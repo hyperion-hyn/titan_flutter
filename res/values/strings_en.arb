@@ -1,0 +1,4 @@
+{
+  "app_name": "Titan",
+  "network_request_err": "Network request error, code: $code"
+}

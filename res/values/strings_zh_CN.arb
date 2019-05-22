@@ -1,0 +1,4 @@
+{
+  "app_name": "泰坦",
+  "network_request_err": "网络请求错误,状态码: $code"
+}

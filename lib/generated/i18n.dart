@@ -19,10 +19,24 @@ class S implements WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get app_name => "Titan";
+  String network_request_err(String code) => "Network request error, code: $code";
 }
 
 class $en extends S {
   const $en();
+}
+
+class $zh_CN extends S {
+  const $zh_CN();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get app_name => "泰坦";
+  @override
+  String network_request_err(String code) => "网络请求错误,状态码: $code";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
@@ -31,6 +45,7 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale("en", ""),
+      Locale("zh", "CN"),
     ];
   }
 
@@ -57,6 +72,8 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
       switch (lang) {
         case "en":
           return SynchronousFuture<S>(const $en());
+        case "zh_CN":
+          return SynchronousFuture<S>(const $zh_CN());
         default:
           // NO-OP.
       }

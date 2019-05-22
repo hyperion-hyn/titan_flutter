@@ -1,4 +1,4 @@
-name: flutter_app
+name: titan
 description: Titan Flutter application.
 
 # The following defines the version and build number for your application.
@@ -19,17 +19,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  #https://plugins.jetbrains.com/plugin/10128-flutter-i18n
+  flutter_localizations:
+    sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
 
+  #https://github.com/flutterchina/dio
+  dio: ^2.1.5
+  rxdart: ^0.22.0
   mapbox_gl:
     path: ./vendor/mapbox_flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  #https://github.com/dart-lang/mockito
+  mockito: ^4.0.0
 
 
 # For information on the generic Dart part of this file, see the
