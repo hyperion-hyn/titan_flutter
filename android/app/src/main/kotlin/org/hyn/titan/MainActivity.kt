@@ -1,4 +1,4 @@
-package org.hyn.flutter_app
+package org.hyn.titan
 
 import android.os.Bundle
 

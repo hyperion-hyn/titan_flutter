@@ -30,8 +30,14 @@ dependencies:
   #https://github.com/flutterchina/dio
   dio: ^2.1.5
   rxdart: ^0.22.0
+  #https://pub.dev/packages/package_info
+#  package_info: ^0.4.0+3
+  #https://github.com/baseflowit/flutter-permission-handler
+#  permission_handler: '^3.0.0'
   mapbox_gl:
     path: ./vendor/mapbox_flutter
+  titan_plugin:
+    path: ./plugin/titan_plugin
 
 dev_dependencies:
   flutter_test:

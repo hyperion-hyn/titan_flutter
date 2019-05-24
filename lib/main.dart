@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/app.dart';
 
-void main() => runApp(App());
+import 'env.dart';
+
+void main() {
+  assert(env != null);
+  runApp(App());
+}

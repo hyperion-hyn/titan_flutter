@@ -4,10 +4,13 @@ PODS:
   - mapbox_gl (0.0.1):
     - Flutter
     - Mapbox-iOS-SDK (~> 4.8.0)
+  - titan_plugin (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `.symlinks/flutter/ios`)
   - mapbox_gl (from `.symlinks/plugins/mapbox_gl/ios`)
+  - titan_plugin (from `.symlinks/plugins/titan_plugin/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -18,11 +21,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/flutter/ios"
   mapbox_gl:
     :path: ".symlinks/plugins/mapbox_gl/ios"
+  titan_plugin:
+    :path: ".symlinks/plugins/titan_plugin/ios"
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
   Mapbox-iOS-SDK: 864bc732a20c183d87f04923295e988b504453d9
   mapbox_gl: 46285a51c05cdc39e5665886db24df47daaa112c
+  titan_plugin: 42967d9d6bf90f8b3ccdf2c48a557a188ad9411b
 
 PODFILE CHECKSUM: d231b65d6bea6d24555f84ca7901720538b5791f
 

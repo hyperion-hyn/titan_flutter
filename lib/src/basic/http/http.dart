@@ -102,7 +102,7 @@ class HttpCore {
     }
 
     statusCode = response.statusCode;
-    if (statusCode > 0) {
+    if (statusCode < 0) {
       errorMsg = S.of(Keys.mainContextKey.currentContext).network_request_err(statusCode.toString());
       throw HttpResponseNot200Exception(errorMsg);
     }

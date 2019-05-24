@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/resource/api/api.dart';
+import 'package:titan/src/di/dependency_injection.dart';
+import 'package:titan_plugin/titan_plugin.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -21,46 +21,6 @@ class _HomePageState extends State<HomePage> {
   _onMapCreated(MapboxMapController controller) {
     print('map created');
   }
-
-  Widget _drawer(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        children: <Widget>[
-          DrawerHeader(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Titan'),
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.update),
-            title: RaisedButton(
-              onPressed: () {
-                Api().update('official', 'zh').then((data) => print(data)).catchError((err) => print(err));
-              },
-              child: Text(S.of(context).app_name),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  get _mapbox => MapboxMap(
-        styleString: 'https://static.hyn.space/maptiles/see-it-all.json',
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: center,
-          zoom: 9.0,
-        ),
-        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
-          Factory<OneSequenceGestureRecognizer>(
-            () => EagerGestureRecognizer(),
-          ),
-        ].toSet(),
-        rotateGesturesEnabled: false,
-        tiltGesturesEnabled: false,
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -79,4 +39,45 @@ class _HomePageState extends State<HomePage> {
           ],
         ));
   }
+
+  Widget _drawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          DrawerHeader(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Titan'),
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.update),
+            title: RaisedButton(
+              onPressed: () async {
+                var v = await TitanPlugin.platformVersion;
+                print(v);
+                Injector.of(context)
+                    .repository
+                    .update('official', 'zh')
+                    .then((data) => print(data.content))
+                    .catchError((err) => print(err));
+              },
+              child: Text(S.of(context).app_name),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  get _mapbox => MapboxMap(
+        styleString: 'https://static.hyn.space/maptiles/see-it-all.json',
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: center,
+          zoom: 9.0,
+        ),
+        rotateGesturesEnabled: false,
+        tiltGesturesEnabled: false,
+      );
 }

@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - titan_plugin (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `.symlinks/flutter/ios`)
+  - titan_plugin (from `.symlinks/plugins/titan_plugin/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: ".symlinks/flutter/ios"
+  titan_plugin:
+    :path: ".symlinks/plugins/titan_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  titan_plugin: 42967d9d6bf90f8b3ccdf2c48a557a188ad9411b
+
+PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497
+
+COCOAPODS: 1.5.3

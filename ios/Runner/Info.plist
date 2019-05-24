@@ -24,10 +24,13 @@
 	<true/>
 	<key>MGLMapboxAccessToken</key>
 	<string>pk.eyJ1IjoibnVyYm90IiwiYSI6ImNpaG0ycXA3czBvamh2NWtsZzBzdHE2dmQifQ.B7NiVcQD0DFguQF1aRcOeQ</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>允许访问一下位置</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>允许访问位置1</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>location</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
@@ -47,10 +50,6 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>允许访问一下位置</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>允许访问位置1</string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 </dict>
