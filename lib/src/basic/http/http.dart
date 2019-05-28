@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/consts/consts.dart';
 
+import '../../../env.dart';
 import 'entity.dart';
 import 'http_exception.dart';
 
@@ -18,6 +19,9 @@ class HttpCore {
   static HttpCore _getInstance() {
     if (_instance == null) {
       _instance = HttpCore._internal();
+      if (env.buildType == 'dev') {
+        _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
+      }
     }
     return _instance;
   }

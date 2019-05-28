@@ -6,7 +6,7 @@ import 'package:titan/src/style/theme.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'business/home/home_widget.dart';
+import 'business/home/home.dart';
 import 'di/dependency_injection.dart';
 import 'resource/api/api.dart';
 import 'resource/repository/repository.dart';

@@ -20,6 +20,7 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get app_name => "Titan";
+  String get offline_map => "Offline map";
   String network_request_err(String code) => "Network request error, code: $code";
 }
 
@@ -35,6 +36,8 @@ class $zh_CN extends S {
 
   @override
   String get app_name => "泰坦";
+  @override
+  String get offline_map => "离线地图";
   @override
   String network_request_err(String code) => "网络请求错误,状态码: $code";
 }

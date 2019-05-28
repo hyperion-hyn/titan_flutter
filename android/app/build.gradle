@@ -66,22 +66,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
-//        release {
-//            minifyEnabled true
-//            shrinkResources false
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-//            signingConfig signingConfigs.release
-//
-//            applicationVariants.all { variant ->
-//                variant.outputs.all {
-//                    variant.packageApplicationProvider.get().outputDirectory = new File(project.rootDir.absolutePath + "/apk/release")
-//                }
-//                variant.outputs.each { output ->
-//                    def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}_${variant.productFlavors[0].name}.apk"
-//                    output.outputFileName = fileName
-//                }
-//            }
-//        }
+        release {
+            minifyEnabled true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    variant.packageApplicationProvider.get().outputDirectory = new File(project.rootDir.absolutePath + "/apk/release")
+                }
+                variant.outputs.each { output ->
+                    def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}_${variant.productFlavors[0].name}.apk"
+                    output.outputFileName = fileName
+                }
+            }
+        }
     }
 
     flavorDimensions "default"

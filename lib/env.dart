@@ -1,15 +1,22 @@
 import 'package:meta/meta.dart';
 
-enum BuildFlavor { official, google, ios }
-enum BuildType { dev, prod }
+class BuildFlavor {
+  static const String official = 'official';
+  static const String google = 'google';
+  static const String ios = 'ios';
+}
+
+class BuildType {
+  static const String dev = 'dev';
+  static const String prod = 'prod';
+}
 
 BuildEnvironment get env => _env;
 BuildEnvironment _env;
 
 class BuildEnvironment {
-  /// The backend server.
-  final BuildType buildType;
-  final BuildFlavor flavor;
+  final String buildType;
+  final String flavor;
 
   BuildEnvironment._init({this.flavor, this.buildType});
 
