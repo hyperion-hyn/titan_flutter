@@ -72,15 +72,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
 
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    variant.packageApplicationProvider.get().outputDirectory = new File(project.rootDir.absolutePath + "/apk/release")
-                }
-                variant.outputs.each { output ->
-                    def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}_${variant.productFlavors[0].name}.apk"
-                    output.outputFileName = fileName
-                }
-            }
+//            applicationVariants.all { variant ->
+//                variant.outputs.all {
+//                    variant.packageApplicationProvider.get().outputDirectory = new File(project.rootDir.absolutePath + "/apk/release")
+//                }
+//                variant.outputs.each { output ->
+//                    def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}_${variant.productFlavors[0].name}.apk"
+//                    output.outputFileName = fileName
+//                }
+//            }
         }
     }
 
@@ -101,9 +101,18 @@ flutter {
     source '../..'
 }
 
+repositories {
+    flatDir {
+        dirs './aars/'
+    }
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation (name:'cipher', ext:'aar')
+
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

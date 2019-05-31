@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
 
 import 'package:toast/toast.dart';
@@ -19,8 +22,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final LatLng center = const LatLng(23.122592, 113.327356);
 
+  StreamSubscription _subscription;
+
   _onMapCreated(MapboxMapController controller) {
     print('map created');
+  }
+
+  @override
+  void initState() {
+    _subscription = TitanPlugin.listenCipherEvent((data) {
+      print(data);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -28,10 +47,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         drawer: Builder(builder: (BuildContext ctx) => _drawer(ctx)),
         body: Builder(
-            builder: (BuildContext ctx) =>
-                Stack(
+            builder: (BuildContext ctx) => Stack(
                   children: <Widget>[
-
                     ///地图渲染
                     _mapbox,
 
@@ -53,10 +70,7 @@ class _HomePageState extends State<HomePage> {
                               child: TextField(
                                   enabled: false,
                                   decoration: InputDecoration(hintText: '搜索 / 解码', border: InputBorder.none),
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .body1))
+                                  style: Theme.of(context).textTheme.body1))
                         ],
                       ),
                     ),
@@ -120,8 +134,8 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Color(0xff212121), Color(0xff000000)], begin: FractionalOffset(0, 0.4), end: FractionalOffset(0, 1))),
+                gradient:
+                    LinearGradient(colors: [Color(0xff212121), Color(0xff000000)], begin: FractionalOffset(0, 0.4), end: FractionalOffset(0, 1))),
             height: 200.0,
             child: Align(
               alignment: Alignment.centerLeft,
@@ -164,11 +178,11 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   Flexible(
                       child: Text(
-                        '1' + 'f' * 256 + '2',
-                        softWrap: false,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                      )),
+                    '1' + 'f' * 256 + '2',
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  )),
                   Padding(
                     padding: const EdgeInsets.only(left: 4),
                     child: Icon(
@@ -187,16 +201,20 @@ class _HomePageState extends State<HomePage> {
           ),
           Container(height: 8, color: Colors.grey[100]),
           ListTile(
-            onTap: () => print('TODO'),
+            onTap: () {
+              print('test cancel');
+              _subscription?.cancel();
+            },
             leading: Icon(Icons.map),
-            title: Text(S
-                .of(context)
-                .offline_map),
+            title: Text(S.of(context).offline_map),
             trailing: Icon(Icons.navigate_next),
           ),
           Container(height: 8, color: Colors.grey[100]),
           ListTile(
-            onTap: () => print('TODO'),
+            onTap: () async {
+              var greet = await TitanPlugin.greetNative();
+              print(greet);
+            },
             leading: Icon(Icons.share),
             title: Text('分享App'),
             trailing: Icon(Icons.navigate_next),
@@ -217,8 +235,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  get _mapbox =>
-      MapboxMap(
+  get _mapbox => MapboxMap(
         styleString: 'https://static.hyn.space/maptiles/see-it-all.json',
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
@@ -241,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                     leading: new Icon(IconData(0xe66e, fontFamily: 'iconfont'), color: Color(0xffac2229)),
                     title: new Text('清除痕迹', style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
                     onTap: () {
-                      Toast.show ('TODO', ctx);
+                      Toast.show('TODO', ctx);
                       Navigator.pop(ctx);
                     }),
                 new ListTile(

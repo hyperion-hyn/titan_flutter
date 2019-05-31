@@ -182,13 +182,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.2.4"
-  titan_plugin:
-    dependency: "direct main"
-    description:
-      path: "plugin/titan_plugin"
-      relative: true
-    source: path
-    version: "0.0.1"
   toast:
     dependency: "direct main"
     description:

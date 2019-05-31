@@ -38,8 +38,8 @@ dependencies:
   flutter_webview_plugin: ^0.3.5
   mapbox_gl:
     path: ./vendor/mapbox_flutter
-  titan_plugin:
-    path: ./plugin/titan_plugin
+#  titan_plugin:
+#    path: ./plugin/titan_plugin
 
 dev_dependencies:
   flutter_test:
