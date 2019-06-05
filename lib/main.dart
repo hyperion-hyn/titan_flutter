@@ -10,6 +10,7 @@ void main() {
   }
 
   TitanPlugin.initFlutterMethodCall();
+  TitanPlugin.initKeyPair();
 
   runApp(App());
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Titan</string>
+
+    <string name="qrcode_scan_qrcode">扫描二维码</string>
+    <string name="qrcode_scan_tips">将条码放入框内，即可自动扫描</string>
+    <string name="album">相册</string>
+    <string name="qrcode_scan_public_key_qrcode_tips">请扫码加密地址（公钥）二维码</string>
+    <string name="qrcode_camera_auth_fail">摄像头授权失败</string>
+    <string name="qrcode_open_camera_error">打开相机出错</string>
+</resources>

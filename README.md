@@ -2,6 +2,12 @@
 
 Titan Flutter application.
 
+
+make json model
+```bash
+flutter packages pub run build_runner build
+```
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

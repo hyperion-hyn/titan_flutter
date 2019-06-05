@@ -14,7 +14,7 @@ description: Titan Flutter application.
 version: 1.0.1+2
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -31,19 +31,31 @@ dependencies:
   dio: ^2.1.5
   rxdart: ^0.22.0
   #https://pub.dev/packages/package_info
-  #  package_info: ^0.4.0+3
+#  package_info: ^0.4.0+4
   #https://github.com/baseflowit/flutter-permission-handler
-  #  permission_handler: '^3.0.0'
+  permission_handler: '^3.1.0'
   toast: ^0.1.4
   flutter_webview_plugin: ^0.3.5
+  #https://github.com/apptreesoftware/flutter_barcode_reader
+#  barcode_scan: ^1.0.0
+  #https://pub.dev/packages/path_provider#-installing-tab-
+  path_provider: ^1.1.0
+  #https://pub.dev/packages/qr_flutter#-installing-tab-
+  qr_flutter: ^2.0.0+51
   mapbox_gl:
     path: ./vendor/mapbox_flutter
 #  titan_plugin:
 #    path: ./plugin/titan_plugin
 
+  #https://github.com/dart-lang/json_serializable
+  json_annotation: ^2.4.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  build_runner: ^1.0.0
+  json_serializable: ^3.0.0
 
   #https://github.com/dart-lang/mockito
   mockito: ^4.0.0
@@ -64,6 +76,8 @@ flutter:
   assets:
     - res/drawable/ic_logo.png
     - res/drawable/logo_title.png
+    - res/drawable/share_app_en_android.jpeg
+    - res/drawable/share_app_zh_android.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
