@@ -1,15 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:titan/src/basic/bloc/bloc_provider.dart';
-import 'package:titan/src/bloc/search_history_bloc.dart';
 
-import 'package:titan/src/business/home/map.dart';
-import 'package:titan/src/business/search/search.dart';
+import 'package:titan/src/business/search/search_page.dart';
 import 'package:toast/toast.dart';
 
-import 'bottom_fabs.dart';
-import 'drawer.dart';
+import 'map_scenes.dart';
+import 'bottom_fabs_scenes.dart';
+import 'drawer_scenes.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);

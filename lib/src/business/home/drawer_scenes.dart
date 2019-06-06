@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr.dart';
+import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/widget/smart_drawer.dart';

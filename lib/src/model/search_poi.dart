@@ -18,4 +18,9 @@ class SearchPoiEntity {
   factory SearchPoiEntity.fromJson(Map<String, dynamic> json) => _$SearchPoiEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$SearchPoiEntityToJson(this);
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

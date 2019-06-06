@@ -19,4 +19,9 @@ class UpdateEntity {
   factory UpdateEntity.fromJson(Map<String, dynamic> json) => _$UpdateEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$UpdateEntityToJson(this);
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }
