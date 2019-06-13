@@ -10,8 +10,10 @@ class SearchHistoryDao {
   static const String kColumnSearchText = 'search_text';
   static const String kColumnType = 'type';
 
-  Future<HistorySearchEntity> insert(HistorySearchEntity entity) async {
-    entity.id = await (await _db).insert(kTable, entity.toJson());
+  Future<HistorySearchEntity> insertOrUpdate(HistorySearchEntity entity) async {
+    entity.id = await (await _db).rawInsert('INSERT OR REPLACE INTO $kTable($kColumnTime, $kColumnSearchText, $kColumnType) VALUES(?,?,?)',
+        [entity.time, entity.searchText, entity.type]);
+//    entity.id = await (await _db).insert(kTable, entity.toJson());
     return entity;
   }
 
@@ -22,6 +24,11 @@ class SearchHistoryDao {
 
   Future<int> delete(int id) async {
     return await (await _db).delete(kTable, where: '$kColumnId=?', whereArgs: [id]);
+  }
+
+  Future<int> deleteAll() async {
+    var result = await (await _db).delete(kTable);
+    return result;
   }
 
   Future<Database> get _db async {

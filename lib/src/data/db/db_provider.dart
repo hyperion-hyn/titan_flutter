@@ -17,7 +17,7 @@ class DBProvider {
       await db.execute('''
 create table ${SearchHistoryDao.kTable} (
   ${SearchHistoryDao.kColumnId} integer primary key autoincrement, 
-  ${SearchHistoryDao.kColumnSearchText} text not null,
+  ${SearchHistoryDao.kColumnSearchText} text not null unique,
   ${SearchHistoryDao.kColumnType} text,
   ${SearchHistoryDao.kColumnTime} integer)
 ''');

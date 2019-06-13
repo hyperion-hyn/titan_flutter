@@ -9,7 +9,7 @@ part of 'history_search.dart';
 HistorySearchEntity _$HistorySearchEntityFromJson(Map<String, dynamic> json) {
   return HistorySearchEntity(
       id: json['id'] as int,
-      time: (json['time'] as num)?.toDouble(),
+      time: json['time'] as int,
       searchText: json['search_text'] as String,
       type: json['type'] as String);
 }

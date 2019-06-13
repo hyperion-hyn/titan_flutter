@@ -22,13 +22,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.0"
-  bloc_pattern:
-    dependency: "direct main"
+  bloc:
+    dependency: transitive
     description:
-      name: bloc_pattern
+      name: bloc
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.9+3"
+    version: "0.14.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -162,6 +162,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.5"
+  equatable:
+    dependency: "direct main"
+    description:
+      name: equatable
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.6"
   fixnum:
     dependency: transitive
     description:
@@ -174,6 +181,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_bloc:
+    dependency: "direct main"
+    description:
+      name: flutter_bloc
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.15.1"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -409,7 +423,7 @@ packages:
     source: hosted
     version: "2.0.2"
   rxdart:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: rxdart
       url: "https://pub.flutter-io.cn"

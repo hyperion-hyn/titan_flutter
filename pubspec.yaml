@@ -29,7 +29,7 @@ dependencies:
 
   #https://github.com/flutterchina/dio
   dio: ^2.1.5
-  rxdart: ^0.22.0
+#  rxdart: ^0.22.0  #flutter_bloc have it
   #https://pub.dev/packages/package_info
 #  package_info: ^0.4.0+4
   #https://github.com/baseflowit/flutter-permission-handler
@@ -47,12 +47,14 @@ dependencies:
   #https://pub.dev/packages/shared_preferences#-installing-tab-
   shared_preferences: ^0.5.3+1
   #https://pub.dev/packages/bloc_pattern#-readme-tab-
-  bloc_pattern: ^2.1.9+3
+#  bloc_pattern: ^2.1.9+3
+  #https://pub.dev/packages/flutter_bloc
+  flutter_bloc: ^0.15.1
+  #https://pub.dev/packages/equatable#-readme-tab-
+  equatable: ^0.2.6
+  #https://github.com/tobrun/flutter-mapbox-gl
   mapbox_gl:
     path: ./vendor/mapbox_flutter
-#  titan_plugin:
-#    path: ./plugin/titan_plugin
-
   #https://github.com/dart-lang/json_serializable
   json_annotation: ^2.4.0
 

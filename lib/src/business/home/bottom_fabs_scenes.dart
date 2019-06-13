@@ -1,8 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 import 'package:toast/toast.dart';
 
-class BottomFabsScenes extends StatelessWidget {
+class BottomFabsScenes extends StatefulWidget {
+  final DraggableBottomSheetController draggableBottomSheetController;
+
+  BottomFabsScenes({this.draggableBottomSheetController});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _BottomFasScenesState();
+  }
+}
+
+class _BottomFasScenesState extends State<BottomFabsScenes> {
+  double fabsBottom = 16;
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.draggableBottomSheetController
+        ?.addListener(() => _handleBottomPadding(widget.draggableBottomSheetController.bottom));
+  }
+
+  void _handleBottomPadding(double bottom) {
+    if(bottom > 0 && bottom <= widget.draggableBottomSheetController.anchorHeight) {
+      setState(() {
+        fabsBottom = bottom;
+      });
+    }
+  }
+
   void _showFireModalBottomSheet(context) {
     showModalBottomSheet(
         context: context,
@@ -31,35 +61,42 @@ class BottomFabsScenes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        FloatingActionButton(
-          onPressed: () => _showFireModalBottomSheet(context),
-          mini: true,
-          heroTag: 'cleanData',
-          backgroundColor: Colors.white,
-          child: Image.asset(
-            'res/drawable/ic_logo.png',
-            width: 24,
-            color: Colors.black54,
-          ),
+    return Positioned(
+      bottom: fabsBottom,
+      left: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: <Widget>[
+            FloatingActionButton(
+              onPressed: () => _showFireModalBottomSheet(context),
+              mini: true,
+              heroTag: 'cleanData',
+              backgroundColor: Colors.white,
+              child: Image.asset(
+                'res/drawable/ic_logo.png',
+                width: 24,
+                color: Colors.black54,
+              ),
+            ),
+            Spacer(),
+            FloatingActionButton(
+              onPressed: () {
+                Toast.show('TODO 定位', context);
+              },
+              mini: true,
+              heroTag: 'myLocation',
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.my_location,
+                color: Colors.black54,
+                size: 24,
+              ),
+            )
+          ],
         ),
-        Spacer(),
-        FloatingActionButton(
-          onPressed: () {
-            Toast.show('TODO 定位', context);
-          },
-          mini: true,
-          heroTag: 'myLocation',
-          backgroundColor: Colors.white,
-          child: Icon(
-            Icons.my_location,
-            color: Colors.black54,
-            size: 24,
-          ),
-        )
-      ],
+      ),
     );
   }
-
 }

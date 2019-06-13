@@ -13,7 +13,7 @@ SearchPoiEntity _$SearchPoiEntityFromJson(Map<String, dynamic> json) {
       tags: json['tags'] as String,
       loc: (json['loc'] as List)?.map((e) => (e as num)?.toDouble())?.toList(),
       phone: json['phone'] as String,
-      isHistory: json['isHistory'] as bool);
+      remark: json['remark'] as String);
 }
 
 Map<String, dynamic> _$SearchPoiEntityToJson(SearchPoiEntity instance) =>
@@ -23,5 +23,5 @@ Map<String, dynamic> _$SearchPoiEntityToJson(SearchPoiEntity instance) =>
       'tags': instance.tags,
       'loc': instance.loc,
       'phone': instance.phone,
-      'isHistory': instance.isHistory
+      'remark': instance.remark
     };

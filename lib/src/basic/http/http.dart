@@ -111,8 +111,23 @@ class HttpCore {
       throw HttpResponseNot200Exception(errorMsg);
     }
 //    String res2Json = '{"code":0,"msg":"mssss","data":[{"name":"moo"},{"name":"moo2"}]}';
-    String res2Json = json.encode(response.data);
-    Map<String, dynamic> map = json.decode(res2Json);
-    return map;
+    if(response.data is Map<String, dynamic>) {
+      return response.data;
+    }
+
+    Map<String, dynamic> map;
+    try {
+      map = json.decode(response.data);
+    } catch (err) {
+      print(err);
+      String res2Json = json.encode(response.data);
+      try {
+        map = json.decode(response.data);
+      } catch (err) {
+        print(err);
+      }
+    }
+
+    return map ?? response.data;
   }
 }

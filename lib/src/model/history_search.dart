@@ -5,7 +5,7 @@ part 'history_search.g.dart';
 @JsonSerializable()
 class HistorySearchEntity {
   int id;
-  final double time;
+  final int time;
   @JsonKey(name: 'search_text')
   final String searchText;
   String type;

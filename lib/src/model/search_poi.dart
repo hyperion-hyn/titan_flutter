@@ -11,9 +11,11 @@ class SearchPoiEntity {
   final String tags;
   final List<double> loc;
   final String phone;
+  final String remark;
+  @JsonKey(ignore: true)
   bool isHistory;
 
-  SearchPoiEntity({this.name, this.address, this.tags, this.loc, this.phone, this.isHistory});
+  SearchPoiEntity({this.name, this.address, this.tags, this.loc, this.phone, this.remark, this.isHistory});
 
   factory SearchPoiEntity.fromJson(Map<String, dynamic> json) => _$SearchPoiEntityFromJson(json);
 
