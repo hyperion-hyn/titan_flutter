@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/home/poi_bottom_sheet.dart';
 
@@ -8,7 +9,6 @@ import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/model/search_poi.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
-import 'package:toast/toast.dart';
 
 import 'map_scenes.dart';
 import 'bottom_fabs_scenes.dart';
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
           onWillPop: () async {
             if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
               _lastPressedAt = DateTime.now();
-              Toast.show('再按一下退出程序', context, duration: Toast.LENGTH_LONG);
+              Fluttertoast.showToast(msg: '再按一下退出程序');
               return false;
             }
             return true;

@@ -1,3 +1,0 @@
-[submodule "vendor/mapbox_flutter"]
-	path = vendor/mapbox_flutter
-	url = git@github.com:hyperion-hyn/mapbox_flutter.git

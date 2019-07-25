@@ -3,10 +3,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/search_poi.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:toast/toast.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -299,7 +299,7 @@ class _SearchPageState extends State<SearchPage> {
             elevation: 2.0,
             child: InkWell(
               onTap: () {
-                Toast.show('TODO', context, duration: Toast.LENGTH_LONG);
+                Fluttertoast.showToast(msg: 'TODO');
               },
               child: Row(
                 children: <Widget>[

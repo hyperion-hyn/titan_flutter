@@ -60,6 +60,10 @@ target 'Runner' do
     File.symlink(p[:path], symlink)
     pod p[:name], :path => File.join(symlink, 'ios')
   }
+  
+  pod 'SwiftKeychainWrapper'
+  pod 'RxSwift', '~> 5.0'
+  pod 'RxCocoa', '~> 5.0'
 end
 
 post_install do |installer|

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
-import 'package:toast/toast.dart';
 
 class BottomFabsScenes extends StatefulWidget {
   final DraggableBottomSheetController draggableBottomSheetController;
@@ -45,7 +45,7 @@ class _BottomFasScenesState extends State<BottomFabsScenes> {
                     leading: new Icon(IconData(0xe66e, fontFamily: 'iconfont'), color: Color(0xffac2229)),
                     title: new Text('清除痕迹', style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
                     onTap: () {
-                      Toast.show('TODO', ctx);
+                      Fluttertoast.showToast(msg: 'TODO');
                       Navigator.pop(ctx);
                     }),
                 new ListTile(
@@ -83,7 +83,7 @@ class _BottomFasScenesState extends State<BottomFabsScenes> {
             Spacer(),
             FloatingActionButton(
               onPressed: () {
-                Toast.show('TODO 定位', context);
+                Fluttertoast.showToast(msg: 'TODO 定位');
               },
               mini: true,
               heroTag: 'myLocation',

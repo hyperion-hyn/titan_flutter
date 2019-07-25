@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:toast/toast.dart';
 
 class MyEncryptedAddrPage extends StatefulWidget {
   @override
@@ -166,7 +166,7 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
       TitanPlugin.shareImage(path, '分享公钥二维码');
     } catch (e) {
       print(e.toString());
-      Toast.show('分享发生错误', context);
+      Fluttertoast.showToast(msg: '分享发生错误');
     }
 
 //    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);

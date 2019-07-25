@@ -39,7 +39,8 @@ class TitanPlugin {
 
   static Future<String> genKeyPair({int expired = 0}) async {
     if (expired == 0) {
-      expired = DateTime.now().millisecondsSinceEpoch + 3600 * 24 * 1000;
+      expired = DateTime.now().millisecondsSinceEpoch + 60 * 1000;
+//      expired = DateTime.now().millisecondsSinceEpoch + 3600 * 24 * 1000;
     }
     return await callChannel.invokeMethod('genKeyPair', expired);
   }
@@ -68,7 +69,7 @@ class TitanPlugin {
       var minutes = timeLeft ~/ 60;
       return '$minutes分后自动刷新';
     } else if (timeLeft > 0) {
-      return '$timeLeft秒后自动刷新';
+      return '${timeLeft.toInt()}秒后自动刷新';
     } else {
       return '正在生成加密地址…';
     }

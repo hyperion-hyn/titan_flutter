@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/app.dart';
 
 import 'env.dart';
@@ -19,13 +20,14 @@ void main() {
   TitanPlugin.initFlutterMethodCall();
   TitanPlugin.initKeyPair();
 
-  //init dependency
-  Api api = Api();
-  SearchHistoryDao searchDao = SearchHistoryDao();
-  Repository repository = Repository(api: api, searchHistoryDao: searchDao);
-  SearchInteractor searchInteractor = SearchInteractor(repository);
+  FlutterBugly.postCatchedException(() {
+    //init dependency
+    Api api = Api();
+    SearchHistoryDao searchDao = SearchHistoryDao();
+    Repository repository = Repository(api: api, searchHistoryDao: searchDao);
+    SearchInteractor searchInteractor = SearchInteractor(repository);
 
-  BlocSupervisor.delegate = AppBlocDelegate();
-
-  runApp(Injector(child: App(), api: api, searchDao: searchDao, repository: repository, searchInteractor: searchInteractor));
+    BlocSupervisor.delegate = AppBlocDelegate();
+    runApp(Injector(child: App(), api: api, searchDao: searchDao, repository: repository, searchInteractor: searchInteractor));
+  });
 }

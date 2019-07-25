@@ -53,6 +53,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     signingConfigs {
@@ -74,27 +78,19 @@ android {
 
         release {
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
 
-//            applicationVariants.all { variant ->
-//                variant.outputs.all {
-//                    variant.packageApplicationProvider.get().outputDirectory = new File(project.rootDir.absolutePath + "/apk/release")
-//                }
-//                variant.outputs.each { output ->
-//                    def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}_${variant.productFlavors[0].name}.apk"
-//                    output.outputFileName = fileName
-//                }
-//            }
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    if(output.outputFileName.contains('-release')) {
+                        def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
+                        output.outputFileName = fileName
+                    }
+                }
+            }
         }
-    }
-
-    flavorDimensions "default"
-
-    productFlavors {
-        official {}
-        google {}
     }
 
     compileOptions {

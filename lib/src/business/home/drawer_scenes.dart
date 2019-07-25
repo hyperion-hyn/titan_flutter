@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:titan/generated/i18n.dart';
@@ -12,7 +13,6 @@ import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
-import 'package:toast/toast.dart';
 
 class DrawerScenes extends StatefulWidget {
   @override
@@ -84,7 +84,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
               onTap: () {
                 if (_pubKey.isNotEmpty) {
                   Clipboard.setData(ClipboardData(text: _pubKey));
-                  Toast.show('公钥地址已复制', context, duration: Toast.LENGTH_LONG);
+                  Fluttertoast.showToast(msg: '公钥地址已复制');
                 }
               },
               child: Row(
