@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:titan/src/domain/domain.dart';
-import 'package:titan/src/model/search_poi.dart';
+import 'package:titan/src/model/poi.dart';
 import 'bloc.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
@@ -16,12 +16,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
     if (event is AddSearchItemEvent) {
-      if (event.item is SearchPoiEntity) {
+      if (event.item is PoiEntity) {
         await searchInteractor.addSearchPoi(event.item);
       } else {
         await searchInteractor.addSearchText(event.item.toString());
       }
-      yield currentState; //nothing to do
     } else if (event is FetchSearchItemsEvent) {
       if (event.isHistory) {
         //only load 20 items
@@ -34,7 +33,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           yield SearchLoadedState(isHistory: false, currentSearchText: event.searchText, items: items);
         } catch (err) {
           print(err.toString());
-          yield currentState; //nothing to do
         }
       }
     } else if(event is ClearSearchHisotoryEvent) {

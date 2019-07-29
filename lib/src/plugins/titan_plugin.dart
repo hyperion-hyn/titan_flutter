@@ -31,6 +31,7 @@ class TitanPlugin {
   // encryption
   //---------------------
   static Future<String> initKeyPair({int expired = 0}) async {
+    print('init key pair');
     if (expired == 0) {
       expired = DateTime.now().millisecondsSinceEpoch + 3600 * 24 * 1000;
     }
@@ -39,8 +40,7 @@ class TitanPlugin {
 
   static Future<String> genKeyPair({int expired = 0}) async {
     if (expired == 0) {
-      expired = DateTime.now().millisecondsSinceEpoch + 60 * 1000;
-//      expired = DateTime.now().millisecondsSinceEpoch + 3600 * 24 * 1000;
+      expired = DateTime.now().millisecondsSinceEpoch + 3600 * 24 * 1000;
     }
     return await callChannel.invokeMethod('genKeyPair', expired);
   }
@@ -51,28 +51,6 @@ class TitanPlugin {
 
   static Future<int> getExpiredTime() async {
     return await callChannel.invokeMethod("getExpired");
-  }
-
-  static Future<String> getExpiredTimeShowTip() async {
-    var expireTime = await getExpiredTime();
-    var timeLeft = (expireTime - DateTime.now().millisecondsSinceEpoch) / 1000;
-    var day = 3600 * 24;
-    var hour = 3600;
-    var minute = 60;
-    if (timeLeft > day) {
-      return '${timeLeft ~/ day}天后自动刷新';
-    } else if (timeLeft > hour) {
-      var hours = timeLeft ~/ hour;
-      var minutes = (timeLeft - hours * hour) ~/ 60;
-      return '$hours小时$minutes分后自动刷新';
-    } else if (timeLeft > minute) {
-      var minutes = timeLeft ~/ 60;
-      return '$minutes分后自动刷新';
-    } else if (timeLeft > 0) {
-      return '${timeLeft.toInt()}秒后自动刷新';
-    } else {
-      return '正在生成加密地址…';
-    }
   }
 
   static StreamSubscription listenCipherEvent(onData, {Function onError, void onDone(), bool cancelOnError}) {

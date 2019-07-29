@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/inject/injector.dart';
-import 'package:titan/src/model/search_poi.dart';
+import 'package:titan/src/model/poi.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
@@ -122,9 +122,7 @@ class _SearchPageState extends State<SearchPage> {
           child: BlocBuilder(
               bloc: _searchBloc,
               builder: (context, SearchState state) {
-                if (state is InitialSearchState) {
-                  return buildTouristGuide();
-                } else if (state is SearchLoadedState) {
+                if (state is SearchLoadedState) {
                   if (state.items != null && state.items.isNotEmpty) {
                     return CustomScrollView(
                       controller: _scrollController,
@@ -155,7 +153,7 @@ class _SearchPageState extends State<SearchPage> {
                                   final int itemIndex = index ~/ 2;
                                   if (index.isEven) {
                                     var item = state.items[itemIndex];
-                                    if (item is SearchPoiEntity) {
+                                    if (item is PoiEntity) {
                                       return buildPoiItem(item);
                                     } else {
                                       return buildTextItem(item.toString());
@@ -177,11 +175,24 @@ class _SearchPageState extends State<SearchPage> {
                     return buildTouristGuide();
                   }
                 }
+                return buildInit();
               })),
     ])));
   }
 
-  Widget buildPoiItem(SearchPoiEntity entity) {
+  Widget buildInit() {
+    return Center(
+      child: SizedBox(
+        height: 32,
+        width: 32,
+        child: CircularProgressIndicator(
+          strokeWidth: 3,
+        ),
+      ),
+    );
+  }
+
+  Widget buildPoiItem(PoiEntity entity) {
     return InkWell(
         onTap: () => handleSearch(entity),
         child: Padding(

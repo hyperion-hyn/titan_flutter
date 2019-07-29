@@ -4,7 +4,7 @@ import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/app.dart';
 
 import 'env.dart';
-import 'src/bloc/app_bloc_delegate.dart';
+import 'src/basic/bloc/app_bloc_delegate.dart';
 import 'src/data/api/api.dart';
 import 'src/data/db/search_history_dao.dart';
 import 'src/data/repository/repository.dart';
@@ -14,7 +14,7 @@ import 'src/plugins/titan_plugin.dart';
 
 void main() {
   if (env == null) {
-    BuildEnvironment.init(flavor: BuildFlavor.official, buildType: BuildType.dev);
+    BuildEnvironment.init(flavor: BuildFlavor.androidOfficial, buildType: BuildType.dev);
   }
 
   TitanPlugin.initFlutterMethodCall();
@@ -28,6 +28,10 @@ void main() {
     SearchInteractor searchInteractor = SearchInteractor(repository);
 
     BlocSupervisor.delegate = AppBlocDelegate();
-    runApp(Injector(child: App(), api: api, searchDao: searchDao, repository: repository, searchInteractor: searchInteractor));
+    runApp(Injector(
+      child: App(),
+      repository: repository,
+      searchInteractor: searchInteractor,
+    ));
   });
 }

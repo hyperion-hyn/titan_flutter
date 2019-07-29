@@ -18,12 +18,12 @@ class EthEncryptionService: EncryptionService {
     private var _pubStr: String? = nil
     private var _expiredTime: Int64 = 0
     
-    func generateKeyPairAndStore(expireAt: Double) -> Observable<Bool> {
+    func generateKeyPairAndStore(expireAt: Int64) -> Observable<Bool> {
         return Observable<Bool>.create { observer in
             if let pairs = self.cipher?.genKeyPair() {
                 let ps = pairs.components(separatedBy: ",")
                 if ps.count == 2 {
-                    let extime = Int64(expireAt)
+                    let extime = expireAt
                     let isSaveSuccess: Bool = KeychainWrapper.standard.set("\(pairs),\(extime)", forKey: "savedKeyPair")
                     if isSaveSuccess {
                         self._pubStr = ps[1]

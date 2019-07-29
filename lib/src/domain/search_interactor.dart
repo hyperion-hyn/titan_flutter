@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/model/history_search.dart';
-import 'package:titan/src/model/search_poi.dart';
+import 'package:titan/src/model/poi.dart';
 
 class SearchInteractor {
   Repository repository;
 
   SearchInteractor(this.repository);
 
-  Future<HistorySearchEntity> addSearchPoi(SearchPoiEntity poiEntity) {
+  Future<HistorySearchEntity> addSearchPoi(PoiEntity poiEntity) {
     var entity = HistorySearchEntity(
         searchText: json.encode(poiEntity.toJson()), time: DateTime.now().millisecondsSinceEpoch, type: poiEntity.runtimeType.toString());
     return repository.searchHistoryDao.insertOrUpdate(entity);
@@ -24,9 +24,9 @@ class SearchInteractor {
     var list = await repository.searchHistoryDao.getList();
     return list.map<dynamic>((item) {
       print(item);
-      if (item.type == SearchPoiEntity().runtimeType.toString()) {
+      if (item.type == PoiEntity().runtimeType.toString()) {
         var parsedJson = json.decode(item.searchText);
-        var entity = SearchPoiEntity.fromJson(parsedJson);
+        var entity = PoiEntity.fromJson(parsedJson);
         entity.isHistory = true;
         return entity;
       }
@@ -38,10 +38,10 @@ class SearchInteractor {
     return repository.searchHistoryDao.deleteAll();
   }
 
-  Future<List<SearchPoiEntity>> searchPoiByMapbox(String query, String proximity, String language, {String types = 'poi', int limit = 10}) async {
+  Future<List<PoiEntity>> searchPoiByMapbox(String query, String proximity, String language, {String types = 'poi', int limit = 10}) async {
     var ret = await repository.api.searchPoiByMapbox(query, proximity, language, types: types, limit: limit);
     List<dynamic> features = ret['features'];
-    List<SearchPoiEntity> pois = [];
+    List<PoiEntity> pois = [];
     for (var feature in features) {
       var name = feature['text'] ?? 'Unknown Location';
       var loc = [feature['center'][0] as double, feature['center'][1] as double];
@@ -65,7 +65,7 @@ class SearchInteractor {
       }
       String tel = feature['properties']['tel'] ?? '';
 
-      SearchPoiEntity poiEntity = SearchPoiEntity(name: name, address: address, loc: loc, tags: tags, phone: tel);
+      PoiEntity poiEntity = PoiEntity(name: name, address: address, loc: loc, tags: tags, phone: tel);
       pois.add(poiEntity);
     }
     return pois;

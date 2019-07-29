@@ -1,34 +1,36 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
+import '../../../store.dart';
+
 @immutable
 abstract class SearchState extends Equatable {
   SearchState([List props = const []]) : super(props);
+
+  Map<String, dynamic> get store => getStoreOfGlobal('searchState');
 }
 
 class InitialSearchState extends SearchState {}
 
 class SearchLoadedState extends SearchState {
-  final List<dynamic> items;
-  final String currentSearchText;
-  final bool isHistory;
-
-  SearchLoadedState({@required this.items, @required this.currentSearchText, @required this.isHistory})
-      : super([isHistory, currentSearchText, items]);
-
-  SearchLoadedState copyWith({List<dynamic> items, bool isHistory, String searchText}) {
-    return SearchLoadedState(
-        items: items ?? this.items, isHistory: isHistory ?? this.isHistory, currentSearchText: currentSearchText ?? this.currentSearchText);
+  SearchLoadedState({
+    @required items,
+    @required currentSearchText,
+    @required isHistory,
+  }) : super([items, currentSearchText, isHistory]) {
+    store['items'] = items;
+    store['currentSearchText'] = currentSearchText;
+    store['isHistory'] = isHistory;
   }
+
+  List<dynamic> get items => store['items'];
+
+  String get currentSearchText => store['currentSearchText'];
+
+  bool get isHistory => store['isHistory'];
 
   @override
   String toString() {
     return '$runtimeType(isHistory: $isHistory, currentSearchText: $currentSearchText, items: $items)';
   }
 }
-
-//class SearchErrorState extends SearchState {
-//  final String msg;
-//
-//  SearchErrorState({this.msg});
-//}

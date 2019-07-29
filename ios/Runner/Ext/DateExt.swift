@@ -17,7 +17,7 @@ extension Date {
     }
     
     /// 获取当前 毫秒级 时间戳 - 13位
-    var milliStamp : Double {
-        return self.timeIntervalSince1970
+    var milliStamp : Int64 {
+        return Int64(round(self.timeIntervalSince1970*1000))
     }
 }

@@ -28,14 +28,14 @@ import RxSwift
         callChannel.setMethodCallHandler { (methodCall, result) in
             switch(methodCall.method) {
             case "initKeyPair":
-                NSLog("## 111")
-                guard let expired = methodCall.arguments as? Double else { return }
-                if self.encryptService.publicKey == nil || Int64(Date().milliStamp) > self.encryptService.expireTime {
-                    NSLog("## 222")
+                if self.encryptService.publicKey == nil || Date().milliStamp > self.encryptService.expireTime {
+                    guard let expired = methodCall.arguments as? Int64 else { return }
                     self.generateKey(expired: expired, result: result)
+                } else {
+                    result(self.encryptService.publicKey)
                 }
             case "genKeyPair":
-                let expired = methodCall.arguments as? Double ?? 3600
+                let expired = methodCall.arguments as? Int64 ?? 3600
                 self.generateKey(expired: expired, result: result)
             case "getPublicKey":
                 result(self.encryptService.publicKey)
@@ -71,39 +71,13 @@ import RxSwift
                 result(FlutterMethodNotImplemented)
             }
         }
-        
-        //        let encryptService: EncryptionService = EthEncryptionService()
-        //        let disposeBag = DisposeBag()
-        //        encryptService.generateKeyPairAndStore(expireAt: 3600)
-        //            //        .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-        //            //        .observeOn(MainScheduler.instance)
-        //            .flatMap({ isSuuccess -> Observable<String> in
-        //                if isSuuccess, let pub = encryptService.publicKey {
-        //                    return encryptService.encrypt(publicKeyStr: pub, message: "this is message11")
-        //                }
-        //                throw NSError(domain: "some thing wrong", code: -1, userInfo: nil)
-        //            })
-        //            .flatMap({ (ciphertext) -> Observable<String> in
-        //                NSLog("ciphertext text is: \(ciphertext)")
-        //                return encryptService.decrypt(ciphertext: ciphertext)
-        //            })
-        //            .subscribe(onNext: { text in
-        //                NSLog("finally text is: \(text)")
-        //            }, onError: { error in
-        //                NSLog("error ----------->>")
-        //                print(error)
-        //                NSLog("<<----------- error")
-        //            }, onCompleted: nil, onDisposed: nil)
-        //            .disposed(by: disposeBag)
     }
     
-    private func generateKey(expired: Double, result: @escaping FlutterResult) {
+    private func generateKey(expired: Int64, result: @escaping FlutterResult) {
         let disposeBag = DisposeBag()
-        NSLog("##&& 111")
         self.encryptService.generateKeyPairAndStore(expireAt: expired)
             .subscribe(onNext: { (isSuccess) in
                 if let pub = self.encryptService.publicKey {
-                    NSLog("##&& 222")
                     result(pub)
                 }
             }, onError: nil, onCompleted: nil, onDisposed: nil)

@@ -12,6 +12,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
 
 class DrawerScenes extends StatefulWidget {
@@ -26,24 +27,45 @@ class _DrawerScenesState extends State<DrawerScenes> {
   String _pubKeyAutoRefreshTip = "";
 
   @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() async {
+    var expireTime = await TitanPlugin.getExpiredTime();
+    var timeLeft = (expireTime - DateTime.now().millisecondsSinceEpoch) ~/ 1000;
+    if (timeLeft <= 0) {
+      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+      _pubKey = '';
+      setState(() {});
+
+      TitanPlugin.genKeyPair().then((pub) async {
+        _pubKey = pub;
+        expireTime = await TitanPlugin.getExpiredTime();
+        _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+        setState(() {});
+      });
+    } else {
+      _pubKey = await TitanPlugin.getPublicKey();
+      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print('drawer build!');
     return SmartDrawer(
       widthPercent: 0.72,
-      callback: (isOpen) async {
-        if (isOpen) {
-          _pubKey = await TitanPlugin.getPublicKey();
-          _pubKeyAutoRefreshTip = await TitanPlugin.getExpiredTimeShowTip();
-          setState(() {});
-        }
-      },
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-                gradient:
-                    LinearGradient(colors: [Color(0xff212121), Color(0xff000000)], begin: FractionalOffset(0, 0.4), end: FractionalOffset(0, 1))),
+                gradient: LinearGradient(
+                    colors: [Color(0xff212121), Color(0xff000000)],
+                    begin: FractionalOffset(0, 0.4),
+                    end: FractionalOffset(0, 1))),
             height: 200.0,
             child: Align(
               alignment: Alignment.centerLeft,
@@ -151,7 +173,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
     var exist = await file.exists();
     if (!exist) {
       var sharePic = 'res/drawable/share_app_zh_android.jpeg';
-      if(ui.window.locale.languageCode != 'zh') {
+      if (ui.window.locale.languageCode != 'zh') {
         sharePic = 'res/drawable/share_app_en_android.jpeg';
       }
       file = await file.create();

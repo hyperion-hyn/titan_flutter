@@ -7,6 +7,9 @@ import 'package:titan/src/style/theme.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'basic/bloc/persist_bloc_holder.dart';
+import 'bloc/bloc.dart';
+import 'business/home/bloc/bloc.dart';
 import 'business/home/home_page.dart';
 
 class App extends StatefulWidget {
@@ -26,17 +29,29 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      key: Keys.materialAppKey,
-      title: 'Titan',
-      theme: appTheme,
-      localizationsDelegates: [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: S.delegate.supportedLocales,
-      home: Builder(key: Keys.mainContextKey, builder: (context) => HomePage()),
+    return PersistBlocHolder(
+      createBloc: () => AppBloc(),
+      child: MaterialApp(
+        key: Keys.materialAppKey,
+        title: 'Titan',
+        theme: appTheme,
+        localizationsDelegates: [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        home: Builder(
+          key: Keys.mainContextKey,
+          builder: (context) {
+            return PersistBlocHolder<HomeBloc>(
+              child: HomePage(),
+              createBloc: () => HomeBloc(),
+            );
+          },
+        ),
+      ),
     );
   }
 }

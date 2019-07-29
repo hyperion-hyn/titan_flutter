@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class MyEncryptedAddrPage extends StatefulWidget {
   @override
@@ -32,7 +33,8 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
 
   void queryData() async {
     _pubKey = await TitanPlugin.getPublicKey();
-    _pubKeyAutoRefreshTip = await TitanPlugin.getExpiredTimeShowTip();
+    var expireTime = await TitanPlugin.getExpiredTime();
+    _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
     setState(() {});
   }
 
@@ -72,8 +74,9 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
               child: QrImage(
                 data: _pubKey,
                 backgroundColor: Colors.white,
+                foregroundColor: Colors.grey[800],
                 version: 6,
-                size: 280,
+                size: 240,
               ),
             )),
           ),
@@ -144,8 +147,9 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
       return TitanPlugin.genKeyPair();
     }).then((key) {
       _pubKey = key;
-      return TitanPlugin.getExpiredTimeShowTip();
-    }).then((tip) {
+      return TitanPlugin.getExpiredTime();
+    }).then((expireTime) {
+      var tip = getExpiredTimeShowTip(expireTime);
       _pubKeyAutoRefreshTip = tip;
       setState(() {});
     });

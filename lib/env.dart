@@ -1,9 +1,10 @@
 import 'package:meta/meta.dart';
 
 class BuildFlavor {
-  static const String official = 'official';
-  static const String google = 'google';
-  static const String ios = 'ios';
+  static const String androidOfficial = 'android_official';
+  static const String androidGoogle = 'android_google';
+  static const String iosStore = 'ios_store';
+  static const String iosEnterprise = 'ios_enterprise';
 }
 
 class BuildType {
