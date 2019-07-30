@@ -13,7 +13,7 @@ PODS:
   - FMDB/standard (2.7.5)
   - in_app_purchase (0.0.1):
     - Flutter
-  - Mapbox-iOS-SDK (5.1.1)
+  - Mapbox-iOS-SDK (5.1.2)
   - mapbox_gl (0.0.1):
     - Flutter
     - Mapbox-iOS-SDK (~> 5.1.0)
@@ -122,7 +122,7 @@ SPEC CHECKSUMS:
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   in_app_purchase: 5e80de181441b1c149372237f5e65255455e175f
-  Mapbox-iOS-SDK: 528739007963ba7f63996d8ea3b382597627f272
+  Mapbox-iOS-SDK: 8eb76c314b9f89d67b630564f252fb42f27321dd
   mapbox_gl: 5a2b88a8d457049dda664fa2575f60e87a86e453
   MapboxCoreNavigation: 89eadd5864a32144043231247fc3bd6900843213
   MapboxDirections.swift: bec8771badfbdd55a0194649a4194b2c2cb15b96
