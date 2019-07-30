@@ -76,3 +76,5 @@ android/app/.classpath
 android/app/.project
 android/app/.settings
 Podfile.lock
+
+ios/Podfile.lock
