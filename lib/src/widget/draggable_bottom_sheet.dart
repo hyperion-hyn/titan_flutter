@@ -6,11 +6,17 @@ import 'draggable_bottom_sheet_controller.dart';
 import 'gestures/vertical_draggesture_recognizer_bottomsheet.dart';
 
 class DraggableBottomSheet extends StatefulWidget {
-  DraggableBottomSheet({this.controller, this.child, this.childScrollController});
+  DraggableBottomSheet({
+    this.controller,
+    this.child,
+    this.childScrollController,
+    this.topPadding = 0,
+  });
 
   final DraggableBottomSheetController controller;
   final ScrollController childScrollController;
   final Widget child;
+  final double topPadding;
 
   @override
   State<StatefulWidget> createState() {
@@ -18,7 +24,9 @@ class DraggableBottomSheet extends StatefulWidget {
   }
 }
 
-class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProviderStateMixin implements DraggableBottomSheetControllerInterface {
+class _DraggableState extends State<DraggableBottomSheet>
+    with SingleTickerProviderStateMixin
+    implements DraggableBottomSheetControllerInterface {
   bool _isChildFrozen;
   bool _isChildReachTop;
 
@@ -29,6 +37,7 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
   AnimationController _animationController;
 
   double _y;
+  double topPadding = 0;
 
   double topRadius = 16;
 
@@ -50,29 +59,36 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
     });
 
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 10),
       value: 1.0,
       vsync: this,
-    )..addListener(() {
-        _y = (1 - _animationController.value) * _sheetHeight;
-        if(_animationController.value == 1) { //reach top
-          if(topRadius != 0) {
-            setState(() {
-              topRadius = 0;
-            });
-          }
-        } else if(topRadius != 16) {
-          setState(() {
-            topRadius = 16;
-          });
-        }
-        widget.controller.bottom = _sheetHeight - _y;
-        widget.controller.notifyListeners();
-      });
+    );
 
     if (widget.controller.initState != null) {
-      SchedulerBinding.instance.addPostFrameCallback((_) => widget.controller.setSheetState(widget.controller.initState));
+      SchedulerBinding.instance
+          .addPostFrameCallback((_) => widget.controller.setSheetState(widget.controller.initState));
     }
+
+    Future.delayed(Duration(milliseconds: 1000))
+        .then((data) => _animationController.addListener(animationNotifyListener));
+  }
+
+  void animationNotifyListener() {
+    _y = (1 - _animationController.value) * bottomSheetHeight;
+    if (_animationController.value == 1) {
+      //reach top
+      if (topRadius != 0) {
+        setState(() {
+          topRadius = 0;
+        });
+      }
+    } else if (topRadius != 16) {
+      setState(() {
+        topRadius = 16;
+      });
+    }
+    widget.controller.bottom = bottomSheetHeight - _y;
+    widget.controller.notifyListeners();
   }
 
   bool _isChildReachTopCheck() {
@@ -94,13 +110,20 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
     widget.controller.setInterface(this);
   }
 
-  double get _sheetHeight {
-//    if(_draggableSheepKey.currentContext != null) {
+  double get bottomSheetHeight {
+    if (_draggableSheepKey.currentContext != null) {
+      final RenderBox renderBox = _draggableSheepKey.currentContext.findRenderObject();
+      return renderBox.size.height - topPadding;
+    }
+//    return 1;
+//    if (_bottomSheetHeight != null) {
+//      return _bottomSheetHeight;
+//    } else {
 //      final RenderBox renderBox = _draggableSheepKey.currentContext.findRenderObject();
 //      return renderBox.size.height;
 //    }
-//    return 1;
-    return MediaQuery.of(context).size.height - MediaQuery.of(context).padding.bottom;
+    return MediaQuery.of(context).size.height -
+        topPadding; // - MediaQuery.of(context).padding.bottom - MediaQuery.of(context).padding.top;
   }
 
   void _handleDragStart(DragStartDetails details) {
@@ -110,14 +133,14 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
   void _handleDragUpdate(DragUpdateDetails details) {
     if (_animationController.isAnimating) return;
 
-    double value = details.primaryDelta / (_sheetHeight ?? details.primaryDelta);
+    double value = details.primaryDelta / (bottomSheetHeight ?? details.primaryDelta);
     _animationController.value -= value;
   }
 
   void _handleDragEnd(DragEndDetails details) {
     if (_animationController.isAnimating) return;
 
-    final double flingVelocity = details.velocity.pixelsPerSecond.dy / _sheetHeight;
+    final double flingVelocity = details.velocity.pixelsPerSecond.dy / bottomSheetHeight;
     if (flingVelocity < 0.0) {
       //up
       if (_isBellowCollapsed) {
@@ -149,15 +172,18 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
     }
   }
 
-  bool _handleScrollNotification(ScrollNotification notification) {
-//    print('@@@@@@@@@@@@ ${notification.runtimeType}');
-//    if(notification is OverscrollNotification) {
-//      print("over ${notification.overscroll}");
-//    } else if(notification is ScrollUpdateNotification) {
-//      print('update ${notification.scrollDelta}');
-//    } else if(notification is ScrollEndNotification) {
-//      print('end ${notification.dragDetails.velocity}');
-//    }
+  bool _handleSheetHeaderNotification(HeaderHeightNotification notification) {
+    if (notification.height > 0 && _state == DraggableBottomSheetState.COLLAPSED) {
+      var reallyHeight = notification.height + 12; //drag height: hack a number
+      widget.controller.collapsedHeight = reallyHeight;
+      var target = widget.controller.collapsedHeight / bottomSheetHeight;
+      print(
+          '_handleSheetHeaderNotification 11 $target ${_animationController.value}, ${notification.height} $reallyHeight');
+      if (_animationController.value != target) {
+        print('_handleSheetHeaderNotification 22');
+        _animationController.animateTo(target, duration: Duration(milliseconds: 100), curve: Curves.linearToEaseOut);
+      }
+    }
     return false;
   }
 
@@ -167,9 +193,9 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
       visible: _state != DraggableBottomSheetState.HIDDEN,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          var hiddenRelative =
-              RelativeRect.fromLTRB(0.0, _sheetHeight, 0.0, -_sheetHeight);
-          var expandedRelative = RelativeRect.fromLTRB(0.0, 0, 0.0, 0.0);
+          final double panelHeight = constraints.biggest.height - topPadding;
+          var hiddenRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height, 0.0, -panelHeight);
+          var expandedRelative = RelativeRect.fromLTRB(0.0, topPadding, 0.0, 0.0);
           final Animation<RelativeRect> panelAnimation = _animationController.drive(
             RelativeRectTween(
               begin: hiddenRelative,
@@ -184,8 +210,10 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
                 PositionedTransition(
                   child: RawGestureDetector(
                     gestures: {
-                      VerticalDragGestureRecognizerBottomSheet: GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizerBottomSheet>(
-                          () => VerticalDragGestureRecognizerBottomSheet(), (VerticalDragGestureRecognizerBottomSheet instance) {
+                      VerticalDragGestureRecognizerBottomSheet:
+                          GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizerBottomSheet>(
+                              () => VerticalDragGestureRecognizerBottomSheet(),
+                              (VerticalDragGestureRecognizerBottomSheet instance) {
                         instance.isChildReachTop = _isChildReachTop;
                         instance.isFrozenChild = _isChildFrozen;
                         instance.onStart = _handleDragStart;
@@ -200,10 +228,12 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
                           Container(
                             margin: EdgeInsets.only(top: 8.0),
                             constraints: BoxConstraints.tightFor(width: 40.0, height: 4.0),
-                            decoration: BoxDecoration(color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
+                            decoration: BoxDecoration(
+                                color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
                           ),
                           Expanded(
-                            child: NotificationListener<ScrollNotification>(onNotification: _handleScrollNotification, child: widget.child),
+                            child: NotificationListener<HeaderHeightNotification>(
+                                onNotification: _handleSheetHeaderNotification, child: widget.child),
                           )
                         ])),
                   ),
@@ -252,9 +282,10 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
           });
         }
       } else if (state == DraggableBottomSheetState.ANCHOR_POINT) {
-        target = widget.controller.anchorHeight / _sheetHeight;
+        target = widget.controller.anchorHeight / bottomSheetHeight;
       } else if (state == DraggableBottomSheetState.COLLAPSED) {
-        target = widget.controller.collapsedHeight / _sheetHeight;
+        print('widget.controller.collapsedHeight ${widget.controller.collapsedHeight}');
+        target = widget.controller.collapsedHeight / bottomSheetHeight;
       } else {
         //hidden
         target = 0;
@@ -270,25 +301,25 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
   }
 
   bool get _isBellowAnchor {
-    return _y > (_sheetHeight - widget.controller.anchorHeight);
+    return _y > (bottomSheetHeight - widget.controller.anchorHeight);
   }
 
   bool get _isBellowCollapsed {
-    return _y > _sheetHeight - widget.controller.collapsedHeight;
+    return _y > bottomSheetHeight - widget.controller.collapsedHeight;
   }
 
   bool get _isInAnchorArea {
-    double sheetHeight = _sheetHeight;
+    double sheetHeight = bottomSheetHeight;
     return (sheetHeight - widget.controller.anchorHeight) / 2 < _y &&
         _y < sheetHeight - (widget.controller.anchorHeight - widget.controller.collapsedHeight) / 2;
   }
 
   bool get _isTopOfAnchorArea {
-    return _y <= (_sheetHeight - widget.controller.anchorHeight) / 2;
+    return _y <= (bottomSheetHeight - widget.controller.anchorHeight) / 2;
   }
 
   bool get _isBellowAnchorArea {
-    return _y > _sheetHeight - (widget.controller.anchorHeight - widget.controller.collapsedHeight) / 2;
+    return _y > bottomSheetHeight - (widget.controller.anchorHeight - widget.controller.collapsedHeight) / 2;
   }
 
   @override
@@ -307,4 +338,10 @@ class _DraggableState extends State<DraggableBottomSheet> with SingleTickerProvi
   bool get isChildFrozen {
     return _isChildFrozen;
   }
+}
+
+class HeaderHeightNotification extends Notification {
+  final double height;
+
+  HeaderHeightNotification({this.height});
 }

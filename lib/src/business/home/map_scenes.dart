@@ -71,7 +71,7 @@ class _MapScenesState extends State<MapScenes> {
         tiltGesturesEnabled: false,
         enableLogo: false,
         enableAttribution: false,
-        compassMargins: CompassMargins(left: 0, top: Platform.isAndroid ? 88 : 88, right: 16, bottom: 0),
+        compassMargins: CompassMargins(left: 0, top: Platform.isAndroid ? 88 : 72, right: 16, bottom: 0),
         minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
         myLocationEnabled: true,
         myLocationTrackingMode: MyLocationTrackingMode.None,

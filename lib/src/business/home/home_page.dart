@@ -13,7 +13,9 @@ import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
+import '../../global.dart';
 import 'bloc/bloc.dart';
+import 'bootom_options.dart';
 import 'map_scenes.dart';
 import 'bottom_fabs_scenes.dart';
 import 'drawer_scenes.dart';
@@ -26,7 +28,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DateTime _lastPressedAt;
-  DraggableBottomSheetController _draggableBottomSheetController = DraggableBottomSheetController(collapsedHeight: 110);
+  DraggableBottomSheetController _draggableBottomSheetController = DraggableBottomSheetController();
   ScrollController _bottomSheetScrollController = ScrollController();
 
   StreamSubscription _homeBlocSubscription;
@@ -66,91 +68,91 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          resizeToAvoidBottomPadding: false,
-          drawer: DrawerScenes(),
-          body: WillPopScope(
-            onWillPop: () async {
-              if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
-                _lastPressedAt = DateTime.now();
-                Fluttertoast.showToast(msg: '再按一下退出程序');
-                return false;
-              }
-              return true;
-            },
-            child: Builder(
-                builder: (BuildContext ctx) => Stack(
-                      children: <Widget>[
-                        ///地图渲染
-                        MapScenes(
-                          homeBloc: BlocProvider.of<HomeBloc>(context),
-                          language: Localizations.localeOf(context).languageCode,
-                        ),
+    return Scaffold(
+        resizeToAvoidBottomPadding: false,
+        drawer: DrawerScenes(),
+        body: WillPopScope(
+          onWillPop: () async {
+            if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+              _lastPressedAt = DateTime.now();
+              Fluttertoast.showToast(msg: '再按一下退出程序');
+              return false;
+            }
+            return true;
+          },
+          child: Builder(
+              builder: (BuildContext ctx) => Stack(
+                    children: <Widget>[
+                      ///地图渲染
+                      MapScenes(
+                        homeBloc: BlocProvider.of<HomeBloc>(context),
+                        language: Localizations.localeOf(context).languageCode,
+                      ),
 
-                        ///搜索入口
-                        buildSearchWidget(ctx),
+                      ///搜索入口
+                      buildSearchWidget(ctx),
 
-                        ///主要是支持drawer手势划出
-                        Container(
-                          decoration: BoxDecoration(color: Colors.transparent),
-                          constraints: BoxConstraints.tightForFinite(width: 24.0),
-                        ),
+                      ///主要是支持drawer手势划出
+                      Container(
+                        decoration: BoxDecoration(color: Colors.transparent),
+                        constraints: BoxConstraints.tightForFinite(width: 24.0),
+                      ),
 
-                        BottomFabsScenes(draggableBottomSheetController: _draggableBottomSheetController),
+                      BottomFabsScenes(draggableBottomSheetController: _draggableBottomSheetController),
 
-                        ///bottom sheet
-                        DraggableBottomSheet(
-                            controller: _draggableBottomSheetController,
-                            childScrollController: _bottomSheetScrollController,
-                            child: BlocBuilder(
-                              bloc: BlocProvider.of<HomeBloc>(context),
-                              condition: (pre, current) {
-                                return current is BottomSheetState || current is HomeSearchState;
-                              },
-                              builder: (context, HomeState state) {
-                                Widget sheet;
-                                if (state is BottomSheetState) {
-                                  if (state.isFetchingPoiInfo == true) {
-                                    sheet = SearchingBottomSheet();
-                                  } else if (state.isFetchFault == true) {
-                                    sheet = SearchFaultBottomSheet();
-                                  } else if (state.isFetchingPoiInfo != true && state.selectedPoi != null) {
-                                    //扩展这里，添加不同poi style
-                                    if (state.selectedPoi is PoiEntity) {
-                                      sheet = PoiBottomSheet(state.selectedPoi);
-                                    }
-                                  }
-                                } else if (state is HomeSearchState) {
-                                  if (state.isFetching == true) {
-                                    sheet = SearchingBottomSheet();
-                                  } else if (state.isSearchFault == true) {
-                                    sheet = SearchFaultBottomSheet();
-                                  } else if (state.isFetching != true && state.searchResultItems != null) {
-                                    //TODO
-                                    sheet = Text('得到一些记录 ${state.searchResultItems.length}');
-                                  }
-                                }
-
-                                if (sheet == null) {
+                      ///bottom sheet
+                      DraggableBottomSheet(
+                          controller: _draggableBottomSheetController,
+                          childScrollController: _bottomSheetScrollController,
+                          topPadding: 0,
+                          child: BlocBuilder(
+                            bloc: BlocProvider.of<HomeBloc>(context),
+                            condition: (pre, current) {
+                              return current is BottomSheetState || current is HomeSearchState;
+                            },
+                            builder: (context, HomeState state) {
+                              Widget sheet;
+                              if (state is BottomSheetState) {
+                                if (state.isFetchingPoiInfo == true) {
                                   sheet = SearchingBottomSheet();
+                                } else if (state.isFetchFault == true) {
+                                  sheet = SearchFaultBottomSheet();
+                                } else if (state.isFetchingPoiInfo != true && state.selectedPoi != null) {
+                                  //扩展这里，添加不同poi style
+                                  if (state.selectedPoi is PoiEntity) {
+                                    sheet = PoiBottomSheet(state.selectedPoi);
+                                  }
                                 }
+                              } else if (state is HomeSearchState) {
+                                if (state.isFetching == true) {
+                                  sheet = SearchingBottomSheet();
+                                } else if (state.isSearchFault == true) {
+                                  sheet = SearchFaultBottomSheet();
+                                } else if (state.isFetching != true && state.searchResultItems != null) {
+                                  //TODO
+                                  sheet = Text('得到一些记录 ${state.searchResultItems.length}');
+                                }
+                              }
 
-                                return Stack(
-                                  children: <Widget>[sheet],
-                                );
-                              },
-                            ))
-                      ],
-                    )),
-          )),
-    );
+                              if (sheet == null) {
+                                sheet = SearchingBottomSheet();
+                              }
+
+                              return Stack(
+                                children: <Widget>[sheet],
+                              );
+                            },
+                          )),
+                      BottomOptions(),
+                    ],
+                  )),
+        ));
   }
 
   ///搜索控件
   Widget buildSearchWidget(context) {
     return Container(
-      margin: EdgeInsets.only(top: 24, left: 16, right: 16),
+      margin: EdgeInsets.only(top: 48, left: 16, right: 16),
       constraints: BoxConstraints.tightForFinite(height: 48),
       child: Material(
         borderRadius: BorderRadius.all(Radius.circular(4)),

@@ -1,99 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 
-class PoiBottomSheet extends StatelessWidget {
+import '../../../global.dart';
+
+class PoiBottomSheet extends StatefulWidget {
   final PoiEntity selectedPoiEntity;
 
   PoiBottomSheet(this.selectedPoiEntity);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _PoiBottomSheetState();
+  }
+}
+
+class _PoiBottomSheetState extends State<PoiBottomSheet> {
+  final GlobalKey _poiHeaderKey = GlobalKey(debugLabel: 'poiHeaderKey');
+
+  double getHeaderHeight() {
+    RenderBox renderBox = _poiHeaderKey.currentContext?.findRenderObject();
+    var h = renderBox?.size?.height ?? 0;
+    if(h > 0) {
+      if (MediaQuery.of(context).padding.bottom > 0) {
+        h += safeAreaBottomPadding;
+      }
+      return h + 76;  //76 is hack options height;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      HeaderHeightNotification(height: getHeaderHeight()).dispatch(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
-          child: Text(
-            selectedPoiEntity.name,
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16, top: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+        //header
+        Container(
+//          color: Colors.blue,
+          padding: EdgeInsets.all(16),
+          child: Column(
+            key: _poiHeaderKey,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Icon(
-                Icons.location_on,
-                size: 18,
-                color: Colors.grey[600],
+              Text(
+                widget.selectedPoiEntity.name,
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  selectedPoiEntity.address,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                ),
-              )
+              SizedBox(
+                height: 8,
+              ),
+              buildHeadItem(Icons.location_on, widget.selectedPoiEntity.address, hint: '暂无详细地址'),
+              if (widget.selectedPoiEntity.remark != null && widget.selectedPoiEntity.remark.length > 0)
+                buildHeadItem(Icons.message, widget.selectedPoiEntity.remark, hint: '无备注'),
             ],
           ),
         ),
-        if (selectedPoiEntity.remark != null && selectedPoiEntity.remark.length > 0)
+        Divider(
+          height: 0,
+        ),
+        buildInfoItem('电话', widget.selectedPoiEntity.tags),
+        buildInfoItem('电话', widget.selectedPoiEntity.phone),
+      ],
+    );
+  }
+
+  Widget buildHeadItem(IconData icon, String info, {String hint = '暂无数据'}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Icon(
+            icon,
+            color: Colors.grey[600],
+            size: 18,
+          ),
           Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16, top: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Icon(
-                  Icons.message,
-                  color: Colors.grey[600],
-                  size: 18,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                      selectedPoiEntity.remark != null && selectedPoiEntity.remark.length > 0
-                          ? selectedPoiEntity.remark
-                          : '无备注',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                )
-              ],
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Divider(
-            height: 40,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-            '标签',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16, top: 8),
-          child: Text(
-              selectedPoiEntity.tags != null && selectedPoiEntity.tags.length > 0 ? selectedPoiEntity.tags : '暂无标签数据',
-              style: TextStyle(fontSize: 14, color: Colors.grey[700])),
-        ),
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(info != null && info.length > 0 ? info : hint,
+                style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildInfoItem(String tag, String info, {String hint = ''}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16),
           child: Text(
-            '电话',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            tag,
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 16, top: 8),
-          child: Text(
-              selectedPoiEntity.phone != null && selectedPoiEntity.phone.length > 0
-                  ? selectedPoiEntity.phone
-                  : '暂无联系方式',
-              style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+          child: Text((info != null && info.isNotEmpty) ? info : hint, style: TextStyle(fontSize: 15)),
         ),
       ],
     );

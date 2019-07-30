@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/style/theme.dart';
 
 import 'env.dart';
 import 'src/basic/bloc/app_bloc_delegate.dart';
@@ -28,6 +30,7 @@ void main() {
     SearchInteractor searchInteractor = SearchInteractor(repository);
 
     BlocSupervisor.delegate = AppBlocDelegate();
+
     runApp(Injector(
       child: App(),
       repository: repository,

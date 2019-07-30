@@ -14,8 +14,9 @@ class BottomFabsScenes extends StatefulWidget {
   }
 }
 
+
 class _BottomFasScenesState extends State<BottomFabsScenes> {
-  double fabsBottom = 16;
+  double _fabsBottom = 16;
 
   @override
   void initState() {
@@ -28,7 +29,7 @@ class _BottomFasScenesState extends State<BottomFabsScenes> {
   void _handleBottomPadding(double bottom) {
     if(bottom > 0 && bottom <= widget.draggableBottomSheetController.anchorHeight) {
       setState(() {
-        fabsBottom = bottom;
+        _fabsBottom = bottom;
       });
     }
   }
@@ -62,7 +63,7 @@ class _BottomFasScenesState extends State<BottomFabsScenes> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: fabsBottom,
+      bottom: _fabsBottom,
       left: 0,
       right: 0,
       child: Padding(

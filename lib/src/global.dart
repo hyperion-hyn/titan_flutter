@@ -5,3 +5,8 @@ import 'package:logger/logger.dart';
 EventBus eventBus = EventBus();
 
 var logger = Logger();
+
+
+///some const
+const safeAreaBottomPadding = 24.0;
+const saveAreaTopPadding = 32.0;

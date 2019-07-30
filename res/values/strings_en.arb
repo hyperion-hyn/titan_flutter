@@ -1,5 +1,6 @@
 {
   "app_name": "Titan",
   "network_request_err": "Network request error, code: $code",
-  "offline_map": "Offline map"
+  "offline_map": "Offline map",
+  "route": "Route"
 }
