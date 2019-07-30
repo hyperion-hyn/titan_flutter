@@ -57,8 +57,8 @@ class _DrawerScenesState extends State<DrawerScenes> {
   Widget build(BuildContext context) {
     return SmartDrawer(
       widthPercent: 0.72,
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
@@ -89,78 +89,90 @@ class _DrawerScenesState extends State<DrawerScenes> {
               ),
             ),
           ),
-          ListTile(
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
-            },
-            leading: Icon(Icons.lock),
-            title: Text('我的加密地址(公钥)'),
-            trailing: Icon(Icons.navigate_next),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            padding: EdgeInsets.all(8),
-            color: Colors.grey[200],
-            child: GestureDetector(
-              onTap: () {
-                if (_pubKey.isNotEmpty) {
-                  Clipboard.setData(ClipboardData(text: _pubKey));
-                  Fluttertoast.showToast(msg: '公钥地址已复制');
-                }
-              },
-              child: Row(
-                children: <Widget>[
-                  Flexible(
-                      child: Text(
-                    _pubKey,
-                    softWrap: false,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                  )),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: Icon(
-                      Icons.content_copy,
-                      size: 16,
-                      color: Colors.black45,
+          Expanded(
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: <Widget>[
+                ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyEncryptedAddrPage()));
+                  },
+                  leading: Icon(Icons.lock),
+                  title: Text('我的加密地址(公钥)'),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.all(8),
+                  color: Colors.grey[200],
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_pubKey.isNotEmpty) {
+                        Clipboard.setData(ClipboardData(text: _pubKey));
+                        Fluttertoast.showToast(msg: '公钥地址已复制');
+                      }
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Flexible(
+                            child: Text(
+                          _pubKey,
+                          softWrap: false,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                        )),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Icon(
+                            Icons.content_copy,
+                            size: 16,
+                            color: Colors.black45,
+                          ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Text(_pubKeyAutoRefreshTip,
+                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                ),
+                Container(height: 8, color: Colors.grey[100]),
+                ListTile(
+                  onTap: () {
+                    print('test cancel');
+                  },
+                  leading: Icon(Icons.map),
+                  title: Text(S.of(context).offline_map),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                Container(height: 8, color: Colors.grey[100]),
+                ListTile(
+                  onTap: shareApp,
+                  leading: Icon(Icons.share),
+                  title: Text('分享App'),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                Container(height: 1, color: Colors.grey[100]),
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                      return WebViewPage();
+                    }));
+                  },
+                  leading: Icon(Icons.info),
+                  title: Text('关于我们'),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+              ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(_pubKeyAutoRefreshTip, style: TextStyle(fontSize: 12, color: Colors.grey)),
-          ),
-          Container(height: 8, color: Colors.grey[100]),
-          ListTile(
-            onTap: () {
-              print('test cancel');
-            },
-            leading: Icon(Icons.map),
-            title: Text(S.of(context).offline_map),
-            trailing: Icon(Icons.navigate_next),
-          ),
-          Container(height: 8, color: Colors.grey[100]),
-          ListTile(
-            onTap: shareApp,
-            leading: Icon(Icons.share),
-            title: Text('分享App'),
-            trailing: Icon(Icons.navigate_next),
-          ),
-          Container(height: 1, color: Colors.grey[100]),
-          ListTile(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-                return WebViewPage();
-              }));
-            },
-            leading: Icon(Icons.info),
-            title: Text('关于我们'),
-            trailing: Icon(Icons.navigate_next),
-          )
         ],
       ),
     );
