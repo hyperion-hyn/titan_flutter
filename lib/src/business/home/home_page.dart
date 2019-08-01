@@ -22,6 +22,9 @@ import 'bottom_fabs_scenes.dart';
 import 'drawer_scenes.dart';
 import 'sheets/searching_sheet.dart';
 
+import 'package:uni_links/uni_links.dart';
+import 'package:flutter/services.dart' show PlatformException;
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -29,15 +32,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DateTime _lastPressedAt;
-  DraggableBottomSheetController _draggableBottomSheetController = DraggableBottomSheetController();
+  DraggableBottomSheetController _draggableBottomSheetController =
+      DraggableBottomSheetController();
   ScrollController _bottomSheetScrollController = ScrollController();
 
   StreamSubscription _homeBlocSubscription;
 
+  StreamSubscription _appLinkSubscription;
+
   final TextEditingController _searchTextController = TextEditingController();
 
   void _showPoi(dynamic poi) {
-    BlocProvider.of<HomeBloc>(context)?.dispatch(SelectedPoiEvent(selectedPoi: poi));
+    BlocProvider.of<HomeBloc>(context)
+        ?.dispatch(SelectedPoiEvent(selectedPoi: poi));
   }
 
   void _searchText(String text, LatLng center) {
@@ -49,16 +56,23 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initUniLinks();
+  }
+
+  @override
   void didChangeDependencies() {
-    if(ModalRoute.of(context).isCurrent){
+    if (ModalRoute.of(context).isCurrent) {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
-    }else{
+    } else {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
     }
 
     super.didChangeDependencies();
     _homeBlocSubscription?.cancel();
-    _homeBlocSubscription = BlocProvider.of<HomeBloc>(context)?.state?.listen((HomeState state) {
+    _homeBlocSubscription =
+        BlocProvider.of<HomeBloc>(context)?.state?.listen((HomeState state) {
       if (state is BottomSheetState) {
         if (state.state != null) {
           _draggableBottomSheetController.setSheetState(state.state);
@@ -80,7 +94,9 @@ class _HomePageState extends State<HomePage> {
         drawer: DrawerScenes(),
         body: WillPopScope(
           onWillPop: () async {
-            if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+            if (_lastPressedAt == null ||
+                DateTime.now().difference(_lastPressedAt) >
+                    Duration(seconds: 2)) {
               _lastPressedAt = DateTime.now();
               Fluttertoast.showToast(msg: '再按一下退出程序');
               return false;
@@ -105,7 +121,9 @@ class _HomePageState extends State<HomePage> {
                         constraints: BoxConstraints.tightForFinite(width: 24.0),
                       ),
 
-                      BottomFabsScenes(draggableBottomSheetController: _draggableBottomSheetController),
+                      BottomFabsScenes(
+                          draggableBottomSheetController:
+                              _draggableBottomSheetController),
 
                       ///bottom sheet
                       DraggableBottomSheet(
@@ -115,7 +133,8 @@ class _HomePageState extends State<HomePage> {
                           child: BlocBuilder(
                             bloc: BlocProvider.of<HomeBloc>(context),
                             condition: (pre, current) {
-                              return current is BottomSheetState || current is HomeSearchState;
+                              return current is BottomSheetState ||
+                                  current is HomeSearchState;
                             },
                             builder: (context, HomeState state) {
                               Widget sheet;
@@ -124,7 +143,8 @@ class _HomePageState extends State<HomePage> {
                                   sheet = SearchingBottomSheet();
                                 } else if (state.isFetchFault == true) {
                                   sheet = SearchFaultBottomSheet();
-                                } else if (state.isFetchingPoiInfo != true && state.selectedPoi != null) {
+                                } else if (state.isFetchingPoiInfo != true &&
+                                    state.selectedPoi != null) {
                                   //扩展这里，添加不同poi style
                                   if (state.selectedPoi is PoiEntity) {
                                     sheet = PoiBottomSheet(state.selectedPoi);
@@ -135,9 +155,11 @@ class _HomePageState extends State<HomePage> {
                                   sheet = SearchingBottomSheet();
                                 } else if (state.isSearchFault == true) {
                                   sheet = SearchFaultBottomSheet();
-                                } else if (state.isFetching != true && state.searchResultItems != null) {
+                                } else if (state.isFetching != true &&
+                                    state.searchResultItems != null) {
                                   //TODO
-                                  sheet = Text('得到一些记录 ${state.searchResultItems.length}');
+                                  sheet = Text(
+                                      '得到一些记录 ${state.searchResultItems.length}');
                                 }
                               }
 
@@ -203,20 +225,25 @@ class _HomePageState extends State<HomePage> {
                     child: TextField(
                         controller: _searchTextController,
                         enabled: false,
-                        decoration: InputDecoration(hintText: '搜索 / 解码', border: InputBorder.none),
+                        decoration: InputDecoration(
+                            hintText: '搜索 / 解码', border: InputBorder.none),
                         style: Theme.of(context).textTheme.body1),
                   ),
                 )),
                 if (state is HomeSearchState && state.isFetching)
                   Padding(
                     padding: const EdgeInsets.only(right: 16),
-                    child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                    child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2)),
                   ),
                 if (state is HomeSearchState && state.isInSearchMode)
                   InkWell(
                       onTap: () {
                         setState(() {
-                          BlocProvider.of<HomeBloc>(context).dispatch(ClearSearchMode());
+                          BlocProvider.of<HomeBloc>(context)
+                              .dispatch(ClearSearchMode());
                         });
                       },
                       child: Padding(
@@ -237,6 +264,27 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _homeBlocSubscription?.cancel();
+    _appLinkSubscription?.cancel();
     super.dispose();
+  }
+
+  Future<Null> initUniLinks() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      String initialLink = await getInitialLink();
+      print("applink url $initialLink");
+    } on PlatformException {
+      // Handle exception by warning the user their action did not succeed
+      // return?
+    }
+
+    // Attach a listener to the stream
+    _appLinkSubscription = getUriLinksStream().listen((Uri uri) {
+      print("applink listen url $uri");
+      // Parse the link and warn the user, if it is not correct
+    }, onError: (err) {
+      print(err);
+      // Handle exception by warning the user their action did not succeed
+    });
   }
 }
