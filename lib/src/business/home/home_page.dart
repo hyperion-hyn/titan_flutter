@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
@@ -17,6 +20,9 @@ import 'bottom_fabs_widget.dart';
 import 'drawer/drawer_scenes.dart';
 import 'searchbar/searchbar.dart';
 
+import 'package:uni_links/uni_links.dart';
+import 'package:flutter/services.dart' show PlatformException;
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -25,6 +31,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DateTime _lastPressedAt;
   DraggableBottomSheetController _draggableBottomSheetController = DraggableBottomSheetController();
+
+  StreamSubscription _appLinkSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    initUniLinks();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (ModalRoute.of(context).isCurrent) {
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    } else {
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,5 +121,31 @@ class _HomePageState extends State<HomePage> {
                     ],
                   )),
         ));
+  }
+
+  @override
+  void dispose() {
+    _appLinkSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<Null> initUniLinks() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      String initialLink = await getInitialLink();
+      print("applink url $initialLink");
+    } on PlatformException {
+      // Handle exception by warning the user their action did not succeed
+      // return?
+    }
+
+    // Attach a listener to the stream
+    _appLinkSubscription = getUriLinksStream().listen((Uri uri) {
+      print("applink listen url $uri");
+      // Parse the link and warn the user, if it is not correct
+    }, onError: (err) {
+      print(err);
+      // Handle exception by warning the user their action did not succeed
+    });
   }
 }

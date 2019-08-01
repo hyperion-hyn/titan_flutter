@@ -67,6 +67,10 @@ dependencies:
     path: ../mapbox_flutter
   #https://github.com/dart-lang/json_serializable
   json_annotation: ^2.4.0
+  #https://pub.dev/packages/esys_flutter_share
+  esys_flutter_share: 1.0.2
+  #https://pub.dev/packages/uni_links
+  uni_links: 0.2.0
 
 dev_dependencies:
   flutter_test:
