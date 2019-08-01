@@ -6,22 +6,22 @@ part of 'poi.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PoiEntity _$SearchPoiEntityFromJson(Map<String, dynamic> json) {
+PoiEntity _$PoiEntityFromJson(Map<String, dynamic> json) {
   return PoiEntity(
-      name: json['name'] as String,
-      address: json['address'] as String,
-      tags: json['tags'] as String,
-      loc: (json['loc'] as List)?.map((e) => (e as num)?.toDouble())?.toList(),
-      phone: json['phone'] as String,
-      remark: json['remark'] as String);
+    name: json['name'] as String,
+    address: json['address'] as String,
+    tags: json['tags'] as String,
+    latLng: LatLngConverter.latLngFromJson(json['latLng']),
+    phone: json['phone'] as String,
+    remark: json['remark'] as String,
+  );
 }
 
-Map<String, dynamic> _$SearchPoiEntityToJson(PoiEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PoiEntityToJson(PoiEntity instance) => <String, dynamic>{
       'name': instance.name,
       'address': instance.address,
       'tags': instance.tags,
-      'loc': instance.loc,
+      'latLng': LatLngConverter.latLngToJson(instance.latLng),
       'phone': instance.phone,
-      'remark': instance.remark
+      'remark': instance.remark,
     };

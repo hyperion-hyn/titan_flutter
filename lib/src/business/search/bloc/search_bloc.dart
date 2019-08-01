@@ -17,9 +17,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
     if (event is AddSearchItemEvent) {
       if (event.item is PoiEntity) {
-        await searchInteractor.addSearchPoi(event.item);
+        await searchInteractor.addHistorySearchPoi(event.item);
       } else {
-        await searchInteractor.addSearchText(event.item.toString());
+        await searchInteractor.addHistorySearchText(event.item.toString());
       }
     } else if (event is FetchSearchItemsEvent) {
       if (event.isHistory) {

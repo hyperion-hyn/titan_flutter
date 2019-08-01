@@ -1,3 +1,4 @@
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
@@ -15,7 +16,7 @@ class AddSearchItemEvent extends SearchEvent {
 class FetchSearchItemsEvent extends SearchEvent {
   final bool isHistory;
   final String searchText;
-  final String center;
+  final LatLng center;
   final String language;
 
   FetchSearchItemsEvent({this.isHistory, this.searchText, this.center, this.language});

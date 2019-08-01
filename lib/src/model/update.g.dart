@@ -8,12 +8,13 @@ part of 'update.dart';
 
 UpdateEntity _$UpdateEntityFromJson(Map<String, dynamic> json) {
   return UpdateEntity(
-      build: json['build'] as int,
-      versionName: json['version_name'] as String,
-      content: json['content'] as String,
-      forceUpdate: json['force_update'] as int,
-      md5: json['md5'] as String,
-      downloadUrl: json['download_url'] as String);
+    build: json['build'] as int,
+    versionName: json['version_name'] as String,
+    content: json['content'] as String,
+    forceUpdate: json['force_update'] as int,
+    md5: json['md5'] as String,
+    downloadUrl: json['download_url'] as String,
+  );
 }
 
 Map<String, dynamic> _$UpdateEntityToJson(UpdateEntity instance) =>
@@ -23,5 +24,5 @@ Map<String, dynamic> _$UpdateEntityToJson(UpdateEntity instance) =>
       'content': instance.content,
       'force_update': instance.forceUpdate,
       'md5': instance.md5,
-      'download_url': instance.downloadUrl
+      'download_url': instance.downloadUrl,
     };

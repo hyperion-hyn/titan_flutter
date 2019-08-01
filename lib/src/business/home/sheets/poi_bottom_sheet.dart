@@ -29,6 +29,7 @@ class _PoiBottomSheetState extends State<PoiBottomSheet> {
       }
       return h + 76;  //76 is hack options height;
     }
+    return 0;
   }
 
   @override

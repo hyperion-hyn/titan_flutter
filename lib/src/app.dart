@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -7,10 +8,12 @@ import 'package:titan/src/style/theme.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'basic/bloc/persist_bloc_holder.dart';
 import 'bloc/bloc.dart';
 import 'business/home/bloc/bloc.dart';
 import 'business/home/home_page.dart';
+import 'business/home/map/bloc/bloc.dart';
+import 'business/home/searchbar/bloc/bloc.dart';
+import 'business/home/sheets/bloc/bloc.dart';
 
 class App extends StatefulWidget {
   @override
@@ -29,8 +32,8 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return PersistBlocHolder(
-      createBloc: () => AppBloc(),
+    return BlocProvider(
+      builder: (context) => AppBloc(context: context),
       child: MaterialApp(
         key: Keys.materialAppKey,
         title: 'Titan',
@@ -45,9 +48,14 @@ class _AppState extends State<App> {
         home: Builder(
           key: Keys.mainContextKey,
           builder: (context) {
-            return PersistBlocHolder<HomeBloc>(
+            return MultiBlocProvider(
               child: HomePage(),
-              createBloc: () => HomeBloc(),
+              providers: [
+                BlocProvider<SheetsBloc>(builder: (context) => SheetsBloc(context: context)),
+                BlocProvider<MapBloc>(builder: (context) => MapBloc(context: context)),
+                BlocProvider<SearchbarBloc>(builder: (context) => SearchbarBloc(context: context)),
+                BlocProvider<HomeBloc>(builder: (context) => HomeBloc(context: context)),
+              ],
             );
           },
         ),
