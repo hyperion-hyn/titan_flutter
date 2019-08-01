@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/home/sheets/poi_bottom_sheet.dart';
@@ -49,6 +50,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void didChangeDependencies() {
+    if(ModalRoute.of(context).isCurrent){
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    }else{
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
+    }
+
     super.didChangeDependencies();
     _homeBlocSubscription?.cancel();
     _homeBlocSubscription = BlocProvider.of<HomeBloc>(context)?.state?.listen((HomeState state) {
