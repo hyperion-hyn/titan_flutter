@@ -180,11 +180,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
   }
 
   void shareApp() async {
-
-    final ByteData bytes1 = await rootBundle.load('res/drawable/share_app_zh_android.jpeg');
-
-    await Share.file('download image', 'app.png', bytes1.buffer.asUint8List(), 'image/jpeg');
-
-//    TitanPlugin.shareImage(path, '分享Titan');
+    final ByteData imageByte = await rootBundle.load('res/drawable/share_app_zh_android.jpeg');
+    await Share.file('download image', 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
   }
 }
