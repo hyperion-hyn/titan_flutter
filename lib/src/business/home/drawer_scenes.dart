@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -179,21 +180,11 @@ class _DrawerScenesState extends State<DrawerScenes> {
   }
 
   void shareApp() async {
-    final path = 'share_app.jpg';
-    final tempDir = await getTemporaryDirectory();
-    File file = File('${tempDir.path}/$path');
-    var exist = await file.exists();
-    if (!exist) {
-      var sharePic = 'res/drawable/share_app_zh_android.jpeg';
-      if (ui.window.locale.languageCode != 'zh') {
-        sharePic = 'res/drawable/share_app_en_android.jpeg';
-      }
-      file = await file.create();
-      final ByteData bytes = await rootBundle.load(sharePic);
-      final Uint8List list = bytes.buffer.asUint8List();
-      file.writeAsBytesSync(list);
-    }
 
-    TitanPlugin.shareImage(path, '分享Titan');
+    final ByteData bytes1 = await rootBundle.load('res/drawable/share_app_zh_android.jpeg');
+
+    await Share.file('download image', 'app.png', bytes1.buffer.asUint8List(), 'image/jpeg');
+
+//    TitanPlugin.shareImage(path, '分享Titan');
   }
 }
