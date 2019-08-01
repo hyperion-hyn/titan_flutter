@@ -269,22 +269,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Null> initUniLinks() async {
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      String initialLink = await getInitialLink();
-      print("applink url $initialLink");
-    } on PlatformException {
-      // Handle exception by warning the user their action did not succeed
-      // return?
-    }
-
     // Attach a listener to the stream
     _appLinkSubscription = getUriLinksStream().listen((Uri uri) {
+//      TODO 完成解码的操作
       print("applink listen url $uri");
-      // Parse the link and warn the user, if it is not correct
     }, onError: (err) {
       print(err);
-      // Handle exception by warning the user their action did not succeed
     });
   }
 }
