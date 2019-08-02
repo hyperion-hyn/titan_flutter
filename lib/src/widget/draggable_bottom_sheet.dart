@@ -177,10 +177,7 @@ class _DraggableState extends State<DraggableBottomSheet>
       var reallyHeight = notification.height + 12; //drag height: hack a number
       widget.controller.collapsedHeight = reallyHeight;
       var target = widget.controller.collapsedHeight / bottomSheetHeight;
-      print(
-          '_handleSheetHeaderNotification 11 $target ${_animationController.value}, ${notification.height} $reallyHeight');
       if (_animationController.value != target) {
-        print('_handleSheetHeaderNotification 22');
         _animationController.animateTo(target, duration: Duration(milliseconds: 100), curve: Curves.linearToEaseOut);
       }
     }

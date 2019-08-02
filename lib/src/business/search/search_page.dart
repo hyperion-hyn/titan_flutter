@@ -37,6 +37,8 @@ class _SearchPageState extends State<SearchPage> {
 
   StreamSubscription _subscription;
 
+  bool loaded = false;
+
   @override
   void initState() {
     super.initState();
@@ -65,8 +67,12 @@ class _SearchPageState extends State<SearchPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    _searchBloc = SearchBloc(searchInteractor: Injector.of(context).searchInteractor);
-    _searchBloc.dispatch(FetchSearchItemsEvent(isHistory: true));
+    if (!loaded) {
+      _searchBloc = SearchBloc(searchInteractor: Injector.of(context).searchInteractor);
+      _searchBloc.dispatch(FetchSearchItemsEvent(isHistory: true));
+
+      loaded = true;
+    }
   }
 
   @override
@@ -87,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
       var event = FetchSearchItemsEvent(
           isHistory: false,
           searchText: _searchTextController.text,
-          center: '${widget.searchCenter.longitude},${widget.searchCenter.latitude}',
+          center: widget.searchCenter,
           language: Localizations.localeOf(context).languageCode);
 
       _subscription?.cancel();
@@ -133,7 +139,8 @@ class _SearchPageState extends State<SearchPage> {
                               padding: const EdgeInsets.only(top: 8, left: 16, right: 8, bottom: 0),
                               child: Row(
                                 children: <Widget>[
-                                  Expanded(child: Text('历史搜索', style: TextStyle(color: Colors.grey[600], fontSize: 13))),
+                                  Expanded(
+                                      child: Text('历史搜索', style: TextStyle(color: Colors.grey[600], fontSize: 13))),
                                   FlatButton(
                                     child: Text(
                                       '清除记录',
@@ -200,20 +207,30 @@ class _SearchPageState extends State<SearchPage> {
             child: Stack(children: <Widget>[
               Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Icon(entity.isHistory != null && entity.isHistory ? Icons.history : Icons.location_on, color: Colors.grey[600])),
+                  child: Icon(entity.isHistory != null && entity.isHistory ? Icons.history : Icons.location_on,
+                      color: Colors.grey[600])),
               Positioned(
                   left: 72,
                   right: 48,
                   top: 0,
                   bottom: 0,
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                    Text(entity.name, overflow: TextOverflow.ellipsis, maxLines: 1),
-                    Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(entity.address, style: TextStyle(color: Colors.grey, fontSize: 13), overflow: TextOverflow.ellipsis, maxLines: 1))
-                  ])),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(entity.name, overflow: TextOverflow.ellipsis, maxLines: 1),
+                        Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(entity.address,
+                                style: TextStyle(color: Colors.grey, fontSize: 13),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1))
+                      ])),
               Positioned(
-                  top: 0, bottom: 0, right: 16, child: Center(child: Icon(IconData(0xe612, fontFamily: 'iconfont'), color: Colors.grey, size: 18)))
+                  top: 0,
+                  bottom: 0,
+                  right: 16,
+                  child: Center(child: Icon(IconData(0xe612, fontFamily: 'iconfont'), color: Colors.grey, size: 18)))
             ])));
   }
 
@@ -223,7 +240,8 @@ class _SearchPageState extends State<SearchPage> {
       child: Container(
           height: 50,
           margin: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey[350])),
+          decoration:
+              BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey[350])),
           child: Row(children: <Widget>[
             InkWell(
               onTap: () {
@@ -243,7 +261,8 @@ class _SearchPageState extends State<SearchPage> {
                   autofocus: true,
                   textInputAction: TextInputAction.search,
                   focusNode: _searchFocusNode,
-                  decoration: InputDecoration(hintText: '输入搜索词 / 密文', border: InputBorder.none, hintStyle: TextStyle(color: Colors.grey)),
+                  decoration: InputDecoration(
+                      hintText: '输入搜索词 / 密文', border: InputBorder.none, hintStyle: TextStyle(color: Colors.grey)),
                   style: Theme.of(context).textTheme.body1),
             )),
             if (_visibleCloseIcon)
@@ -265,7 +284,8 @@ class _SearchPageState extends State<SearchPage> {
         onTap: () => handleSearch(text),
         child: Stack(children: <Widget>[
           Padding(padding: const EdgeInsets.all(16.0), child: Icon(Icons.history, color: Colors.grey[600])),
-          Positioned(left: 72, right: 48, top: 0, bottom: 0, child: Align(alignment: Alignment.centerLeft, child: Text(text)))
+          Positioned(
+              left: 72, right: 48, top: 0, bottom: 0, child: Align(alignment: Alignment.centerLeft, child: Text(text)))
         ]));
   }
 
@@ -274,38 +294,6 @@ class _SearchPageState extends State<SearchPage> {
       padding: const EdgeInsets.only(top: 24.0, left: 8, right: 8),
       child: Column(
         children: <Widget>[
-//            GestureDetector(
-//              onTap: () {
-//                FocusScope.of(context).requestFocus(_searchFocusNode);
-//              },
-//              child: Material(
-//                elevation: 2,
-//                child: Row(
-//                  children: <Widget>[
-//                    Padding(
-//                      padding: const EdgeInsets.all(16.0),
-//                      child: Icon(Icons.search, color: Colors.grey[600]),
-//                    ),
-//                    Padding(
-//                      padding: const EdgeInsets.only(top: 16, bottom: 16),
-//                      child: Column(
-//                        crossAxisAlignment: CrossAxisAlignment.start,
-//                        children: <Widget>[
-//                          Text('搜索位置', style: TextStyle(fontWeight: FontWeight.w600)),
-//                          Padding(
-//                            padding: const EdgeInsets.only(top: 8),
-//                            child: Text('请输入你感兴趣的位置，点击搜索。', style: TextStyle(color: Colors.grey, fontSize: 14)),
-//                          ),
-//                        ],
-//                      ),
-//                    )
-//                  ],
-//                ),
-//              ),
-//            ),
-//            SizedBox(
-//              height: 8,
-//            ),
           Material(
             elevation: 2.0,
             child: InkWell(

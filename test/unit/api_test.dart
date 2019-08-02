@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:matcher/matcher.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/domain/domain.dart';
@@ -19,7 +20,13 @@ void main() {
 
   test('mapbox search api', () async {
     SearchInteractor interactor = SearchInteractor(Repository(api: Api(), searchHistoryDao: SearchHistoryDao()));
-    var data = await interactor.searchPoiByMapbox('台湾高雄', '113.316121,23.108317', 'zh');
+    var data = await interactor.searchPoiByMapbox('台湾高雄', LatLng(23.108317, 113.316121), 'zh');
     expect(data, TypeMatcher<List<PoiEntity>>());
+  });
+
+  test('mapbox reverse geo search', () async {
+    SearchInteractor interactor = SearchInteractor(Repository(api: Api(), searchHistoryDao: SearchHistoryDao()));
+    var entity = await interactor.reverseGeoSearch(LatLng(23.108317, 113.316121), 'zh');
+    expect(entity, TypeMatcher<PoiEntity>());
   });
 }

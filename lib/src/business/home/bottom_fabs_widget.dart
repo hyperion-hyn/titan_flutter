@@ -3,10 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
-class BottomFabsScenes extends StatefulWidget {
+class BottomFabsWidget extends StatefulWidget {
   final DraggableBottomSheetController draggableBottomSheetController;
 
-  BottomFabsScenes({this.draggableBottomSheetController});
+  BottomFabsWidget({this.draggableBottomSheetController});
 
   @override
   State<StatefulWidget> createState() {
@@ -14,8 +14,7 @@ class BottomFabsScenes extends StatefulWidget {
   }
 }
 
-
-class _BottomFasScenesState extends State<BottomFabsScenes> {
+class _BottomFasScenesState extends State<BottomFabsWidget> {
   double _fabsBottom = 16;
 
   @override
@@ -27,7 +26,7 @@ class _BottomFasScenesState extends State<BottomFabsScenes> {
   }
 
   void _handleBottomPadding(double bottom) {
-    if(bottom > 0 && bottom <= widget.draggableBottomSheetController.anchorHeight) {
+    if (bottom > 0 && bottom <= widget.draggableBottomSheetController.anchorHeight) {
       setState(() {
         _fabsBottom = bottom;
       });
@@ -78,7 +77,7 @@ class _BottomFasScenesState extends State<BottomFabsScenes> {
               child: Image.asset(
                 'res/drawable/ic_logo.png',
                 width: 24,
-                color: Colors.black54,
+                color: Colors.black87,
               ),
             ),
             Spacer(),
@@ -91,7 +90,7 @@ class _BottomFasScenesState extends State<BottomFabsScenes> {
               backgroundColor: Colors.white,
               child: Icon(
                 Icons.my_location,
-                color: Colors.black54,
+                color: Colors.black87,
                 size: 24,
               ),
             )
