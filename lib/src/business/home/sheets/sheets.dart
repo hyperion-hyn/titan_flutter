@@ -36,7 +36,7 @@ class _SheetState extends State<Sheets> {
       child: DraggableBottomSheet(
           controller: widget.draggableBottomSheetController,
           childScrollController: _bottomSheetScrollController,
-          topPadding: 0,
+          topPadding: MediaQuery.of(context).padding.top + 48 + 8 - 12 - 4,  //paddingtop + search height + paddingbottom - draggable height - threshold
           child: BlocBuilder<SheetsBloc, SheetsState>(
             builder: (context, state) {
               Widget sheet;

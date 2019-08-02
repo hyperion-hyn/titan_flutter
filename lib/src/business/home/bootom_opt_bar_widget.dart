@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/i18n.dart';
 
+import '../../global.dart';
 
 class BottomOptBarWidget extends StatelessWidget {
   final VoidCallback onRouteTap;
@@ -31,13 +32,12 @@ class BottomOptBarWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Container(
-                    color: Colors.red,
+                    color: Colors.black87,
                     height: 28,
                     child: MaterialButton(
                       elevation: 0,
                       highlightElevation: 0,
                       minWidth: 60,
-                      color: Colors.black,
                       textColor: Color(0xddffffff),
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       child: Row(
@@ -52,7 +52,7 @@ class BottomOptBarWidget extends StatelessWidget {
                           ),
                           Text(
                             S.of(context).route,
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
                           )
                         ],
                       ),
@@ -63,16 +63,17 @@ class BottomOptBarWidget extends StatelessWidget {
                     width: 16,
                   ),
                   Container(
-                    color: Colors.red,
+                    color: Colors.black87,
                     height: 28,
                     child: MaterialButton(
                       elevation: 0,
                       highlightElevation: 0,
                       minWidth: 60,
                       onPressed: onShareTap,
-                      color: Colors.black,
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       textColor: Color(0xddffffff),
+                      highlightColor: Colors.black,
+                      splashColor: Colors.white10,
                       child: Row(
                         children: <Widget>[
                           Icon(
@@ -85,7 +86,7 @@ class BottomOptBarWidget extends StatelessWidget {
                           ),
                           Text(
                             '分享',
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
                           )
                         ],
                       ),
@@ -93,6 +94,9 @@ class BottomOptBarWidget extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).padding.bottom > 0 ? safeAreaBottomPadding : 0,
             ),
           ],
         ),

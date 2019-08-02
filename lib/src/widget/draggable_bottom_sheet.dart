@@ -11,12 +11,14 @@ class DraggableBottomSheet extends StatefulWidget {
     this.child,
     this.childScrollController,
     this.topPadding = 0,
+    this.topRadius = 16,
   });
 
   final DraggableBottomSheetController controller;
   final ScrollController childScrollController;
   final Widget child;
   final double topPadding;
+  final double topRadius;
 
   @override
   State<StatefulWidget> createState() {
@@ -37,9 +39,8 @@ class _DraggableState extends State<DraggableBottomSheet>
   AnimationController _animationController;
 
   double _y;
-  double topPadding = 0;
 
-  double topRadius = 16;
+  double topRadius = 0;
 
 //  double get _y {
 //    return (1 - _animationController.value) * _sheetHeight;
@@ -74,7 +75,6 @@ class _DraggableState extends State<DraggableBottomSheet>
   }
 
   void animationNotifyListener() {
-    _y = (1 - _animationController.value) * bottomSheetHeight;
     if (_animationController.value == 1) {
       //reach top
       if (topRadius != 0) {
@@ -82,12 +82,20 @@ class _DraggableState extends State<DraggableBottomSheet>
           topRadius = 0;
         });
       }
-    } else if (topRadius != 16) {
+    } else if (topRadius != widget.topRadius) {
       setState(() {
-        topRadius = 16;
+        topRadius = widget.topRadius;
       });
     }
-    widget.controller.bottom = bottomSheetHeight - _y;
+
+    double sheetUp = _animationController.value * sheetHeight;
+    double sheetY = screenHeight - sheetUp;
+
+//    _y = (1 - _animationController.value) * sheetHeight;
+    _y = sheetY;
+
+    widget.controller.bottom = sheetUp;
+    widget.controller.sheetY = sheetY;
     widget.controller.notifyListeners();
   }
 
@@ -110,10 +118,14 @@ class _DraggableState extends State<DraggableBottomSheet>
     widget.controller.setInterface(this);
   }
 
-  double get bottomSheetHeight {
+  double get screenHeight {
+    return MediaQuery.of(context).size.height;
+  }
+
+  double get sheetHeight {
     if (_draggableSheepKey.currentContext != null) {
       final RenderBox renderBox = _draggableSheepKey.currentContext.findRenderObject();
-      return renderBox.size.height - topPadding;
+      return renderBox.size.height - widget.topPadding;
     }
 //    return 1;
 //    if (_bottomSheetHeight != null) {
@@ -123,7 +135,7 @@ class _DraggableState extends State<DraggableBottomSheet>
 //      return renderBox.size.height;
 //    }
     return MediaQuery.of(context).size.height -
-        topPadding; // - MediaQuery.of(context).padding.bottom - MediaQuery.of(context).padding.top;
+        widget.topPadding; // - MediaQuery.of(context).padding.bottom - MediaQuery.of(context).padding.top;
   }
 
   void _handleDragStart(DragStartDetails details) {
@@ -133,14 +145,14 @@ class _DraggableState extends State<DraggableBottomSheet>
   void _handleDragUpdate(DragUpdateDetails details) {
     if (_animationController.isAnimating) return;
 
-    double value = details.primaryDelta / (bottomSheetHeight ?? details.primaryDelta);
+    double value = details.primaryDelta / (sheetHeight ?? details.primaryDelta);
     _animationController.value -= value;
   }
 
   void _handleDragEnd(DragEndDetails details) {
     if (_animationController.isAnimating) return;
 
-    final double flingVelocity = details.velocity.pixelsPerSecond.dy / bottomSheetHeight;
+    final double flingVelocity = details.velocity.pixelsPerSecond.dy / sheetHeight;
     if (flingVelocity < 0.0) {
       //up
       if (_isBellowCollapsed) {
@@ -176,7 +188,7 @@ class _DraggableState extends State<DraggableBottomSheet>
     if (notification.height > 0 && _state == DraggableBottomSheetState.COLLAPSED) {
       var reallyHeight = notification.height + 12; //drag height: hack a number
       widget.controller.collapsedHeight = reallyHeight;
-      var target = widget.controller.collapsedHeight / bottomSheetHeight;
+      var target = widget.controller.collapsedHeight / sheetHeight;
       if (_animationController.value != target) {
         _animationController.animateTo(target, duration: Duration(milliseconds: 100), curve: Curves.linearToEaseOut);
       }
@@ -190,9 +202,9 @@ class _DraggableState extends State<DraggableBottomSheet>
       visible: _state != DraggableBottomSheetState.HIDDEN,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          final double panelHeight = constraints.biggest.height - topPadding;
+          final double panelHeight = constraints.biggest.height - widget.topPadding;
           var hiddenRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height, 0.0, -panelHeight);
-          var expandedRelative = RelativeRect.fromLTRB(0.0, topPadding, 0.0, 0.0);
+          var expandedRelative = RelativeRect.fromLTRB(0.0, widget.topPadding, 0.0, 0.0);
           final Animation<RelativeRect> panelAnimation = _animationController.drive(
             RelativeRectTween(
               begin: hiddenRelative,
@@ -220,6 +232,7 @@ class _DraggableState extends State<DraggableBottomSheet>
                     },
                     child: Material(
                         elevation: 2.0,
+                        color: Colors.white,
                         borderRadius: BorderRadius.vertical(top: Radius.circular(topRadius)),
                         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
                           Container(
@@ -279,10 +292,9 @@ class _DraggableState extends State<DraggableBottomSheet>
           });
         }
       } else if (state == DraggableBottomSheetState.ANCHOR_POINT) {
-        target = widget.controller.anchorHeight / bottomSheetHeight;
+        target = widget.controller.anchorHeight / sheetHeight;
       } else if (state == DraggableBottomSheetState.COLLAPSED) {
-        print('widget.controller.collapsedHeight ${widget.controller.collapsedHeight}');
-        target = widget.controller.collapsedHeight / bottomSheetHeight;
+        target = widget.controller.collapsedHeight / sheetHeight;
       } else {
         //hidden
         target = 0;
@@ -297,26 +309,31 @@ class _DraggableState extends State<DraggableBottomSheet>
     }
   }
 
+  double get anchorY => screenHeight - widget.controller.anchorHeight;
+  double get collapsedY => screenHeight - widget.controller.collapsedHeight;
+
   bool get _isBellowAnchor {
-    return _y > (bottomSheetHeight - widget.controller.anchorHeight);
+    return _y > anchorY;
   }
 
   bool get _isBellowCollapsed {
-    return _y > bottomSheetHeight - widget.controller.collapsedHeight;
+    return _y > collapsedY;
   }
 
   bool get _isInAnchorArea {
-    double sheetHeight = bottomSheetHeight;
-    return (sheetHeight - widget.controller.anchorHeight) / 2 < _y &&
-        _y < sheetHeight - (widget.controller.anchorHeight - widget.controller.collapsedHeight) / 2;
+    double up = (screenHeight - anchorY) / 2;
+    double down = (widget.controller.anchorHeight - widget.controller.collapsedHeight) / 2 + anchorY;
+    return _y > up && _y < down;
   }
 
   bool get _isTopOfAnchorArea {
-    return _y <= (bottomSheetHeight - widget.controller.anchorHeight) / 2;
+    double up = (screenHeight - anchorY) / 2;
+    return _y <= up;
   }
 
   bool get _isBellowAnchorArea {
-    return _y > bottomSheetHeight - (widget.controller.anchorHeight - widget.controller.collapsedHeight) / 2;
+    double down = (widget.controller.anchorHeight - widget.controller.collapsedHeight) / 2 + anchorY;
+    return _y > down;
   }
 
   @override
