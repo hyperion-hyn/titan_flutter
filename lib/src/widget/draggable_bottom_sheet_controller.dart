@@ -20,6 +20,7 @@ class DraggableBottomSheetController extends ChangeNotifier {
   double collapsedHeight;
 
   double bottom;
+  double sheetY;
 
   DraggableBottomSheetState initState;
 

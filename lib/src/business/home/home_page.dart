@@ -70,32 +70,6 @@ class _HomePageState extends State<HomePage> {
                       ///地图渲染
                       MapScenes(),
 
-                      ///搜索入口
-                      SearchBarPresenter(
-                        onMenu: () => Scaffold.of(context).openDrawer(),
-                        backToPrvSearch: (String searchText, List<dynamic> pois) {
-                          BlocProvider.of<HomeBloc>(context)
-                              .dispatch(SearchTextEvent(searchText: searchText, pois: pois));
-                        },
-                        onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
-                        onSearch: (searchText) async {
-                          var center = LatLng(23.108317, 113.316121); //test TODO
-                          var searchResult = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SearchPage(
-                                        searchCenter: center,
-                                        searchText: searchText,
-                                      )));
-                          if (searchResult is String) {
-                            BlocProvider.of<HomeBloc>(context)
-                                .dispatch(SearchTextEvent(searchText: searchResult, center: center));
-                          } else if (searchResult is PoiEntity) {
-                            BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: searchResult));
-                          }
-                        },
-                      ),
-
                       ///主要是支持drawer手势划出
                       Container(
                         decoration: BoxDecoration(color: Colors.transparent),
@@ -109,11 +83,45 @@ class _HomePageState extends State<HomePage> {
                         draggableBottomSheetController: _draggableBottomSheetController,
                       ),
 
+                      ///搜索入口
+                      SearchBarPresenter(
+                        draggableBottomSheetController: _draggableBottomSheetController,
+                        onMenu: () => Scaffold.of(context).openDrawer(),
+                        backToPrvSearch: (String searchText, List<dynamic> pois) {
+                          BlocProvider.of<HomeBloc>(context)
+                              .dispatch(SearchTextEvent(searchText: searchText, pois: pois));
+                        },
+                        onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
+                        onSearch: (searchText) async {
+                          var center = LatLng(23.108317, 113.316121); //test TODO
+                          var searchResult = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SearchPage(
+                                    searchCenter: center,
+                                    searchText: searchText,
+                                  )));
+                          if (searchResult is String) {
+                            BlocProvider.of<HomeBloc>(context)
+                                .dispatch(SearchTextEvent(searchText: searchResult, center: center));
+                          } else if (searchResult is PoiEntity) {
+                            BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: searchResult));
+                          }
+                        },
+                      ),
+
                       ///路线规划， 分析操作区
                       BlocBuilder<sheets.SheetsBloc, sheets.SheetsState>(
                         builder: (context, state) {
                           if (state is sheets.PoiLoadedState || state is sheets.HeavenPoiLoadedState) {
-                            return BottomOptBarWidget();
+                            return BottomOptBarWidget(
+                              onRouteTap: () {
+                                print('route TODO');
+                              },
+                              onShareTap: () {
+                                print('shaer TODO');
+                              },
+                            );
                           }
                           return SizedBox.shrink();
                         },
