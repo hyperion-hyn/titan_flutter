@@ -8,8 +8,11 @@ import '../../../global.dart';
 
 class PoiBottomSheet extends StatefulWidget {
   final PoiEntity selectedPoiEntity;
+  final ScrollController scrollController;
 
-  PoiBottomSheet(this.selectedPoiEntity);
+
+  PoiBottomSheet({this.selectedPoiEntity, this.scrollController
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -42,36 +45,39 @@ class _PoiBottomSheetState extends State<PoiBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        //header
-        Container(
+    return SingleChildScrollView(
+      controller: widget.scrollController,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          //header
+          Container(
 //          color: Colors.blue,
-          padding: EdgeInsets.all(16),
-          child: Column(
-            key: _poiHeaderKey,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                widget.selectedPoiEntity.name,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              buildHeadItem(Icons.location_on, widget.selectedPoiEntity.address, hint: '暂无详细地址'),
-              if (widget.selectedPoiEntity.remark != null && widget.selectedPoiEntity.remark.length > 0)
-                buildHeadItem(Icons.message, widget.selectedPoiEntity.remark, hint: '无备注'),
-            ],
+            padding: EdgeInsets.all(16),
+            child: Column(
+              key: _poiHeaderKey,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  widget.selectedPoiEntity.name,
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                buildHeadItem(Icons.location_on, widget.selectedPoiEntity.address, hint: '暂无详细地址'),
+                if (widget.selectedPoiEntity.remark != null && widget.selectedPoiEntity.remark.length > 0)
+                  buildHeadItem(Icons.message, widget.selectedPoiEntity.remark, hint: '无备注'),
+              ],
+            ),
           ),
-        ),
-        Divider(
-          height: 0,
-        ),
-        buildInfoItem('电话', widget.selectedPoiEntity.tags),
-        buildInfoItem('电话', widget.selectedPoiEntity.phone),
-      ],
+          Divider(
+            height: 0,
+          ),
+          buildInfoItem('标签', widget.selectedPoiEntity.tags),
+          buildInfoItem('电话', widget.selectedPoiEntity.phone),
+        ],
+      ),
     );
   }
 
@@ -86,17 +92,19 @@ class _PoiBottomSheetState extends State<PoiBottomSheet> {
             color: Colors.grey[600],
             size: 18,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(info != null && info.length > 0 ? info : hint,
-                style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(info != null && info.isNotEmpty ? info : hint,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+            ),
           )
         ],
       ),
     );
   }
 
-  Widget buildInfoItem(String tag, String info, {String hint = ''}) {
+  Widget buildInfoItem(String tag, String info, {String hint = '暂无填写'}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[

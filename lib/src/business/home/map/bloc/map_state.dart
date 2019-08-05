@@ -1,5 +1,6 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
+import 'package:titan/src/model/poi_interface.dart';
 
 @immutable
 abstract class MapState {}
@@ -9,9 +10,9 @@ class InitialMapState extends MapState {}
 
 ///marker
 class MarkerLoadedState extends MapState {
-  final LatLng coordinate;
+  final IPoi poi;
 
-  MarkerLoadedState({this.coordinate});
+  MarkerLoadedState({this.poi});
 }
 
 class ClearMarkerState extends MapState {}

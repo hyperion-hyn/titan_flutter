@@ -18,49 +18,59 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   @override
   HomeState get initialState => InitialHomeState();
 
+  sheets.SheetsBloc get sheetBloc => BlocProvider.of<sheets.SheetsBloc>(context);
+
+  search.SearchbarBloc get searchBarBloc => BlocProvider.of<search.SearchbarBloc>(context);
+
+  map.MapBloc get mapBloc => BlocProvider.of<map.MapBloc>(context);
+
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
     if (event is ShowPoiEvent) {
-      //update search bar ui
-      BlocProvider.of<search.SearchbarBloc>(context).dispatch(search.ShowPoiEvent(poi: event.poi));
-      //add marker on map
-      BlocProvider.of<map.MapBloc>(context).dispatch(map.AddMarkerEvent(coordinate: event.poi.latLng));
       //show bottom sheet of the poi
-      BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.ShowPoiEvent(poi: event.poi));
+      sheetBloc.dispatch(sheets.ShowPoiEvent(poi: event.poi));
+      //update search bar ui
+      searchBarBloc.dispatch(search.ShowPoiEvent(poi: event.poi));
+      //add marker on map
+      mapBloc.dispatch(map.AddMarkerEvent(poi: event.poi));
     } else if (event is SearchPoiEvent) {
       //add marker on map
-      BlocProvider.of<map.MapBloc>(context).dispatch(map.AddMarkerEvent(coordinate: event.latLng));
+      mapBloc.dispatch(map.AddMarkerEvent(poi: event.poi));
       //show bottom sheet loading
-      BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.ShowLoadingEvent());
+      sheetBloc.dispatch(sheets.ShowLoadingEvent());
 
       //load poi info
       try {
         var searchInteractor = Injector.of(context).searchInteractor;
         PoiEntity poi =
-            await searchInteractor.reverseGeoSearch(event.latLng, Localizations.localeOf(context).languageCode);
+            await searchInteractor.reverseGeoSearch(event.poi.latLng, Localizations.localeOf(context).languageCode);
         //update search bar ui
-        BlocProvider.of<search.SearchbarBloc>(context).dispatch(search.ShowPoiEvent(poi: poi));
+        searchBarBloc.dispatch(search.ShowPoiEvent(poi: poi));
         //show bottom sheet of the poi
-        BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.ShowPoiEvent(poi: poi));
+        sheetBloc.dispatch(sheets.ShowPoiEvent(poi: poi));
       } catch (err) {
         print(err);
         //show bottom sheet fail
-        BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.ShowLoadFailEvent(message: '获取数据失败'));
+        sheetBloc.dispatch(sheets.ShowLoadFailEvent(message: '获取数据失败'));
       }
     } else if (event is SearchTextEvent) {
       var searchEvent = search.ShowSearchEvent(isLoading: true, searchText: event.searchText);
 
+      //clear some
+      mapBloc.dispatch(map.ClearMarkerEvent());
+      mapBloc.dispatch(map.ClearMarkerListEvent());
+      sheetBloc.dispatch(sheets.CloseSheetEvent());
+
       if (event.pois != null && event.pois.length > 0) {
-        BlocProvider.of<search.SearchbarBloc>(context)
-            .dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, pois: event.pois)));
-        BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.ShowSearchItemsEvent(items: event.pois));
-        BlocProvider.of<map.MapBloc>(context).dispatch(map.AddMarkerListEvent(pois: event.pois));
+        searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, pois: event.pois)));
+        sheetBloc.dispatch(sheets.ShowSearchItemsEvent(items: event.pois));
+        mapBloc.dispatch(map.AddMarkerListEvent(pois: event.pois));
       } else {
-        BlocProvider.of<map.MapBloc>(context).dispatch(map.ClearMarkerListEvent());
-        BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.CloseSheetEvent());
+        mapBloc.dispatch(map.ClearMarkerListEvent());
+        sheetBloc.dispatch(sheets.CloseSheetEvent());
 
         //loading
-        BlocProvider.of<search.SearchbarBloc>(context).dispatch(searchEvent);
+        searchBarBloc.dispatch(searchEvent);
 
         try {
           var searchInteractor = Injector.of(context).searchInteractor;
@@ -68,27 +78,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               event.searchText, event.center, Localizations.localeOf(context).languageCode);
           if (pois.length > 0) {
             //update searchBar
-            BlocProvider.of<search.SearchbarBloc>(context)
-                .dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, pois: pois)));
+            searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, pois: pois)));
             //show bottom list
-            BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.ShowSearchItemsEvent(items: pois));
+            sheetBloc.dispatch(sheets.ShowSearchItemsEvent(items: pois));
             //show map search result
-            BlocProvider.of<map.MapBloc>(context).dispatch(map.AddMarkerListEvent(pois: pois));
+            mapBloc.dispatch(map.AddMarkerListEvent(pois: pois));
           } else {
-            BlocProvider.of<search.SearchbarBloc>(context)
-                .dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, failMsg: '无搜索结果')));
+            searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, failMsg: '无搜索结果')));
           }
         } catch (err) {
           print(err);
-          BlocProvider.of<search.SearchbarBloc>(context)
-              .dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, failMsg: '获取数据失败')));
+          searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, failMsg: '获取数据失败')));
         }
       }
     } else if (event is ExistSearchEvent) {
-      BlocProvider.of<search.SearchbarBloc>(context).dispatch(search.ExistSearchEvent());
-      BlocProvider.of<map.MapBloc>(context).dispatch(map.ClearMarkerEvent());
-      BlocProvider.of<map.MapBloc>(context).dispatch(map.ClearMarkerListEvent());
-      BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.CloseSheetEvent());
+      searchBarBloc.dispatch(search.ExistSearchEvent());
+      mapBloc.dispatch(map.ClearMarkerEvent());
+      mapBloc.dispatch(map.ClearMarkerListEvent());
+      sheetBloc.dispatch(sheets.CloseSheetEvent());
     }
   }
 }

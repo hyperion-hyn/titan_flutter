@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
+
+import 'map/bloc/bloc.dart';
 
 class BottomFabsWidget extends StatefulWidget {
   final DraggableBottomSheetController draggableBottomSheetController;
@@ -83,7 +86,7 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
             Spacer(),
             FloatingActionButton(
               onPressed: () {
-                Fluttertoast.showToast(msg: 'TODO 定位');
+                BlocProvider.of<MapBloc>(context).dispatch(MyLocationEvent());
               },
               mini: true,
               heroTag: 'myLocation',

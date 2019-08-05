@@ -16,11 +16,12 @@ class BottomOptBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
+      bottom: 0,
       left: 0,
       right: 0,
-      bottom: 0,
       child: Material(
         elevation: 2,
+        color: Colors.white,
         child: Column(
           children: <Widget>[
             Divider(
@@ -31,73 +32,50 @@ class BottomOptBarWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Container(
-                    color: Colors.black87,
-                    height: 28,
-                    child: MaterialButton(
-                      elevation: 0,
-                      highlightElevation: 0,
-                      minWidth: 60,
-                      textColor: Color(0xddffffff),
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.directions,
-                            color: Color(0xddffffff),
-                            size: 15,
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            S.of(context).route,
-                            style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
-                          )
-                        ],
-                      ),
-                      onPressed: onRouteTap,
-                    ),
-                  ),
+                  buildButton(text: S.of(context).route, icon: Icons.directions, onTap: onRouteTap),
                   SizedBox(
                     width: 16,
                   ),
-                  Container(
-                    color: Colors.black87,
-                    height: 28,
-                    child: MaterialButton(
-                      elevation: 0,
-                      highlightElevation: 0,
-                      minWidth: 60,
-                      onPressed: onShareTap,
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      textColor: Color(0xddffffff),
-                      highlightColor: Colors.black,
-                      splashColor: Colors.white10,
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.share,
-                            color: Color(0xddffffff),
-                            size: 15,
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            '分享',
-                            style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                  buildButton(text: '私密分享', icon: Icons.lock, onTap: onShareTap),
                 ],
               ),
             ),
             SizedBox(
               height: MediaQuery.of(context).padding.bottom > 0 ? safeAreaBottomPadding : 0,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildButton({@required String text, IconData icon, VoidCallback onTap}) {
+    return Container(
+      color: Colors.black87,
+      height: 28,
+      child: MaterialButton(
+        elevation: 0,
+        highlightElevation: 0,
+        minWidth: 60,
+        onPressed: onTap,
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        textColor: Color(0xddffffff),
+        highlightColor: Colors.black,
+        splashColor: Colors.white10,
+        child: Row(
+          children: <Widget>[
+            Icon(
+              icon,
+              color: Color(0xddffffff),
+              size: 15,
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              text,
+              style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
+            )
           ],
         ),
       ),

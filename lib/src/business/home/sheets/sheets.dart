@@ -29,14 +29,16 @@ class _SheetState extends State<Sheets> {
       listener: (context, state) {
         if (state.nextSheetState != null &&
             (state.nextSheetState == DraggableBottomSheetState.HIDDEN ||
-                widget.draggableBottomSheetController.getSheetState() == DraggableBottomSheetState.HIDDEN)) {
+                widget.draggableBottomSheetController.getSheetState() == DraggableBottomSheetState.HIDDEN ||
+                widget.draggableBottomSheetController.getSheetState() == DraggableBottomSheetState.EXPANDED)) {
           widget.draggableBottomSheetController.setSheetState(state.nextSheetState);
         }
       },
       child: DraggableBottomSheet(
           controller: widget.draggableBottomSheetController,
           childScrollController: _bottomSheetScrollController,
-          topPadding: MediaQuery.of(context).padding.top + 48 + 8 - 12 - 4,  //paddingtop + search height + paddingbottom - draggable height - threshold
+          //paddingtop + search height + paddingbottom - draggable height - threshold
+          topPadding: (MediaQuery.of(context).padding.top + 48 + 8 - 12 - 4),
           child: BlocBuilder<SheetsBloc, SheetsState>(
             builder: (context, state) {
               Widget sheet;
@@ -45,11 +47,14 @@ class _SheetState extends State<Sheets> {
               } else if (state is LoadFailState) {
                 sheet = SearchFaultBottomSheet();
               } else if (state is PoiLoadedState) {
-                sheet = PoiBottomSheet(state.poiEntity);
+                sheet = PoiBottomSheet(
+                  selectedPoiEntity: state.poiEntity,
+                  scrollController: _bottomSheetScrollController,
+                );
               } else if (state is HeavenPoiLoadedState) {
                 //TODO
               } else if (state is ItemsLoadedState) {
-                sheet = PoiListSheet(pois: state.items);
+                sheet = PoiListSheet(pois: state.items, scrollController: _bottomSheetScrollController,);
               }
 
               if (sheet == null) {

@@ -16,9 +16,9 @@ class ShowPoiEvent extends HomeEvent {
 }
 
 class SearchPoiEvent extends HomeEvent {
-  final LatLng latLng;
+  final IPoi poi;
 
-  SearchPoiEvent({this.latLng});
+  SearchPoiEvent({this.poi});
 }
 
 class SearchTextEvent extends HomeEvent {
