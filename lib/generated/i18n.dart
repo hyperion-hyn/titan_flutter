@@ -20,8 +20,18 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get app_name => "Titan";
+  String get forum => "Forum";
+  String get medium => "Medium";
+  String get official_website => "Official Website";
   String get offline_map => "Offline map";
   String get route => "Route";
+  String get telegram => "Telegram";
+  String get telegram_operator => "Telegram Operator";
+  String get twitterhyperion => "Twitter-Hyperion";
+  String get twittertitan => "Twitter-Titan";
+  String get wechat => "Wechat";
+  String get wechat_cs => "微信客服";
+  String get wechat_official_account => "Wechat Official Account";
   String network_request_err(String code) => "Network request error, code: $code";
 }
 
@@ -36,11 +46,31 @@ class $zh_CN extends S {
   TextDirection get textDirection => TextDirection.ltr;
 
   @override
+  String get official_website => "Official Website";
+  @override
+  String get telegram_operator => "Telegram Operator";
+  @override
+  String get wechat => "Wechat";
+  @override
+  String get telegram => "Telegram";
+  @override
+  String get twitterhyperion => "Twitter-Hyperion";
+  @override
+  String get medium => "Medium";
+  @override
+  String get offline_map => "离线地图";
+  @override
+  String get forum => "Forum";
+  @override
   String get app_name => "泰坦";
   @override
   String get route => "路线";
   @override
-  String get offline_map => "离线地图";
+  String get twittertitan => "Twitter-Titan";
+  @override
+  String get wechat_official_account => "Wechat Official Account";
+  @override
+  String get wechat_cs => "微信客服";
   @override
   String network_request_err(String code) => "网络请求错误,状态码: $code";
 }

@@ -2,5 +2,15 @@
   "app_name": "泰坦",
   "network_request_err": "网络请求错误,状态码: $code",
   "offline_map": "离线地图",
-  "route": "路线"
+  "route": "路线",
+  "official_website": "Official Website",
+  "forum": "Forum",
+  "telegram": "Telegram",
+  "twitterhyperion": "Twitter-Hyperion",
+  "twittertitan": "Twitter-Titan",
+  "medium": "Medium",
+  "wechat": "Wechat",
+  "wechat_official_account": "Wechat Official Account",
+  "telegram_operator": "Telegram Operator",
+  "wechat_cs": "微信客服"
 }

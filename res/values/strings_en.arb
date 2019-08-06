@@ -2,5 +2,15 @@
   "app_name": "Titan",
   "network_request_err": "Network request error, code: $code",
   "offline_map": "Offline map",
-  "route": "Route"
+  "route": "Route",
+  "official_website": "Official Website",
+  "forum": "Forum",
+  "telegram": "Telegram",
+  "twitterhyperion": "Twitter-Hyperion",
+  "twittertitan": "Twitter-Titan",
+  "medium": "Medium",
+  "wechat": "Wechat",
+  "wechat_official_account": "Wechat Official Account",
+  "telegram_operator": "Telegram Operator",
+  "wechat_cs": "微信客服"
 }
