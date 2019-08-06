@@ -108,7 +108,7 @@ class _DraggableState extends State<DraggableBottomSheet>
         return true;
       }
     }
-    return true;
+    return false;
   }
 
   @protected

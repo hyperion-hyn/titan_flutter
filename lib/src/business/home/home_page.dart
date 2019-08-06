@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
               builder: (BuildContext context) => Stack(
                     children: <Widget>[
                       ///地图渲染
-                      MapScenes(),
+                      MapScenes(draggableBottomSheetController: _draggableBottomSheetController),
 
                       ///主要是支持drawer手势划出
                       Container(

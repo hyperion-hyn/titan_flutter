@@ -23,7 +23,7 @@ class SheetsBloc extends Bloc<SheetsEvent, SheetsState> {
       }
       //TODO add heaven poi info
     } else if (event is ShowSearchItemsEvent) {
-      yield ItemsLoadedState(items: event.items, nextSheetState: DraggableBottomSheetState.COLLAPSED);
+      yield ItemsLoadedState(items: event.items, nextSheetState: DraggableBottomSheetState.ANCHOR_POINT);
     } else if (event is ShowLoadFailEvent) {
       yield LoadFailState(message: event.message);
     } else if (event is CloseSheetEvent) {

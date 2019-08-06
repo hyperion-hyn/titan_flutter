@@ -1,14 +1,15 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
+import 'package:titan/src/model/poi_interface.dart';
 
 @immutable
 abstract class MapEvent {}
 
 ///marker
 class AddMarkerEvent extends MapEvent {
-  final LatLng coordinate;
+  final IPoi poi;
 
-  AddMarkerEvent({this.coordinate});
+  AddMarkerEvent({this.poi});
 }
 
 class ClearMarkerEvent extends MapEvent {}
@@ -16,7 +17,7 @@ class ClearMarkerEvent extends MapEvent {}
 
 ///marker list
 class AddMarkerListEvent extends MapEvent {
-  final List<dynamic> pois;
+  final List<IPoi> pois;
 
   AddMarkerListEvent({this.pois});
 }

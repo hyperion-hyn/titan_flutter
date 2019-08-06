@@ -37,6 +37,7 @@ class _SearchBarPresenterState extends State<SearchBarPresenter> {
 
     widget.draggableBottomSheetController
         ?.addListener(() => _handleBottomPadding(widget.draggableBottomSheetController.sheetY));
+    //TODO if sheet child scroll > 0, set elevation 2
   }
 
   void _handleBottomPadding(double sheetY) {

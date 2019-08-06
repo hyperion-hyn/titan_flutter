@@ -62,15 +62,15 @@ dependencies:
   logger: ^0.7.0+2
   #https://pub.dev/packages/flutter_statusbarcolor#-installing-tab-
   flutter_statusbarcolor: ^0.2.1
-  #https://github.com/tobrun/flutter-mapbox-gl
-  mapbox_gl:
-    path: ../mapbox_flutter
   #https://github.com/dart-lang/json_serializable
   json_annotation: ^2.4.0
   #https://pub.dev/packages/esys_flutter_share
   esys_flutter_share: 1.0.2
   #https://pub.dev/packages/uni_links
   uni_links: 0.2.0
+  #https://github.com/tobrun/flutter-mapbox-gl
+  mapbox_gl:
+    path: ../mapbox_flutter
 
 dev_dependencies:
   flutter_test:

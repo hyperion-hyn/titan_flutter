@@ -14,9 +14,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   @override
   Stream<MapState> mapEventToState(MapEvent event) async* {
     if (event is AddMarkerEvent) {
-      yield MarkerLoadedState(coordinate: event.coordinate);
+      yield MarkerLoadedState(poi: event.poi);
     } else if (event is ClearMarkerEvent) {
       yield ClearMarkerState();
+    } else if (event is AddMarkerListEvent) {
+      yield MarkerListLoadedState(pois: event.pois);
+    } else if (event is ClearMarkerListEvent) {
+      yield ClearMarkerListState();
     } else if (event is AddRouteEvent) {
       yield RouteLoadedState(routeData: event.routeData);
     } else if (event is ClearRouteEvent) {
