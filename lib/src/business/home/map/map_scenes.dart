@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,9 +49,20 @@ class _MapScenesState extends State<MapScenes> {
 //      widget.homeBloc.dispatch(ClosePoiBottomSheetEvent());
 //    }
 
-//    var range = 10;
-//    Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
-//    List features = await mapboxMapController?.queryRenderedFeaturesInRect(rect, [layerId], null);
+//    "name != NIL"
+    print("start map click event");
+    var range = 10;
+    Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
+    String filter = null;
+    if (Platform.isAndroid) {
+      filter = '["has", "name"]';
+    }
+    if (Platform.isIOS) {
+      filter = "name != NIL";
+    }
+    List features = await mapboxMapController?.queryRenderedFeaturesInRect(rect, [], filter);
+
+    print(features);
 //    if (features != null && features.length > 0) {
 //      var clickFeatureJsonString = features[0];
 //      var clickFeatureJson = json.decode(clickFeatureJsonString);
