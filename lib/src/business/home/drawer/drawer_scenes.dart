@@ -16,6 +16,8 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
 
+import 'package:titan/src/business/about/about_me_page.dart';
+
 class DrawerScenes extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -163,9 +165,11 @@ class _DrawerScenesState extends State<DrawerScenes> {
                 Container(height: 1, color: Colors.grey[100]),
                 ListTile(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-                      return WebViewPage();
-                    }));
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AboutMePage()));
                   },
                   leading: Icon(Icons.info),
                   title: Text('关于我们'),

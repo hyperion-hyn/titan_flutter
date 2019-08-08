@@ -10,5 +10,15 @@
   "n_minute": "${minute}分钟",
   "km": "${km}公里",
   "distance": "${distance}米",
-  "my_position": "我的位置"
+  "my_position": "我的位置",
+  "official_website": "Official Website",
+  "forum": "Forum",
+  "telegram": "Telegram",
+  "twitterhyperion": "Twitter-Hyperion",
+  "twittertitan": "Twitter-Titan",
+  "medium": "Medium",
+  "wechat": "Wechat",
+  "wechat_official_account": "Wechat Official Account",
+  "telegram_operator": "Telegram Operator",
+  "wechat_cs": "微信客服"
 }

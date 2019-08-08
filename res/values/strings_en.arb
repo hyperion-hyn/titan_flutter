@@ -10,5 +10,15 @@
   "n_minute": "$minute minute ",
   "km": "$km km ",
   "distance": "$distance m",
-  "my_position": "My position"
+  "my_position": "My position",
+  "official_website": "Official Website",
+  "forum": "Forum",
+  "telegram": "Telegram",
+  "twitterhyperion": "Twitter-Hyperion",
+  "twittertitan": "Twitter-Titan",
+  "medium": "Medium",
+  "wechat": "Wechat",
+  "wechat_official_account": "Wechat Official Account",
+  "telegram_operator": "Telegram Operator",
+  "wechat_cs": "微信客服"
 }
