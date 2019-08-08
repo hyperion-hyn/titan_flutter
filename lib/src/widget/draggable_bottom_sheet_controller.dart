@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-const kAnchorHeight = 400.0;
+const kAnchorPoiHeight = 400.0;
+const kAnchorSearchHeight = 300.0;
 const kCollapsedHeight = 112.0;
 
 enum DraggableBottomSheetState { DRAGGING, SETTLING, ANCHOR_POINT, EXPANDED, COLLAPSED, HIDDEN }
@@ -25,7 +26,7 @@ class DraggableBottomSheetController extends ChangeNotifier {
   DraggableBottomSheetState initState;
 
   DraggableBottomSheetController(
-      {this.anchorHeight = kAnchorHeight, this.collapsedHeight = kCollapsedHeight, this.initState = DraggableBottomSheetState.HIDDEN});
+      {this.anchorHeight = kAnchorPoiHeight, this.collapsedHeight = kCollapsedHeight, this.initState = DraggableBottomSheetState.HIDDEN});
 
   void setInterface(DraggableBottomSheetControllerInterface mDraggableBottomSheetControllerInterface) {
     _interface = mDraggableBottomSheetControllerInterface;

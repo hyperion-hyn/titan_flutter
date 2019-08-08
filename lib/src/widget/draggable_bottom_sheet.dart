@@ -12,6 +12,7 @@ class DraggableBottomSheet extends StatefulWidget {
     this.childScrollController,
     this.topPadding = 0,
     this.topRadius = 16,
+    this.draggable,
   });
 
   final DraggableBottomSheetController controller;
@@ -19,6 +20,7 @@ class DraggableBottomSheet extends StatefulWidget {
   final Widget child;
   final double topPadding;
   final double topRadius;
+  final bool draggable;
 
   @override
   State<StatefulWidget> createState() {
@@ -212,41 +214,19 @@ class _DraggableState extends State<DraggableBottomSheet>
             ),
           );
 
+          Widget content;
+          if(widget.draggable) {
+            content = buildDraggableContent(context);
+          } else {
+            content = buildContent(context);
+          }
+
           return Container(
             key: _draggableSheepKey,
             child: Stack(
               children: <Widget>[
                 PositionedTransition(
-                  child: RawGestureDetector(
-                    gestures: {
-                      VerticalDragGestureRecognizerBottomSheet:
-                          GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizerBottomSheet>(
-                              () => VerticalDragGestureRecognizerBottomSheet(),
-                              (VerticalDragGestureRecognizerBottomSheet instance) {
-                        instance.isChildReachTop = _isChildReachTop;
-                        instance.isFrozenChild = _isChildFrozen;
-                        instance.onStart = _handleDragStart;
-                        instance.onUpdate = _handleDragUpdate;
-                        instance.onEnd = _handleDragEnd;
-                      })
-                    },
-                    child: Material(
-                        elevation: 2.0,
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(topRadius)),
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(top: 8.0),
-                            constraints: BoxConstraints.tightFor(width: 40.0, height: 4.0),
-                            decoration: BoxDecoration(
-                                color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                          ),
-                          Expanded(
-                            child: NotificationListener<HeaderHeightNotification>(
-                                onNotification: _handleSheetHeaderNotification, child: widget.child),
-                          )
-                        ])),
-                  ),
+                  child: content,
                   rect: panelAnimation,
                 )
               ],
@@ -255,6 +235,43 @@ class _DraggableState extends State<DraggableBottomSheet>
         },
       ),
     );
+  }
+
+  Widget buildDraggableContent(context) {
+    return RawGestureDetector(
+      gestures: {
+        VerticalDragGestureRecognizerBottomSheet:
+        GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizerBottomSheet>(
+                () => VerticalDragGestureRecognizerBottomSheet(),
+                (VerticalDragGestureRecognizerBottomSheet instance) {
+              instance.isChildReachTop = widget.draggable ? _isChildReachTop : true;
+              instance.isFrozenChild = widget.draggable ? _isChildFrozen : true;
+              instance.onStart = widget.draggable ? _handleDragStart : null;
+              instance.onUpdate = widget.draggable ? _handleDragUpdate : null;
+              instance.onEnd = widget.draggable ? _handleDragEnd : null;
+            })
+      },
+      child: buildContent(context),
+    );
+  }
+
+  Widget buildContent(context) {
+    return Material(
+        elevation: 2.0,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(widget.draggable ? topRadius : 0)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+          if(widget.draggable)
+            Container(
+              margin: EdgeInsets.only(top: 8.0),
+              constraints: BoxConstraints.tightFor(width: 40.0, height: 4.0),
+              decoration: BoxDecoration(
+                  color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
+            ),
+          Expanded(
+            child: NotificationListener<HeaderHeightNotification>(
+                onNotification: _handleSheetHeaderNotification, child: widget.child),
+          ),
+        ]));
   }
 
   @override

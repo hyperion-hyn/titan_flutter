@@ -4,12 +4,20 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/home/bloc/bloc.dart';
+import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as searchBar;
+import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
+import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
+import '../../../global.dart';
 import 'bloc/bloc.dart';
+import 'map_route.dart';
 
 const kDoubleClickGap = 300;
 const kLocationZoom = 16.0;
@@ -38,10 +46,13 @@ class _MapScenesState extends State<MapScenes> {
   var myLocationTrackingMode = MyLocationTrackingMode.None;
 
   StreamSubscription _locationClickSubscription;
+  StreamSubscription _eventBusSubscription;
 
   MapboxMapController mapboxMapController;
 
   _onMapClick(Point<double> point, LatLng coordinates) async {
+    print('xx on click $point, $coordinates');
+
 //    widget.draggableBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
 
 //    if(!(widget.homeBloc.currentState is HomeSearchState)) {
@@ -60,12 +71,16 @@ class _MapScenesState extends State<MapScenes> {
 //    }
   }
 
+  _onMapLongPress(Point<double> point, LatLng coordinates) async {
+    print('xx on long press $point, $coordinates');
+  }
+
   void onStyleLoaded(controller) async {
     setState(() {
       mapboxMapController = controller;
     });
 
-//    eventBus.fire(MyLocationClickEvent());
+    _toMyLocation();
   }
 
   void _addMarker(IPoi poi) async {
@@ -82,19 +97,18 @@ class _MapScenesState extends State<MapScenes> {
     if (shouldNeedAddSymbol) {
       showingSymbol = await mapboxMapController?.addSymbol(
         SymbolOptions(
-            geometry: poi.latLng, iconImage: "hyn-marker-image", iconAnchor: "bottom", iconOffset: Offset(0.0, 3.0)),
+            geometry: poi.latLng, iconImage: "marker_big", iconAnchor: "bottom", iconOffset: Offset(0.0, 0.0)),
       );
 
-      print('${widget.draggableBottomSheetController?.bottom} ${window.devicePixelRatio}');
       double top = -widget.draggableBottomSheetController?.collapsedHeight;
-      if(widget.draggableBottomSheetController?.getSheetState() == DraggableBottomSheetState.ANCHOR_POINT) {
+      if (widget.draggableBottomSheetController?.getSheetState() == DraggableBottomSheetState.ANCHOR_POINT) {
         top = -widget.draggableBottomSheetController?.anchorHeight;
       }
       var offset = 0.001;
       var sw = LatLng(poi.latLng.latitude - offset, poi.latLng.longitude - offset);
       var ne = LatLng(poi.latLng.latitude + offset, poi.latLng.longitude + offset);
-      mapboxMapController?.animateCamera(CameraUpdate.newLatLngBounds2(
-          LatLngBounds(southwest: sw, northeast: ne), 0, top + 32, 0, 0));
+      mapboxMapController
+          ?.animateCamera(CameraUpdate.newLatLngBounds2(LatLngBounds(southwest: sw, northeast: ne), 0, top + 32, 0, 0));
 
       currentPoi = poi;
     }
@@ -111,8 +125,9 @@ class _MapScenesState extends State<MapScenes> {
   void _addMarkers(List<IPoi> pois) {
     _clearAllMarkers();
 
-    List<SymbolOptions> options = pois.map((poi) => SymbolOptions(
-        geometry: poi.latLng, iconImage: "hyn-marker-image", iconAnchor: "bottom", iconOffset: Offset(0.0, 3.0))).toList();
+    List<SymbolOptions> options = pois
+        .map((poi) => SymbolOptions(geometry: poi.latLng, iconImage: "marker_gray", iconAnchor: "center", iconSize: 20))
+        .toList();
     mapboxMapController?.addSymbolList(options);
   }
 
@@ -120,10 +135,6 @@ class _MapScenesState extends State<MapScenes> {
     mapboxMapController?.clearSymbols();
     showingSymbol = null;
     currentPoi = null;
-  }
-
-  void _addRoute(dynamic routeData) {
-    //TODO
   }
 
   void _toMyLocation() {
@@ -151,45 +162,100 @@ class _MapScenesState extends State<MapScenes> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _listenEventBus();
+  }
+
+  void _listenEventBus() {
+    _eventBusSubscription = eventBus.on().listen((event) async {
+      if (event is RouteClickEvent) {
+        var toPoi = event.toPoi ?? currentPoi;
+        if (toPoi != null && mapboxMapController != null) {
+          LatLng start = await mapboxMapController.lastKnownLocation();
+          if (start == null) {
+            Fluttertoast.showToast(msg: '获取不到你当前位置');
+            return;
+          }
+
+          BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.CloseSheetEvent());
+
+          LatLng end = toPoi.latLng;
+          String lang = Localizations.localeOf(context).languageCode;
+          BlocProvider.of<MapBloc>(context).dispatch(QueryRouteEvent(
+            start: start,
+            end: end,
+            languageCode: lang,
+            startName: S.of(context).my_position,
+            endName: (toPoi is PoiEntity) ? toPoi.name : '',
+            selectedPoi: toPoi,
+            profile: event.profile,
+            padding: 150,
+          ));
+
+          BlocProvider.of<searchBar.SearchbarBloc>(context).dispatch(searchBar.HideSearchBarEvent());
+        }
+      } else if (event is MyLocationEvent) {
+        _toMyLocation();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<MapBloc, MapState>(
       listener: (context, state) {
         if (state is MarkerLoadedState) {
+          mapboxMapController?.disableLocation();
           _addMarker(state.poi);
         } else if (state is ClearMarkerState) {
           _removeMarker();
-        } else if(state is MarkerListLoadedState) {
+        } else if (state is MarkerListLoadedState) {
           _addMarkers(state.pois);
-        } else if(state is ClearMarkerListState) {
+        } else if (state is ClearMarkerListState) {
           _clearAllMarkers();
-        }
-        else if (state is RouteLoadedState) {
-          _addRoute(state.routeData);
-        } else if (state is MyLocationState) {
-          _toMyLocation();
+        } else if (state is RouteSceneState) {
+          mapboxMapController?.disableLocation();
+          if (!state.isLoading) {
+            _clearAllMarkers();
+          }
         }
       },
       child: MapboxMapParent(
         controller: mapboxMapController,
-        child: MapboxMap(
-          onMapClick: _onMapClick,
-          styleString: _style,
-          onStyleLoaded: onStyleLoaded,
-          initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: _defaultZoom,
-          ),
-          rotateGesturesEnabled: true,
-          tiltGesturesEnabled: false,
-          enableLogo: false,
-          enableAttribution: false,
-          compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
-          minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-          myLocationEnabled: true,
-          myLocationTrackingMode: MyLocationTrackingMode.None,
+        child: BlocBuilder<MapBloc, MapState>(
+          builder: (context, state) {
+            return MapboxMap(
+              onMapClick: _onMapClick,
+              onMapLongPress: _onMapLongPress,
+              styleString: _style,
+              onStyleLoaded: onStyleLoaded,
+              initialCameraPosition: CameraPosition(
+                target: _center,
+                zoom: _defaultZoom,
+              ),
+              rotateGesturesEnabled: true,
+              tiltGesturesEnabled: false,
+              enableLogo: false,
+              enableAttribution: false,
+              compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
+              minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+              myLocationEnabled: true,
+              myLocationTrackingMode: MyLocationTrackingMode.None,
+              children: <Widget>[
+//            MapRoute(),
+                MapRoute(),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
+  @override
+  void dispose() {
+    _eventBusSubscription?.cancel();
+    super.dispose();
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
+import '../../global.dart';
 import 'map/bloc/bloc.dart';
 
 class BottomFabsWidget extends StatefulWidget {
@@ -86,7 +87,8 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
             Spacer(),
             FloatingActionButton(
               onPressed: () {
-                BlocProvider.of<MapBloc>(context).dispatch(MyLocationEvent());
+                eventBus.fire(MyLocationEvent());
+//                BlocProvider.of<MapBloc>(context).dispatch(MyLocationEvent());
               },
               mini: true,
               heroTag: 'myLocation',

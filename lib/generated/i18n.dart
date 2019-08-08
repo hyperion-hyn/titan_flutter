@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 class S implements WidgetsLocalizations {
   const S();
 
+  static S current;
+
   static const GeneratedLocalizationsDelegate delegate =
     GeneratedLocalizationsDelegate();
 
@@ -20,8 +22,16 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get app_name => "Titan";
+  String get less_than_1_min => "Less than 1 minute";
+  String get my_position => "My position";
+  String get no_recommended_route => "No recommended route yet";
   String get offline_map => "Offline map";
   String get route => "Route";
+  String distance(String distance) => "$distance m";
+  String km(String km) => "$km km ";
+  String n_day(String day) => "$day day ";
+  String n_hour(String hour) => "$hour hour ";
+  String n_minute(String minute) => "$minute minute ";
   String network_request_err(String code) => "Network request error, code: $code";
 }
 
@@ -38,11 +48,27 @@ class $zh_CN extends S {
   @override
   String get app_name => "泰坦";
   @override
+  String get my_position => "我的位置";
+  @override
   String get route => "路线";
+  @override
+  String get less_than_1_min => "小于1分钟";
+  @override
+  String get no_recommended_route => "暂无推荐路线";
   @override
   String get offline_map => "离线地图";
   @override
+  String n_day(String day) => "${day}天";
+  @override
+  String km(String km) => "${km}公里";
+  @override
+  String distance(String distance) => "${distance}米";
+  @override
+  String n_hour(String hour) => "${hour}小时";
+  @override
   String network_request_err(String code) => "网络请求错误,状态码: $code";
+  @override
+  String n_minute(String minute) => "${minute}分钟";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
@@ -77,14 +103,17 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
     if (lang != null) {
       switch (lang) {
         case "en":
-          return SynchronousFuture<S>(const $en());
+          S.current = const $en();
+          return SynchronousFuture<S>(S.current);
         case "zh_CN":
-          return SynchronousFuture<S>(const $zh_CN());
+          S.current = const $zh_CN();
+          return SynchronousFuture<S>(S.current);
         default:
           // NO-OP.
       }
     }
-    return SynchronousFuture<S>(const S());
+    S.current = const S();
+    return SynchronousFuture<S>(S.current);
   }
 
   @override

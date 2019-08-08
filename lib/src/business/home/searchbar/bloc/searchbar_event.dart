@@ -38,3 +38,5 @@ class ShowPoiEvent extends SearchbarEvent {
 }
 
 class ExistSearchEvent extends SearchbarEvent {}
+
+class HideSearchBarEvent extends SearchbarEvent {}

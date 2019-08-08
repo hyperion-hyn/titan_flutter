@@ -8,24 +8,28 @@ import 'package:titan/src/model/poi_interface.dart';
 class PoiListSheet extends StatelessWidget {
   final List<IPoi> pois;
   final ScrollController scrollController;
+  final double listHeight;
 
-  PoiListSheet({this.pois, this.scrollController});
+  PoiListSheet({this.pois, this.scrollController, this.listHeight = 300});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      controller: scrollController,
-      padding: EdgeInsets.only(top: 8, bottom: 16),
-      itemBuilder: (context, index) {
-        return buildItem(context, pois[index]);
-      },
-      separatorBuilder: (context, index) {
-        return Container(
-          color: Colors.grey[200],
-          height: 1,
-        );
-      },
-      itemCount: pois.length,
+    return Container(
+      height: listHeight,
+      child: ListView.separated(
+        controller: scrollController,
+        padding: EdgeInsets.only(top: 8, bottom: 16),
+        itemBuilder: (context, index) {
+          return buildItem(context, pois[index]);
+        },
+        separatorBuilder: (context, index) {
+          return Container(
+            color: Colors.grey[200],
+            height: 1,
+          );
+        },
+        itemCount: pois.length,
+      ),
     );
   }
 

@@ -92,7 +92,7 @@ class VerticalDragGestureRecognizerBottomSheet extends OneSequenceGestureRecogni
 
   double minDragDistance;
 
-  bool isChildReachTop = false;
+  bool isChildReachTop = true;
   bool isFrozenChild = true;
 
   _DragState _state = _DragState.ready;

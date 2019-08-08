@@ -48,13 +48,26 @@ class _AppState extends State<App> {
         home: Builder(
           key: Keys.mainContextKey,
           builder: (context) {
+            var sheetsBloc = SheetsBloc();
+            var mapBloc = MapBloc();
+            var searchBarBloc = SearchbarBloc();
+            var homeBloc = HomeBloc();
+            homeBloc.mapBloc = mapBloc;
+            homeBloc.searchBarBloc = searchBarBloc;
+            homeBloc.sheetBloc = sheetsBloc;
+
+            sheetsBloc.homeBloc = homeBloc;
+            mapBloc.homeBloc = homeBloc;
+            mapBloc.sheetsBloc = sheetsBloc;
+            searchBarBloc.homeBloc = homeBloc;
+
             return MultiBlocProvider(
               child: HomePage(),
               providers: [
-                BlocProvider<SheetsBloc>(builder: (context) => SheetsBloc(context: context)),
-                BlocProvider<MapBloc>(builder: (context) => MapBloc(context: context)),
-                BlocProvider<SearchbarBloc>(builder: (context) => SearchbarBloc(context: context)),
-                BlocProvider<HomeBloc>(builder: (context) => HomeBloc(context: context)),
+                BlocProvider<SheetsBloc>(builder: (context) => sheetsBloc..context = context),
+                BlocProvider<MapBloc>(builder: (context) => mapBloc..context = context),
+                BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
+                BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
               ],
             );
           },

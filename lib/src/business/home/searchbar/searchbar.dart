@@ -60,6 +60,10 @@ class _SearchBarPresenterState extends State<SearchBarPresenter> {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchbarBloc, SearchbarState>(
       builder: (BuildContext context, SearchbarState state) {
+        if(state is HideSearchBarState) {
+          return SizedBox.shrink();
+        }
+
         bool isPrvIsSearchItems =
             (state is SearchPoiState) && (state.prvSearchPois != null && state.prvSearchPois.length > 0);
         Widget barIcon = isPrvIsSearchItems
@@ -85,7 +89,7 @@ class _SearchBarPresenterState extends State<SearchBarPresenter> {
           color: isTouchSheet ? Colors.white : Colors.transparent,
 //          elevation: isTouchSheet ? 2.0 : 0,
           child: Container(
-            margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 16, right: 16, bottom: 8),
+            margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 8, left: 16, right: 16, bottom: 8),
             decoration: BoxDecoration(
 //              border: isTouchSheet ? null : Border.all(color: Colors.grey[400]),
 //              borderRadius: isTouchSheet ? null : BorderRadius.all(Radius.circular(8)),

@@ -35,3 +35,17 @@ class SearchTextEvent extends HomeEvent {
 }
 
 class ExistSearchEvent extends HomeEvent {}
+
+//route
+//class RouteEvent extends HomeEvent {}
+
+//event bus
+class RouteClickEvent extends HomeEvent {
+  final String profile;
+  final IPoi toPoi;
+
+  RouteClickEvent({
+    this.profile = 'driving',
+    this.toPoi,
+  });
+}

@@ -2,5 +2,13 @@
   "app_name": "泰坦",
   "network_request_err": "网络请求错误,状态码: $code",
   "offline_map": "离线地图",
-  "route": "路线"
+  "route": "路线",
+  "no_recommended_route": "暂无推荐路线",
+  "less_than_1_min": "小于1分钟",
+  "n_day": "${day}天",
+  "n_hour": "${hour}小时",
+  "n_minute": "${minute}分钟",
+  "km": "${km}公里",
+  "distance": "${distance}米",
+  "my_position": "我的位置"
 }

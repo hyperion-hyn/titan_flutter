@@ -52,3 +52,5 @@ class SearchPoiState extends SearchbarState {
     );
   }
 }
+
+class HideSearchBarState extends SearchbarState {}

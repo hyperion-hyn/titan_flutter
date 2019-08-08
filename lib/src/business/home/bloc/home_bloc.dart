@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 
@@ -11,18 +10,18 @@ import '../sheets/bloc/bloc.dart' as sheets;
 import '../map/bloc/bloc.dart' as map;
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final BuildContext context;
+  BuildContext context;
 
   HomeBloc({this.context});
 
   @override
   HomeState get initialState => InitialHomeState();
 
-  sheets.SheetsBloc get sheetBloc => BlocProvider.of<sheets.SheetsBloc>(context);
+  sheets.SheetsBloc sheetBloc;
 
-  search.SearchbarBloc get searchBarBloc => BlocProvider.of<search.SearchbarBloc>(context);
+  search.SearchbarBloc searchBarBloc;
 
-  map.MapBloc get mapBloc => BlocProvider.of<map.MapBloc>(context);
+  map.MapBloc mapBloc;
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
@@ -62,6 +61,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       sheetBloc.dispatch(sheets.CloseSheetEvent());
 
       if (event.pois != null && event.pois.length > 0) {
+        //back to search result
         searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, pois: event.pois)));
         sheetBloc.dispatch(sheets.ShowSearchItemsEvent(items: event.pois));
         mapBloc.dispatch(map.AddMarkerListEvent(pois: event.pois));
@@ -96,6 +96,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       mapBloc.dispatch(map.ClearMarkerEvent());
       mapBloc.dispatch(map.ClearMarkerListEvent());
       sheetBloc.dispatch(sheets.CloseSheetEvent());
-    }
+    } /*else if(event is RouteEvent) {
+      searchBarBloc.dispatch(search.HideSearchBarEvent());
+      sheetBloc.dispatch(sheets.CloseSheetEvent());
+      mapBloc.dispatch(map.ClearMarkerEvent());
+      mapBloc.dispatch(map.ClearMarkerListEvent());
+
+      eventBus.fire(RouteClickEvent());
+    }*/
   }
 }

@@ -2,5 +2,13 @@
   "app_name": "Titan",
   "network_request_err": "Network request error, code: $code",
   "offline_map": "Offline map",
-  "route": "Route"
+  "route": "Route",
+  "no_recommended_route": "No recommended route yet",
+  "less_than_1_min": "Less than 1 minute",
+  "n_day": "$day day ",
+  "n_hour": "$hour hour ",
+  "n_minute": "$minute minute ",
+  "km": "$km km ",
+  "distance": "$distance m",
+  "my_position": "My position"
 }

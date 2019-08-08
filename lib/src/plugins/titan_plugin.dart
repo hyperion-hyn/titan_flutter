@@ -31,7 +31,6 @@ class TitanPlugin {
   // encryption
   //---------------------
   static Future<String> initKeyPair({int expired = 0}) async {
-    print('init key pair');
     if (expired == 0) {
       expired = DateTime.now().millisecondsSinceEpoch + 3600 * 24 * 1000;
     }
