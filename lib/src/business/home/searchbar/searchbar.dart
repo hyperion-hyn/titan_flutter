@@ -7,7 +7,7 @@ import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 import 'bloc/bloc.dart';
 
 typedef void OnSearchCallback(String searchText);
-typedef void BackToPrvSearchCallback(String searchText, List<dynamic> pois);
+typedef void BackToPrvSearchCallback(String searchText);
 
 class SearchBarPresenter extends StatefulWidget {
   final OnSearchCallback onSearch;
@@ -64,14 +64,13 @@ class _SearchBarPresenterState extends State<SearchBarPresenter> {
           return SizedBox.shrink();
         }
 
-        bool isPrvIsSearchItems =
-            (state is SearchPoiState) && (state.prvSearchPois != null && state.prvSearchPois.length > 0);
-        Widget barIcon = isPrvIsSearchItems
+        bool isFromSearchText = (state is SearchPoiState) && state.prvSearchText != null;
+        Widget barIcon = isFromSearchText
             ? Icon(Icons.arrow_back_ios, color: Colors.grey[600])
             : Icon(Icons.menu, color: Colors.grey[600]);
 
         if (state is SearchPoiState) {
-          if (isPrvIsSearchItems) {
+          if (isFromSearchText) {
             _textEditingController.text = state.prvSearchText;
           } else {
             if (state.poi is PoiEntity) {
@@ -103,9 +102,9 @@ class _SearchBarPresenterState extends State<SearchBarPresenter> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
-                      if (isPrvIsSearchItems) {
+                      if (isFromSearchText) {
                         var st = state as SearchPoiState;
-                        if (widget.backToPrvSearch != null) widget.backToPrvSearch(st.prvSearchText, st.prvSearchPois);
+                        if (widget.backToPrvSearch != null) widget.backToPrvSearch(st.prvSearchText);
                       } else {
                         if (widget.onMenu != null) widget.onMenu();
                       }

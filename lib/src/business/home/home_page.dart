@@ -91,9 +91,8 @@ class _HomePageState extends State<HomePage> {
                       SearchBarPresenter(
                         draggableBottomSheetController: _draggableBottomSheetController,
                         onMenu: () => Scaffold.of(context).openDrawer(),
-                        backToPrvSearch: (String searchText, List<dynamic> pois) {
-                          BlocProvider.of<HomeBloc>(context)
-                              .dispatch(SearchTextEvent(searchText: searchText, pois: pois));
+                        backToPrvSearch: (String searchText) {
+                          BlocProvider.of<HomeBloc>(context).dispatch(SearchTextEvent(searchText: searchText));
                         },
                         onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
                         onSearch: (searchText) async {

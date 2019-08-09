@@ -36,6 +36,7 @@ class MapRoute extends StatelessWidget {
         return false;
       },
       child: Material(
+        elevation: 2,
         child: Padding(
           padding: EdgeInsets.only(top: 32),
           child: Column(

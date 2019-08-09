@@ -257,21 +257,21 @@ class _DraggableState extends State<DraggableBottomSheet>
 
   Widget buildContent(context) {
     return Material(
-        elevation: 2.0,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(widget.draggable ? topRadius : 0)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-          if(widget.draggable)
-            Container(
-              margin: EdgeInsets.only(top: 8.0),
-              constraints: BoxConstraints.tightFor(width: 40.0, height: 4.0),
-              decoration: BoxDecoration(
-                  color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
-            ),
-          Expanded(
-            child: NotificationListener<HeaderHeightNotification>(
-                onNotification: _handleSheetHeaderNotification, child: widget.child),
+      elevation: 2.0,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        if(widget.draggable)
+          Container(
+            margin: EdgeInsets.only(top: 8.0),
+            constraints: BoxConstraints.tightFor(width: 40.0, height: 4.0),
+            decoration: BoxDecoration(
+                color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
           ),
-        ]));
+        Expanded(
+          child: NotificationListener<HeaderHeightNotification>(
+              onNotification: _handleSheetHeaderNotification, child: widget.child),
+        ),
+      ]),
+    );
   }
 
   @override

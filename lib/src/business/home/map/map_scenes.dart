@@ -109,7 +109,11 @@ class _MapScenesState extends State<MapScenes> {
     if (shouldNeedAddSymbol) {
       showingSymbol = await mapboxMapController?.addSymbol(
         SymbolOptions(
-            geometry: poi.latLng, iconImage: "marker_big", iconAnchor: "bottom", iconOffset: Offset(0.0, 0.0)),
+          geometry: poi.latLng,
+          iconImage: "marker_big",
+          iconAnchor: "bottom",
+          iconOffset: Offset(0.0, 0.0),
+        ),
       );
 
       double top = -widget.draggableBottomSheetController?.collapsedHeight;
@@ -138,7 +142,13 @@ class _MapScenesState extends State<MapScenes> {
     _clearAllMarkers();
 
     List<SymbolOptions> options = pois
-        .map((poi) => SymbolOptions(geometry: poi.latLng, iconImage: "marker_gray", iconAnchor: "center", iconSize: 20))
+        .map(
+          (poi) => SymbolOptions(
+              geometry: poi.latLng,
+              iconImage: "marker_gray",
+              iconAnchor: "center",
+              iconSize: Platform.isAndroid ? 1 : 0.4),
+        )
         .toList();
     mapboxMapController?.addSymbolList(options);
   }

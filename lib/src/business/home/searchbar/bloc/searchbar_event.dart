@@ -33,8 +33,9 @@ class ShowSearchEvent extends SearchbarEvent {
 
 class ShowPoiEvent extends SearchbarEvent {
   final IPoi poi;
+  final String prvSearchText;
 
-  ShowPoiEvent({this.poi});
+  ShowPoiEvent({this.poi, this.prvSearchText});
 }
 
 class ExistSearchEvent extends SearchbarEvent {}

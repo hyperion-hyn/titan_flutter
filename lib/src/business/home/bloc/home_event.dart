@@ -24,13 +24,13 @@ class SearchPoiEvent extends HomeEvent {
 class SearchTextEvent extends HomeEvent {
   final String searchText;
   final LatLng center;
-  final List<dynamic> pois;
+//  final List<dynamic> pois;
 
-  SearchTextEvent({this.center, this.searchText, this.pois});
+  SearchTextEvent({this.center, this.searchText});
 
   @override
   String toString() {
-    return 'SearchPoiEvent{searchText: $searchText, center: $center, pois:$pois}';
+    return 'SearchPoiEvent{searchText: $searchText, center: $center}';
   }
 }
 

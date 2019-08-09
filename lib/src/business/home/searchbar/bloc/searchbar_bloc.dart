@@ -24,14 +24,16 @@ class SearchbarBloc extends Bloc<SearchbarEvent, SearchbarState> {
         failMsg: event.failMsg,
       );
     } else if (event is ShowPoiEvent) {
-      if (currentState is SearchTextState) {
-        var cs = (currentState as SearchTextState);
-        yield SearchPoiState(poi: event.poi, prvSearchPois: cs.pois, prvSearchText: cs.searchText);
-      } else if (currentState is SearchPoiState) {
-        yield (currentState as SearchPoiState).copyWith(SearchPoiState(poi: event.poi));
-      } else {
-        yield SearchPoiState(poi: event.poi);
-      }
+//      if (currentState is SearchTextState) {
+//        var cs = (currentState as SearchTextState);
+//        yield SearchPoiState(poi: event.poi, prvSearchPois: cs.pois, prvSearchText: cs.searchText);
+//      } else if (currentState is SearchPoiState) {
+//        yield (currentState as SearchPoiState).copyWith(SearchPoiState(poi: event.poi));
+//      } else {
+//        yield SearchPoiState(poi: event.poi);
+//      }
+
+      yield SearchPoiState(poi: event.poi, prvSearchText: event.prvSearchText);
     } else if (event is ExistSearchEvent) {
       yield InitialSearchbarState();
     } else if(event is HideSearchBarEvent) {

@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
 
 import './bloc.dart';
 import '../searchbar/bloc/bloc.dart' as search;
@@ -23,13 +24,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   map.MapBloc mapBloc;
 
+  //search data
+  List<IPoi> searchList;
+  String searchText;
+
+  //showing poi
+  IPoi selectedPoi;
+
+
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
     if (event is ShowPoiEvent) {
       //show bottom sheet of the poi
       sheetBloc.dispatch(sheets.ShowPoiEvent(poi: event.poi));
       //update search bar ui
-      searchBarBloc.dispatch(search.ShowPoiEvent(poi: event.poi));
+      searchBarBloc.dispatch(search.ShowPoiEvent(poi: event.poi, prvSearchText: searchText));
       //add marker on map
       mapBloc.dispatch(map.AddMarkerEvent(poi: event.poi));
     } else if (event is SearchPoiEvent) {
@@ -60,12 +69,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       mapBloc.dispatch(map.ClearMarkerListEvent());
       sheetBloc.dispatch(sheets.CloseSheetEvent());
 
-      if (event.pois != null && event.pois.length > 0) {
+      print('xx 1 ${event.searchText}');
+//      if (event.pois != null && event.pois.length > 0) {
+      if (searchText != null && searchList != null && searchText == event.searchText) {
+        print('xx 2 ${event.searchText}');
         //back to search result
-        searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, pois: event.pois)));
-        sheetBloc.dispatch(sheets.ShowSearchItemsEvent(items: event.pois));
-        mapBloc.dispatch(map.AddMarkerListEvent(pois: event.pois));
+        searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, pois: searchList)));
+        sheetBloc.dispatch(sheets.ShowSearchItemsEvent(items: searchList));
+        mapBloc.dispatch(map.AddMarkerListEvent(pois: searchList));
       } else {
+        print('xx 3 ${event.searchText}');
+        searchText = event.searchText;
+
         mapBloc.dispatch(map.ClearMarkerListEvent());
         sheetBloc.dispatch(sheets.CloseSheetEvent());
 
@@ -83,6 +98,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             sheetBloc.dispatch(sheets.ShowSearchItemsEvent(items: pois));
             //show map search result
             mapBloc.dispatch(map.AddMarkerListEvent(pois: pois));
+
+            searchList = pois;
           } else {
             searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, failMsg: '无搜索结果')));
           }
@@ -92,6 +109,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
       }
     } else if (event is ExistSearchEvent) {
+      searchList = null;
+      searchText = null;
+
       searchBarBloc.dispatch(search.ExistSearchEvent());
       mapBloc.dispatch(map.ClearMarkerEvent());
       mapBloc.dispatch(map.ClearMarkerListEvent());

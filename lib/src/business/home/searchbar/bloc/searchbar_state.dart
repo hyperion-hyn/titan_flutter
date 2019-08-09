@@ -37,9 +37,9 @@ class SearchPoiState extends SearchbarState {
   final IPoi poi;
 
   final String prvSearchText;
-  final List<IPoi> prvSearchPois;
+//  final List<IPoi> prvSearchPois;
 
-  SearchPoiState({this.poi, this.prvSearchPois, this.prvSearchText});
+  SearchPoiState({this.poi, this.prvSearchText});
 
   SearchPoiState copyWith(SearchPoiState state) {
     if(state == null) {
@@ -48,7 +48,7 @@ class SearchPoiState extends SearchbarState {
     return SearchPoiState(
       poi: state.poi ?? this.poi,
       prvSearchText: state.prvSearchText ?? this.prvSearchText,
-      prvSearchPois: state.prvSearchPois ?? this.prvSearchPois,
+//      prvSearchPois: state.prvSearchPois ?? this.prvSearchPois,
     );
   }
 }
