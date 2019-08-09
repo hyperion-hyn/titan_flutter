@@ -99,14 +99,14 @@ class _MapScenesState extends State<MapScenes> {
 
       print('${widget.draggableBottomSheetController?.bottom} ${window.devicePixelRatio}');
       double top = -widget.draggableBottomSheetController?.collapsedHeight;
-      if(widget.draggableBottomSheetController?.getSheetState() == DraggableBottomSheetState.ANCHOR_POINT) {
+      if (widget.draggableBottomSheetController?.getSheetState() == DraggableBottomSheetState.ANCHOR_POINT) {
         top = -widget.draggableBottomSheetController?.anchorHeight;
       }
       var offset = 0.001;
       var sw = LatLng(poi.latLng.latitude - offset, poi.latLng.longitude - offset);
       var ne = LatLng(poi.latLng.latitude + offset, poi.latLng.longitude + offset);
-      mapboxMapController?.animateCamera(CameraUpdate.newLatLngBounds2(
-          LatLngBounds(southwest: sw, northeast: ne), 0, top + 32, 0, 0));
+      mapboxMapController
+          ?.animateCamera(CameraUpdate.newLatLngBounds2(LatLngBounds(southwest: sw, northeast: ne), 0, top + 32, 0, 0));
 
       currentPoi = poi;
     }
@@ -120,12 +120,59 @@ class _MapScenesState extends State<MapScenes> {
     currentPoi = null;
   }
 
+  var MAX_POI_DIFF_DISTANCE = 5000;
+
   void _addMarkers(List<IPoi> pois) {
     _clearAllMarkers();
 
-    List<SymbolOptions> options = pois.map((poi) => SymbolOptions(
-        geometry: poi.latLng, iconImage: "hyn-marker-image", iconAnchor: "bottom", iconOffset: Offset(0.0, 3.0))).toList();
+    List<SymbolOptions> options = pois
+        .map((poi) => SymbolOptions(
+            geometry: poi.latLng, iconImage: "marker_gray", iconAnchor: "bottom", iconOffset: Offset(0.0, 3.0)))
+        .toList();
     mapboxMapController?.addSymbolList(options);
+
+    //计算太远的距离
+    var firstPoi = pois[0];
+    var distanceFilterList = List<IPoi>();
+    distanceFilterList.add(firstPoi);
+
+    for (var i = 0; i < pois.length; i++) {
+      var poiTemp = pois[i];
+      if (firstPoi.latLng.distanceTo(poiTemp.latLng) < MAX_POI_DIFF_DISTANCE &&
+          firstPoi.latLng.distanceTo(poiTemp.latLng) > 10) {
+        distanceFilterList.add(poiTemp);
+      }
+    }
+
+    //针对过滤后的结果，看选择不同的移动方式
+
+    //TODO 针对地图的偏移，绑定在列表的显示和隐藏事件中
+
+    if (distanceFilterList.length == 1) {
+      mapboxMapController.animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0)).then((_) {
+        var screenHeight = MediaQuery.of(context).size.height;
+        mapboxMapController.animateCamera(CameraUpdate.scrollBy(0, -screenHeight / 4));
+      });
+    } else {
+      var latlngList = List<LatLng>();
+
+      for (var poi in distanceFilterList) {
+        latlngList.add(poi.latLng);
+      }
+
+      var padding = 0.0;
+      if (distanceFilterList.length < 5) {
+        padding = 300.0;
+      } else {
+        padding = 150.0;
+      }
+
+      var latlngBound = LatLngBounds.fromLatLngs(latlngList);
+
+      var screenHeight = MediaQuery.of(context).size.height;
+      mapboxMapController.moveCamera(
+          CameraUpdate.newLatLngBounds2(latlngBound, padding, padding, padding, screenHeight / 2 + padding));
+    }
   }
 
   void _clearAllMarkers() {
@@ -170,12 +217,11 @@ class _MapScenesState extends State<MapScenes> {
           _addMarker(state.poi);
         } else if (state is ClearMarkerState) {
           _removeMarker();
-        } else if(state is MarkerListLoadedState) {
+        } else if (state is MarkerListLoadedState) {
           _addMarkers(state.pois);
-        } else if(state is ClearMarkerListState) {
+        } else if (state is ClearMarkerListState) {
           _clearAllMarkers();
-        }
-        else if (state is RouteLoadedState) {
+        } else if (state is RouteLoadedState) {
           _addRoute(state.routeData);
         } else if (state is MyLocationState) {
           _toMyLocation();
@@ -203,5 +249,4 @@ class _MapScenesState extends State<MapScenes> {
       ),
     );
   }
-
 }
