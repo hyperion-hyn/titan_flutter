@@ -25,13 +25,29 @@ class AddMarkerListEvent extends MapEvent {
 class ClearMarkerListEvent extends MapEvent {}
 
 ///route
-class AddRouteEvent extends MapEvent {
-  final dynamic routeData;
+class QueryRouteEvent extends MapEvent {
+  final LatLng start;
+  final LatLng end;
+  final String languageCode;
+  final int padding;
+  final String profile;
+  final String startName;
+  final String endName;
+  final IPoi selectedPoi;
 
-  AddRouteEvent({this.routeData});
+  QueryRouteEvent({
+    this.start,
+    this.end,
+    this.languageCode,
+    this.profile = 'driving',
+    this.startName,
+    this.endName,
+    this.selectedPoi,
+    this.padding = 100,
+  });
 }
 
-class ClearRouteEvent extends MapEvent {}
+class CloseRouteEvent extends MapEvent {}
 
 
 ///location

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as search;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
 import 'package:titan/src/business/home/sheets/sheets.dart';
 
@@ -13,8 +14,10 @@ import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
+import '../../global.dart';
 import 'bloc/bloc.dart';
 import 'bootom_opt_bar_widget.dart';
+import 'map/bloc/bloc.dart';
 import 'map/map_scenes.dart';
 import 'bottom_fabs_widget.dart';
 import 'drawer/drawer_scenes.dart';
@@ -72,6 +75,7 @@ class _HomePageState extends State<HomePage> {
 
                       ///主要是支持drawer手势划出
                       Container(
+                        margin: EdgeInsets.only(top: 120),
                         decoration: BoxDecoration(color: Colors.transparent),
                         constraints: BoxConstraints.tightForFinite(width: 24.0),
                       ),
@@ -83,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                         draggableBottomSheetController: _draggableBottomSheetController,
                       ),
 
-                      ///搜索入口
+                      ///search bar
                       SearchBarPresenter(
                         draggableBottomSheetController: _draggableBottomSheetController,
                         onMenu: () => Scaffold.of(context).openDrawer(),
@@ -98,9 +102,9 @@ class _HomePageState extends State<HomePage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SearchPage(
-                                    searchCenter: center,
-                                    searchText: searchText,
-                                  )));
+                                        searchCenter: center,
+                                        searchText: searchText,
+                                      )));
                           if (searchResult is String) {
                             BlocProvider.of<HomeBloc>(context)
                                 .dispatch(SearchTextEvent(searchText: searchResult, center: center));
@@ -110,13 +114,14 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
 
-                      ///路线规划， 分析操作区
+                      ///opt area
                       BlocBuilder<sheets.SheetsBloc, sheets.SheetsState>(
                         builder: (context, state) {
                           if (state is sheets.PoiLoadedState || state is sheets.HeavenPoiLoadedState) {
                             return BottomOptBarWidget(
                               onRouteTap: () {
-                                print('route TODO');
+//                                BlocProvider.of<HomeBloc>(context).dispatch(RouteEvent());
+                                eventBus.fire(RouteClickEvent());
                               },
                               onShareTap: () {
                                 print('shaer TODO');

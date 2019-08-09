@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:titan/src/inject/injector.dart';
+import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import './bloc.dart';
 
 class SearchbarBloc extends Bloc<SearchbarEvent, SearchbarState> {
-  final BuildContext context;
+  BuildContext context;
+
+  home.HomeBloc homeBloc;
 
   SearchbarBloc({this.context});
 
@@ -32,6 +34,8 @@ class SearchbarBloc extends Bloc<SearchbarEvent, SearchbarState> {
       }
     } else if (event is ExistSearchEvent) {
       yield InitialSearchbarState();
+    } else if(event is HideSearchBarEvent) {
+      yield HideSearchBarState();
     }
   }
 }

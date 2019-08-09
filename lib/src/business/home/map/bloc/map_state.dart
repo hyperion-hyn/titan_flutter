@@ -28,14 +28,45 @@ class MarkerListLoadedState extends MapState {
 class ClearMarkerListState extends MapState {}
 
 ///route
-class RouteLoadedState extends MapState {
-  final dynamic routeData;
+class RouteSceneState extends MapState {
+  final RouteDataModel routeDataModel;
+  final bool isLoading;
+  final bool isError;
+  final String startName;
+  final String endName;
+  final String profile;
+  final IPoi selectedPoi;
 
-  RouteLoadedState({this.routeData});
+  RouteSceneState({
+    this.routeDataModel,
+    this.isLoading = false,
+    this.isError = false,
+    this.endName,
+    this.startName,
+    this.profile,
+    this.selectedPoi,
+  });
+
+  RouteSceneState copyWith(RouteSceneState copy) {
+    return RouteSceneState(
+        routeDataModel: copy.routeDataModel ?? this.routeDataModel,
+        profile: copy.profile ?? this.profile,
+        startName: copy.startName ?? this.startName,
+        endName: copy.endName ?? this.endName,
+        isError: copy.isError ?? this.isError,
+        selectedPoi: copy.selectedPoi ?? this.selectedPoi,
+        isLoading: copy.isLoading ?? this.isLoading);
+  }
+
+  @override
+  String toString() {
+    return 'RouteSceneState(isLoading: $isLoading, isError: $isError, routeDataModel: $routeDataModel)';
+  }
 }
 
-class ClearRouteState extends MapState {}
+class CloseRouteState extends MapState {}
+
 
 
 ///location
-class MyLocationState extends MapState {}
+//class MyLocationState extends MapState {}
