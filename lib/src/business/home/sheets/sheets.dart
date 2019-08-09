@@ -88,6 +88,7 @@ class _SheetState extends State<Sheets> {
                 draggable: draggable,
                 controller: widget.draggableBottomSheetController,
                 childScrollController: _bottomSheetScrollController,
+                  topRadius: 16,
                 //paddingtop + search height + paddingbottom - draggable height - threshold
                 topPadding: (MediaQuery.of(context).padding.top + 48 + 8 - 12 - 4),
                 child: Stack(

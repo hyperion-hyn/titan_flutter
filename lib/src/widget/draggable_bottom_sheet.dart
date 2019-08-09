@@ -258,6 +258,7 @@ class _DraggableState extends State<DraggableBottomSheet>
   Widget buildContent(context) {
     return Material(
       elevation: 2.0,
+      borderRadius: BorderRadius.vertical(top: Radius.circular(widget.draggable ? topRadius : 0)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
         if(widget.draggable)
           Container(

@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/home/bloc/bloc.dart';
+import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as searchBar;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
 import 'package:titan/src/model/poi.dart';
@@ -81,6 +81,10 @@ class _MapScenesState extends State<MapScenes> {
 //    } else {
 //      widget.homeBloc.dispatch(ClosePoiBottomSheetEvent());
 //    }
+
+    //TODO 瓦片中找到当前位置poi，把name补到poi里面。
+    BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates)));
+
   }
 
   _onMapLongPress(Point<double> point, LatLng coordinates) async {
@@ -236,7 +240,7 @@ class _MapScenesState extends State<MapScenes> {
 
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
-      if (event is RouteClickEvent) {
+      if (event is home.RouteClickEvent) {
         var toPoi = event.toPoi ?? currentPoi;
         if (toPoi != null && mapboxMapController != null) {
           LatLng start = await mapboxMapController.lastKnownLocation();
@@ -278,6 +282,7 @@ class _MapScenesState extends State<MapScenes> {
         } else if (state is ClearMarkerState) {
           _removeMarker();
         } else if (state is MarkerListLoadedState) {
+          mapboxMapController?.disableLocation();
           _addMarkers(state.pois);
         } else if (state is ClearMarkerListState) {
           _clearAllMarkers();

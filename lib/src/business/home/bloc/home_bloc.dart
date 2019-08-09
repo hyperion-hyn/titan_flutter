@@ -41,6 +41,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       searchBarBloc.dispatch(search.ShowPoiEvent(poi: event.poi, prvSearchText: searchText));
       //add marker on map
       mapBloc.dispatch(map.AddMarkerEvent(poi: event.poi));
+      selectedPoi = event.poi;
     } else if (event is SearchPoiEvent) {
       //add marker on map
       mapBloc.dispatch(map.AddMarkerEvent(poi: event.poi));
@@ -56,6 +57,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         searchBarBloc.dispatch(search.ShowPoiEvent(poi: poi));
         //show bottom sheet of the poi
         sheetBloc.dispatch(sheets.ShowPoiEvent(poi: poi));
+        selectedPoi = poi;
       } catch (err) {
         print(err);
         //show bottom sheet fail
@@ -65,20 +67,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       var searchEvent = search.ShowSearchEvent(isLoading: true, searchText: event.searchText);
 
       //clear some
+      selectedPoi = null;
       mapBloc.dispatch(map.ClearMarkerEvent());
       mapBloc.dispatch(map.ClearMarkerListEvent());
       sheetBloc.dispatch(sheets.CloseSheetEvent());
 
-      print('xx 1 ${event.searchText}');
 //      if (event.pois != null && event.pois.length > 0) {
       if (searchText != null && searchList != null && searchText == event.searchText) {
-        print('xx 2 ${event.searchText}');
         //back to search result
         searchBarBloc.dispatch(searchEvent.copyWith(search.ShowSearchEvent(isLoading: false, pois: searchList)));
         sheetBloc.dispatch(sheets.ShowSearchItemsEvent(items: searchList));
         mapBloc.dispatch(map.AddMarkerListEvent(pois: searchList));
       } else {
-        print('xx 3 ${event.searchText}');
         searchText = event.searchText;
 
         mapBloc.dispatch(map.ClearMarkerListEvent());
@@ -111,6 +111,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is ExistSearchEvent) {
       searchList = null;
       searchText = null;
+      selectedPoi =  null;
 
       searchBarBloc.dispatch(search.ExistSearchEvent());
       mapBloc.dispatch(map.ClearMarkerEvent());
