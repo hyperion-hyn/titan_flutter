@@ -1,8 +1,13 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 abstract class IPoi {
-  final LatLng latLng;
   final String name;
+  final String address;
+  final LatLng latLng;
 
-  IPoi({this.latLng, this.name});
+  IPoi({
+    this.latLng,
+    this.name,
+    this.address,
+  });
 }

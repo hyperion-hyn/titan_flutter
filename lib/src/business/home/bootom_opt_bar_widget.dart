@@ -36,7 +36,7 @@ class BottomOptBarWidget extends StatelessWidget {
                   SizedBox(
                     width: 16,
                   ),
-                  buildButton(text: '私密分享', icon: Icons.lock, onTap: onShareTap),
+                  buildButton(text: '位置分享', icon: Icons.lock, onTap: onShareTap),
                 ],
               ),
             ),

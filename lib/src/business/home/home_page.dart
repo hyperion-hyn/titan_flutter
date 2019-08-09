@@ -26,6 +26,8 @@ import 'searchbar/searchbar.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter/services.dart' show PlatformException;
 
+import 'share_dialog.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -122,8 +124,15 @@ class _HomePageState extends State<HomePage> {
 //                                BlocProvider.of<HomeBloc>(context).dispatch(RouteEvent());
                                 eventBus.fire(RouteClickEvent());
                               },
-                              onShareTap: () {
-                                print('shaer TODO');
+                              onShareTap: () async {
+                                var selectedPoi = BlocProvider.of<HomeBloc>(context).selectedPoi;
+                                if (selectedPoi != null) {
+                                  var dat = await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ShareDialog(poi: selectedPoi);
+                                      });
+                                }
                               },
                             );
                           }
