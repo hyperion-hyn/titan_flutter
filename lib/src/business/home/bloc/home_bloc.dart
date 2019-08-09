@@ -53,6 +53,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         var searchInteractor = Injector.of(context).searchInteractor;
         PoiEntity poi =
             await searchInteractor.reverseGeoSearch(event.poi.latLng, Localizations.localeOf(context).languageCode);
+        poi.name = event.poi.name??poi.name;
         //update search bar ui
         searchBarBloc.dispatch(search.ShowPoiEvent(poi: poi));
         //show bottom sheet of the poi

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,16 +65,14 @@ class _MapScenesState extends State<MapScenes> {
     print("start map click event");
     var range = 10;
     Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
-    String filter;
-    if (Platform.isAndroid) {
-      filter = '["has", "name"]';
-    }
-    if (Platform.isIOS) {
-      filter = "name != NIL";
-    }
-    List features = await mapboxMapController?.queryRenderedFeaturesInRect(rect, [], filter);
 
-    print(features);
+    if (await _clickOnMarkerLayer(rect)) {
+      return;
+    }
+    if (await _clickOnCommonSymbolLayer(rect)) {
+      return;
+    }
+
 //    if (features != null && features.length > 0) {
 //      var clickFeatureJsonString = features[0];
 //      var clickFeatureJson = json.decode(clickFeatureJsonString);
@@ -83,12 +82,95 @@ class _MapScenesState extends State<MapScenes> {
 //    }
 
     //TODO 瓦片中找到当前位置poi，把name补到poi里面。
-    BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates)));
+//    BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates)));
+  }
 
+  Future<bool> _clickOnCommonSymbolLayer(Rect rect) async {
+    String filter;
+    if (Platform.isAndroid) {
+      filter = '["has", "name"]';
+    }
+    if (Platform.isIOS) {
+      filter = "name != NIL";
+    }
+    List features = await mapboxMapController?.queryRenderedFeaturesInRect(rect, [], filter);
+
+    print("query features :${features}");
+    var filterFeatureList = features.where((featureString) {
+      var feature = json.decode(featureString);
+
+      var type = feature["geometry"]["type"];
+      if (type == "Point") {
+        return true;
+      } else {
+        return false;
+      }
+    }).toList();
+
+    print("filter features :${filterFeatureList}");
+    if (filterFeatureList != null && filterFeatureList.isNotEmpty) {
+      var firstFeature = json.decode(filterFeatureList[0]);
+      var coordinatesArray = firstFeature["geometry"]["coordinates"];
+      var coordinates = LatLng(coordinatesArray[1], coordinatesArray[0]);
+      print("coordinates:${coordinates}");
+      var languageCode = Localizations.localeOf(context).languageCode;
+      var name = "";
+      if (languageCode == "zh") {
+        name = firstFeature["properties"]["name:zh"];
+        if (name == null) {
+          name = firstFeature["properties"]["name"];
+        }
+      } else {
+        name = firstFeature["properties"]["name"];
+      }
+
+      BlocProvider.of<home.HomeBloc>(context)
+          .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates, name: name)));
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> _clickOnMarkerLayer(Rect rect) async {
+    // 查找搜索结果的layer
+
+    String symbolMarkerLayerId = "";
+    if (Platform.isIOS) {
+      symbolMarkerLayerId = "hyn-batch-add-marker-layer";
+    }
+    if (Platform.isAndroid) {
+      symbolMarkerLayerId = "mapbox-android-symbol-layer";
+    }
+
+    List symbolMarkerFeatures =
+        await mapboxMapController?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
+    if (symbolMarkerFeatures != null && symbolMarkerFeatures.isNotEmpty) {
+      print("symbolMarkerFeatures：" + symbolMarkerFeatures[0]);
+
+      var symbolMarkerFeature = json.decode(symbolMarkerFeatures[0]);
+
+      var markerId = symbolMarkerFeature["properties"]["id"].toInt();
+
+      print("markerID:${markerId}");
+
+      print("_currentGrayMarkerMap:${_currentGrayMarkerMap}");
+      var poi = _currentGrayMarkerMap[markerId.toString()];
+
+      print("poi:${poi}");
+
+      var coordinates = poi.latLng;
+
+      BlocProvider.of<home.HomeBloc>(context)
+          .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates, name: poi.name)));
+      return true;
+    } else {
+      return false;
+    }
   }
 
   _onMapLongPress(Point<double> point, LatLng coordinates) async {
-    print('xx on long press $point, $coordinates');
+    BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates)));
   }
 
   void onStyleLoaded(controller) async {
@@ -144,7 +226,9 @@ class _MapScenesState extends State<MapScenes> {
 
   var MAX_POI_DIFF_DISTANCE = 5000;
 
-  void _addMarkers(List<IPoi> pois) {
+  var _currentGrayMarkerMap = Map<String, IPoi>();
+
+  void _addMarkers(List<IPoi> pois) async {
     _clearAllMarkers();
 
     List<SymbolOptions> options = pois
@@ -156,7 +240,11 @@ class _MapScenesState extends State<MapScenes> {
               iconSize: Platform.isAndroid ? 1 : 0.4),
         )
         .toList();
-    mapboxMapController?.addSymbolList(options);
+    var symbolList = await mapboxMapController?.addSymbolList(options);
+
+    for (var i = 0; i < symbolList.length; i++) {
+      _currentGrayMarkerMap[symbolList[i].id] = pois[i];
+    }
 
     //计算太远的距离
     var firstPoi = pois[0];
@@ -206,6 +294,7 @@ class _MapScenesState extends State<MapScenes> {
     mapboxMapController?.clearSymbols();
     showingSymbol = null;
     currentPoi = null;
+    _currentGrayMarkerMap.clear();
   }
 
   void _toMyLocation() {
