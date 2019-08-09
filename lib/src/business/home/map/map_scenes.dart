@@ -198,7 +198,7 @@ class _MapScenesState extends State<MapScenes> {
           geometry: poi.latLng,
           iconImage: "marker_big",
           iconAnchor: "bottom",
-          iconOffset: Offset(0.0, 0.0),
+          iconOffset: Offset(0.0, 3.0),
         ),
       );
 
