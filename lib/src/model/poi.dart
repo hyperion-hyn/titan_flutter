@@ -10,7 +10,7 @@ part 'poi.g.dart';
 
 @JsonSerializable()
 class PoiEntity implements IPoi {
-  final String name;
+  String name;
   final String address;
   final String tags;
   @JsonKey(fromJson: LatLngConverter.latLngFromJson, toJson: LatLngConverter.latLngToJson)
