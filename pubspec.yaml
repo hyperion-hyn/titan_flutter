@@ -68,6 +68,8 @@ dependencies:
   esys_flutter_share: 1.0.2
   #https://pub.dev/packages/uni_links
   uni_links: 0.2.0
+  #https://pub.dev/packages/intro_slider#demo:
+  intro_slider: ^2.2.6
   #https://github.com/tobrun/flutter-mapbox-gl
   mapbox_gl:
     path: ../mapbox_flutter
@@ -100,6 +102,12 @@ flutter:
     - res/drawable/logo_title.png
     - res/drawable/share_app_en_android.jpeg
     - res/drawable/share_app_zh_android.jpeg
+    - res/drawable/burn.jpeg
+    - res/drawable/burn_zh.jpeg
+    - res/drawable/encrypted_location.jpeg
+    - res/drawable/encrypted_location_zh.jpeg
+    - res/drawable/location_privacy.jpeg
+    - res/drawable/location_privacy_zh.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

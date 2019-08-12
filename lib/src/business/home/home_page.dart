@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/src/business/home/intro/intro_slider.dart';
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as search;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
 import 'package:titan/src/business/home/sheets/sheets.dart';
@@ -37,6 +39,9 @@ class _HomePageState extends State<HomePage> {
 
   StreamSubscription _appLinkSubscription;
 
+  var isFirst = true;
+  var isShowIntro = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,8 +58,22 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _isNeedShowIntro() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+    print('isFirstRun: $isFirstRun');
+    if (isFirstRun && !isShowIntro) {
+      isShowIntro = true;
+      await prefs.setBool('isFirstRun', false);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => IntroScreen()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      _isNeedShowIntro();
+    });
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         drawer: DrawerScenes(),
