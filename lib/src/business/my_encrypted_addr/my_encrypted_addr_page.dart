@@ -107,10 +107,10 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                 color: Colors.black87,
                 highlightColor: Colors.black,
                 splashColor: Colors.white10,
-                onPressed: share,
-                child: Text('分享'),
                 textColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+                onPressed: share,
+                child: Text('分享'),
               ),
             ),
           )
