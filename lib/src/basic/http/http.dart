@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:titan/generated/i18n.dart';
@@ -36,6 +37,7 @@ class HttpCore {
 //    headers: {"user-agent": "dio", "api": "1.0.0"},
     /*contentType: ContentType.JSON,
       responseType: ResponseType.PLAIN*/
+    contentType: ContentType.parse('application/x-www-form-urlencoded'),
   ));
 
   Future<ResponseEntity<T>> getResponseEntity<T>(String url, EntityFactory<T> factory, {Map<String, dynamic> params}) async {
@@ -119,12 +121,12 @@ class HttpCore {
     try {
       map = json.decode(response.data);
     } catch (err) {
-      print(err);
+      print('json decode 1 err $err');
       String res2Json = json.encode(response.data);
       try {
         map = json.decode(response.data);
       } catch (err) {
-        print(err);
+        print('json decode 2 err $err');
       }
     }
 

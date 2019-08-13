@@ -1,6 +1,17 @@
+import 'dart:math';
+
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/utils/encryption.dart';
+import 'package:titan/src/utils/open_location_code.dart' as locationCode;
+
+import '../../global.dart';
 
 class ShareDialog extends StatefulWidget {
   final IPoi poi;
@@ -19,7 +30,22 @@ class ShareDialogState extends State<ShareDialog> {
   String pubAddress;
   String remark;
 
+  var pubKeyTextEditController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    pubKeyTextEditController.addListener(() {
+      if(addressErrorStr != null) {
+        setState(() {
+          addressErrorStr = null;
+          _formKey.currentState.validate();
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +109,7 @@ class ShareDialogState extends State<ShareDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        '广州图书馆',
+                        widget.poi.name,
                         style: TextStyle(color: Colors.grey[600], fontSize: 15),
                       ),
                       SizedBox(height: 4),
@@ -95,10 +121,13 @@ class ShareDialogState extends State<ShareDialog> {
                             size: 16,
                           ),
                           SizedBox(width: 8),
-                          Text(
-                            '逐渐东路1号',
-                            style: TextStyle(
-                              color: Colors.grey[600],
+                          Expanded(
+                            child: Text(
+                              widget.poi.address,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                         ],
@@ -137,6 +166,7 @@ class ShareDialogState extends State<ShareDialog> {
                       alignment: Alignment.center,
                       children: <Widget>[
                         TextFormField(
+                          controller: pubKeyTextEditController,
                           autofocus: true,
                           decoration: InputDecoration(
                               labelText: "点对点分享",
@@ -144,6 +174,7 @@ class ShareDialogState extends State<ShareDialog> {
                               contentPadding: EdgeInsets.only(top: 16, right: 32, bottom: 8)),
                           validator: validatePubAddress,
                           onSaved: (value) {
+                            print('xx onSave address $value');
                             pubAddress = value;
                           },
                         ),
@@ -166,6 +197,7 @@ class ShareDialogState extends State<ShareDialog> {
                     decoration: InputDecoration(
                         labelText: "附言", hintText: "50字内", contentPadding: EdgeInsets.only(top: 16, bottom: 8)),
                     onSaved: (value) {
+                      print('xx onSave remark $value');
                       remark = value;
                     },
                   ),
@@ -198,14 +230,43 @@ class ShareDialogState extends State<ShareDialog> {
     );
   }
 
+  String addressErrorStr;
   String validatePubAddress(String address) {
-    //TODO
-    return null;
+    return addressErrorStr;
   }
 
   void onScan() {
     print('TODO scan');
   }
 
-  void onShare() {}
+  void onShare() async {
+    _formKey.currentState.save();
+
+    String cipherText;
+
+    bool isReEncrypt = pubAddress == null || pubAddress.isEmpty;
+    if(isReEncrypt) {
+      try {
+        cipherText = await reEncryptPoi(Injector.of(context).repository, widget.poi, remark);
+      } catch (err) {
+        logger.e(err);
+        Fluttertoast.showToast(msg: '加密发生异常');
+      }
+    } else {  //p2p
+      try{
+        cipherText = await p2pEncryptPoi(pubAddress, widget.poi, remark);
+      } catch(err) {
+        logger.e(err);
+
+        setState(() {
+          addressErrorStr = '不是合法的公钥';
+          _formKey.currentState.validate();
+        });
+      }
+    }
+    
+    if(cipherText != null && cipherText.isNotEmpty) {
+      Share.text('分享加密位置', cipherText, 'text/plain');
+    }
+  }
 }

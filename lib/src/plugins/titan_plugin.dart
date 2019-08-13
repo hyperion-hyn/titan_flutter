@@ -52,6 +52,14 @@ class TitanPlugin {
     return await callChannel.invokeMethod("getExpired");
   }
 
+  static Future<String> encrypt(String pubKey, String message) async {
+    return await callChannel.invokeMethod("encrypt", {'pub': pubKey, 'message': message});
+  }
+
+  static Future<String> decrypt(String cipherText) async {
+    return await callChannel.invokeMethod("decrypt", cipherText);
+  }
+
   static StreamSubscription listenCipherEvent(onData, {Function onError, void onDone(), bool cancelOnError}) {
     return keyPairChangeChannel
         .receiveBroadcastStream('keypair_change_event')
