@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/business/home/burning_dialog/burning_dialog.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
@@ -49,8 +50,13 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
                     leading: new Icon(IconData(0xe66e, fontFamily: 'iconfont'), color: Color(0xffac2229)),
                     title: new Text('清除痕迹', style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
                     onTap: () {
-                      Fluttertoast.showToast(msg: 'TODO');
                       Navigator.pop(ctx);
+//                      Navigator.push(context, MaterialPageRoute(builder: (context) => BurningDialog()));
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return BurningDialog();
+                          });
                     }),
                 new ListTile(
                   leading: new Icon(Icons.close),
