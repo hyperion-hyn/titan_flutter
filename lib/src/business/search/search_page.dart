@@ -9,7 +9,9 @@ import 'package:titan/src/model/poi.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/src/utils/encryption.dart';
 
+import '../../global.dart';
 import 'bloc/bloc.dart';
 
 class SearchPage extends StatefulWidget {
@@ -84,7 +86,8 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void searchTextChangeListener() {
-    if (_searchTextController.text.isNotEmpty) {
+    String currentText = _searchTextController.text.trim();
+    if (currentText.isNotEmpty) {
       if (!_visibleCloseIcon) {
         setState(() {
           _visibleCloseIcon = true;
@@ -92,14 +95,14 @@ class _SearchPageState extends State<SearchPage> {
       }
       var event = FetchSearchItemsEvent(
           isHistory: false,
-          searchText: _searchTextController.text,
+          searchText: currentText,
           center: widget.searchCenter,
           language: Localizations.localeOf(context).languageCode);
 
       _subscription?.cancel();
       _subscription = null;
       _subscription = Observable.timer(event, Duration(milliseconds: 1000)).listen((data) {
-        if (data.searchText == _searchTextController.text) {
+        if (data.searchText == currentText) {
           _searchBloc.dispatch(data);
         }
       });
@@ -114,6 +117,26 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void handleSearch(textOrPoi) async {
+    if(textOrPoi is String) {
+      textOrPoi = (textOrPoi as String).trim();
+      if((textOrPoi as String).isEmpty) {
+        return ;
+      }
+    }
+
+    if (textOrPoi is String && !isSearchText(textOrPoi)) {
+      //encrypt text
+      try {
+        var poi = await ciphertextToPoi(Injector.of(context).repository, textOrPoi);
+        _searchBloc.dispatch(AddSearchItemEvent(textOrPoi));
+        Navigator.pop(context, poi);
+      } catch(err) {
+        logger.e(err);
+        Fluttertoast.showToast(msg: err.message);
+      }
+      return;
+    }
+
     _searchBloc.dispatch(AddSearchItemEvent(textOrPoi));
     Navigator.pop(context, textOrPoi);
   }
@@ -166,6 +189,7 @@ class _SearchPageState extends State<SearchPage> {
                                       return buildTextItem(item.toString());
                                     }
                                   } else {
+                                    //devicer
                                     return Padding(
                                       padding: const EdgeInsets.only(left: 72.0),
                                       child: Divider(height: 0),
@@ -258,7 +282,8 @@ class _SearchPageState extends State<SearchPage> {
               child: TextField(
                   controller: _searchTextController,
                   onSubmitted: handleSearch,
-                  autofocus: true,
+//                  autofocus: true,
+                  enableInteractiveSelection: true,
                   textInputAction: TextInputAction.search,
                   focusNode: _searchFocusNode,
                   decoration: InputDecoration(
@@ -283,9 +308,16 @@ class _SearchPageState extends State<SearchPage> {
     return InkWell(
         onTap: () => handleSearch(text),
         child: Stack(children: <Widget>[
-          Padding(padding: const EdgeInsets.all(16.0), child: Icon(Icons.history, color: Colors.grey[600])),
-          Positioned(
-              left: 72, right: 48, top: 0, bottom: 0, child: Align(alignment: Alignment.centerLeft, child: Text(text)))
+          Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Icon(
+                Icons.history,
+                color: Colors.grey[600],
+              )),
+          Padding(
+            padding: const EdgeInsets.only(left: 72, right: 16, top: 16, bottom: 16),
+            child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, ),
+          ),
         ]));
   }
 
@@ -345,5 +377,9 @@ class _SearchPageState extends State<SearchPage> {
   // Helper method to compute the semantic child count for the separated constructor.
   static int _computeSemanticChildCount(int itemCount) {
     return math.max(0, itemCount * 2 - 1);
+  }
+
+  bool isSearchText(String text) {
+    return (text.indexOf(" ") > 0 || text.length < 30);
   }
 }
