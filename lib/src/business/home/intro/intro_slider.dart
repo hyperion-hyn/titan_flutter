@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/business/home/home_page.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -11,6 +12,11 @@ class IntroScreen extends StatefulWidget {
     return IntroScreenState();
   }
 }
+
+//void _saveFirstRunState() async {
+//  SharedPreferences prefs = await SharedPreferences.getInstance();
+//  prefs.setBool('isFirstRun', false);
+//}
 
 class IntroScreenState extends State<IntroScreen> {
   List<Slide> slides = new List();
@@ -34,6 +40,8 @@ class IntroScreenState extends State<IntroScreen> {
         backgroundImage: "res/drawable/encrypted_location_zh.jpeg",
       ),
     );
+
+//    _saveFirstRunState();
   }
 
   void onDonePress() {

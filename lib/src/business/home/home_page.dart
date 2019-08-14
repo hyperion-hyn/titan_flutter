@@ -48,6 +48,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     initUniLinks();
+    print("initState");
+    _isNeedShowIntro();
   }
 
   @override
@@ -58,24 +60,44 @@ class _HomePageState extends State<HomePage> {
     } else {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
     }
+    print("didChangeDependencies");
   }
 
   void _isNeedShowIntro() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
-    print('isFirstRun: $isFirstRun');
-    if (isFirstRun && !isShowIntro) {
-      isShowIntro = true;
-      await prefs.setBool('isFirstRun', false);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => IntroScreen()));
-    }
+    isFirst = prefs.getBool('isFirstRun') ?? true;
+    print('isFirstRun: $isFirst');
+    setState(() {});
+  }
+
+  void _saveFirstRunState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFirstRun', false);
+    print("save state");
+//    setState(() {});
+    _isNeedShowIntro();
   }
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((callback) {
-      _isNeedShowIntro();
+      if (isFirst && !isShowIntro) {
+        isShowIntro = true;
+        Navigator.push(context, MaterialPageRoute(builder: (context) => IntroScreen()));
+        _saveFirstRunState();
+      }
     });
+
+    if (isFirst == null) {
+      return Container(
+        color: Colors.white,
+      );
+    }
+    if (isFirst) {
+      return Container(
+        color: Colors.white,
+      );
+    }
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         drawer: DrawerScenes(),
@@ -117,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                         },
                         onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
                         onSearch: (searchText) async {
-                          var center = LatLng(23.108317, 113.316121); //test TODO
+                          var center = LatLng(23.108317, 113.316121); //test TODO 传入地图的中心点
                           var searchResult = await Navigator.push(
                               context,
                               MaterialPageRoute(
