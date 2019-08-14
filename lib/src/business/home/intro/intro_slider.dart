@@ -13,18 +13,12 @@ class IntroScreen extends StatefulWidget {
   }
 }
 
-//void _saveFirstRunState() async {
-//  SharedPreferences prefs = await SharedPreferences.getInstance();
-//  prefs.setBool('isFirstRun', false);
-//}
-
 class IntroScreenState extends State<IntroScreen> {
   List<Slide> slides = new List();
 
   @override
   void initState() {
     super.initState();
-
     slides.add(
       new Slide(
         backgroundImage: "res/drawable/location_privacy_zh.jpeg",

@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
 
   StreamSubscription _appLinkSubscription;
 
-  var isFirst = true;
+  var isFirst;
   var isShowIntro = false;
 
   @override
@@ -72,8 +72,7 @@ class _HomePageState extends State<HomePage> {
 
   void _saveFirstRunState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isFirstRun', false);
-    print("save state");
+    prefs.setBool('isFirstRun', false);
 //    setState(() {});
     _isNeedShowIntro();
   }
@@ -81,7 +80,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((callback) {
-      if (isFirst && !isShowIntro) {
+      if (isFirst == true && !isShowIntro) {
         isShowIntro = true;
         Navigator.push(context, MaterialPageRoute(builder: (context) => IntroScreen()));
         _saveFirstRunState();
