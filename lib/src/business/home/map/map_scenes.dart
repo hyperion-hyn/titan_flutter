@@ -4,10 +4,13 @@ import 'dart:ui';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
@@ -65,7 +68,7 @@ class _MapScenesState extends State<MapScenes> {
 
     //clear selected poi
     var homeBloc = BlocProvider.of<home.HomeBloc>(context);
-    if(homeBloc.searchText != null) {
+    if (homeBloc.searchText != null) {
       homeBloc.dispatch(home.SearchTextEvent(searchText: homeBloc.searchText));
     } else {
       homeBloc.dispatch(home.ExistSearchEvent());
@@ -314,6 +317,48 @@ class _MapScenesState extends State<MapScenes> {
     _listenEventBus();
   }
 
+  void _showGoToOpenAppSettingsDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('申请定位授权'),
+                  content: Text('请你授权使用定位功能.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('申请定位授权'),
+                  content: Text('请你授权使用定位功能.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+        });
+  }
+
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
       if (event is home.RouteClickEvent) {
@@ -343,7 +388,22 @@ class _MapScenesState extends State<MapScenes> {
           BlocProvider.of<searchBar.SearchbarBloc>(context).dispatch(searchBar.HideSearchBarEvent());
         }
       } else if (event is MyLocationEvent) {
-        _toMyLocation();
+        PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+        if (permission == PermissionStatus.granted) {
+          _toMyLocation();
+        } else {
+          Map<PermissionGroup, PermissionStatus> permissions =
+              await PermissionHandler().requestPermissions([PermissionGroup.location]);
+          if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
+            _toMyLocation();
+            Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
+              _toMyLocation(); //hack, location not auto move
+            });
+          } else {
+//              Fluttertoast.showToast(msg: "Failed to get location permissions");
+            _showGoToOpenAppSettingsDialog();
+          }
+        }
       }
     });
   }
