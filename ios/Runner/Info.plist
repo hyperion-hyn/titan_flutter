@@ -46,6 +46,8 @@
 	<string></string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>允许访问位置1</string>
+	<key>NSCameraUsageDescription</key>
+    <string>允许使用相机扫描二维码</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

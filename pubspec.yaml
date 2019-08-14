@@ -70,6 +70,8 @@ dependencies:
   uni_links: 0.2.0
   #https://pub.dev/packages/intro_slider#demo:
   intro_slider: ^2.2.6
+  #https://pub.dev/packages/barcode_scan
+  barcode_scan: 1.0.0
   #https://github.com/tobrun/flutter-mapbox-gl
   mapbox_gl:
     path: ../mapbox_flutter

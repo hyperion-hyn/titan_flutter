@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -38,7 +39,7 @@ class ShareDialogState extends State<ShareDialog> {
   void initState() {
     super.initState();
     pubKeyTextEditController.addListener(() {
-      if(addressErrorStr != null) {
+      if (addressErrorStr != null) {
         setState(() {
           addressErrorStr = null;
           _formKey.currentState.validate();
@@ -235,8 +236,23 @@ class ShareDialogState extends State<ShareDialog> {
     return addressErrorStr;
   }
 
-  void onScan() {
-    print('TODO scan');
+  Future onScan() async {
+//    print('TODO scan');
+    try {
+      String barcode = await BarcodeScanner.scan();
+      if (barcode.length != 130) {
+        Fluttertoast.showToast(msg: "公钥有误，请重新扫描", toastLength: Toast.LENGTH_SHORT);
+      } else {
+        pubKeyTextEditController.text = barcode;
+        setState(() => {});
+      }
+    } catch (e) {
+      if (e.code == BarcodeScanner.CameraAccessDenied) {
+        Fluttertoast.showToast(msg: "请开启相机权限", toastLength: Toast.LENGTH_SHORT);
+      } else {
+        setState(() => this.pubAddress = 'Unknown error: $e');
+      }
+    }
   }
 
   void onShare() async {
@@ -245,17 +261,18 @@ class ShareDialogState extends State<ShareDialog> {
     String cipherText;
 
     bool isReEncrypt = pubAddress == null || pubAddress.isEmpty;
-    if(isReEncrypt) {
+    if (isReEncrypt) {
       try {
         cipherText = await reEncryptPoi(Injector.of(context).repository, widget.poi, remark);
       } catch (err) {
         logger.e(err);
         Fluttertoast.showToast(msg: '加密发生异常');
       }
-    } else {  //p2p
-      try{
+    } else {
+      //p2p
+      try {
         cipherText = await p2pEncryptPoi(pubAddress, widget.poi, remark);
-      } catch(err) {
+      } catch (err) {
         logger.e(err);
 
         setState(() {
@@ -264,8 +281,8 @@ class ShareDialogState extends State<ShareDialog> {
         });
       }
     }
-    
-    if(cipherText != null && cipherText.isNotEmpty) {
+
+    if (cipherText != null && cipherText.isNotEmpty) {
       Share.text('分享加密位置', cipherText, 'text/plain');
     }
   }
