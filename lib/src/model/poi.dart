@@ -11,12 +11,12 @@ part 'poi.g.dart';
 @JsonSerializable()
 class PoiEntity implements IPoi {
   String name;
-  final String address;
-  final String tags;
+  String address;
+  String tags;
   @JsonKey(fromJson: LatLngConverter.latLngFromJson, toJson: LatLngConverter.latLngToJson)
-  final LatLng latLng;
-  final String phone;
-  final String remark;
+  LatLng latLng;
+  String phone;
+  String remark;
   @JsonKey(ignore: true)
   bool isHistory;
 

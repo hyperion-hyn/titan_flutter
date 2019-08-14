@@ -53,16 +53,6 @@ class _MapScenesState extends State<MapScenes> {
   MapboxMapController mapboxMapController;
 
   _onMapClick(Point<double> point, LatLng coordinates) async {
-    print('xx on click $point, $coordinates');
-
-//    widget.draggableBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
-
-//    if(!(widget.homeBloc.currentState is HomeSearchState)) {
-//      widget.homeBloc.dispatch(ClosePoiBottomSheetEvent());
-//    }
-
-//    "name != NIL"
-    print("start map click event");
     var range = 10;
     Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
 
@@ -73,16 +63,13 @@ class _MapScenesState extends State<MapScenes> {
       return;
     }
 
-//    if (features != null && features.length > 0) {
-//      var clickFeatureJsonString = features[0];
-//      var clickFeatureJson = json.decode(clickFeatureJsonString);
-//      widget.homeBloc.dispatch(SelectedPoiEvent(poiEntity: _featureToPoiEntity(clickFeatureJson)));
-//    } else {
-//      widget.homeBloc.dispatch(ClosePoiBottomSheetEvent());
-//    }
-
-    //TODO 瓦片中找到当前位置poi，把name补到poi里面。
-//    BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates)));
+    //clear selected poi
+    var homeBloc = BlocProvider.of<home.HomeBloc>(context);
+    if(homeBloc.searchText != null) {
+      homeBloc.dispatch(home.SearchTextEvent(searchText: homeBloc.searchText));
+    } else {
+      homeBloc.dispatch(home.ExistSearchEvent());
+    }
   }
 
   Future<bool> _clickOnCommonSymbolLayer(Rect rect) async {

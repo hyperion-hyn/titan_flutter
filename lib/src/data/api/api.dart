@@ -34,4 +34,13 @@ class Api {
     });
     return data;
   }
+
+  Future<Map<String, dynamic>> getCls({@required String commitment, @required String pubkey, @required String kid}) async {
+    var data = await HttpCore.instance.get('re/cls', params: {
+      'commitment': commitment,
+      'pubkey': pubkey,
+      'kid': kid,
+    });
+    return data;
+  }
 }

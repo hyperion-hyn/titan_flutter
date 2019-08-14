@@ -31,7 +31,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   //showing poi
   IPoi selectedPoi;
 
-
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
     if (event is ShowPoiEvent) {
@@ -53,7 +52,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         var searchInteractor = Injector.of(context).searchInteractor;
         PoiEntity poi =
             await searchInteractor.reverseGeoSearch(event.poi.latLng, Localizations.localeOf(context).languageCode);
-        poi.name = event.poi.name??poi.name;
+        poi.name = event.poi.name ?? poi.name;
+        poi.address = event.poi.address ?? poi.address;
+        poi.remark = event.poi.remark ?? poi.remark;
+        poi.latLng = event.poi.latLng ?? poi.latLng;
+
         //update search bar ui
         searchBarBloc.dispatch(search.ShowPoiEvent(poi: poi));
         //show bottom sheet of the poi
@@ -112,13 +115,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else if (event is ExistSearchEvent) {
       searchList = null;
       searchText = null;
-      selectedPoi =  null;
+      selectedPoi = null;
 
       searchBarBloc.dispatch(search.ExistSearchEvent());
       mapBloc.dispatch(map.ClearMarkerEvent());
       mapBloc.dispatch(map.ClearMarkerListEvent());
       sheetBloc.dispatch(sheets.CloseSheetEvent());
-    } /*else if(event is RouteEvent) {
+    }
+    /*else if(event is RouteEvent) {
       searchBarBloc.dispatch(search.HideSearchBarEvent());
       sheetBloc.dispatch(sheets.CloseSheetEvent());
       mapBloc.dispatch(map.ClearMarkerEvent());

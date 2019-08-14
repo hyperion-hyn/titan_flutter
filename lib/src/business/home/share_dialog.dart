@@ -1,16 +1,12 @@
 import 'dart:math';
-
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi_interface.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/encryption.dart';
-import 'package:titan/src/utils/open_location_code.dart' as locationCode;
 
 import '../../global.dart';
 
@@ -71,7 +67,7 @@ class ShareDialogState extends State<ShareDialog> {
                 color: Colors.white,
               ),
               child: buildContent(context),
-            )
+            ),
           ],
         ),
       ),
@@ -81,16 +77,6 @@ class ShareDialogState extends State<ShareDialog> {
   Widget buildContent(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Align(
-          child: InkWell(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.close),
-            ),
-            onTap: () => Navigator.pop(context),
-          ),
-          alignment: Alignment.topRight,
-        ),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -175,7 +161,6 @@ class ShareDialogState extends State<ShareDialog> {
                               contentPadding: EdgeInsets.only(top: 16, right: 32, bottom: 8)),
                           validator: validatePubAddress,
                           onSaved: (value) {
-                            print('xx onSave address $value');
                             pubAddress = value;
                           },
                         ),
@@ -198,7 +183,6 @@ class ShareDialogState extends State<ShareDialog> {
                     decoration: InputDecoration(
                         labelText: "附言", hintText: "50字内", contentPadding: EdgeInsets.only(top: 16, bottom: 8)),
                     onSaved: (value) {
-                      print('xx onSave remark $value');
                       remark = value;
                     },
                   ),
@@ -226,12 +210,23 @@ class ShareDialogState extends State<ShareDialog> {
               ],
             ),
           ),
-        )
+        ),
+        Align(
+          child: InkWell(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.close),
+            ),
+            onTap: () => Navigator.pop(context),
+          ),
+          alignment: Alignment.topRight,
+        ),
       ],
     );
   }
 
   String addressErrorStr;
+
   String validatePubAddress(String address) {
     return addressErrorStr;
   }

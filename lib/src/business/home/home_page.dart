@@ -129,7 +129,12 @@ class _HomePageState extends State<HomePage> {
                             BlocProvider.of<HomeBloc>(context)
                                 .dispatch(SearchTextEvent(searchText: searchResult, center: center));
                           } else if (searchResult is PoiEntity) {
-                            BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: searchResult));
+                            if (searchResult.address == null) {
+                              //we need to full fil all properties
+                              BlocProvider.of<HomeBloc>(context).dispatch(SearchPoiEvent(poi: searchResult));
+                            } else {
+                              BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: searchResult));
+                            }
                           }
                         },
                       ),

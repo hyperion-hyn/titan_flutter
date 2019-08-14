@@ -7,8 +7,6 @@ import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 @immutable
 abstract class HomeEvent {}
 
-class ClearSelectPoiEvent extends HomeEvent {}
-
 class ShowPoiEvent extends HomeEvent {
   final IPoi poi;
 
