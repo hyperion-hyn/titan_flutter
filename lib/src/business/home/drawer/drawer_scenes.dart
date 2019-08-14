@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/services.dart';
@@ -143,15 +141,6 @@ class _DrawerScenesState extends State<DrawerScenes> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text(_pubKeyAutoRefreshTip,
                       style: TextStyle(fontSize: 12, color: Colors.grey)),
-                ),
-                Container(height: 8, color: Colors.grey[100]),
-                ListTile(
-                  onTap: () {
-                    print('test cancel');
-                  },
-                  leading: Icon(Icons.map),
-                  title: Text(S.of(context).offline_map),
-                  trailing: Icon(Icons.navigate_next),
                 ),
                 Container(height: 8, color: Colors.grey[100]),
                 ListTile(
