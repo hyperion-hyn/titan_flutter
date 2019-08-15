@@ -41,6 +41,8 @@ class _HomePageState extends State<HomePage> {
 
   StreamSubscription _appLinkSubscription;
 
+  GlobalKey mapScenseKey = GlobalKey();
+
   var isFirst;
   var isShowIntro = false;
 
@@ -113,7 +115,10 @@ class _HomePageState extends State<HomePage> {
               builder: (BuildContext context) => Stack(
                     children: <Widget>[
                       ///地图渲染
-                      MapScenes(draggableBottomSheetController: _draggableBottomSheetController),
+                      MapScenes(
+                        draggableBottomSheetController: _draggableBottomSheetController,
+                        key: mapScenseKey,
+                      ),
 
                       ///主要是支持drawer手势划出
                       Container(
@@ -138,7 +143,12 @@ class _HomePageState extends State<HomePage> {
                         },
                         onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
                         onSearch: (searchText) async {
-                          var center = LatLng(23.108317, 113.316121); //test TODO 传入地图的中心点
+                          var mapScenseState = mapScenseKey.currentState as MapScenesState;
+                          print("get mapScenseState ");
+                          var camraPosition = await mapScenseState.mapboxMapController.getCameraPosition();
+                          print("search center $camraPosition");
+                          var center = camraPosition.target;
+                          print("search center $center");
                           var searchResult = await Navigator.push(
                               context,
                               MaterialPageRoute(

@@ -30,15 +30,15 @@ const kLocationZoom = 16.0;
 class MapScenes extends StatefulWidget {
   final DraggableBottomSheetController draggableBottomSheetController;
 
-  MapScenes({this.draggableBottomSheetController});
+  MapScenes({this.draggableBottomSheetController,key}):super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _MapScenesState();
+    return MapScenesState();
   }
 }
 
-class _MapScenesState extends State<MapScenes> {
+class MapScenesState extends State<MapScenes> {
   final LatLng _center = const LatLng(23.122592, 113.327356);
   final String _style = 'https://static.hyn.space/maptiles/see-it-all.json';
   final double _defaultZoom = 9.0;
