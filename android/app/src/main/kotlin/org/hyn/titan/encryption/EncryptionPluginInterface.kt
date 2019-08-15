@@ -45,6 +45,10 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                 result.success(encryptionService.expireTime)
                 return true
             }
+            "encrypt" -> {
+                encrypt(call, result)
+                return true
+            }
         }
         return false
     }
@@ -69,6 +73,18 @@ class EncryptionPluginInterface(private val context: Context, private val binary
         if (encryptionService.publicKey == null || System.currentTimeMillis() > encryptionService.expireTime) {
             generateKey(expired, result)
         }
+    }
+
+    private fun encrypt(call: MethodCall, result: MethodChannel.Result) {
+
+        val pub = call.argument<String>("pub");
+        val message = call.argument<String>("message");
+        val encryptMessage = encryptionService.encrypt(pub!!, message!!)
+        encryptMessage.subscribe({
+            result.success(it);
+        })
+
+
     }
 
     @SuppressLint("CheckResult")
