@@ -30,7 +30,7 @@ const kLocationZoom = 16.0;
 class MapScenes extends StatefulWidget {
   final DraggableBottomSheetController draggableBottomSheetController;
 
-  MapScenes({this.draggableBottomSheetController,key}):super(key: key);
+  MapScenes({this.draggableBottomSheetController, key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -214,7 +214,7 @@ class MapScenesState extends State<MapScenes> {
     currentPoi = null;
   }
 
-  var MAX_POI_DIFF_DISTANCE = 5000;
+  var MAX_POI_DIFF_DISTANCE = 10000;
 
   var _currentGrayMarkerMap = Map<String, IPoi>();
 
@@ -256,6 +256,7 @@ class MapScenesState extends State<MapScenes> {
     if (distanceFilterList.length == 1) {
       mapboxMapController.animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0)).then((_) {
         var screenHeight = MediaQuery.of(context).size.height;
+        print("screenHeight: $screenHeight");
         mapboxMapController.animateCamera(CameraUpdate.scrollBy(0, -screenHeight / 4));
       });
     } else {
@@ -265,18 +266,18 @@ class MapScenesState extends State<MapScenes> {
         latlngList.add(poi.latLng);
       }
 
-      var padding = 0.0;
-      if (distanceFilterList.length < 5) {
-        padding = 300.0;
-      } else {
-        padding = 150.0;
-      }
+      var padding =50.0;
+//      if (distanceFilterList.length < 5) {
+//        padding = 200.0;
+//      } else {
+//        padding = 50.0;
+//      }
 
       var latlngBound = LatLngBounds.fromLatLngs(latlngList);
 
       var screenHeight = MediaQuery.of(context).size.height;
       mapboxMapController.moveCamera(
-          CameraUpdate.newLatLngBounds2(latlngBound, padding, padding, padding, screenHeight / 2 + padding));
+          CameraUpdate.newLatLngBounds2(latlngBound, padding, padding * 1.2, padding, screenHeight / 2 + padding));
     }
   }
 
@@ -382,7 +383,7 @@ class MapScenesState extends State<MapScenes> {
             endName: (toPoi is PoiEntity) ? toPoi.name : '',
             selectedPoi: toPoi,
             profile: event.profile,
-            padding: 150,
+            padding: 450,
           ));
 
           BlocProvider.of<searchBar.SearchbarBloc>(context).dispatch(searchBar.HideSearchBarEvent());

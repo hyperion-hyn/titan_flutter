@@ -97,14 +97,14 @@ class MapRoute extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    state.startName,
+                                    state.startName ?? "",
                                     style: TextStyle(fontSize: 14),
                                   ),
                                   Divider(
                                     height: 16,
                                   ),
                                   Text(
-                                    state.endName,
+                                    state.endName ?? "",
                                     style: TextStyle(fontSize: 14),
                                   ),
                                 ],
@@ -142,7 +142,10 @@ class MapRoute extends StatelessWidget {
                   FlatButton.icon(
                     onPressed: () {
                       if (state.profile != 'cycling') {
-                        eventBus.fire(RouteClickEvent(profile: 'cycling', toPoi: state.selectedPoi,));
+                        eventBus.fire(RouteClickEvent(
+                          profile: 'cycling',
+                          toPoi: state.selectedPoi,
+                        ));
                       }
                     },
                     icon: Icon(
@@ -158,7 +161,10 @@ class MapRoute extends StatelessWidget {
                   FlatButton.icon(
                     onPressed: () {
                       if (state.profile != 'walking') {
-                        eventBus.fire(RouteClickEvent(profile: 'walking', toPoi: state.selectedPoi,));
+                        eventBus.fire(RouteClickEvent(
+                          profile: 'walking',
+                          toPoi: state.selectedPoi,
+                        ));
                       }
                     },
                     icon: Icon(
