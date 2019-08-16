@@ -18,6 +18,17 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>titan</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>Fabric</key>
@@ -40,14 +51,14 @@
 	<string>pk.eyJ1IjoibnVyYm90IiwiYSI6ImNpaG0ycXA3czBvamh2NWtsZzBzdHE2dmQifQ.B7NiVcQD0DFguQF1aRcOeQ</string>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>允许使用相机扫描二维码</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>允许访问一下位置</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string></string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>允许访问位置1</string>
-	<key>NSCameraUsageDescription</key>
-    <string>允许使用相机扫描二维码</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -73,16 +84,5 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>titan</string>
-            </array>
-        </dict>
-    </array>
 </dict>
 </plist>
