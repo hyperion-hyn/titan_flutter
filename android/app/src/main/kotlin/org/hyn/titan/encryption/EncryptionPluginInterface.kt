@@ -49,6 +49,10 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                 encrypt(call, result)
                 return true
             }
+            "decrypt" -> {
+                decrypt(call, result)
+                return true
+            }
         }
         return false
     }
@@ -79,12 +83,19 @@ class EncryptionPluginInterface(private val context: Context, private val binary
 
         val pub = call.argument<String>("pub");
         val message = call.argument<String>("message");
-        val encryptMessage = encryptionService.encrypt(pub!!, message!!)
-        encryptMessage.subscribe({
+        val ciphertext = encryptionService.encrypt(pub!!, message!!)
+        ciphertext.subscribe({
             result.success(it);
         })
+    }
 
-
+    private fun decrypt(call: MethodCall, result: MethodChannel.Result) {
+        val ciphertext = call.arguments as String;
+        val message = encryptionService.decrypt(ciphertext)
+        message.subscribe({
+            Timber.i("message:$message")
+            result.success(it);
+        })
     }
 
     @SuppressLint("CheckResult")
