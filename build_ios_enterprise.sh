@@ -1,0 +1,1 @@
+flutter build ios --release --target=lib/main_ios_enterprise_prod.dart
