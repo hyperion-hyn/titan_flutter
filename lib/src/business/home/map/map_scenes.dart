@@ -196,11 +196,12 @@ class MapScenesState extends State<MapScenes> {
       if (widget.draggableBottomSheetController?.getSheetState() == DraggableBottomSheetState.ANCHOR_POINT) {
         top = -widget.draggableBottomSheetController?.anchorHeight;
       }
-      var offset = 0.001;
+      print("top:$top");
+      var offset = 0.0002;
       var sw = LatLng(poi.latLng.latitude - offset, poi.latLng.longitude - offset);
       var ne = LatLng(poi.latLng.latitude + offset, poi.latLng.longitude + offset);
-      mapboxMapController
-          ?.animateCamera(CameraUpdate.newLatLngBounds2(LatLngBounds(southwest: sw, northeast: ne), 0, top + 32, 0, 0));
+      mapboxMapController?.animateCamera(
+          CameraUpdate.newLatLngBounds2(LatLngBounds(southwest: sw, northeast: ne), 10, top + 42, 10, 10));
 
       currentPoi = poi;
     }
@@ -266,7 +267,7 @@ class MapScenesState extends State<MapScenes> {
         latlngList.add(poi.latLng);
       }
 
-      var padding =50.0;
+      var padding = 50.0;
 //      if (distanceFilterList.length < 5) {
 //        padding = 200.0;
 //      } else {

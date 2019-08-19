@@ -11,9 +11,13 @@ import 'package:titan/src/business/home/intro/intro_slider.dart';
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as search;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
 import 'package:titan/src/business/home/sheets/sheets.dart';
+import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 
 import 'package:titan/src/business/search/search_page.dart';
+import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
@@ -206,10 +210,38 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Null> initUniLinks() async {
+    try {
+      String initialLink = await getInitialLink();
+      print("initialLink listen url $initialLink");
+
+      try {
+        if (initialLink == null || initialLink.isEmpty) {
+          return;
+        }
+        IPoi poi = await ciphertextToPoi(Injector.of(context).repository, initialLink.toString());
+        BlocProvider.of<home.HomeBloc>(context)
+            .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
+      } catch (err) {
+        logger.e(err);
+      }
+      // Parse the link and warn the user, if it is not correct,
+      // but keep in mind it could be `null`.
+    } on PlatformException {
+      // Handle exception by warning the user their action did not succeed
+      // return?
+    }
+
     // Attach a listener to the stream
-    _appLinkSubscription = getUriLinksStream().listen((Uri uri) {
-//      TODO 完成解码的操作
-      print("applink listen url $uri");
+    _appLinkSubscription = getLinksStream().listen((String link) async {
+      print("listenlink listen url $link");
+
+      try {
+        IPoi poi = await ciphertextToPoi(Injector.of(context).repository, link.toString());
+        BlocProvider.of<home.HomeBloc>(context)
+            .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
+      } catch (err) {
+        logger.e(err);
+      }
     }, onError: (err) {
       print(err);
     });

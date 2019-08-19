@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/theme.dart';
@@ -27,7 +26,7 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
 
-    FlutterBugly.init(androidAppId: "103fd7ef12", iOSAppId: "0198fbe26a");
+//    FlutterBugly.init(androidAppId: "103fd7ef12", iOSAppId: "0198fbe26a");
   }
 
   @override
