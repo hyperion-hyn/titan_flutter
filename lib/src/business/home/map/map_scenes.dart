@@ -209,7 +209,8 @@ class MapScenesState extends State<MapScenes> {
 
   void _resetMap() {
     mapboxMapController.disableLocation();
-    mapboxMapController.moveCamera(CameraUpdate.newLatLngZoom(_center, _defaultZoom));
+    mapboxMapController.moveCamera(
+        CameraUpdate.newCameraPosition(CameraPosition(target: _center, bearing: 0, tilt: 0, zoom: _defaultZoom)));
   }
 
   void _removeMarker() {
