@@ -30,4 +30,5 @@ create table ${SearchHistoryDao.kTable} (
     String path = join(databasePath, dbName);
     return deleteDatabase(path);
   }
+
 }

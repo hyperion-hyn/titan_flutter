@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/src/inject/injector.dart';
 
 class BurningDialog extends StatefulWidget {
   @override
@@ -63,6 +64,8 @@ class _BurningDialogState extends State<BurningDialog> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+
+    clean();
     return Stack(
       children: <Widget>[
         Opacity(
@@ -90,6 +93,11 @@ class _BurningDialogState extends State<BurningDialog> with TickerProviderStateM
   void dispose() {
     animationController.dispose();
     super.dispose();
+  }
+
+  void clean() {
+    var searchInteractor = Injector.of(context).searchInteractor;
+    searchInteractor.deleteAllHistory();
   }
 }
 
