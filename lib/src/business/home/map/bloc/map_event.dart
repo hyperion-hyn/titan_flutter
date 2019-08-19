@@ -14,6 +14,8 @@ class AddMarkerEvent extends MapEvent {
 
 class ClearMarkerEvent extends MapEvent {}
 
+class ResetMapEvent extends MapEvent {}
+
 
 ///marker list
 class AddMarkerListEvent extends MapEvent {

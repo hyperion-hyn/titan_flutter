@@ -17,6 +17,8 @@ class MarkerLoadedState extends MapState {
 
 class ClearMarkerState extends MapState {}
 
+class ResetMapState extends MapState {}
+
 
 ///marker list
 class MarkerListLoadedState extends MapState {

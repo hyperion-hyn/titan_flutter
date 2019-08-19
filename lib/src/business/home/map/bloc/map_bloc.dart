@@ -58,6 +58,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
     } else if (event is CloseRouteEvent) {
       yield CloseRouteState();
+    } else if (event is ResetMapEvent) {
+      yield ResetMapState();
     }
     /*else if (event is MyLocationEvent) {
       yield MyLocationState();

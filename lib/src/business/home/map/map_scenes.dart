@@ -207,6 +207,11 @@ class MapScenesState extends State<MapScenes> {
     }
   }
 
+  void _resetMap() {
+    mapboxMapController.disableLocation();
+    mapboxMapController.moveCamera(CameraUpdate.newLatLngZoom(_center, _defaultZoom));
+  }
+
   void _removeMarker() {
     if (showingSymbol != null) {
       mapboxMapController?.removeSymbol(showingSymbol);
@@ -429,6 +434,8 @@ class MapScenesState extends State<MapScenes> {
           if (!state.isLoading) {
             _clearAllMarkers();
           }
+        } else if (state is ResetMapState) {
+          _resetMap();
         }
       },
       child: MapboxMapParent(

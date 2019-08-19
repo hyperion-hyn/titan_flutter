@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/business/home/bloc/bloc.dart' as home;
+import 'package:titan/src/business/home/map/bloc/bloc.dart' as map;
 import 'package:titan/src/business/home/burning_dialog/burning_dialog.dart';
+import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
@@ -38,6 +40,14 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
     }
   }
 
+  void _clean() {
+    var searchInteractor = Injector.of(context).searchInteractor;
+    searchInteractor.deleteAllHistory();
+
+    BlocProvider.of<home.HomeBloc>(context).dispatch(home.ExistSearchEvent());
+    BlocProvider.of<map.MapBloc>(context).dispatch(map.ResetMapEvent());
+  }
+
   void _showFireModalBottomSheet(context) {
     showModalBottomSheet(
         context: context,
@@ -57,6 +67,7 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
                           builder: (BuildContext context) {
                             return BurningDialog();
                           });
+                      _clean();
                     }),
                 new ListTile(
                   leading: new Icon(Icons.close),
