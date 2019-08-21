@@ -186,7 +186,7 @@ class MapScenesState extends State<MapScenes> {
       showingSymbol = await mapboxMapController?.addSymbol(
         SymbolOptions(
           geometry: poi.latLng,
-          iconImage: "marker_big",
+          iconImage: "hyn_marker_big",
           iconAnchor: "bottom",
           iconOffset: Offset(0.0, 3.0),
         ),
