@@ -97,4 +97,18 @@ class TitanPlugin {
   static Future<bool> requestInstallUnknownSourceSetting() async {
     return await callChannel.invokeMethod("requestInstallUnknownSourceSetting");
   }
+
+  /// only android
+  static Future<dynamic> installApk(String path) async {
+    return await callChannel.invokeMethod('installApk', {'path': path});
+  }
+
+  static Future<dynamic> openMarket({String packageName}) async {
+    return await callChannel
+        .invokeMethod('openMarket', {'packageName': packageName});
+  }
+
+  static Future<String> fileMd5(String path) async {
+    return await callChannel.invokeMethod('fileMd5', {'path': path});
+  }
 }

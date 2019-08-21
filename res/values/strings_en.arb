@@ -20,5 +20,11 @@
   "wechat": "Wechat",
   "wechat_official_account": "Wechat Official Account",
   "telegram_operator": "Telegram Operator",
-  "wechat_cs": "微信客服"
+  "wechat_cs": "微信客服",
+  "new_update_available": "New Update Available",
+  "update_now": "Update Now",
+  "later": "Later",
+  "downloading_update_file": "Downloading update file",
+  "installation_update_package_failed": "Installation update package failed",
+  "install_now": "Install now"
 }

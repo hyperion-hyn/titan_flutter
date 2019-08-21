@@ -22,10 +22,15 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get app_name => "Titan";
+  String get downloading_update_file => "Downloading update file";
   String get forum => "Forum";
+  String get install_now => "Install now";
+  String get installation_update_package_failed => "Installation update package failed";
+  String get later => "Later";
   String get less_than_1_min => "Less than 1 minute";
   String get medium => "Medium";
   String get my_position => "My position";
+  String get new_update_available => "New Update Available";
   String get no_recommended_route => "No recommended route yet";
   String get official_website => "Official Website";
   String get offline_map => "Offline map";
@@ -34,6 +39,7 @@ class S implements WidgetsLocalizations {
   String get telegram_operator => "Telegram Operator";
   String get twitterhyperion => "Twitter-Hyperion";
   String get twittertitan => "Twitter-Titan";
+  String get update_now => "Update Now";
   String get wechat => "Wechat";
   String get wechat_cs => "微信客服";
   String get wechat_official_account => "Wechat Official Account";
@@ -56,15 +62,11 @@ class $zh_CN extends S {
   TextDirection get textDirection => TextDirection.ltr;
 
   @override
+  String get update_now => "现在更新";
+  @override
   String get official_website => "Official Website";
   @override
-  String get less_than_1_min => "小于1分钟";
-  @override
   String get telegram_operator => "Telegram Operator";
-  @override
-  String get wechat => "Wechat";
-  @override
-  String get telegram => "Telegram";
   @override
   String get twitterhyperion => "Twitter-Hyperion";
   @override
@@ -72,33 +74,49 @@ class $zh_CN extends S {
   @override
   String get offline_map => "离线地图";
   @override
+  String get my_position => "我的位置";
+  @override
+  String get twittertitan => "Twitter-Titan";
+  @override
+  String get later => "暂不更新";
+  @override
+  String get wechat_official_account => "Wechat Official Account";
+  @override
+  String get new_update_available => "发现新版本";
+  @override
+  String get wechat_cs => "微信客服";
+  @override
+  String get less_than_1_min => "小于1分钟";
+  @override
+  String get wechat => "Wechat";
+  @override
+  String get telegram => "Telegram";
+  @override
   String get forum => "Forum";
   @override
   String get app_name => "泰坦";
   @override
-  String get my_position => "我的位置";
-  @override
   String get route => "路线";
-  @override
-  String get twittertitan => "Twitter-Titan";
-  @override
-  String get wechat_official_account => "Wechat Official Account";
   @override
   String get no_recommended_route => "暂无推荐路线";
   @override
-  String get wechat_cs => "微信客服";
+  String get downloading_update_file => "正在下载更新文件";
   @override
-  String km(String km) => "${km}公里";
+  String get installation_update_package_failed => "安装更新包失败";
+  @override
+  String get install_now => "马上安装";
   @override
   String distance(String distance) => "${distance}米";
+  @override
+  String network_request_err(String code) => "网络请求错误,状态码: $code";
+  @override
+  String km(String km) => "${km}公里";
   @override
   String n_minute(String minute) => "${minute}分钟";
   @override
   String n_day(String day) => "${day}天";
   @override
   String n_hour(String hour) => "${hour}小时";
-  @override
-  String network_request_err(String code) => "网络请求错误,状态码: $code";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {

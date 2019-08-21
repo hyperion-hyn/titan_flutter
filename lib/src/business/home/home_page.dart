@@ -14,6 +14,7 @@ import 'package:titan/src/business/home/sheets/sheets.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 
 import 'package:titan/src/business/search/search_page.dart';
+import 'package:titan/src/business/updater/updater.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -103,104 +104,106 @@ class _HomePageState extends State<HomePage> {
         color: Colors.white,
       );
     }
-    return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        drawer: DrawerScenes(),
-        body: WillPopScope(
-          onWillPop: () async {
-            if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
-              _lastPressedAt = DateTime.now();
-              Fluttertoast.showToast(msg: '再按一下退出程序');
-              return false;
-            }
-            return true;
-          },
-          child: Builder(
-              builder: (BuildContext context) => Stack(
-                    children: <Widget>[
-                      ///地图渲染
-                      MapScenes(
-                        draggableBottomSheetController: _draggableBottomSheetController,
-                        key: mapScenseKey,
-                      ),
+    return Updater(
+      child: Scaffold(
+          resizeToAvoidBottomPadding: false,
+          drawer: DrawerScenes(),
+          body: WillPopScope(
+            onWillPop: () async {
+              if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+                _lastPressedAt = DateTime.now();
+                Fluttertoast.showToast(msg: '再按一下退出程序');
+                return false;
+              }
+              return true;
+            },
+            child: Builder(
+                builder: (BuildContext context) => Stack(
+                      children: <Widget>[
+                        ///地图渲染
+                        MapScenes(
+                          draggableBottomSheetController: _draggableBottomSheetController,
+                          key: mapScenseKey,
+                        ),
 
-                      ///主要是支持drawer手势划出
-                      Container(
-                        margin: EdgeInsets.only(top: 120),
-                        decoration: BoxDecoration(color: Colors.transparent),
-                        constraints: BoxConstraints.tightForFinite(width: 24.0),
-                      ),
+                        ///主要是支持drawer手势划出
+                        Container(
+                          margin: EdgeInsets.only(top: 120),
+                          decoration: BoxDecoration(color: Colors.transparent),
+                          constraints: BoxConstraints.tightForFinite(width: 24.0),
+                        ),
 
-                      BottomFabsWidget(draggableBottomSheetController: _draggableBottomSheetController),
+                        BottomFabsWidget(draggableBottomSheetController: _draggableBottomSheetController),
 
-                      ///bottom sheet
-                      Sheets(
-                        draggableBottomSheetController: _draggableBottomSheetController,
-                      ),
+                        ///bottom sheet
+                        Sheets(
+                          draggableBottomSheetController: _draggableBottomSheetController,
+                        ),
 
-                      ///search bar
-                      SearchBarPresenter(
-                        draggableBottomSheetController: _draggableBottomSheetController,
-                        onMenu: () => Scaffold.of(context).openDrawer(),
-                        backToPrvSearch: (String searchText) {
-                          BlocProvider.of<HomeBloc>(context).dispatch(SearchTextEvent(searchText: searchText));
-                        },
-                        onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
-                        onSearch: (searchText) async {
-                          var mapScenseState = mapScenseKey.currentState as MapScenesState;
-                          print("get mapScenseState ");
-                          var camraPosition = await mapScenseState.mapboxMapController.getCameraPosition();
-                          print("search center $camraPosition");
-                          var center = camraPosition.target;
-                          print("search center $center");
-                          var searchResult = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SearchPage(
-                                        searchCenter: center,
-                                        searchText: searchText,
-                                      )));
-                          if (searchResult is String) {
-                            BlocProvider.of<HomeBloc>(context)
-                                .dispatch(SearchTextEvent(searchText: searchResult, center: center));
-                          } else if (searchResult is PoiEntity) {
-                            if (searchResult.address == null) {
-                              //we need to full fil all properties
-                              BlocProvider.of<HomeBloc>(context).dispatch(SearchPoiEvent(poi: searchResult));
-                            } else {
-                              BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: searchResult));
+                        ///search bar
+                        SearchBarPresenter(
+                          draggableBottomSheetController: _draggableBottomSheetController,
+                          onMenu: () => Scaffold.of(context).openDrawer(),
+                          backToPrvSearch: (String searchText) {
+                            BlocProvider.of<HomeBloc>(context).dispatch(SearchTextEvent(searchText: searchText));
+                          },
+                          onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
+                          onSearch: (searchText) async {
+                            var mapScenseState = mapScenseKey.currentState as MapScenesState;
+                            print("get mapScenseState ");
+                            var camraPosition = await mapScenseState.mapboxMapController.getCameraPosition();
+                            print("search center $camraPosition");
+                            var center = camraPosition.target;
+                            print("search center $center");
+                            var searchResult = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchPage(
+                                          searchCenter: center,
+                                          searchText: searchText,
+                                        )));
+                            if (searchResult is String) {
+                              BlocProvider.of<HomeBloc>(context)
+                                  .dispatch(SearchTextEvent(searchText: searchResult, center: center));
+                            } else if (searchResult is PoiEntity) {
+                              if (searchResult.address == null) {
+                                //we need to full fil all properties
+                                BlocProvider.of<HomeBloc>(context).dispatch(SearchPoiEvent(poi: searchResult));
+                              } else {
+                                BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: searchResult));
+                              }
                             }
-                          }
-                        },
-                      ),
+                          },
+                        ),
 
-                      ///opt area
-                      BlocBuilder<sheets.SheetsBloc, sheets.SheetsState>(
-                        builder: (context, state) {
-                          if (state is sheets.PoiLoadedState || state is sheets.HeavenPoiLoadedState) {
-                            return BottomOptBarWidget(
-                              onRouteTap: () {
+                        ///opt area
+                        BlocBuilder<sheets.SheetsBloc, sheets.SheetsState>(
+                          builder: (context, state) {
+                            if (state is sheets.PoiLoadedState || state is sheets.HeavenPoiLoadedState) {
+                              return BottomOptBarWidget(
+                                onRouteTap: () {
 //                                BlocProvider.of<HomeBloc>(context).dispatch(RouteEvent());
-                                eventBus.fire(RouteClickEvent());
-                              },
-                              onShareTap: () async {
-                                var selectedPoi = BlocProvider.of<HomeBloc>(context).selectedPoi;
-                                if (selectedPoi != null) {
-                                  var dat = await showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return ShareDialog(poi: selectedPoi);
-                                      });
-                                }
-                              },
-                            );
-                          }
-                          return SizedBox.shrink();
-                        },
-                      ),
-                    ],
-                  )),
-        ));
+                                  eventBus.fire(RouteClickEvent());
+                                },
+                                onShareTap: () async {
+                                  var selectedPoi = BlocProvider.of<HomeBloc>(context).selectedPoi;
+                                  if (selectedPoi != null) {
+                                    var dat = await showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return ShareDialog(poi: selectedPoi);
+                                        });
+                                  }
+                                },
+                              );
+                            }
+                            return SizedBox.shrink();
+                          },
+                        ),
+                      ],
+                    )),
+          )),
+    );
   }
 
   @override

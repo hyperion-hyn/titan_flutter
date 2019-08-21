@@ -10,10 +10,7 @@ import androidx.core.content.FileProvider
 import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
-import org.hyn.titan.business.qrcode.QRCodeScanActivity
 import org.hyn.titan.encryption.EncryptionPluginInterface
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.startActivityForResult
 import java.io.File
 
 class MainActivity : FlutterActivity() {
@@ -52,11 +49,6 @@ class MainActivity : FlutterActivity() {
                             }
 
                         })
-                    }
-                    "scan" -> { //扫码
-                        val intent = intentFor<QRCodeScanActivity>()
-                        startActivityForResult(intent, QRCODE_SCAN_REQUEST_CODE)
-                        scanResult = result
                     }
                     "canRequestPackageInstalls" -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

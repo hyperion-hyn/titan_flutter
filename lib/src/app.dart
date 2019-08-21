@@ -7,12 +7,12 @@ import 'package:titan/src/style/theme.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'bloc/bloc.dart';
 import 'business/home/bloc/bloc.dart';
 import 'business/home/home_page.dart';
 import 'business/home/map/bloc/bloc.dart';
 import 'business/home/searchbar/bloc/bloc.dart';
 import 'business/home/sheets/bloc/bloc.dart';
+import 'business/updater/bloc/bloc.dart';
 
 class App extends StatefulWidget {
   @override
@@ -32,7 +32,7 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      builder: (context) => AppBloc(context: context),
+      builder: (context) => AppBloc(),
       child: MaterialApp(
         key: Keys.materialAppKey,
         title: 'Titan',

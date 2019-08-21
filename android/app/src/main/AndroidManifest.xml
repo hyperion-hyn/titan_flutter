@@ -56,7 +56,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity"/>
         <activity
             android:name=".business.qrcode.QRCodeScanActivity"
             android:screenOrientation="portrait" />
