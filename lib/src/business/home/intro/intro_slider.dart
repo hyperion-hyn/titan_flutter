@@ -39,8 +39,16 @@ class IntroScreenState extends State<IntroScreen> {
   }
 
   void onDonePress() {
-    Navigator.pop(context);
+    Navigator.pop(context,"done");
 //    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+    _saveFirstRunState();
+  }
+
+  void _saveFirstRunState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isFirstRun', false);
+//    setState(() {});
+//    _isNeedShowIntro();
   }
 
   @override

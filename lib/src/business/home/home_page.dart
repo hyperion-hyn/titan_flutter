@@ -7,6 +7,7 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/src/business/home/improvement_dialog.dart';
 import 'package:titan/src/business/home/intro/intro_slider.dart';
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as search;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
@@ -49,7 +50,9 @@ class _HomePageState extends State<HomePage> {
   GlobalKey mapScenseKey = GlobalKey();
 
   var isFirst;
+  var isShowPlanDialog;
   var isShowIntro = false;
+  var isPlanDialogIsShowing = false;
 
   @override
   void initState() {
@@ -57,6 +60,7 @@ class _HomePageState extends State<HomePage> {
     initUniLinks();
     print("initState");
     _isNeedShowIntro();
+    _isNeedShowPlanDialog();
   }
 
   @override
@@ -77,9 +81,16 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
-  void _saveFirstRunState() async {
+  void _isNeedShowPlanDialog() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isFirstRun', false);
+    isShowPlanDialog = prefs.getBool('isShowPlanDialog') ?? false;
+    print('isShowPlanDialog: $isFirst');
+    setState(() {});
+  }
+
+  void _savePlanDialogState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isShowPlanDialog', true);
 //    setState(() {});
     _isNeedShowIntro();
   }
@@ -89,8 +100,19 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance.addPostFrameCallback((callback) {
       if (isFirst == true && !isShowIntro) {
         isShowIntro = true;
-        Navigator.push(context, MaterialPageRoute(builder: (context) => IntroScreen()));
-        _saveFirstRunState();
+        Navigator.push(context, MaterialPageRoute(builder: (context) => IntroScreen())).then((data) {
+          _isNeedShowIntro();
+          if (isShowPlanDialog == false && !isPlanDialogIsShowing) {
+            isPlanDialogIsShowing = true;
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return ImprovementDialog();
+                });
+
+            _savePlanDialogState();
+          }
+        });
       }
     });
 
