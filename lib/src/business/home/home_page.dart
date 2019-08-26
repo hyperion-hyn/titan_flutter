@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/src/business/home/drawer/map_store_drawer_scenes.dart';
 import 'package:titan/src/business/home/improvement_dialog.dart';
 import 'package:titan/src/business/home/intro/intro_slider.dart';
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as search;
@@ -131,6 +132,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
           resizeToAvoidBottomPadding: false,
           drawer: DrawerScenes(),
+          endDrawer: MapStoreDrawerScenes(),
           body: WillPopScope(
             onWillPop: () async {
               if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
@@ -158,14 +160,20 @@ class _HomePageState extends State<HomePage> {
 
                         Align(
                           alignment: Alignment.topRight,
-                          child: Container(
-                            decoration:BoxDecoration(color: Color(0xeeffffff),borderRadius: BorderRadius.circular(8)),
-                            width: 45,
-                            height: 45,
-                            margin: EdgeInsets.only(top: 115, right: 20),
-                            padding: EdgeInsets.all(6),
-                            child: SvgPicture.asset("res/drawable/map_layer.svg",
-                                color: Colors.grey[700], semanticsLabel: 'A red up arrow'),
+                          child: GestureDetector(
+                            onTap: () {
+                              Scaffold.of(context).openEndDrawer();
+                            },
+                            child: Container(
+                              decoration:
+                                  BoxDecoration(color: Color(0xeeffffff), borderRadius: BorderRadius.circular(8)),
+                              width: 45,
+                              height: 45,
+                              margin: EdgeInsets.only(top: 115, right: 20),
+                              padding: EdgeInsets.all(6),
+                              child: SvgPicture.asset("res/drawable/map_layer.svg",
+                                  color: Colors.grey[700], semanticsLabel: ''),
+                            ),
                           ),
                         ),
 
