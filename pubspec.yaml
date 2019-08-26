@@ -114,6 +114,7 @@ flutter:
     - res/drawable/encrypted_location_zh.jpeg
     - res/drawable/location_privacy.jpeg
     - res/drawable/location_privacy_zh.jpeg
+    - res/drawable/map_layer.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

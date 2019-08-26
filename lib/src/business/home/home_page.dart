@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -153,6 +154,19 @@ class _HomePageState extends State<HomePage> {
                           margin: EdgeInsets.only(top: 120),
                           decoration: BoxDecoration(color: Colors.transparent),
                           constraints: BoxConstraints.tightForFinite(width: 24.0),
+                        ),
+
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            decoration:BoxDecoration(color: Color(0xeeffffff),borderRadius: BorderRadius.circular(8)),
+                            width: 45,
+                            height: 45,
+                            margin: EdgeInsets.only(top: 115, right: 20),
+                            padding: EdgeInsets.all(6),
+                            child: SvgPicture.asset("res/drawable/map_layer.svg",
+                                color: Colors.grey[700], semanticsLabel: 'A red up arrow'),
+                          ),
                         ),
 
                         BottomFabsWidget(draggableBottomSheetController: _draggableBottomSheetController),
