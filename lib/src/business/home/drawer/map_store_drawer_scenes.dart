@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/map_store/map_store.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
 
 class MapStoreDrawerScenes extends StatefulWidget {
@@ -32,24 +33,29 @@ class _MapStoreDrawerScenesState extends State<MapStoreDrawerScenes> {
   }
 
   Widget _buildPurchseMoreToolbar() {
-    return Material(
-      elevation: 10,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          children: <Widget>[
-            Container(
-                height: 35,
-                width: 35,
-                child: SvgPicture.asset("res/drawable/shop_car.svg", color: Colors.grey[700], semanticsLabel: '')),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "购买更多地图",
-                style: TextStyle(color: Colors.grey, fontSize: 15),
-              ),
-            )
-          ],
+    return GestureDetector(
+      onTap: () {
+        _navigateToMapStorePage();
+      },
+      child: Material(
+        elevation: 10,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: <Widget>[
+              Container(
+                  height: 35,
+                  width: 35,
+                  child: SvgPicture.asset("res/drawable/shop_car.svg", color: Colors.grey[700], semanticsLabel: '')),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "购买更多地图",
+                  style: TextStyle(color: Colors.grey, fontSize: 15),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -73,11 +79,16 @@ class _MapStoreDrawerScenesState extends State<MapStoreDrawerScenes> {
             style: TextStyle(color: Colors.grey[500], fontSize: 14),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "点击前往购买",
-            style: TextStyle(color: Colors.blueAccent, fontSize: 14),
+        GestureDetector(
+          onTap: () {
+            _navigateToMapStorePage();
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "点击前往购买",
+              style: TextStyle(color: Colors.blueAccent, fontSize: 14),
+            ),
           ),
         )
       ],
@@ -158,5 +169,10 @@ class _MapStoreDrawerScenesState extends State<MapStoreDrawerScenes> {
         ),
       ),
     );
+  }
+
+  void _navigateToMapStorePage() {
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MapStorePage()));
   }
 }
