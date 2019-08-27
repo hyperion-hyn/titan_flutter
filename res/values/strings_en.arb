@@ -26,5 +26,7 @@
   "later": "Later",
   "downloading_update_file": "Downloading update file",
   "installation_update_package_failed": "Installation update package failed",
-  "install_now": "Install now"
+  "install_now": "Install now",
+  "app_version": "Version",
+  "about_us": "About Us"
 }

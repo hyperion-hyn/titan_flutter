@@ -21,7 +21,9 @@ class S implements WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get about_us => "About Us";
   String get app_name => "Titan";
+  String get app_version => "Version";
   String get downloading_update_file => "Downloading update file";
   String get forum => "Forum";
   String get install_now => "Install now";
@@ -64,11 +66,13 @@ class $zh_CN extends S {
   @override
   String get update_now => "现在更新";
   @override
-  String get official_website => "Official Website";
+  String get official_website => "官网";
   @override
   String get telegram_operator => "Telegram Operator";
   @override
-  String get twitterhyperion => "Twitter-Hyperion";
+  String get app_version => "版本";
+  @override
+  String get twitterhyperion => "推特-海伯利安";
   @override
   String get medium => "Medium";
   @override
@@ -76,11 +80,13 @@ class $zh_CN extends S {
   @override
   String get my_position => "我的位置";
   @override
-  String get twittertitan => "Twitter-Titan";
+  String get twittertitan => "推特-泰坦";
   @override
   String get later => "暂不更新";
   @override
-  String get wechat_official_account => "Wechat Official Account";
+  String get wechat_official_account => "服务号";
+  @override
+  String get about_us => "关于我们";
   @override
   String get new_update_available => "发现新版本";
   @override
@@ -88,11 +94,11 @@ class $zh_CN extends S {
   @override
   String get less_than_1_min => "小于1分钟";
   @override
-  String get wechat => "Wechat";
+  String get wechat => "公众号";
   @override
-  String get telegram => "Telegram";
+  String get telegram => "电报群";
   @override
-  String get forum => "Forum";
+  String get forum => "论坛";
   @override
   String get app_name => "泰坦";
   @override
