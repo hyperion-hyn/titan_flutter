@@ -21,16 +21,20 @@ class IntroScreenState extends State<IntroScreen> {
     super.initState();
     slides.add(
       new Slide(
+        backgroundOpacityColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
         backgroundImage: "res/drawable/location_privacy_zh.jpeg",
       ),
     );
     slides.add(
       new Slide(
+        backgroundColor: Colors.transparent,
         backgroundImage: "res/drawable/burn_zh.jpeg",
       ),
     );
     slides.add(
       new Slide(
+        backgroundColor: Colors.transparent,
         backgroundImage: "res/drawable/encrypted_location_zh.jpeg",
       ),
     );
