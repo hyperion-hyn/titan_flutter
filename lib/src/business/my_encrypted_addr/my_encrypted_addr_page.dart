@@ -56,7 +56,7 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                   onTap: () {
                     if (_pubKey.isNotEmpty) {
                       Clipboard.setData(ClipboardData(text: _pubKey));
-                      Scaffold.of(context).showSnackBar(SnackBar(content: Text('S.of(context).public_key_copied')));
+                      Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).public_key_copied)));
                     }
                   },
                   child: Row(children: <Widget>[
