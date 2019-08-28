@@ -82,7 +82,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
                       ],
                     ),
                     SizedBox(height: 16),
-                    Text('我的隐私地图', style: TextStyle(color: Colors.white70))
+                    Text(S.of(context).nav_my_privacy_map, style: TextStyle(color: Colors.white70))
                   ],
                 ),
               ),
@@ -101,7 +101,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
                             builder: (context) => MyEncryptedAddrPage()));
                   },
                   leading: Icon(Icons.lock),
-                  title: Text('我的加密地址(公钥)'),
+                  title: Text(S.of(context).main_my_public_key),
                   trailing: Icon(Icons.navigate_next),
                 ),
                 Container(
@@ -112,7 +112,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
                     onTap: () {
                       if (_pubKey.isNotEmpty) {
                         Clipboard.setData(ClipboardData(text: _pubKey));
-                        Fluttertoast.showToast(msg: '公钥地址已复制');
+                        Fluttertoast.showToast(msg: S.of(context).public_key_copied);
                       }
                     },
                     child: Row(
@@ -146,7 +146,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
                 ListTile(
                   onTap: shareApp,
                   leading: Icon(Icons.share),
-                  title: Text('分享App'),
+                  title: Text(S.of(context).nav_share_app),
                   trailing: Icon(Icons.navigate_next),
                 ),
                 Container(height: 1, color: Colors.grey[100]),
@@ -159,7 +159,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
                             builder: (context) => AboutMePage()));
                   },
                   leading: Icon(Icons.info),
-                  title: Text('关于我们'),
+                  title: Text(S.of(context).nav_about_us),
                   trailing: Icon(Icons.navigate_next),
                 ),
               ],

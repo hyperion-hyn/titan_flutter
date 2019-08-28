@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/bloc/bloc.dart';
 import 'package:titan/src/widget/circle_dash_line.dart';
@@ -134,7 +135,7 @@ class MapRoute extends StatelessWidget {
                       size: 20,
                     ),
                     label: Text(
-                      '驾车',
+                      S.of(context).driving,
                       style: TextStyle(fontSize: 14),
                     ),
                     color: state.profile == 'driving' ? Colors.blue[100] : null,
@@ -153,7 +154,7 @@ class MapRoute extends StatelessWidget {
                       size: 20,
                     ),
                     label: Text(
-                      '骑行',
+                      S.of(context).cycling,
                       style: TextStyle(fontSize: 14),
                     ),
                     color: state.profile == 'cycling' ? Colors.blue[100] : null,
@@ -172,7 +173,7 @@ class MapRoute extends StatelessWidget {
                       size: 20,
                     ),
                     label: Text(
-                      '步行',
+                      S.of(context).walking,
                       style: TextStyle(fontSize: 14),
                     ),
                     color: state.profile == 'walking' ? Colors.blue[100] : null,

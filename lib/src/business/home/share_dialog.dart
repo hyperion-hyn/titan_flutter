@@ -4,6 +4,7 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
@@ -85,7 +86,7 @@ class ShareDialogState extends State<ShareDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '位置加密分享',
+                  S.of(context).share_encrypted_location,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
                 Container(
@@ -135,7 +136,7 @@ class ShareDialogState extends State<ShareDialog> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Text(
-                            '分享选项',
+                            S.of(context).add_share_options,
                             style: TextStyle(color: Colors.blue),
                           ),
                           Icon(
@@ -156,8 +157,8 @@ class ShareDialogState extends State<ShareDialog> {
                           controller: pubKeyTextEditController,
                           autofocus: true,
                           decoration: InputDecoration(
-                              labelText: "点对点分享",
-                              hintText: "接收者加密地址（公钥）",
+                              labelText: S.of(context).accept_share_pub_key,
+                              hintText: S.of(context).receiver_encrypted_address,
                               contentPadding: EdgeInsets.only(top: 16, right: 32, bottom: 8)),
                           validator: validatePubAddress,
                           onSaved: (value) {
@@ -181,7 +182,7 @@ class ShareDialogState extends State<ShareDialog> {
                     autofocus: true,
                     maxLength: 50,
                     decoration: InputDecoration(
-                        labelText: "附言", hintText: "50字内", contentPadding: EdgeInsets.only(top: 16, bottom: 8)),
+                        labelText: S.of(context).postscript, hintText: S.of(context).postscript_hint, contentPadding: EdgeInsets.only(top: 16, bottom: 8)),
                     onSaved: (value) {
                       remark = value;
                     },
@@ -198,7 +199,7 @@ class ShareDialogState extends State<ShareDialog> {
                       size: 20,
                     ),
                     label: Text(
-                      '分享',
+                      S.of(context).share,
                       style: TextStyle(fontSize: 16),
                     ),
                     color: Colors.black87,
@@ -236,16 +237,17 @@ class ShareDialogState extends State<ShareDialog> {
     try {
       String barcode = await BarcodeScanner.scan();
       if (barcode.length != 130) {
-        Fluttertoast.showToast(msg: "公钥有误，请重新扫描", toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(msg: S.of(context).public_key_scan_fail_rescan, toastLength: Toast.LENGTH_SHORT);
       } else {
         pubKeyTextEditController.text = barcode;
         setState(() => {});
       }
     } catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        Fluttertoast.showToast(msg: "请开启相机权限", toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
       } else {
-        setState(() => this.pubAddress = 'Unknown error: $e');
+        logger.e("",e);
+        setState(() => this.pubAddress = S.of(context).unknown_error);
       }
     }
   }
@@ -261,7 +263,7 @@ class ShareDialogState extends State<ShareDialog> {
         cipherText = await reEncryptPoi(Injector.of(context).repository, widget.poi, remark);
       } catch (err) {
         logger.e(err);
-        Fluttertoast.showToast(msg: '加密发生异常');
+        Fluttertoast.showToast(msg: S.of(context).encrypt_error);
       }
     } else {
       //p2p
@@ -271,14 +273,14 @@ class ShareDialogState extends State<ShareDialog> {
         logger.e(err);
 
         setState(() {
-          addressErrorStr = '不是合法的公钥';
+          addressErrorStr = S.of(context).share_invalid_public_key;
           _formKey.currentState.validate();
         });
       }
     }
 
     if (cipherText != null && cipherText.isNotEmpty) {
-      Share.text('分享加密位置', cipherText, 'text/plain');
+      Share.text(S.of(context).share_encrypted_location, cipherText, 'text/plain');
     }
   }
 }

@@ -40,7 +40,9 @@ class MapScenes extends StatefulWidget {
 
 class MapScenesState extends State<MapScenes> {
   final LatLng _center = const LatLng(23.122592, 113.327356);
-  final String _style = 'https://static.hyn.space/maptiles/see-it-all.json';
+  final kStyleZh = 'https://static.xuantu.mobi/maptiles/see-it-all-zh.json';
+  final kStyleEn = 'https://static.xuantu.mobi/maptiles/see-it-all-en.json';
+  String _style = '';
   final double _defaultZoom = 9.0;
 
   Symbol showingSymbol;
@@ -323,6 +325,18 @@ class MapScenesState extends State<MapScenes> {
   void initState() {
     super.initState();
     _listenEventBus();
+
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    var languageCode =  Localizations.localeOf(context).languageCode;
+    if(languageCode=="zh"){
+      _style = kStyleZh;
+    }else{
+      _style = kStyleEn;
+    }
   }
 
   void _showGoToOpenAppSettingsDialog() {

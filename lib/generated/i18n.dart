@@ -22,28 +22,66 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get about_us => "About Us";
+  String get accept_share_pub_key => "p2p sharing";
+  String get add_share_options => "Sharing options";
   String get app_name => "Titan";
   String get app_version => "Version";
+  String get cancel => "Cancel";
+  String get clean_search_history => "Clean History";
+  String get confirm => "Confirm";
+  String get cycling => "Cycling";
+  String get decrypt_location_cipher_tips => "How to decode positional ciphertext？";
+  String get decrypt_location_cipher_tips_context => "Please paste ciphertext, click enter to decode.";
   String get downloading_update_file => "Downloading update file";
+  String get driving => "Driving";
+  String get encrypt_error => "encrypt error";
   String get forum => "Forum";
+  String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
   String get install_now => "Install now";
   String get installation_update_package_failed => "Installation update package failed";
+  String get key_manager_title => "My encrypted addr.";
+  String get label => "Label";
   String get later => "Later";
   String get less_than_1_min => "Less than 1 minute";
+  String get main_my_public_key => "My encrypted key(public key)";
+  String get manually_refresh => "Refresh Manually";
   String get medium => "Medium";
   String get my_position => "My position";
+  String get nav_about_us => "About us";
+  String get nav_my_privacy_map => "My Privacy Map";
+  String get nav_share_app => "Share Titan APP";
   String get new_update_available => "New Update Available";
   String get no_recommended_route => "No recommended route yet";
   String get official_website => "Official Website";
   String get offline_map => "Offline map";
+  String get open_camera => "Please enable camera permissions";
+  String get postscript => "Notes";
+  String get postscript_hint => "within 50 character";
+  String get public_key_copied => "Public key. copied";
+  String get public_key_scan_fail_rescan => "public key error, please re-scan";
+  String get receiver_encrypted_address => "receiver encrypted address(public key)";
+  String get refresh_keypaire_message => "Refreshing your public key address will unable to decrypt the previous address received, still continue to refresh?";
   String get route => "Route";
+  String get search_empty_data => "No Data";
+  String get search_history => "History";
+  String get search_title => "Search / Decrypt";
+  String get share => "Share";
+  String get share_encrypted_location => "Share encrypted location";
+  String get share_fail => "Share Fail";
+  String get share_invalid_public_key => "Invalid public key";
+  String get share_location => "Location share";
+  String get share_qrcode => "Share public key QR Code";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
+  String get telphone => "Phone No.";
+  String get tips => "Tips";
   String get twitterhyperion => "Twitter-Hyperion";
   String get twittertitan => "Twitter-Titan";
+  String get unknown_error => "Unknown error";
   String get update_now => "Update Now";
+  String get walking => "Walking";
   String get wechat => "Wechat";
-  String get wechat_cs => "微信客服";
+  String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
   String distance(String distance) => "$distance m";
   String km(String km) => "$km km ";
@@ -64,21 +102,29 @@ class $zh_CN extends S {
   TextDirection get textDirection => TextDirection.ltr;
 
   @override
+  String get cancel => "取消";
+  @override
+  String get search_history => "历史搜索";
+  @override
   String get update_now => "现在更新";
   @override
-  String get official_website => "官网";
-  @override
-  String get telegram_operator => "Telegram Operator";
+  String get receiver_encrypted_address => "接收者加密地址（公钥）";
   @override
   String get app_version => "版本";
   @override
   String get twitterhyperion => "推特-海伯利安";
   @override
-  String get medium => "Medium";
+  String get cycling => "骑行";
+  @override
+  String get tips => "提示";
   @override
   String get offline_map => "离线地图";
   @override
-  String get my_position => "我的位置";
+  String get decrypt_location_cipher_tips_context => "请粘贴位置密文，点击搜索即可解码密文。";
+  @override
+  String get public_key_copied => "公钥地址已复制";
+  @override
+  String get encrypt_error => "加密失败";
   @override
   String get twittertitan => "推特-泰坦";
   @override
@@ -88,9 +134,67 @@ class $zh_CN extends S {
   @override
   String get about_us => "关于我们";
   @override
-  String get new_update_available => "发现新版本";
+  String get share_encrypted_location => "分享加密位置";
+  @override
+  String get share_fail => "分享发生错误";
   @override
   String get wechat_cs => "微信客服";
+  @override
+  String get search_empty_data => "暂无数据";
+  @override
+  String get manually_refresh => "手动刷新";
+  @override
+  String get search_title => "搜索 / 解码";
+  @override
+  String get share_location => "位置分享";
+  @override
+  String get nav_share_app => "分享App";
+  @override
+  String get public_key_scan_fail_rescan => "公钥有误，请重新扫描";
+  @override
+  String get refresh_keypaire_message => "刷新公钥地址后，之前的接收的位置密文将永久解密不了！确定继续刷新吗？";
+  @override
+  String get nav_my_privacy_map => "我的隐私地图";
+  @override
+  String get key_manager_title => "我的加密地址";
+  @override
+  String get driving => "驾车";
+  @override
+  String get share_invalid_public_key => "无效的公钥";
+  @override
+  String get route => "路线";
+  @override
+  String get input_search_keyworod_or_cipher => "输入搜索词 / 密文";
+  @override
+  String get telphone => "电话";
+  @override
+  String get installation_update_package_failed => "安装更新包失败";
+  @override
+  String get official_website => "官网";
+  @override
+  String get telegram_operator => "Telegram Operator";
+  @override
+  String get postscript => "附言";
+  @override
+  String get postscript_hint => "输入附言（50字内）";
+  @override
+  String get clean_search_history => "清除记录";
+  @override
+  String get medium => "Medium";
+  @override
+  String get open_camera => "请开启相机权限";
+  @override
+  String get unknown_error => "Unknown error";
+  @override
+  String get my_position => "我的位置";
+  @override
+  String get accept_share_pub_key => "点对点分享";
+  @override
+  String get walking => "步行";
+  @override
+  String get share => "分享";
+  @override
+  String get new_update_available => "发现新版本";
   @override
   String get less_than_1_min => "小于1分钟";
   @override
@@ -98,31 +202,41 @@ class $zh_CN extends S {
   @override
   String get telegram => "电报群";
   @override
+  String get label => "标签";
+  @override
+  String get nav_about_us => "关于我们";
+  @override
   String get forum => "论坛";
+  @override
+  String get confirm => "确定";
   @override
   String get app_name => "泰坦";
   @override
-  String get route => "路线";
+  String get add_share_options => "分享选项";
   @override
   String get no_recommended_route => "暂无推荐路线";
   @override
   String get downloading_update_file => "正在下载更新文件";
   @override
-  String get installation_update_package_failed => "安装更新包失败";
-  @override
   String get install_now => "马上安装";
   @override
-  String distance(String distance) => "${distance}米";
+  String get main_my_public_key => "我的加密地址(公钥)";
+  @override
+  String get decrypt_location_cipher_tips => "怎么解码位置密文？";
+  @override
+  String get share_qrcode => "分享公钥二维码";
   @override
   String network_request_err(String code) => "网络请求错误,状态码: $code";
   @override
-  String km(String km) => "${km}公里";
-  @override
   String n_minute(String minute) => "${minute}分钟";
   @override
-  String n_day(String day) => "${day}天";
-  @override
   String n_hour(String hour) => "${hour}小时";
+  @override
+  String distance(String distance) => "${distance}米";
+  @override
+  String km(String km) => "${km}公里";
+  @override
+  String n_day(String day) => "${day}天";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {

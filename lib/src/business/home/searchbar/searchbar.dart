@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
@@ -134,7 +135,7 @@ class _SearchBarPresenterState extends State<SearchBarPresenter> {
                         child: TextField(
                             controller: _textEditingController,
                             enabled: false,
-                            decoration: InputDecoration(hintText: '搜索 / 解码', border: InputBorder.none),
+                            decoration: InputDecoration(hintText: S.of(context).search_title, border: InputBorder.none),
                             style: Theme.of(context).textTheme.body1),
                       ),
                     )),

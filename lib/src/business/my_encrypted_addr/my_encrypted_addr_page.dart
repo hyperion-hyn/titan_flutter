@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -41,11 +42,11 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('我的加密地址')),
+        appBar: AppBar(title: Text(S.of(context).key_manager_title)),
         body: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 48),
-            child: Center(child: Text('加密地址（公钥）', style: TextStyle(fontSize: 20))),
+            child: Center(child: Text(S.of(context).main_my_public_key, style: TextStyle(fontSize: 20))),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -55,7 +56,7 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                   onTap: () {
                     if (_pubKey.isNotEmpty) {
                       Clipboard.setData(ClipboardData(text: _pubKey));
-                      Scaffold.of(context).showSnackBar(SnackBar(content: Text('公钥地址已复制')));
+                      Scaffold.of(context).showSnackBar(SnackBar(content: Text('S.of(context).public_key_copied')));
                     }
                   },
                   child: Row(children: <Widget>[
@@ -92,7 +93,7 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                 child: InkWell(
                   onTap: () => showRefreshDialog(context),
                   child: Text(
-                    '手动刷新',
+                    S.of(context).manually_refresh,
                     style: TextStyle(color: Colors.blue),
                   ),
                 ),
@@ -110,7 +111,7 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                 textColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
                 onPressed: share,
-                child: Text('分享'),
+                child: Text(S.of(context).share),
               ),
             ),
           )
@@ -122,20 +123,20 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('提示'),
-            content: Text('刷新公钥地址后，之前的接收的位置密文将永久解密不了！确定继续刷新吗？'),
+            title: Text(S.of(context).tips),
+            content: Text(S.of(context).refresh_keypaire_message),
             actions: <Widget>[
               FlatButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('取消')),
+                  child: Text(S.of(context).cancel)),
               FlatButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                     genNewKeys();
                   },
-                  child: Text('确定'))
+                  child: Text(S.of(context).confirm))
             ],
           );
         },
@@ -167,10 +168,10 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
       final file = await File('${tempDir.path}/$path').create();
       await file.writeAsBytes(pngBytes);
 
-      TitanPlugin.shareImage(path, '分享公钥二维码');
+      TitanPlugin.shareImage(path, S.of(context).share_qrcode);
     } catch (e) {
       print(e.toString());
-      Fluttertoast.showToast(msg: '分享发生错误');
+      Fluttertoast.showToast(msg: S.of(context).share_fail);
     }
 
 //    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);

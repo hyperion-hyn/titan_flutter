@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -163,10 +164,10 @@ class _SearchPageState extends State<SearchPage> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                      child: Text('历史搜索', style: TextStyle(color: Colors.grey[600], fontSize: 13))),
+                                      child: Text(S.of(context).search_history, style: TextStyle(color: Colors.grey[600], fontSize: 13))),
                                   FlatButton(
                                     child: Text(
-                                      '清除记录',
+                                      S.of(context).clean_search_history,
                                       style: TextStyle(color: Colors.blue),
                                     ),
                                     onPressed: () {
@@ -287,7 +288,7 @@ class _SearchPageState extends State<SearchPage> {
                   textInputAction: TextInputAction.search,
                   focusNode: _searchFocusNode,
                   decoration: InputDecoration(
-                      hintText: '输入搜索词 / 密文', border: InputBorder.none, hintStyle: TextStyle(color: Colors.grey)),
+                      hintText: S.of(context).input_search_keyworod_or_cipher, border: InputBorder.none, hintStyle: TextStyle(color: Colors.grey)),
                   style: Theme.of(context).textTheme.body1),
             )),
             if (_visibleCloseIcon)
@@ -330,7 +331,7 @@ class _SearchPageState extends State<SearchPage> {
             elevation: 2.0,
             child: InkWell(
               onTap: () {
-                Fluttertoast.showToast(msg: 'TODO');
+//                Fluttertoast.showToast(msg: 'TODO');
               },
               child: Row(
                 children: <Widget>[
@@ -346,21 +347,21 @@ class _SearchPageState extends State<SearchPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0),
                           child: Text(
-                            '怎么解码位置密文？',
+                            S.of(context).decrypt_location_cipher_tips,
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
-                          child: Text('请粘贴位置密文，点击搜索即可解码密文。', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                          child: Text(S.of(context).decrypt_location_cipher_tips_context, style: TextStyle(color: Colors.grey, fontSize: 14),softWrap: true,),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: Text(
-                            '位置密文帮助',
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        )
+//                        Padding(
+//                          padding: const EdgeInsets.only(top: 16.0),
+//                          child: Text(
+//                            '位置密文帮助',
+//                            style: TextStyle(color: Colors.blue),
+//                          ),
+//                        )
                       ],
                     ),
                   )
