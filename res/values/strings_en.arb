@@ -66,5 +66,10 @@
   "decrypt_location_cipher_tips_context": "Please paste ciphertext, click enter to decode.",
   "input_search_keyworod_or_cipher": "Enter search keyword/ciphertext",
   "search_history": "History",
-  "clean_search_history": "Clean History"
+  "clean_search_history": "Clean History",
+  "generating_key": "Please wait for encrypted key.…",
+  "refresh_public_key_days_tips": "Automatically refresh in %d days",
+  "refresh_public_key_hours_tips": "Automatically refresh in %d hrs %d mins",
+  "refresh_public_key_minutes_tips": "Automatically refresh in %d mins",
+  "refresh_public_key_seconds_tips": "Automatically refresh in %d secs"
 }

@@ -35,19 +35,19 @@ class _DrawerScenesState extends State<DrawerScenes> {
     var expireTime = await TitanPlugin.getExpiredTime();
     var timeLeft = (expireTime - DateTime.now().millisecondsSinceEpoch) ~/ 1000;
     if (timeLeft <= 0) {
-      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context,expireTime);
       _pubKey = '';
       setState(() {});
 
       TitanPlugin.genKeyPair().then((pub) async {
         _pubKey = pub;
         expireTime = await TitanPlugin.getExpiredTime();
-        _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+        _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context,expireTime);
         setState(() {});
       });
     } else {
       _pubKey = await TitanPlugin.getPublicKey();
-      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context,expireTime);
       setState(() {});
     }
   }

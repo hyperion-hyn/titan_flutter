@@ -76,6 +76,8 @@ dependencies:
   flutter_downloader: ^1.1.7
   #https://pub.dev/packages/flutter_html:
   flutter_html: ^0.10.4
+  #https://pub.dev/packages/sprintf
+  sprintf: ^4.0.2
   #https://github.com/tobrun/flutter-mapbox-gl
   mapbox_gl:
     path: ../mapbox_flutter

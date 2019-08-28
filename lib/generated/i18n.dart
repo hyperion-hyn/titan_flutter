@@ -36,6 +36,7 @@ class S implements WidgetsLocalizations {
   String get driving => "Driving";
   String get encrypt_error => "encrypt error";
   String get forum => "Forum";
+  String get generating_key => "Please wait for encrypted key.…";
   String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
   String get install_now => "Install now";
   String get installation_update_package_failed => "Installation update package failed";
@@ -61,6 +62,10 @@ class S implements WidgetsLocalizations {
   String get public_key_scan_fail_rescan => "public key error, please re-scan";
   String get receiver_encrypted_address => "receiver encrypted address(public key)";
   String get refresh_keypaire_message => "Refreshing your public key address will unable to decrypt the previous address received, still continue to refresh?";
+  String get refresh_public_key_days_tips => "Automatically refresh in %d days";
+  String get refresh_public_key_hours_tips => "Automatically refresh in %d hrs %d mins";
+  String get refresh_public_key_minutes_tips => "Automatically refresh in %d mins";
+  String get refresh_public_key_seconds_tips => "Automatically refresh in %d secs";
   String get route => "Route";
   String get search_empty_data => "No Data";
   String get search_history => "History";
@@ -160,6 +165,8 @@ class $zh_CN extends S {
   @override
   String get driving => "驾车";
   @override
+  String get generating_key => "正在生成加密地址…";
+  @override
   String get share_invalid_public_key => "无效的公钥";
   @override
   String get route => "路线";
@@ -186,6 +193,8 @@ class $zh_CN extends S {
   @override
   String get unknown_error => "Unknown error";
   @override
+  String get refresh_public_key_hours_tips => "%d小时%d分后自动刷新";
+  @override
   String get my_position => "我的位置";
   @override
   String get accept_share_pub_key => "点对点分享";
@@ -196,7 +205,11 @@ class $zh_CN extends S {
   @override
   String get new_update_available => "发现新版本";
   @override
+  String get refresh_public_key_days_tips => "%d天后自动刷新";
+  @override
   String get less_than_1_min => "小于1分钟";
+  @override
+  String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override
   String get wechat => "公众号";
   @override
@@ -217,6 +230,8 @@ class $zh_CN extends S {
   String get no_recommended_route => "暂无推荐路线";
   @override
   String get downloading_update_file => "正在下载更新文件";
+  @override
+  String get refresh_public_key_seconds_tips => "%d秒后自动刷新";
   @override
   String get install_now => "马上安装";
   @override

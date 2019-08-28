@@ -66,5 +66,10 @@
   "decrypt_location_cipher_tips_context": "请粘贴位置密文，点击搜索即可解码密文。",
   "input_search_keyworod_or_cipher": "输入搜索词 / 密文",
   "search_history": "历史搜索",
-  "clean_search_history": "清除记录"
+  "clean_search_history": "清除记录",
+  "generating_key": "正在生成加密地址…",
+  "refresh_public_key_days_tips": "%d天后自动刷新",
+  "refresh_public_key_hours_tips": "%d小时%d分后自动刷新",
+  "refresh_public_key_minutes_tips": "%d分后自动刷新",
+  "refresh_public_key_seconds_tips": "%d秒后自动刷新"
 }

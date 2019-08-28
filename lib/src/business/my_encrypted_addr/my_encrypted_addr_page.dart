@@ -35,7 +35,7 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
   void queryData() async {
     _pubKey = await TitanPlugin.getPublicKey();
     var expireTime = await TitanPlugin.getExpiredTime();
-    _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+    _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context,expireTime);
     setState(() {});
   }
 
@@ -150,7 +150,7 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
       _pubKey = key;
       return TitanPlugin.getExpiredTime();
     }).then((expireTime) {
-      var tip = getExpiredTimeShowTip(expireTime);
+      var tip = getExpiredTimeShowTip(context,expireTime);
       _pubKeyAutoRefreshTip = tip;
       setState(() {});
     });
