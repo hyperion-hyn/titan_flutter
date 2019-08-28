@@ -14,6 +14,7 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:titan/src/widget/static_webview_page.dart';
 
 class AboutMePage extends StatefulWidget {
   @override
@@ -166,23 +167,8 @@ class _AboueMeState extends State<AboutMePage> {
 
   void _copyText(String text) {
     Clipboard.setData(new ClipboardData(text: text));
-    Fluttertoast.showToast(msg: 'Copyed');
+    Fluttertoast.showToast(msg: S.of(context).copyed);
   }
 }
 
-class StaticWebViewPage extends StatelessWidget {
-  final String url;
-  final String title;
 
-  StaticWebViewPage(this.url, this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return WebviewScaffold(
-      url: url,
-      appBar: new AppBar(
-        title: new Text(title),
-      ),
-    );
-  }
-}

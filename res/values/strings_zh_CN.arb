@@ -71,5 +71,14 @@
   "refresh_public_key_days_tips": "%d天后自动刷新",
   "refresh_public_key_hours_tips": "%d小时%d分后自动刷新",
   "refresh_public_key_minutes_tips": "%d分后自动刷新",
-  "refresh_public_key_seconds_tips": "%d秒后自动刷新"
+  "refresh_public_key_seconds_tips": "%d秒后自动刷新",
+  "improvement_plan_message": "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>",
+  "improvement_plan_agree": "参与计划",
+  "improvement_plan_refuse": "不参与",
+  "improvement_plan_title": "改进体验计划",
+  "skip": "跳过",
+  "Next": "下一页",
+  "enter": "进入",
+  "copyed": "已拷贝",
+  "Clean": "清除痕迹"
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/home_page.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -19,31 +20,53 @@ class IntroScreenState extends State<IntroScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _initSlides();
+  }
+
+  void _initSlides() {
+    var privacyImage = "";
+    var burningImage = "";
+    var encryptedImage = "";
+
+    var languageCode = Localizations.localeOf(context).languageCode;
+    if (languageCode == "zh") {
+      privacyImage = "res/drawable/location_privacy_zh.jpeg";
+      burningImage = "res/drawable/burn_zh.jpeg";
+      encryptedImage = "res/drawable/encrypted_location_zh.jpeg";
+    } else {
+      privacyImage = "res/drawable/location_privacy.jpeg";
+      burningImage = "res/drawable/burn.jpeg";
+      encryptedImage = "res/drawable/encrypted_location.jpeg";
+    }
     slides.add(
       new Slide(
         backgroundOpacityColor: Colors.transparent,
         backgroundColor: Colors.transparent,
-        backgroundImage: "res/drawable/location_privacy_zh.jpeg",
+        backgroundImage: privacyImage,
       ),
     );
     slides.add(
       new Slide(
+        backgroundOpacityColor: Colors.transparent,
         backgroundColor: Colors.transparent,
-        backgroundImage: "res/drawable/burn_zh.jpeg",
+        backgroundImage: burningImage,
       ),
     );
     slides.add(
       new Slide(
+        backgroundOpacityColor: Colors.transparent,
         backgroundColor: Colors.transparent,
-        backgroundImage: "res/drawable/encrypted_location_zh.jpeg",
+        backgroundImage: encryptedImage,
       ),
     );
-
-//    _saveFirstRunState();
   }
 
   void onDonePress() {
-    Navigator.pop(context,"done");
+    Navigator.pop(context, "done");
 //    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
     _saveFirstRunState();
   }
@@ -64,9 +87,9 @@ class IntroScreenState extends State<IntroScreen> {
         slides: this.slides,
         onSkipPress: this.onDonePress,
         onDonePress: this.onDonePress,
-        nameSkipBtn: "跳过",
-        nameNextBtn: "下一页",
-        nameDoneBtn: "进入",
+        nameSkipBtn: S.of(context).skip,
+        nameNextBtn: S.of(context).Next,
+        nameDoneBtn: S.of(context).enter,
       ),
     );
   }

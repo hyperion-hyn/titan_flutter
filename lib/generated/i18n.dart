@@ -21,6 +21,8 @@ class S implements WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get Clean => "Clean";
+  String get Next => "Next";
   String get about_us => "About Us";
   String get accept_share_pub_key => "p2p sharing";
   String get add_share_options => "Sharing options";
@@ -29,14 +31,20 @@ class S implements WidgetsLocalizations {
   String get cancel => "Cancel";
   String get clean_search_history => "Clean History";
   String get confirm => "Confirm";
+  String get copyed => "Copyed";
   String get cycling => "Cycling";
   String get decrypt_location_cipher_tips => "How to decode positional ciphertext？";
   String get decrypt_location_cipher_tips_context => "Please paste ciphertext, click enter to decode.";
   String get downloading_update_file => "Downloading update file";
   String get driving => "Driving";
   String get encrypt_error => "encrypt error";
+  String get enter => "Enter";
   String get forum => "Forum";
   String get generating_key => "Please wait for encrypted key.…";
+  String get improvement_plan_agree => "Participate";
+  String get improvement_plan_message => "Tell us what you think about Titan product by participating in\n        our user experience plan. Check for more details.\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">Titan Privacy Policy</a>\n        </b>";
+  String get improvement_plan_refuse => "Not participate";
+  String get improvement_plan_title => "Titan improvement plan";
   String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
   String get install_now => "Install now";
   String get installation_update_package_failed => "Installation update package failed";
@@ -76,6 +84,7 @@ class S implements WidgetsLocalizations {
   String get share_invalid_public_key => "Invalid public key";
   String get share_location => "Location share";
   String get share_qrcode => "Share public key QR Code";
+  String get skip => "Skip";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
@@ -115,6 +124,8 @@ class $zh_CN extends S {
   @override
   String get receiver_encrypted_address => "接收者加密地址（公钥）";
   @override
+  String get improvement_plan_title => "改进体验计划";
+  @override
   String get app_version => "版本";
   @override
   String get twitterhyperion => "推特-海伯利安";
@@ -135,6 +146,8 @@ class $zh_CN extends S {
   @override
   String get later => "暂不更新";
   @override
+  String get copyed => "已拷贝";
+  @override
   String get wechat_official_account => "服务号";
   @override
   String get about_us => "关于我们";
@@ -142,6 +155,10 @@ class $zh_CN extends S {
   String get share_encrypted_location => "分享加密位置";
   @override
   String get share_fail => "分享发生错误";
+  @override
+  String get enter => "进入";
+  @override
+  String get improvement_plan_refuse => "不参与";
   @override
   String get wechat_cs => "微信客服";
   @override
@@ -152,6 +169,8 @@ class $zh_CN extends S {
   String get search_title => "搜索 / 解码";
   @override
   String get share_location => "位置分享";
+  @override
+  String get improvement_plan_agree => "参与计划";
   @override
   String get nav_share_app => "分享App";
   @override
@@ -175,6 +194,8 @@ class $zh_CN extends S {
   @override
   String get telphone => "电话";
   @override
+  String get Next => "下一页";
+  @override
   String get installation_update_package_failed => "安装更新包失败";
   @override
   String get official_website => "官网";
@@ -187,7 +208,11 @@ class $zh_CN extends S {
   @override
   String get clean_search_history => "清除记录";
   @override
+  String get skip => "跳过";
+  @override
   String get medium => "Medium";
+  @override
+  String get Clean => "清除痕迹";
   @override
   String get open_camera => "请开启相机权限";
   @override
@@ -218,6 +243,8 @@ class $zh_CN extends S {
   String get label => "标签";
   @override
   String get nav_about_us => "关于我们";
+  @override
+  String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
   @override
   String get forum => "论坛";
   @override

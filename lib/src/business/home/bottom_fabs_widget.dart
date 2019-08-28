@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/map/bloc/bloc.dart' as map;
 import 'package:titan/src/business/home/burning_dialog/burning_dialog.dart';
@@ -58,7 +59,7 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
               children: <Widget>[
                 new ListTile(
                     leading: new Icon(IconData(0xe66e, fontFamily: 'iconfont'), color: Color(0xffac2229)),
-                    title: new Text('清除痕迹', style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
+                    title: new Text(S.of(context).Clean, style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
                     onTap: () {
                       Navigator.pop(ctx);
 //                      Navigator.push(context, MaterialPageRoute(builder: (context) => BurningDialog()));
@@ -71,7 +72,7 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
                     }),
                 new ListTile(
                   leading: new Icon(Icons.close),
-                  title: new Text('取消'),
+                  title: new Text(S.of(context).cancel),
                   onTap: () => Navigator.pop(ctx),
                 ),
               ],
