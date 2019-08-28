@@ -40,8 +40,8 @@ class MapScenes extends StatefulWidget {
 
 class MapScenesState extends State<MapScenes> {
   final LatLng _center = const LatLng(23.122592, 113.327356);
-  final kStyleZh = 'https://static.xuantu.mobi/maptiles/see-it-all-zh.json';
-  final kStyleEn = 'https://static.xuantu.mobi/maptiles/see-it-all-en.json';
+  final kStyleZh = 'https://static.xuantu.mobi/maptiles/see-it-all-cdn-zh.json';
+  final kStyleEn = 'https://static.xuantu.mobi/maptiles/see-it-all-cdn-en.json';
   String _style = '';
   final double _defaultZoom = 9.0;
 

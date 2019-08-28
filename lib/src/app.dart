@@ -34,6 +34,7 @@ class _AppState extends State<App> {
     return BlocProvider(
       builder: (context) => AppBloc(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         key: Keys.materialAppKey,
         title: 'Titan',
         theme: appTheme,
