@@ -35,19 +35,19 @@ class _DrawerScenesState extends State<DrawerScenes> {
     var expireTime = await TitanPlugin.getExpiredTime();
     var timeLeft = (expireTime - DateTime.now().millisecondsSinceEpoch) ~/ 1000;
     if (timeLeft <= 0) {
-      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context, expireTime);
       _pubKey = '';
       setState(() {});
 
       TitanPlugin.genKeyPair().then((pub) async {
         _pubKey = pub;
         expireTime = await TitanPlugin.getExpiredTime();
-        _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+        _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context, expireTime);
         setState(() {});
       });
     } else {
       _pubKey = await TitanPlugin.getPublicKey();
-      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(expireTime);
+      _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context, expireTime);
       setState(() {});
     }
   }
@@ -82,7 +82,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
                       ],
                     ),
                     SizedBox(height: 16),
-                    Text('我的隐私地图', style: TextStyle(color: Colors.white70))
+                    Text(S.of(context).nav_my_privacy_map, style: TextStyle(color: Colors.white70))
                   ],
                 ),
               ),
@@ -95,13 +95,10 @@ class _DrawerScenesState extends State<DrawerScenes> {
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyEncryptedAddrPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
                   },
                   leading: Icon(Icons.lock),
-                  title: Text('我的加密地址(公钥)'),
+                  title: Text(S.of(context).main_my_public_key),
                   trailing: Icon(Icons.navigate_next),
                 ),
                 Container(
@@ -112,7 +109,7 @@ class _DrawerScenesState extends State<DrawerScenes> {
                     onTap: () {
                       if (_pubKey.isNotEmpty) {
                         Clipboard.setData(ClipboardData(text: _pubKey));
-                        Fluttertoast.showToast(msg: '公钥地址已复制');
+                        Fluttertoast.showToast(msg: S.of(context).public_key_copied);
                       }
                     },
                     child: Row(
@@ -137,29 +134,24 @@ class _DrawerScenesState extends State<DrawerScenes> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text(_pubKeyAutoRefreshTip,
-                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Text(_pubKeyAutoRefreshTip, style: TextStyle(fontSize: 12, color: Colors.grey)),
                 ),
                 Container(height: 8, color: Colors.grey[100]),
                 ListTile(
                   onTap: shareApp,
                   leading: Icon(Icons.share),
-                  title: Text('分享App'),
+                  title: Text(S.of(context).nav_share_app),
                   trailing: Icon(Icons.navigate_next),
                 ),
                 Container(height: 1, color: Colors.grey[100]),
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AboutMePage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
                   },
                   leading: Icon(Icons.info),
-                  title: Text('关于我们'),
+                  title: Text(S.of(context).nav_about_us),
                   trailing: Icon(Icons.navigate_next),
                 ),
               ],
@@ -171,7 +163,16 @@ class _DrawerScenesState extends State<DrawerScenes> {
   }
 
   void shareApp() async {
-    final ByteData imageByte = await rootBundle.load('res/drawable/share_app_zh_android.jpeg');
-    await Share.file('download image', 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
+    var languageCode = Localizations.localeOf(context).languageCode;
+    var shareAppImage = "";
+
+    if (languageCode == "zh") {
+      shareAppImage = "res/drawable/share_app_zh_android.jpeg";
+    } else {
+      shareAppImage = "res/drawable/share_app_en_android.jpeg";
+    }
+
+    final ByteData imageByte = await rootBundle.load(shareAppImage);
+    await Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 
@@ -10,9 +11,7 @@ class PoiBottomSheet extends StatefulWidget {
   final PoiEntity selectedPoiEntity;
   final ScrollController scrollController;
 
-
-  PoiBottomSheet({this.selectedPoiEntity, this.scrollController
-  });
+  PoiBottomSheet({this.selectedPoiEntity, this.scrollController});
 
   @override
   State<StatefulWidget> createState() {
@@ -26,11 +25,11 @@ class _PoiBottomSheetState extends State<PoiBottomSheet> {
   double getHeaderHeight() {
     RenderBox renderBox = _poiHeaderKey.currentContext?.findRenderObject();
     var h = renderBox?.size?.height ?? 0;
-    if(h > 0) {
+    if (h > 0) {
       if (MediaQuery.of(context).padding.bottom > 0) {
         h += safeAreaBottomPadding;
       }
-      return h + 76;  //76 is hack options height;
+      return h + 76; //76 is hack options height;
     }
     return 0;
   }
@@ -74,14 +73,17 @@ class _PoiBottomSheetState extends State<PoiBottomSheet> {
           Divider(
             height: 0,
           ),
-          buildInfoItem('标签', widget.selectedPoiEntity.tags),
-          buildInfoItem('电话', widget.selectedPoiEntity.phone),
+          buildInfoItem(S.of(context).label, widget.selectedPoiEntity.tags),
+          buildInfoItem(S.of(context).telphone, widget.selectedPoiEntity.phone),
         ],
       ),
     );
   }
 
-  Widget buildHeadItem(IconData icon, String info, {String hint = '暂无数据'}) {
+  Widget buildHeadItem(IconData icon, String info, {String hint}) {
+    if (hint == null || hint.isEmpty) {
+      hint = S.of(context).search_empty_data;
+    }
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -104,7 +106,10 @@ class _PoiBottomSheetState extends State<PoiBottomSheet> {
     );
   }
 
-  Widget buildInfoItem(String tag, String info, {String hint = '暂无填写'}) {
+  Widget buildInfoItem(String tag, String info, {String hint}) {
+    if (hint == null || hint.isEmpty) {
+      hint = S.of(context).search_empty_data;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[

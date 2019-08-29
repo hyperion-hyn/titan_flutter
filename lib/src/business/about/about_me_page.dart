@@ -7,12 +7,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:titan/src/widget/static_webview_page.dart';
 
 class AboutMePage extends StatefulWidget {
   @override
@@ -22,15 +24,22 @@ class AboutMePage extends StatefulWidget {
 }
 
 class _AboueMeState extends State<AboutMePage> {
+  String version = "";
+
   @override
   void initState() {
     super.initState();
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      version = packageInfo.version;
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    var languageCode = Localizations.localeOf(context).languageCode;
     return Scaffold(
-        appBar: AppBar(title: Text('About Us')),
+        appBar: AppBar(title: Text(S.of(context).about_us)),
         body: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 48),
@@ -59,12 +68,12 @@ class _AboueMeState extends State<AboutMePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Version Updates",
+                    S.of(context).app_version,
                     style: TextStyle(color: Colors.black, fontSize: 15),
                   ),
                   Spacer(),
                   Text(
-                    "v1.1.1",
+                    version,
                     style: TextStyle(color: Colors.grey),
                   )
                 ],
@@ -85,13 +94,8 @@ class _AboueMeState extends State<AboutMePage> {
               value: "https://talk.hyn.space/",
               isUrl: true),
           _buildInfoContainer(
-              label: S.of(context).telegram,
-              showValue: "@hypersionOfficianHYN",
-              value: "hypersionOfficianHYN"),
-          _buildInfoContainer(
-              label: S.of(context).twitterhyperion,
-              showValue: "@TitanHYN",
-              value: "TitanHYN"),
+              label: S.of(context).telegram, showValue: "@hypersionOfficianHYN", value: "hypersionOfficianHYN"),
+          _buildInfoContainer(label: S.of(context).twitterhyperion, showValue: "@TitanHYN", value: "TitanHYN"),
           _buildInfoContainer(
             label: S.of(context).twittertitan,
             showValue: "@HyperionHYN",
@@ -102,26 +106,21 @@ class _AboueMeState extends State<AboutMePage> {
             showValue: "@hyperionsgoffical",
             value: "@hyperionsgoffical",
           ),
-          _buildInfoContainer(
-              label: S.of(context).wechat, showValue: "@HyperionHYN", value: "HyperionHYN"),
-          _buildInfoContainer(
-              label: S.of(context).wechat_official_account,
-              showValue: "@kaizshuo",
-              value: "kaizshuo"),
-          _buildInfoContainer(
-              label: S.of(context).telegram_operator,
-              showValue: "@FriedrichLVZX",
-              value: "FriedrichLVZX"),
-          _buildInfoContainer(
-            label: S.of(context).wechat_cs,
-            showValue: "@Bi321369",
-            value: "@Bi321369",
-          ),
+          _buildInfoContainer(label: S.of(context).wechat, showValue: "@HyperionHYN", value: "HyperionHYN"),
+          _buildInfoContainer(label: S.of(context).wechat_official_account, showValue: "@kaizshuo", value: "kaizshuo"),
+          if (languageCode == "en")
+            _buildInfoContainer(
+                label: S.of(context).telegram_operator, showValue: "@FriedrichLVZX", value: "FriedrichLVZX"),
+          if (languageCode == "zh")
+            _buildInfoContainer(
+              label: S.of(context).wechat_cs,
+              showValue: "@Bi321369",
+              value: "@Bi321369",
+            ),
         ]));
   }
 
-  Widget _buildInfoContainer(
-      {String label, String showValue, String value, bool isUrl: false}) {
+  Widget _buildInfoContainer({String label, String showValue, String value, bool isUrl: false}) {
     Color showValueTextColor = isUrl ? Colors.grey : Colors.blue;
     return GestureDetector(
       onTap: () {
@@ -168,23 +167,8 @@ class _AboueMeState extends State<AboutMePage> {
 
   void _copyText(String text) {
     Clipboard.setData(new ClipboardData(text: text));
-    Fluttertoast.showToast(msg: 'Copyed');
+    Fluttertoast.showToast(msg: S.of(context).copyed);
   }
 }
 
-class StaticWebViewPage extends StatelessWidget {
-  final String url;
-  final String title;
 
-  StaticWebViewPage(this.url, this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return WebviewScaffold(
-      url: url,
-      appBar: new AppBar(
-        title: new Text(title),
-      ),
-    );
-  }
-}

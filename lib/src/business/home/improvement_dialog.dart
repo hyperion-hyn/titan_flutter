@@ -6,9 +6,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
+import 'package:titan/src/widget/static_webview_page.dart';
 
 import '../../global.dart';
 
@@ -67,7 +69,7 @@ class ImprovementDialogDialogState extends State<ImprovementDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '改进体验计划',
+                  S.of(context).improvement_plan_title,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
                 Container(
@@ -78,15 +80,13 @@ class ImprovementDialogDialogState extends State<ImprovementDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Html(
-                        data: """
-                            为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细
-                            <b>
-                              <a href="https://www.map3.network/titan/privacy_policy/">计划说明</a>
-                            </b>
-                            """,
+                        data: '''
+                        ${S.of(context).improvement_plan_message}
+                        ''',
                         padding: EdgeInsets.all(8.0),
                         onLinkTap: (url) {
-                          print("Opening $url...");
+//                          print("Opening $url...");
+                          _openUrl(url, "Titan Privacy");
                         },
                       ),
                       Text(
@@ -109,7 +109,7 @@ class ImprovementDialogDialogState extends State<ImprovementDialog> {
                         child: RaisedButton(
                           onPressed: onDisAgree,
                           child: Text(
-                            '不参与',
+                            S.of(context).improvement_plan_refuse,
                             style: TextStyle(fontSize: 16),
                           ),
                           color: Colors.black87,
@@ -123,7 +123,7 @@ class ImprovementDialogDialogState extends State<ImprovementDialog> {
                         child: RaisedButton(
                           onPressed: onAgree,
                           child: Text(
-                            '参与计划',
+                            S.of(context).improvement_plan_agree,
                             style: TextStyle(fontSize: 16),
                           ),
                           color: Colors.black87,
@@ -164,5 +164,11 @@ class ImprovementDialogDialogState extends State<ImprovementDialog> {
     prefs.setBool('isAgreePlan', isAgree);
 //    setState(() {});
 //    _isNeedShowIntro();
+  }
+
+  void _openUrl(String url, String title) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+      return StaticWebViewPage(url, title);
+    }));
   }
 }
