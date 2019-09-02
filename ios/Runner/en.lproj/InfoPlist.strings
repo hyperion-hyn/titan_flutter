@@ -6,12 +6,12 @@
   Copyright © 2019 The Chromium Authors. All rights reserved.
 */
 CFBundleDisplayName = "Titan";
-NSLocationAlwaysAndWhenInUseUsageDescription = "Please allow obtain location permission";
-NSLocationWhenInUseUsageDescription = "Please allow obtain location permission";
-NSLocationAlwaysUsageDescription = "Please allow obtain location permission";
+NSLocationAlwaysAndWhenInUseUsageDescription = "Displays your current location and navigation";
+NSLocationWhenInUseUsageDescription = "Displays your current location and navigation";
+NSLocationAlwaysUsageDescription = "Displays your current location and navigation";
 NSSpeechRecognitionUsageDescription = "Please allow obtain speech recognition permission";
 NSMotionUsageDescription = "Please allow obtain motion permission";
 NSAppleMusicUsageDescription = "Please allow obtain Apple Music permission";
 NSCalendarsUsageDescription = "Please allow obtain calendars permission";
 NSContactsUsageDescription = "Please allow obtain contacts permission";
-NSCameraUsageDescription = "Please allow obtain camera permission";
+NSCameraUsageDescription = "Used to scan public key qr code";
