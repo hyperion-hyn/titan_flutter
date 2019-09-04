@@ -9,45 +9,23 @@ import '../../../env.dart';
 import 'entity.dart';
 import 'http_exception.dart';
 
-class HttpCore {
-  factory HttpCore() => _getInstance();
+class BaseHttpCore {
+  final Dio dio;
 
-  HttpCore._internal();
-
-
-  static HttpCore get instance => _getInstance();
-  static HttpCore _instance;
-
-  static HttpCore _getInstance() {
-    if (_instance == null) {
-      _instance = HttpCore._internal();
-      if (env.buildType == 'dev') {
-        _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
-      }
-    }
-    return _instance;
-  }
+  BaseHttpCore(this.dio);
 
   static const String GET = "get";
   static const String POST = "post";
 
-  var dio = new Dio(BaseOptions(
-    baseUrl: Const.DOMAIN,
-    connectTimeout: 5000,
-    receiveTimeout: 10000,
-//    headers: {"user-agent": "dio", "api": "1.0.0"},
-    /*contentType: ContentType.JSON,
-      responseType: ResponseType.PLAIN*/
-    contentType: ContentType.parse('application/x-www-form-urlencoded'),
-  ));
-
-  Future<ResponseEntity<T>> getResponseEntity<T>(String url, EntityFactory<T> factory, {Map<String, dynamic> params}) async {
+  Future<ResponseEntity<T>> getResponseEntity<T>(String url, EntityFactory<T> factory,
+      {Map<String, dynamic> params}) async {
     var res = await get(url, params: params);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
-  Future<ResponseEntity<T>> postResponseEntity<T>(String url, EntityFactory<T> factory, {Map<String, dynamic> params}) async {
+  Future<ResponseEntity<T>> postResponseEntity<T>(String url, EntityFactory<T> factory,
+      {Map<String, dynamic> params}) async {
     var res = await post(url, params: params);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
@@ -114,7 +92,7 @@ class HttpCore {
       throw HttpResponseNot200Exception(errorMsg);
     }
 //    String res2Json = '{"code":0,"msg":"mssss","data":[{"name":"moo"},{"name":"moo2"}]}';
-    if(response.data is Map<String, dynamic>) {
+    if (response.data is Map<String, dynamic>) {
       return response.data;
     }
 

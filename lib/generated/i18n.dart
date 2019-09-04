@@ -54,6 +54,7 @@ class S implements WidgetsLocalizations {
   String get less_than_1_min => "Less than 1 minute";
   String get main_my_public_key => "My encrypted key(public key)";
   String get manually_refresh => "Refresh Manually";
+  String get map_store => "Map Store";
   String get medium => "Medium";
   String get my_position => "My position";
   String get nav_about_us => "About us";
@@ -237,6 +238,8 @@ class $zh_CN extends S {
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override
   String get wechat => "公众号";
+  @override
+  String get map_store => "地图商店";
   @override
   String get telegram => "电报群";
   @override
