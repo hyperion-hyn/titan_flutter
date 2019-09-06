@@ -81,5 +81,16 @@
   "enter": "Enter",
   "copyed": "Copyed",
   "Clean": "Clean",
-  "map_store": "Map Store"
+  "map_store": "Map Store",
+  "more": "More",
+  "payment_failed": "Payment failed",
+  "service_type": "Service type",
+  "payment_type": "Payment Types",
+  "cancel_payment": "Cancel payment",
+  "cancel": "Cancel",
+  "pay": "Pay",
+  "ordering": "Ordering...",
+  "waiting_for_payment_result": "Waiting for payment result...",
+  "payment_successful": "Payment successful",
+  "monthly_payment": " One Month Valid"
 }

@@ -1,7 +1,11 @@
 import 'package:bloc/bloc.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+
 //import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/domain/firebase.dart';
 
 import 'env.dart';
 import 'src/basic/bloc/app_bloc_delegate.dart';
@@ -14,7 +18,7 @@ import 'src/plugins/titan_plugin.dart';
 
 void main() {
   if (env == null) {
-    BuildEnvironment.init(flavor: BuildFlavor.androidOfficial, buildType: BuildType.dev);
+    BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV);
   }
 
   TitanPlugin.initFlutterMethodCall();
@@ -28,7 +32,11 @@ void main() {
   BlocSupervisor.delegate = AppBlocDelegate();
 
   runApp(Injector(
-    child: App(),
+    child: FireBaseLogic(
+      child: App(),
+      analytics: FirebaseAnalytics(),
+      crashlytics: Crashlytics.instance,
+    ),
     repository: repository,
     searchInteractor: searchInteractor,
   ));

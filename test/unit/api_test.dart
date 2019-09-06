@@ -10,7 +10,7 @@ import 'package:titan/src/data/db/search_history_dao.dart';
 import 'package:titan/src/data/repository/repository.dart';
 
 void main() {
-  BuildEnvironment.init(flavor: BuildFlavor.androidOfficial, buildType: BuildType.dev);
+  BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV);
 
   test('update app api', () async {
     Api api = Api();

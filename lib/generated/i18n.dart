@@ -29,6 +29,7 @@ class S implements WidgetsLocalizations {
   String get app_name => "Titan";
   String get app_version => "Version";
   String get cancel => "Cancel";
+  String get cancel_payment => "Cancel payment";
   String get clean_search_history => "Clean History";
   String get confirm => "Confirm";
   String get copyed => "Copyed";
@@ -56,6 +57,8 @@ class S implements WidgetsLocalizations {
   String get manually_refresh => "Refresh Manually";
   String get map_store => "Map Store";
   String get medium => "Medium";
+  String get monthly_payment => " One Month Valid";
+  String get more => "More";
   String get my_position => "My position";
   String get nav_about_us => "About us";
   String get nav_my_privacy_map => "My Privacy Map";
@@ -65,6 +68,11 @@ class S implements WidgetsLocalizations {
   String get official_website => "Official Website";
   String get offline_map => "Offline map";
   String get open_camera => "Please enable camera permissions";
+  String get ordering => "Ordering...";
+  String get pay => "Pay";
+  String get payment_failed => "Payment failed";
+  String get payment_successful => "Payment successful";
+  String get payment_type => "Payment Types";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 character";
   String get public_key_copied => "Public key. copied";
@@ -79,6 +87,7 @@ class S implements WidgetsLocalizations {
   String get search_empty_data => "No Data";
   String get search_history => "History";
   String get search_title => "Search / Decrypt";
+  String get service_type => "Service type";
   String get share => "Share";
   String get share_encrypted_location => "Share encrypted location";
   String get share_fail => "Share Fail";
@@ -94,6 +103,7 @@ class S implements WidgetsLocalizations {
   String get twittertitan => "Twitter-Titan";
   String get unknown_error => "Unknown error";
   String get update_now => "Update Now";
+  String get waiting_for_payment_result => "Waiting for payment result...";
   String get walking => "Walking";
   String get wechat => "Wechat";
   String get wechat_cs => "Wechat Operator";
@@ -133,6 +143,8 @@ class $zh_CN extends S {
   @override
   String get cycling => "骑行";
   @override
+  String get payment_successful => "支付成功";
+  @override
   String get tips => "提示";
   @override
   String get offline_map => "离线地图";
@@ -165,6 +177,8 @@ class $zh_CN extends S {
   @override
   String get search_empty_data => "暂无数据";
   @override
+  String get monthly_payment => "一个月有效";
+  @override
   String get manually_refresh => "手动刷新";
   @override
   String get search_title => "搜索 / 解码";
@@ -177,6 +191,8 @@ class $zh_CN extends S {
   @override
   String get public_key_scan_fail_rescan => "公钥有误，请重新扫描";
   @override
+  String get pay => "支付";
+  @override
   String get refresh_keypaire_message => "刷新公钥地址后，之前的接收的位置密文将永久解密不了！确定继续刷新吗？";
   @override
   String get nav_my_privacy_map => "我的隐私地图";
@@ -188,6 +204,8 @@ class $zh_CN extends S {
   String get generating_key => "正在生成加密地址…";
   @override
   String get share_invalid_public_key => "无效的公钥";
+  @override
+  String get payment_type => "支付类型";
   @override
   String get route => "路线";
   @override
@@ -204,6 +222,8 @@ class $zh_CN extends S {
   String get telegram_operator => "Telegram Operator";
   @override
   String get postscript => "附言";
+  @override
+  String get ordering => "正在下单...";
   @override
   String get postscript_hint => "输入附言（50字内）";
   @override
@@ -233,9 +253,13 @@ class $zh_CN extends S {
   @override
   String get refresh_public_key_days_tips => "%d天后自动刷新";
   @override
+  String get payment_failed => "支付失败";
+  @override
   String get less_than_1_min => "小于1分钟";
   @override
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
+  @override
+  String get more => "更多";
   @override
   String get wechat => "公众号";
   @override
@@ -255,7 +279,13 @@ class $zh_CN extends S {
   @override
   String get app_name => "泰坦";
   @override
+  String get waiting_for_payment_result => "等待支付结果...";
+  @override
+  String get service_type => "服务类型";
+  @override
   String get add_share_options => "分享选项";
+  @override
+  String get cancel_payment => "取消支付";
   @override
   String get no_recommended_route => "暂无推荐路线";
   @override

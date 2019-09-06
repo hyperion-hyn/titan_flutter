@@ -81,5 +81,16 @@
   "enter": "进入",
   "copyed": "已拷贝",
   "Clean": "清除痕迹",
-  "map_store": "地图商店"
+  "map_store": "地图商店",
+  "more": "更多",
+  "payment_failed": "支付失败",
+  "service_type": "服务类型",
+  "payment_type": "支付类型",
+  "cancel_payment": "取消支付",
+  "cancel": "取消",
+  "pay": "支付",
+  "ordering": "正在下单...",
+  "waiting_for_payment_result": "等待支付结果...",
+  "payment_successful": "支付成功",
+  "monthly_payment": "一个月有效"
 }

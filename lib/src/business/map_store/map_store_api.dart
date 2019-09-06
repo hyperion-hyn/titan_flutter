@@ -17,4 +17,11 @@ class MapStoreApi {
 
     return PurchasedSuccessToken.fromJson(token);
   }
+
+  Future<PurchasedSuccessToken> getGoogleOrderToken(String itemId, String token) async {
+    String path = "/token/google/hmap";
+    var getGoogleTokenRequest = {"item_id": itemId, "token": token};
+    var map = await MapStoreHttpCore.instance.post(path, params: getGoogleTokenRequest);
+    return PurchasedSuccessToken.fromJson(map);
+  }
 }

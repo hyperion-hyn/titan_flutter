@@ -1,10 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/generated/i18n.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/business/map_store/bloc/map_store_event.dart';
 import 'package:titan/src/business/map_store/bloc/map_store_state.dart';
 import 'package:titan/src/business/map_store/map_store_network_repository.dart';
+import 'package:titan/src/business/map_store/model/map_store_item.dart';
 import 'package:titan/src/global.dart';
 
 class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
@@ -26,27 +27,18 @@ class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
   Stream<MapStoreState> _loadedMapStoreItemState(String channel, String language) async* {
 //    var channel = "";
     var language = Localizations.localeOf(context).languageCode;
-    switch (env.buildType) {
-      case BuildFlavor.androidOfficial:
+    switch (env.channel) {
+      case BuildChannel.OFFICIAL:
         {
           channel = "official";
           break;
         }
-      case BuildFlavor.androidGoogle:
+      case BuildChannel.STORE:
         {
           channel = "google";
           break;
         }
-      case BuildFlavor.iosEnterprise:
-        {
-          channel = "google";
-          break;
-        }
-      case BuildFlavor.iosStore:
-        {
-          channel = "google";
-          break;
-        }
+
       default:
         {
           channel = "google";
@@ -56,10 +48,39 @@ class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
 
     try {
       final mapStoreItems = await mapStoreNetworkRepository.getAllMapItem(channel, language);
+      modifyMapStoreItemPrice(mapStoreItems);
       yield MapStoreLoaded(mapStoreItems);
     } catch (_) {
       logger.e(_);
       yield MapStoreNotLoaded();
+    }
+  }
+
+  void modifyMapStoreItemPrice(List<MapStoreItem> mapStoreItems) {
+    for (MapStoreItem mapStoreItem in mapStoreItems) {
+      var policys = mapStoreItem.policies;
+      if (policys.length == 1) {
+        var policy = policys[0];
+        if (policy.price == 0.0) {
+          mapStoreItem.showPrice = "免费";
+          mapStoreItem.isFree = true;
+        } else if (policy.duration == 30) {
+          mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price]);
+        } else {
+          mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price / 12]);
+        }
+      } else {
+        for (var policy in policys) {
+          if (policy.duration == 365) {
+            mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price / 12]);
+            break;
+          }
+        }
+      }
+      mapStoreItem.isShowMore = false;
+      mapStoreItem.isPurchased = false;
+
+      //todo 增加已购买的判断
     }
   }
 }

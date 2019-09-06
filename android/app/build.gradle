@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "org.hyn.titan_flutter"
+        applicationId "org.hyn.titan"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
@@ -70,8 +70,6 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-Debug'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -143,3 +141,6 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
+
+apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'

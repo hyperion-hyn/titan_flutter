@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/map_store/bloc/bloc.dart';
+import 'package:titan/src/business/map_store/bloc/map_store_order_bloc.dart';
 import 'package:titan/src/business/map_store/map_store_network_repository.dart';
 import 'package:titan/src/business/map_store/model/map_store_item.dart';
+import 'package:titan/src/business/map_store/pay_dialog.dart';
+import 'package:titan/src/domain/firebase.dart';
+import 'package:titan/src/global.dart';
 
 class MapStorePage extends StatefulWidget {
   @override
@@ -105,22 +110,26 @@ class _MapStorePageState extends State<MapStorePage> {
                       elevation: 0,
                       highlightElevation: 0,
                       minWidth: 60,
-                      onPressed: () {},
+                      onPressed: () {
+                        if (!mapStoreItem.isPurchased) {
+                          _handlePayClick(context, mapStoreItem);
+                        }
+                      },
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       textColor: Color(0xddffffff),
-                      highlightColor: Colors.black,
+                      highlightColor: mapStoreItem.isPurchased ? Colors.grey : Colors.black,
                       splashColor: Colors.white10,
                       child: Row(
                         children: <Widget>[
                           Text(
-                            "购买",
+                            mapStoreItem.isPurchased ? "已购买" : "购买",
                             style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
                           )
                         ],
                       ),
                     ),
                   ),
-                  Text("HKD 6.00/月")
+                  Text(mapStoreItem.showPrice)
                 ],
               )
             ],
@@ -148,7 +157,7 @@ class _MapStorePageState extends State<MapStorePage> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                           child: Text(
-                            "更多",
+                            S.of(context).more,
                             style: TextStyle(color: Colors.blue),
                           ),
                         ),
@@ -167,5 +176,23 @@ class _MapStorePageState extends State<MapStorePage> {
         ],
       ),
     );
+  }
+
+  void _handlePayClick(BuildContext context, MapStoreItem mapStoreItem) async {
+    await FireBaseLogic.of(context).analytics.logEvent(name: 'ClickBuy');
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return BlocProvider<MapStoreOrderBloc>(
+            builder: (context) => MapStoreOrderBloc(),
+            child: WillPopScope(
+              child: PayDialog(
+                mapStoreItem: mapStoreItem,
+              ),
+              onWillPop: () => Future.value(false),
+            ),
+          );
+        });
   }
 }
