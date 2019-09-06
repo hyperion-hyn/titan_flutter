@@ -3,7 +3,7 @@ import 'package:titan/src/business/map_store/model/purchased_map_item.dart';
 
 @dao
 abstract class PurchasedMapDao {
-  @Query('SELECT * FROM PurchasedMapItem')
+  @Query('SELECT * FROM PurchasedMap')
   Future<List<PurchasedMap>> findAll();
 
   @insert

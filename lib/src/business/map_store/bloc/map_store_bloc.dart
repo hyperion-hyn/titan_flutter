@@ -6,10 +6,13 @@ import 'package:titan/src/business/map_store/bloc/map_store_event.dart';
 import 'package:titan/src/business/map_store/bloc/map_store_state.dart';
 import 'package:titan/src/business/map_store/map_store_network_repository.dart';
 import 'package:titan/src/business/map_store/model/map_store_item.dart';
+import 'package:titan/src/business/map_store/model/purchased_map_item.dart';
+import 'package:titan/src/business/map_store/purchased_map_repository.dart';
 import 'package:titan/src/global.dart';
 
 class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
   final MapStoreNetworkRepository mapStoreNetworkRepository;
+  final PurchasedMapRepository _purchasedMapRepository = PurchasedMapRepository();
   final BuildContext context;
 
   MapStoreBloc({@required this.context, @required this.mapStoreNetworkRepository});
@@ -48,7 +51,7 @@ class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
 
     try {
       final mapStoreItems = await mapStoreNetworkRepository.getAllMapItem(channel, language);
-      modifyMapStoreItemPrice(mapStoreItems);
+      await modifyMapStoreItemPrice(mapStoreItems);
       yield MapStoreLoaded(mapStoreItems);
     } catch (_) {
       logger.e(_);
@@ -56,7 +59,11 @@ class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
     }
   }
 
-  void modifyMapStoreItemPrice(List<MapStoreItem> mapStoreItems) {
+  Future modifyMapStoreItemPrice(List<MapStoreItem> mapStoreItems) async {
+    List<PurchasedMap> purchasedMapList = await _purchasedMapRepository.getPurchasedMapItems();
+
+    List<String> purchasedMapIdList = purchasedMapList.map((purchasedMap) => purchasedMap.id).toList();
+
     for (MapStoreItem mapStoreItem in mapStoreItems) {
       var policys = mapStoreItem.policies;
       if (policys.length == 1) {
@@ -78,6 +85,9 @@ class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
         }
       }
       //todo 增加已购买的判断
+      if (purchasedMapIdList.contains(mapStoreItem.id)) {
+        mapStoreItem.isPurchased = true;
+      }
     }
   }
 }

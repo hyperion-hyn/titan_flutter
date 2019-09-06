@@ -133,7 +133,7 @@ class _$PurchasedMapDao extends PurchasedMapDao {
 
   @override
   Future<List<PurchasedMap>> findAll() async {
-    return _queryAdapter.queryList('SELECT * FROM PurchasedMapItem',
+    return _queryAdapter.queryList('SELECT * FROM PurchasedMap',
         mapper: _purchasedMapMapper);
   }
 
