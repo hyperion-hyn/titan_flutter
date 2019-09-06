@@ -3,7 +3,7 @@ import 'main.dart' as Main;
 import 'env.dart';
 
 void main() {
-  BuildEnvironment.init(flavor: BuildFlavor.iosEnterprise, buildType: BuildType.dev);
+  BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV);
   assert(env != null);
   Main.main();
 }

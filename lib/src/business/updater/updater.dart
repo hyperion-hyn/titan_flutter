@@ -113,7 +113,7 @@ class _UpdaterState extends State<Updater> {
   }
 
   void _launch(UpdateEntity versionModel, bool hasDownloaded) async {
-    if (env.flavor == BuildFlavor.androidOfficial) {
+    if (env.channel == BuildChannel.OFFICIAL) {
       if (hasDownloaded) {
         var apkPath = await _getApkPath();
         _installApk(apkPath);

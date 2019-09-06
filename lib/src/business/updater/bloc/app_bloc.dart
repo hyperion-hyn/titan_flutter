@@ -15,7 +15,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield UpdateState(isChecking: true);
       try {
         var injector = Injector.of(Keys.materialAppKey.currentContext);
-        var versionModel = await injector.repository.checkNewVersion(env.flavor, event.lang);
+        var channel = "";
+        if (env.channel == BuildChannel.OFFICIAL) {
+          channel = "official";
+        } else if (env.channel == BuildChannel.STORE) {
+          channel = "store";
+        }
+        var versionModel = await injector.repository.checkNewVersion(channel, event.lang);
 
         yield UpdateState(isChecking: false, updateEntity: versionModel);
       } catch (err) {
