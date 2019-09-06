@@ -27,14 +27,14 @@ MapStoreItem _$MapStoreItemFromJson(Map<String, dynamic> json) {
     ..modifiedOn = json['modified_on'] as int
     ..preview = json['preview'] as String
     ..description = json['description'] as String
-    ..titleUrl = json['tile_url'] as String
+    ..tileUrl = json['tile_url'] as String
     ..config = json['config'] == null
         ? null
         : MapStoreItemConfig.fromJson(json['config'] as Map<String, dynamic>)
     ..showPrice = json['showPrice'] as String
-    ..isFree = json['isFree'] as bool
-    ..isPurchased = json['isPurchased'] as bool
-    ..isShowMore = json['isShowMore'] as bool;
+    ..isFree = json['isFree'] as bool ?? false
+    ..isPurchased = json['isPurchased'] as bool ?? false
+    ..isShowMore = json['isShowMore'] as bool ?? false;
 }
 
 Map<String, dynamic> _$MapStoreItemToJson(MapStoreItem instance) =>
@@ -51,7 +51,7 @@ Map<String, dynamic> _$MapStoreItemToJson(MapStoreItem instance) =>
       'modified_on': instance.modifiedOn,
       'preview': instance.preview,
       'description': instance.description,
-      'tile_url': instance.titleUrl,
+      'tile_url': instance.tileUrl,
       'config': instance.config,
       'showPrice': instance.showPrice,
       'isFree': instance.isFree,

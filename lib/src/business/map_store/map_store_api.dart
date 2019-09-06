@@ -13,7 +13,7 @@ class MapStoreApi {
   }
 
   Future<PurchasedSuccessToken> orderFreeMap(String policyId) async {
-    var token = await MapStoreHttpCore.instance.get("/token/free/${policyId}");
+    var token = await MapStoreHttpCore.instance.post("/token/free/${policyId}");
 
     return PurchasedSuccessToken.fromJson(token);
   }

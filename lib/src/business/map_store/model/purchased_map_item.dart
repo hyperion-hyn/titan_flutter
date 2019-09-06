@@ -1,23 +1,29 @@
+import 'package:floor/floor.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'purchased_map_item.g.dart';
 
 @JsonSerializable()
-class PurchasedMapItem {
+@entity
+class PurchasedMap {
+  @primaryKey
   String id;
   String name;
   String description;
   String sourceUrl;
   String sourceLayer;
   String icon;
-  int color;
+  String color;
   double minZoom;
   double maxZoom;
   bool selected;
 
-  PurchasedMapItem();
 
-  factory PurchasedMapItem.fromJson(Map<String, dynamic> json) => _$PurchasedMapItemFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PurchasedMapItemToJson(this);
+  PurchasedMap(this.id, this.name, this.description, this.sourceUrl, this.sourceLayer, this.icon, this.color,
+      this.minZoom, this.maxZoom, this.selected);
+
+  factory PurchasedMap.fromJson(Map<String, dynamic> json) => _$PurchasedMapFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PurchasedMapToJson(this);
 }

@@ -87,7 +87,9 @@ dependencies:
   firebase_crashlytics: ^0.1.0
   firebase_analytics: ^5.0.0
   #https://pub.dev/packages/floor
-  floor: ^0.7.0
+  floor: ^0.8.0
+  #https://pub.dev/packages/rxdart
+  rxdart: 0.22.2
 
 dev_dependencies:
   flutter_test:

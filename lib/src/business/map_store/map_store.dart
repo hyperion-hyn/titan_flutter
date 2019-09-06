@@ -122,7 +122,7 @@ class _MapStorePageState extends State<MapStorePage> {
                       child: Row(
                         children: <Widget>[
                           Text(
-                            mapStoreItem.isPurchased ? "已购买" : "购买",
+                            mapStoreItem.isPurchased ? "已购买" : mapStoreItem.isFree ? "获取" : "购买",
                             style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
                           )
                         ],

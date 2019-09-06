@@ -24,7 +24,7 @@ class MapStoreItem {
   String preview;
   String description;
   @JsonKey(name: "tile_url")
-  String titleUrl;
+  String tileUrl;
   MapStoreItemConfig config;
   String showPrice;
   bool isFree;

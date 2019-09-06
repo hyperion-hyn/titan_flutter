@@ -21,8 +21,8 @@ class MapStoreHttpCore extends BaseHttpCore {
   static MapStoreHttpCore _getInstance() {
     if (_instance == null) {
       _instance = MapStoreHttpCore._internal();
-      if (env.buildType == 'dev') {
-        _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
+      if (env.buildType == BuildType.DEV) {
+        _instance.dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true, requestHeader: true));
       }
     }
     return _instance;

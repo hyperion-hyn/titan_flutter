@@ -5,13 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/map_store/bloc/map_store_order_bloc.dart';
+import 'package:titan/src/business/map_store/bloc/map_store_order_event.dart';
 import 'package:titan/src/business/map_store/bloc/map_store_order_state.dart';
 import 'package:titan/src/business/map_store/map_store_api.dart';
 import 'package:titan/src/business/map_store/model/map_store_item.dart';
 import 'package:titan/src/domain/firebase.dart';
+
+import 'bloc/bloc.dart';
 
 class PayDialog extends StatefulWidget {
   MapStoreItem mapStoreItem;
@@ -20,17 +24,23 @@ class PayDialog extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _PayDialogState();
+    return _PayDialogState(this.mapStoreItem);
   }
 }
 
 class _PayDialogState extends State<PayDialog> {
   MapStoreApi mapStoreApi = MapStoreApi();
   StreamSubscription _checkPayStatusSubscription;
+  MapStoreItem mapStoreItem;
+
+  _PayDialogState(this.mapStoreItem);
 
   @override
   void initState() {
     super.initState();
+    if (mapStoreItem.isFree) {
+      BlocProvider.of<MapStoreOrderBloc>(context).dispatch(BuyFreeMapEvent(mapStoreItem));
+    }
   }
 
   @override
@@ -69,11 +79,11 @@ class _PayDialogState extends State<PayDialog> {
                       if (state is OrderPlacingState)
                         buildPlacingOrderingView(context),
                       if (state is OrderPayingState)
-                        buildWaitingView(context),
+                        _buildWaitingView(context),
                       if (state is OrderSuccessState)
-                        buildSuccessView(context),
+                        _buildPaySuccessView(context),
                       if (state is OrderFailState)
-                        buildErrorView(context),
+                        _buildPayFailView(context),
                     ],
                   ),
                 ),
@@ -191,7 +201,7 @@ class _PayDialogState extends State<PayDialog> {
     );
   }
 
-  Widget buildWaitingView(BuildContext context) {
+  Widget _buildWaitingView(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -230,7 +240,8 @@ class _PayDialogState extends State<PayDialog> {
     );
   }
 
-  Widget buildSuccessView(BuildContext context) {
+  Widget _buildPaySuccessView(BuildContext context) {
+    _dismissDialog();
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -255,7 +266,8 @@ class _PayDialogState extends State<PayDialog> {
     );
   }
 
-  Widget buildErrorView(BuildContext context) {
+  Widget _buildPayFailView(BuildContext context) {
+    _dismissDialog();
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -342,5 +354,11 @@ class _PayDialogState extends State<PayDialog> {
 
   void _handlePay(BuildContext context) async {
     await FireBaseLogic.of(context).analytics.logEvent(name: 'pay_comfirn', parameters: {'platform': env.channel});
+  }
+
+  void _dismissDialog() {
+    Observable.timer("", Duration(milliseconds: 2500)).listen((token) {
+      Navigator.pop(context);
+    });
   }
 }

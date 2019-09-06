@@ -6,21 +6,22 @@ part of 'purchased_map_item.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PurchasedMapItem _$PurchasedMapItemFromJson(Map<String, dynamic> json) {
-  return PurchasedMapItem()
-    ..id = json['id'] as String
-    ..name = json['name'] as String
-    ..description = json['description'] as String
-    ..sourceUrl = json['sourceUrl'] as String
-    ..sourceLayer = json['sourceLayer'] as String
-    ..icon = json['icon'] as String
-    ..color = json['color'] as int
-    ..minZoom = (json['minZoom'] as num)?.toDouble()
-    ..maxZoom = (json['maxZoom'] as num)?.toDouble()
-    ..selected = json['selected'] as bool;
+PurchasedMap _$PurchasedMapFromJson(Map<String, dynamic> json) {
+  return PurchasedMap(
+    json['id'] as String,
+    json['name'] as String,
+    json['description'] as String,
+    json['sourceUrl'] as String,
+    json['sourceLayer'] as String,
+    json['icon'] as String,
+    json['color'] as String,
+    (json['minZoom'] as num)?.toDouble(),
+    (json['maxZoom'] as num)?.toDouble(),
+    json['selected'] as bool,
+  );
 }
 
-Map<String, dynamic> _$PurchasedMapItemToJson(PurchasedMapItem instance) =>
+Map<String, dynamic> _$PurchasedMapToJson(PurchasedMap instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

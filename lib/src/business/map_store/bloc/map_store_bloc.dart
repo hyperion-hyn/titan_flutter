@@ -77,9 +77,6 @@ class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
           }
         }
       }
-      mapStoreItem.isShowMore = false;
-      mapStoreItem.isPurchased = false;
-
       //todo 增加已购买的判断
     }
   }
