@@ -241,7 +241,7 @@ class _PayDialogState extends State<PayDialog> {
   }
 
   Widget _buildPaySuccessView(BuildContext context) {
-    _dismissDialog();
+    _dismissDialog(true);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -267,7 +267,7 @@ class _PayDialogState extends State<PayDialog> {
   }
 
   Widget _buildPayFailView(BuildContext context) {
-    _dismissDialog();
+    _dismissDialog(false);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -356,9 +356,9 @@ class _PayDialogState extends State<PayDialog> {
     await FireBaseLogic.of(context).analytics.logEvent(name: 'pay_comfirn', parameters: {'platform': env.channel});
   }
 
-  void _dismissDialog() {
+  void _dismissDialog(bool isBuySuccess) {
     Observable.timer("", Duration(milliseconds: 2500)).listen((token) {
-      Navigator.pop(context);
+      Navigator.pop(context, isBuySuccess);
     });
   }
 }

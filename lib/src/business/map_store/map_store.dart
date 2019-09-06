@@ -102,8 +102,10 @@ class _MapStorePageState extends State<MapStorePage> {
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: mapStoreItem.isPurchased ? Colors.grey : Colors.black87, width: 3), // 边色与边宽度
-                        color: mapStoreItem.isPurchased ? Colors.grey : Colors.black87, // 底色
+                        border: Border.all(color: mapStoreItem.isPurchased ? Colors.grey : Colors.black87, width: 3),
+                        // 边色与边宽度
+                        color: mapStoreItem.isPurchased ? Colors.grey : Colors.black87,
+                        // 底色
                         borderRadius: BorderRadius.circular(6)),
                     height: 40,
                     child: MaterialButton(
@@ -193,6 +195,11 @@ class _MapStorePageState extends State<MapStorePage> {
               onWillPop: () => Future.value(false),
             ),
           );
-        });
+        }).then((isBuyMapSuccess) {
+      if (isBuyMapSuccess) {
+        mapStoreItem.isPurchased = true;
+        setState(() {});
+      }
+    });
   }
 }

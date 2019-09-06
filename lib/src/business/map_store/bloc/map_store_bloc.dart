@@ -84,7 +84,6 @@ class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
           }
         }
       }
-      //todo 增加已购买的判断
       if (purchasedMapIdList.contains(mapStoreItem.id)) {
         mapStoreItem.isPurchased = true;
       }
