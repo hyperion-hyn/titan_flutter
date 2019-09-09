@@ -60,6 +60,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       yield CloseRouteState();
     } else if (event is ResetMapEvent) {
       yield ResetMapState();
+    } else if (event is ShowPurchasedMapEvent) {
+      yield LoadedPurchasedMapState(event.purchasedMapList);
     }
     /*else if (event is MyLocationEvent) {
       yield MyLocationState();

@@ -5,6 +5,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
 import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_event.dart';
 import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_state.dart';
+import 'package:titan/src/business/home/map/bloc/bloc.dart';
 import 'package:titan/src/business/map_store/map_store.dart';
 import 'package:titan/src/business/map_store/model/purchased_map_item.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
@@ -22,9 +23,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
   @override
   void initState() {
     super.initState();
-
-    _purchasedMapBloc = PurchasedMapBloc();
-
+    _purchasedMapBloc = BlocProvider.of<PurchasedMapBloc>(context);
     _purchasedMapBloc.dispatch(LoadPurchasedMapsEvent());
   }
 
@@ -146,7 +145,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
       padding: const EdgeInsets.all(2.0),
       child: GestureDetector(
         onTap: () {
-          _purchasedMapBloc.dispatch(ShowPurchasedMapEvent(purchasedMap));
+          _purchasedMapBloc.dispatch(SelectedPurchasedMapEvent(purchasedMap));
         },
         child: Container(
           decoration: BoxDecoration(

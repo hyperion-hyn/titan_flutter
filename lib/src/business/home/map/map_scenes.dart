@@ -13,9 +13,13 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
+import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
+import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_event.dart';
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as searchBar;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
+import 'package:titan/src/business/map_store/model/purchased_map_item.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
@@ -57,6 +61,22 @@ class MapScenesState extends State<MapScenes> {
   StreamSubscription _eventBusSubscription;
 
   MapboxMapController mapboxMapController;
+
+  List<HeavenDataModel> _addedHeavenDataModelList = List();
+
+  _addPurchasedMap(List<PurchasedMap> newPurchasedMapList) {
+    //将purchasedMapList 转成HeavenDataModel
+
+    print("ennter _addPurchasedMap :$newPurchasedMapList");
+
+    _addedHeavenDataModelList = newPurchasedMapList.map((purchasedMap) {
+      return HeavenDataModel(
+          id: purchasedMap.id,
+          sourceUrl: purchasedMap.sourceUrl,
+          color: HexColor(purchasedMap.color).value,
+          sourceLayer: purchasedMap.sourceLayer);
+    }).toList();
+  }
 
   _onMapClick(Point<double> point, LatLng coordinates) async {
     var range = 10;
@@ -172,6 +192,11 @@ class MapScenesState extends State<MapScenes> {
     });
 
     _toMyLocation();
+    _loadPurchasedMap();
+  }
+
+  void _loadPurchasedMap() {
+    BlocProvider.of<PurchasedMapBloc>(context).dispatch(LoadPurchasedMapsEvent());
   }
 
   void _addMarker(IPoi poi) async {
@@ -326,16 +351,14 @@ class MapScenesState extends State<MapScenes> {
   void initState() {
     super.initState();
     _listenEventBus();
-
   }
-
 
   @override
   void didChangeDependencies() {
-    var languageCode =  Localizations.localeOf(context).languageCode;
-    if(languageCode=="zh"){
+    var languageCode = Localizations.localeOf(context).languageCode;
+    if (languageCode == "zh") {
       _style = kStyleZh;
-    }else{
+    } else {
       _style = kStyleEn;
     }
   }
@@ -452,6 +475,8 @@ class MapScenesState extends State<MapScenes> {
           }
         } else if (state is ResetMapState) {
           _resetMap();
+        } else if (state is LoadedPurchasedMapState) {
+          _addPurchasedMap(state.purchasedMapList);
         }
       },
       child: MapboxMapParent(
@@ -477,6 +502,9 @@ class MapScenesState extends State<MapScenes> {
               myLocationTrackingMode: MyLocationTrackingMode.None,
               children: <Widget>[
 //            MapRoute(),
+                HeavenPlugin(
+                  models: _addedHeavenDataModelList,
+                ),
                 MapRoute(),
               ],
             );

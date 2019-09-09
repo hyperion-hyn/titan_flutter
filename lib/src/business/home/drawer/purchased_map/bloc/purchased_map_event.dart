@@ -7,8 +7,8 @@ abstract class PurchasedMapEvent extends Equatable {
 
 class LoadPurchasedMapsEvent extends PurchasedMapEvent {}
 
-class ShowPurchasedMapEvent extends PurchasedMapEvent {
+class SelectedPurchasedMapEvent extends PurchasedMapEvent {
   final PurchasedMap purchasedMap;
 
-  ShowPurchasedMapEvent(this.purchasedMap);
+  SelectedPurchasedMapEvent(this.purchasedMap);
 }

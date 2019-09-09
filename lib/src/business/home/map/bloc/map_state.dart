@@ -1,12 +1,12 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
+import 'package:titan/src/business/map_store/model/purchased_map_item.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
 @immutable
 abstract class MapState {}
 
 class InitialMapState extends MapState {}
-
 
 ///marker
 class MarkerLoadedState extends MapState {
@@ -18,7 +18,6 @@ class MarkerLoadedState extends MapState {
 class ClearMarkerState extends MapState {}
 
 class ResetMapState extends MapState {}
-
 
 ///marker list
 class MarkerListLoadedState extends MapState {
@@ -68,7 +67,11 @@ class RouteSceneState extends MapState {
 
 class CloseRouteState extends MapState {}
 
+class LoadedPurchasedMapState extends MapState {
+  final List<PurchasedMap> purchasedMapList;
 
+  LoadedPurchasedMapState(this.purchasedMapList);
+}
 
 ///location
 //class MyLocationState extends MapState {}
