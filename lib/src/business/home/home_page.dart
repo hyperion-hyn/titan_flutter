@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:titan/src/business/home/drawer/map_store_drawer_scenes.dart';
+import 'package:titan/src/business/home/drawer/purchased_map/purchased_map_drawer_scenes.dart';
 import 'package:titan/src/business/home/improvement_dialog.dart';
 import 'package:titan/src/business/home/intro/intro_slider.dart';
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as search;
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
           resizeToAvoidBottomPadding: false,
           drawer: DrawerScenes(),
-          endDrawer: MapStoreDrawerScenes(),
+          endDrawer: PurchasedMapDrawerScenes(),
           body: WillPopScope(
             onWillPop: () async {
               if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
