@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/theme.dart';
 
@@ -52,6 +53,7 @@ class _AppState extends State<App> {
             var mapBloc = MapBloc();
             var searchBarBloc = SearchbarBloc();
             var homeBloc = HomeBloc();
+            var _purchasedMapBloc = PurchasedMapBloc(mapBloc);
             homeBloc.mapBloc = mapBloc;
             homeBloc.searchBarBloc = searchBarBloc;
             homeBloc.sheetBloc = sheetsBloc;
@@ -68,6 +70,7 @@ class _AppState extends State<App> {
                 BlocProvider<MapBloc>(builder: (context) => mapBloc..context = context),
                 BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
                 BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
+                BlocProvider<PurchasedMapBloc>(builder: (context) => _purchasedMapBloc),
               ],
             );
           },
