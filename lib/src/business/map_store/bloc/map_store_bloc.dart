@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
@@ -65,28 +67,44 @@ class MapStoreBloc extends Bloc<MapStoreEvent, MapStoreState> {
     List<String> purchasedMapIdList = purchasedMapList.map((purchasedMap) => purchasedMap.id).toList();
 
     for (MapStoreItem mapStoreItem in mapStoreItems) {
-      var policys = mapStoreItem.policies;
-      if (policys.length == 1) {
-        var policy = policys[0];
-        if (policy.price == 0.0) {
-          mapStoreItem.showPrice = "免费";
-          mapStoreItem.isFree = true;
-        } else if (policy.duration == 30) {
-          mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price]);
-        } else {
-          mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price / 12]);
-        }
+      if (Platform.isIOS) {
+        _buildAppleFreeMapStoreItem(mapStoreItem, purchasedMapIdList);
       } else {
-        for (var policy in policys) {
-          if (policy.duration == 365) {
-            mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price / 12]);
-            break;
-          }
+        _buildCommonMapStoreItem(mapStoreItem, purchasedMapIdList);
+      }
+    }
+  }
+
+  void _buildAppleFreeMapStoreItem(MapStoreItem mapStoreItem, List<String> purchasedMapIdList) {
+    mapStoreItem.showPrice = "免费";
+    mapStoreItem.isFree = true;
+    if (purchasedMapIdList.contains(mapStoreItem.id)) {
+      mapStoreItem.isPurchased = true;
+    }
+  }
+
+  void _buildCommonMapStoreItem(MapStoreItem mapStoreItem, List<String> purchasedMapIdList) {
+    var policys = mapStoreItem.policies;
+    if (policys.length == 1) {
+      var policy = policys[0];
+      if (policy.price == 0.0) {
+        mapStoreItem.showPrice = "免费";
+        mapStoreItem.isFree = true;
+      } else if (policy.duration == 30) {
+        mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price]);
+      } else {
+        mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price / 12]);
+      }
+    } else {
+      for (var policy in policys) {
+        if (policy.duration == 365) {
+          mapStoreItem.showPrice = sprintf("HKD %.2f", [policy.price / 12]);
+          break;
         }
       }
-      if (purchasedMapIdList.contains(mapStoreItem.id)) {
-        mapStoreItem.isPurchased = true;
-      }
+    }
+    if (purchasedMapIdList.contains(mapStoreItem.id)) {
+      mapStoreItem.isPurchased = true;
     }
   }
 }

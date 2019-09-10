@@ -10,7 +10,7 @@ MapStoreItemPolicy _$MapStoreItemPolicyFromJson(Map<String, dynamic> json) {
   return MapStoreItemPolicy()
     ..currency = json['currency'] as String
     ..price = (json['price'] as num)?.toDouble()
-    ..duration = (json['duration'] as num)?.toDouble();
+    ..duration = (json['duration'] as int)?.toInt();
 }
 
 Map<String, dynamic> _$MapStoreItemPolicyToJson(MapStoreItemPolicy instance) =>

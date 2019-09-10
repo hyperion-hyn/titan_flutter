@@ -38,8 +38,12 @@ class _PayDialogState extends State<PayDialog> {
   @override
   void initState() {
     super.initState();
-    if (mapStoreItem.isFree) {
+    if (Platform.isIOS) {
+      BlocProvider.of<MapStoreOrderBloc>(context).dispatch(BuyAppleMapEvent(mapStoreItem));
+    } else if (mapStoreItem.isFree) {
       BlocProvider.of<MapStoreOrderBloc>(context).dispatch(BuyFreeMapEvent(mapStoreItem));
+    } else {
+      BlocProvider.of<MapStoreOrderBloc>(context).dispatch(BuyPayingMapEvent(mapStoreItem));
     }
   }
 
@@ -229,7 +233,7 @@ class _PayDialogState extends State<PayDialog> {
 
               await FireBaseLogic.of(context).analytics.logEvent(name: 'pay_cancel');
 
-              Navigator.pop(context);
+              _dismissDialog(false);
             },
             child: Text(S.of(context).cancel_payment),
           ),

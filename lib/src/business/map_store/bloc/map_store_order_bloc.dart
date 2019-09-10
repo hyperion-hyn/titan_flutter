@@ -29,6 +29,9 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
     if (event is BuyFreeMapEvent) {
       yield* _buyFreeMap(event.mapStoreItem);
     }
+    if (event is BuyAppleMapEvent) {
+      yield* _buyAppleMap(event.mapStoreItem);
+    }
   }
 
   @override
@@ -45,6 +48,23 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
       var policyId = "${mapStoreItem.id}.${firstPolicy.duration}";
 
       PurchasedSuccessToken successToken = await _mapStoreNetworkRepository.orderFreeMap(policyId);
+      await _savePurchasedToken(mapStoreItem, successToken);
+      yield OrderSuccessState();
+    } catch (err) {
+      logger.e(err);
+      yield OrderFailState();
+    }
+  }
+
+  ///
+  /// 处理苹果购买商品
+  Stream<MapStoreOrderState> _buyAppleMap(MapStoreItem mapStoreItem) async* {
+    yield OrderPlacingState();
+    try {
+      var firstPolicy = mapStoreItem.policies[0];
+      var policyId = "${mapStoreItem.id}.${firstPolicy.duration}";
+
+      PurchasedSuccessToken successToken = await _mapStoreNetworkRepository.orderAppleFreeMap(policyId);
       await _savePurchasedToken(mapStoreItem, successToken);
       yield OrderSuccessState();
     } catch (err) {

@@ -6,7 +6,7 @@ part 'map_store_item_policy.g.dart';
 class MapStoreItemPolicy {
   String currency;
   double price;
-  double duration;
+  int duration;
 
   MapStoreItemPolicy();
 

@@ -14,3 +14,15 @@ class BuyFreeMapEvent extends MapStoreOrderEvent {
 
   BuyFreeMapEvent(this.mapStoreItem);
 }
+
+class BuyAppleMapEvent extends MapStoreOrderEvent {
+  final MapStoreItem mapStoreItem;
+
+  BuyAppleMapEvent(this.mapStoreItem);
+}
+
+class BuyPayingMapEvent extends MapStoreOrderEvent {
+  final MapStoreItem mapStoreItem;
+
+  BuyPayingMapEvent(this.mapStoreItem);
+}

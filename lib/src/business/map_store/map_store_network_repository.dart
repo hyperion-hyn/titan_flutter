@@ -13,4 +13,8 @@ class MapStoreNetworkRepository {
   Future<PurchasedSuccessToken> orderFreeMap(String policyId) async {
     return await _mapStoreApi.orderFreeMap(policyId);
   }
+
+  Future<PurchasedSuccessToken> orderAppleFreeMap(String policyId) async {
+    return await _mapStoreApi.orderAppleFreeMap(policyId);
+  }
 }
