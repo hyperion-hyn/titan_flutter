@@ -8,7 +8,7 @@ import RxSwift
     
     private lazy var callChannel: FlutterMethodChannel = {
         let controller = window.rootViewController as! FlutterViewController
-        return FlutterMethodChannel(name: "org.hyn.titan/call_channel", binaryMessenger: controller)
+        return FlutterMethodChannel(name: "org.hyn.titan/call_channel", binaryMessenger: controller.binaryMessenger)
     }()
     
     private lazy var encryptService: EncryptionService = EthEncryptionService()
