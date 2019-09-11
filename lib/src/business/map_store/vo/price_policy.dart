@@ -8,11 +8,11 @@ class PricePolicy {
   bool selected;
 
   PricePolicy(
-      {this.id,
+      this.id,
       this.policyName,
       this.policyUnit,
       this.policyPrice,
       this.policyDuration,
       this.policyOldPrice,
-      this.selected});
+      this.selected);
 }

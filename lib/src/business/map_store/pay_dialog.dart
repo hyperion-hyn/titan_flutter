@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/map_store/bloc/map_store_order_bloc.dart';
@@ -13,9 +14,9 @@ import 'package:titan/src/business/map_store/bloc/map_store_order_event.dart';
 import 'package:titan/src/business/map_store/bloc/map_store_order_state.dart';
 import 'package:titan/src/business/map_store/map_store_api.dart';
 import 'package:titan/src/business/map_store/model/map_store_item.dart';
+import 'package:titan/src/business/map_store/vo/map_price.dart';
+import 'package:titan/src/business/map_store/vo/price_policy.dart';
 import 'package:titan/src/domain/firebase.dart';
-
-import 'bloc/bloc.dart';
 
 class PayDialog extends StatefulWidget {
   MapStoreItem mapStoreItem;
@@ -30,7 +31,6 @@ class PayDialog extends StatefulWidget {
 
 class _PayDialogState extends State<PayDialog> {
   MapStoreApi mapStoreApi = MapStoreApi();
-  StreamSubscription _checkPayStatusSubscription;
   MapStoreItem mapStoreItem;
 
   _PayDialogState(this.mapStoreItem);
@@ -43,7 +43,7 @@ class _PayDialogState extends State<PayDialog> {
     } else if (mapStoreItem.isFree) {
       BlocProvider.of<MapStoreOrderBloc>(context).dispatch(BuyFreeMapEvent(mapStoreItem));
     } else {
-      BlocProvider.of<MapStoreOrderBloc>(context).dispatch(BuyPayingMapEvent(mapStoreItem));
+      BlocProvider.of<MapStoreOrderBloc>(context).dispatch(ShowPayingMapPriceEvent(mapStoreItem));
     }
   }
 
@@ -78,8 +78,8 @@ class _PayDialogState extends State<PayDialog> {
                     alignment: Alignment.center,
                     children: <Widget>[
 //                    buildWaitingView(context)
-                      if (state is OrderIdleState)
-                        buildPayView(context),
+                      if (state is ShowPayingMapPriceState)
+                        buildPayView(context, state.mapPrice),
                       if (state is OrderPlacingState)
                         buildPlacingOrderingView(context),
                       if (state is OrderPayingState)
@@ -100,7 +100,7 @@ class _PayDialogState extends State<PayDialog> {
     });
   }
 
-  Widget buildPayView(BuildContext context) {
+  Widget buildPayView(BuildContext context, MapPrice mapPrice) {
     return new Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +113,16 @@ class _PayDialogState extends State<PayDialog> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        buildPolicyView(),
+        Container(
+          height: 145.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return buildPolicyView(mapPrice, mapPrice.policies[index]);
+            },
+            itemCount: mapPrice.policies.length,
+          ),
+        ),
         if (!Platform.isIOS)
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 16, 0, 8),
@@ -151,8 +160,9 @@ class _PayDialogState extends State<PayDialog> {
               RaisedButton(
                   onPressed: () async {
                     if (Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
+                      _dismissDialog(false, false);
                     }
+                    BlocProvider.of<MapStoreOrderBloc>(context).dispatch(CancelPurchaseEvent());
                     //pay success
                     await FireBaseLogic.of(context).analytics.logEvent(name: 'pay_cancel');
                   },
@@ -163,7 +173,7 @@ class _PayDialogState extends State<PayDialog> {
               ),
               Expanded(
                 child: RaisedButton(
-                  onPressed: () => _handlePay(context),
+                  onPressed: () => _handlePay(context, mapPrice),
                   child: Text(
                     S.of(context).pay,
                     style: TextStyle(color: Colors.white),
@@ -228,12 +238,9 @@ class _PayDialogState extends State<PayDialog> {
         if (env.channel != BuildChannel.STORE)
           RaisedButton(
             onPressed: () async {
-              _checkPayStatusSubscription?.cancel();
-              _checkPayStatusSubscription = null;
-
               await FireBaseLogic.of(context).analytics.logEvent(name: 'pay_cancel');
-
-              _dismissDialog(false);
+              BlocProvider.of<MapStoreOrderBloc>(context).dispatch(CancelPurchaseEvent());
+              _dismissDialog(false, false);
             },
             child: Text(S.of(context).cancel_payment),
           ),
@@ -245,7 +252,7 @@ class _PayDialogState extends State<PayDialog> {
   }
 
   Widget _buildPaySuccessView(BuildContext context) {
-    _dismissDialog(true);
+    _dismissDialog(true, true);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -271,7 +278,7 @@ class _PayDialogState extends State<PayDialog> {
   }
 
   Widget _buildPayFailView(BuildContext context) {
-    _dismissDialog(false);
+    _dismissDialog(false, true);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -296,73 +303,90 @@ class _PayDialogState extends State<PayDialog> {
     );
   }
 
-  Widget buildPolicyView() {
-    return Container(
-      width: 140,
-      height: 140,
-      margin: EdgeInsets.all(4.0),
-      padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-          color: Color(0xFFfff9de),
-          border: Border.all(color: Color(0xFFf7da95), width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(10.0))),
-      child: Column(
-        children: <Widget>[
-          Align(
-              alignment: Alignment.topLeft,
-              child: Text(S.of(context).monthly_payment, style: TextStyle(fontWeight: FontWeight.bold))),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-            child: Row(
-              children: <Widget>[
-                Text("HKD", style: TextStyle(fontSize: 12)),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
-                  child: Text(
-                    "10.0",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                )
-              ],
+  Widget buildPolicyView(MapPrice mapPrice, PricePolicy pricePolicy) {
+    return GestureDetector(
+      onTap: () {
+        print("tap");
+        mapPrice.policies.forEach((pricePolicyTemp) {
+          pricePolicyTemp.selected = false;
+        });
+        pricePolicy.selected = true;
+        setState(() {});
+      },
+      child: Container(
+        width: 140,
+        height: 140,
+        margin: EdgeInsets.all(4.0),
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+            color: pricePolicy.selected ? Color(0xFFfff9de) : Colors.white,
+            border: Border.all(color: pricePolicy.selected ? Color(0xFFf7da95) : Colors.grey[300], width: 3),
+            borderRadius: BorderRadius.all(Radius.circular(8.0))),
+        child: Column(
+          children: <Widget>[
+            Align(
+                alignment: Alignment.topLeft,
+                child: Text(pricePolicy.policyName, style: TextStyle(fontWeight: FontWeight.bold))),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+              child: Row(
+                children: <Widget>[
+                  Text(pricePolicy.policyUnit, style: TextStyle(fontSize: 12)),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
+                    child: Text(
+                      sprintf("%.2f", [pricePolicy.policyPrice]),
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Text("HKD 10.0 ",
-                style: TextStyle(
-                    fontSize: 11, decoration: TextDecoration.lineThrough, decorationStyle: TextDecorationStyle.solid)),
-          ),
-          Spacer(),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Container(
-                width: 25,
-                height: 25,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Color(0xFFf7da95), width: 1),
-                  color: Color(0xFFf7da95),
-                ),
-                child: Center(child: Icon(Icons.check, color: Colors.white, size: 16))),
-          )
-        ],
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(pricePolicy.policyOldPrice,
+                  style: TextStyle(
+                      fontSize: 11,
+                      decoration: TextDecoration.lineThrough,
+                      decorationStyle: TextDecorationStyle.solid)),
+            ),
+            Spacer(),
+            if (pricePolicy.selected)
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                    width: 25,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Color(0xFFf7da95), width: 1),
+                      color: Color(0xFFf7da95),
+                    ),
+                    child: Center(child: Icon(Icons.check, color: Colors.white, size: 16))),
+              )
+          ],
+        ),
       ),
     );
   }
 
   @override
   void dispose() {
-    _checkPayStatusSubscription?.cancel();
     super.dispose();
   }
 
-  void _handlePay(BuildContext context) async {
-    await FireBaseLogic.of(context).analytics.logEvent(name: 'pay_comfirn', parameters: {'platform': env.channel});
+  void _handlePay(BuildContext context, MapPrice mapPrice) async {
+//    FireBaseLogic.of(context).analytics.logEvent(name: 'pay_comfirn', parameters: {'platform': env.channel});
+    BlocProvider.of<MapStoreOrderBloc>(context).dispatch(PurchaseEvent(mapStoreItem, mapPrice));
   }
 
-  void _dismissDialog(bool isBuySuccess) {
-    Observable.timer("", Duration(milliseconds: 2500)).listen((token) {
+  void _dismissDialog(bool isBuySuccess, bool isDelay) {
+    if (isDelay) {
+      Observable.timer("", Duration(milliseconds: 2500)).listen((token) {
+        Navigator.pop(context, isBuySuccess);
+      });
+    } else {
       Navigator.pop(context, isBuySuccess);
-    });
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:titan/src/business/map_store/model/map_store_item.dart';
+import 'package:titan/src/business/map_store/vo/map_price.dart';
 
 abstract class MapStoreOrderEvent extends Equatable {
   MapStoreOrderEvent([List props = const []]) : super(props);
@@ -21,8 +22,19 @@ class BuyAppleMapEvent extends MapStoreOrderEvent {
   BuyAppleMapEvent(this.mapStoreItem);
 }
 
-class BuyPayingMapEvent extends MapStoreOrderEvent {
+class ShowPayingMapPriceEvent extends MapStoreOrderEvent {
   final MapStoreItem mapStoreItem;
 
-  BuyPayingMapEvent(this.mapStoreItem);
+  ShowPayingMapPriceEvent(this.mapStoreItem);
 }
+
+class PurchaseEvent extends MapStoreOrderEvent {
+  final MapStoreItem mapStoreItem;
+  final MapPrice mapPrice;
+
+  PurchaseEvent(this.mapStoreItem, this.mapPrice);
+}
+
+class CancelPurchaseEvent extends MapStoreOrderEvent {}
+
+class PurchaseSuccessEvent extends MapStoreOrderEvent {}

@@ -90,6 +90,8 @@ dependencies:
   floor: ^0.8.0
   #https://pub.dev/packages/rxdart
   rxdart: 0.22.2
+  #https://pub.dev/packages/url_launcher
+  url_launcher: 5.1.2
 
 dev_dependencies:
   flutter_test:

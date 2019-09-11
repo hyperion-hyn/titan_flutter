@@ -187,7 +187,7 @@ class _MapStorePageState extends State<MapStorePage> {
         barrierDismissible: false,
         builder: (context) {
           return BlocProvider<MapStoreOrderBloc>(
-            builder: (context) => MapStoreOrderBloc(),
+            builder: (context) => MapStoreOrderBloc(context),
             child: WillPopScope(
               child: PayDialog(
                 mapStoreItem: mapStoreItem,
