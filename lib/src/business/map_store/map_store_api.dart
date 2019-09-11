@@ -19,15 +19,13 @@ class MapStoreApi {
     return PurchasedSuccessToken.fromJson(token);
   }
 
-//  http://10.10.1.115:3000/token/apple/{mapPolicy}
-
   Future<PurchasedSuccessToken> orderAppleFreeMap(String policyId) async {
     var token = await MapStoreHttpCore.instance.post("/token/apple/${policyId}");
     return PurchasedSuccessToken.fromJson(token);
   }
 
   Future<PurchasedSuccessToken> getGoogleOrderToken(String itemId, String token) async {
-    String path = "/token/google/hmap";
+    String path = "/token/google/titan";
     var getGoogleTokenRequest = {"item_id": itemId, "token": token};
     var map = await MapStoreHttpCore.instance.post(path, params: getGoogleTokenRequest);
     return PurchasedSuccessToken.fromJson(map);
@@ -38,7 +36,6 @@ class MapStoreApi {
     var map = await MapStoreHttpCore.instance.post(path);
     return AlipayOrderResponse.fromJson(map);
   }
-
 
   Future<PurchasedSuccessToken> getOrderToken(String orderId) async {
     String path = "/token/joinpay/${orderId}";

@@ -26,4 +26,8 @@ class MapStoreNetworkRepository {
   Future<PurchasedSuccessToken> getOrderToken(String orderId) async {
     return await _mapStoreApi.getOrderToken(orderId);
   }
+
+  Future<PurchasedSuccessToken> getGoogleOrderToken(String itemId, String token) async {
+    return await _mapStoreApi.getGoogleOrderToken(itemId, token);
+  }
 }

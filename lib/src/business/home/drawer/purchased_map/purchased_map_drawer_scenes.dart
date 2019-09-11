@@ -214,6 +214,12 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
 
   void _navigateToMapStorePage() {
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MapStorePage()));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => BlocProvider.value(
+                  value: _purchasedMapBloc,
+                  child: MapStorePage(),
+                )));
   }
 }

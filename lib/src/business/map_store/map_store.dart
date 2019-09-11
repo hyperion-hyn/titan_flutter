@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
 import 'package:titan/src/business/map_store/bloc/bloc.dart';
 import 'package:titan/src/business/map_store/bloc/map_store_order_bloc.dart';
 import 'package:titan/src/business/map_store/map_store_network_repository.dart';
@@ -21,6 +22,7 @@ class MapStorePage extends StatefulWidget {
 
 class _MapStorePageState extends State<MapStorePage> {
   MapStoreBloc _mapStoreBloc;
+  PurchasedMapBloc _purchasedMapBloc;
 
   MapStoreNetworkRepository _mapStoreNetworkRepository;
 
@@ -35,6 +37,8 @@ class _MapStorePageState extends State<MapStorePage> {
     _mapStoreBloc = MapStoreBloc(context: context, mapStoreNetworkRepository: _mapStoreNetworkRepository);
 
     _mapStoreBloc.dispatch(LoadMapStoreItemsEvent(channel: "", language: ""));
+
+    _purchasedMapBloc = BlocProvider.of<PurchasedMapBloc>(context);
   }
 
   @override
@@ -187,7 +191,7 @@ class _MapStorePageState extends State<MapStorePage> {
         barrierDismissible: false,
         builder: (context) {
           return BlocProvider<MapStoreOrderBloc>(
-            builder: (context) => MapStoreOrderBloc(context),
+            builder: (context) => MapStoreOrderBloc(context, _purchasedMapBloc),
             child: WillPopScope(
               child: PayDialog(
                 mapStoreItem: mapStoreItem,

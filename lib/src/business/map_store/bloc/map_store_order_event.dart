@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:titan/src/business/map_store/model/map_store_item.dart';
+import 'package:titan/src/business/map_store/model/purchased_success_token.dart';
 import 'package:titan/src/business/map_store/vo/map_price.dart';
 
 abstract class MapStoreOrderEvent extends Equatable {
@@ -37,4 +38,11 @@ class PurchaseEvent extends MapStoreOrderEvent {
 
 class CancelPurchaseEvent extends MapStoreOrderEvent {}
 
-class PurchaseSuccessEvent extends MapStoreOrderEvent {}
+class PurchaseSuccessEvent extends MapStoreOrderEvent {
+  final MapStoreItem mapStoreItem;
+  final PurchasedSuccessToken purchasedSuccessToken;
+
+  PurchaseSuccessEvent(this.mapStoreItem, this.purchasedSuccessToken);
+}
+
+class PurchaseFailEvent extends MapStoreOrderEvent {}
