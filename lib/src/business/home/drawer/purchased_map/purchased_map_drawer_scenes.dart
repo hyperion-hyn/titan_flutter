@@ -79,7 +79,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
       child: Material(
         elevation: 10,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: EdgeInsets.only(top:10.0,left: 10,bottom: MediaQuery.of(context).padding.bottom,right: 10),
           child: Row(
             children: <Widget>[
               Container(
@@ -143,6 +143,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
         },
         separatorBuilder: (BuildContext context, int index) {
           return Divider(
+            height: 0,
             color: Colors.grey,
           );
         },
@@ -163,7 +164,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
               // 边色与边宽度
               color: Colors.white,
               // 底色
-              borderRadius: new BorderRadius.circular(8)),
+              borderRadius: new BorderRadius.circular(4)),
           child: Row(
             children: <Widget>[
               Padding(
