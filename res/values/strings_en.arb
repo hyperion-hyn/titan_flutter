@@ -92,5 +92,8 @@
   "ordering": "Ordering...",
   "waiting_for_payment_result": "Waiting for payment result...",
   "payment_successful": "Payment successful",
-  "monthly_payment": " One Month Valid"
+  "monthly_payment": " One Month Valid",
+  "time": "Time",
+  "services": "Services",
+  "remark": "Remark"
 }

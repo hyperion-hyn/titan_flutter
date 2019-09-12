@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/business/home/map/bloc/bloc.dart';
+import 'package:titan/src/business/home/sheets/heven_poi_bottom_sheet.dart';
 import 'package:titan/src/business/home/sheets/poi_bottom_sheet.dart';
 import 'package:titan/src/business/home/sheets/search_fault_sheet.dart';
 import 'package:titan/src/business/home/sheets/searching_sheet.dart';
@@ -33,6 +34,8 @@ class _SheetState extends State<Sheets> {
       listeners: [
         BlocListener<SheetsBloc, SheetsState>(listener: (context, state) {
           if (state is PoiLoadedState) {
+            widget.draggableBottomSheetController.anchorHeight = kAnchorPoiHeight;
+          } else if (state is HeavenPoiLoadedState) {
             widget.draggableBottomSheetController.anchorHeight = kAnchorPoiHeight;
           } else {
             widget.draggableBottomSheetController.anchorHeight = kAnchorSearchHeight;
@@ -68,7 +71,10 @@ class _SheetState extends State<Sheets> {
               scrollController: _bottomSheetScrollController,
             );
           } else if (state is HeavenPoiLoadedState) {
-            //TODO
+            sheet = HeavenPoiBottomSheet(
+              selectedPoiEntity: state.poi,
+              scrollController: _bottomSheetScrollController,
+            );
           } else if (state is ItemsLoadedState) {
             sheet = PoiListSheet(
               pois: state.items,
@@ -77,7 +83,7 @@ class _SheetState extends State<Sheets> {
             );
           }
 
-          var draggable =  state is PoiLoadedState;
+          var draggable = state is PoiLoadedState || state is HeavenPoiLoadedState;
 
           return BlocBuilder<MapBloc, MapState>(
             builder: (context, state) {
@@ -88,7 +94,7 @@ class _SheetState extends State<Sheets> {
                 draggable: draggable,
                 controller: widget.draggableBottomSheetController,
                 childScrollController: _bottomSheetScrollController,
-                  topRadius: 16,
+                topRadius: 16,
                 //paddingtop + search height + paddingbottom - draggable height - threshold
                 topPadding: (MediaQuery.of(context).padding.top + 48 + 8 - 12 - 4),
                 child: Stack(

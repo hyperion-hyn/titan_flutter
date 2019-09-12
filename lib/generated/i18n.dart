@@ -83,11 +83,13 @@ class S implements WidgetsLocalizations {
   String get refresh_public_key_hours_tips => "Automatically refresh in %d hrs %d mins";
   String get refresh_public_key_minutes_tips => "Automatically refresh in %d mins";
   String get refresh_public_key_seconds_tips => "Automatically refresh in %d secs";
+  String get remark => "Remark";
   String get route => "Route";
   String get search_empty_data => "No Data";
   String get search_history => "History";
   String get search_title => "Search / Decrypt";
   String get service_type => "Service type";
+  String get services => "Services";
   String get share => "Share";
   String get share_encrypted_location => "Share encrypted location";
   String get share_fail => "Share Fail";
@@ -98,6 +100,7 @@ class S implements WidgetsLocalizations {
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
+  String get time => "Time";
   String get tips => "Tips";
   String get twitterhyperion => "Twitter-Hyperion";
   String get twittertitan => "Twitter-Titan";
@@ -231,6 +234,8 @@ class $zh_CN extends S {
   @override
   String get skip => "跳过";
   @override
+  String get remark => "备注";
+  @override
   String get medium => "Medium";
   @override
   String get Clean => "清除痕迹";
@@ -269,6 +274,8 @@ class $zh_CN extends S {
   @override
   String get label => "标签";
   @override
+  String get services => "服务";
+  @override
   String get nav_about_us => "关于我们";
   @override
   String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
@@ -298,6 +305,8 @@ class $zh_CN extends S {
   String get main_my_public_key => "我的加密地址(公钥)";
   @override
   String get decrypt_location_cipher_tips => "怎么解码位置密文？";
+  @override
+  String get time => "营业时间";
   @override
   String get share_qrcode => "分享公钥二维码";
   @override

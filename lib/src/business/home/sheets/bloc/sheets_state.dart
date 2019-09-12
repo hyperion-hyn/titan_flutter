@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
@@ -34,7 +35,7 @@ class PoiLoadedState extends SheetsState {
 }
 
 class HeavenPoiLoadedState extends SheetsState {
-  final dynamic poi;
+  final HeavenMapPoiInfo poi;
 
   HeavenPoiLoadedState({this.poi, DraggableBottomSheetState nextSheetState}) : super(nextSheetState: nextSheetState);
 }
