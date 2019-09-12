@@ -13,8 +13,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:titan/src/widget/static_webview_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutMePage extends StatefulWidget {
   @override
@@ -159,10 +158,12 @@ class _AboueMeState extends State<AboutMePage> {
     );
   }
 
-  void _openUrl(String url, String title) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      return StaticWebViewPage(url, title);
-    }));
+  Future _openUrl(String url, String title) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+    }
   }
 
   void _copyText(String text) {
@@ -170,5 +171,3 @@ class _AboueMeState extends State<AboutMePage> {
     Fluttertoast.showToast(msg: S.of(context).copyed);
   }
 }
-
-

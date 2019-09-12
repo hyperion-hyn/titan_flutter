@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,6 +31,14 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
 
   @override
   Widget build(BuildContext context) {
+    if (Platform.isIOS) {
+      return SafeArea(child: _buildDrawer());
+    } else {
+      return _buildDrawer();
+    }
+  }
+
+  Widget _buildDrawer() {
     return SmartDrawer(
       widthPercent: 0.72,
       child: Column(
@@ -217,7 +227,8 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => BlocProvider.value(
+            builder: (context) =>
+                BlocProvider.value(
                   value: _purchasedMapBloc,
                   child: MapStorePage(),
                 )));
