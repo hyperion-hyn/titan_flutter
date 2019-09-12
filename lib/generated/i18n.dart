@@ -28,9 +28,11 @@ class S implements WidgetsLocalizations {
   String get add_share_options => "Sharing options";
   String get app_name => "Titan";
   String get app_version => "Version";
+  String get buy_more_map => "Buy More Map";
   String get cancel => "Cancel";
   String get cancel_payment => "Cancel payment";
   String get clean_search_history => "Clean History";
+  String get click_to_purchase => "Click to purchase";
   String get confirm => "Confirm";
   String get copyed => "Copyed";
   String get cycling => "Cycling";
@@ -38,6 +40,7 @@ class S implements WidgetsLocalizations {
   String get decrypt_location_cipher_tips_context => "Please paste ciphertext, click enter to decode.";
   String get downloading_update_file => "Downloading update file";
   String get driving => "Driving";
+  String get empty_map_notice_message => "You haven't purchase any maps";
   String get encrypt_error => "encrypt error";
   String get enter => "Enter";
   String get forum => "Forum";
@@ -111,6 +114,7 @@ class S implements WidgetsLocalizations {
   String get wechat => "Wechat";
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
+  String get your_purchased_map => "Your purchased map";
   String distance(String distance) => "$distance m";
   String km(String km) => "$km km ";
   String n_day(String day) => "$day day ";
@@ -132,43 +136,19 @@ class $zh_CN extends S {
   @override
   String get cancel => "取消";
   @override
-  String get search_history => "历史搜索";
-  @override
   String get update_now => "现在更新";
   @override
-  String get receiver_encrypted_address => "接收者加密地址（公钥）";
-  @override
-  String get improvement_plan_title => "改进体验计划";
-  @override
-  String get app_version => "版本";
-  @override
-  String get twitterhyperion => "推特-海伯利安";
+  String get your_purchased_map => "您购买的地图";
   @override
   String get cycling => "骑行";
   @override
-  String get payment_successful => "支付成功";
-  @override
   String get tips => "提示";
   @override
-  String get offline_map => "离线地图";
-  @override
   String get decrypt_location_cipher_tips_context => "请粘贴位置密文，点击搜索即可解码密文。";
-  @override
-  String get public_key_copied => "公钥地址已复制";
-  @override
-  String get encrypt_error => "加密失败";
-  @override
-  String get twittertitan => "推特-泰坦";
-  @override
-  String get later => "暂不更新";
-  @override
-  String get copyed => "已拷贝";
   @override
   String get wechat_official_account => "服务号";
   @override
   String get about_us => "关于我们";
-  @override
-  String get share_encrypted_location => "分享加密位置";
   @override
   String get share_fail => "分享发生错误";
   @override
@@ -176,25 +156,9 @@ class $zh_CN extends S {
   @override
   String get improvement_plan_refuse => "不参与";
   @override
-  String get wechat_cs => "微信客服";
-  @override
   String get search_empty_data => "暂无数据";
   @override
-  String get monthly_payment => "一个月有效";
-  @override
-  String get manually_refresh => "手动刷新";
-  @override
-  String get search_title => "搜索 / 解码";
-  @override
-  String get share_location => "位置分享";
-  @override
   String get improvement_plan_agree => "参与计划";
-  @override
-  String get nav_share_app => "分享App";
-  @override
-  String get public_key_scan_fail_rescan => "公钥有误，请重新扫描";
-  @override
-  String get pay => "支付";
   @override
   String get refresh_keypaire_message => "刷新公钥地址后，之前的接收的位置密文将永久解密不了！确定继续刷新吗？";
   @override
@@ -202,27 +166,13 @@ class $zh_CN extends S {
   @override
   String get key_manager_title => "我的加密地址";
   @override
-  String get driving => "驾车";
-  @override
-  String get generating_key => "正在生成加密地址…";
-  @override
   String get share_invalid_public_key => "无效的公钥";
   @override
-  String get payment_type => "支付类型";
-  @override
   String get route => "路线";
-  @override
-  String get input_search_keyworod_or_cipher => "输入搜索词 / 密文";
-  @override
-  String get telphone => "电话";
   @override
   String get Next => "下一页";
   @override
   String get installation_update_package_failed => "安装更新包失败";
-  @override
-  String get official_website => "官网";
-  @override
-  String get telegram_operator => "Telegram Operator";
   @override
   String get postscript => "附言";
   @override
@@ -234,37 +184,115 @@ class $zh_CN extends S {
   @override
   String get skip => "跳过";
   @override
-  String get remark => "备注";
-  @override
-  String get medium => "Medium";
-  @override
-  String get Clean => "清除痕迹";
-  @override
   String get open_camera => "请开启相机权限";
   @override
   String get unknown_error => "Unknown error";
   @override
-  String get refresh_public_key_hours_tips => "%d小时%d分后自动刷新";
-  @override
   String get my_position => "我的位置";
   @override
-  String get accept_share_pub_key => "点对点分享";
-  @override
-  String get walking => "步行";
+  String get empty_map_notice_message => "你尚未购买任何地图";
   @override
   String get share => "分享";
   @override
   String get new_update_available => "发现新版本";
-  @override
-  String get refresh_public_key_days_tips => "%d天后自动刷新";
-  @override
-  String get payment_failed => "支付失败";
   @override
   String get less_than_1_min => "小于1分钟";
   @override
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override
   String get more => "更多";
+  @override
+  String get services => "服务";
+  @override
+  String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
+  @override
+  String get confirm => "确定";
+  @override
+  String get app_name => "泰坦";
+  @override
+  String get waiting_for_payment_result => "等待支付结果...";
+  @override
+  String get no_recommended_route => "暂无推荐路线";
+  @override
+  String get refresh_public_key_seconds_tips => "%d秒后自动刷新";
+  @override
+  String get click_to_purchase => "点击前往购买";
+  @override
+  String get share_qrcode => "分享公钥二维码";
+  @override
+  String get search_history => "历史搜索";
+  @override
+  String get receiver_encrypted_address => "接收者加密地址（公钥）";
+  @override
+  String get improvement_plan_title => "改进体验计划";
+  @override
+  String get app_version => "版本";
+  @override
+  String get twitterhyperion => "推特-海伯利安";
+  @override
+  String get payment_successful => "支付成功";
+  @override
+  String get offline_map => "离线地图";
+  @override
+  String get public_key_copied => "公钥地址已复制";
+  @override
+  String get buy_more_map => "购买更多地图";
+  @override
+  String get encrypt_error => "加密失败";
+  @override
+  String get twittertitan => "推特-泰坦";
+  @override
+  String get later => "暂不更新";
+  @override
+  String get copyed => "已拷贝";
+  @override
+  String get share_encrypted_location => "分享加密位置";
+  @override
+  String get wechat_cs => "微信客服";
+  @override
+  String get monthly_payment => "一个月有效";
+  @override
+  String get manually_refresh => "手动刷新";
+  @override
+  String get search_title => "搜索 / 解码";
+  @override
+  String get share_location => "位置分享";
+  @override
+  String get nav_share_app => "分享App";
+  @override
+  String get public_key_scan_fail_rescan => "公钥有误，请重新扫描";
+  @override
+  String get pay => "支付";
+  @override
+  String get driving => "驾车";
+  @override
+  String get generating_key => "正在生成加密地址…";
+  @override
+  String get payment_type => "支付类型";
+  @override
+  String get input_search_keyworod_or_cipher => "输入搜索词 / 密文";
+  @override
+  String get telphone => "电话";
+  @override
+  String get official_website => "官网";
+  @override
+  String get telegram_operator => "Telegram Operator";
+  @override
+  String get remark => "备注";
+  @override
+  String get medium => "Medium";
+  @override
+  String get Clean => "清除痕迹";
+  @override
+  String get refresh_public_key_hours_tips => "%d小时%d分后自动刷新";
+  @override
+  String get accept_share_pub_key => "点对点分享";
+  @override
+  String get walking => "步行";
+  @override
+  String get refresh_public_key_days_tips => "%d天后自动刷新";
+  @override
+  String get payment_failed => "支付失败";
   @override
   String get wechat => "公众号";
   @override
@@ -274,19 +302,9 @@ class $zh_CN extends S {
   @override
   String get label => "标签";
   @override
-  String get services => "服务";
-  @override
   String get nav_about_us => "关于我们";
   @override
-  String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
-  @override
   String get forum => "论坛";
-  @override
-  String get confirm => "确定";
-  @override
-  String get app_name => "泰坦";
-  @override
-  String get waiting_for_payment_result => "等待支付结果...";
   @override
   String get service_type => "服务类型";
   @override
@@ -294,11 +312,7 @@ class $zh_CN extends S {
   @override
   String get cancel_payment => "取消支付";
   @override
-  String get no_recommended_route => "暂无推荐路线";
-  @override
   String get downloading_update_file => "正在下载更新文件";
-  @override
-  String get refresh_public_key_seconds_tips => "%d秒后自动刷新";
   @override
   String get install_now => "马上安装";
   @override
@@ -308,19 +322,17 @@ class $zh_CN extends S {
   @override
   String get time => "营业时间";
   @override
-  String get share_qrcode => "分享公钥二维码";
-  @override
-  String network_request_err(String code) => "网络请求错误,状态码: $code";
-  @override
   String n_minute(String minute) => "${minute}分钟";
   @override
   String n_hour(String hour) => "${hour}小时";
   @override
-  String distance(String distance) => "${distance}米";
-  @override
   String km(String km) => "${km}公里";
   @override
   String n_day(String day) => "${day}天";
+  @override
+  String network_request_err(String code) => "网络请求错误,状态码: $code";
+  @override
+  String distance(String distance) => "${distance}米";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {

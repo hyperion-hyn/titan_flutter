@@ -130,7 +130,7 @@ class MapScenesState extends State<MapScenes> {
   HeavenMapPoiInfo _convertHeavenMapPoiInfoFromFeature(Map<String, dynamic> feature) {
     HeavenMapPoiInfo heavenMapPoiInfo = HeavenMapPoiInfo();
 
-    heavenMapPoiInfo.id = feature["id"];
+    heavenMapPoiInfo.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
     var coordinatesArray = feature["geometry"]["coordinates"];
     var coordinates = LatLng(coordinatesArray[1], coordinatesArray[0]);
     print("coordinates:${coordinates}");

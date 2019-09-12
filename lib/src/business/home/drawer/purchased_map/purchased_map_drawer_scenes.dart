@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
 import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_event.dart';
@@ -31,11 +32,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isIOS) {
-      return SafeArea(child: _buildDrawer());
-    } else {
-      return _buildDrawer();
-    }
+    return _buildDrawer();
   }
 
   Widget _buildDrawer() {
@@ -46,9 +43,12 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
           Container(
             alignment: Alignment.topLeft,
             color: Colors.black,
-            child: Text(
-              "您购买的地图",
-              style: TextStyle(color: Colors.white),
+            child: Padding(
+              padding: EdgeInsets.only(top: (MediaQuery.of(context).padding.top), bottom: 10,left: 10),
+              child: Text(
+                S.of(context).your_purchased_map,
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
           Expanded(
@@ -89,7 +89,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "购买更多地图",
+                  S.of(context).buy_more_map,
                   style: TextStyle(color: Colors.grey, fontSize: 15),
                 ),
               )
@@ -114,7 +114,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            "你尚未购买任何地图",
+            S.of(context).empty_map_notice_message,
             style: TextStyle(color: Colors.grey[500], fontSize: 14),
           ),
         ),
@@ -125,7 +125,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "点击前往购买",
+              S.of(context).click_to_purchase,
               style: TextStyle(color: Colors.blueAccent, fontSize: 14),
             ),
           ),
@@ -227,8 +227,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                BlocProvider.value(
+            builder: (context) => BlocProvider.value(
                   value: _purchasedMapBloc,
                   child: MapStorePage(),
                 )));

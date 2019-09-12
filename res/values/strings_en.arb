@@ -95,5 +95,9 @@
   "monthly_payment": " One Month Valid",
   "time": "Time",
   "services": "Services",
-  "remark": "Remark"
+  "remark": "Remark",
+  "buy_more_map": "Buy More Map",
+  "click_to_purchase": "Click to purchase",
+  "empty_map_notice_message": "You haven't purchase any maps",
+  "your_purchased_map": "Your purchased map"
 }
