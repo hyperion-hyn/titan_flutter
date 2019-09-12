@@ -67,6 +67,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         //show bottom sheet fail
         sheetBloc.dispatch(sheets.ShowLoadFailEvent(message: '获取数据失败'));
       }
+    } else if (event is SearchHeavenPoiEvent) {
+      //add marker on map
+      mapBloc.dispatch(map.AddMarkerEvent(poi: event.poi));
+      //show bottom sheet loading
+      sheetBloc.dispatch(sheets.ShowLoadingEvent());
+
+      //load poi info
+      try {
+        //update search bar ui
+        searchBarBloc.dispatch(search.ShowPoiEvent(poi: event.poi));
+        //show bottom sheet of the poi
+        sheetBloc.dispatch(sheets.ShowPoiEvent(poi: event.poi));
+        selectedPoi = event.poi;
+      } catch (err) {
+        print(err);
+        //show bottom sheet fail
+        sheetBloc.dispatch(sheets.ShowLoadFailEvent(message: '获取数据失败'));
+      }
     } else if (event is SearchTextEvent) {
       var searchEvent = search.ShowSearchEvent(isLoading: true, searchText: event.searchText);
 

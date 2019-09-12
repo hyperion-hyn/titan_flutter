@@ -1,5 +1,6 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
+import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
@@ -19,9 +20,16 @@ class SearchPoiEvent extends HomeEvent {
   SearchPoiEvent({this.poi});
 }
 
+class SearchHeavenPoiEvent extends HomeEvent {
+  final HeavenMapPoiInfo poi;
+
+  SearchHeavenPoiEvent({this.poi});
+}
+
 class SearchTextEvent extends HomeEvent {
   final String searchText;
   final LatLng center;
+
 //  final List<dynamic> pois;
 
   SearchTextEvent({this.center, this.searchText});

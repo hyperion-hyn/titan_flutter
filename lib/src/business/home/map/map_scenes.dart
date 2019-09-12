@@ -20,6 +20,7 @@ import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as searchBar;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
 import 'package:titan/src/business/map_store/model/purchased_map_item.dart';
+import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
@@ -64,6 +65,8 @@ class MapScenesState extends State<MapScenes> {
 
   List<HeavenDataModel> _addedHeavenDataModelList = List();
 
+  List<String> heavenMapLayers = [];
+
   _addPurchasedMap(List<PurchasedMap> newPurchasedMapList) {
     //将purchasedMapList 转成HeavenDataModel
 
@@ -76,6 +79,13 @@ class MapScenesState extends State<MapScenes> {
           color: HexColor(purchasedMap.color).value,
           sourceLayer: purchasedMap.sourceLayer);
     }).toList();
+
+    var addHeavenLayerIds = newPurchasedMapList.map((purchaseMapTemp) {
+      return "layer-heaven-" + purchaseMapTemp.id;
+    }).toList();
+
+    heavenMapLayers.clear();
+    heavenMapLayers.addAll(addHeavenLayerIds);
   }
 
   _onMapClick(Point<double> point, LatLng coordinates) async {
@@ -83,6 +93,9 @@ class MapScenesState extends State<MapScenes> {
     Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
 
     if (await _clickOnMarkerLayer(rect)) {
+      return;
+    }
+    if (await _clickOnHeavenLayer(rect)) {
       return;
     }
     if (await _clickOnCommonSymbolLayer(rect)) {
@@ -96,6 +109,39 @@ class MapScenesState extends State<MapScenes> {
     } else {
       homeBloc.dispatch(home.ExistSearchEvent());
     }
+  }
+
+  Future<bool> _clickOnHeavenLayer(Rect rect) async {
+    // 查找Heaven map layer
+    print("heavenMapLayers:$heavenMapLayers");
+    List symbolFeatures = await mapboxMapController?.queryRenderedFeaturesInRect(rect, heavenMapLayers, null);
+    if (symbolFeatures != null && symbolFeatures.isNotEmpty) {
+      var firstFeature = json.decode(symbolFeatures[0]);
+      print("firstFeature :$firstFeature");
+
+      var heavenMapInfo = _convertHeavenMapPoiInfoFromFeature(firstFeature);
+      BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchHeavenPoiEvent(poi: heavenMapInfo));
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  HeavenMapPoiInfo _convertHeavenMapPoiInfoFromFeature(Map<String, dynamic> feature) {
+    HeavenMapPoiInfo heavenMapPoiInfo = HeavenMapPoiInfo();
+
+    heavenMapPoiInfo.id = feature["id"];
+    var coordinatesArray = feature["geometry"]["coordinates"];
+    var coordinates = LatLng(coordinatesArray[1], coordinatesArray[0]);
+    print("coordinates:${coordinates}");
+    heavenMapPoiInfo.latLng = LatLng(coordinates.latitude, coordinates.longitude);
+    heavenMapPoiInfo.time = feature["properties"]["time"];
+    heavenMapPoiInfo.phone = feature["properties"]["telephone"];
+    heavenMapPoiInfo.service = feature["properties"]["service"];
+    heavenMapPoiInfo.address = feature["properties"]["address"];
+    heavenMapPoiInfo.desc = feature["properties"]["desc"];
+    heavenMapPoiInfo.name = feature["properties"]["name"];
+    return heavenMapPoiInfo;
   }
 
   Future<bool> _clickOnCommonSymbolLayer(Rect rect) async {
