@@ -131,10 +131,9 @@ class MapScenesState extends State<MapScenes> {
     HeavenMapPoiInfo heavenMapPoiInfo = HeavenMapPoiInfo();
 
     heavenMapPoiInfo.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
-    var coordinatesArray = feature["geometry"]["coordinates"];
-    var coordinates = LatLng(coordinatesArray[1], coordinatesArray[0]);
-    print("coordinates:${coordinates}");
-    heavenMapPoiInfo.latLng = LatLng(coordinates.latitude, coordinates.longitude);
+    var lat = double.parse(feature["properties"]["lat"]);
+    var lon = double.parse(feature["properties"]["lon"]);
+    heavenMapPoiInfo.latLng = LatLng(lat,lon);
     heavenMapPoiInfo.time = feature["properties"]["time"];
     heavenMapPoiInfo.phone = feature["properties"]["telephone"];
     heavenMapPoiInfo.service = feature["properties"]["service"];
