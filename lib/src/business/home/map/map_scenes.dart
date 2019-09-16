@@ -114,11 +114,13 @@ class MapScenesState extends State<MapScenes> {
   Future<bool> _clickOnHeavenLayer(Rect rect) async {
     // 查找Heaven map layer
     print("heavenMapLayers:$heavenMapLayers");
+    if(heavenMapLayers.isEmpty){
+      return false;
+    }
     List symbolFeatures = await mapboxMapController?.queryRenderedFeaturesInRect(rect, heavenMapLayers, null);
     if (symbolFeatures != null && symbolFeatures.isNotEmpty) {
       var firstFeature = json.decode(symbolFeatures[0]);
       print("firstFeature :$firstFeature");
-
       var heavenMapInfo = _convertHeavenMapPoiInfoFromFeature(firstFeature);
       BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchHeavenPoiEvent(poi: heavenMapInfo));
       return true;
@@ -133,7 +135,7 @@ class MapScenesState extends State<MapScenes> {
     heavenMapPoiInfo.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
     var lat = double.parse(feature["properties"]["lat"]);
     var lon = double.parse(feature["properties"]["lon"]);
-    heavenMapPoiInfo.latLng = LatLng(lat,lon);
+    heavenMapPoiInfo.latLng = LatLng(lat, lon);
     heavenMapPoiInfo.time = feature["properties"]["time"];
     heavenMapPoiInfo.phone = feature["properties"]["telephone"];
     heavenMapPoiInfo.service = feature["properties"]["service"];
@@ -299,7 +301,7 @@ class MapScenesState extends State<MapScenes> {
   var _currentGrayMarkerMap = Map<String, IPoi>();
 
   void _addMarkers(List<IPoi> pois) async {
-    _clearAllMarkers();
+    await _clearAllMarkers();
 
     List<SymbolOptions> options = pois
         .map(
@@ -361,8 +363,8 @@ class MapScenesState extends State<MapScenes> {
     }
   }
 
-  void _clearAllMarkers() {
-    mapboxMapController?.clearSymbols();
+  Future<void> _clearAllMarkers() async {
+    await mapboxMapController?.clearSymbols();
     showingSymbol = null;
     currentPoi = null;
     _currentGrayMarkerMap.clear();

@@ -91,7 +91,7 @@
   "pay": "支付",
   "ordering": "正在下单...",
   "waiting_for_payment_result": "等待支付结果...",
-  "payment_successful": "支付成功",
+  "payment_successful": "购买成功",
   "monthly_payment": "一个月有效",
   "time": "营业时间",
   "services": "服务",

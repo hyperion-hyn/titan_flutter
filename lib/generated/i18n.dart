@@ -74,7 +74,7 @@ class S implements WidgetsLocalizations {
   String get ordering => "Ordering...";
   String get pay => "Pay";
   String get payment_failed => "Payment failed";
-  String get payment_successful => "Payment successful";
+  String get payment_successful => "Purchase successful";
   String get payment_type => "Payment Types";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 character";
@@ -230,7 +230,7 @@ class $zh_CN extends S {
   @override
   String get twitterhyperion => "推特-海伯利安";
   @override
-  String get payment_successful => "支付成功";
+  String get payment_successful => "购买成功";
   @override
   String get offline_map => "离线地图";
   @override
