@@ -37,7 +37,7 @@ dependencies:
   event_bus: ^1.1.0
   #https://pub.dev/packages/fluttertoast
   fluttertoast: ^3.1.0
-#  flutter_webview_plugin: ^0.3.5
+  #  flutter_webview_plugin: ^0.3.5
   #https://github:com/dnfield/flutter_svg:
   flutter_svg: ^0.13.0+2
   #https://pub.dev/packages/in_app_purchase#-installing-tab-
@@ -133,6 +133,7 @@ flutter:
     - res/drawable/shop_car.svg
     - res/drawable/alipay.svg
     - res/drawable/google_play.svg
+    - res/drawable/onboarding_lock.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
