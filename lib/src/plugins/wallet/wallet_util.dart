@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_core.dart';
@@ -18,7 +19,7 @@ class WalletUtil {
     for (var map in keyStoreMaps) {
 //      logger.i(map);
       var wallet = _parseWalletJson(map);
-      if(wallet != null) {
+      if (wallet != null) {
         wallets.add(wallet);
       }
     }
@@ -58,6 +59,83 @@ class WalletUtil {
   ///查看eth油费
   static Future<BigInt> ethGasPrice() {
     return WalletCore.ethGasPrice(isMainNet: WalletConfig.isMainNet);
+  }
+
+  ///计算费用
+  static Future<BigInt> estimateGas({
+    @required String fromAddress,
+    @required String toAddress,
+    @required int coinType,
+    @required String amount,
+    String erc20ContractAddress,
+  }) {
+    return WalletCore.estimateGas(
+      fromAddress: fromAddress,
+      toAddress: toAddress,
+      coinType: coinType,
+      amount: amount,
+      erc20ContractAddress: erc20ContractAddress,
+      isMainNet: WalletConfig.isMainNet,
+    );
+  }
+
+  static Future<String> transfer({
+    @required String password,
+    @required String fileName,
+    @required String fromAddress,
+    @required String toAddress,
+    @required String amount,
+    @required int coinType,
+    String isMainNet,
+    String data,
+  }) {
+    return WalletCore.transfer(
+      password: password,
+      fileName: fileName,
+      fromAddress: fromAddress,
+      toAddress: toAddress,
+      amount: amount,
+      coinType: coinType,
+      isMainNet: isMainNet,
+      data: data,
+    );
+  }
+
+  static Future<String> transferErc20Token({
+    @required String password,
+    @required String fileName,
+    @required String fromAddress,
+    @required String toAddress,
+    @required String amount,
+    @required String erc20ContractAddress,
+    String isMainNet,
+    String data,
+  }) {
+    return WalletCore.transfer(
+      password: password,
+      fileName: fileName,
+      fromAddress: fromAddress,
+      toAddress: toAddress,
+      amount: amount,
+      coinType: CoinType.ETHEREUM,
+      erc20ContractAddress: erc20ContractAddress,
+      isMainNet: isMainNet,
+      data: data,
+    );
+  }
+
+  static Future<String> exportPrivateKey({
+    @required String fileName,
+    @required password,
+  }) {
+    return WalletCore.exportPrivateKey(fileName: fileName, password: password);
+  }
+
+  static Future<String> exportMnemonic({
+    @required String fileName,
+    @required password,
+  }) {
+    return WalletCore.exportMnemonic(fileName: fileName, password: password);
   }
 
   ///加载单个钱包

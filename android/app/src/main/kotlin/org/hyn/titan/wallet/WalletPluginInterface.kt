@@ -9,8 +9,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.internal.operators.flowable.FlowableSingle
 import io.reactivex.schedulers.Schedulers
+import org.hyn.titan.ErrorCode
 import org.hyn.titan.utils.md5
 import org.hyn.titan.utils.toHex
 import org.hyn.titan.utils.toHexByteArray
@@ -22,7 +22,6 @@ import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.http.HttpService
 import org.web3j.tx.ReadonlyTransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
-import org.web3j.utils.Flowables
 import org.web3j.utils.Numeric
 import timber.log.Timber
 import wallet.core.jni.CoinType
@@ -30,6 +29,7 @@ import wallet.core.jni.StoredKey
 import java.io.File
 import java.io.IOException
 import java.lang.Exception
+import java.math.BigInteger
 
 class WalletPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
     init {
@@ -68,7 +68,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     val path = saveMnemonic(mnemonic, name, password)
                     result.success(path)
                 } else {
-                    result.error("parameters error", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "parameters error", null)
                 }
                 true
             }
@@ -81,7 +81,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     val path = savePrvKey(prvKeyHex, name, password)
                     result.success(path)
                 } else {
-                    result.error("parameters error", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "parameters error", null)
                 }
                 true
             }
@@ -100,10 +100,10 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                                 result.success(it)
                             }, {
                                 it.printStackTrace()
-                                result.error(it.message, null, null)
+                                result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
                             })
                 } else {
-                    result.error("parameters error", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "parameters error", null)
                 }
                 true
             }
@@ -111,13 +111,13 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
             "wallet_load_keystore" -> {
                 val fileName = call.argument<String>("fileName")
                 if (fileName == null) {
-                    result.error("fileName cannot be null", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "fileName cannot be null", null)
                 } else {
                     val map = loadKeyStore(fileName)
                     if (map != null) {
                         result.success(map)
                     } else {
-                        result.error("load keystore error", null, null)
+                        result.error(ErrorCode.UNKNOWN_ERROR, "load keystore error", null)
                     }
                 }
                 true
@@ -129,7 +129,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     val ret = File(getKeyStorePath(fileName)).delete()
                     result.success(ret)
                 } else {
-                    result.error("fileName cannot be null.", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "fileName cannot be null.", null)
                 }
                 true
             }
@@ -153,15 +153,15 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val newPassword = call.argument<String>("newPassword")
                 val fileName = call.argument<String>("fileName")
                 if (oldPassword == null) {
-                    result.error("old password should not be null", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "old password should not be null", null)
                     return true
                 }
                 if (newPassword == null) {
-                    result.error("new password should not be null", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "new password should not be null", null)
                     return true
                 }
                 if (fileName == null) {
-                    result.error("fileName should not be null", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "fileName should not be null", null)
                     return true
                 }
 
@@ -169,33 +169,36 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 if (isTrustWallet(fileName)) {
                     val storedKey = StoredKey.load(getKeyStorePath(fileName))
                     if (storedKey == null) {
-                        result.error("file not exist.", null, null)
+                        result.error(ErrorCode.UNKNOWN_ERROR, "file not exist.", null)
                         return true
                     }
                     val name = call.argument<String>("name") ?: storedKey.name();
 
-                    if (storedKey.isMnemonic) {
-                        val mnemonic = storedKey.decryptMnemonic(oldPassword)
-                        if (mnemonic.isNullOrEmpty()) {
-                            result.error("old password error.", null, null)
-                            return true
-                        }
-                        val newStoredKey = StoredKey.importHDWallet(mnemonic, name, newPassword, CoinType.ETHEREUM)
-                        val rename = saveStoredKeyToLocal(newStoredKey)
-                        //delete old file
-                        File(getKeyStorePath(fileName)).delete()
-                        result.success(rename)
+                    val wallet = storedKey.wallet(oldPassword)
+                    if (wallet == null) {
+                        result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
                     } else {
-                        val prvKey = storedKey.decryptPrivateKey(oldPassword)
-                        if (prvKey == null || prvKey.isEmpty()) {
-                            result.error("old password error.", null, null)
-                            return true
+                        if (storedKey.isMnemonic) {
+                            val mnemonic = wallet.mnemonic()
+                            if (mnemonic.isNullOrEmpty()) {
+                                result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
+                                return true
+                            }
+                            val rename = saveMnemonic(mnemonic, name, newPassword)
+                            //delete old file
+                            File(getKeyStorePath(fileName)).delete()
+                            result.success(rename)
+                        } else {
+                            val prvKey = wallet.getKeyForCoin(CoinType.ETHEREUM)
+                            if (prvKey == null) {
+                                result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
+                                return true
+                            }
+                            val rename = savePrvKey(prvKey.data().toHex(), name, newPassword)
+                            //delete old file
+                            File(getKeyStorePath(fileName)).delete()
+                            result.success(rename)
                         }
-                        val newStoredKey = StoredKey.importPrivateKey(prvKey, name, newPassword, CoinType.ETHEREUM)
-                        val rename = saveStoredKeyToLocal(newStoredKey)
-                        //delete old file
-                        File(getKeyStorePath(fileName)).delete()
-                        result.success(rename)
                     }
                 } else if (isV3KeyStore(fileName)) { //v3keystore json
                     try {
@@ -206,16 +209,16 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                         result.success(rename)
                     } catch (e: IOException) {
                         e.printStackTrace()
-                        result.error(e.message, null, null)
+                        result.error(ErrorCode.UNKNOWN_ERROR, e.message, null)
                         return true
                     } catch (e: CipherException) {
                         e.printStackTrace()
-                        result.error(e.message, null, null)
+                        result.error(ErrorCode.UNKNOWN_ERROR, e.message, null)
                         return true
                     }
 
                 } else {
-                    result.error("$fileName is not a keystore file", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "$fileName is not a keystore file", null)
                     return true
                 }
                 true
@@ -226,9 +229,13 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val fileName = call.argument<String>("fileName")
                 if (fileName != null && password != null) {
                     val prvKeyHex = getPrvKey(fileName, password)
-                    result.success(prvKeyHex)
+                    if (prvKeyHex != null) {
+                        result.success(prvKeyHex)
+                    } else {
+                        result.error(ErrorCode.PASSWORD_WRONG, "password error.", null)
+                    }
                 } else {
-                    result.error("file not exist.", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "file not exist.", null)
                 }
                 true
             }
@@ -240,14 +247,20 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     if (isTrustWallet(fileName)) {
                         val storedKey = StoredKey.load(getKeyStorePath(fileName))
                         if (storedKey.isMnemonic) {
-                            val mnemnic = storedKey.decryptMnemonic(password)
-                            result.success(mnemnic)
-                            return true
+                            val wallet = storedKey.wallet(password)
+                            if (wallet != null) {
+                                val mnemonic = storedKey.decryptMnemonic(password)
+                                result.success(mnemonic)
+                                return true
+                            } else {
+                                result.error(ErrorCode.PASSWORD_WRONG, "wrong password.", null)
+                                return true
+                            }
                         }
                     }
-                    result.error("cannot get mnemonic.", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "cannot get mnemonic.", null)
                 } else {
-                    result.error("file not exist.", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "file not exist.", null)
                 }
                 true
             }
@@ -258,7 +271,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val erc20ContractAddress = call.argument<String>("erc20ContractAddress")
                 val isMainNet = call.argument<Boolean>("isMainNet") ?: true
                 if (address == null || coinType == null) {
-                    result.error("parameters error", null, null)
+                    result.error(ErrorCode.UNKNOWN_ERROR, "parameters error", null)
                 } else {
                     if (coinType == CoinType.ETHEREUM.value()) {
                         if (erc20ContractAddress != null) {
@@ -270,7 +283,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                                         result.success(Numeric.toHexStringNoPrefix(it))
                                     }, {
                                         it.printStackTrace()
-                                        result.error(it.message, null, null)
+                                        result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
                                     })
                         } else {
                             //get ethereum balance
@@ -282,9 +295,12 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                                         result.success(Numeric.toHexStringNoPrefix(it.balance))
                                     }, {
                                         it.printStackTrace()
-                                        result.error(it.message, null, null)
+                                        result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
                                     })
                         }
+                    } else {
+                        //Other coin are not implements
+                        result.error(ErrorCode.UNKNOWN_ERROR, "coinType $coinType are not implemented", null)
                     }
                 }
                 true
@@ -299,8 +315,82 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                             result.success(Numeric.toHexStringNoPrefix(it.gasPrice))
                         }, {
                             it.printStackTrace()
-                            result.error(it.message, null, null)
+                            result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
                         })
+                true
+            }
+            "wallet_transfer" -> {
+                val password = call.argument<String>("password")
+                val fileName = call.argument<String>("fileName")
+                val fromAddress = call.argument<String>("fromAddress")
+                val toAddress = call.argument<String>("toAddress")
+                val amount = call.argument<String>("amount")
+                val coinType = call.argument<Int>("coinType")
+                val erc20ContractAddress = call.argument<String>("erc20ContractAddress")
+                val isMainNet = call.argument<Boolean>("isMainNet") ?: true
+                val data = call.argument<String>("data")
+
+                if (password != null && fileName != null && fromAddress != null && toAddress != null && amount != null && coinType != null) {
+                    if (coinType == CoinType.ETHEREUM.value()) {
+                        val prvKeyHex = getPrvKey(fileName, password)
+                        if (prvKeyHex != null) {
+                            val web3j = buildWeb3j(isMainNet)
+                            Flowable.fromCallable {
+                                if (erc20ContractAddress.isNullOrEmpty()) {
+                                    return@fromCallable EthHelper.transferETH(web3j, fromAddress, prvKeyHex, toAddress, BigInteger(amount, 16), data)
+                                } else {
+                                    return@fromCallable EthHelper.transferToken(web3j, prvKeyHex, fromAddress, toAddress, erc20ContractAddress, BigInteger(amount, 16))
+                                }
+                            }
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ txHash ->
+                                        result.success(txHash)
+                                    }, {
+                                        it.printStackTrace()
+                                        result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
+                                    })
+                        } else {
+                            result.error(ErrorCode.PASSWORD_WRONG, "password error", null)
+                        }
+                    } else {
+                        result.error(ErrorCode.UNKNOWN_ERROR, "coinType $coinType are not implemented", null)
+                    }
+                }
+                true
+            }
+            /*计算油费*/
+            "wallet_estimateGas" -> {
+                val fromAddress = call.argument<String>("fromAddress")
+                val toAddress = call.argument<String>("toAddress")
+                val amount = call.argument<String>("amount")
+                val coinType = call.argument<Int>("coinType")
+                val erc20ContractAddress = call.argument<String>("erc20ContractAddress")
+                val isMainNet = call.argument<Boolean>("isMainNet") ?: true
+                if (fromAddress != null && toAddress != null && amount != null && coinType != null) {
+                    if (coinType == CoinType.ETHEREUM.value()) {
+                        val web3j = buildWeb3j(isMainNet)
+                        Flowable.fromCallable {
+                            if (erc20ContractAddress.isNullOrEmpty()) {
+                                return@fromCallable EthHelper.ethTransferEstimateGas(web3j, fromAddress, toAddress, BigInteger(amount, 16))
+                            } else {
+                                return@fromCallable EthHelper.tokenTransferEstimateGas(web3j, fromAddress, toAddress, erc20ContractAddress, BigInteger(amount, 16))
+                            }
+                        }
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    result.success(Numeric.toHexStringNoPrefix(it))
+                                }, {
+                                    it.printStackTrace()
+                                    result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
+                                })
+                    } else {
+                        result.error(ErrorCode.UNKNOWN_ERROR, "coinType $coinType are not implemented", null)
+                    }
+                } else {
+                    result.error(ErrorCode.UNKNOWN_ERROR, "coinType $coinType are not implemented", null)
+                }
                 true
             }
             else -> false
@@ -356,6 +446,9 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
         return savePath
     }
 
+    /**
+     * only support eth now
+     */
     private fun getPrvKey(fileName: String, password: String): String? {
         if (isTrustWallet(fileName)) {    //trust wallet ks
             val storedKey = StoredKey.load(getKeyStorePath(fileName))
@@ -368,6 +461,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 return Numeric.toHexStringWithPrefix(credentials.ecKeyPair.privateKey)
             }
         }
+
         return null
     }
 
