@@ -5,4 +5,4 @@ abstract class WalletState {}
 
 class WalletEmptyState extends WalletState {}
 
-class CreateNewWalletState extends WalletState {}
+class ShowWalletState extends WalletState {}

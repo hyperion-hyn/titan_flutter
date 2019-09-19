@@ -9,8 +9,8 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
   @override
   Stream<WalletState> mapEventToState(WalletEvent event) async* {
-    if (event is CreateNewWalletEvent) {
-      yield CreateNewWalletState();
+    if (event is ShowWalletEvent) {
+      yield ShowWalletState();
     }
   }
 }
