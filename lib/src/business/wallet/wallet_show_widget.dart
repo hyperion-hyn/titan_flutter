@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/wallet_show_account_widget.dart';
+import 'package:titan/src/plugins/wallet/account.dart';
+import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 
+import 'model_vo.dart';
 import 'wallert_create_new_account_page.dart';
 import 'wallert_import_account_page.dart';
 
 class ShowWallet extends StatefulWidget {
+  WalletVo wallet;
+
+  ShowWallet(this.wallet);
+
   @override
   State<StatefulWidget> createState() {
     return _ShowWalletState();
@@ -13,28 +23,17 @@ class ShowWallet extends StatefulWidget {
 }
 
 class _ShowWalletState extends State<ShowWallet> {
-  List<WalletAccount> walletAccounts = [
-    WalletAccount(
-        name: "Ethereun",
-        shortName: "ETH",
-        count: 123.02,
-        price: 180.92,
-        priceUnit: "USD",
-        unit: "ETH",
-        amount: 22256.77),
-    WalletAccount(
-        name: "Hyperion",
-        shortName: "HYN",
-        count: 123.02,
-        price: 180.92,
-        priceUnit: "USD",
-        unit: "HYN",
-        amount: 22256.77)
-  ];
+  WalletVo wallet;
+
+  @override
+  void initState() {
+    wallet = widget.wallet;
+  }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    TrustWalletKeyStore walletKeyStore = wallet.wallet.keystore;
+    var walletName = walletKeyStore.name;
     return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,13 +51,13 @@ class _ShowWalletState extends State<ShowWallet> {
                         Padding(
                           padding: const EdgeInsets.only(top: 24.0),
                           child: Text(
-                            "US \$100",
+                            "${wallet.amountUnit} \$${sprintf("%.2", [wallet.amount])}",
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("钱包1"),
+                          child: Text("${walletName}"),
                         )
                       ],
                     ),
@@ -81,16 +80,18 @@ class _ShowWalletState extends State<ShowWallet> {
           ListView.builder(
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
-              return GestureDetector(onTap:(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAccountPage()));
-              },child: _buildAccountItem(context, walletAccounts[index]));
+              return GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAccountPage()));
+                  },
+                  child: _buildAccountItem(context, wallet.accountList[index]));
             },
-            itemCount: walletAccounts.length,
+            itemCount: wallet.accountList.length,
           )
         ]);
   }
 
-  Widget _buildAccountItem(BuildContext context, WalletAccount account) {
+  Widget _buildAccountItem(BuildContext context, WalletAccountVo account) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -103,20 +104,20 @@ class _ShowWalletState extends State<ShowWallet> {
               border: Border.all(color: Colors.grey, width: 1),
               shape: BoxShape.circle,
             ),
-            child: Text("HYN"),
+            child: Text(account.symbol),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: <Widget>[
                 Text(
-                  "Ethereum",
+                  account.name,
                   style: TextStyle(),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "USD180.92",
+                    "${account.priceUnit}${account.price}",
                     style: TextStyle(fontSize: 11, color: HexColor("#FF848181")),
                   ),
                 ),
@@ -146,16 +147,4 @@ class _ShowWalletState extends State<ShowWallet> {
       ),
     );
   }
-}
-
-class WalletAccount {
-  String name;
-  String shortName;
-  double count;
-  double price;
-  String priceUnit;
-  String unit;
-  double amount;
-
-  WalletAccount({this.name, this.shortName, this.count, this.price, this.priceUnit, this.unit, this.amount});
 }

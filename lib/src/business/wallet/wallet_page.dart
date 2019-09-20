@@ -22,7 +22,6 @@ class _WalletPageState extends State<WalletPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return _buildWalletView(context);
   }
 
@@ -30,7 +29,7 @@ class _WalletPageState extends State<WalletPage> {
   void initState() {
     _walletBloc = WalletBloc();
 
-    _walletBloc.dispatch(ShowWalletEvent());
+    _walletBloc.dispatch(ScanWalletEvent());
   }
 
   Widget _buildWalletView(BuildContext context) {
@@ -77,7 +76,7 @@ class _WalletPageState extends State<WalletPage> {
                   );
                 } else if (state is ShowWalletState) {
                   return Container(
-                    child: ShowWallet(),
+                    child: ShowWallet(state.wallet),
                   );
                 } else {
                   return Container();
