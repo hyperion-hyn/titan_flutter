@@ -151,6 +151,7 @@ flutter:
     - family: iconfont
       fonts:
         - asset: res/fonts/iconfont.ttf
+
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
