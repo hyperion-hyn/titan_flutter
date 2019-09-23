@@ -144,7 +144,7 @@ class WalletCore {
     @required String amount,
     @required int coinType,
     String erc20ContractAddress,
-    String isMainNet,
+    bool isMainNet,
     String data,
   }) async {
     var txHash = await TitanPlugin.callChannel.invokeMethod("wallet_transfer", {

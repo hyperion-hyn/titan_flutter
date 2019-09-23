@@ -86,7 +86,6 @@ class WalletUtil {
     @required String toAddress,
     @required String amount,
     @required int coinType,
-    String isMainNet,
     String data,
   }) {
     return WalletCore.transfer(
@@ -96,7 +95,7 @@ class WalletUtil {
       toAddress: toAddress,
       amount: amount,
       coinType: coinType,
-      isMainNet: isMainNet,
+      isMainNet: WalletConfig.isMainNet,
       data: data,
     );
   }
@@ -108,7 +107,6 @@ class WalletUtil {
     @required String toAddress,
     @required String amount,
     @required String erc20ContractAddress,
-    String isMainNet,
     String data,
   }) {
     return WalletCore.transfer(
@@ -119,7 +117,7 @@ class WalletUtil {
       amount: amount,
       coinType: CoinType.ETHEREUM,
       erc20ContractAddress: erc20ContractAddress,
-      isMainNet: isMainNet,
+      isMainNet: WalletConfig.isMainNet,
       data: data,
     );
   }
@@ -136,6 +134,20 @@ class WalletUtil {
     @required password,
   }) {
     return WalletCore.exportMnemonic(fileName: fileName, password: password);
+  }
+
+  static Future<bool> changePassword({
+    @required String oldPassword,
+    @required String newPassword,
+    @required Wallet wallet,
+    String name,
+  }) async {
+    bool result = await wallet.keystore.changePassword(
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+      name: name,
+    );
+    return result;
   }
 
   ///加载单个钱包

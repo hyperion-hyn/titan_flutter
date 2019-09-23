@@ -135,16 +135,20 @@ public class EthHelper {
 //        BigDecimal balance = Convert.toWei(ethBalance, Convert.Unit.ETHER);
         // balance < amount + gasLimit ??
 //        BigDecimal amountWeiDecimal = new BigDecimal(amount.toString());
-        if (ethBalance.compareTo(amount.add(gasLimit)) < 0) {
+        BigInteger gasUsed = gasLimit.multiply(gasPrice);
+//        Timber.i("ethBalance " + ethBalance.toString(10) + " amount: " + amount + " gasLimit:" + gasLimit + " gasUsed:" + gasUsed + " fromAddr:" + fromAddr);
+        if (ethBalance.compareTo(amount.add(gasUsed)) < 0) {
             throw new RuntimeException("Insufficient balance.");
         }
+
+//        Timber.i("1111 nonce:" + nonce + " gasPrice:" + gasPrice + " gasLimit:" + gasLimit + " privateKey:" + privateKey);
 
         return signAndSend(web3j, nonce, gasPrice, gasLimit, toAddr, amount, data, privateKey);
     }
 
     public static String signAndSend(Web3j web3j, BigInteger nonce, BigInteger gasPrice, BigInteger gasLimit, String to, BigInteger value, String data, String privateKey) throws IOException {
         String txHash = "";
-        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, gasLimit, to, value, data);
+        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, gasLimit, to, value, data == null ? "" : data);
         if (privateKey.startsWith("0x")) {
             privateKey = privateKey.substring(2);
         }
@@ -199,7 +203,9 @@ public class EthHelper {
         BigInteger tokenBalance = getTokenBalance(web3j, fromAddr, contractAddr);
 //        BigInteger balance = Convert.toWei(ethBalance, Convert.Unit.ETHER).toBigInteger();
 
-        if (ethBalance.compareTo(gasLimit) < 0) {
+        BigInteger gasUsed = gasLimit.multiply(gasPrice);
+
+        if (ethBalance.compareTo(gasUsed) < 0) {
             throw new RuntimeException("Insufficient gas fee, please verify");
         }
         if (tokenBalance.compareTo(amount) < 0) {
@@ -241,9 +247,9 @@ public class EthHelper {
         // make transaction
         Transaction transaction = Transaction.createEtherTransaction(fromAddr, nonce, gasPrice, null, toAddr, amount);
         // calculate gasLimit
-        BigInteger gasUsed = getTransactionGasLimit(web3j, transaction);
-        Timber.i("eth nonce " + nonce + ", gasPrice " + gasPrice + ", gasUsed " + gasUsed);
-        return gasUsed.multiply(gasPrice);
+        BigInteger amountUsed = getTransactionGasLimit(web3j, transaction);
+        Timber.i("eth nonce " + nonce + ", gasPrice " + gasPrice + ", gasUsed " + amountUsed);
+        return amountUsed.multiply(gasPrice);
     }
 
 }

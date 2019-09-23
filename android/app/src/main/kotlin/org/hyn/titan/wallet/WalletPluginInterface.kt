@@ -245,11 +245,12 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val fileName = call.argument<String>("fileName")
                 if (fileName != null && password != null) {
                     if (isTrustWallet(fileName)) {
+                        Timber.i("加载keystore文件 ${getKeyStorePath(fileName)}")
                         val storedKey = StoredKey.load(getKeyStorePath(fileName))
                         if (storedKey.isMnemonic) {
                             val wallet = storedKey.wallet(password)
                             if (wallet != null) {
-                                val mnemonic = storedKey.decryptMnemonic(password)
+                                val mnemonic = wallet.mnemonic()
                                 result.success(mnemonic)
                                 return true
                             } else {
@@ -329,6 +330,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val erc20ContractAddress = call.argument<String>("erc20ContractAddress")
                 val isMainNet = call.argument<Boolean>("isMainNet") ?: true
                 val data = call.argument<String>("data")
+                Timber.i(call.arguments.toString())
 
                 if (password != null && fileName != null && fromAddress != null && toAddress != null && amount != null && coinType != null) {
                     if (coinType == CoinType.ETHEREUM.value()) {
@@ -336,9 +338,11 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                         if (prvKeyHex != null) {
                             val web3j = buildWeb3j(isMainNet)
                             Flowable.fromCallable {
+                                Timber.i("begin eth transfer")
                                 if (erc20ContractAddress.isNullOrEmpty()) {
                                     return@fromCallable EthHelper.transferETH(web3j, fromAddress, prvKeyHex, toAddress, BigInteger(amount, 16), data)
                                 } else {
+                                    Timber.i("begin token transfer")
                                     return@fromCallable EthHelper.transferToken(web3j, prvKeyHex, fromAddress, toAddress, erc20ContractAddress, BigInteger(amount, 16))
                                 }
                             }
@@ -402,8 +406,9 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
      */
     private fun saveMnemonic(mnemonic: String, name: String, password: String): String {
         val storedKey = StoredKey.importHDWallet(mnemonic, name, password, CoinType.ETHEREUM)
-        Timber.i("saveMnemonic activeAccount count ${storedKey.accountCount()}")
-        return saveStoredKeyToLocal(storedKey)
+        val path = saveStoredKeyToLocal(storedKey)
+        Timber.i("saveMnemonic name: $name, password: $password, path: $path, 助记词: $mnemonic")
+        return path
     }
 
     /**
@@ -411,7 +416,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
      */
     private fun savePrvKey(prvKeyHex: String, name: String, password: String): String {
         val storedKey = StoredKey.importPrivateKey(prvKeyHex.toHexByteArray(), name, password, CoinType.ETHEREUM)
-        Timber.i("storedKey activeAccount count ${storedKey.accountCount()}")
+        Timber.i("storedKey activeAccount count ${storedKey.accountCount()}, 私钥: $prvKeyHex")
         return saveStoredKeyToLocal(storedKey)
     }
 

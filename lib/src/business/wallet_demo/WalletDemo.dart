@@ -10,6 +10,7 @@ import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
@@ -55,7 +56,7 @@ class _WalletDemoState extends State<WalletDemo> {
               var mnemonic =
                   "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal";
               var walletName = "我的助记词钱包1";
-              var password = PasswordDef.password;
+              var password = 'my password';
               var wallet = await WalletUtil.saveAsTrustWalletKeyStoreByMnemonic(
                   name: walletName, password: password, mnemonic: mnemonic);
               if (wallet != null) {
@@ -72,7 +73,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   "afeefca74d9a325cf1d6b6911d61a65c32afa8e02bd5e78e2e4ac2910bab45f5";
 //              ab4accc9310d90a61fc354d8f353bca4a2b3c0590685d3eb82d0216af3badddc
               var walletName = "我的密钥钱包1";
-              var password = PasswordDef.password;
+              var password = 'my password';
               var wallet = await WalletUtil.saveAsTrustWalletKeyStoreByPrvKey(
                   name: walletName, password: password, prvKeyHex: prvKey);
               if (wallet != null) {
@@ -134,8 +135,9 @@ class _WalletDemoState extends State<WalletDemo> {
                 //修改第一个账户密码吧
                 var wallet = wallets[0];
                 print('即将修改${wallet.keystore.fileName} 的密码');
-                var success = await wallet.keystore.changePassword(
-                    oldPassword: PasswordDef.password,
+                var success = await WalletUtil.changePassword(
+                    wallet: wallet,
+                    oldPassword: 'my password',
                     newPassword: "my password new",
                     name: '修改的钱包');
                 if (success) {
@@ -154,7 +156,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 try {
                   var prvKey = await WalletUtil.exportPrivateKey(
                       fileName: wallet.keystore.fileName,
-                      password: PasswordDef.password);
+                      password: 'my password');
                   logger.i('your prvKey is: $prvKey');
                 } catch (e) {
                   logger.e(e);
@@ -173,7 +175,7 @@ class _WalletDemoState extends State<WalletDemo> {
                       (wallet.keystore as TrustWalletKeyStore).isMnemonic) {
                     var mnemonic = await WalletUtil.exportMnemonic(
                         fileName: wallet.keystore.fileName,
-                        password: PasswordDef.password);
+                        password: 'my password');
                     logger.i('your mnemonic is: $mnemonic');
                   } else {
                     print('不是TrustWallet钱包，不支持导出助记词');
@@ -272,16 +274,17 @@ class _WalletDemoState extends State<WalletDemo> {
                 var password = 'my password';
                 var amount = Convert.numToWei(0.01).toRadixString(16);
                 var wallets = await WalletUtil.scanWallets();
-                if (wallets.length > 1) {
+                if (wallets.length > 0) {
                   var wallet0 = wallets[0] as TrustWallet;
-                  var wallet1 = wallets[1] as TrustWallet;
+
+                  var toAddress = '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0';
 
                   var txHash = await WalletUtil.transfer(
                     password: password,
                     fileName: wallet0.keystore.fileName,
                     coinType: wallet0.getEthAccount().coinType,
                     fromAddress: wallet0.getEthAccount().address,
-                    toAddress: wallet1.getEthAccount().address,
+                    toAddress: toAddress,
                     amount: amount,
                   );
 
@@ -299,20 +302,21 @@ class _WalletDemoState extends State<WalletDemo> {
                 var password = 'my password';
                 var amount = Convert.numToWei(1).toRadixString(16);
                 var wallets = await WalletUtil.scanWallets();
-                if (wallets.length > 1) {
+                if (wallets.length > 0) {
                   var wallet0 = wallets[0] as TrustWallet;
                   var hynErc20ContractAddress = wallet0
                       .getEthAccount()
                       .erc20AssetTokens[0]
                       .erc20ContractAddress;
-                  var wallet1 = wallets[1] as TrustWallet;
+
+                  var toAddress = '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0';
 
                   var txHash = await WalletUtil.transferErc20Token(
                     password: password,
                     fileName: wallet0.keystore.fileName,
                     erc20ContractAddress: hynErc20ContractAddress,
                     fromAddress: wallet0.getEthAccount().address,
-                    toAddress: wallet1.getEthAccount().address,
+                    toAddress: toAddress,
                     amount: amount,
                   );
 
@@ -328,8 +332,4 @@ class _WalletDemoState extends State<WalletDemo> {
       ),
     );
   }
-}
-
-class PasswordDef {
-  static String password = 'my password';
 }
