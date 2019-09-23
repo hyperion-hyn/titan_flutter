@@ -4,13 +4,8 @@ Titan Flutter application.
 
 
 make json model
+
 ```bash
-flutter packages pub run build_runner build
-```
-
-or
-
-```
 flutter packages pub run build_runner build --delete-conflicting-outputs
 
 ```
