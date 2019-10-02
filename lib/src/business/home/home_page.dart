@@ -8,13 +8,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/src/business/home/discover_content.dart';
+import 'package:titan/src/business/home/information_content.dart';
+import 'package:titan/src/business/home/map_content.dart';
 import 'package:titan/src/business/home/drawer/purchased_map/purchased_map_drawer_scenes.dart';
 import 'package:titan/src/business/home/improvement_dialog.dart';
 import 'package:titan/src/business/home/intro/intro_slider.dart';
+import 'package:titan/src/business/home/my_content.dart';
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as search;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
 import 'package:titan/src/business/home/sheets/sheets.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
+import 'package:titan/src/business/home/wallet_content.dart';
 
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/business/updater/updater.dart';
@@ -162,110 +167,7 @@ class _HomePageState extends State<HomePage> {
               }
               return true;
             },
-            child: Builder(
-                builder: (BuildContext context) => Stack(
-                      children: <Widget>[
-                        ///地图渲染
-                        MapScenes(
-                          draggableBottomSheetController: _draggableBottomSheetController,
-                          key: mapScenseKey,
-                        ),
-
-                        ///主要是支持drawer手势划出
-                        Container(
-                          margin: EdgeInsets.only(top: 120),
-                          decoration: BoxDecoration(color: Colors.transparent),
-                          constraints: BoxConstraints.tightForFinite(width: 24.0),
-                        ),
-
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: GestureDetector(
-                            onTap: () {
-                              Scaffold.of(context).openEndDrawer();
-                            },
-                            child: Container(
-                              decoration:
-                                  BoxDecoration(color: Color(0xeeffffff), borderRadius: BorderRadius.circular(8)),
-                              width: 45,
-                              height: 45,
-                              margin: EdgeInsets.only(top: 115, right: 20),
-                              padding: EdgeInsets.all(6),
-                              child: SvgPicture.asset("res/drawable/map_layer.svg",
-                                  color: Colors.grey[700], semanticsLabel: ''),
-                            ),
-                          ),
-                        ),
-
-                        BottomFabsWidget(draggableBottomSheetController: _draggableBottomSheetController),
-
-                        ///bottom sheet
-                        Sheets(
-                          draggableBottomSheetController: _draggableBottomSheetController,
-                        ),
-
-                        ///search bar
-                        SearchBarPresenter(
-                          draggableBottomSheetController: _draggableBottomSheetController,
-                          onMenu: () => Scaffold.of(context).openDrawer(),
-                          backToPrvSearch: (String searchText) {
-                            BlocProvider.of<HomeBloc>(context).dispatch(SearchTextEvent(searchText: searchText));
-                          },
-                          onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
-                          onSearch: (searchText) async {
-                            var mapScenseState = mapScenseKey.currentState as MapScenesState;
-                            print("get mapScenseState ");
-                            var camraPosition = await mapScenseState.mapboxMapController.getCameraPosition();
-                            print("search center $camraPosition");
-                            var center = camraPosition.target;
-                            print("search center $center");
-                            var searchResult = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchPage(
-                                          searchCenter: center,
-                                          searchText: searchText,
-                                        )));
-                            if (searchResult is String) {
-                              BlocProvider.of<HomeBloc>(context)
-                                  .dispatch(SearchTextEvent(searchText: searchResult, center: center));
-                            } else if (searchResult is PoiEntity) {
-                              if (searchResult.address == null) {
-                                //we need to full fil all properties
-                                BlocProvider.of<HomeBloc>(context).dispatch(SearchPoiEvent(poi: searchResult));
-                              } else {
-                                BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: searchResult));
-                              }
-                            }
-                          },
-                        ),
-
-                        ///opt area
-                        BlocBuilder<sheets.SheetsBloc, sheets.SheetsState>(
-                          builder: (context, state) {
-                            if (state is sheets.PoiLoadedState || state is sheets.HeavenPoiLoadedState) {
-                              return BottomOptBarWidget(
-                                onRouteTap: () {
-//                                BlocProvider.of<HomeBloc>(context).dispatch(RouteEvent());
-                                  eventBus.fire(RouteClickEvent());
-                                },
-                                onShareTap: () async {
-                                  var selectedPoi = BlocProvider.of<HomeBloc>(context).selectedPoi;
-                                  if (selectedPoi != null) {
-                                    var dat = await showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return ShareDialog(poi: selectedPoi);
-                                        });
-                                  }
-                                },
-                              );
-                            }
-                            return SizedBox.shrink();
-                          },
-                        ),
-                      ],
-                    )),
+            child: _getContent(_currentIndex),
           )),
     );
   }
@@ -274,6 +176,21 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _appLinkSubscription?.cancel();
     super.dispose();
+  }
+
+  Widget _getContent(int index) {
+    switch (index) {
+      case 0:
+        return MapContentWidget();
+      case 1:
+        return WalletContentWidget();
+      case 2:
+        return DiscoverContentWidget();
+      case 3:
+        return InformationContentWidget();
+      case 4:
+        return MyContentWidget();
+    }
   }
 
   Future<Null> initUniLinks() async {
