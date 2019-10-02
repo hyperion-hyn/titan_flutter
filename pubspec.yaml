@@ -28,7 +28,7 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   #https://github.com/flutterchina/dio
-  dio: ^2.1.5
+  dio: ^3.0.1
   #https://pub.dev/packages/package_info
   package_info: ^0.4.0+4
   #https://github.com/baseflowit/flutter-permission-handler
@@ -93,6 +93,7 @@ dependencies:
   #https://pub.dev/packages/url_launcher
   url_launcher: 5.1.2
   decimal: ^0.3.5
+  web3dart: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -135,6 +136,7 @@ flutter:
     - res/drawable/alipay.svg
     - res/drawable/google_play.svg
     - res/drawable/onboarding_lock.png
+    - res/eth/hyn_abi.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
