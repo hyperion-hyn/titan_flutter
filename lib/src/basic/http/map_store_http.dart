@@ -33,7 +33,7 @@ class MapStoreHttpCore extends BaseHttpCore {
     connectTimeout: 5000,
     receiveTimeout: 10000,
 //    headers: {"user-agent": "dio", "api": "1.0.0"},
-    contentType: ContentType.json,
+    contentType: 'application/json',
 //      responseType: ResponseType.PLAIN
 //    contentType: ContentType.parse('application/x-www-form-urlencoded'),
   ));

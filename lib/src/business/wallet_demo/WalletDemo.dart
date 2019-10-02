@@ -1,10 +1,15 @@
 import 'dart:math';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:dio/dio.dart';
+import 'package:http/http.dart';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -13,6 +18,8 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:web3dart/crypto.dart';
+import 'package:web3dart/web3dart.dart';
 
 class WalletDemo extends StatefulWidget {
   @override
@@ -39,6 +46,136 @@ class _WalletDemoState extends State<WalletDemo> {
               });
             },
             child: Text('切换网络类型 ${WalletConfig.isMainNet ? "主网" : "ROPSTEN网"}'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var apiUrl =
+                  "https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"; //Replace with your API
+
+              var httpClient = Client();
+              var ethClient = new Web3Client(apiUrl, httpClient);
+//              EtherAmount balance = await ethClient.getBalance(
+//                  EthereumAddress.fromHex(
+//                      '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0'));
+//              var ret = balance.getInWei;
+//              var w = Convert.weiToNum(ret, 18);
+//              print("balance is $w ${balance.getValueInUnit(EtherUnit.ether)}");
+
+              final abiCode = await DefaultAssetBundle.of(context)
+                  .loadString("res/eth/hyn_abi.json");
+              final contract = DeployedContract(
+                  ContractAbi.fromJson(abiCode, 'HYN'),
+                  EthereumAddress.fromHex(
+                      '0xaebbada2bece10c84cbeac637c438cb63e1446c9'));
+              final balanceFun = contract.function('balanceOf');
+//              final balanceHyn = await ethClient.call(
+//                  contract: contract,
+//                  function: balanceFun,
+//                  params: [
+//                    EthereumAddress.fromHex(
+//                        '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0')
+//                  ]);
+//              print(balanceHyn);
+//              print('hyn balance is: ${Convert.weiToNum(balanceHyn.first)}');
+
+//              ethClient.getGasPrice();
+
+//              Uint8List getBalanceFunAbi = balanceFun.encodeCall([
+//                EthereumAddress.fromHex(
+//                    '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0')
+//              ]);
+//              print(bytesToHex(getBalanceFunAbi));
+
+              final transferFun = contract.function('transfer');
+              Uint8List transferFunAbi = transferFun.encodeCall([
+                EthereumAddress.fromHex(
+                    '0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7'),
+                Convert.numToWei(10)
+              ]);
+
+              print(
+                  'Convert.numToWei(1) ${Convert.numToWei(1)}, ${bytesToHex(transferFunAbi, include0x: true)}');
+
+              var response = await HttpCore.instance.post(apiUrl,
+                  params: {
+                    "jsonrpc": "2.0",
+                    "method": "eth_gasPrice",
+                    "params": [],
+                    "id": 1
+                  },
+                  options:
+                      RequestOptions(contentType: Headers.jsonContentType));
+
+              if (response['result'] != null) {
+//                logger.i(response['result']);
+                String gasPriceHex = response['result'];
+                BigInt gasPrice = hexToInt(gasPriceHex);
+                print('gasPrice is $gasPrice');
+
+                var estimateGasOfHynResponse = await HttpCore.instance.post(
+                    apiUrl,
+                    params: {
+                      "jsonrpc": "2.0",
+                      "method": "eth_estimateGas",
+                      "params": [
+                        {
+                          'from': '0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7',
+                          'to': '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0',
+                          'gasPrice': '0x${gasPrice.toRadixString(16)}',
+                          'data': bytesToHex(transferFunAbi, include0x: true)
+                        }
+                      ],
+                      "id": 2
+                    },
+                    options:
+                        RequestOptions(contentType: Headers.jsonContentType));
+
+                if (estimateGasOfHynResponse['result'] != null) {
+                  var amountUse = hexToInt(estimateGasOfHynResponse['result']);
+                  var allWei = amountUse * gasPrice;
+                  var us = Convert.weiToNum(allWei) * Decimal.parse('200');
+                  logger.i('hyn fee $us, wei $allWei');
+                } else {
+                  logger.e(estimateGasOfHynResponse['error']);
+                }
+
+                var tValue = '0x${Convert.numToWei(10).toRadixString(16)}';
+//                var tValue = '0x9184e72a';
+                print(
+                    'value $tValue, gasPrice: 0x${gasPrice.toRadixString(16)}}');
+                var estimateGasOfEthResponse = await HttpCore.instance.post(
+                    apiUrl,
+                    params: {
+                      "jsonrpc": "2.0",
+                      "method": "eth_estimateGas",
+                      "params": [
+                        {
+                          'from': '0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7',
+                          'to': '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0',
+                          'gasPrice': '0x${gasPrice.toRadixString(16)}',
+                          'value': tValue
+                        }
+                      ],
+                      "id": 3
+                    },
+                    options:
+                        RequestOptions(contentType: Headers.jsonContentType));
+                if (estimateGasOfEthResponse['result'] != null) {
+                  var amountUse = hexToInt(estimateGasOfEthResponse['result']);
+                  var allWei = amountUse * gasPrice;
+                  var us = Convert.weiToNum(allWei) * Decimal.parse('200');
+                  logger.i('eth fee $us');
+                } else {
+                  logger.e(estimateGasOfEthResponse['error']);
+                }
+              } else {
+                logger.e(response['error']);
+              }
+            },
+            child: Text('dart获取余额'),
           ),
           Divider(
             height: 16,
