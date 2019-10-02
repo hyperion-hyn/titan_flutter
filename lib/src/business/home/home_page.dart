@@ -56,6 +56,8 @@ class _HomePageState extends State<HomePage> {
   var isShowIntro = false;
   var isPlanDialogIsShowing = false;
 
+  var _currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -132,7 +134,25 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
           resizeToAvoidBottomPadding: false,
           drawer: DrawerScenes(),
-          endDrawer: PurchasedMapDrawerScenes(),
+//          endDrawer: PurchasedMapDrawerScenes(),
+          bottomNavigationBar: BottomNavigationBar(
+              selectedItemColor: Theme.of(context).primaryColor,
+              unselectedItemColor: Colors.black38,
+              selectedFontSize: 14,
+              unselectedFontSize: 14,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              currentIndex: _currentIndex,
+              items: [
+                BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
+                BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
+                BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.domain)),
+                BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
+                BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
+              ]),
           body: WillPopScope(
             onWillPop: () async {
               if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
