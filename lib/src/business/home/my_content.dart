@@ -13,6 +13,7 @@ class _MyContentState extends State<MyContentWidget> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
+      color: Theme.of(context).backgroundColor,
       alignment: Alignment.center,
       child: Text("我的"),
     );

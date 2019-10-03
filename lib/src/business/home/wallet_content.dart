@@ -11,6 +11,7 @@ class _WalletContentState extends State<WalletContentWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Theme.of(context).backgroundColor,
       alignment: Alignment.center,
       child: Text("钱包"),
     );

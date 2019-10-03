@@ -11,6 +11,7 @@ class _DiscoverContentState extends State<DiscoverContentWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Theme.of(context).backgroundColor,
       alignment: Alignment.center,
       child: Text("发现"),
     );

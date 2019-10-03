@@ -20,6 +20,7 @@ import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
 import 'package:titan/src/business/home/sheets/sheets.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/wallet_content.dart';
+import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/business/updater/updater.dart';
@@ -48,7 +49,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   DateTime _lastPressedAt;
   DraggableBottomSheetController _draggableBottomSheetController = DraggableBottomSheetController();
 
@@ -63,9 +64,13 @@ class _HomePageState extends State<HomePage> {
 
   var _currentIndex = 0;
 
+  AnimationController animationController;
+
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(duration: Duration(milliseconds: 2000), vsync: this);
+
     initUniLinks();
     print("initState");
     _isNeedShowIntro();
@@ -143,8 +148,10 @@ class _HomePageState extends State<HomePage> {
           bottomNavigationBar: BottomNavigationBar(
               selectedItemColor: Theme.of(context).primaryColor,
               unselectedItemColor: Colors.black38,
-              selectedFontSize: 14,
-              unselectedFontSize: 14,
+              showUnselectedLabels: true,
+              selectedFontSize: 12,
+              unselectedFontSize: 12,
+              type: BottomNavigationBarType.fixed,
               onTap: (index) {
                 setState(() {
                   _currentIndex = index;
@@ -154,7 +161,7 @@ class _HomePageState extends State<HomePage> {
               items: [
                 BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
                 BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
-                BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.domain)),
+                BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.explore)),
                 BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
                 BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
               ]),
@@ -167,7 +174,12 @@ class _HomePageState extends State<HomePage> {
               }
               return true;
             },
-            child: _getContent(_currentIndex),
+            child: Stack(
+              children: <Widget>[
+                ScaffoldMap(),
+                _getContent(_currentIndex),
+              ],
+            ),
           )),
     );
   }
@@ -175,13 +187,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _appLinkSubscription?.cancel();
+    animationController.dispose();
     super.dispose();
   }
 
   Widget _getContent(int index) {
     switch (index) {
       case 0:
-        return MapContentWidget();
+//        return MapContentWidget();
+        return Container();
       case 1:
         return WalletContentWidget();
       case 2:
@@ -191,6 +205,7 @@ class _HomePageState extends State<HomePage> {
       case 4:
         return MyContentWidget();
     }
+    return Container();
   }
 
   Future<Null> initUniLinks() async {

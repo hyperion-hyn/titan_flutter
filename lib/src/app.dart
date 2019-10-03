@@ -13,6 +13,7 @@ import 'business/home/home_page.dart';
 import 'business/home/map/bloc/bloc.dart';
 import 'business/home/searchbar/bloc/bloc.dart';
 import 'business/home/sheets/bloc/bloc.dart';
+import 'business/scaffold_map/bloc/bloc.dart';
 import 'business/updater/bloc/bloc.dart';
 
 class App extends StatefulWidget {
@@ -71,6 +72,7 @@ class _AppState extends State<App> {
                 BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
                 BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
                 BlocProvider<PurchasedMapBloc>(builder: (context) => _purchasedMapBloc),
+                BlocProvider<ScaffoldMapBloc>(builder: (context) => ScaffoldMapBloc(context)),
               ],
             );
           },
