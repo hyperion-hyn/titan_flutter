@@ -28,6 +28,7 @@ import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
+import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
@@ -51,7 +52,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   DateTime _lastPressedAt;
-  DraggableBottomSheetController _draggableBottomSheetController = DraggableBottomSheetController();
+  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
+  DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController();
+  ScrollController _homeBottomSheetChildrenScrollController = ScrollController();
 
   StreamSubscription _appLinkSubscription;
 
@@ -145,26 +148,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           resizeToAvoidBottomPadding: false,
           drawer: DrawerScenes(),
 //          endDrawer: PurchasedMapDrawerScenes(),
-          bottomNavigationBar: BottomNavigationBar(
-              selectedItemColor: Theme.of(context).primaryColor,
-              unselectedItemColor: Colors.black38,
-              showUnselectedLabels: true,
-              selectedFontSize: 12,
-              unselectedFontSize: 12,
-              type: BottomNavigationBarType.fixed,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              currentIndex: _currentIndex,
-              items: [
-                BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
-                BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
-                BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.explore)),
-                BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
-                BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
-              ]),
+          bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
+            builder: (context, state) {
+              double height;
+              if(state is home.MapOperatingState) {
+                height = 0;
+              }
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                height: height,
+                curve: Curves.fastOutSlowIn,
+                child: BottomNavigationBar(
+                    selectedItemColor: Theme.of(context).primaryColor,
+                    unselectedItemColor: Colors.black38,
+                    showUnselectedLabels: true,
+                    selectedFontSize: 12,
+                    unselectedFontSize: 12,
+                    type: BottomNavigationBarType.fixed,
+                    onTap: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    currentIndex: _currentIndex,
+                    items: [
+                      BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
+                      BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
+                      BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.explore)),
+                      BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
+                      BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
+                    ]),
+              );
+            },
+          ),
           body: WillPopScope(
             onWillPop: () async {
               if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
@@ -195,7 +211,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     switch (index) {
       case 0:
 //        return MapContentWidget();
-        return Container();
+        return BlocBuilder<home.HomeBloc, home.HomeState>(
+          builder: (context, state) {
+            if (state is InitialHomeState) {
+              var state = _homeBottomSheetController.getSheetState();
+              if (state == DraggableBottomSheetState.HIDDEN || state == null) {
+                _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
+              }
+            } else if (state is home.MapOperatingState) {
+              _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
+            }
+
+            return DraggableBottomSheet(
+              controller: _homeBottomSheetController,
+              childScrollController: _homeBottomSheetChildrenScrollController,
+              topPadding: (MediaQuery.of(context).padding.top),
+              topRadius: 16,
+              child: Center(
+                child: RaisedButton(child: Text('map opt'), onPressed: () {
+                  BlocProvider.of<home.HomeBloc>(context).dispatch(home.MapOperatingEvent());
+                },),
+              ),
+            );
+          },
+          bloc: BlocProvider.of<home.HomeBloc>(context),
+        );
       case 1:
         return WalletContentWidget();
       case 2:

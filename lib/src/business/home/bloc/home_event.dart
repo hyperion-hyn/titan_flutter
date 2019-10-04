@@ -55,3 +55,9 @@ class RouteClickEvent extends HomeEvent {
     this.toPoi,
   });
 }
+
+class MapOperatingEvent extends HomeEvent {
+}
+
+class HomeInitEvent extends HomeEvent {
+}

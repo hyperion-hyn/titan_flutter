@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/business/home/bloc/bloc.dart';
 
 class Map extends StatefulWidget {
   final List<HeavenDataModel> heavenDataList;
@@ -30,6 +32,8 @@ class _MapState extends State<Map> {
   _onMapClick(Point<double> point, LatLng coordinates) async {
     //TODO
     print('click map ${point.toString()}');
+    //test
+    BlocProvider.of<HomeBloc>(context).dispatch(HomeInitEvent());
   }
 
   _onMapLongPress(Point<double> point, LatLng coordinates) async {

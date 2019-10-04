@@ -148,5 +148,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       eventBus.fire(RouteClickEvent());
     }*/
+    else if(event is HomeInitEvent) {
+      yield InitialHomeState();
+    } else if(event is MapOperatingEvent) {
+      yield MapOperatingState();
+    }
+
   }
 }

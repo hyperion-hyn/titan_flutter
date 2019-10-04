@@ -12,7 +12,7 @@ class DraggableBottomSheet extends StatefulWidget {
     this.childScrollController,
     this.topPadding = 0,
     this.topRadius = 16,
-    this.draggable,
+    this.draggable = true,
   });
 
   final DraggableBottomSheetController controller;
@@ -51,7 +51,6 @@ class _DraggableState extends State<DraggableBottomSheet>
   @override
   void initState() {
     super.initState();
-    widget.controller.setInterface(this);
     widget.childScrollController?.addListener(() {
       var isReachTop = _isChildReachTopCheck();
       if (_isChildReachTop != isReachTop) {
@@ -62,18 +61,39 @@ class _DraggableState extends State<DraggableBottomSheet>
     });
 
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 10),
+      duration: const Duration(milliseconds: 20),
       value: 1.0,
       vsync: this,
     );
 
-    if (widget.controller.initState != null) {
-      SchedulerBinding.instance
-          .addPostFrameCallback((_) => widget.controller.setSheetState(widget.controller.initState));
-    }
+//    if (widget.controller.initState != null) {
+//      SchedulerBinding.instance
+//          .addPostFrameCallback((_) => widget.controller.setSheetState(widget.controller.initState));
+//    }
 
-    Future.delayed(Duration(milliseconds: 1000))
-        .then((data) => _animationController.addListener(animationNotifyListener));
+//    Future.delayed(Duration(milliseconds: 1000))
+//        .then((data) => _animationController.addListener(animationNotifyListener));
+  }
+
+  bool inited = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!inited) {
+      widget.controller.setInterface(this);
+      if(widget.controller.getSheetState() != null) {
+        widget.controller.setSheetState(widget.controller.getSheetState());
+      } else {
+        if (widget.controller.initState != null) {
+          widget.controller.setSheetState(widget.controller.initState);
+        }
+      }
+
+      _animationController.addListener(animationNotifyListener);
+
+      inited = true;
+    }
   }
 
   void animationNotifyListener() {
@@ -215,12 +235,11 @@ class _DraggableState extends State<DraggableBottomSheet>
           );
 
           Widget content;
-          if(widget.draggable) {
+          if (widget.draggable) {
             content = buildDraggableContent(context);
           } else {
             content = buildContent(context);
           }
-
           return Container(
             key: _draggableSheepKey,
             child: Stack(
@@ -241,15 +260,14 @@ class _DraggableState extends State<DraggableBottomSheet>
     return RawGestureDetector(
       gestures: {
         VerticalDragGestureRecognizerBottomSheet:
-        GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizerBottomSheet>(
-                () => VerticalDragGestureRecognizerBottomSheet(),
-                (VerticalDragGestureRecognizerBottomSheet instance) {
-              instance.isChildReachTop = widget.draggable ? _isChildReachTop : true;
-              instance.isFrozenChild = widget.draggable ? _isChildFrozen : true;
-              instance.onStart = widget.draggable ? _handleDragStart : null;
-              instance.onUpdate = widget.draggable ? _handleDragUpdate : null;
-              instance.onEnd = widget.draggable ? _handleDragEnd : null;
-            })
+            GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizerBottomSheet>(
+                () => VerticalDragGestureRecognizerBottomSheet(), (VerticalDragGestureRecognizerBottomSheet instance) {
+          instance.isChildReachTop = widget.draggable ? _isChildReachTop : true;
+          instance.isFrozenChild = widget.draggable ? _isChildFrozen : true;
+          instance.onStart = widget.draggable ? _handleDragStart : null;
+          instance.onUpdate = widget.draggable ? _handleDragUpdate : null;
+          instance.onEnd = widget.draggable ? _handleDragEnd : null;
+        })
       },
       child: buildContent(context),
     );
@@ -260,12 +278,11 @@ class _DraggableState extends State<DraggableBottomSheet>
       elevation: 2.0,
       borderRadius: BorderRadius.vertical(top: Radius.circular(widget.draggable ? topRadius : 0)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        if(widget.draggable)
+        if (widget.draggable)
           Container(
             margin: EdgeInsets.only(top: 8.0),
             constraints: BoxConstraints.tightFor(width: 40.0, height: 4.0),
-            decoration: BoxDecoration(
-                color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
+            decoration: BoxDecoration(color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
           ),
         Expanded(
           child: NotificationListener<HeaderHeightNotification>(
@@ -278,11 +295,16 @@ class _DraggableState extends State<DraggableBottomSheet>
   @override
   void dispose() {
     _animationController.dispose();
+    widget.controller?.setInterface(null);
     super.dispose();
   }
 
   @override
   void setSheetState(DraggableBottomSheetState state) {
+    print('xxx');
+    print(state);
+    print(_state);
+    print('xxx1');
     if (_state == state) {
       return;
     }
@@ -328,6 +350,7 @@ class _DraggableState extends State<DraggableBottomSheet>
   }
 
   double get anchorY => screenHeight - widget.controller.anchorHeight;
+
   double get collapsedY => screenHeight - widget.controller.collapsedHeight;
 
   bool get _isBellowAnchor {

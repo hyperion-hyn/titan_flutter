@@ -10,3 +10,6 @@ class InitialHomeState extends HomeState {}
 //
 //  ShowPoiState({this.poi});
 //}
+
+class MapOperatingState extends HomeState {
+}
