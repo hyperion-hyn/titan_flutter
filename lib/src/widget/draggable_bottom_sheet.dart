@@ -51,14 +51,7 @@ class _DraggableState extends State<DraggableBottomSheet>
   @override
   void initState() {
     super.initState();
-    widget.childScrollController?.addListener(() {
-      var isReachTop = _isChildReachTopCheck();
-      if (_isChildReachTop != isReachTop) {
-        setState(() {
-          _isChildReachTop = isReachTop;
-        });
-      }
-    });
+    widget.childScrollController?.addListener(childScrollListener);
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 20),
@@ -73,6 +66,15 @@ class _DraggableState extends State<DraggableBottomSheet>
 
 //    Future.delayed(Duration(milliseconds: 1000))
 //        .then((data) => _animationController.addListener(animationNotifyListener));
+  }
+
+  void childScrollListener() {
+    var isReachTop = _isChildReachTopCheck();
+    if (_isChildReachTop != isReachTop) {
+      setState(() {
+        _isChildReachTop = isReachTop;
+      });
+    }
   }
 
   bool inited = false;
@@ -296,6 +298,7 @@ class _DraggableState extends State<DraggableBottomSheet>
   void dispose() {
     _animationController.dispose();
     widget.controller?.setInterface(null);
+    widget.childScrollController?.removeListener(childScrollListener);
     super.dispose();
   }
 
