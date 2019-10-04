@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/src/business/discover/discover_page.dart';
 
 class DiscoverContentWidget extends StatefulWidget {
   @override
@@ -10,10 +11,6 @@ class DiscoverContentWidget extends StatefulWidget {
 class _DiscoverContentState extends State<DiscoverContentWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).backgroundColor,
-      alignment: Alignment.center,
-      child: Text("发现"),
-    );
+    return DiscoverPageWidget();
   }
 }

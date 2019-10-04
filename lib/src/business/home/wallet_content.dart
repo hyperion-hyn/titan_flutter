@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/src/business/wallet/wallet_page.dart';
 
 class WalletContentWidget extends StatefulWidget {
   @override
@@ -10,10 +11,6 @@ class WalletContentWidget extends StatefulWidget {
 class _WalletContentState extends State<WalletContentWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).backgroundColor,
-      alignment: Alignment.center,
-      child: Text("钱包"),
-    );
+    return WalletPage();
   }
 }
