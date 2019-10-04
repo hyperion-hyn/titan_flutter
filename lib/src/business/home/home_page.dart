@@ -53,7 +53,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   DateTime _lastPressedAt;
   DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
-  DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController();
+  DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController(collapsedHeight: 80);
   ScrollController _homeBottomSheetChildrenScrollController = ScrollController();
 
   StreamSubscription _appLinkSubscription;
@@ -83,7 +83,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (ModalRoute.of(context).isCurrent) {
+    if (ModalRoute
+        .of(context)
+        .isCurrent) {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     } else {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
@@ -151,7 +153,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
             builder: (context, state) {
               double height;
-              if(state is home.MapOperatingState) {
+              if (state is home.MapOperatingState) {
                 height = 0;
               }
               return AnimatedContainer(
@@ -159,7 +161,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 height: height,
                 curve: Curves.fastOutSlowIn,
                 child: BottomNavigationBar(
-                    selectedItemColor: Theme.of(context).primaryColor,
+                    selectedItemColor: Theme
+                        .of(context)
+                        .primaryColor,
                     unselectedItemColor: Colors.black38,
                     showUnselectedLabels: true,
                     selectedFontSize: 12,
@@ -223,14 +227,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             }
 
             return DraggableBottomSheet(
+              draggable: true,
               controller: _homeBottomSheetController,
               childScrollController: _homeBottomSheetChildrenScrollController,
-              topPadding: (MediaQuery.of(context).padding.top),
+              topPadding: (MediaQuery
+                  .of(context)
+                  .padding
+                  .top),
               topRadius: 16,
-              child: Center(
-                child: RaisedButton(child: Text('map opt'), onPressed: () {
-                  BlocProvider.of<home.HomeBloc>(context).dispatch(home.MapOperatingEvent());
-                },),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: _buildHomeSheetPanel(),
               ),
             );
           },
@@ -248,6 +255,244 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Container();
   }
 
+  Widget _buildHomeSheetPanel() {
+    return SingleChildScrollView(
+      controller: _homeBottomSheetChildrenScrollController,
+      child: Container(
+        color: Theme
+            .of(context)
+            .backgroundColor,
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: BoxDecoration(
+                color: Color(0xffebecf1),
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+              ),
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.search),
+                  Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Text(
+                          '查找地点',
+                          style: TextStyle(color: Theme
+                              .of(context)
+                              .hintColor),
+                        ),
+                      )),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Container(
+                constraints: BoxConstraints(maxHeight: 120),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Flexible(
+                      child: _buildFocusItem(Icon(Icons.language), '全球节点', '全球地图服务节点', true, () {
+                        print('xxx');
+                      }),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: _buildFocusItem(Icon(Icons.layers), '数据贡献', '贡献地图数据获得HYN奖励', false, null),
+                      ),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: _buildFocusItem(Icon(Icons.language), '海伯利安', '官方介绍', true, () {
+                          print('xxx');
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16),
+              padding: EdgeInsets.only(top: 16, bottom: 16),
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      _buildPoiItem(),
+                      _buildPoiItem(),
+                      _buildPoiItem(),
+                      _buildPoiItem(),
+                      _buildPoiItem(),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 32.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        _buildPoiItem(),
+                        _buildPoiItem(),
+                        _buildPoiItem(),
+                        _buildPoiItem(),
+                        _buildPoiItem(),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: 32, left: 16, right: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text('附近推荐', style: TextStyle(fontSize: 18),),
+                        ),
+                        _buildRecommendItem(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: _buildRecommendItem(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: _buildRecommendItem(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecommendItem() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          //TODO
+          print('poi item click');
+        },
+        child: Ink(
+          child: Row(
+//            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Image.network(
+                'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3925233323,1705701801&fm=26&gp=0.jpg',
+                height: 80, width: 80, fit: BoxFit.fill,),
+              Container(
+//                color: Colors.red,
+                margin: EdgeInsets.only(left: 16, right: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('广东博物馆', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text('旅游，美食', style: TextStyle(fontSize: 13, color: Colors.black54),),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPoiItem() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          //TODO
+          print('poi clicked');
+        },
+        child: Ink(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            children: <Widget>[
+              Icon(Icons.hotel, size: 32, color: Colors.black54,),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  '酒店',
+                  style: TextStyle(fontSize: 13),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFocusItem(Icon icon, String title, String subtitle, bool open, GestureTapCallback onTap) {
+    return Material(
+      child: InkWell(
+        onTap: onTap,
+        highlightColor: Colors.transparent,
+        child: Ink(
+          padding: EdgeInsets.only(left: 8, right: 4, top: 8, bottom: 8),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(8))),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              icon,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(title),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                                child: Text(
+                                  subtitle,
+                                  style: TextStyle(color: Colors.black54, fontSize: 12),
+                                )),
+                          ],
+                        ),
+                      ),
+                      if (!open)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            '即将开放',
+                            style: TextStyle(color: Colors.red[700], fontSize: 12),
+                            softWrap: true,
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<Null> initUniLinks() async {
     try {
       String initialLink = await getInitialLink();
@@ -257,7 +502,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         if (initialLink == null || initialLink.isEmpty) {
           return;
         }
-        IPoi poi = await ciphertextToPoi(Injector.of(context).repository, initialLink.toString());
+        IPoi poi = await ciphertextToPoi(Injector
+            .of(context)
+            .repository, initialLink.toString());
         BlocProvider.of<home.HomeBloc>(context)
             .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {
@@ -275,7 +522,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       print("listenlink listen url $link");
 
       try {
-        IPoi poi = await ciphertextToPoi(Injector.of(context).repository, link.toString());
+        IPoi poi = await ciphertextToPoi(Injector
+            .of(context)
+            .repository, link.toString());
         BlocProvider.of<home.HomeBloc>(context)
             .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {

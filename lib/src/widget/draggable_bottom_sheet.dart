@@ -301,10 +301,6 @@ class _DraggableState extends State<DraggableBottomSheet>
 
   @override
   void setSheetState(DraggableBottomSheetState state) {
-    print('xxx');
-    print(state);
-    print(_state);
-    print('xxx1');
     if (_state == state) {
       return;
     }
