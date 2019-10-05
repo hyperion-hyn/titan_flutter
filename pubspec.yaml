@@ -96,6 +96,8 @@ dependencies:
   #https://pub.dev/packages/carousel_pro
   carousel_pro: ^1.0.0
   web3dart: ^1.1.1
+  intl: 0.15.8
+  webview_flutter: ^0.3.14+1
 
 dev_dependencies:
   flutter_test:
