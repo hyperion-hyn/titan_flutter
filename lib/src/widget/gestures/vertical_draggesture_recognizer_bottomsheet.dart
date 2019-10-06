@@ -254,11 +254,11 @@ class VerticalDragGestureRecognizerBottomSheet extends OneSequenceGestureRecogni
 
   var dyThreshold = 8.0;
   bool get _hasSufficientPendingDragDeltaToAccept {
-//    if (_pendingDragOffset.dy.abs() > dyThreshold) {
+    if (_pendingDragOffset.distance.abs() > dyThreshold) {
       if (isFrozenChild) {
         return true;
       }
-//    }
+    }
 
     if (isChildReachTop == true) {
       if (_pendingDragOffset.dy > dyThreshold) {
