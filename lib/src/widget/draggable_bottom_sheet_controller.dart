@@ -25,23 +25,41 @@ class DraggableBottomSheetController extends ChangeNotifier {
 
   DraggableBottomSheetState initState;
 
+  DraggableBottomSheetState _sheetState;
+  bool _isFrozen;
+
   DraggableBottomSheetController(
-      {this.anchorHeight = kAnchorPoiHeight, this.collapsedHeight = kCollapsedHeight, this.initState = DraggableBottomSheetState.HIDDEN});
+      {this.anchorHeight = kAnchorPoiHeight,
+      this.collapsedHeight = kCollapsedHeight,
+      this.initState = DraggableBottomSheetState.HIDDEN});
 
   void setInterface(DraggableBottomSheetControllerInterface mDraggableBottomSheetControllerInterface) {
     _interface = mDraggableBottomSheetControllerInterface;
+//    if (_sheetState != null) {
+//      _interface?.setSheetState(_sheetState);
+//    }
+//    if (_isFrozen != null) {
+//      _interface?.isChildFrozen = _isFrozen;
+//    }
+  }
+
+  DraggableBottomSheetControllerInterface getInterface() {
+    return _interface;
   }
 
   void setSheetState(DraggableBottomSheetState state) {
     _interface?.setSheetState(state);
+    _sheetState = state;
   }
 
   DraggableBottomSheetState getSheetState() {
-    return _interface?.getSheetState();
+    var st = _interface?.getSheetState();
+    return st ?? _sheetState;
   }
 
   void setFrozenState(bool isFrozen) {
     _interface?.isChildFrozen = isFrozen;
+    _isFrozen = isFrozen;
   }
 
   @override

@@ -46,7 +46,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
 
-    _searchTextController.text = widget.searchText;
+    _searchTextController.text = widget.searchText ?? '';
     _searchTextController.addListener(searchTextChangeListener);
 
     _scrollController.addListener(() {

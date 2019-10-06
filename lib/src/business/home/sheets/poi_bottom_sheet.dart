@@ -37,6 +37,8 @@ class _PoiBottomSheetState extends State<PoiBottomSheet> {
   @override
   void initState() {
     super.initState();
+
+    //动态设置收缩高度
     SchedulerBinding.instance.addPostFrameCallback((_) {
       HeaderHeightNotification(height: getHeaderHeight()).dispatch(context);
     });

@@ -1,9 +1,7 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
-import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 @immutable
 abstract class HomeEvent {}
@@ -54,4 +52,10 @@ class RouteClickEvent extends HomeEvent {
     this.profile = 'driving',
     this.toPoi,
   });
+}
+
+class MapOperatingEvent extends HomeEvent {
+}
+
+class HomeInitEvent extends HomeEvent {
 }

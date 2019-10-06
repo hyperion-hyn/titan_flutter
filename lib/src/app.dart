@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -64,8 +65,20 @@ class _AppState extends State<App> {
             mapBloc.sheetsBloc = sheetsBloc;
             searchBarBloc.homeBloc = homeBloc;
 
+            DateTime _lastPressedAt;
+
             return MultiBlocProvider(
-              child: HomePage(),
+              child: WillPopScope(
+                onWillPop: () async {
+                  if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+                    _lastPressedAt = DateTime.now();
+                    Fluttertoast.showToast(msg: '再按一下退出程序');
+                    return false;
+                  }
+                  return true;
+                },
+                child: HomePage(),
+              ),
               providers: [
                 BlocProvider<SheetsBloc>(builder: (context) => sheetsBloc..context = context),
                 BlocProvider<MapBloc>(builder: (context) => mapBloc..context = context),
