@@ -84,7 +84,7 @@ class _DraggableState extends State<DraggableBottomSheet>
     super.didChangeDependencies();
     if (!inited) {
       widget.controller.setInterface(this);
-      if(widget.controller.getSheetState() != null) {
+      if (widget.controller.getSheetState() != null) {
         widget.controller.setSheetState(widget.controller.getSheetState());
       } else {
         if (widget.controller.initState != null) {
@@ -208,6 +208,7 @@ class _DraggableState extends State<DraggableBottomSheet>
     }
   }
 
+  ///动态设置收缩高度
   bool _handleSheetHeaderNotification(HeaderHeightNotification notification) {
     if (notification.height > 0 && _state == DraggableBottomSheetState.COLLAPSED) {
       var reallyHeight = notification.height + 12; //drag height: hack a number
@@ -278,8 +279,9 @@ class _DraggableState extends State<DraggableBottomSheet>
   Widget buildContent(context) {
     return Material(
       elevation: 2.0,
+      color: Colors.white,
       borderRadius: BorderRadius.vertical(top: Radius.circular(widget.draggable ? topRadius : 0)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+      child: Column(children: <Widget>[
         if (widget.draggable)
           Container(
             margin: EdgeInsets.only(top: 8.0),
@@ -288,7 +290,9 @@ class _DraggableState extends State<DraggableBottomSheet>
           ),
         Expanded(
           child: NotificationListener<HeaderHeightNotification>(
-              onNotification: _handleSheetHeaderNotification, child: widget.child),
+            onNotification: _handleSheetHeaderNotification,
+            child: widget.child,
+          ),
         ),
       ]),
     );

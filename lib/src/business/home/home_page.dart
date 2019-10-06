@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
@@ -20,6 +21,7 @@ import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
 import 'package:titan/src/business/home/sheets/sheets.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/wallet_content.dart';
+import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 
 import 'package:titan/src/business/search/search_page.dart';
@@ -28,6 +30,7 @@ import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
@@ -51,6 +54,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
+
   DateTime _lastPressedAt;
   DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
   DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController(collapsedHeight: 80);
@@ -78,14 +83,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     print("initState");
     _isNeedShowIntro();
     _isNeedShowPlanDialog();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (ModalRoute
-        .of(context)
-        .isCurrent) {
+    if (ModalRoute.of(context).isCurrent) {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     } else {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
@@ -145,62 +152,75 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         color: Colors.white,
       );
     }
-    return Updater(
-      child: Scaffold(
-          resizeToAvoidBottomPadding: false,
-          drawer: DrawerScenes(),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
+          listener: (context, state) {
+            if (state is InitialScaffoldMapState) {
+              BlocProvider.of<home.HomeBloc>(context).dispatch(home.HomeInitEvent());
+            } else {
+              BlocProvider.of<home.HomeBloc>(context).dispatch(home.MapOperatingEvent());
+            }
+          },
+        ),
+      ],
+      child: Updater(
+        child: Scaffold(
+            resizeToAvoidBottomPadding: false,
+            drawer: DrawerScenes(),
 //          endDrawer: PurchasedMapDrawerScenes(),
-          bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
-            builder: (context, state) {
-              double height;
-              if (state is home.MapOperatingState) {
-                height = 0;
-              }
-              return AnimatedContainer(
-                duration: Duration(milliseconds: 500),
-                height: height,
-                curve: Curves.fastOutSlowIn,
-                child: BottomNavigationBar(
-                    selectedItemColor: Theme
-                        .of(context)
-                        .primaryColor,
-                    unselectedItemColor: Colors.black38,
-                    showUnselectedLabels: true,
-                    selectedFontSize: 12,
-                    unselectedFontSize: 12,
-                    type: BottomNavigationBarType.fixed,
-                    onTap: (index) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
-                    currentIndex: _currentIndex,
-                    items: [
-                      BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
-                      BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
-                      BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.explore)),
-                      BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
-                      BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
-                    ]),
-              );
-            },
-          ),
-          body: WillPopScope(
-            onWillPop: () async {
-              if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
-                _lastPressedAt = DateTime.now();
-                Fluttertoast.showToast(msg: '再按一下退出程序');
-                return false;
-              }
-              return true;
-            },
-            child: Stack(
-              children: <Widget>[
-                ScaffoldMap(),
-                _getContent(_currentIndex),
-              ],
+            bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
+              builder: (context, state) {
+                double height;
+                if (state is home.MapOperatingState) {
+                  height = 0;
+                }
+                return AnimatedContainer(
+                  duration: Duration(milliseconds: 5000),
+                  height: height,
+//                  curve: Curves.fastOutSlowIn,
+                  child: BottomNavigationBar(
+                      key: _bottomBarKey,
+                      selectedItemColor: Theme.of(context).primaryColor,
+                      unselectedItemColor: Colors.black38,
+                      showUnselectedLabels: true,
+                      selectedFontSize: 12,
+                      unselectedFontSize: 12,
+                      type: BottomNavigationBarType.fixed,
+                      onTap: (index) {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      },
+                      currentIndex: _currentIndex,
+                      items: [
+                        BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
+                        BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
+                        BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.explore)),
+                        BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
+                        BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
+                      ]),
+                );
+              },
             ),
-          )),
+            body: WillPopScope(
+              onWillPop: () async {
+                if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+                  _lastPressedAt = DateTime.now();
+                  Fluttertoast.showToast(msg: '再按一下退出程序');
+                  return false;
+                }
+                return true;
+              },
+              child: Stack(
+                children: <Widget>[
+                  //地图
+                  ScaffoldMap(),
+                  _getContent(_currentIndex),
+                ],
+              ),
+            )),
+      ),
     );
   }
 
@@ -230,10 +250,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               draggable: true,
               controller: _homeBottomSheetController,
               childScrollController: _homeBottomSheetChildrenScrollController,
-              topPadding: (MediaQuery
-                  .of(context)
-                  .padding
-                  .top),
+              topPadding: (MediaQuery.of(context).padding.top),
               topRadius: 16,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -259,9 +276,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return SingleChildScrollView(
       controller: _homeBottomSheetChildrenScrollController,
       child: Container(
-        color: Theme
-            .of(context)
-            .backgroundColor,
+        color: Theme.of(context).backgroundColor,
         child: Column(
           children: <Widget>[
             Container(
@@ -275,14 +290,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   Icon(Icons.search),
                   Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Text(
-                          '查找地点',
-                          style: TextStyle(color: Theme
-                              .of(context)
-                              .hintColor),
-                        ),
-                      )),
+                    padding: const EdgeInsets.all(6.0),
+                    child: Text(
+                      '查找地点',
+                      style: TextStyle(color: Theme.of(context).hintColor),
+                    ),
+                  )),
                 ],
               ),
             ),
@@ -353,7 +366,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: Text('附近推荐', style: TextStyle(fontSize: 18),),
+                          child: Text(
+                            '附近推荐',
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ),
                         _buildRecommendItem(),
                         Padding(
@@ -390,7 +406,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: <Widget>[
               Image.network(
                 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3925233323,1705701801&fm=26&gp=0.jpg',
-                height: 80, width: 80, fit: BoxFit.fill,),
+                height: 80,
+                width: 80,
+                fit: BoxFit.fill,
+              ),
               Container(
 //                color: Colors.red,
                 margin: EdgeInsets.only(left: 16, right: 16),
@@ -398,10 +417,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('广东博物馆', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                    Text(
+                      '广东博物馆',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text('旅游，美食', style: TextStyle(fontSize: 13, color: Colors.black54),),
+                      child: Text(
+                        '旅游，美食',
+                        style: TextStyle(fontSize: 13, color: Colors.black54),
+                      ),
                     ),
                   ],
                 ),
@@ -425,7 +450,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           padding: EdgeInsets.all(8),
           child: Column(
             children: <Widget>[
-              Icon(Icons.hotel, size: 32, color: Colors.black54,),
+              Icon(
+                Icons.hotel,
+                size: 32,
+                color: Colors.black54,
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
@@ -467,9 +496,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           children: <Widget>[
                             Expanded(
                                 child: Text(
-                                  subtitle,
-                                  style: TextStyle(color: Colors.black54, fontSize: 12),
-                                )),
+                              subtitle,
+                              style: TextStyle(color: Colors.black54, fontSize: 12),
+                            )),
                           ],
                         ),
                       ),
@@ -502,9 +531,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         if (initialLink == null || initialLink.isEmpty) {
           return;
         }
-        IPoi poi = await ciphertextToPoi(Injector
-            .of(context)
-            .repository, initialLink.toString());
+        IPoi poi = await ciphertextToPoi(Injector.of(context).repository, initialLink.toString());
         BlocProvider.of<home.HomeBloc>(context)
             .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {
@@ -522,9 +549,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       print("listenlink listen url $link");
 
       try {
-        IPoi poi = await ciphertextToPoi(Injector
-            .of(context)
-            .repository, link.toString());
+        IPoi poi = await ciphertextToPoi(Injector.of(context).repository, link.toString());
         BlocProvider.of<home.HomeBloc>(context)
             .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {

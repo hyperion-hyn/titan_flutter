@@ -7,19 +7,19 @@ import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 
 import '../../../global.dart';
 
-class PoiBottomSheet extends StatefulWidget {
+class PoiPanel extends StatefulWidget {
   final PoiEntity selectedPoiEntity;
   final ScrollController scrollController;
 
-  PoiBottomSheet({this.selectedPoiEntity, this.scrollController});
+  PoiPanel({this.selectedPoiEntity, this.scrollController});
 
   @override
   State<StatefulWidget> createState() {
-    return _PoiBottomSheetState();
+    return _PoiPanelState();
   }
 }
 
-class _PoiBottomSheetState extends State<PoiBottomSheet> {
+class _PoiPanelState extends State<PoiPanel> {
   final GlobalKey _poiHeaderKey = GlobalKey(debugLabel: 'poiHeaderKey');
 
   double getHeaderHeight() {
