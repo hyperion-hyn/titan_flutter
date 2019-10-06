@@ -35,11 +35,11 @@ class MapContainer extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _MapContainerState();
+    return MapContainerState();
   }
 }
 
-class _MapContainerState extends State<MapContainer> {
+class MapContainerState extends State<MapContainer> {
   MapboxMapController mapboxMapController;
 
   Symbol showingSymbol;

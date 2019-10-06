@@ -31,6 +31,8 @@ class DraggableBottomSheet extends StatefulWidget {
 class _DraggableState extends State<DraggableBottomSheet>
     with SingleTickerProviderStateMixin
     implements DraggableBottomSheetControllerInterface {
+  double dragTickHeight = 12;
+
   bool _isChildFrozen;
   bool _isChildReachTop;
 
@@ -211,7 +213,7 @@ class _DraggableState extends State<DraggableBottomSheet>
   ///动态设置收缩高度
   bool _handleSheetHeaderNotification(HeaderHeightNotification notification) {
     if (notification.height > 0 && _state == DraggableBottomSheetState.COLLAPSED) {
-      var reallyHeight = notification.height + 12; //drag height: hack a number
+      var reallyHeight = notification.height + dragTickHeight;
       widget.controller.collapsedHeight = reallyHeight;
       var target = widget.controller.collapsedHeight / sheetHeight;
       if (_animationController.value != target) {
@@ -284,6 +286,7 @@ class _DraggableState extends State<DraggableBottomSheet>
       child: Column(children: <Widget>[
         if (widget.draggable)
           Container(
+            height: dragTickHeight,
             margin: EdgeInsets.only(top: 8.0),
             constraints: BoxConstraints.tightFor(width: 40.0, height: 4.0),
             decoration: BoxDecoration(color: Color(0xffdcdcdc), borderRadius: BorderRadius.all(Radius.circular(4.0))),
@@ -301,7 +304,9 @@ class _DraggableState extends State<DraggableBottomSheet>
   @override
   void dispose() {
     _animationController.dispose();
-    widget.controller?.setInterface(null);
+    if(widget.controller?.getInterface() == this) {
+      widget.controller?.setInterface(null);
+    }
     widget.childScrollController?.removeListener(childScrollListener);
     super.dispose();
   }

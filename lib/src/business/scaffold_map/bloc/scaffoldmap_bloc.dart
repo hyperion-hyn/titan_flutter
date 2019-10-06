@@ -24,6 +24,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   @override
   Stream<ScaffoldMapState> mapEventToState(ScaffoldMapEvent event) async* {
     if (event is InitMapEvent) {
+      ScaffoldMapStore.shared.clearAll();
       yield InitialScaffoldMapState();
     }
     /*search one poi*/
@@ -65,6 +66,21 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       } else {
         //back to search state
         yield SearchPoiByTextSuccessState();
+      }
+    }
+    /* search text */
+    else if (event is SearchTextEvent) {
+      yield SearchingPoiByTextState(searchText: event.searchText);
+
+      try {
+        var searchInteractor = Injector.of(context).searchInteractor;
+        var pois = await searchInteractor.searchPoiByMapbox(
+            event.searchText, event.center, Localizations.localeOf(context).languageCode);
+
+        yield SearchPoiByTextSuccessState(list: pois);
+      } catch (e) {
+        logger.e(e);
+        yield SearchPoiByTextFailState(message: '搜索异常');
       }
     }
   }

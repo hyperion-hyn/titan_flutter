@@ -30,6 +30,14 @@ abstract class ScaffoldMapState {
     }
   }
 
+  void setSearchText(String text) {
+    ScaffoldMapStore.shared.searchText = text;
+  }
+
+  String getSearchText() {
+    return ScaffoldMapStore.shared.searchText;
+  }
+
   DAppDefine getCurrentDapp() {
     return ScaffoldMapStore.shared.dapp;
   }
@@ -70,11 +78,23 @@ class SearchPoiFailState extends ScaffoldMapState {
 //-----------------
 
 /// searching pois
-class SearchingPoiByTextState extends ScaffoldMapState {}
+class SearchingPoiByTextState extends ScaffoldMapState {
+  SearchingPoiByTextState({String searchText}) {
+    setSearchText(searchText);
+  }
+}
 
-class SearchPoiByTextSuccessState extends ScaffoldMapState {}
+class SearchPoiByTextSuccessState extends ScaffoldMapState {
+  SearchPoiByTextSuccessState({List<IPoi> list}) {
+    appendSearchPoiList(list);
+  }
+}
 
-class SearchPoiByTextFailState extends ScaffoldMapState {}
+class SearchPoiByTextFailState extends ScaffoldMapState {
+  final String message;
+
+  SearchPoiByTextFailState({this.message});
+}
 
 //-----------------
 //  route
@@ -92,12 +112,10 @@ class RouteFailState extends ScaffoldMapState {}
 
 class NavigationState extends ScaffoldMapState {}
 
-
 //-----------------
 //  dapp night life
 //-----------------
 class NightLifeState extends ScaffoldMapState {}
-
 
 //-----------------
 //  dapp police

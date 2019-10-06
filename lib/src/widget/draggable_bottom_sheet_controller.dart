@@ -43,6 +43,10 @@ class DraggableBottomSheetController extends ChangeNotifier {
 //    }
   }
 
+  DraggableBottomSheetControllerInterface getInterface() {
+    return _interface;
+  }
+
   void setSheetState(DraggableBottomSheetState state) {
     _interface?.setSheetState(state);
     _sheetState = state;

@@ -254,13 +254,13 @@ class VerticalDragGestureRecognizerBottomSheet extends OneSequenceGestureRecogni
 
   var dyThreshold = 8.0;
   bool get _hasSufficientPendingDragDeltaToAccept {
-//    print('xx $isChildReachTop');
-    if (_pendingDragOffset.dy.abs() > dyThreshold) {
+//    if (_pendingDragOffset.dy.abs() > dyThreshold) {
       if (isFrozenChild) {
         return true;
       }
-    }
-    if (isChildReachTop != null && isChildReachTop) {
+//    }
+
+    if (isChildReachTop == true) {
       if (_pendingDragOffset.dy > dyThreshold) {
         return true;
       }

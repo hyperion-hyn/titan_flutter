@@ -22,10 +22,12 @@ import 'package:titan/src/business/home/sheets/sheets.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/wallet_content.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/business/updater/updater.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -56,14 +58,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
 
-  DateTime _lastPressedAt;
   DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
   DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController(collapsedHeight: 80);
   ScrollController _homeBottomSheetChildrenScrollController = ScrollController();
 
   StreamSubscription _appLinkSubscription;
 
-  GlobalKey mapScenseKey = GlobalKey();
+//  GlobalKey mapScenseKey = GlobalKey();
 
   var isFirst;
   var isShowPlanDialog;
@@ -203,22 +204,45 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 );
               },
             ),
-            body: WillPopScope(
-              onWillPop: () async {
-                if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
-                  _lastPressedAt = DateTime.now();
-                  Fluttertoast.showToast(msg: '再按一下退出程序');
-                  return false;
-                }
-                return true;
-              },
-              child: Stack(
-                children: <Widget>[
-                  //地图
-                  ScaffoldMap(),
-                  _getContent(_currentIndex),
-                ],
-              ),
+            body: Stack(
+              children: <Widget>[
+                //地图
+                ScaffoldMap(),
+//                Center(
+//                  child: RaisedButton(
+//                    child: Text('测试'),
+//                    onPressed: onSearch,
+//                  ),
+//                ),
+                //首页bottom sheet
+                  BlocBuilder<home.HomeBloc, home.HomeState>(
+                    builder: (context, state) {
+                      if (state is InitialHomeState) {
+                        var state = _homeBottomSheetController.getSheetState();
+                        if (state == DraggableBottomSheetState.HIDDEN || state == null) {
+                          _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
+                        }
+                      } else if (state is home.MapOperatingState) {
+                        _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
+                      }
+
+                      return DraggableBottomSheet(
+                        draggable: true,
+                        controller: _homeBottomSheetController,
+                        childScrollController: _homeBottomSheetChildrenScrollController,
+                        topPadding: (MediaQuery.of(context).padding.top),
+                        topRadius: 16,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          child: _buildHomeSheetPanel(),
+                        ),
+                      );
+                    },
+                    bloc: BlocProvider.of<home.HomeBloc>(context),
+                  ),
+                //tabs
+                _getContent(_currentIndex),
+              ],
             )),
       ),
     );
@@ -234,32 +258,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _getContent(int index) {
     switch (index) {
       case 0:
-//        return MapContentWidget();
-        return BlocBuilder<home.HomeBloc, home.HomeState>(
-          builder: (context, state) {
-            if (state is InitialHomeState) {
-              var state = _homeBottomSheetController.getSheetState();
-              if (state == DraggableBottomSheetState.HIDDEN || state == null) {
-                _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
-              }
-            } else if (state is home.MapOperatingState) {
-              _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
-            }
-
-            return DraggableBottomSheet(
-              draggable: true,
-              controller: _homeBottomSheetController,
-              childScrollController: _homeBottomSheetChildrenScrollController,
-              topPadding: (MediaQuery.of(context).padding.top),
-              topRadius: 16,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: _buildHomeSheetPanel(),
-              ),
-            );
-          },
-          bloc: BlocProvider.of<home.HomeBloc>(context),
-        );
+        return Container();
       case 1:
         return WalletContentWidget();
       case 2:
@@ -270,6 +269,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         return MyContentWidget();
     }
     return Container();
+  }
+
+  void onSearch() async {
+    eventBus.fire(GoSearchEvent());
   }
 
   Widget _buildHomeSheetPanel() {
@@ -291,9 +294,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   Expanded(
                       child: Padding(
                     padding: const EdgeInsets.all(6.0),
-                    child: Text(
-                      '查找地点',
-                      style: TextStyle(color: Theme.of(context).hintColor),
+                    child: InkWell(
+                      onTap: onSearch,
+                      child: Text(
+                        '查找地点',
+                        style: TextStyle(color: Theme.of(context).hintColor),
+                      ),
                     ),
                   )),
                 ],
@@ -308,7 +314,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   children: <Widget>[
                     Flexible(
                       child: _buildFocusItem(Icon(Icons.language), '全球节点', '全球地图服务节点', true, () {
-                        print('xxx');
+                        //TODO
+                        print('TODO');
                       }),
                     ),
                     Flexible(
@@ -321,7 +328,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: _buildFocusItem(Icon(Icons.language), '海伯利安', '官方介绍', true, () {
-                          print('xxx');
+                          //TODO
+                          print('TODO');
                         }),
                       ),
                     ),
