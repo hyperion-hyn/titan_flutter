@@ -290,6 +290,9 @@ class _MapContainerState extends State<MapContainer> {
           _addMarker(state.getCurrentPoi());
         } else if (state is InitialScaffoldMapState) {
           _removeMarker();
+          setState(() {
+            _mapTop = 0;
+          });
         }
       },
       child: Positioned(
