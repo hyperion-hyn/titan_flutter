@@ -200,27 +200,19 @@ class MapContainerState extends State<MapContainer> {
 
     //针对过滤后的结果，看选择不同的移动方式
 
-    //TODO 针对地图的偏移，绑定在列表的显示和隐藏事件中
-
     if (distanceFilterList.length == 1) {
-      mapboxMapController.animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0)).then((_) {
-        var screenHeight = MediaQuery.of(context).size.height;
-        print("screenHeight: $screenHeight");
-        mapboxMapController.animateCamera(CameraUpdate.scrollBy(0, -screenHeight / 4));
-      });
+      mapboxMapController.animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0));
     } else {
       var latlngList = List<LatLng>();
-
       for (var poi in distanceFilterList) {
         latlngList.add(poi.latLng);
       }
 
       var padding = 50.0;
       var latlngBound = LatLngBounds.fromLatLngs(latlngList);
-
-      var screenHeight = MediaQuery.of(context).size.height;
-      mapboxMapController.moveCamera(
-          CameraUpdate.newLatLngBounds2(latlngBound, padding, padding * 1.2, padding, padding * 1.2));
+//      var screenHeight = MediaQuery.of(context).size.height;
+      mapboxMapController
+          .moveCamera(CameraUpdate.newLatLngBounds2(latlngBound, padding, padding * 1.2, padding, padding * 1.2));
     }
   }
 
@@ -476,35 +468,49 @@ class MapContainerState extends State<MapContainer> {
       },
       child: Positioned(
         top: _mapTop,
-        child: Container(
-          height: MediaQuery.of(context).size.height + bottomBarHeight,
-          width: MediaQuery.of(context).size.width,
-          child: MapboxMapParent(
-              controller: mapboxMapController,
-              child: MapboxMap(
-                compassEnabled: false,
-                onMapClick: _onMapClick,
-                onMapLongPress: _onMapLongPress,
-                styleString: widget.style,
-                onStyleLoaded: onStyleLoaded,
-                initialCameraPosition: CameraPosition(
-                  target: widget.defaultCenter,
-                  zoom: widget.defaultZoom,
-                ),
-                rotateGesturesEnabled: true,
-                tiltGesturesEnabled: false,
-                enableLogo: false,
-                enableAttribution: false,
-                compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
-                minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-                myLocationEnabled: true,
-                myLocationTrackingMode: MyLocationTrackingMode.None,
-                children: <Widget>[
-                  ///active plugins
-                  HeavenPlugin(models: widget.heavenDataList),
-                  RoutePlugin(model: widget.routeDataModel),
-                ],
-              )),
+        child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
+          builder: (context, state) {
+            return Container(
+              height: MediaQuery.of(context).size.height + bottomBarHeight,
+              width: MediaQuery.of(context).size.width,
+              child: MapboxMapParent(
+                  controller: mapboxMapController,
+                  child: MapboxMap(
+                    compassEnabled: false,
+                    onMapClick: (point, coordinates) {
+                      if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                        return;
+                      }
+                      _onMapClick(point, coordinates);
+                    },
+                    onMapLongPress: (point, coordinates) {
+                      if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                        return;
+                      }
+                      _onMapLongPress(point, coordinates);
+                    },
+                    styleString: widget.style,
+                    onStyleLoaded: onStyleLoaded,
+                    initialCameraPosition: CameraPosition(
+                      target: widget.defaultCenter,
+                      zoom: widget.defaultZoom,
+                    ),
+                    rotateGesturesEnabled: true,
+                    tiltGesturesEnabled: false,
+                    enableLogo: false,
+                    enableAttribution: false,
+                    compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
+                    minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+                    myLocationEnabled: true,
+                    myLocationTrackingMode: MyLocationTrackingMode.None,
+                    children: <Widget>[
+                      ///active plugins
+                      HeavenPlugin(models: widget.heavenDataList),
+                      RoutePlugin(model: widget.routeDataModel),
+                    ],
+                  )),
+            );
+          },
         ),
       ),
     );
