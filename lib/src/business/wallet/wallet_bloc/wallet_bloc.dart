@@ -58,7 +58,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       walletAccountList.add(await _buildErc20TokenAccountVo(wallet, account, token));
     }
 
-    _buildPrice(walletAccountList);
+    await _buildPrice(walletAccountList);
 
     var amount = 0.0;
 
@@ -113,6 +113,6 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
   }
 
   Future<Map<String, double>> _getPriceFromApi(List<String> symbols) async {
-    return await _coinMarketApi.quotes(symbols, QUOTE_UNIT);
+    return _coinMarketApi.quotes(symbols, QUOTE_UNIT);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/wallet_show_account_widget.dart';
@@ -25,8 +26,11 @@ class ShowWallet extends StatefulWidget {
 class _ShowWalletState extends State<ShowWallet> {
   WalletVo wallet;
 
+  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
+
   @override
   void initState() {
+    super.initState();
     wallet = widget.wallet;
   }
 
@@ -51,7 +55,7 @@ class _ShowWalletState extends State<ShowWallet> {
                         Padding(
                           padding: const EdgeInsets.only(top: 24.0),
                           child: Text(
-                            "${wallet.amountUnit} \$${sprintf("%.2", [wallet.amount])}",
+                            "${wallet.amountUnit} \$${DOUBLE_NUMBER_FORMAT.format(wallet.amount)}",
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                           ),
                         ),
@@ -109,6 +113,7 @@ class _ShowWalletState extends State<ShowWallet> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   account.name,
@@ -117,7 +122,7 @@ class _ShowWalletState extends State<ShowWallet> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${account.priceUnit}${account.price}",
+                    "${account.priceUnit}${DOUBLE_NUMBER_FORMAT.format(account.price)}",
                     style: TextStyle(fontSize: 11, color: HexColor("#FF848181")),
                   ),
                 ),
@@ -128,15 +133,16 @@ class _ShowWalletState extends State<ShowWallet> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "Ethereum",
+                  "${DOUBLE_NUMBER_FORMAT.format(account.count)}",
                   style: TextStyle(),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "USD180.92",
+                    "${account.priceUnit}${DOUBLE_NUMBER_FORMAT.format(account.amount)}",
                     style: TextStyle(fontSize: 11, color: HexColor("#FF848181")),
                   ),
                 ),
