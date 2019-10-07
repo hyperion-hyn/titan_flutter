@@ -43,3 +43,6 @@ class GoSearchEvent {
 
   GoSearchEvent({this.searchText});
 }
+
+class ToMyLocationEvent {
+}

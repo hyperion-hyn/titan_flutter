@@ -10,7 +10,6 @@ import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/model/poi.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
@@ -32,10 +31,11 @@ typedef PanelBuilder = Widget Function<POI>(BuildContext context, POI poi);
 typedef HeightCallBack = void Function(double height);
 
 class ScaffoldMap extends StatefulWidget {
-  final Function onBack;
-  final PanelBuilder panelBuilder;
+  final DraggableBottomSheetController poiBottomSheetController;
 
-  ScaffoldMap({this.onBack, this.panelBuilder});
+  ScaffoldMap({
+    this.poiBottomSheetController,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -44,7 +44,6 @@ class ScaffoldMap extends StatefulWidget {
 }
 
 class _ScaffoldMapState extends State<ScaffoldMap> {
-  DraggableBottomSheetController _draggableBottomSheetController = DraggableBottomSheetController();
   ScrollController _bottomChildScrollController = ScrollController();
 
   StreamSubscription _eventbusSubcription;
@@ -208,8 +207,8 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         dragState = DraggableBottomSheetState.COLLAPSED;
       }
 
-      _draggableBottomSheetController.setSheetState(dragState);
-      _draggableBottomSheetController.collapsedHeight = 112;
+      widget.poiBottomSheetController?.setSheetState(dragState);
+      widget.poiBottomSheetController?.collapsedHeight = 112;
 
       //---------------------------
       //set opt bar
@@ -223,13 +222,13 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         children: <Widget>[
           MapContainer(
             key: Keys.mapKey,
-            bottomPanelController: _draggableBottomSheetController,
+            bottomPanelController: widget.poiBottomSheetController,
             style: style,
           ),
           if (showSearchBar)
             SearchBar(
               searchText: searchText,
-              bottomPanelController: _draggableBottomSheetController,
+              bottomPanelController: widget.poiBottomSheetController,
             ),
           RouteBar(),
           /* bottom sheet */
@@ -237,7 +236,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             draggable: draggable,
             topPadding: topPadding,
             topRadius: topRadius,
-            controller: _draggableBottomSheetController,
+            controller: widget.poiBottomSheetController,
             childScrollController: _bottomChildScrollController,
             child: sheetPanel ?? Container(),
           ),
@@ -246,7 +245,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
               title: title,
               onBack: onTopBarBack,
               onClose: onTopBarClose,
-              bottomPanelController: _draggableBottomSheetController,
+              bottomPanelController: widget.poiBottomSheetController,
               heightCallBack: (double height) {
 //              setState(() {
                 topBarHeight = height;

@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -42,6 +46,9 @@ class MapContainer extends StatefulWidget {
 class MapContainerState extends State<MapContainer> {
   MapboxMapController mapboxMapController;
 
+  StreamSubscription _locationClickSubscription;
+  StreamSubscription _eventBusSubscription;
+
   Symbol showingSymbol;
   IPoi currentPoi;
 
@@ -52,6 +59,7 @@ class MapContainerState extends State<MapContainer> {
   void initState() {
     super.initState();
     widget.bottomPanelController?.addListener(onDragPanelYChange);
+    _listenEventBus();
   }
 
   double _mapTop = 0;
@@ -280,6 +288,104 @@ class MapContainerState extends State<MapContainer> {
 
 //    _toMyLocation();
 //    _loadPurchasedMap();
+  }
+
+  int _clickTimes = 0;
+
+  void _toMyLocation() {
+    _locationClickSubscription?.cancel();
+
+    _clickTimes++;
+    _locationClickSubscription = Observable.timer('', Duration(milliseconds: 300)).listen((value) async {
+      var latLng = await mapboxMapController?.lastKnownLocation();
+      if (_clickTimes > 1) {
+        // double click
+        double doubleClickZoom = 17;
+        if (latLng != null) {
+          mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom));
+        } else {
+          mapboxMapController?.animateCamera(CameraUpdate.zoomTo(doubleClickZoom));
+        }
+      } else {
+        //single click
+        if (latLng != null) {
+          mapboxMapController?.animateCamera(CameraUpdate.newLatLng(latLng));
+        }
+      }
+      mapboxMapController?.enableLocation();
+      _clickTimes = 0;
+    });
+  }
+
+  void _listenEventBus() {
+    _eventBusSubscription = eventBus.on().listen((event) async {
+      if (event is ToMyLocationEvent) {
+        PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+        if (permission == PermissionStatus.granted) {
+          _toMyLocation();
+        } else {
+          Map<PermissionGroup, PermissionStatus> permissions =
+              await PermissionHandler().requestPermissions([PermissionGroup.location]);
+          if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
+            _toMyLocation();
+            Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
+              _toMyLocation(); //hack, location not auto move
+            });
+          } else {
+            _showGoToOpenAppSettingsDialog();
+          }
+        }
+      }
+    });
+  }
+
+  void _showGoToOpenAppSettingsDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('申请定位授权'),
+                  content: Text('请你授权使用定位功能.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('申请定位授权'),
+                  content: Text('请你授权使用定位功能.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+        });
+  }
+
+  @override
+  void dispose() {
+    _locationClickSubscription?.cancel();
+    _eventBusSubscription?.cancel();
+    super.dispose();
   }
 
   @override
