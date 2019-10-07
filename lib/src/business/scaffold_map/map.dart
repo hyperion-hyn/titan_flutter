@@ -44,6 +44,8 @@ class MapContainer extends StatefulWidget {
 }
 
 class MapContainerState extends State<MapContainer> {
+  final MAX_POI_DIFF_DISTANCE = 10000;
+
   MapboxMapController mapboxMapController;
 
   StreamSubscription _locationClickSubscription;
@@ -118,13 +120,13 @@ class MapContainerState extends State<MapContainer> {
     BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
   }
 
-  void _addMarker(IPoi poi) async {
+  void addMarker(IPoi poi) async {
     bool shouldNeedAddSymbol = true;
 
     if (currentPoi != null) {
       if (currentPoi.latLng != poi.latLng) {
         //位置不同，先删除再添加新的Marker
-        _removeMarker();
+        removeMarker();
       } else {
         //位置相同，不需要再添加Marker
         shouldNeedAddSymbol = false;
@@ -157,12 +159,76 @@ class MapContainerState extends State<MapContainer> {
     }
   }
 
-  void _removeMarker() {
+  void removeMarker() {
     if (showingSymbol != null) {
       mapboxMapController?.removeSymbol(showingSymbol);
     }
     showingSymbol = null;
     currentPoi = null;
+  }
+
+  void addMarkers(List<IPoi> pois) async {
+    await clearAllMarkers();
+
+    List<SymbolOptions> options = pois
+        .map(
+          (poi) => SymbolOptions(
+              geometry: poi.latLng,
+              iconImage: "marker_gray",
+              iconAnchor: "center",
+              iconSize: Platform.isAndroid ? 1 : 0.4),
+        )
+        .toList();
+    var symbolList = await mapboxMapController?.addSymbolList(options);
+
+    for (var i = 0; i < symbolList.length; i++) {
+      _currentGrayMarkerMap[symbolList[i].id] = pois[i];
+    }
+
+    //计算太远的距离
+    var firstPoi = pois[0];
+    var distanceFilterList = List<IPoi>();
+    distanceFilterList.add(firstPoi);
+
+    for (var i = 0; i < pois.length; i++) {
+      var poiTemp = pois[i];
+      if (firstPoi.latLng.distanceTo(poiTemp.latLng) < MAX_POI_DIFF_DISTANCE &&
+          firstPoi.latLng.distanceTo(poiTemp.latLng) > 10) {
+        distanceFilterList.add(poiTemp);
+      }
+    }
+
+    //针对过滤后的结果，看选择不同的移动方式
+
+    //TODO 针对地图的偏移，绑定在列表的显示和隐藏事件中
+
+    if (distanceFilterList.length == 1) {
+      mapboxMapController.animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0)).then((_) {
+        var screenHeight = MediaQuery.of(context).size.height;
+        print("screenHeight: $screenHeight");
+        mapboxMapController.animateCamera(CameraUpdate.scrollBy(0, -screenHeight / 4));
+      });
+    } else {
+      var latlngList = List<LatLng>();
+
+      for (var poi in distanceFilterList) {
+        latlngList.add(poi.latLng);
+      }
+
+      var padding = 50.0;
+      var latlngBound = LatLngBounds.fromLatLngs(latlngList);
+
+      var screenHeight = MediaQuery.of(context).size.height;
+      mapboxMapController.moveCamera(
+          CameraUpdate.newLatLngBounds2(latlngBound, padding, padding * 1.2, padding, padding * 1.2));
+    }
+  }
+
+  Future<void> clearAllMarkers() async {
+    await mapboxMapController?.clearSymbols();
+    showingSymbol = null;
+    currentPoi = null;
+    _currentGrayMarkerMap.clear();
   }
 
   /// 查找搜索结果的layer
@@ -393,12 +459,19 @@ class MapContainerState extends State<MapContainer> {
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
       listener: (context, state) {
         if (state is SearchingPoiState || state is ShowPoiState) {
-          _addMarker(state.getCurrentPoi());
+          addMarker(state.getCurrentPoi());
+        } else if (state is SearchPoiByTextSuccessState) {
+          if (state.getSearchPoiList().length > 0) {
+            addMarkers(state.getSearchPoiList());
+          }
         } else if (state is InitialScaffoldMapState) {
-          _removeMarker();
+//          removeMarker();
+          clearAllMarkers();
           setState(() {
             _mapTop = 0;
           });
+        } else {
+          removeMarker();
         }
       },
       child: Positioned(
@@ -409,6 +482,7 @@ class MapContainerState extends State<MapContainer> {
           child: MapboxMapParent(
               controller: mapboxMapController,
               child: MapboxMap(
+                compassEnabled: false,
                 onMapClick: _onMapClick,
                 onMapLongPress: _onMapLongPress,
                 styleString: widget.style,

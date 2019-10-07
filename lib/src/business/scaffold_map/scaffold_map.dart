@@ -6,16 +6,20 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import 'bloc/bloc.dart';
 import 'bottom_panels/common_panel.dart';
 import 'bottom_panels/poi_panel.dart';
+import 'bottom_panels/route_panel.dart';
 import 'bottom_panels/search_list_panel.dart';
 import 'map.dart';
 import 'opt_bar.dart';
@@ -157,6 +161,32 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       //---------------------------
       //set route
       //---------------------------
+      bool showRoute = false;
+      IPoi fromPoi;
+      IPoi toPoi;
+      String profile;
+      String language;
+      RouteDataModel routeDataModel;
+      if (state is RoutingState) {
+        showRoute = true;
+        fromPoi = state.fromPoi;
+        toPoi = state.toPoi;
+        profile = state.profile;
+        language = state.language;
+      } else if (state is RouteSuccessState) {
+        showRoute = true;
+        fromPoi = state.fromPoi;
+        toPoi = state.toPoi;
+        profile = state.profile;
+        language = state.language;
+        routeDataModel = state.routeDataModel;
+      } else if (state is RouteFailState) {
+        showRoute = true;
+        fromPoi = state.fromPoi;
+        toPoi = state.toPoi;
+        profile = state.profile;
+        language = state.language;
+      }
 
       //---------------------------
       //set the bottom sheet
@@ -205,6 +235,18 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         //搜索失败
         sheetPanel = FailPanel(message: state.message);
         dragState = DraggableBottomSheetState.COLLAPSED;
+      } else if (state is RoutingState) {
+        //路线规划中
+        sheetPanel = LoadingPanel();
+        dragState = DraggableBottomSheetState.COLLAPSED;
+      } else if (state is RouteSuccessState) {
+        //路线规划成功
+        sheetPanel = RoutePanel(routeDataModel: routeDataModel,);
+        dragState = DraggableBottomSheetState.COLLAPSED;
+      } else if (state is RouteFailState) {
+        //路线规划失败
+        sheetPanel = FailPanel(message: state.message);
+        dragState = DraggableBottomSheetState.COLLAPSED;
       }
 
       widget.poiBottomSheetController?.setSheetState(dragState);
@@ -220,17 +262,35 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
       return Stack(
         children: <Widget>[
+          Container(), //need a container to expand the stack???
           MapContainer(
             key: Keys.mapKey,
             bottomPanelController: widget.poiBottomSheetController,
             style: style,
+            routeDataModel: routeDataModel,
           ),
           if (showSearchBar)
             SearchBar(
               searchText: searchText,
               bottomPanelController: widget.poiBottomSheetController,
             ),
-          RouteBar(),
+          if (showRoute)
+            RouteBar(
+              fromName: fromPoi.name,
+              toName: toPoi.name,
+              profile: profile,
+              onBack: () {
+                BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ExistRouteEvent());
+              },
+              onRoute: (String toProfile) {
+                BlocProvider.of<ScaffoldMapBloc>(context).dispatch(RouteEvent(
+                  fromPoi: fromPoi,
+                  toPoi: toPoi,
+                  profile: toProfile,
+                  language: language,
+                ));
+              },
+            ),
           /* bottom sheet */
           DraggableBottomSheet(
             draggable: draggable,
@@ -257,10 +317,37 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
               bottom: 0,
               left: 0,
               right: 0,
-              child: OperationBar(),
+              child: OperationBar(
+                onRouteTap: tapRoute,
+              ),
             ),
         ],
       );
     });
+  }
+
+  void tapRoute() async {
+    var currentPoi = ScaffoldMapStore.shared.currentPoi;
+    var location = await getMapState?.mapboxMapController?.lastKnownLocation();
+    if (currentPoi != null) {
+      if (location == null) {
+        Fluttertoast.showToast(msg: '获取不到你当前位置');
+      } else {
+        var fromPoi = PoiEntity(latLng: location, name: '我的位置');
+        var toPoi = currentPoi;
+        var language = Localizations.localeOf(context).languageCode;
+        var profile = 'driving';
+        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(RouteEvent(
+          fromPoi: fromPoi,
+          toPoi: toPoi,
+          language: language,
+          profile: profile,
+        ));
+      }
+    }
+  }
+
+  MapContainerState get getMapState {
+    return Keys.mapKey.currentState as MapContainerState;
   }
 }
