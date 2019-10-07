@@ -92,16 +92,19 @@ class _InformationPageState extends State<InformationPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            CupertinoSegmentedControl<int>(
-              children: {
-                0: _buildTabItem("资讯"),
-                1: _buildTabItem("凯式物语"),
-              },
-              onValueChanged: (value) {
-                _selectedTabIndex = value;
-                setState(() {});
-              },
-              groupValue: _selectedTabIndex,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: CupertinoSegmentedControl<int>(
+                children: {
+                  0: _buildTabItem("资讯"),
+                  1: _buildTabItem("凯式物语"),
+                },
+                onValueChanged: (value) {
+                  _selectedTabIndex = value;
+                  setState(() {});
+                },
+                groupValue: _selectedTabIndex,
+              ),
             ),
             Expanded(
               child: ListView.separated(
