@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/src/business/my/my_page.dart';
 
 class MyContentWidget extends StatefulWidget {
   @override
@@ -12,10 +13,6 @@ class _MyContentState extends State<MyContentWidget> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
-      color: Theme.of(context).backgroundColor,
-      alignment: Alignment.center,
-      child: Text("我的"),
-    );
+    return MyPage();
   }
 }
