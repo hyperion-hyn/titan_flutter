@@ -1,43 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/home/bloc/bloc.dart' as home;
-import 'package:titan/src/business/home/map/bloc/bloc.dart' as map;
 import 'package:titan/src/business/home/burning_dialog/burning_dialog.dart';
+import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/inject/injector.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
-import 'map/bloc/bloc.dart';
 
 class BottomFabsWidget extends StatefulWidget {
-  final DraggableBottomSheetController draggableBottomSheetController;
-
-  BottomFabsWidget({this.draggableBottomSheetController});
+  BottomFabsWidget({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _BottomFasScenesState();
+    return BottomFasScenesState();
   }
 }
 
-class _BottomFasScenesState extends State<BottomFabsWidget> {
+class BottomFasScenesState extends State<BottomFabsWidget> {
   double _fabsBottom = 16;
+  double opacity = 1;
 
-  @override
-  void initState() {
-    super.initState();
-
-    widget.draggableBottomSheetController
-        ?.addListener(() => _handleBottomPadding(widget.draggableBottomSheetController.bottom));
-  }
-
-  void _handleBottomPadding(double bottom) {
-    if (bottom > 0 && bottom <= widget.draggableBottomSheetController.anchorHeight) {
+  void updateBottomPadding(double bottom, double anchorHeight) {
+    if (bottom > 0 && bottom <= anchorHeight) {
       setState(() {
         _fabsBottom = bottom;
+        opacity = 1;
       });
+    }
+    if (bottom > anchorHeight) {
+      double dy = _fabsBottom + 50 - bottom;
+      if (dy > 0) {
+        setState(() {
+          opacity = dy / 50;
+        });
+      } else if (opacity != 0) {
+        setState(() {
+          opacity = 0;
+        });
+      }
     }
   }
 
@@ -45,8 +45,9 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
     var searchInteractor = Injector.of(context).searchInteractor;
     searchInteractor.deleteAllHistory();
 
-    BlocProvider.of<home.HomeBloc>(context).dispatch(home.ExistSearchEvent());
-    BlocProvider.of<map.MapBloc>(context).dispatch(map.ResetMapEvent());
+    //TODO UI back to global
+//    BlocProvider.of<home.HomeBloc>(context).dispatch(home.ExistSearchEvent());
+//    BlocProvider.of<map.MapBloc>(context).dispatch(map.ResetMapEvent());
   }
 
   void _showFireModalBottomSheet(context) {
@@ -59,7 +60,8 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
               children: <Widget>[
                 new ListTile(
                     leading: new Icon(IconData(0xe66e, fontFamily: 'iconfont'), color: Color(0xffac2229)),
-                    title: new Text(S.of(context).Clean, style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
+                    title: new Text(S.of(context).Clean,
+                        style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
                     onTap: () {
                       Navigator.pop(ctx);
 //                      Navigator.push(context, MaterialPageRoute(builder: (context) => BurningDialog()));
@@ -87,37 +89,43 @@ class _BottomFasScenesState extends State<BottomFabsWidget> {
       bottom: _fabsBottom,
       left: 0,
       right: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: <Widget>[
-            FloatingActionButton(
-              onPressed: () => _showFireModalBottomSheet(context),
-              mini: true,
-              heroTag: 'cleanData',
-              backgroundColor: Colors.white,
-              child: Image.asset(
-                'res/drawable/ic_logo.png',
-                width: 24,
-                color: Colors.black87,
-              ),
-            ),
-            Spacer(),
-            FloatingActionButton(
-              onPressed: () {
-                eventBus.fire(MyLocationEvent());
+      child: IgnorePointer(
+        ignoring: opacity == 0,
+        child: Opacity(
+          opacity: opacity,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: <Widget>[
+                FloatingActionButton(
+                  onPressed: () => _showFireModalBottomSheet(context),
+                  mini: true,
+                  heroTag: 'cleanData',
+                  backgroundColor: Colors.white,
+                  child: Image.asset(
+                    'res/drawable/ic_logo.png',
+                    width: 24,
+                    color: Colors.black87,
+                  ),
+                ),
+                Spacer(),
+                FloatingActionButton(
+                  onPressed: () {
+                    eventBus.fire(ToMyLocationEvent());
 //                BlocProvider.of<MapBloc>(context).dispatch(MyLocationEvent());
-              },
-              mini: true,
-              heroTag: 'myLocation',
-              backgroundColor: Colors.white,
-              child: Icon(
-                Icons.my_location,
-                color: Colors.black87,
-                size: 24,
-              ),
-            )
-          ],
+                  },
+                  mini: true,
+                  heroTag: 'myLocation',
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.my_location,
+                    color: Colors.black87,
+                    size: 24,
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

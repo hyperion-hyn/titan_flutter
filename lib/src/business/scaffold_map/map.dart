@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -40,7 +44,12 @@ class MapContainer extends StatefulWidget {
 }
 
 class MapContainerState extends State<MapContainer> {
+  final MAX_POI_DIFF_DISTANCE = 10000;
+
   MapboxMapController mapboxMapController;
+
+  StreamSubscription _locationClickSubscription;
+  StreamSubscription _eventBusSubscription;
 
   Symbol showingSymbol;
   IPoi currentPoi;
@@ -52,6 +61,7 @@ class MapContainerState extends State<MapContainer> {
   void initState() {
     super.initState();
     widget.bottomPanelController?.addListener(onDragPanelYChange);
+    _listenEventBus();
   }
 
   double _mapTop = 0;
@@ -110,13 +120,13 @@ class MapContainerState extends State<MapContainer> {
     BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
   }
 
-  void _addMarker(IPoi poi) async {
+  void addMarker(IPoi poi) async {
     bool shouldNeedAddSymbol = true;
 
     if (currentPoi != null) {
       if (currentPoi.latLng != poi.latLng) {
         //位置不同，先删除再添加新的Marker
-        _removeMarker();
+        removeMarker();
       } else {
         //位置相同，不需要再添加Marker
         shouldNeedAddSymbol = false;
@@ -149,12 +159,68 @@ class MapContainerState extends State<MapContainer> {
     }
   }
 
-  void _removeMarker() {
+  void removeMarker() {
     if (showingSymbol != null) {
       mapboxMapController?.removeSymbol(showingSymbol);
     }
     showingSymbol = null;
     currentPoi = null;
+  }
+
+  void addMarkers(List<IPoi> pois) async {
+    await clearAllMarkers();
+
+    List<SymbolOptions> options = pois
+        .map(
+          (poi) => SymbolOptions(
+              geometry: poi.latLng,
+              iconImage: "marker_gray",
+              iconAnchor: "center",
+              iconSize: Platform.isAndroid ? 1 : 0.4),
+        )
+        .toList();
+    var symbolList = await mapboxMapController?.addSymbolList(options);
+
+    for (var i = 0; i < symbolList.length; i++) {
+      _currentGrayMarkerMap[symbolList[i].id] = pois[i];
+    }
+
+    //计算太远的距离
+    var firstPoi = pois[0];
+    var distanceFilterList = List<IPoi>();
+    distanceFilterList.add(firstPoi);
+
+    for (var i = 0; i < pois.length; i++) {
+      var poiTemp = pois[i];
+      if (firstPoi.latLng.distanceTo(poiTemp.latLng) < MAX_POI_DIFF_DISTANCE &&
+          firstPoi.latLng.distanceTo(poiTemp.latLng) > 10) {
+        distanceFilterList.add(poiTemp);
+      }
+    }
+
+    //针对过滤后的结果，看选择不同的移动方式
+
+    if (distanceFilterList.length == 1) {
+      mapboxMapController.animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0));
+    } else {
+      var latlngList = List<LatLng>();
+      for (var poi in distanceFilterList) {
+        latlngList.add(poi.latLng);
+      }
+
+      var padding = 50.0;
+      var latlngBound = LatLngBounds.fromLatLngs(latlngList);
+//      var screenHeight = MediaQuery.of(context).size.height;
+      mapboxMapController
+          .moveCamera(CameraUpdate.newLatLngBounds2(latlngBound, padding, padding * 1.2, padding, padding * 1.2));
+    }
+  }
+
+  Future<void> clearAllMarkers() async {
+    await mapboxMapController?.clearSymbols();
+    showingSymbol = null;
+    currentPoi = null;
+    _currentGrayMarkerMap.clear();
   }
 
   /// 查找搜索结果的layer
@@ -282,49 +348,169 @@ class MapContainerState extends State<MapContainer> {
 //    _loadPurchasedMap();
   }
 
+  int _clickTimes = 0;
+
+  void _toMyLocation() {
+    _locationClickSubscription?.cancel();
+
+    _clickTimes++;
+    _locationClickSubscription = Observable.timer('', Duration(milliseconds: 300)).listen((value) async {
+      var latLng = await mapboxMapController?.lastKnownLocation();
+      if (_clickTimes > 1) {
+        // double click
+        double doubleClickZoom = 17;
+        if (latLng != null) {
+          mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom));
+        } else {
+          mapboxMapController?.animateCamera(CameraUpdate.zoomTo(doubleClickZoom));
+        }
+      } else {
+        //single click
+        if (latLng != null) {
+          mapboxMapController?.animateCamera(CameraUpdate.newLatLng(latLng));
+        }
+      }
+      mapboxMapController?.enableLocation();
+      _clickTimes = 0;
+    });
+  }
+
+  void _listenEventBus() {
+    _eventBusSubscription = eventBus.on().listen((event) async {
+      if (event is ToMyLocationEvent) {
+        PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+        if (permission == PermissionStatus.granted) {
+          _toMyLocation();
+        } else {
+          Map<PermissionGroup, PermissionStatus> permissions =
+              await PermissionHandler().requestPermissions([PermissionGroup.location]);
+          if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
+            _toMyLocation();
+            Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
+              _toMyLocation(); //hack, location not auto move
+            });
+          } else {
+            _showGoToOpenAppSettingsDialog();
+          }
+        }
+      }
+    });
+  }
+
+  void _showGoToOpenAppSettingsDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('申请定位授权'),
+                  content: Text('请你授权使用定位功能.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('申请定位授权'),
+                  content: Text('请你授权使用定位功能.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+        });
+  }
+
+  @override
+  void dispose() {
+    _locationClickSubscription?.cancel();
+    _eventBusSubscription?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
       listener: (context, state) {
         if (state is SearchingPoiState || state is ShowPoiState) {
-          _addMarker(state.getCurrentPoi());
+          addMarker(state.getCurrentPoi());
+        } else if (state is SearchPoiByTextSuccessState) {
+          if (state.getSearchPoiList().length > 0) {
+            addMarkers(state.getSearchPoiList());
+          }
         } else if (state is InitialScaffoldMapState) {
-          _removeMarker();
+//          removeMarker();
+          clearAllMarkers();
           setState(() {
             _mapTop = 0;
           });
+        } else {
+          removeMarker();
         }
       },
       child: Positioned(
         top: _mapTop,
-        child: Container(
-          height: MediaQuery.of(context).size.height + bottomBarHeight,
-          width: MediaQuery.of(context).size.width,
-          child: MapboxMapParent(
-              controller: mapboxMapController,
-              child: MapboxMap(
-                onMapClick: _onMapClick,
-                onMapLongPress: _onMapLongPress,
-                styleString: widget.style,
-                onStyleLoaded: onStyleLoaded,
-                initialCameraPosition: CameraPosition(
-                  target: widget.defaultCenter,
-                  zoom: widget.defaultZoom,
-                ),
-                rotateGesturesEnabled: true,
-                tiltGesturesEnabled: false,
-                enableLogo: false,
-                enableAttribution: false,
-                compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
-                minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-                myLocationEnabled: true,
-                myLocationTrackingMode: MyLocationTrackingMode.None,
-                children: <Widget>[
-                  ///active plugins
-                  HeavenPlugin(models: widget.heavenDataList),
-                  RoutePlugin(model: widget.routeDataModel),
-                ],
-              )),
+        child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
+          builder: (context, state) {
+            return Container(
+              height: MediaQuery.of(context).size.height + bottomBarHeight,
+              width: MediaQuery.of(context).size.width,
+              child: MapboxMapParent(
+                  controller: mapboxMapController,
+                  child: MapboxMap(
+                    compassEnabled: false,
+                    onMapClick: (point, coordinates) {
+                      if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                        return;
+                      }
+                      _onMapClick(point, coordinates);
+                    },
+                    onMapLongPress: (point, coordinates) {
+                      if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                        return;
+                      }
+                      _onMapLongPress(point, coordinates);
+                    },
+                    styleString: widget.style,
+                    onStyleLoaded: onStyleLoaded,
+                    initialCameraPosition: CameraPosition(
+                      target: widget.defaultCenter,
+                      zoom: widget.defaultZoom,
+                    ),
+                    rotateGesturesEnabled: true,
+                    tiltGesturesEnabled: false,
+                    enableLogo: false,
+                    enableAttribution: false,
+                    compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
+                    minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+                    myLocationEnabled: true,
+                    myLocationTrackingMode: MyLocationTrackingMode.None,
+                    children: <Widget>[
+                      ///active plugins
+                      HeavenPlugin(models: widget.heavenDataList),
+                      RoutePlugin(model: widget.routeDataModel),
+                    ],
+                  )),
+            );
+          },
         ),
       ),
     );

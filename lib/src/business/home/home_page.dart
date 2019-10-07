@@ -57,9 +57,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
+  final GlobalKey fabsContainerKey = GlobalKey(debugLabel: 'fabsContainerKey');
 
   DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
   DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController(collapsedHeight: 80);
+  DraggableBottomSheetController _activeBottomSheetController;
   ScrollController _homeBottomSheetChildrenScrollController = ScrollController();
 
   StreamSubscription _appLinkSubscription;
@@ -207,45 +209,66 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             body: Stack(
               children: <Widget>[
                 //地图
-                ScaffoldMap(),
+                ScaffoldMap(
+                  poiBottomSheetController: _poiBottomSheetController,
+                ),
 //                Center(
 //                  child: RaisedButton(
 //                    child: Text('测试'),
 //                    onPressed: onSearch,
 //                  ),
 //                ),
+
+                //位置按钮
+                BottomFabsWidget(key: fabsContainerKey),
+
                 //首页bottom sheet
-                  BlocBuilder<home.HomeBloc, home.HomeState>(
-                    builder: (context, state) {
-                      if (state is InitialHomeState) {
-                        var state = _homeBottomSheetController.getSheetState();
-                        if (state == DraggableBottomSheetState.HIDDEN || state == null) {
-                          _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
-                        }
-                      } else if (state is home.MapOperatingState) {
-                        _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
+                BlocBuilder<home.HomeBloc, home.HomeState>(
+                  bloc: BlocProvider.of<home.HomeBloc>(context),
+                  builder: (context, state) {
+                    if (state is InitialHomeState) {
+                      if (_activeBottomSheetController != null) {
+                        _activeBottomSheetController.removeListener(onBottomSheetChange);
                       }
 
-                      return DraggableBottomSheet(
-                        draggable: true,
-                        controller: _homeBottomSheetController,
-                        childScrollController: _homeBottomSheetChildrenScrollController,
-                        topPadding: (MediaQuery.of(context).padding.top),
-                        topRadius: 16,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          child: _buildHomeSheetPanel(),
-                        ),
-                      );
-                    },
-                    bloc: BlocProvider.of<home.HomeBloc>(context),
-                  ),
+                      var state = _homeBottomSheetController.getSheetState();
+                      if (state == DraggableBottomSheetState.HIDDEN || state == null) {
+                        _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
+                      }
+                      _activeBottomSheetController = _homeBottomSheetController;
+                    } else if (state is home.MapOperatingState) {
+                      _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
+                      _activeBottomSheetController = _poiBottomSheetController;
+                    }
+                    _activeBottomSheetController.addListener(onBottomSheetChange);
+
+                    return DraggableBottomSheet(
+                      draggable: true,
+                      controller: _homeBottomSheetController,
+                      childScrollController: _homeBottomSheetChildrenScrollController,
+                      topPadding: (MediaQuery.of(context).padding.top),
+                      topRadius: 16,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        child: _buildHomeSheetPanel(),
+                      ),
+                    );
+                  },
+                ),
                 //tabs
                 _getContent(_currentIndex),
               ],
             )),
       ),
     );
+  }
+
+  void onBottomSheetChange() {
+    var bottom = _activeBottomSheetController?.bottom;
+    if (bottom != null) {
+      var state = fabsContainerKey.currentState as BottomFasScenesState;
+      state.updateBottomPadding(bottom, _activeBottomSheetController.anchorHeight);
+    }
   }
 
   @override

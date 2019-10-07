@@ -74,7 +74,7 @@ class _MapContentState extends State<MapContentWidget> {
                   ),
                 ),
 
-                BottomFabsWidget(draggableBottomSheetController: _draggableBottomSheetController),
+//                BottomFabsWidget(draggableBottomSheetController: _draggableBottomSheetController),
 
                 ///bottom sheet
                 Sheets(

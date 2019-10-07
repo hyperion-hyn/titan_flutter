@@ -1,3 +1,4 @@
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/dapp/dapp_define.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -100,11 +101,51 @@ class SearchPoiByTextFailState extends ScaffoldMapState {
 //  route
 //-----------------
 
-class RoutingState extends ScaffoldMapState {}
+class RoutingState extends ScaffoldMapState {
+  IPoi fromPoi;
+  IPoi toPoi;
+  String profile;
+  String language;
 
-class RouteSuccessState extends ScaffoldMapState {}
+  RoutingState({
+    this.toPoi,
+    this.profile,
+    this.fromPoi,
+    this.language,
+  });
+}
 
-class RouteFailState extends ScaffoldMapState {}
+class RouteSuccessState extends ScaffoldMapState {
+  IPoi fromPoi;
+  IPoi toPoi;
+  String profile;
+  String language;
+  RouteDataModel routeDataModel;
+
+  RouteSuccessState({
+    this.toPoi,
+    this.profile,
+    this.fromPoi,
+    this.routeDataModel,
+    this.language,
+  });
+}
+
+class RouteFailState extends ScaffoldMapState {
+  IPoi fromPoi;
+  IPoi toPoi;
+  String profile;
+  String message;
+  String language;
+
+  RouteFailState({
+    this.toPoi,
+    this.profile,
+    this.fromPoi,
+    this.message,
+    this.language,
+  });
+}
 
 //-----------------
 //  navigation

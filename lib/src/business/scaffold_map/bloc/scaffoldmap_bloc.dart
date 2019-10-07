@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/scaffold_map/dapp/dapp_define.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
@@ -27,6 +31,9 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       ScaffoldMapStore.shared.clearAll();
       yield InitialScaffoldMapState();
     }
+    //--------------
+    // poi
+    //--------------
     /*search one poi*/
     else if (event is SearchPoiEvent) {
       yield SearchingPoiState(searchingPoi: event.poi);
@@ -68,7 +75,9 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
         yield SearchPoiByTextSuccessState();
       }
     }
-    /* search text */
+    //--------------
+    // search
+    //--------------
     else if (event is SearchTextEvent) {
       yield SearchingPoiByTextState(searchText: event.searchText);
 
@@ -81,6 +90,55 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       } catch (e) {
         logger.e(e);
         yield SearchPoiByTextFailState(message: '搜索异常');
+      }
+    }
+    //--------------
+    // route
+    //--------------
+    else if (event is RouteEvent) {
+      yield RoutingState(
+        fromPoi: event.fromPoi,
+        profile: event.profile,
+        toPoi: event.toPoi,
+        language: event.language,
+      );
+
+      try {
+        String routeResp =
+            await _fetchRoute(event.fromPoi.latLng, event.toPoi.latLng, event.language, profile: event.profile);
+        var model = RouteDataModel(
+          startLatLng: event.fromPoi.latLng,
+          endLatLng: event.toPoi.latLng,
+          directionsResponse: routeResp,
+          paddingRight: event.paddingRight,
+          paddingBottom: event.paddingBottom,
+          paddingLeft: event.paddingLeft,
+          paddingTop: event.paddingTop,
+        );
+
+        yield RouteSuccessState(
+          fromPoi: event.fromPoi,
+          toPoi: event.toPoi,
+          profile: event.profile,
+          language: event.language,
+          routeDataModel: model,
+        );
+      } catch (e) {
+        logger.e(e);
+
+        yield RouteFailState(
+          fromPoi: event.fromPoi,
+          toPoi: event.toPoi,
+          profile: event.profile,
+          language: event.language,
+          message: '没有合适的路线',
+        );
+      }
+    } else if (event is ExistRouteEvent) {
+      if (currentState.getCurrentPoi() != null) {
+        yield ShowPoiState(poi: currentState.getCurrentPoi());
+      } else {
+        yield getDappHomeState();
       }
     }
   }
@@ -101,5 +159,20 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     }
 
     return state;
+  }
+
+  ///profile: driving, walking, cycling";
+  Future<String> _fetchRoute(LatLng start, LatLng end, String language, {String profile = 'driving'}) async {
+    var url =
+        'https://api.hyn.space/directions/v5/hyperion/$profile/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=polyline6&language=$language&steps=true&banner_instructions=true&voice_instructions=true&voice_units=metric&access_token=pk.hyn';
+    print(url);
+    var httpClient = new HttpClient();
+    var request = await httpClient.getUrl(Uri.parse(url));
+    var response = await request.close();
+    if (response.statusCode == HttpStatus.OK) {
+      var responseBody = await response.transform(utf8.decoder).join();
+      return responseBody;
+    }
+    throw Exception('fetch error');
   }
 }
