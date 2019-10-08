@@ -18,7 +18,6 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(

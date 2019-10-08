@@ -86,7 +86,7 @@ class _ShowWalletState extends State<ShowWallet> {
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAccountPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAccountPage(wallet.accountList[index])));
                   },
                   child: _buildAccountItem(context, wallet.accountList[index]));
             },

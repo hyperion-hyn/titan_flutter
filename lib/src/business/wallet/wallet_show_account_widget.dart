@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/wallet/model_vo.dart';
 
 import 'wallert_create_new_account_page.dart';
 import 'wallert_import_account_page.dart';
 
 class ShowAccountPage extends StatefulWidget {
+  final WalletAccountVo walletAccountVo;
+  ShowAccountPage(this.walletAccountVo);
   @override
   State<StatefulWidget> createState() {
     return _ShowAccountPageState();
@@ -29,12 +33,14 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
         toAddress: "431434123432143434")
   ];
 
+  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(
-          title: Text("Hyperion Token"),
+          title: Text("${widget.walletAccountVo.name} Token"),
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -53,17 +59,17 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                           border: Border.all(color: Colors.grey, width: 1),
                           shape: BoxShape.circle,
                         ),
-                        child: Text("HYN"),
+                        child: Text("${widget.walletAccountVo.symbol}"),
                       ),
                     ),
                     Text(
-                      "1000HYN",
+                      "${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.count)}${widget.walletAccountVo.symbol}",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        "≈USD482.98",
+                        "≈${widget.walletAccountVo.priceUnit}${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.amount)}",
                         style: TextStyle(fontSize: 14),
                       ),
                     ),
