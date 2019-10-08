@@ -225,6 +225,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       } else if (state is SearchPoiByTextSuccessState) {
         //搜索成功
         draggable = true;
+        topRadius = 16;
         topPadding = topBarHeight - 12; //减去"抓" 的范围
         dragState = DraggableBottomSheetState.ANCHOR_POINT;
         sheetPanel = SearchListPanel(

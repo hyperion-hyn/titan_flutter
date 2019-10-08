@@ -103,11 +103,11 @@ class _DraggableState extends State<DraggableBottomSheet>
   void animationNotifyListener() {
     if (_animationController.value == 1) {
       //reach top
-      if (topRadius != 0) {
-        setState(() {
-          topRadius = 0;
-        });
-      }
+//      if (topRadius != 0) {
+//        setState(() {
+//          topRadius = 0;
+//        });
+//      }
     } else if (topRadius != widget.topRadius) {
       setState(() {
         topRadius = widget.topRadius;
