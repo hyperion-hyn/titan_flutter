@@ -1,4 +1,3 @@
-import 'package:titan/src/business/scaffold_map/dapp/dapp_define.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
 class ScaffoldMapStore {
@@ -7,7 +6,7 @@ class ScaffoldMapStore {
   String searchText;
   List<IPoi> searchPoiList = [];
 
-  DAppDefine dapp = DAppDefine.NONE;
+  String dMapName;
 
   ScaffoldMapStore._();
 
@@ -16,7 +15,7 @@ class ScaffoldMapStore {
   void clearAll() {
     currentPoi = null;
     searchText = null;
-    dapp = DAppDefine.NONE;
+    dMapName = null;
     searchPoiList = [];
   }
 }

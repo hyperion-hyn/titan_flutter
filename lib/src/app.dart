@@ -9,6 +9,7 @@ import 'package:titan/src/style/theme.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'business/discover/bloc/bloc.dart';
 import 'business/home/bloc/bloc.dart';
 import 'business/home/home_page.dart';
 import 'business/home/map/bloc/bloc.dart';
@@ -86,6 +87,7 @@ class _AppState extends State<App> {
                 BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
                 BlocProvider<PurchasedMapBloc>(builder: (context) => _purchasedMapBloc),
                 BlocProvider<ScaffoldMapBloc>(builder: (context) => ScaffoldMapBloc(context)),
+                BlocProvider<DiscoverBloc>(builder: (context) => DiscoverBloc(context)),
               ],
             );
           },

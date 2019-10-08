@@ -8,7 +8,9 @@ import 'package:titan/src/inject/injector.dart';
 import '../../global.dart';
 
 class BottomFabsWidget extends StatefulWidget {
-  BottomFabsWidget({Key key}) : super(key: key);
+  final bool showBurnBtn;
+
+  BottomFabsWidget({Key key, this.showBurnBtn}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -21,7 +23,7 @@ class BottomFasScenesState extends State<BottomFabsWidget> {
   double opacity = 1;
 
   void updateBottomPadding(double bottom, double anchorHeight) {
-    if (bottom > 0 && bottom <= anchorHeight) {
+    if (bottom >= 0 && bottom <= anchorHeight) {
       setState(() {
         _fabsBottom = bottom;
         opacity = 1;
@@ -97,17 +99,18 @@ class BottomFasScenesState extends State<BottomFabsWidget> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: <Widget>[
-                FloatingActionButton(
-                  onPressed: () => _showFireModalBottomSheet(context),
-                  mini: true,
-                  heroTag: 'cleanData',
-                  backgroundColor: Colors.white,
-                  child: Image.asset(
-                    'res/drawable/ic_logo.png',
-                    width: 24,
-                    color: Colors.black87,
+                if (widget.showBurnBtn)
+                  FloatingActionButton(
+                    onPressed: () => _showFireModalBottomSheet(context),
+                    mini: true,
+                    heroTag: 'cleanData',
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      'res/drawable/ic_logo.png',
+                      width: 24,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
                 Spacer(),
                 FloatingActionButton(
                   onPressed: () {

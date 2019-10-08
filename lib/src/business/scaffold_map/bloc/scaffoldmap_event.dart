@@ -63,6 +63,15 @@ class RouteEvent extends ScaffoldMapEvent {
 
 class ExistRouteEvent extends ScaffoldMapEvent {}
 
+//---------------------
+// dmap
+//---------------------
+class InitDMapEvent extends ScaffoldMapEvent {
+  String dMapName;
+
+  InitDMapEvent({@required this.dMapName});
+}
+
 //bus event
 class GoSearchEvent {
   String searchText;

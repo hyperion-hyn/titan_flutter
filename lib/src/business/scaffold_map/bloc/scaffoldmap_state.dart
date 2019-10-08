@@ -1,6 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/business/scaffold_map/dapp/dapp_define.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
 abstract class ScaffoldMapState {
@@ -39,12 +39,12 @@ abstract class ScaffoldMapState {
     return ScaffoldMapStore.shared.searchText;
   }
 
-  DAppDefine getCurrentDapp() {
-    return ScaffoldMapStore.shared.dapp;
+  String getCurrentDMapName() {
+    return ScaffoldMapStore.shared.dMapName;
   }
 
-  void setCurrentDapp(DAppDefine dapp) {
-    ScaffoldMapStore.shared.dapp = dapp;
+  void setCurrentDMppName(String dMppName) {
+    ScaffoldMapStore.shared.dMapName = dMppName;
   }
 }
 
@@ -154,11 +154,14 @@ class RouteFailState extends ScaffoldMapState {
 class NavigationState extends ScaffoldMapState {}
 
 //-----------------
-//  dapp night life
+//  dmap
 //-----------------
-class NightLifeState extends ScaffoldMapState {}
+class InitDMapState extends ScaffoldMapState {
+  String get dMapName {
+    return getCurrentDMapName();
+  }
 
-//-----------------
-//  dapp police
-//-----------------
-class PoliceState extends ScaffoldMapState {}
+  InitDMapState({@required String dMapName}) {
+    setCurrentDMppName(dMapName);
+  }
+}

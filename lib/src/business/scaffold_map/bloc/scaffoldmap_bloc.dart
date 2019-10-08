@@ -3,9 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/business/scaffold_map/dapp/dapp_define.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import '../../../global.dart';
@@ -69,7 +67,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       //check if have search list
       var searchPoiList = currentState.getSearchPoiList();
       if (searchPoiList == null || searchPoiList.isEmpty) {
-        yield getDappHomeState();
+        yield _getHomeState();
       } else {
         //back to search state
         yield SearchPoiByTextSuccessState();
@@ -138,24 +136,25 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       if (currentState.getCurrentPoi() != null) {
         yield ShowPoiState(poi: currentState.getCurrentPoi());
       } else {
-        yield getDappHomeState();
+        yield _getHomeState();
       }
+    }
+    //--------------
+    // dmap
+    //--------------
+    else if (event is InitDMapEvent) {
+      yield InitDMapState(dMapName: event.dMapName);
     }
   }
 
-  ScaffoldMapState getDappHomeState() {
-    DAppDefine dapp = currentState.getCurrentDapp();
+  ScaffoldMapState _getHomeState() {
+    String dMapName = currentState.getCurrentDMapName();
     ScaffoldMapState state;
-    switch (dapp) {
-      case DAppDefine.NIGHT_LIFE:
-        state = NightLifeState();
-        break;
-      case DAppDefine.POLICE:
-        state = PoliceState();
-        break;
-      default:
-        state = InitialScaffoldMapState();
-        break;
+    print('dmapname $dMapName');
+    if (dMapName == null) {
+      state = InitialScaffoldMapState();
+    } else {
+      state = InitDMapState(dMapName: dMapName);
     }
 
     return state;

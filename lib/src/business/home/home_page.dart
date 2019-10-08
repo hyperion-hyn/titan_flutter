@@ -168,98 +168,90 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       ],
       child: Updater(
-        child: Scaffold(
-            resizeToAvoidBottomPadding: false,
-            drawer: DrawerScenes(),
+          child: Scaffold(
+              resizeToAvoidBottomPadding: false,
+              drawer: DrawerScenes(),
 //          endDrawer: PurchasedMapDrawerScenes(),
-            bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
-              builder: (context, state) {
-                double height;
-                if (state is home.MapOperatingState) {
-                  height = 0;
-                }
-                return AnimatedContainer(
-                  duration: Duration(milliseconds: 5000),
-                  height: height,
+              bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
+                builder: (context, state) {
+                  double height;
+                  if (state is home.MapOperatingState) {
+                    height = 0;
+                  }
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 5000),
+                    height: height,
 //                  curve: Curves.fastOutSlowIn,
-                  child: BottomNavigationBar(
-                      key: _bottomBarKey,
-                      selectedItemColor: Theme.of(context).primaryColor,
-                      unselectedItemColor: Colors.black38,
-                      showUnselectedLabels: true,
-                      selectedFontSize: 12,
-                      unselectedFontSize: 12,
-                      type: BottomNavigationBarType.fixed,
-                      onTap: (index) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
-                      },
-                      currentIndex: _currentIndex,
-                      items: [
-                        BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
-                        BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
-                        BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.explore)),
-                        BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
-                        BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
-                      ]),
-                );
-              },
-            ),
-            body: Stack(
-              children: <Widget>[
-                //地图
-                ScaffoldMap(
-                  poiBottomSheetController: _poiBottomSheetController,
-                ),
-//                Center(
-//                  child: RaisedButton(
-//                    child: Text('测试'),
-//                    onPressed: onSearch,
-//                  ),
-//                ),
-
-                //位置按钮
-                BottomFabsWidget(key: fabsContainerKey),
-
-                //首页bottom sheet
-                BlocBuilder<home.HomeBloc, home.HomeState>(
-                  bloc: BlocProvider.of<home.HomeBloc>(context),
-                  builder: (context, state) {
-                    if (state is InitialHomeState) {
-                      if (_activeBottomSheetController != null) {
-                        _activeBottomSheetController.removeListener(onBottomSheetChange);
-                      }
-
-                      var state = _homeBottomSheetController.getSheetState();
-                      if (state == DraggableBottomSheetState.HIDDEN || state == null) {
-                        _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
-                      }
-                      _activeBottomSheetController = _homeBottomSheetController;
-                    } else if (state is home.MapOperatingState) {
-                      _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
-                      _activeBottomSheetController = _poiBottomSheetController;
+                    child: BottomNavigationBar(
+                        key: _bottomBarKey,
+                        selectedItemColor: Theme.of(context).primaryColor,
+                        unselectedItemColor: Colors.black38,
+                        showUnselectedLabels: true,
+                        selectedFontSize: 12,
+                        unselectedFontSize: 12,
+                        type: BottomNavigationBarType.fixed,
+                        onTap: (index) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
+                        currentIndex: _currentIndex,
+                        items: [
+                          BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
+                          BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
+                          BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.explore)),
+                          BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
+                          BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
+                        ]),
+                  );
+                },
+              ),
+              body: BlocBuilder<home.HomeBloc, home.HomeState>(
+                bloc: BlocProvider.of<home.HomeBloc>(context),
+                builder: (context, state) {
+                  if (state is InitialHomeState) {
+                    if (_activeBottomSheetController != null) {
+                      _activeBottomSheetController.removeListener(onBottomSheetChange);
                     }
-                    _activeBottomSheetController.addListener(onBottomSheetChange);
 
-                    return DraggableBottomSheet(
-                      draggable: true,
-                      controller: _homeBottomSheetController,
-                      childScrollController: _homeBottomSheetChildrenScrollController,
-                      topPadding: (MediaQuery.of(context).padding.top),
-                      topRadius: 16,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        child: _buildHomeSheetPanel(),
+                    var state = _homeBottomSheetController.getSheetState();
+                    if (state == DraggableBottomSheetState.HIDDEN || state == null) {
+                      _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
+                    }
+                    _activeBottomSheetController = _homeBottomSheetController;
+                  } else if (state is home.MapOperatingState) {
+                    _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
+                    _activeBottomSheetController = _poiBottomSheetController;
+                  }
+                  _activeBottomSheetController.addListener(onBottomSheetChange);
+                  return Stack(
+                    children: <Widget>[
+                      //地图
+                      ScaffoldMap(
+                        poiBottomSheetController: _poiBottomSheetController,
                       ),
-                    );
-                  },
-                ),
-                //tabs
-                _getContent(_currentIndex),
-              ],
-            )),
-      ),
+
+                      //位置按钮
+                      BottomFabsWidget(key: fabsContainerKey, showBurnBtn: state is InitialHomeState,),
+
+                      //首页bottom sheet
+                      DraggableBottomSheet(
+                        draggable: true,
+                        controller: _homeBottomSheetController,
+                        childScrollController: _homeBottomSheetChildrenScrollController,
+                        topPadding: (MediaQuery.of(context).padding.top),
+                        topRadius: 16,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          child: _buildHomeSheetPanel(),
+                        ),
+                      ),
+                      //tabs
+                      _getContent(_currentIndex),
+                    ],
+                  );
+                },
+              ))),
     );
   }
 

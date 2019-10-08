@@ -456,7 +456,7 @@ class MapContainerState extends State<MapContainer> {
           if (state.getSearchPoiList().length > 0) {
             addMarkers(state.getSearchPoiList());
           }
-        } else if (state is InitialScaffoldMapState) {
+        } else if (state is InitialScaffoldMapState || state is InitDMapState) {
 //          removeMarker();
           clearAllMarkers();
           setState(() {
