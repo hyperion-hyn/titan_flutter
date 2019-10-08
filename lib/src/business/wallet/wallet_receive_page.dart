@@ -1,9 +1,18 @@
+import 'dart:io';
+
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/wallet/model_vo.dart';
 
 class WalletReceivePage extends StatefulWidget {
+  final WalletAccountVo walletAccountVo;
+
+  WalletReceivePage(this.walletAccountVo);
+
   @override
   State<StatefulWidget> createState() {
     return _WalletReceiveState();
@@ -13,10 +22,9 @@ class WalletReceivePage extends StatefulWidget {
 class _WalletReceiveState extends State<WalletReceivePage> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text("接收HYN"),
+        title: Text("接收 ${widget.walletAccountVo.symbol}"),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -35,14 +43,14 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     QrImage(
-                      data: "0x9432fewfefet4t24tfrwf4g4f3qw4f4w4f43wf4w34f4",
+                      data: widget.walletAccountVo.account.address,
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.grey[800],
                       version: 4,
                       size: 180,
                     ),
                     Text(
-                      "0x9fdr53424grgsrgresg434tgr43tw43gwrg",
+                      widget.walletAccountVo.account.address,
                       softWrap: true,
                       style: TextStyle(color: Colors.grey[500], fontSize: 16),
                     )
@@ -51,30 +59,54 @@ class _WalletReceiveState extends State<WalletReceivePage> {
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text(
-                    "30 HYN",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
-                  ),
-                  Text(
-                    "≈ USD \$1.74 ",
-                    style: TextStyle(color: Colors.grey[400], fontSize: 22),
-                  )
-                ],
-              )
-            ],
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 18),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
+                Builder(
+                  builder: (BuildContext context) {
+                    return GestureDetector(
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: widget.walletAccountVo.account.address));
+                        Scaffold.of(context).showSnackBar(SnackBar(content: Text("地址已复制")));
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            alignment: Alignment.center,
+                            width: 68,
+                            height: 68,
+                            decoration: BoxDecoration(
+                              color: HexColor("#FF3F51B5"),
+                              border: Border.all(color: Colors.grey, width: 0),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.content_copy,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "复制",
+                              style: TextStyle(
+                                color: HexColor(
+                                  "#FF3F51B5",
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
+                    Share.text("我的${widget.walletAccountVo.symbol}接收地址:", widget.walletAccountVo.account.address,
+                        "text/plain");
                   },
                   child: Column(
                     children: <Widget>[
@@ -88,14 +120,14 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.content_copy,
+                          Icons.share,
                           color: Colors.white,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "复制",
+                          "分享",
                           style: TextStyle(
                             color: HexColor(
                               "#FF3F51B5",
@@ -105,68 +137,6 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                       )
                     ],
                   ),
-                ),
-                GestureDetector(
-                  onTap: (){
-                  },
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.center,
-                        width: 68,
-                        height: 68,
-                        decoration: BoxDecoration(
-                          color: HexColor("#FF3F51B5"),
-                          border: Border.all(color: Colors.grey, width: 0),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.bookmark,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "设置数额",
-                          style: TextStyle(
-                            color: HexColor(
-                              "#FF3F51B5",
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Column(
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.center,
-                      width: 68,
-                      height: 68,
-                      decoration: BoxDecoration(
-                        color: HexColor("#FF3F51B5"),
-                        border: Border.all(color: Colors.grey, width: 0),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.share,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "分享",
-                        style: TextStyle(
-                          color: HexColor(
-                            "#FF3F51B5",
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
                 )
               ],
             ),

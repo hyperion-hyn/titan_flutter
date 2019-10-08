@@ -76,7 +76,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
     WalletAccountVo walletAccountVo = WalletAccountVo(
         account: account,
-        accessToken: token,
+        assetToken: token,
         name: token.name,
         shortName: "",
         count: balance / BigInt.from(pow(10, token.decimals)),
@@ -89,7 +89,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
     WalletAccountVo walletAccountVo = WalletAccountVo(
         account: account,
-        accessToken: token,
+        assetToken: token,
         name: token.name,
         shortName: "",
         count: balance / BigInt.from(pow(10, token.decimals)),

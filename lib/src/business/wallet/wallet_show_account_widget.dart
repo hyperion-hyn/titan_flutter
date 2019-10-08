@@ -10,7 +10,9 @@ import 'wallert_import_account_page.dart';
 
 class ShowAccountPage extends StatefulWidget {
   final WalletAccountVo walletAccountVo;
+
   ShowAccountPage(this.walletAccountVo);
+
   @override
   State<StatefulWidget> createState() {
     return _ShowAccountPageState();
@@ -81,7 +83,7 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSendPage()));
                             },
                             child: Column(
@@ -115,8 +117,9 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletReceivePage()));
+                            onTap: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => WalletReceivePage(widget.walletAccountVo)));
                             },
                             child: Column(
                               children: <Widget>[

@@ -4,7 +4,7 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class WalletAccountVo {
   Account account;
-  AssetToken accessToken;
+  AssetToken assetToken;
   String name;
   String shortName;
   double count;
@@ -15,7 +15,7 @@ class WalletAccountVo {
 
   WalletAccountVo(
       {this.account,
-      this.accessToken,
+      this.assetToken,
       this.name,
       this.shortName,
       this.count,
