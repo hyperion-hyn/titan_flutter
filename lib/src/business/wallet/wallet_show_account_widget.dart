@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/model_vo.dart';
+import 'package:titan/src/business/wallet/wallet_send_page.dart';
 
 import 'wallert_create_new_account_page.dart';
 import 'wallert_import_account_page.dart';
@@ -78,34 +79,39 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              Container(
-                                alignment: Alignment.center,
-                                width: 68,
-                                height: 68,
-                                decoration: BoxDecoration(
-                                  color: HexColor("#FF3F51B5"),
-                                  border: Border.all(color: Colors.grey, width: 0),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.arrow_upward,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "发送",
-                                  style: TextStyle(
-                                    color: HexColor(
-                                      "#FF3F51B5",
-                                    ),
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSendPage()));
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  alignment: Alignment.center,
+                                  width: 68,
+                                  height: 68,
+                                  decoration: BoxDecoration(
+                                    color: HexColor("#FF3F51B5"),
+                                    border: Border.all(color: Colors.grey, width: 0),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_upward,
+                                    color: Colors.white,
                                   ),
                                 ),
-                              )
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "发送",
+                                    style: TextStyle(
+                                      color: HexColor(
+                                        "#FF3F51B5",
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                           Column(
                             children: <Widget>[
