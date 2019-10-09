@@ -75,10 +75,10 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     var balance = await wallet.getBalance(account);
 
     WalletAccountVo walletAccountVo = WalletAccountVo(
+        wallet: wallet,
         account: account,
-        accessToken: token,
+        assetToken: token,
         name: token.name,
-        shortName: "",
         count: balance / BigInt.from(pow(10, token.decimals)),
         symbol: token.symbol);
     return walletAccountVo;
@@ -88,10 +88,10 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     var balance = await wallet.getErc20Balance(token.erc20ContractAddress);
 
     WalletAccountVo walletAccountVo = WalletAccountVo(
+        wallet: wallet,
         account: account,
-        accessToken: token,
+        assetToken: token,
         name: token.name,
-        shortName: "",
         count: balance / BigInt.from(pow(10, token.decimals)),
         symbol: token.symbol);
     return walletAccountVo;
@@ -106,8 +106,9 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
     for (var accountVo in accountList) {
       var price = priceMap[accountVo.symbol];
-      accountVo.price = price;
-      accountVo.priceUnit = QUOTE_UNIT;
+      accountVo.currencyRate = price;
+      accountVo.ethCurrencyRate = priceMap["ETH"];
+      accountVo.currencyUnit = QUOTE_UNIT;
       accountVo.amount = price * accountVo.count;
     }
   }

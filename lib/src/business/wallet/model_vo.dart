@@ -3,30 +3,32 @@ import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class WalletAccountVo {
+  TrustWallet wallet;
   Account account;
-  AssetToken accessToken;
+  AssetToken assetToken;
   String name;
-  String shortName;
   double count;
-  double price;
-  String priceUnit;
+  double currencyRate;
+  double ethCurrencyRate;
+  String currencyUnit;
   String symbol;
   double amount;
 
   WalletAccountVo(
-      {this.account,
-      this.accessToken,
+      {this.wallet,
+      this.account,
+      this.assetToken,
       this.name,
-      this.shortName,
       this.count,
-      this.price,
-      this.priceUnit,
+      this.currencyRate,
+      this.currencyUnit,
+      this.ethCurrencyRate,
       this.symbol,
       this.amount});
 }
 
 class WalletVo {
-  Wallet wallet;
+  TrustWallet wallet;
   double amount;
   String amountUnit;
   List<WalletAccountVo> accountList;
