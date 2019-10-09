@@ -1,3 +1,5 @@
+import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
 class ScaffoldMapStore {
@@ -6,7 +8,7 @@ class ScaffoldMapStore {
   String searchText;
   List<IPoi> searchPoiList = [];
 
-  String dMapName;
+  DMapConfigModel dMapConfigModel;
 
   ScaffoldMapStore._();
 
@@ -15,7 +17,7 @@ class ScaffoldMapStore {
   void clearAll() {
     currentPoi = null;
     searchText = null;
-    dMapName = null;
     searchPoiList = [];
+    dMapConfigModel = null;
   }
 }

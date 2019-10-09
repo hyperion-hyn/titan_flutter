@@ -1,12 +1,13 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
-class HeavenMapPoiInfo implements IPoi {
+class HeavenMapPoiInfo implements IDMapPoi {
   String id;
   String time;
   String phone;
   String service;
   String desc;
+  String area;
 
   @override
   String address;
@@ -19,4 +20,11 @@ class HeavenMapPoiInfo implements IPoi {
 
   @override
   LatLng latLng;
+
+  @override
+  String toString() {
+    return 'HeavenMapPoiInfo{id: $id, time: $time, phone: $phone, service: $service, desc: $desc, area: $area, address: $address, name: $name, remark: $remark, latLng: $latLng}';
+  }
+
+
 }

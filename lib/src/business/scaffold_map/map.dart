@@ -18,12 +18,17 @@ import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 import '../../global.dart';
 import 'bloc/bloc.dart';
 
+typedef Future<bool> OnMapClickHandle(BuildContext context, Point<double> point, LatLng coordinates);
+typedef Future<bool> OnMapLongPressHandle(BuildContext context, Point<double> point, LatLng coordinates);
+
 class MapContainer extends StatefulWidget {
   final List<HeavenDataModel> heavenDataList;
   final RouteDataModel routeDataModel;
   final String style;
   final double defaultZoom;
   final LatLng defaultCenter;
+  final OnMapClickHandle mapClickHandle;
+  final OnMapLongPressHandle mapLongPressHandle;
 
   final DraggableBottomSheetController bottomPanelController;
 
@@ -35,6 +40,8 @@ class MapContainer extends StatefulWidget {
     this.defaultZoom = 9.0,
     this.defaultCenter = const LatLng(23.122592, 113.327356),
     this.bottomPanelController,
+    this.mapClickHandle,
+    this.mapLongPressHandle,
   }) : super(key: key);
 
   @override
@@ -76,41 +83,46 @@ class MapContainerState extends State<MapContainer> {
   }
 
   void _onMapClick(Point<double> point, LatLng coordinates) async {
+    if (widget.mapClickHandle != null) {
+      if (await widget.mapClickHandle(context, point, coordinates)) {
+        return;
+      }
+    }
+
     var range = 10;
     Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
     if (await _clickOnMarkerLayer(rect)) {
       return;
     }
-    if (await _clickOnHeavenLayer(rect)) {
-      return;
-    }
+//    if (await _clickOnHeavenLayer(rect)) {
+//      return;
+//    }
     if (await _clickOnCommonSymbolLayer(rect)) {
       return;
     }
+
     //if click nothing on the map
     if (this.currentPoi != null) {
       BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
     }
-
-//    //clear selected poi
-//    var homeBloc = BlocProvider.of<home.HomeBloc>(context);
-//    if (homeBloc.searchText != null) {
-//      homeBloc.dispatch(home.SearchTextEvent(searchText: homeBloc.searchText));
-//    } else {
-//      homeBloc.dispatch(home.ExistSearchEvent());
-//    }
   }
 
   _onMapLongPress(Point<double> point, LatLng coordinates) async {
+    if (widget.mapLongPressHandle != null) {
+      if (await widget.mapLongPressHandle(context, point, coordinates)) {
+        return;
+      }
+    }
+
     var range = 10;
     Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
 
     if (await _clickOnMarkerLayer(rect)) {
       return;
     }
-    if (await _clickOnHeavenLayer(rect)) {
-      return;
-    }
+//    if (await _clickOnHeavenLayer(rect)) {
+//      return;
+//    }
     if (await _clickOnCommonSymbolLayer(rect)) {
       return;
     }
@@ -153,7 +165,7 @@ class MapContainerState extends State<MapContainer> {
 //      var ne = LatLng(poi.latLng.latitude + offset, poi.latLng.longitude + offset);
 //      mapboxMapController?.animateCamera(
 //          CameraUpdate.newLatLngBounds2(LatLngBounds(southwest: sw, northeast: ne), 10, top + 42, 10, 10));
-      mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 16));
+      mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
 
       currentPoi = poi;
     }
@@ -312,6 +324,12 @@ class MapContainerState extends State<MapContainer> {
         }
       } else {
         name = firstFeature["properties"]["name"];
+      }
+
+      //the same poi
+      if (currentPoi?.latLng == coordinates) {
+        print('click the same poi');
+        return true;
       }
 
       var poi = PoiEntity(name: name, latLng: coordinates);

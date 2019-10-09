@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
 abstract class ScaffoldMapState {
@@ -39,12 +40,12 @@ abstract class ScaffoldMapState {
     return ScaffoldMapStore.shared.searchText;
   }
 
-  String getCurrentDMapName() {
-    return ScaffoldMapStore.shared.dMapName;
+  DMapConfigModel get dMapConfigModel {
+    return ScaffoldMapStore.shared.dMapConfigModel;
   }
 
-  void setCurrentDMppName(String dMppName) {
-    ScaffoldMapStore.shared.dMapName = dMppName;
+  void set dMapConfigModel(DMapConfigModel viewModel) {
+    ScaffoldMapStore.shared.dMapConfigModel = viewModel;
   }
 }
 
@@ -100,8 +101,9 @@ class SearchPoiByTextFailState extends ScaffoldMapState {
 //-----------------
 //  route
 //-----------------
+abstract class MapRouteState extends ScaffoldMapState {}
 
-class RoutingState extends ScaffoldMapState {
+class RoutingState extends MapRouteState {
   IPoi fromPoi;
   IPoi toPoi;
   String profile;
@@ -115,7 +117,7 @@ class RoutingState extends ScaffoldMapState {
   });
 }
 
-class RouteSuccessState extends ScaffoldMapState {
+class RouteSuccessState extends MapRouteState {
   IPoi fromPoi;
   IPoi toPoi;
   String profile;
@@ -131,7 +133,7 @@ class RouteSuccessState extends ScaffoldMapState {
   });
 }
 
-class RouteFailState extends ScaffoldMapState {
+class RouteFailState extends MapRouteState {
   IPoi fromPoi;
   IPoi toPoi;
   String profile;
@@ -156,12 +158,10 @@ class NavigationState extends ScaffoldMapState {}
 //-----------------
 //  dmap
 //-----------------
-class InitDMapState extends ScaffoldMapState {
-  String get dMapName {
-    return getCurrentDMapName();
-  }
+abstract class BaseDMapState extends ScaffoldMapState {}
 
-  InitDMapState({@required String dMapName}) {
-    setCurrentDMppName(dMapName);
+class InitDMapState extends BaseDMapState {
+  InitDMapState({@required DMapConfigModel dMapConfigModel}) {
+    this.dMapConfigModel = dMapConfigModel;
   }
 }

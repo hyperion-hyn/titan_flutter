@@ -30,7 +30,7 @@ import 'route_bar.dart';
 final kStyleZh = 'https://static.xuantu.mobi/maptiles/see-it-all-boundary-cdn-zh.json';
 final kStyleEn = 'https://static.xuantu.mobi/maptiles/see-it-all-boundary-cdn-en.json';
 
-typedef PanelBuilder = Widget Function<POI>(BuildContext context, POI poi);
+typedef PanelBuilder = Widget Function(BuildContext context, ScrollController scrollController, IDMapPoi poi);
 
 typedef HeightCallBack = void Function(double height);
 
@@ -209,10 +209,22 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         draggable = true;
         topRadius = 16;
 //        topPadding = MediaQuery.of(context).padding.top;
-        sheetPanel = PoiPanel(
-          scrollController: _bottomChildScrollController,
-          selectedPoiEntity: state.getCurrentPoi(),
-        );
+
+        //dmap poi panel
+        if (state.dMapConfigModel?.panelBuilder != null && state.getCurrentPoi() is IDMapPoi) {
+          if (state.dMapConfigModel?.panelPaddingTop != null) {
+            topPadding = state.dMapConfigModel?.panelPaddingTop(context);
+          }
+          sheetPanel =
+              state.dMapConfigModel?.panelBuilder(context, _bottomChildScrollController, state.getCurrentPoi());
+        }
+        if (sheetPanel == null) {
+          sheetPanel = PoiPanel(
+            scrollController: _bottomChildScrollController,
+            selectedPoiEntity: state.getCurrentPoi(),
+          );
+        }
+
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is SearchPoiFailState) {
         //搜索poi失败
@@ -242,7 +254,9 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is RouteSuccessState) {
         //路线规划成功
-        sheetPanel = RoutePanel(routeDataModel: routeDataModel,);
+        sheetPanel = RoutePanel(
+          routeDataModel: routeDataModel,
+        );
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is RouteFailState) {
         //路线规划失败
@@ -261,14 +275,28 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         showOptBar = true;
       }
 
+      //---------------------------
+      // dmap
+      //---------------------------
+      List<HeavenDataModel> heavenModelList = state.dMapConfigModel?.heavenDataModelList;
+      OnMapClickHandle onMapClickHandle;
+      OnMapLongPressHandle onMapLongPressHandle;
+      onMapClickHandle = state.dMapConfigModel?.onMapClickHandle;
+      onMapLongPressHandle = state.dMapConfigModel?.onMapLongPressHandle;
+//      if (state is InitDMapState) {
+//      }
+
       return Stack(
         children: <Widget>[
           Container(), //need a container to expand the stack???
           MapContainer(
             key: Keys.mapKey,
+            heavenDataList: heavenModelList,
             bottomPanelController: widget.poiBottomSheetController,
             style: style,
             routeDataModel: routeDataModel,
+            mapClickHandle: onMapClickHandle,
+            mapLongPressHandle: onMapLongPressHandle,
           ),
           if (showSearchBar)
             SearchBar(

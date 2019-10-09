@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 
 @immutable
 abstract class DiscoverState {}
@@ -6,7 +7,7 @@ abstract class DiscoverState {}
 class InitialDiscoverState extends DiscoverState {}
 
 class ActiveDMapState extends DiscoverState {
-  final String dMapName;
+  final String name;
 
-  ActiveDMapState({@required this.dMapName});
+  ActiveDMapState({@required this.name});
 }

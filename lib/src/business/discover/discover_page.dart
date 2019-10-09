@@ -1,10 +1,13 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/discover/dapp/embassy/embassy.dart';
 import 'package:titan/src/business/discover/dapp/nightlife/nightlife.dart';
 import 'package:titan/src/business/discover/dapp/police_service/police_service.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
+import 'package:titan/src/business/scaffold_map/map.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 
 import 'bloc/bloc.dart';
@@ -28,9 +31,9 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
         bloc: BlocProvider.of<DiscoverBloc>(context),
         builder: (context, state) {
           if (state is ActiveDMapState) {
-            var fun = DMapDefine.kMapList[state.dMapName];
-            if (fun != null) {
-              return fun(context);
+            DMapCreationModel model = DMapDefine.kMapList[state.name];
+            if (model != null) {
+              return model.createDAppWidgetFunction(context);
             }
           }
 
@@ -78,7 +81,16 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                           _buildDappItem(ExtendsIconFont.point, "私密分享", "分享加密位置，绝不泄露位置信息"),
                           Divider(),
                           _buildDappItem(ExtendsIconFont.female, "夜生活指南", "夜蒲不再迷路", () {
-                            BlocProvider.of<DiscoverBloc>(context).dispatch(ActiveDMapEvent(dMapName: 'nightlife'));
+                            BlocProvider.of<DiscoverBloc>(context).dispatch(ActiveDMapEvent(name: 'nightlife'));
+                            var model = DMapDefine.kMapList['nightlife'];
+                            if (model != null) {
+                              var mapboxController =
+                                  (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+                              mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
+                                model.dMapConfigModel.defaultLocation,
+                                model.dMapConfigModel.defaultZoom,
+                              ));
+                            }
                           }),
                           Divider(),
                           _buildDappItem(ExtendsIconFont.police_car, "警察服务站", "有困难找警察"),
