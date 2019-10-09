@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/model_vo.dart';
@@ -73,7 +74,7 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        "≈${widget.walletAccountVo.priceUnit}${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.amount)}",
+                        "≈${widget.walletAccountVo.currencyUnit}${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.amount)}",
                         style: TextStyle(fontSize: 14),
                       ),
                     ),
@@ -84,7 +85,8 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSendPage()));
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => WalletSendPage(widget.walletAccountVo)));
                             },
                             child: Column(
                               children: <Widget>[
@@ -151,34 +153,44 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                               ],
                             ),
                           ),
-                          Column(
-                            children: <Widget>[
-                              Container(
-                                alignment: Alignment.center,
-                                width: 68,
-                                height: 68,
-                                decoration: BoxDecoration(
-                                  color: HexColor("#FF3F51B5"),
-                                  border: Border.all(color: Colors.grey, width: 0),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.content_copy,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "复制",
-                                  style: TextStyle(
-                                    color: HexColor(
-                                      "#FF3F51B5",
+                          Builder(
+                            builder: (BuildContext context) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Clipboard.setData(ClipboardData(text: widget.walletAccountVo.account.address));
+                                  Scaffold.of(context).showSnackBar(SnackBar(content: Text("地址已复制")));
+                                },
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      alignment: Alignment.center,
+                                      width: 68,
+                                      height: 68,
+                                      decoration: BoxDecoration(
+                                        color: HexColor("#FF3F51B5"),
+                                        border: Border.all(color: Colors.grey, width: 0),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.content_copy,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "复制",
+                                        style: TextStyle(
+                                          color: HexColor(
+                                            "#FF3F51B5",
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              )
-                            ],
+                              );
+                            },
                           )
                         ],
                       ),

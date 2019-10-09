@@ -86,7 +86,11 @@ class _ShowWalletState extends State<ShowWallet> {
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowAccountPage(wallet.accountList[index])));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ShowAccountPage(wallet.accountList[index]),
+                            settings: RouteSettings(name: "/show_account_page")));
                   },
                   child: _buildAccountItem(context, wallet.accountList[index]));
             },
@@ -122,7 +126,7 @@ class _ShowWalletState extends State<ShowWallet> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${account.priceUnit}${DOUBLE_NUMBER_FORMAT.format(account.price)}",
+                    "${account.currencyUnit}${DOUBLE_NUMBER_FORMAT.format(account.currencyRate)}",
                     style: TextStyle(fontSize: 11, color: HexColor("#FF848181")),
                   ),
                 ),
@@ -142,7 +146,7 @@ class _ShowWalletState extends State<ShowWallet> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${account.priceUnit}${DOUBLE_NUMBER_FORMAT.format(account.amount)}",
+                    "${account.currencyUnit}${DOUBLE_NUMBER_FORMAT.format(account.amount)}",
                     style: TextStyle(fontSize: 11, color: HexColor("#FF848181")),
                   ),
                 ),

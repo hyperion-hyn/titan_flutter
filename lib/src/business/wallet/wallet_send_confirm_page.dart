@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/wallet/model_vo.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+
+import '../../global.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
+  final WalletAccountVo walletAccountVo;
+  final double count;
+  final String receiverAddress;
+
+  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress);
+
   @override
   State<StatefulWidget> createState() {
     return _WalletSendConfirmState();
@@ -9,6 +23,16 @@ class WalletSendConfirmPage extends StatefulWidget {
 }
 
 class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
+  double ethFee = 0.0;
+  double usdFee = 0.0;
+
+  NumberFormat currency_format = new NumberFormat("#,###.##");
+
+  @override
+  void initState() {
+    _getGasFee();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,12 +61,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: Text(
-                      "-50HYN",
+                      "-${widget.count} ${widget.walletAccountVo.symbol}",
                       style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24),
                     ),
                   ),
                   Text(
-                    "(USD\$2.91)",
+                    "(${widget.walletAccountVo.currencyUnit}${currency_format.format(widget.count * widget.walletAccountVo.currencyRate)})",
                     style: TextStyle(color: Colors.grey[500], fontSize: 16),
                   )
                 ],
@@ -63,8 +87,10 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "主钱包1(0x89r3wr32feafedfaffdafsdfd)",
+                          "${(widget.walletAccountVo.wallet.keystore as TrustWalletKeyStore).name}(${widget.walletAccountVo.account.address})",
                           style: TextStyle(fontSize: 16, color: Colors.black54),
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
                         ),
                       )
                     ],
@@ -87,7 +113,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "0x89r3wr32feafedfaffdafsdfd5425454235432245",
+                          widget.receiverAddress,
                           style: TextStyle(fontSize: 16, color: Colors.black54),
                         ),
                       )
@@ -107,7 +133,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                   ),
                   Spacer(),
                   Text(
-                    "0.000058985 ETH(USD\$0.10)",
+                    "${ethFee * widget.count} ETH(USD ${currency_format.format(usdFee * widget.count)})",
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   )
                 ],
@@ -141,7 +167,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                     color: Colors.blue,
                     padding: EdgeInsets.symmetric(horizontal: 128, vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    onPressed: () {},
+                    onPressed: () {
+                      _transfer();
+                    },
                     child: Text(
                       "发送",
                       style: TextStyle(color: Colors.white),
@@ -152,5 +180,54 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
             ])
           ],
         ));
+  }
+
+  Future _getGasFee() async {
+    var fromAddress = widget.walletAccountVo.account.address;
+    var toAddress = widget.receiverAddress;
+    var contract = widget.walletAccountVo.assetToken.erc20ContractAddress;
+    var decimals = 18;
+    var amount = 13.45;
+    var gasFee = await WalletUtil.estimateGas(
+        fromAddress: fromAddress,
+        toAddress: toAddress,
+        coinType: CoinType.ETHEREUM,
+        erc20ContractAddress: contract,
+        amount: Convert.numToWei(amount, decimals).toRadixString(16));
+
+    ethFee = Convert.weiToNum(gasFee).toDouble();
+    usdFee = ethFee * widget.walletAccountVo.ethCurrencyRate;
+
+    logger.i('费率是 $ethFee eth');
+    logger.i('费率是 $usdFee usd');
+
+    setState(() {});
+  }
+
+  Future _transfer() async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(child: Container(width: 48, height: 48, child: CircularProgressIndicator()));
+        });
+    var password = 'my password';
+    var amount = Convert.numToWei(widget.count).toRadixString(16);
+    try {
+      var txHash = await WalletUtil.transferErc20Token(
+        password: password,
+        fileName: widget.walletAccountVo.wallet.keystore.fileName,
+        erc20ContractAddress: widget.walletAccountVo.assetToken.erc20ContractAddress,
+        fromAddress: widget.walletAccountVo.account.address,
+        toAddress: widget.receiverAddress,
+        amount: amount,
+      );
+
+      logger.i('HYN交易已提交，交易hash $txHash');
+
+      Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
+    } catch (e) {
+      Navigator.of(context).pop();
+      logger.e(e);
+    }
   }
 }
