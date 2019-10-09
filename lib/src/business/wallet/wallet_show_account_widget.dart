@@ -7,15 +7,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/etherscan_api.dart';
 import 'package:titan/src/business/wallet/model/erc20_transfer_history.dart';
+import 'package:titan/src/business/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/business/wallet/model_vo.dart';
 import 'package:titan/src/business/wallet/wallet_receive_page.dart';
 import 'package:titan/src/business/wallet/wallet_send_page.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/utils.dart';
-
-import 'wallert_create_new_account_page.dart';
-import 'wallert_import_account_page.dart';
 
 class ShowAccountPage extends StatefulWidget {
   final WalletAccountVo walletAccountVo;
@@ -273,7 +270,7 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
 
     return Column(
       children: <Widget>[
-        if(isShowTime)
+        if (isShowTime)
           Column(
             children: <Widget>[
               Divider(
@@ -345,6 +342,14 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
   }
 
   Future _getTransferList(int page) async {
+    if (widget.walletAccountVo.symbol == "ETH") {
+      _getEthTransferList(page);
+    } else {
+      _getErc20TransferList(page);
+    }
+  }
+
+  Future _getErc20TransferList(int page) async {
     var contractAddress = widget.walletAccountVo.assetToken.erc20ContractAddress;
 
     List<Erc20TransferHistory> erc20TransferHistoryList =
@@ -365,6 +370,41 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
           fromAddress: erc20TransferHistory.from,
           toAddress: erc20TransferHistory.to,
           time: int.parse(erc20TransferHistory.timeStamp + "000"));
+    }).toList();
+    if (page == 0) {
+      _transtionDetails.clear();
+      _transtionDetails.addAll(detailList);
+    } else {
+      if (detailList.length == 0) {
+        return;
+      }
+      _transtionDetails.addAll(detailList);
+    }
+    _currentPage = page;
+    setState(() {});
+  }
+
+  Future _getEthTransferList(int page) async {
+    var contractAddress = widget.walletAccountVo.assetToken.erc20ContractAddress;
+
+    List<EthTransferHistory> ethTransferHistoryList =
+        await _etherscanApi.queryEthHistory( widget.walletAccountVo.account.address, page);
+
+    List<TranstionDetailVo> detailList = ethTransferHistoryList.map((ethTransferHistory) {
+      var type = 0;
+      if (ethTransferHistory.from == widget.walletAccountVo.account.address.toLowerCase()) {
+        type = TranstionType.TRANSFER_OUT;
+      } else if (ethTransferHistory.to == widget.walletAccountVo.account.address.toLowerCase()) {
+        type = TranstionType.TRANSFER_IN;
+      }
+      return TranstionDetailVo(
+          type: type,
+          state: 0,
+          amount: Convert.weiToNum(BigInt.parse(ethTransferHistory.value)).toDouble(),
+          unit: "ETH",
+          fromAddress: ethTransferHistory.from,
+          toAddress: ethTransferHistory.to,
+          time: int.parse(ethTransferHistory.timeStamp + "000"));
     }).toList();
     if (page == 0) {
       _transtionDetails.clear();
