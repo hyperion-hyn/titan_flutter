@@ -70,10 +70,13 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     /*clear selected poi*/
     else if (event is ClearSelectPoiEvent) {
       //check if have search list
+      print('xx1');
       var searchPoiList = currentState.getSearchPoiList();
       if (searchPoiList == null || searchPoiList.isEmpty) {
+        print('xx2');
         yield _getHomeState();
       } else {
+        print('xx3');
         //back to search state
         yield SearchPoiByTextSuccessState();
       }
@@ -159,7 +162,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   ScaffoldMapState _getHomeState() {
     DMapConfigModel dmap = currentState.dMapConfigModel;
     ScaffoldMapState state;
-    print('dmapname ${dmap.dMapName}');
+    print('dmapname ${dmap?.dMapName}');
     if (dmap == null) {
       state = InitialScaffoldMapState();
     } else {
