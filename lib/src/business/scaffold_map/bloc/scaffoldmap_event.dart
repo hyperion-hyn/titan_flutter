@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
 abstract class ScaffoldMapEvent {
@@ -62,6 +63,16 @@ class RouteEvent extends ScaffoldMapEvent {
 }
 
 class ExistRouteEvent extends ScaffoldMapEvent {}
+
+//---------------------
+// dmap
+//---------------------
+
+class InitDMapEvent extends ScaffoldMapEvent {
+  final DMapConfigModel dMapConfigModel;
+
+  InitDMapEvent({@required this.dMapConfigModel});
+}
 
 //bus event
 class GoSearchEvent {

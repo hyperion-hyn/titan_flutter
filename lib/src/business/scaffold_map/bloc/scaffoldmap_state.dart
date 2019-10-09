@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/business/scaffold_map/dapp/dapp_define.dart';
+import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
 abstract class ScaffoldMapState {
@@ -39,12 +40,12 @@ abstract class ScaffoldMapState {
     return ScaffoldMapStore.shared.searchText;
   }
 
-  DAppDefine getCurrentDapp() {
-    return ScaffoldMapStore.shared.dapp;
+  DMapConfigModel get dMapConfigModel {
+    return ScaffoldMapStore.shared.dMapConfigModel;
   }
 
-  void setCurrentDapp(DAppDefine dapp) {
-    ScaffoldMapStore.shared.dapp = dapp;
+  void set dMapConfigModel(DMapConfigModel viewModel) {
+    ScaffoldMapStore.shared.dMapConfigModel = viewModel;
   }
 }
 
@@ -100,8 +101,9 @@ class SearchPoiByTextFailState extends ScaffoldMapState {
 //-----------------
 //  route
 //-----------------
+abstract class MapRouteState extends ScaffoldMapState {}
 
-class RoutingState extends ScaffoldMapState {
+class RoutingState extends MapRouteState {
   IPoi fromPoi;
   IPoi toPoi;
   String profile;
@@ -115,7 +117,7 @@ class RoutingState extends ScaffoldMapState {
   });
 }
 
-class RouteSuccessState extends ScaffoldMapState {
+class RouteSuccessState extends MapRouteState {
   IPoi fromPoi;
   IPoi toPoi;
   String profile;
@@ -131,7 +133,7 @@ class RouteSuccessState extends ScaffoldMapState {
   });
 }
 
-class RouteFailState extends ScaffoldMapState {
+class RouteFailState extends MapRouteState {
   IPoi fromPoi;
   IPoi toPoi;
   String profile;
@@ -154,11 +156,12 @@ class RouteFailState extends ScaffoldMapState {
 class NavigationState extends ScaffoldMapState {}
 
 //-----------------
-//  dapp night life
+//  dmap
 //-----------------
-class NightLifeState extends ScaffoldMapState {}
+abstract class BaseDMapState extends ScaffoldMapState {}
 
-//-----------------
-//  dapp police
-//-----------------
-class PoliceState extends ScaffoldMapState {}
+class InitDMapState extends BaseDMapState {
+  InitDMapState({@required DMapConfigModel dMapConfigModel}) {
+    this.dMapConfigModel = dMapConfigModel;
+  }
+}
