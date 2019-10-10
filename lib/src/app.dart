@@ -17,6 +17,8 @@ import 'business/home/searchbar/bloc/bloc.dart';
 import 'business/home/sheets/bloc/bloc.dart';
 import 'business/scaffold_map/bloc/bloc.dart';
 import 'business/updater/bloc/bloc.dart';
+import 'global.dart';
+import 'guide.dart';
 
 class App extends StatefulWidget {
   @override
@@ -49,49 +51,8 @@ class _AppState extends State<App> {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: S.delegate.supportedLocales,
-        home: Builder(
-          key: Keys.mainContextKey,
-          builder: (context) {
-            var sheetsBloc = SheetsBloc();
-            var mapBloc = MapBloc();
-            var searchBarBloc = SearchbarBloc();
-            var homeBloc = HomeBloc();
-            var _purchasedMapBloc = PurchasedMapBloc(mapBloc);
-            homeBloc.mapBloc = mapBloc;
-            homeBloc.searchBarBloc = searchBarBloc;
-            homeBloc.sheetBloc = sheetsBloc;
-
-            sheetsBloc.homeBloc = homeBloc;
-            mapBloc.homeBloc = homeBloc;
-            mapBloc.sheetsBloc = sheetsBloc;
-            searchBarBloc.homeBloc = homeBloc;
-
-            DateTime _lastPressedAt;
-
-            return MultiBlocProvider(
-              child: WillPopScope(
-                onWillPop: () async {
-                  if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
-                    _lastPressedAt = DateTime.now();
-                    Fluttertoast.showToast(msg: '再按一下退出程序');
-                    return false;
-                  }
-                  return true;
-                },
-                child: HomePage(),
-              ),
-              providers: [
-                BlocProvider<SheetsBloc>(builder: (context) => sheetsBloc..context = context),
-                BlocProvider<MapBloc>(builder: (context) => mapBloc..context = context),
-                BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
-                BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
-                BlocProvider<PurchasedMapBloc>(builder: (context) => _purchasedMapBloc),
-                BlocProvider<ScaffoldMapBloc>(builder: (context) => ScaffoldMapBloc(context)),
-                BlocProvider<DiscoverBloc>(builder: (context) => DiscoverBloc(context)),
-              ],
-            );
-          },
-        ),
+        home: GuidePage(),
+        navigatorObservers: [routeObserver],
       ),
     );
   }

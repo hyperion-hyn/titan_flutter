@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 
 class Const {
   static const String DOMAIN = 'https://api.hyn.space/';
@@ -8,10 +10,17 @@ class Const {
   static const String CIPHER_TEXT_PREFIX = "titan_cipher";
   static const String CIPHER_TOKEN_PREFIX = "titan_cls";
 
-
-
   static const String MAP_STORE_DOMAIN = "https://store.map3.network/";
+
 //    static const String MAP_STORE_DOMAIN = "http://10.10.1.119:3000/"
+
+  static const String MAP_RICH_DOMAIN = "http://10.10.1.116:3000/";
+
+  static Color PRIMARY_COLOR = HexColor("#FF259B24");
+
+  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
+
+  static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
 }
 
 class Keys {

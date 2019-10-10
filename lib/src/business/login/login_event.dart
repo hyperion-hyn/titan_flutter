@@ -1,0 +1,3 @@
+class ReloginEvent {}
+
+class LoginSuccessEvent {}
