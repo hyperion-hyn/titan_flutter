@@ -120,6 +120,22 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - res/drawable/ic_hyperion.png
+    - res/drawable/ic_bank.png
+    - res/drawable/ic_cybercafe.png
+    - res/drawable/ic_food.png
+    - res/drawable/ic_gas_station.png
+    - res/drawable/ic_hotel.png
+    - res/drawable/ic_market.png
+    - res/drawable/ic_park.png
+    - res/drawable/ic_scenic_spotx.png
+    - res/drawable/ic_supermarket.png
+    - res/drawable/ic_wc.png
+    - res/drawable/data.png
+    - res/drawable/global.png
+    - res/drawable/hyperion.png
+    - res/drawable/hyn.png
+    - res/drawable/rock.png
     - res/drawable/ic_logo.png
     - res/drawable/logo_title.png
     - res/drawable/share_app_en_android.jpeg
