@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Titan</string>
+    <string name="app_name">MapRich</string>
 
     <string name="qrcode_scan_qrcode">Scan QR Code</string>
     <string name="qrcode_scan_tips">Position QR Code in the frame</string>
