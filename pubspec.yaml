@@ -153,6 +153,7 @@ flutter:
     - res/drawable/google_play.svg
     - res/drawable/onboarding_lock.png
     - res/eth/hyn_abi.json
+    - res/drawable/default_avator.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

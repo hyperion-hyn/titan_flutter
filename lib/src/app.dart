@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -39,20 +40,28 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return BlocProvider(
       builder: (context) => AppBloc(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        key: Keys.materialAppKey,
-        title: 'Titan',
-        theme: appTheme,
-        localizationsDelegates: [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        home: GuidePage(),
-        navigatorObservers: [routeObserver],
+      child: RefreshConfiguration(
+        footerTriggerDistance: 15,
+        dragSpeedRatio: 0.91,
+        headerBuilder: () => MaterialClassicHeader(),
+        footerBuilder: () => ClassicFooter(),
+        autoLoad: true,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          key: Keys.materialAppKey,
+          title: 'Titan',
+          theme: appTheme,
+          localizationsDelegates: [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            RefreshLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: GuidePage(),
+          navigatorObservers: [routeObserver],
+        ),
       ),
     );
   }
