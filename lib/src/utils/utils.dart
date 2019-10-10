@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/i18n.dart';
 
-String getExpiredTimeShowTip(BuildContext context,int expireTime) {
+String getExpiredTimeShowTip(BuildContext context, int expireTime) {
   var timeLeft = (expireTime - DateTime.now().millisecondsSinceEpoch) ~/ 1000;
   var day = 3600 * 24;
   var hour = 3600;
@@ -21,4 +21,8 @@ String getExpiredTimeShowTip(BuildContext context,int expireTime) {
   } else {
     return S.of(context).generating_key;
   }
+}
+
+String shortEthAddress(String address) {
+  return address.substring(0, 7) + "..." + address.substring(address.length - 7, address.length);
 }
