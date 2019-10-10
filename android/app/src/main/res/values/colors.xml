@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/colorPrimary_black</color>
+    <color name="colorPrimaryDark">@color/colorPrimary_black</color>
+    <color name="colorAccent">@color/colorAccent_black</color>
+
+    <color name="window_background">#f9f9f9</color>
+
+    <color name="colorPrimaryDark_red">#ffD32F2F</color>
+    <color name="colorAccent_red">#ff2196F3</color>
+
+    <color name="textColorPrimary">@color/black_trans_87</color>
+    <color name="textColorSecondary">@color/black_trans_54</color>
+
+    <color name="colorPrimary_black">#ff212121</color>
+    <color name="colorPrimaryDark_black">#ff000000</color>
+    <color name="colorAccent_black">@color/colorAccent_red</color>
+
+    <color name="text_link">#ff4063ce</color>
+
+    <!--black text-->
+    <color name="black">#ff000000</color>
+    <!--Primary text-->
+    <color name="black_trans_87">#de000000</color>
+    <color name="black_trans_67">#ac000000</color>
+    <!--Secondary text-->
+    <color name="black_trans_54">#8f000000</color>
+    <!--Disabled text, hint text, and icons-->
+    <!--Dividers-->
+
+    <!--white text-->
+    <!--Primary text-->
+    <color name="white">#ffffffff</color>
+    <!--Secondary text-->
+    <color name="white_trans_87">#deffffff</color>
+    <color name="white_trans_70">#b3ffffff</color>
+    <!--Disabled text, hint text, and icons-->
+    <!--click feedback-->
+    <!--Dividers-->
+
+    <color name="normal_grey">#636463</color>
+    <color name="light_grey">#ff959595</color>
+    <color name="press_color">#eeeeee</color>
+    <color name="light_light_gray">#eeeeee</color>
+    <color name="nav_icon">#636463</color>
+    <color name="line">#0f000000</color>
+    <color name="route_profile_selected_tint">#3672e0</color>
+</resources>

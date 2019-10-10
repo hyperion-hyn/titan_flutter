@@ -1,0 +1,169 @@
+name: titan
+description: Titan Flutter application.
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.3.0+28
+
+environment:
+  sdk: ">=2.2.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  #https://plugins.jetbrains.com/plugin/10128-flutter-i18n
+  flutter_localizations:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^0.1.2
+
+  #https://github.com/flutterchina/dio
+  dio: ^3.0.1
+  #https://pub.dev/packages/package_info
+  package_info: ^0.4.0+4
+  #https://github.com/baseflowit/flutter-permission-handler
+  permission_handler: '^3.1.0'
+  #https://pub.dev/packages/event_bus#-installing-tab-
+  event_bus: ^1.1.0
+  #https://pub.dev/packages/fluttertoast
+  fluttertoast: ^3.1.0
+  #  flutter_webview_plugin: ^0.3.5
+  #https://github:com/dnfield/flutter_svg:
+  flutter_svg: ^0.13.0+2
+  #https://pub.dev/packages/in_app_purchase#-installing-tab-
+  in_app_purchase: ^0.2.1+3
+  #https://github.com/apptreesoftware/flutter_barcode_reader
+  #  barcode_scan: ^1.0.0
+  #https://pub.dev/packages/path_provider#-installing-tab-
+  path_provider: ^1.1.0
+  #https://pub.dev/packages/qr_flutter#-installing-tab-
+  qr_flutter: ^2.0.0+51
+  #https://pub.dev/packages/sqflite#-installing-tab-
+  sqflite: ^1.1.5
+  #https://pub.dev/packages/shared_preferences#-installing-tab-
+  shared_preferences: ^0.5.3+1
+  #https://pub.dev/packages/flutter_bloc
+  flutter_bloc: ^0.20.0
+  #https://pub.dev/packages/equatable#-readme-tab-
+  equatable: ^0.2.6
+  #https://pub.dev/packages/flutter_bugly#-installing-tab-
+  #flutter_bugly: ^0.2.3+1
+  #https://pub.dev/packages/logger#-installing-tab-
+  logger: ^0.7.0+2
+  #https://pub.dev/packages/flutter_statusbarcolor#-installing-tab-
+  flutter_statusbarcolor: ^0.2.1
+  #https://github.com/dart-lang/json_serializable
+  json_annotation: ^2.4.0
+  #https://pub.dev/packages/esys_flutter_share
+  esys_flutter_share: 1.0.2
+  #https://pub.dev/packages/uni_links
+  uni_links: 0.2.0
+  #https://pub.dev/packages/intro_slider#demo:
+  intro_slider: ^2.2.6
+  #https://pub.dev/packages/barcode_scan
+  barcode_scan: 1.0.0
+  #https://pub.dev/packages/flutter_downloader/versions/0.0.6#-installing-tab-
+  flutter_downloader: ^1.1.7
+  #https://pub.dev/packages/flutter_html:
+  flutter_html: ^0.10.4
+  #https://pub.dev/packages/sprintf
+  sprintf: ^4.0.2
+  #https://github.com/tobrun/flutter-mapbox-gl
+  mapbox_gl:
+    path: ../mapbox_flutter
+
+  #fire base 全家桶
+  firebase_core: ^0.4.0
+  firebase_crashlytics: ^0.1.0
+  firebase_analytics: ^5.0.0
+  #https://pub.dev/packages/floor
+  floor: ^0.8.0
+  #https://pub.dev/packages/rxdart
+  rxdart: 0.22.2
+  #https://pub.dev/packages/url_launcher
+  url_launcher: 5.1.2
+  decimal: ^0.3.5
+  #https://pub.dev/packages/carousel_pro
+  carousel_pro: ^1.0.0
+  web3dart: ^1.1.1
+  intl: 0.15.8
+  webview_flutter: ^0.3.14+1
+  pull_to_refresh: ^1.5.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  build_runner: ^1.6.7
+  json_serializable: ^3.1.0
+  floor_generator: ^0.7.0
+
+  #https://github.com/dart-lang/mockito
+  mockito: ^4.0.0
+
+
+# For information on the generic Dart part of this file, see the
+# following page: https://www.dartlang.org/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - res/drawable/ic_logo.png
+    - res/drawable/logo_title.png
+    - res/drawable/share_app_en_android.jpeg
+    - res/drawable/share_app_zh_android.jpeg
+    - res/drawable/burn.jpeg
+    - res/drawable/burn_zh.jpeg
+    - res/drawable/encrypted_location.jpeg
+    - res/drawable/encrypted_location_zh.jpeg
+    - res/drawable/location_privacy.jpeg
+    - res/drawable/location_privacy_zh.jpeg
+    - res/drawable/map_layer.svg
+    - res/drawable/empty_box.svg
+    - res/drawable/shop_car.svg
+    - res/drawable/alipay.svg
+    - res/drawable/google_play.svg
+    - res/drawable/onboarding_lock.png
+    - res/eth/hyn_abi.json
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: iconfont
+      fonts:
+        - asset: res/fonts/iconfont.ttf
+
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Titan</string>
+
+    <string name="qrcode_scan_qrcode">Scan QR Code</string>
+    <string name="qrcode_scan_tips">Position QR Code in the frame</string>
+    <string name="album">Photos</string>
+    <string name="qrcode_scan_public_key_qrcode_tips">Scan QR code of encrypted key. (public key)</string>
+    <string name="qrcode_camera_auth_fail">Camera authorization failed</string>
+    <string name="qrcode_open_camera_error">Camera Error</string>
+</resources>

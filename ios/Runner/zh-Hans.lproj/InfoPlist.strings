@@ -1,0 +1,17 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by moo on 2019/7/29.
+  Copyright © 2019 The Chromium Authors. All rights reserved.
+*/
+CFBundleDisplayName = "Titan";
+NSLocationAlwaysAndWhenInUseUsageDescription = "用于显示您当前的位置和导航";
+NSLocationWhenInUseUsageDescription = "用于显示您当前的位置和导航";
+NSLocationAlwaysUsageDescription = "用于显示您当前的位置和导航";
+NSSpeechRecognitionUsageDescription = "请允许获得语音转文字权限";
+NSMotionUsageDescription = "请允许获得运动权限";
+NSAppleMusicUsageDescription = "请允许获得Apple Music权限";
+NSCalendarsUsageDescription = "请允许获得日历权限";
+NSContactsUsageDescription = "请允许获得通讯录权限";
+NSCameraUsageDescription = "用于扫描公钥二维码";
