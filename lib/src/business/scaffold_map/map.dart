@@ -513,7 +513,7 @@ class MapContainerState extends State<MapContainer> {
                       target: widget.defaultCenter,
                       zoom: widget.defaultZoom,
                     ),
-                    rotateGesturesEnabled: true,
+                    rotateGesturesEnabled: false,
                     tiltGesturesEnabled: false,
                     enableLogo: false,
                     enableAttribution: false,
