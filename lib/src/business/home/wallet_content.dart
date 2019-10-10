@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/business/map3/map3_description.dart';
+import 'package:titan/src/business/map3/map3_node_introduction.dart';
 import 'package:titan/src/business/wallet/wallet_page.dart';
 
 class WalletContentWidget extends StatefulWidget {
@@ -26,7 +26,7 @@ class _WalletContentState extends State<WalletContentWidget> {
                     flex: 3,
                     child: TabBar(
                       labelColor: Colors.black,
-                      labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 18),
+                      labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 16),
                       indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: Theme.of(context).primaryColor,
                       indicatorWeight: 5,
@@ -49,7 +49,7 @@ class _WalletContentState extends State<WalletContentWidget> {
             ),
           ),
         ),
-        body: TabBarView(children: [WalletPage(), Map3DescriptionPage()]),
+        body: TabBarView(children: [WalletPage(), Map3NodeIntroductionPage()]),
       ),
     );
   }
