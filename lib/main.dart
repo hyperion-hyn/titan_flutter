@@ -1,9 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-
-//import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/domain/firebase.dart';
 
@@ -34,8 +30,6 @@ void main() {
   runApp(Injector(
     child: FireBaseLogic(
       child: App(),
-      analytics: FirebaseAnalytics(),
-      crashlytics: Crashlytics.instance,
     ),
     repository: repository,
     searchInteractor: searchInteractor,

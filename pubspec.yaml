@@ -81,11 +81,6 @@ dependencies:
   #https://github.com/tobrun/flutter-mapbox-gl
   mapbox_gl:
     path: ../mapbox_flutter
-
-  #fire base 全家桶
-  firebase_core: ^0.4.0
-  firebase_crashlytics: ^0.1.0
-  firebase_analytics: ^5.0.0
   #https://pub.dev/packages/floor
   floor: ^0.8.0
   #https://pub.dev/packages/rxdart
