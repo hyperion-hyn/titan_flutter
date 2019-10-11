@@ -307,7 +307,7 @@ class _PurchaseState extends State<PurchasePage> {
                       ),
                     ),
                   ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               ),
               Padding(
@@ -338,7 +338,7 @@ class _PurchaseState extends State<PurchasePage> {
                       ),
                     ),
                   ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               )
             ],
@@ -417,10 +417,10 @@ class _PurchaseState extends State<PurchasePage> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.only(top: 24),
                 child: RaisedButton(
                   elevation: 1,
-                  color: Theme.of(context).primaryColor,
+                  color: Color(0xFFD6A734),
                   onPressed: () async {
                     if (userInfo != null && payOrder != null) {
                       if (userInfo.balance < payOrder.amount) {
@@ -460,7 +460,7 @@ class _PurchaseState extends State<PurchasePage> {
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ))),
                   ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               ),
             ],
