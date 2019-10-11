@@ -49,12 +49,12 @@ class NightLifeState extends State<NightLife> {
                           child: Ink(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              '退出',
+                              '关闭',
                               style: TextStyle(color: Colors.blueAccent),
                             ),
                           ),
                         ),
-                        alignment: Alignment.centerRight,
+                        alignment: Alignment.centerLeft,
                       ),
                     ],
                   ),
