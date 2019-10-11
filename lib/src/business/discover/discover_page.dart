@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
+import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 
+import '../../global.dart';
 import 'bloc/bloc.dart';
 
 class DiscoverPageWidget extends StatefulWidget {
@@ -103,8 +105,13 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: InkWell(
-                                onTap: () {
-                                  print('on share');
+                                onTap: () async {
+                                  activeDMap('encryptShare');
+                                  var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+                                  var lastLocation = await mapboxController?.lastKnownLocation();
+                                  if(lastLocation != null) {
+                                    mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
+                                  }
                                 },
                                 borderRadius: BorderRadius.all(Radius.circular(4)),
                                 child: Container(
@@ -271,7 +278,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                               Padding(
                                                 padding: const EdgeInsets.only(top: 16.0),
                                                 child: Text(
-                                                  '警察服务站',
+                                                  '警察安全站',
                                                   style: TextStyle(fontWeight: FontWeight.w600),
                                                 ),
                                               ),
@@ -316,13 +323,16 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
 
   void activeDMap(String dMapName) {
     BlocProvider.of<DiscoverBloc>(context).dispatch(ActiveDMapEvent(name: dMapName));
+
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {
       var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
-      mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
-        model.dMapConfigModel.defaultLocation,
-        model.dMapConfigModel.defaultZoom,
-      ));
+      if(model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
+        mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
+          model.dMapConfigModel.defaultLocation,
+          model.dMapConfigModel.defaultZoom,
+        ));
+      }
     }
   }
 }

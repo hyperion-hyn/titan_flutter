@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/business/discover/dapp/encrypt_share/encrypt_share.dart';
 import 'package:titan/src/business/discover/dapp/police_service/police_station_panel.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
@@ -16,6 +17,7 @@ import 'package:titan/src/model/poi_interface.dart';
 import 'dapp/embassy/embassy.dart';
 import 'dapp/embassy/embassy_poi_panel.dart';
 import 'dapp/embassy/model/model.dart';
+import 'dapp/encrypt_share/share_pois_panel.dart';
 import 'dapp/nightlife/nightlife.dart';
 import 'dapp/nightlife/nightlife_poi_panel.dart';
 import 'dapp/police_service/model/model.dart';
@@ -50,7 +52,7 @@ DMapConfigModel get nightLifeDMapConfigModel {
         var poi;
         var feature = await _getFeature(point, coordinates, 'layer-heaven-2c6bfb5fb5714f4f9f42ed01ac486a35');
         if (feature != null) {
-          poi = _convertHeavenMapPoiInfoFromFeature(feature);
+          poi = HeavenMapPoiInfo.fromMapFeature(feature);
           if (poi != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
           }
@@ -148,6 +150,24 @@ final policeDMapConfigModel = DMapConfigModel(
   },
 );
 
+//位置加密分享
+final encryptShareDMapConfigModel = DMapConfigModel(
+  dMapName: 'encryptShare',
+  onMapClickHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
+    print('on click encrypt share');
+    return true;
+  },
+  onMapLongPressHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
+    print('on long press encrypt share');
+    return true;
+  },
+  alwaysShowPanel: true,
+  panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
+    print('xxx3');
+    return SharePoisPanel(scrollController: scrollController);
+  },
+);
+
 Future<Map<String, dynamic>> _getFeature(Point<double> point, LatLng coordinates, String layerId) async {
   var range = 20;
   Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
@@ -159,23 +179,6 @@ Future<Map<String, dynamic>> _getFeature(Point<double> point, LatLng coordinates
   return null;
 }
 
-HeavenMapPoiInfo _convertHeavenMapPoiInfoFromFeature(Map<String, dynamic> feature) {
-  HeavenMapPoiInfo poi = HeavenMapPoiInfo();
-
-  poi.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
-  var lat = double.parse(feature["properties"]["lat"]);
-  var lon = double.parse(feature["properties"]["lon"]);
-  poi.latLng = LatLng(lat, lon);
-  poi.time = feature["properties"]["time"];
-  poi.phone = feature["properties"]["telephone"];
-  poi.service = feature["properties"]["service"];
-  poi.address = feature["properties"]["address"];
-  poi.desc = feature["properties"]["desc"];
-  poi.name = feature["properties"]["name"];
-  poi.area = feature["properties"]["area"];
-  return poi;
-}
-
 MapboxMapController get mapboxMapController {
   return (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
 }
@@ -183,20 +186,20 @@ MapboxMapController get mapboxMapController {
 class DMapDefine {
   static Map<String, DMapCreationModel> kMapList = {
     'embassy': DMapCreationModel(
-        dMapConfigModel: embassyDMapConfigModel,
-        createDAppWidgetFunction: (context) {
-          return Embassy();
-        }),
+      dMapConfigModel: embassyDMapConfigModel,
+      createDAppWidgetFunction: (context) => Embassy(),
+    ),
     'nightlife': DMapCreationModel(
-        dMapConfigModel: nightLifeDMapConfigModel,
-        createDAppWidgetFunction: (context) {
-          return NightLife();
-        }),
+      dMapConfigModel: nightLifeDMapConfigModel,
+      createDAppWidgetFunction: (context) => NightLife(),
+    ),
     'policeStation': DMapCreationModel(
       dMapConfigModel: policeDMapConfigModel,
-      createDAppWidgetFunction: (context) {
-        return PoliceService();
-      },
-    )
+      createDAppWidgetFunction: (context) => PoliceService(),
+    ),
+    'encryptShare': DMapCreationModel(
+      dMapConfigModel: encryptShareDMapConfigModel,
+      createDAppWidgetFunction: (context) => EncryptShare(),
+    ),
   };
 }

@@ -18,10 +18,12 @@ class DMapConfigModel {
 
   final PanelBuilder panelBuilder;
   final PaddingTopFun panelPaddingTop;
+  final bool alwaysShowPanel;
 
   DMapConfigModel({
     this.panelBuilder,
     this.panelPaddingTop,
+    this.alwaysShowPanel,
     this.onMapLongPressHandle,
     this.onMapClickHandle,
     this.dMapName,
