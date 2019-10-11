@@ -96,9 +96,7 @@ class HomePanel extends StatelessWidget {
 
   Widget _search() {
     return InkWell(
-      onTap: () {
-        print('on search');
-      },
+      onTap: onSearch,
       borderRadius: BorderRadius.all(Radius.circular(31)),
       child: Ink(
         height: 44,

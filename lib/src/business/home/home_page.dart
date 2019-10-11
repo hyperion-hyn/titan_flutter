@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GlobalKey fabsContainerKey = GlobalKey(debugLabel: 'fabsContainerKey');
 
   DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
-  DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController(collapsedHeight: 80);
+  DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController(collapsedHeight: 110);
   DraggableBottomSheetController _activeBottomSheetController;
   ScrollController _homeBottomSheetChildrenScrollController = ScrollController();
 
