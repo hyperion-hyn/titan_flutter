@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/business/discover/dapp/police_service/police_station_panel.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
@@ -17,6 +18,7 @@ import 'dapp/embassy/embassy_poi_panel.dart';
 import 'dapp/embassy/model/model.dart';
 import 'dapp/nightlife/nightlife.dart';
 import 'dapp/nightlife/nightlife_poi_panel.dart';
+import 'dapp/police_service/model/model.dart';
 import 'dapp/police_service/police_service.dart';
 
 typedef CreateDAppWidgetFunction = Widget Function(BuildContext context);
@@ -88,9 +90,8 @@ final embassyDMapConfigModel = DMapConfigModel(
     onMapClickHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
       var poi;
       var feature = await _getFeature(point, coordinates, 'layer-heaven-c1b7c5102eca43029f0416892447e0ed');
-      print('@@@ $feature');
       if (feature != null) {
-        poi = _convertEmbassyPoiFromFeature(feature);
+        poi = EmbassyPoi.fromMapFeature(feature);
         if (poi != null) {
           BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
         }
@@ -122,9 +123,20 @@ final policeDMapConfigModel = DMapConfigModel(
       color: 0xff836FFF,
     )
   ],
-  defaultLocation: LatLng(40.73061, -73.937242),
+  defaultLocation: LatLng(22.296797, 114.170900),
+  defaultZoom: 12,
   onMapClickHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
-    print('on map click police');
+    var poi;
+    var feature = await _getFeature(point, coordinates, 'layer-heaven-3818230e27554203b638851aa246e7d3');
+    if (feature != null) {
+      poi = PoliceStationPoi.fromMapFeature(feature);
+      if (poi != null) {
+        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+      }
+    }
+    if (poi == null) {
+      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+    }
     return true;
   },
   onMapLongPressHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
@@ -132,9 +144,7 @@ final policeDMapConfigModel = DMapConfigModel(
     return true;
   },
   panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
-    return Container(
-      child: Text('poi panel police'),
-    );
+    return PoliceStationPanel(poi: poi, scrollController: scrollController);
   },
 );
 
@@ -163,22 +173,6 @@ HeavenMapPoiInfo _convertHeavenMapPoiInfoFromFeature(Map<String, dynamic> featur
   poi.desc = feature["properties"]["desc"];
   poi.name = feature["properties"]["name"];
   poi.area = feature["properties"]["area"];
-  return poi;
-}
-
-EmbassyPoi _convertEmbassyPoiFromFeature(Map<String, dynamic> feature) {
-  EmbassyPoi poi = EmbassyPoi();
-  poi.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
-  var lat = double.parse(feature["properties"]["lat"]);
-  var lon = double.parse(feature["properties"]["lon"]);
-  poi.latLng = LatLng(lat, lon);
-  poi.name = feature["properties"]["name"];
-  poi.telephone = feature["properties"]["telephone"];
-  poi.department = feature["properties"]["department"];
-  poi.website = feature["properties"]["website"];
-  poi.remark = feature["properties"]["remark"];
-  poi.address = feature["properties"]["address"];
-
   return poi;
 }
 
