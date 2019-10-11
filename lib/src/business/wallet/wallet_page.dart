@@ -27,64 +27,26 @@ class _WalletPageState extends State<WalletPage> {
   @override
   void initState() {
     _walletBloc = WalletBloc();
-
-    _walletBloc.dispatch(ScanWalletEvent());
+//    _walletBloc.dispatch(ScanWalletEvent());
   }
 
   Widget _buildWalletView(BuildContext context) {
-    return DefaultTabController(
-      length: 1,
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          textTheme: TextTheme(),
-          backgroundColor: Colors.white,
-          title: TabBar(
-            labelColor: Colors.blue,
-            indicatorColor: Colors.white,
-            tabs: <Widget>[
-              Tab(
-                  child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.account_balance_wallet,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        "钱包",
-                      ),
-                    )
-                  ],
-                ),
-              ))
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: <Widget>[
-            BlocBuilder<WalletBloc, WalletState>(
-              bloc: _walletBloc,
-              builder: (BuildContext context, WalletState state) {
-                if (state is WalletEmptyState) {
-                  return Container(
-                    alignment: Alignment.center,
-                    child: EmptyWallet(),
-                  );
-                } else if (state is ShowWalletState) {
-                  return Container(
-                    child: ShowWallet(state.wallet),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+    return BlocBuilder<WalletBloc, WalletState>(
+      bloc: _walletBloc,
+      builder: (BuildContext context, WalletState state) {
+        if (state is WalletEmptyState) {
+          return Container(
+            alignment: Alignment.center,
+            child: EmptyWallet(),
+          );
+        } else if (state is ShowWalletState) {
+          return Container(
+            child: ShowWallet(state.wallet),
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 }
