@@ -39,7 +39,6 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
-        title: Text("我的节点抵押"),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
@@ -47,10 +46,10 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(top: 32, bottom: 40),
-              child: Row(
+              padding: EdgeInsets.only(top: 0, bottom: 40),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(bottom: 6),
@@ -80,13 +79,6 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        "抵押详情",
-                        style: TextStyle(fontSize: 18, color: Colors.black54),
-                      ),
-                    ),
                     Expanded(
                       child: ListView.separated(
                           itemBuilder: (BuildContext context, int index) {
@@ -126,9 +118,8 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(ExtendsIconFont.mortgage),
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
+                      padding: const EdgeInsets.only(left: 0.0),
                       child: Text(
                         nodeMortgageVo.title,
                         style: TextStyle(fontSize: 16),

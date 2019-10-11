@@ -27,32 +27,49 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        title: Text("购买算力合约"),
+        brightness: Brightness.light,
+        backgroundColor: Colors.white,
+        title: Text(
+          "购买算力合约",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
+        elevation: 0,
       ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          return _buildItem(contractList[index]);
-        },
-        itemCount: contractList.length,
+      body: Container(
+        color: Colors.white,
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            return _buildItem(contractList[index]);
+          },
+          itemCount: contractList.length,
+        ),
       ),
     );
   }
 
   Widget _buildItem(ContractInfo contractInfo) {
     return Padding(
-      padding: const EdgeInsets.only(top: 4),
+      padding: const EdgeInsets.all(16),
       child: Material(
+        color: Colors.white,
+        elevation: 3,
+        borderRadius: BorderRadius.circular(16),
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
           padding: EdgeInsets.all(16),
           child: Column(
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Icon(ExtendsIconFont.engine),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Icon(
+                      ExtendsIconFont.rocket,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
                   Text(
                     "${contractInfo.power}",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -61,19 +78,22 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
                     width: 4,
                   ),
                   Text(
-                    'POH算力',
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                    '算力',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Spacer(),
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PurchasePage(contractInfo: contractInfo,)));
-                    },
-                    child: Text(
-                      "购买",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        "每人限购${contractInfo.limit}份",
+                        style: TextStyle(color: Theme.of(context).primaryColor),
+                      ),
+                      Text(
+                        "每日返还",
+                        style: TextStyle(color: Color(0xFF6D6D6D)),
+                      )
+                    ],
                   )
                 ],
               ),
@@ -82,73 +102,61 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
                 color: Colors.black12,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  SizedBox(
-                    width: 88,
-                    child: Text(
-                      "购买所需",
-                      style: TextStyle(color: Colors.black54, fontSize: 14),
-                    ),
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "${Const.DOUBLE_NUMBER_FORMAT.format(contractInfo.amount)}",
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
+                        ),
+                      ),
+                      Text(
+                        "购买所需(USDT)",
+                        style: TextStyle(color: Colors.black54, fontSize: 14),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "${Const.DOUBLE_NUMBER_FORMAT.format(contractInfo.amount)} U",
-                    style: TextStyle(color: Colors.black87),
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "${Const.DOUBLE_NUMBER_FORMAT.format(contractInfo.monthInc + contractInfo.amount)}",
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
+                        ),
+                      ),
+                      Text(
+                        "45天收益(USDT)",
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                    ],
                   )
                 ],
               ),
               SizedBox(
-                height: 4,
+                height: 10,
               ),
-              Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 88,
-                    child: Text(
-                      "30天收益",
-                      style: TextStyle(color: Colors.black54),
-                    ),
+              RaisedButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PurchasePage(
+                                contractInfo: contractInfo,
+                              )));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 8),
+                  child: Text(
+                    "购买",
+                    style: TextStyle(color: Colors.white),
                   ),
-                  Text(
-                    "${Const.DOUBLE_NUMBER_FORMAT.format(contractInfo.monthInc)} U",
-                    style: TextStyle(color: Colors.black87),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 88,
-                    child: Text(
-                      "购买上限",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                  ),
-                  Text(
-                    "每人最多${contractInfo.limit}份",
-                    style: TextStyle(color: Colors.black87),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 88,
-                    child: Text(
-                      "结算方式",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                  ),
-                  Text(
-                    "每日返还",
-                    style: TextStyle(color: Colors.black87),
-                  )
-                ],
+                ),
               )
             ],
           ),
