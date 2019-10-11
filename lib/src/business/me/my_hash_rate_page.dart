@@ -26,6 +26,8 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
 
   List hashRateList = [];
 
+  static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd");
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +40,6 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
-        title: Text("我的算力"),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
@@ -46,15 +47,15 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(top: 32, bottom: 40),
-              child: Row(
+              padding: EdgeInsets.only(top: 0, bottom: 40),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(bottom: 6),
                     child: Text(
-                      "算力",
+                      "总算力",
                       style: TextStyle(
                         color: Colors.white70,
                       ),
@@ -72,35 +73,27 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
             ),
             Expanded(
               child: Container(
-//                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        "算力详情",
-                        style: TextStyle(fontSize: 18, color: Colors.black54),
-                      ),
-                    ),
                     Expanded(
-                      child: ListView.separated(
-                          itemBuilder: (BuildContext context, int index) {
-                            return _buildHashRateItem(hashRateList[index]);
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Divider(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ListView.separated(
+                            itemBuilder: (BuildContext context, int index) {
+                              return _buildHashRateItem(hashRateList[index]);
+                            },
+                            separatorBuilder: (BuildContext context, int index) {
+                              return Divider(
                                 thickness: 0.5,
                                 color: Colors.black12,
-                              ),
-                            );
-                          },
-                          itemCount: hashRateList.length),
+                              );
+                            },
+                            itemCount: hashRateList.length),
+                      ),
                     )
                   ],
                 ),
@@ -114,7 +107,7 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
 
   Widget _buildHashRateItem(HashRateVo hashRateVo) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: <Widget>[
           Column(
@@ -124,16 +117,9 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Row(
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Icon(
-                        hashRateVo.iconData,
-                        color: hashRateVo.iconColor,
-                      ),
-                    ),
                     Text(
                       hashRateVo.title,
-                      style: TextStyle(fontSize: 16, color: hashRateVo.iconColor),
+                      style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                     ),
                   ],
                 ),
@@ -141,7 +127,7 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
               if (hashRateVo.subTitle != null)
                 Text(
                   hashRateVo.subTitle,
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
                 )
             ],
           ),
@@ -158,7 +144,7 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
               ),
               Text(
                 hashRateVo.time,
-                style: TextStyle(fontSize: 12, color: Colors.black54),
+                style: TextStyle(fontSize: 14, color: Colors.black54),
               )
             ],
           )
@@ -184,12 +170,12 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
   }
 
   HashRateVo _convertPowerDetailToHashRateVo(PowerDetail powerDetail) {
-    var iconColor = powerDetail.expire ? Colors.black38 : Colors.black;
+    var iconColor = powerDetail.expire ? Color(0xFF6D6D6D) : Color(0xFF6DBA1A);
     var validity = powerDetail.expire ? "已结束" : "有效";
-    var validityColor = powerDetail.expire ? Colors.black38 : PRIMARY_COLOR;
+    var validityColor = powerDetail.expire ? Color(0xFF6D6D6D) : Color(0xFF6DBA1A);
 
-    var createAt = Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(powerDetail.createdAt * 1000));
-    var expiredAt = Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(powerDetail.expiredAt * 1000));
+    var createAt = DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(powerDetail.createdAt * 1000));
+    var expiredAt = DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(powerDetail.expiredAt * 1000));
 
     var time = "$createAt ~ $expiredAt";
     return HashRateVo(
