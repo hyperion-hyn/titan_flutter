@@ -35,7 +35,6 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
-        title: Text("我的账户"),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         actions: <Widget>[
@@ -52,7 +51,10 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text("提币"),
+                  child: Text(
+                    "提币",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ))
         ],
@@ -61,15 +63,15 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(top: 32, bottom: 40),
-              child: Row(
+              padding: EdgeInsets.only(top: 0, bottom: 40),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(bottom: 6),
                     child: Text(
-                      "余额",
+                      "账户余额",
                       style: TextStyle(
                         color: Colors.white70,
                       ),
@@ -78,7 +80,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Text(
-                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} U",
+                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} USDT",
                       style: TextStyle(color: Colors.white, fontSize: 24),
                     ),
                   )
@@ -92,30 +94,32 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                     color: Colors.white,
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 0),
+                      margin: EdgeInsets.symmetric(vertical: 8),
 //                      color: Colors.black54,
                       width: 200,
                       child: TabBar(
                         tabs: <Widget>[
                           Tab(
-                            child: Text('账单流水'),
+                            child: Text(
+                              '账单流水',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
                           Tab(
-                            child: Text('提币记录'),
+                            child: Text(
+                              '提币记录',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ],
                         controller: _tabController,
-                        labelColor: Colors.blue,
+                        labelColor: Color(0xFF252525),
                         unselectedLabelColor: Colors.grey,
                         indicatorSize: TabBarIndicatorSize.label,
                       ),
-                    ),
-                    Divider(
-                      height: 1,
-                      thickness: 1,
                     ),
                     Expanded(
                       child: RefreshConfiguration.copyAncestor(
@@ -220,6 +224,12 @@ class _BillHistoryState extends State<BillHistory> {
   }
 
   Widget _buildBillDetailItem(BillInfo billInfo) {
+    var amountColor = Colors.black;
+    if (billInfo.amount > 0) {
+      amountColor = HexColor("#6DBA1A");
+    } else {
+      amountColor = HexColor("#D0021B");
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -231,13 +241,13 @@ class _BillHistoryState extends State<BillHistory> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   billInfo.title,
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, color: HexColor("#252525")),
                 ),
               ),
               if (billInfo.subTitle != null)
                 Text(
                   billInfo.subTitle,
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                  style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
                 )
             ],
           ),
@@ -249,12 +259,12 @@ class _BillHistoryState extends State<BillHistory> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   Const.DOUBLE_NUMBER_FORMAT.format(billInfo.amount),
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, color: amountColor, fontWeight: FontWeight.bold),
                 ),
               ),
               Text(
                 Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(billInfo.crateAt * 1000)),
-                style: TextStyle(fontSize: 12, color: Colors.black54),
+                style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
               )
             ],
           )
@@ -372,7 +382,10 @@ class _WithdrawalState extends State<WithdrawalHistory> {
   }
 
   Widget _buildWithdrawalItem(WithdrawalInfoLog withdrawalInfo) {
-    Color stateColor = HexColor("#FFFF9800");
+    Color stateColor = HexColor("#6DBA1A");
+
+    Color successColor = HexColor("#6DBA1A");
+    Color failColor = HexColor("#D0021B");
 
 //    waitForAudit: 待审核
 //    unapprove：审核不通过
@@ -382,19 +395,19 @@ class _WithdrawalState extends State<WithdrawalHistory> {
 //    approved：审核通过
 
     if (withdrawalInfo.state == "waitForAudit") {
-      stateColor = HexColor("#FFFF9800");
+      stateColor = successColor;
     } else if (withdrawalInfo.state == "unapprove") {
-      stateColor = Colors.red;
+      stateColor = failColor;
     } else if (withdrawalInfo.state == "waitForTXConfirm") {
-      stateColor = HexColor("#FFFF9800");
+      stateColor = successColor;
     } else if (withdrawalInfo.state == "haveTransfer") {
       stateColor = HexColor("#FF259B24");
     } else if (withdrawalInfo.state == "transferFail") {
-      stateColor = Colors.red;
+      stateColor = failColor;
     } else if (withdrawalInfo.state == "approved") {
-      stateColor = HexColor("#FFFF9800");
+      stateColor = successColor;
     } else if (withdrawalInfo.state == "rollback:") {
-      stateColor = Colors.red;
+      stateColor = failColor;
     }
 
     return Padding(

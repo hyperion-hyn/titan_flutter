@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/enter_fund_password.dart';
@@ -31,7 +34,6 @@ class _DrawBalanceState extends State<DrawBalancePage> {
 
   //到账数量
   double canGetHynAmount = 0;
-
   double amount = 0;
 
   @override
@@ -88,56 +90,72 @@ class _DrawBalanceState extends State<DrawBalancePage> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("提币"),
+        elevation: 0,
+        brightness: Brightness.light,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
+        title: Text(
+          "提币",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top: 32, bottom: 24),
-              alignment: Alignment.center,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "余额",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                  ),
-                  Text(
-                    "$balance U",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          Icons.info,
-                          size: 16,
-                          color: Colors.grey,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Material(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.transparent,
+                elevation: 5,
+                child: Container(
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                  alignment: Alignment.center,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "余额",
+                          style: TextStyle(color: Color(0xFF9B9B9B)),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            '最多可提 $maxWithdrawal U',
-                            style: TextStyle(
+                      ),
+                      Text(
+                        "$balance USDT",
+                        style:
+                            TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0, bottom: 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.info,
+                              size: 12,
                               color: Colors.grey,
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                '最多可提 $maxWithdrawal USDT',
+                                style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 12),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                ],
+                      )
+                    ],
+                  ),
+                ),
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
               alignment: Alignment.centerLeft,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,6 +164,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Text(
                       "HYN提币地址",
+                      style: TextStyle(color: Color(0xFF6D6D6D)),
                     ),
                   ),
                   Row(
@@ -154,39 +173,41 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                         child: TextField(
                           controller: addressTEController,
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(6),
-                            hintStyle: TextStyle(fontSize: 14),
-                            hintText: "请输入HYN地址",
-                          ),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), gapPadding: 4),
+                              contentPadding: EdgeInsets.all(16),
+                              hintStyle: TextStyle(fontSize: 14),
+                              hintText: "请输入HYN地址",
+                              suffixIcon: Container(
+                                margin: const EdgeInsets.only(left: 16, right: 8),
+                                child: InkWell(
+                                  onTap: () async {
+                                    String barcode = await BarcodeScanner.scan();
+                                    if (barcode.indexOf(':') > 0) {
+                                      var ls = barcode.split(':');
+                                      barcode = ls[ls.length - 1];
+                                    }
+                                    print('xxxxx $barcode');
+                                    print(barcode);
+                                    if (barcode.length != 40 && barcode.length != 42) {
+                                      Fluttertoast.showToast(msg: "非以太坊地址");
+                                    } else {
+                                      addressTEController.text = barcode;
+                                    }
+                                  },
+                                  child: Icon(
+                                    ExtendsIconFont.qrcode_scan,
+                                  ),
+                                ),
+                              )),
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(left: 16, right: 8),
-                        child: InkWell(
-                          onTap: () async {
-                            String barcode = await BarcodeScanner.scan();
-                            if (barcode.indexOf(':') > 0) {
-                              var ls = barcode.split(':');
-                              barcode = ls[ls.length - 1];
-                            }
-                            print('xxxxx $barcode');
-                            print(barcode);
-                            if (barcode.length != 40 && barcode.length != 42) {
-                              Fluttertoast.showToast(msg: "非以太坊地址");
-                            } else {
-                              addressTEController.text = barcode;
-                            }
-                          },
-                          child: Icon(ExtendsIconFont.qrcode_scan),
-                        ),
-                      )
                     ],
                   )
                 ],
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
               alignment: Alignment.centerLeft,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,6 +216,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Text(
                       "数量",
+                      style: TextStyle(color: Color(0xFF6D6D6D)),
                     ),
                   ),
                   Row(
@@ -205,64 +227,77 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                           keyboardType: TextInputType.number,
                           controller: amountTEController,
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(6),
-                            hintStyle: TextStyle(fontSize: 14),
-                            hintText: "最小提币数量${withdrawalInfo?.min_limit}",
-                          ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                gapPadding: 4,
+                              ),
+                              contentPadding: EdgeInsets.all(16),
+                              hintStyle: TextStyle(fontSize: 14),
+                              hintText: "最小提币数量${withdrawalInfo?.min_limit}",
+                              suffixIcon: Container(
+                                margin: const EdgeInsets.only(left: 16, right: 8, top: 20),
+                                child: Text(
+                                  "U",
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF9B9B9B)),
+                                ),
+                              )),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16, right: 8),
-                        child: Text("U"),
-                      )
                     ],
                   )
                 ],
               ),
             ),
-            Container(
-              height: 16,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              alignment: Alignment.centerLeft,
-              child: Table(
-                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                columnWidths: {
-                  0: FractionColumnWidth(.2),
-                  1: FractionColumnWidth(.8),
-                },
-                children: [
-                  TableRow(children: [
-                    Text(
-                      "手续费",
-                      style: TextStyle(color: Colors.black54),
+            Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Divider(),
+                        Text(
+                          "手续费",
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text("${Const.DOUBLE_NUMBER_FORMAT.format(fee)} U"),
+                        ),
+                        Divider(),
+                        Text(
+                          "到账数量",
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text("≈${Const.DOUBLE_NUMBER_FORMAT.format(canGetHynAmount)} HYN"),
+                        ),
+                        Divider(),
+                      ],
                     ),
-                    Text("${Const.DOUBLE_NUMBER_FORMAT.format(fee)} U")
-                  ]),
-                  TableRow(children: [
-                    Text(
-                      "到账数量",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                    Text("≈${Const.DOUBLE_NUMBER_FORMAT.format(canGetHynAmount)} HYN")
-                  ]),
+                  )
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    color: HexColor("#FFf5f4fa"),
-                    shape: BoxShape.rectangle),
-                child: Text(
-                  "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核，请耐心等待工作人员电话或邮件联系。",
-                  style: TextStyle(color: Colors.black54, fontSize: 13),
-                ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Icon(Icons.info_outline, color: Color(0xFFCE9D40)),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核，请耐心等待工作人员电话或邮件联系。",
+                      style: TextStyle(color: Color(0xFFCE9D40), fontSize: 14),
+                    ),
+                  ),
+                ],
               ),
             ),
             Row(
