@@ -68,7 +68,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: <Widget>[
-                                    Text('地图应用接入文档', textAlign: TextAlign.center, style: TextStyle(fontSize: 13)),
+                                    Text('DMapp地图应用接入文档', textAlign: TextAlign.center, style: TextStyle(fontSize: 13)),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 4.0),
                                       child: Text('文档优化中...',
@@ -158,17 +158,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                             child: InkWell(
                                               borderRadius: BorderRadius.all(Radius.circular(4)),
                                               onTap: () {
-                                                BlocProvider.of<DiscoverBloc>(context)
-                                                    .dispatch(ActiveDMapEvent(name: 'nightlife'));
-                                                var model = DMapDefine.kMapList['nightlife'];
-                                                if (model != null) {
-                                                  var mapboxController = (Keys.mapKey.currentState as MapContainerState)
-                                                      ?.mapboxMapController;
-                                                  mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
-                                                    model.dMapConfigModel.defaultLocation,
-                                                    model.dMapConfigModel.defaultZoom,
-                                                  ));
-                                                }
+                                                activeDMap('nightlife');
                                               },
                                               child: Container(
                                                 padding: const EdgeInsets.all(16),
@@ -214,7 +204,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                             child: InkWell(
                                               borderRadius: BorderRadius.all(Radius.circular(4)),
                                               onTap: () {
-                                                print('TODO 大使馆');
+                                                activeDMap('embassy');
                                               },
                                               child: Container(
                                                 padding: const EdgeInsets.all(16),
@@ -234,7 +224,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: <Widget>[
                                                           Text(
-                                                            '全球大使馆',
+                                                            '大使馆指南',
                                                             style: TextStyle(fontWeight: FontWeight.w600),
                                                           ),
                                                           Padding(
@@ -301,6 +291,15 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                 ),
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '更多DMapp应用持续添加~',
+                                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                                  )),
+                            )
                           ],
                         ),
                       ),
@@ -313,5 +312,17 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
         },
       ),
     );
+  }
+
+  void activeDMap(String dMapName) {
+    BlocProvider.of<DiscoverBloc>(context).dispatch(ActiveDMapEvent(name: dMapName));
+    var model = DMapDefine.kMapList[dMapName];
+    if (model != null) {
+      var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+      mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
+        model.dMapConfigModel.defaultLocation,
+        model.dMapConfigModel.defaultZoom,
+      ));
+    }
   }
 }
