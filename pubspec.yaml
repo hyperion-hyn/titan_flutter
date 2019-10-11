@@ -159,6 +159,9 @@ flutter:
     - res/eth/hyn_abi.json
     - res/drawable/default_avator.png
     - res/drawable/safe_lock.png
+    - res/drawable/cloud_1.png
+    - res/drawable/cloud_2.png
+    - res/drawable/cloud_3.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

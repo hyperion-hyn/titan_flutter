@@ -12,7 +12,7 @@ class EmptyWallet extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: const EdgeInsets.all(38.0),
           child: Image.asset(
             "res/drawable/safe_lock.png",
             width: 72,
