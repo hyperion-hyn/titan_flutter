@@ -36,5 +36,11 @@ class ExtendsIconFont {
   static const IconData embassy = const IconData(0xebf3, fontFamily: _kFontFam);
   static const IconData female = const IconData(0xe600, fontFamily: _kFontFam);
 
+  static const IconData checkbox_outline = const IconData(0xe646, fontFamily: _kFontFam);
+
+  static const IconData mail_read = const IconData(0xe9eb, fontFamily: _kFontFam);
+  static const IconData document = const IconData(0xe607, fontFamily: _kFontFam);
+  static const IconData person = const IconData(0xe60d, fontFamily: _kFontFam);
+
 
 }

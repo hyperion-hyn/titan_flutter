@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/buy_hash_rate_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
 import 'package:titan/src/business/me/model/common_response.dart';
@@ -42,12 +43,10 @@ class _MeState extends UserState<MePage> with RouteAware {
     routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
-
   @override
   void didPopNext() {
     getUserInfo();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -56,224 +55,271 @@ class _MeState extends UserState<MePage> with RouteAware {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 24, left: 16, right: 16, bottom: 24),
-              color: Theme.of(context).primaryColor,
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      GestureDetector(
-                        child: CircleAvatar(
-                          radius: 32,
-                          backgroundColor: Colors.white,
-                          backgroundImage: AssetImage("res/drawable/default_avator.png"),
-                        ),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => PersonalSettingsPage()));
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "Hi,${LOGIN_USER_INFO.email}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => GradePage()));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: Colors.white70),
-                                      shape: BoxShape.rectangle),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    child: Text(
-                                      LOGIN_USER_INFO.level,
-                                      style: TextStyle(fontSize: 10, color: Colors.white70),
+            Stack(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Container(
+                      height: 180,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    Container(
+                      height: 50,
+                      color: Colors.white,
+                    )
+                  ],
+                ),
+                Positioned(
+                  left: 20,
+                  right: 20,
+                  bottom: 20,
+                  child: Material(
+                    borderRadius: BorderRadius.circular(12),
+                    elevation: 6,
+                    color: Colors.transparent,
+                    shadowColor: Colors.black87,
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              GestureDetector(
+                                child: CircleAvatar(
+                                  radius: 32,
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: AssetImage("res/drawable/default_avator.png"),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context, MaterialPageRoute(builder: (context) => PersonalSettingsPage()));
+                                },
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      "Hi,${LOGIN_USER_INFO.email}",
+                                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                                     ),
-                                  ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => GradePage()));
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 4),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(16),
+                                              border: Border.all(color: HexColor("#B4B4B4")),
+                                              shape: BoxShape.rectangle),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                            child: Text(
+                                              LOGIN_USER_INFO.level,
+                                              style: TextStyle(fontSize: 10, color: HexColor("#B4B4B4")),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Spacer(),
-                      Column(
-                        children: <Widget>[
-                          GestureDetector(
-                            child: Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: Colors.white),
-                                    shape: BoxShape.rectangle),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                                  child: Text(
-                                    "打卡",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-//                                    color: Const.PRIMARY_COLOR,
-                                    ),
+                              Spacer(),
+                              Column(
+                                children: <Widget>[
+                                  GestureDetector(
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: Theme.of(context).primaryColor,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(color: Theme.of(context).primaryColor),
+                                            shape: BoxShape.rectangle),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Icon(
+                                                ExtendsIconFont.checkbox_outline,
+                                                color: Colors.white,
+                                                size: 14,
+                                              ),
+                                              Text(
+                                                " 打卡",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )),
+                                    onTap: () {
+                                      _checkIn();
+                                    },
                                   ),
-                                )),
-                            onTap: () {
-                              _checkIn();
-                            },
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    child: Text(
+                                      "${checkInCount}/3",
+                                      style: TextStyle(color: Theme.of(context).primaryColor),
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Text(
-                              "${checkInCount}/3",
-                              style: TextStyle(color: Colors.white70),
-                            ),
-                          )
+                          SizedBox(
+                            height: 24,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)}",
+                                      style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "我的账户(USDT)",
+                                      style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                color: Colors.white60,
+                                width: 1,
+                                height: 16,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalPower)}",
+                                      style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "我的算力(POH)",
+                                      style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                color: Colors.white60,
+                                width: 1,
+                                height: 16,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)}",
+                                      style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "节点抵押(USDT)",
+                                      style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
-                      )
-                    ],
+                      ),
+                    ),
                   ),
-                  SizedBox(
-                    height: 24,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} U",
-                              style: TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                            Text(
-                              "我的资产",
-                              style: TextStyle(color: Colors.white70, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        color: Colors.white60,
-                        width: 1,
-                        height: 16,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalPower)} POH",
-                              style: TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                            Text(
-                              "算力",
-                              style: TextStyle(color: Colors.white70, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        color: Colors.white60,
-                        width: 1,
-                        height: 16,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)} U",
-                              style: TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                            Text(
-                              "节点抵押",
-                              style: TextStyle(color: Colors.white70, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                )
+              ],
             ),
             Container(
+              color: Colors.white,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    _buildCenterBigButton("获取算力", ExtendsIconFont.engine, () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePage()));
-                    }),
-                    _buildCenterBigButton("节点抵押", ExtendsIconFont.mortgage, () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePage()));
-                    }),
-                  ],
+                padding: const EdgeInsets.symmetric(vertical: 0),
+                child: IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      _buildCenterBigButton("获取算力", "res/drawable/get_power.png", () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePage()));
+                      }),
+                      VerticalDivider(),
+                      _buildCenterBigButton("节点抵押", "res/drawable/node_mortgage.png", () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePage()));
+                      }),
+                    ],
+                  ),
                 ),
               ),
             ),
-            _buildMemuBar("我的推广", ExtendsIconFont.promotion, () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
-            }),
-            SizedBox(
-              height: 4,
-            ),
-            _buildMemuBar("使用教程", ExtendsIconFont.course, () {}),
-//            _buildMemuBar("问题反馈", ExtendsIconFont.feedback, () {}),
-//            _buildMemuBar("关于我们", ExtendsIconFont.about, () {}),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"))),
+              child: Column(
+                children: <Widget>[
+                  _buildMemuBar("我的推广", ExtendsIconFont.mail_read, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
+                  }),
+                  Divider(
+                    height: 2,
+                  ),
+                  _buildMemuBar("使用教程", ExtendsIconFont.document, () {}),
+                  Divider(
+                    height: 2,
+                  ),
+                  _buildMemuBar("关于我们", ExtendsIconFont.person, () {}),
+                ],
+              ),
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCenterBigButton(String title, IconData iconData, Function ontap) {
+  Widget _buildCenterBigButton(String title, String imageAsset, Function ontap) {
     return InkWell(
       onTap: ontap,
       child: Container(
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-//            border: Border.all(color: Colors.black38),
-            shape: BoxShape.rectangle),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-          child: Column(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 52),
+          child: Row(
             children: <Widget>[
-              Icon(
-                iconData,
-                color: Colors.black87,
-                size: 42,
+              Image.asset(
+                imageAsset,
+                width: 42,
+                height: 42,
               ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
                   title,
-                  style: TextStyle(color: Colors.black54),
+                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               )
             ],
@@ -288,16 +334,14 @@ class _MeState extends UserState<MePage> with RouteAware {
       onTap: onTap,
       child: Container(
         alignment: Alignment.center,
-        decoration:
-            BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black12), shape: BoxShape.rectangle),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(right: 8),
               child: Icon(
                 iconData,
-                color: Colors.black54,
+                color: HexColor("#B4B4B4"),
               ),
             ),
             Padding(
