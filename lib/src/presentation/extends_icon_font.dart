@@ -41,6 +41,5 @@ class ExtendsIconFont {
   static const IconData mail_read = const IconData(0xe9eb, fontFamily: _kFontFam);
   static const IconData document = const IconData(0xe607, fontFamily: _kFontFam);
   static const IconData person = const IconData(0xe60d, fontFamily: _kFontFam);
-
-
+  static const IconData rocket = const IconData(0xe6a1, fontFamily: _kFontFam);
 }

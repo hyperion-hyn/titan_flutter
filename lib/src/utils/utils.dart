@@ -24,5 +24,8 @@ String getExpiredTimeShowTip(BuildContext context, int expireTime) {
 }
 
 String shortEthAddress(String address) {
-  return address.substring(0, 7) + "..." + address.substring(address.length - 7, address.length);
+  if (address == null) {
+    return "";
+  }
+  return address.substring(0, 9) + "..." + address.substring(address.length - 9, address.length);
 }

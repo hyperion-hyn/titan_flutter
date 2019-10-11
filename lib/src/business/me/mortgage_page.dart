@@ -43,44 +43,41 @@ class _MortgagePageState extends State<MortgagePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('节点抵押'),
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+        title: Text(
+          '抵押支付',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(2)),
-                  color: Color(0xfff6f6f6),
-                  shape: BoxShape.rectangle),
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "产品：",
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                        Text("${widget.mortgageInfo.name}"),
-                      ],
-                    ),
-                  ),
-                  Row(
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
                     children: <Widget>[
                       Text(
-                        "合计：",
-                        style: TextStyle(color: Colors.black54),
+                        "抵押产品：${widget.mortgageInfo.name}",
+                        style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                       ),
-                      Text("${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} U")
                     ],
-                  )
-                ],
-              ),
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      "金额：${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} U",
+                      style: TextStyle(color: Color(0xFF252525), fontSize: 16),
+                    ),
+                  ],
+                )
+              ],
             ),
             SizedBox(height: 16),
             _buildBalancePayBox(),
@@ -93,107 +90,81 @@ class _MortgagePageState extends State<MortgagePage> {
   Widget _buildBalancePayBox() {
     return Column(
       children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          alignment: Alignment.topCenter,
-          decoration: BoxDecoration(color: HexColor("#fff5f4fa"), shape: BoxShape.rectangle),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "余额",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                  ),
-                  Text(
-                    "${userInfo?.balance} U",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "将支付",
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        '${widget.mortgageInfo?.amount}',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        Material(
+          elevation: 3,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            alignment: Alignment.topCenter,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        "请抵押",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        'U',
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          '${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo?.amount ?? 0)} USDT',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Color(0xFFCE9D40)),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              RaisedButton(
-                elevation: 10,
-                color: Theme.of(context).primaryColor,
-                onPressed: () async {
-                  if (widget.mortgageInfo != null && userInfo != null) {
-                    if (userInfo.balance < widget.mortgageInfo.amount) {
-                      Fluttertoast.showToast(msg: '余额不足');
-                    } else {
-                      try {
-                        await service.mortgage(confId: widget.mortgageInfo.id);
-                        Fluttertoast.showToast(msg: '抵押成功');
-                        Navigator.pushReplacement(
-                            context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
-                      } catch (e) {
-                        logger.e(e);
-                        Fluttertoast.showToast(msg: '抵押异常');
-                      }
-                    }
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
-                    "确认抵押",
-                    style: TextStyle(color: Colors.white),
+                    "余额 ${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.balance ?? 0)} USDT",
+                    style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-//        Container(
-//          margin: EdgeInsets.only(top: 8),
-//          padding: EdgeInsets.symmetric(vertical: 8.0),
-//          child: Row(
-//            children: <Widget>[
-//              Padding(
-//                padding: const EdgeInsets.all(8.0),
-//                child: Icon(
-//                  Icons.notification_important,
-//                  color: Colors.grey,
-//                  size: 20,
-//                ),
-//              ),
-//              Expanded(
-//                child: Text(
-//                  "当前 U 兑换 HYN 的汇率为: 1U = 3.3HYN",
-//                  style: TextStyle(color: Colors.grey, fontSize: 12),
-//                  softWrap: true,
-//                ),
-//              )
-//            ],
-//          ),
-//        )
+        SizedBox(
+          height: 32,
+        ),
+        RaisedButton(
+          elevation: 1,
+          color: Theme.of(context).primaryColor,
+          onPressed: () async {
+            if (widget.mortgageInfo != null && userInfo != null) {
+              if (userInfo.balance < widget.mortgageInfo.amount) {
+                Fluttertoast.showToast(msg: '余额不足');
+              } else {
+                try {
+                  await service.mortgage(confId: widget.mortgageInfo.id);
+                  Fluttertoast.showToast(msg: '抵押成功');
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
+                } catch (e) {
+                  logger.e(e);
+                  Fluttertoast.showToast(msg: '抵押异常');
+                }
+              }
+            }
+          },
+          child: SizedBox(
+            width: 192,
+            height: 56,
+            child: Center(
+              child: Text(
+                "确认抵押",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        ),
       ],
     );
   }

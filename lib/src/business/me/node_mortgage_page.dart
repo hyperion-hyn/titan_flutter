@@ -28,20 +28,27 @@ class _NodeMortgageState extends State<NodeMortgagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("节点列表"),
+        elevation: 0,
+        title: Text(
+          "节点抵押",
+          style: TextStyle(color: Colors.black),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverToBoxAdapter(
             child: Material(
               child: Container(
-                padding: EdgeInsets.all(16),
+                color: Color(0xFFFFF8EA),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Text(
-                  "提示：节点抵押，随进随出，不限时间。",
-                  style: TextStyle(color: Colors.black54),
+                  "节点抵押，随进随出，不限时间。",
+                  style: TextStyle(color: Color(0xFFCE9D40)),
                 ),
               ),
             ),
@@ -56,88 +63,99 @@ class _NodeMortgageState extends State<NodeMortgagePage> {
   }
 
   Widget _buildItem(MortgageInfo mortgageInfo) {
-    return Container(
-      margin: EdgeInsets.only(top: 4),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(border: Border.all(color: Colors.black12), color: Colors.white),
-      child: Column(
-        children: <Widget>[
-          Row(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Material(
+        elevation: 3,
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
             children: <Widget>[
-              Icon(ExtendsIconFont.mortgage),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  mortgageInfo.name,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
+              Row(
+                children: <Widget>[
+                  Image.asset(
+                    "res/drawable/node_icon.png",
+                    width: 24,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      mortgageInfo.name,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                  ),
+                  Spacer(),
+                  Text(
+                    "每日返还",
+                    style: TextStyle(color: Color(0xFF6D6D6D)),
+                  )
+                ],
               ),
-              Spacer(),
+              Divider(
+                thickness: 0.5,
+                color: Colors.black12,
+                height: 24,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(mortgageInfo.amount)}",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        "抵押所需(USDT)",
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      )
+                    ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        mortgageInfo.incomeRate,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        "30天收益(USDT)",
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 24,
+              ),
               RaisedButton(
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MortgagePage(mortgageInfo)));
                 },
-                child: Text(
-                  "我要抵押",
-                  style: TextStyle(color: Colors.white),
+                child: SizedBox(
+                  width: 172,
+                  height: 40,
+                  child: Center(
+                    child: Text(
+                      "我要抵押",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               )
             ],
           ),
-          Divider(
-            thickness: 0.5,
-            color: Colors.black12,
-          ),
-          Row(
-            children: <Widget>[
-              SizedBox(
-                width: 88,
-                child: Text(
-                  "抵押所需",
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-              ),
-              Text(
-                "${Const.DOUBLE_NUMBER_FORMAT.format(mortgageInfo.amount)} U",
-              )
-            ],
-          ),
-          SizedBox(
-            height: 4,
-          ),
-          Row(
-            children: <Widget>[
-              SizedBox(
-                width: 88,
-                child: Text(
-                  "30天收益",
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-              ),
-              Text(
-                mortgageInfo.incomeRate,
-              )
-            ],
-          ),
-          SizedBox(
-            height: 4,
-          ),
-          Row(
-            children: <Widget>[
-              SizedBox(
-                width: 88,
-                child: Text(
-                  "结算方式",
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-              ),
-              Text(
-                "每日返还",
-              )
-            ],
-          )
-        ],
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
 import 'model/contract_info.dart';
@@ -68,105 +69,121 @@ class _PurchaseState extends State<PurchasePage> {
 
   @override
   Widget build(BuildContext context) {
-    var payTypeName = payType == 0 ? "HYN" : "余额支付";
+    var payTypeName = payType == 0 ? "HYN支付" : "余额支付";
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        title: Text("购买合约"),
+        centerTitle: true,
+        title: Text("支付"),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(2)),
-                    color: Color(0xfff6f6f6),
-                    shape: BoxShape.rectangle),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            "产品：",
-                            style: TextStyle(color: Colors.black54),
-                          ),
-                          Text("${widget.contractInfo.power} POH算力"),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          "合计：",
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                        Text("${Const.DOUBLE_NUMBER_FORMAT.format(widget.contractInfo.amount)} U")
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 12),
-                child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(shape: BoxShape.rectangle, color: Color(0xfff5f4fa)),
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+              alignment: Alignment.centerLeft,
+              decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(2)), shape: BoxShape.rectangle),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
                       children: <Widget>[
-                        Text(payTypeName),
-                        Spacer(),
-                        GestureDetector(
-                          onTapUp: (detail) {
-                            RenderBox overlay = Overlay.of(context).context.findRenderObject();
-                            var position = RelativeRect.fromRect(
-                                detail.globalPosition & Size(80, 80), // smaller rect, the touch area
-                                Offset.zero & overlay.size // Bigger rect, the entire screen
-                                );
-                            showMenu(
-                                    context: context,
-                                    position: position,
-                                    items: <PopupMenuEntry>[
-                                      PopupMenuItem(
-                                        value: 0,
-                                        child: Text(
-                                          "HYN",
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                      PopupMenuItem(
-                                        value: 1,
-                                        child: Text("余额支付", style: TextStyle(fontSize: 14)),
-                                      ),
-                                    ],
-                                    initialValue: payType)
-                                .then((selected) {
-                              print("selected:$selected ");
-                              if (selected == null) {
-                                return;
-                              }
-                              payType = selected;
-                              setState(() {});
-                            });
-                          },
-                          child: Text(
-                            "切换支付方式>",
-                            style: TextStyle(fontSize: 14, color: HexColor("#9E101010")),
-                          ),
-                        )
+                        Text(
+                          "购买产品：",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                        Text(
+                          "${widget.contractInfo.power} POH算力",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
                       ],
-                    )),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "金额：",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                      Text(
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(widget.contractInfo.amount)} U",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      )
+                    ],
+                  )
+                ],
               ),
-              if (payType == 0) _buildHynPayBox(),
-              if (payType == 1) _buildHynBalancePayBox(),
-            ],
-          ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: Color(0xFFF2F2F2),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                          )),
+                      child: Row(
+                        children: <Widget>[
+                          Text(payTypeName),
+                          Spacer(),
+                          GestureDetector(
+                            onTapUp: (detail) {
+                              RenderBox overlay = Overlay.of(context).context.findRenderObject();
+                              var position = RelativeRect.fromRect(
+                                  detail.globalPosition & Size(80, 80), // smaller rect, the touch area
+                                  Offset.zero & overlay.size // Bigger rect, the entire screen
+                                  );
+                              showMenu(
+                                      context: context,
+                                      position: position,
+                                      items: <PopupMenuEntry>[
+                                        PopupMenuItem(
+                                          value: 0,
+                                          child: Text(
+                                            "HYN",
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 1,
+                                          child: Text("余额支付", style: TextStyle(fontSize: 14)),
+                                        ),
+                                      ],
+                                      initialValue: payType)
+                                  .then((selected) {
+                                print("selected:$selected ");
+                                if (selected == null) {
+                                  return;
+                                }
+                                payType = selected;
+                                setState(() {});
+                              });
+                            },
+                            child: Text(
+                              "切换支付方式>",
+                              style: TextStyle(fontSize: 14, color: HexColor("#9E101010")),
+                            ),
+                          )
+                        ],
+                      )),
+                  if (payType == 0) _buildHynPayBox(),
+                  if (payType == 1) _buildHynBalancePayBox(),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -191,36 +208,22 @@ class _PurchaseState extends State<PurchasePage> {
         Container(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           alignment: Alignment.topCenter,
-          decoration: BoxDecoration(color: HexColor("#fff5f4fa"), shape: BoxShape.rectangle),
+          decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-//              QrImage(
-//                data: "0xfdsafdfdsfhfhdsjfshfsdf24234sdfdsfsd",
-//                backgroundColor: Colors.white,
-//                foregroundColor: Colors.grey[800],
-//                version: 3,
-//                size: 180,
-//              ),
               if (payOrder?.qr_code != null)
                 Image.memory(
                   Base64Decoder().convert(payOrder?.qr_code),
-                  height: 180,
-                  width: 180,
+                  height: 240,
+                  width: 240,
                 )
               else
                 Container(
                   color: Colors.white,
-                  height: 180,
-                  width: 180,
+                  height: 240,
+                  width: 240,
                 ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  "支付地址",
-                  style: TextStyle(color: HexColor("#9E101010"), fontSize: 14),
-                ),
-              ),
               InkWell(
                 onTap: () {
                   if (payOrder?.address != null) {
@@ -232,7 +235,11 @@ class _PurchaseState extends State<PurchasePage> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('${payOrder?.address}', style: TextStyle(fontSize: 13)),
+                    Text(
+                      "支付地址",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    Text('${shortEthAddress(payOrder?.address)}', style: TextStyle(fontSize: 14)),
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: Icon(
@@ -244,30 +251,39 @@ class _PurchaseState extends State<PurchasePage> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "请支付",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        '${payOrder?.hyn_amount}',
+              InkWell(
+                onTap: () {
+                  if (payOrder?.hyn_amount != null) {
+                    Clipboard.setData(ClipboardData(text: payOrder?.hyn_amount));
+                    Fluttertoast.showToast(msg: "支付金额复制成功");
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        "请支付",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        'HYN',
-                        style: TextStyle(color: Colors.black54),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          '${payOrder?.hyn_amount} HYN',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
+                        ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Icon(
+                          Icons.content_copy,
+                          size: 16,
+                          color: Colors.black54,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               Text(
@@ -275,50 +291,54 @@ class _PurchaseState extends State<PurchasePage> {
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: InkWell(
-                  onTap: () {
-                    if (payOrder?.hyn_amount != null) {
-                      Clipboard.setData(ClipboardData(text: payOrder?.hyn_amount));
-                      Fluttertoast.showToast(msg: "金额复制成功");
-                    }
+                padding: const EdgeInsets.only(top: 22.0),
+                child: RaisedButton(
+                  color: Color(0xFFD6A734),
+                  onPressed: () {
+                    Fluttertoast.showToast(msg: 'HYN钱包即将开放');
                   },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    color: Color(0xffe0e6ea),
-                    child: Text(
-                      '复制金额',
-                      style: TextStyle(fontSize: 12),
+                  child: SizedBox(
+                    height: 48,
+                    width: 192,
+                    child: Center(
+                      child: Text(
+                        "使用HYN钱包支付",
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: RaisedButton(
-                  color: Theme.of(context).primaryColor,
+                  color: Color(0xFF73C42D),
                   onPressed: () async {
                     var ret = await service.confirmPay(orderId: payOrder.order_id, payType: 'HYN');
                     if (ret.code == 0) {
                       //支付成功
                       Fluttertoast.showToast(msg: '购买成功');
-                      Navigator.pushReplacement(
-                          context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                     } else {
-                      if(ret.code == -1007) {
+                      if (ret.code == -1007) {
                         Fluttertoast.showToast(msg: '已到达购买上限');
                       } else {
                         Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
                       }
                     }
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    child: Text(
-                      "我已支付",
-                      style: TextStyle(color: Colors.white),
+                  child: SizedBox(
+                    height: 48,
+                    width: 192,
+                    child: Center(
+                      child: Text(
+                        "我已使用外部钱包支付",
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               )
             ],
@@ -355,117 +375,97 @@ class _PurchaseState extends State<PurchasePage> {
     return Column(
       children: <Widget>[
         Container(
+          margin: EdgeInsets.all(16),
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           alignment: Alignment.topCenter,
-          decoration: BoxDecoration(color: HexColor("#fff5f4fa"), shape: BoxShape.rectangle),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "余额",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                  ),
-                  Text(
-                    "${userInfo?.balance} U",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                ],
-              ),
               Padding(
-                padding: const EdgeInsets.all(32.0),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      "将支付",
+                      "请支付",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: Text(
                         '${payOrder?.amount}',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFFCE9D40)),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: Text(
-                        'U',
+                        'USDT',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFFCE9D40)),
                       ),
                     ),
                   ],
                 ),
               ),
-              RaisedButton(
-                elevation: 10,
-                color: Theme.of(context).primaryColor,
-                onPressed: () async {
-                  if (userInfo != null && payOrder != null) {
-                    if (userInfo.balance < payOrder.amount) {
-                      Fluttertoast.showToast(msg: '余额不足');
-                    } else {
-                      try {
-                        var ret = await service.confirmPay(orderId: payOrder.order_id, payType: 'B_HYN');
-                        if (ret.code == 0) {
-                          //支付成功
-                          Fluttertoast.showToast(msg: '购买成功');
-                          Navigator.pushReplacement(
-                              context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                        } else {
-                          if(ret.code == -1007) {
-                            Fluttertoast.showToast(msg: '已到达购买上限');
-                          } else {
-                            Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
-                          }
-                        }
-                      } catch (e) {
-                        logger.e(e);
-                        Fluttertoast.showToast(msg: '支付异常');
-                      }
-                    }
-                  } else {
-                    Fluttertoast.showToast(msg: "数据异常，请重新购买");
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Text(
-                    "确认支付",
-                    style: TextStyle(color: Colors.white),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "账户余额 ${userInfo?.balance} USDT",
+                    style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                   ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: RaisedButton(
+                  elevation: 1,
+                  color: Color(0xFFD6A734),
+                  onPressed: () async {
+                    if (userInfo != null && payOrder != null) {
+                      if (userInfo.balance < payOrder.amount) {
+                        Fluttertoast.showToast(msg: '余额不足');
+                      } else {
+                        try {
+                          var ret = await service.confirmPay(orderId: payOrder.order_id, payType: 'B_HYN');
+                          if (ret.code == 0) {
+                            //支付成功
+                            Fluttertoast.showToast(msg: '购买成功');
+                            Navigator.pushReplacement(
+                                context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                          } else {
+                            if (ret.code == -1007) {
+                              Fluttertoast.showToast(msg: '已到达购买上限');
+                            } else {
+                              Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
+                            }
+                          }
+                        } catch (e) {
+                          logger.e(e);
+                          Fluttertoast.showToast(msg: '支付异常');
+                        }
+                      }
+                    } else {
+                      Fluttertoast.showToast(msg: "数据异常，请重新购买");
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: SizedBox(
+                        height: 40,
+                        width: 192,
+                        child: Center(
+                            child: Text(
+                          "确认支付",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ))),
+                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               ),
             ],
           ),
         ),
-//        Container(
-//          margin: EdgeInsets.only(top: 8),
-//          padding: EdgeInsets.symmetric(vertical: 8.0),
-//          child: Row(
-//            children: <Widget>[
-//              Padding(
-//                padding: const EdgeInsets.all(8.0),
-//                child: Icon(
-//                  Icons.notification_important,
-//                  color: Colors.grey,
-//                  size: 20,
-//                ),
-//              ),
-//              Expanded(
-//                child: Text(
-//                  "当前 U 兑换 HYN 的汇率为: 1U = 3.3HYN",
-//                  style: TextStyle(color: Colors.grey, fontSize: 12),
-//                  softWrap: true,
-//                ),
-//              )
-//            ],
-//          ),
-//        )
       ],
     );
   }
