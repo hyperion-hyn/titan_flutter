@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'dart:math' as math;
 
 import '../../global.dart';
@@ -238,7 +239,13 @@ class HomePanel extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(4.0)),
                     onTap: () {
-                      print('TODO 全球节点');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InfoDetailPage(
+                                url: 'https://news.hyn.space/react-reduction/',
+                                title: 'map3全球节点',
+                              )));
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -286,7 +293,13 @@ class HomePanel extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(4.0)),
                     onTap: () {
-                      print('TODO 海伯利安');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InfoDetailPage(
+                                url: 'https://shimo.im/docs/GDp72cj3ATwEB7ke/read',
+                                title: '海伯利安',
+                              )));
                     },
                     child: Container(
                       decoration: BoxDecoration(

@@ -253,7 +253,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                       child: InkWell(
                                         borderRadius: BorderRadius.all(Radius.circular(4)),
                                         onTap: () {
-                                          print('TODO 警察服务站');
+                                          activeDMap('policeStation');
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.all(16),
