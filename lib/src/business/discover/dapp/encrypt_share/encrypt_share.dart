@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 
 class EncryptShare extends StatefulWidget {
   @override
@@ -12,6 +14,17 @@ class EncryptShare extends StatefulWidget {
 }
 
 class EncryptShareState extends State<EncryptShare> {
+
+  @override
+  void initState() {
+    super.initState();
+
+//    //动态设置收缩高度
+//    SchedulerBinding.instance.addPostFrameCallback((_) {
+//      HeaderHeightNotification(height: 400).dispatch(context);
+//    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(

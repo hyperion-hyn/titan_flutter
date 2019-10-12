@@ -38,6 +38,8 @@ class ExtendsIconFont {
 
   static const IconData checkbox_outline = const IconData(0xe646, fontFamily: _kFontFam);
 
+  static const IconData position_marker = const IconData(0xe6e4, fontFamily: _kFontFam);
+
   static const IconData mail_read = const IconData(0xe9eb, fontFamily: _kFontFam);
   static const IconData document = const IconData(0xe607, fontFamily: _kFontFam);
   static const IconData person = const IconData(0xe60d, fontFamily: _kFontFam);

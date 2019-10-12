@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/i18n.dart';
@@ -28,4 +30,23 @@ String shortEthAddress(String address) {
     return "";
   }
   return address.substring(0, 9) + "..." + address.substring(address.length - 9, address.length);
+}
+
+///防抖动
+///RaisedButton(
+//      onPressed: debounce(() {
+//          print(1);
+//     }, 3000),
+//    child: Text('Test'),
+//)
+Timer _debounce;
+Function debounce(Function fn, [int t = 100]) {
+  return () {
+    // 还在时间之内，抛弃上一次
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+
+    _debounce = Timer(Duration(milliseconds: t), () {
+      fn();
+    });
+  };
 }

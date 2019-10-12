@@ -13,6 +13,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
@@ -29,6 +30,7 @@ class MapContainer extends StatefulWidget {
   final LatLng defaultCenter;
   final OnMapClickHandle mapClickHandle;
   final OnMapLongPressHandle mapLongPressHandle;
+  final bool showCenterMarker;
 
   final DraggableBottomSheetController bottomPanelController;
 
@@ -42,6 +44,7 @@ class MapContainer extends StatefulWidget {
     this.bottomPanelController,
     this.mapClickHandle,
     this.mapLongPressHandle,
+    this.showCenterMarker,
   }) : super(key: key);
 
   @override
@@ -75,7 +78,7 @@ class MapContainerState extends State<MapContainer> {
 
   void onDragPanelYChange() {
 //    print('ch ${widget.bottomPanelController.collapsedHeight} bottom: ${widget.bottomPanelController.bottom}');
-    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight ) {
+    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight) {
       setState(() {
         _mapTop = -widget.bottomPanelController.bottom * 0.5;
       });
@@ -498,43 +501,61 @@ class MapContainerState extends State<MapContainer> {
             return Container(
               height: MediaQuery.of(context).size.height + bottomBarHeight,
               width: MediaQuery.of(context).size.width,
-              child: MapboxMapParent(
-                  controller: mapboxMapController,
-                  child: MapboxMap(
-                    compassEnabled: false,
-                    onMapClick: (point, coordinates) {
-                      if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
-                        return;
-                      }
-                      _onMapClick(point, coordinates);
-                    },
-                    onMapLongPress: (point, coordinates) {
-                      if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
-                        return;
-                      }
-                      _onMapLongPress(point, coordinates);
-                    },
-                    trackCameraPosition: true,
-                    styleString: widget.style,
-                    onStyleLoaded: onStyleLoaded,
-                    initialCameraPosition: CameraPosition(
-                      target: widget.defaultCenter,
-                      zoom: widget.defaultZoom,
-                    ),
-                    rotateGesturesEnabled: false,
-                    tiltGesturesEnabled: false,
-                    enableLogo: false,
-                    enableAttribution: false,
-                    compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
-                    minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-                    myLocationEnabled: true,
-                    myLocationTrackingMode: MyLocationTrackingMode.None,
-                    children: <Widget>[
-                      ///active plugins
-                      HeavenPlugin(models: widget.heavenDataList),
-                      RoutePlugin(model: widget.routeDataModel),
-                    ],
-                  )),
+              child: Stack(
+                children: <Widget>[
+                  MapboxMapParent(
+                      controller: mapboxMapController,
+                      child: MapboxMap(
+                        compassEnabled: false,
+                        onMapClick: (point, coordinates) {
+                          if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                            return;
+                          }
+                          _onMapClick(point, coordinates);
+                        },
+                        onMapLongPress: (point, coordinates) {
+                          if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                            return;
+                          }
+                          _onMapLongPress(point, coordinates);
+                        },
+                        trackCameraPosition: true,
+                        styleString: widget.style,
+                        onStyleLoaded: onStyleLoaded,
+                        initialCameraPosition: CameraPosition(
+                          target: widget.defaultCenter,
+                          zoom: widget.defaultZoom,
+                        ),
+                        rotateGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        enableLogo: false,
+                        enableAttribution: false,
+                        compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
+                        minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+                        myLocationEnabled: true,
+                        myLocationTrackingMode: MyLocationTrackingMode.None,
+                        children: <Widget>[
+                          ///active plugins
+                          HeavenPlugin(models: widget.heavenDataList),
+                          RoutePlugin(model: widget.routeDataModel),
+                        ],
+                      )),
+                  if (widget.showCenterMarker)
+                    Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            ExtendsIconFont.position_marker,
+                            size: 64,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          SizedBox(height: 68)
+                        ],
+                      ),
+                    )
+                ],
+              ),
             );
           },
         ),

@@ -153,59 +153,13 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: SizedBox(
-                                height: 156,
+                                height: 180,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: <Widget>[
                                     Expanded(
                                       child: Column(
                                         children: <Widget>[
-                                          //夜生活指南
-                                          Expanded(
-                                            child: InkWell(
-                                              borderRadius: BorderRadius.all(Radius.circular(4)),
-                                              onTap: () {
-                                                activeDMap('nightlife');
-                                              },
-                                              child: Container(
-                                                padding: const EdgeInsets.all(16),
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(color: Color(0xFFE9E9E9)),
-                                                    borderRadius: BorderRadius.all(Radius.circular(4))),
-                                                child: Row(
-                                                  children: <Widget>[
-                                                    Image.asset(
-                                                      'res/drawable/ic_dmap_bar.png',
-                                                      width: 32,
-                                                      height: 32,
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(left: 8.0),
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: <Widget>[
-                                                          Text(
-                                                            '夜生活指南',
-                                                            style: TextStyle(fontWeight: FontWeight.w600),
-                                                          ),
-                                                          Padding(
-                                                            padding: const EdgeInsets.only(top: 8.0),
-                                                            child: Text(
-                                                              '夜蒲不再迷路',
-                                                              style: TextStyle(color: Colors.grey, fontSize: 13),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 12,
-                                          ),
                                           //全球大使馆
                                           Expanded(
                                             child: InkWell(
@@ -238,6 +192,52 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                             padding: const EdgeInsets.only(top: 8.0),
                                                             child: Text(
                                                               '全球大使馆地图',
+                                                              style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          //夜生活指南
+                                          Expanded(
+                                            child: InkWell(
+                                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                                              onTap: () {
+                                                activeDMap('nightlife');
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.all(16),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(color: Color(0xFFE9E9E9)),
+                                                    borderRadius: BorderRadius.all(Radius.circular(4))),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Image.asset(
+                                                      'res/drawable/ic_dmap_bar.png',
+                                                      width: 32,
+                                                      height: 32,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: 8.0),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: <Widget>[
+                                                          Text(
+                                                            '夜生活指南',
+                                                            style: TextStyle(fontWeight: FontWeight.w600),
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(top: 8.0),
+                                                            child: Text(
+                                                              '夜蒲不再迷路',
                                                               style: TextStyle(color: Colors.grey, fontSize: 13),
                                                             ),
                                                           ),

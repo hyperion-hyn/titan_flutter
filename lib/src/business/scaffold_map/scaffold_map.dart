@@ -121,11 +121,15 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       //---------------------------
       //set map
       //---------------------------
+      bool showCenterMarker = false;
       String style;
       if (languageCode == "zh") {
         style = kStyleZh;
       } else {
         style = kStyleEn;
+      }
+      if (state.dMapConfigModel?.showCenterMarker == true) {
+        showCenterMarker = true;
       }
 //        var mapState =
 //      if (state is InitialScaffoldMapState) {}
@@ -271,10 +275,14 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           state.dMapConfigModel?.alwaysShowPanel == true &&
           state.dMapConfigModel?.panelBuilder != null) {
         sheetPanel = state.dMapConfigModel?.panelBuilder(context, _bottomChildScrollController, null);
-        if(state.dMapConfigModel?.panelPaddingTop != null) {
+        if (state.dMapConfigModel?.panelPaddingTop != null) {
           topPadding = state.dMapConfigModel?.panelPaddingTop(context);
         }
         dragState = DraggableBottomSheetState.ANCHOR_POINT;
+      }
+      if(state.dMapConfigModel?.panelDraggable == true) {
+        draggable = true;
+        topRadius = 16;
       }
 
       widget.poiBottomSheetController?.setSheetState(dragState);
@@ -310,6 +318,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             routeDataModel: routeDataModel,
             mapClickHandle: onMapClickHandle,
             mapLongPressHandle: onMapLongPressHandle,
+            showCenterMarker: showCenterMarker,
           ),
           if (showSearchBar)
             SearchBar(
