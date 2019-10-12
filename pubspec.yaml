@@ -165,6 +165,7 @@ flutter:
     - res/drawable/get_power.png
     - res/drawable/node_mortgage.png
     - res/drawable/node_icon.png
+    - res/drawable/email_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

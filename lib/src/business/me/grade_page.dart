@@ -4,6 +4,7 @@ import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/presentation/extends_icon_font.dart';
 
 class GradePage extends StatefulWidget {
   @override
@@ -25,33 +26,46 @@ class _GradeState extends State<GradePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("等级"),
+          backgroundColor: Colors.white,
+          title: Text(
+            "等级",
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: true,
+          iconTheme: IconThemeData(color: Colors.black),
+          elevation: 0,
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Material(
+                elevation: 3,
                 color: Colors.white,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    "当前等级",
-                    style: TextStyle(color: Colors.black54),
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "当前等级",
+                        style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        LOGIN_USER_INFO.level,
+                        style: TextStyle(fontSize: 16, color: Color(0xFF3C94FF)),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      LOGIN_USER_INFO.level,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
 //            Padding(
@@ -83,47 +97,46 @@ class _GradeState extends State<GradePage> {
 
   Widget _buildGrade(String level, String award, String require) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       alignment: Alignment.centerLeft,
       decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              level,
-              style: TextStyle(fontSize: 16),
+      child: Table(
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        columnWidths: {
+          0: FractionColumnWidth(0.1),
+          1: FractionColumnWidth(0.9),
+        },
+        children: [
+          TableRow(children: [
+            Center(
+              child: Icon(
+                ExtendsIconFont.dot,
+                color: Color(0xFF252525),
+                size: 20,
+              ),
             ),
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                  width: 40,
-                  child: Text(
-                    "奖励",
-                    style: TextStyle(color: Colors.black54),
-                  )),
-              Text(
-                "$award",
-              )
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                  width: 40,
-                  child: Text(
-                    "要求",
-                    style: TextStyle(color: Colors.black54),
-                  )),
-              Text(
-                "$require",
-              )
-            ],
-          ),
+            Text(
+              level,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ]),
+          TableRow(children: [
+            Container(),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                "奖励： $award",
+                style: TextStyle(color: Color(0xFF6D6D6D)),
+              ),
+            ),
+          ]),
+          TableRow(children: [
+            Container(),
+            Text(
+              "要求： $require",
+              style: TextStyle(color: Color(0xFF6D6D6D)),
+            ),
+          ])
         ],
       ),
     );

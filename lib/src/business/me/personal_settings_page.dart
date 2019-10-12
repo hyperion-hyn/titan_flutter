@@ -23,54 +23,88 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text("个人信息"),
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        title: Text(
+          "个人信息",
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
       ),
-      body: ListView(
+      body: Column(
         children: <Widget>[
           Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-                color: Colors.white, border: Border.all(color: Colors.black12), shape: BoxShape.rectangle),
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            color: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.email,
-                    color: Colors.black54,
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Image.asset(
+                    "res/drawable/email_icon.png",
+                    width: 36,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    LOGIN_USER_INFO.email,
-                    style: TextStyle(color: Colors.black, fontSize: 14),
-                  ),
-                ),
-                Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "邮箱",
+                      style: TextStyle(color: Color(0xFF333333), fontSize: 16),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      LOGIN_USER_INFO.email,
+                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
-          _buildMemuBar("修改密码", ExtendsIconFont.lock, () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
-          }),
           SizedBox(
-            height: 4,
+            height: 24,
           ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+                _buildMemuBar("修改账户密码", ExtendsIconFont.lock, () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
+                }),
+                Divider(),
+                _buildMemuBar("修改资金密码", ExtendsIconFont.lock, () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
+                }),
+              ],
+            ),
+          ),
+          Spacer(),
           Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: OutlineButton(
-              borderSide: BorderSide(width: 1),
-              color: Theme.of(context).primaryColor,
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: RaisedButton(
+              elevation: 1,
+              color: Color(0xFFBCC1C7),
               onPressed: () {
                 eventBus.fire(ReloginEvent());
               },
-              child: Text("登出"),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: SizedBox(
+                    height: 40,
+                    width: 192,
+                    child: Center(
+                        child: Text(
+                      "登出",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ))),
+              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -81,30 +115,28 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
       onTap: onTap,
       child: Container(
         alignment: Alignment.center,
-        decoration:
-            BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black12), shape: BoxShape.rectangle),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        child: Row(
+        decoration: BoxDecoration(
+          color: Colors.white,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                iconData,
-                color: Colors.black54,
-              ),
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+                  child: Text(
+                    title,
+                    style: TextStyle(color: Color(0xFF333333), fontSize: 15),
+                  ),
+                ),
+                Spacer(),
+                Icon(
+                  Icons.chevron_right,
+                  color: Colors.black54,
+                )
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title,
-                style: TextStyle(color: Colors.black, fontSize: 14),
-              ),
-            ),
-            Spacer(),
-            Icon(
-              Icons.chevron_right,
-              color: Colors.black54,
-            )
           ],
         ),
       ),
