@@ -1,19 +1,26 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
+import 'package:titan/src/business/discover/dapp/encrypt_share/share_dialog.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
+import 'package:titan/src/global.dart';
+import 'package:titan/src/model/poi.dart';
+
+import 'event.dart';
 
 class EncryptShare extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return EncryptShareState();
   }
-
 }
 
 class EncryptShareState extends State<EncryptShare> {
+  PoiEntity selectedPoi;
+
+  StreamSubscription streamSubscription;
 
   @override
   void initState() {
@@ -23,6 +30,20 @@ class EncryptShareState extends State<EncryptShare> {
 //    SchedulerBinding.instance.addPostFrameCallback((_) {
 //      HeaderHeightNotification(height: 400).dispatch(context);
 //    });
+
+    streamSubscription = eventBus.on().listen(eventBusListener);
+  }
+
+  @override
+  void dispose() {
+    streamSubscription.cancel();
+    super.dispose();
+  }
+
+  void eventBusListener(event) async {
+    if (event is SelectedSharePoiEvent) {
+      selectedPoi = event.poi;
+    }
   }
 
   @override
@@ -40,13 +61,10 @@ class EncryptShareState extends State<EncryptShare> {
                 color: Colors.transparent,
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: new LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black38,
-                          Colors.transparent,
-                        ]),
+                    gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+                      Colors.black38,
+                      Colors.transparent,
+                    ]),
                   ),
                   padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                   width: MediaQuery.of(context).size.width,
@@ -75,13 +93,25 @@ class EncryptShareState extends State<EncryptShare> {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 16.0),
                             child: InkWell(
-                              onTap: () {
-                                print('xxx TODO');
+                              onTap: () async {
+                                print('你将要加密 $selectedPoi');
+                                if(selectedPoi != null) {
+                                  var dat = await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ShareDialog(poi: selectedPoi);
+                                      });
+                                }
                               },
                               child: Ink(
-                                decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(4))),
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.all(Radius.circular(4))),
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                child: Text('开始加密', style: TextStyle(color: Colors.white),),
+                                child: Text(
+                                  '开始加密',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
                           ),

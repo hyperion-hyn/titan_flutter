@@ -58,6 +58,8 @@ class MapContainerState extends State<MapContainer> {
 
   MapboxMapController mapboxMapController;
 
+  MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
+
   StreamSubscription _locationClickSubscription;
   StreamSubscription _eventBusSubscription;
 
@@ -78,7 +80,8 @@ class MapContainerState extends State<MapContainer> {
 
   void onDragPanelYChange() {
 //    print('ch ${widget.bottomPanelController.collapsedHeight} bottom: ${widget.bottomPanelController.bottom}');
-    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight) {
+//    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight) {
+    if (widget.bottomPanelController.bottom <= 400) {
       setState(() {
         _mapTop = -widget.bottomPanelController.bottom * 0.5;
       });
@@ -467,6 +470,11 @@ class MapContainerState extends State<MapContainer> {
         });
   }
 
+  ///update user track mode
+  void updateTrackMode() {
+    //TODO
+  }
+
   @override
   void dispose() {
     _locationClickSubscription?.cancel();
@@ -533,7 +541,7 @@ class MapContainerState extends State<MapContainer> {
                         compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
                         minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
                         myLocationEnabled: true,
-                        myLocationTrackingMode: MyLocationTrackingMode.None,
+                        myLocationTrackingMode: locationTrackingMode,
                         children: <Widget>[
                           ///active plugins
                           HeavenPlugin(models: widget.heavenDataList),

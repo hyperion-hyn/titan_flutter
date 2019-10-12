@@ -19,6 +19,8 @@ class DMapConfigModel {
   final PanelBuilder panelBuilder;
   final PaddingTopFun panelPaddingTop;
   final bool panelDraggable;
+  final double panelCollapsedHeight;
+  final double panelAnchorHeight;
   final bool alwaysShowPanel;
 
   final bool showCenterMarker;
@@ -26,6 +28,8 @@ class DMapConfigModel {
   DMapConfigModel({
     this.panelBuilder,
     this.panelPaddingTop,
+    this.panelAnchorHeight,
+    this.panelCollapsedHeight,
     this.panelDraggable,
     this.alwaysShowPanel,
     this.onMapLongPressHandle,

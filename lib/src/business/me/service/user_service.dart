@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -20,6 +21,7 @@ import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
+import 'package:titan/src/model/poi.dart';
 
 class UserService {
   MapRichApi _mapRichApi = MapRichApi();
@@ -236,5 +238,25 @@ class UserService {
       throw new Exception("not login");
     }
     return await _mapRichApi.redemption(token: userToken.token, id: id);
+  }
+
+  ///附近可以分享的位置
+  Future<List<PoiEntity>> nearSharePlaces({
+    @required double lat,
+    @required double lon,
+    double radius = 100,
+    CancelToken cancelToken,
+  }) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    return await _mapRichApi.nearSharePlaces(
+      lat: lat,
+      lon: lon,
+      token: userToken.token,
+      radius: radius,
+      cancelToken: cancelToken,
+    );
   }
 }

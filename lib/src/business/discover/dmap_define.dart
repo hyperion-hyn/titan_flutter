@@ -169,6 +169,8 @@ final encryptShareDMapConfigModel = DMapConfigModel(
     return SharePoisPanel(scrollController: scrollController);
   },
   panelPaddingTop: (context) => kAnchorPoiHeight,
+  panelAnchorHeight: 220,
+  panelCollapsedHeight: 220,
 );
 
 Future<Map<String, dynamic>> _getFeature(Point<double> point, LatLng coordinates, String layerId) async {
