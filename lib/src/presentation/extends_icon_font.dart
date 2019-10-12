@@ -42,4 +42,10 @@ class ExtendsIconFont {
   static const IconData document = const IconData(0xe607, fontFamily: _kFontFam);
   static const IconData person = const IconData(0xe60d, fontFamily: _kFontFam);
   static const IconData rocket = const IconData(0xe6a1, fontFamily: _kFontFam);
+
+  static const IconData share = const IconData(0xe660, fontFamily: _kFontFam);
+  static const IconData qr_code = const IconData(0xe605, fontFamily: _kFontFam);
+  static const IconData copy_content = const IconData(0xeef0, fontFamily: _kFontFam);
+
+
 }
