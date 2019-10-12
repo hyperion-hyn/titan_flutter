@@ -46,6 +46,7 @@ class ExtendsIconFont {
   static const IconData share = const IconData(0xe660, fontFamily: _kFontFam);
   static const IconData qr_code = const IconData(0xe605, fontFamily: _kFontFam);
   static const IconData copy_content = const IconData(0xeef0, fontFamily: _kFontFam);
+  static const IconData dot = const IconData(0xe602, fontFamily: _kFontFam);
 
 
 }
