@@ -195,6 +195,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       double topRadius = 0;
       bool draggable = false;
       Widget sheetPanel;
+      double collapsedHeight = 110;
 
       DraggableBottomSheetState dragState = DraggableBottomSheetState.HIDDEN;
 
@@ -225,6 +226,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           );
         }
 
+        collapsedHeight = widget.poiBottomSheetController.collapsedHeight;
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is SearchPoiFailState) {
         //搜索poi失败
@@ -264,8 +266,19 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         dragState = DraggableBottomSheetState.COLLAPSED;
       }
 
+      //for dmap, always show sheet panel
+      if (sheetPanel == null &&
+          state.dMapConfigModel?.alwaysShowPanel == true &&
+          state.dMapConfigModel?.panelBuilder != null) {
+        sheetPanel = state.dMapConfigModel?.panelBuilder(context, _bottomChildScrollController, null);
+        if(state.dMapConfigModel?.panelPaddingTop != null) {
+          topPadding = state.dMapConfigModel?.panelPaddingTop(context);
+        }
+        dragState = DraggableBottomSheetState.ANCHOR_POINT;
+      }
+
       widget.poiBottomSheetController?.setSheetState(dragState);
-      widget.poiBottomSheetController?.collapsedHeight = 112;
+      widget.poiBottomSheetController?.collapsedHeight = collapsedHeight;
 
       //---------------------------
       //set opt bar

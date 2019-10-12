@@ -74,11 +74,18 @@ class MapContainerState extends State<MapContainer> {
   double _mapTop = 0;
 
   void onDragPanelYChange() {
-    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight &&
-        widget.bottomPanelController.bottom > widget.bottomPanelController.collapsedHeight) {
+//    print('ch ${widget.bottomPanelController.collapsedHeight} bottom: ${widget.bottomPanelController.bottom}');
+    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight ) {
       setState(() {
         _mapTop = -widget.bottomPanelController.bottom * 0.5;
       });
+//      if(widget.bottomPanelController.bottom > widget.bottomPanelController.collapsedHeight) {
+//        setState(() {
+//          _mapTop = -widget.bottomPanelController.bottom * 0.5;
+//        });
+//      } else if(_mapTop != 0) {
+//
+//      }
     }
   }
 
@@ -507,6 +514,7 @@ class MapContainerState extends State<MapContainer> {
                       }
                       _onMapLongPress(point, coordinates);
                     },
+                    trackCameraPosition: true,
                     styleString: widget.style,
                     onStyleLoaded: onStyleLoaded,
                     initialCameraPosition: CameraPosition(
