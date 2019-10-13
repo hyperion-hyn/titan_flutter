@@ -13,6 +13,7 @@ import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import 'dapp/embassy/embassy.dart';
 import 'dapp/embassy/embassy_poi_panel.dart';
@@ -162,10 +163,14 @@ final encryptShareDMapConfigModel = DMapConfigModel(
     return true;
   },
   alwaysShowPanel: true,
+  panelDraggable: true,
+  showCenterMarker: true,
   panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
-    print('xxx3');
     return SharePoisPanel(scrollController: scrollController);
   },
+  panelPaddingTop: (context) => kAnchorPoiHeight,
+  panelAnchorHeight: 220,
+  panelCollapsedHeight: 220,
 );
 
 Future<Map<String, dynamic>> _getFeature(Point<double> point, LatLng coordinates, String layerId) async {

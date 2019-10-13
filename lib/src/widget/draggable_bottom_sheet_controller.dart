@@ -7,7 +7,7 @@ const kCollapsedHeight = 112.0;
 enum DraggableBottomSheetState { DRAGGING, SETTLING, ANCHOR_POINT, EXPANDED, COLLAPSED, HIDDEN }
 
 abstract class DraggableBottomSheetControllerInterface {
-  void setSheetState(DraggableBottomSheetState state);
+  void setSheetState(DraggableBottomSheetState state, {bool forceUpdate = false});
 
   DraggableBottomSheetState getSheetState();
 
@@ -47,8 +47,8 @@ class DraggableBottomSheetController extends ChangeNotifier {
     return _interface;
   }
 
-  void setSheetState(DraggableBottomSheetState state) {
-    _interface?.setSheetState(state);
+  void setSheetState(DraggableBottomSheetState state, {bool forceUpdate = false}) {
+    _interface?.setSheetState(state, forceUpdate: forceUpdate);
     _sheetState = state;
   }
 

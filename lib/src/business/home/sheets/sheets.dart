@@ -53,7 +53,7 @@ class _SheetState extends State<Sheets> {
         BlocListener<MapBloc, MapState>(
           listener: (context, state) {
             if (state is RouteSceneState) {
-              widget.draggableBottomSheetController.collapsedHeight = 110;
+              widget.draggableBottomSheetController.collapsedHeight = kCollapsedHeight;
               widget.draggableBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
             }
           },

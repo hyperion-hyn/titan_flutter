@@ -121,11 +121,15 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       //---------------------------
       //set map
       //---------------------------
+      bool showCenterMarker = false;
       String style;
       if (languageCode == "zh") {
         style = kStyleZh;
       } else {
         style = kStyleEn;
+      }
+      if (state.dMapConfigModel?.showCenterMarker == true) {
+        showCenterMarker = true;
       }
 //        var mapState =
 //      if (state is InitialScaffoldMapState) {}
@@ -195,7 +199,8 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       double topRadius = 0;
       bool draggable = false;
       Widget sheetPanel;
-      double collapsedHeight = 110;
+      double collapsedHeight = kCollapsedHeight;
+      double anchorHeight = kAnchorPoiHeight;
 
       DraggableBottomSheetState dragState = DraggableBottomSheetState.HIDDEN;
 
@@ -271,14 +276,27 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           state.dMapConfigModel?.alwaysShowPanel == true &&
           state.dMapConfigModel?.panelBuilder != null) {
         sheetPanel = state.dMapConfigModel?.panelBuilder(context, _bottomChildScrollController, null);
-        if(state.dMapConfigModel?.panelPaddingTop != null) {
+        if (state.dMapConfigModel?.panelPaddingTop != null) {
           topPadding = state.dMapConfigModel?.panelPaddingTop(context);
         }
-        dragState = DraggableBottomSheetState.ANCHOR_POINT;
+        dragState = DraggableBottomSheetState.COLLAPSED;
+      }
+      if (state.dMapConfigModel?.panelDraggable == true) {
+        draggable = true;
+        topRadius = 16;
+      }
+      if (state.dMapConfigModel?.panelAnchorHeight != null) {
+        anchorHeight = state.dMapConfigModel?.panelAnchorHeight;
+      }
+      if (state.dMapConfigModel?.panelCollapsedHeight != null) {
+        collapsedHeight = state.dMapConfigModel?.panelCollapsedHeight;
       }
 
-      widget.poiBottomSheetController?.setSheetState(dragState);
       widget.poiBottomSheetController?.collapsedHeight = collapsedHeight;
+      widget.poiBottomSheetController.anchorHeight = anchorHeight;
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        widget.poiBottomSheetController?.setSheetState(dragState);
+      });
 
       //---------------------------
       //set opt bar
@@ -296,8 +314,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       OnMapLongPressHandle onMapLongPressHandle;
       onMapClickHandle = state.dMapConfigModel?.onMapClickHandle;
       onMapLongPressHandle = state.dMapConfigModel?.onMapLongPressHandle;
-//      if (state is InitDMapState) {
-//      }
 
       return Stack(
         children: <Widget>[
@@ -310,6 +326,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             routeDataModel: routeDataModel,
             mapClickHandle: onMapClickHandle,
             mapLongPressHandle: onMapLongPressHandle,
+            showCenterMarker: showCenterMarker,
           ),
           if (showSearchBar)
             SearchBar(

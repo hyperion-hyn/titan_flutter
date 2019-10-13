@@ -1,10 +1,10 @@
 import 'dart:core';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/business/me/api/map_rich_http.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
-import 'package:titan/src/business/me/model/common_response.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
 import 'package:titan/src/business/me/model/node_mortgage_info.dart';
@@ -18,6 +18,8 @@ import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
+import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/utils/open_location_code.dart';
 
 class MapRichApi {
   ///
@@ -202,5 +204,33 @@ class MapRichApi {
   Future<dynamic> redemption({@required int id, @required token}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/redemption', null,
         params: {"id": id}, options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  ///附近可以分享的位置
+  Future<List<PoiEntity>> nearSharePlaces({
+    @required double lat,
+    @required double lon,
+    @required String token,
+    double radius = 100,
+    CancelToken cancelToken,
+  }) async {
+    return await MapRichHttpCore.instance.getEntity(
+      'map/around',
+      EntityFactory<List<PoiEntity>>((json) {
+        return (json as List).map((map) {
+          PoiEntity poi = PoiEntity();
+          poi.name = map['name'];
+          poi.address = map['address'];
+          poi.latLng = mapbox.LatLng(map['lat'], map['lon']);
+          return poi;
+        }).toList();
+      }),
+      params: {
+        "lat": lat,
+        "lon": lon,
+        "radius": radius,
+      },
+      options: RequestOptions(headers: {"Authorization": token}, cancelToken: cancelToken),
+    );
   }
 }
