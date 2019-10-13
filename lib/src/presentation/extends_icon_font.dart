@@ -30,6 +30,7 @@ class ExtendsIconFont {
   static const IconData lightning = const IconData(0xe604, fontFamily: _kFontFam);
 
   static const IconData lock = const IconData(0xe721, fontFamily: _kFontFam);
+  static const IconData lock_outline = const IconData(0xe635, fontFamily: _kFontFam);
 
   static const IconData point = const IconData(0xe77d, fontFamily: _kFontFam);
   static const IconData police_car = const IconData(0xe767, fontFamily: _kFontFam);
@@ -49,6 +50,7 @@ class ExtendsIconFont {
   static const IconData qr_code = const IconData(0xe605, fontFamily: _kFontFam);
   static const IconData copy_content = const IconData(0xeef0, fontFamily: _kFontFam);
   static const IconData dot = const IconData(0xe602, fontFamily: _kFontFam);
+  static const IconData email = const IconData(0xe642, fontFamily: _kFontFam);
 
 
 }

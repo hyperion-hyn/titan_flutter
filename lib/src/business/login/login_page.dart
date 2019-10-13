@@ -6,6 +6,7 @@ import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/presentation/extends_icon_font.dart';
 
 import 'login_event.dart';
 
@@ -27,104 +28,162 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: Stack(
         children: <Widget>[
           Form(
             key: _formKey,
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24, bottom: 32, left: 8, right: 8),
-                    child: Text(
-                      "账号密码登陆",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (!ValidatorUtil.isEmail(value)) {
-                          return "邮箱格式有误，请输入正确的邮箱";
-                        } else {
-                          return null;
-                        }
-                      },
-                      controller: emailEditingController,
-                      decoration: InputDecoration(
-                        hintText: "请输入邮箱",
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 36),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                      child: Image.asset(
+                        "res/drawable/map_rich_application.png",
+                        width: 32,
+                        height: 128,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: TextFormField(
-                      keyboardType: TextInputType.visiblePassword,
-                      validator: (value) {
-                        if (!ValidatorUtil.validatePassword(value)) {
-                          return "密码格式有误，请输入最少6位";
-                        } else {
-                          return null;
-                        }
-                      },
-                      controller: passwordEditingController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: "请输入密码",
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          ExtendsIconFont.email,
+                          color: Color(0xFF6D6D6D),
+                          size: 18,
+                        ),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        Text(
+                          "邮箱",
+                          style: TextStyle(
+                            color: Color(0xFF6D6D6D),
+                            fontSize: 16,
+                          ),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (!ValidatorUtil.isEmail(value)) {
+                            return "邮箱格式有误，请输入正确的邮箱";
+                          } else {
+                            return null;
+                          }
+                        },
+                        controller: emailEditingController,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(color: Color(0xFFB7B7B7))),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            hintText: "请输入邮箱",
+                            hintStyle: TextStyle(color: Color(0XFFD7D7D7))),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      disabledColor: Colors.grey[600],
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      disabledTextColor: Colors.white,
-                      onPressed: () {
-                        _submit();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          "登录",
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          ExtendsIconFont.lock_outline,
+                          color: Color(0xFF6D6D6D),
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        Text(
+                          "密码",
+                          style: TextStyle(
+                            color: Color(0xFF6D6D6D),
+                            fontSize: 16,
+                          ),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: TextFormField(
+                        keyboardType: TextInputType.visiblePassword,
+                        validator: (value) {
+                          if (!ValidatorUtil.validatePassword(value)) {
+                            return "密码格式有误，请输入最少6位";
+                          } else {
+                            return null;
+                          }
+                        },
+                        controller: passwordEditingController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          hintText: "请输入密码",
+                          hintStyle: TextStyle(color: Color(0XFFD7D7D7)),
                         ),
                       ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
-                    },
-                    child: Align(
-                        alignment: Alignment.bottomRight,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
+                      },
+                      child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "忘记密码",
+                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16),
+                            ),
+                          )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: RaisedButton(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        disabledColor: Colors.grey[600],
+                        color: Theme.of(context).primaryColor,
+                        textColor: Colors.white,
+                        disabledTextColor: Colors.white,
+                        onPressed: () {
+                          _submit();
+                        },
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            "忘记密码",
-                            style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                            "登录",
+                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
                           ),
-                        )),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10, top: 180),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[Text("注册账号")],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10, top: 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "注册账号",
+                              style: TextStyle(color: Color(0xFF3C94FF), fontSize: 16, fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
