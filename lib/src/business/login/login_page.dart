@@ -145,8 +145,9 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           )),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(24.0),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 16),
+                      constraints: BoxConstraints.expand(height: 48),
                       child: RaisedButton(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         disabledColor: Colors.grey[600],
@@ -157,10 +158,10 @@ class _LoginPageState extends State<LoginPage> {
                           _submit();
                         },
                         child: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
                             "登录",
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ),
                       ),

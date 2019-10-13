@@ -21,6 +21,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
 
   TextEditingController emailEditingController = TextEditingController();
   TextEditingController passwordEditingController = TextEditingController();
+  TextEditingController confirmPasswordEditingController = TextEditingController();
   TextEditingController verificationCodeEditingController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -29,111 +30,195 @@ class _ResetPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+        title: Text(
+          "重置账户密码",
+          style: TextStyle(color: Colors.black),
+        ),
+        centerTitle: true,
+        elevation: 0,
+      ),
       body: Stack(
         children: <Widget>[
-          Form(
-            key: _formKey,
-            child: ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 24, bottom: 32, left: 8, right: 8),
-                  child: Text(
-                    "重置密码",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 24),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "邮箱",
+                        style: TextStyle(
+                          color: Color(0xFF6D6D6D),
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (!ValidatorUtil.isEmail(value)) {
-                        return "邮箱格式有误，请输入正确的邮箱";
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: emailEditingController,
-                    decoration: InputDecoration(
-                        hintText: "请输入邮箱", errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: TextFormField(
-                    keyboardType: TextInputType.visiblePassword,
-                    validator: (value) {
-                      if (!ValidatorUtil.validatePassword(value)) {
-                        return "密码格式有误，请输入最少6位";
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: passwordEditingController,
-                    obscureText: true,
-                    decoration: InputDecoration(hintText: "请输入新密码"),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (!ValidatorUtil.validateCode(6, value)) {
-                        return "请输入6位验证码";
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: verificationCodeEditingController,
-                    decoration: InputDecoration(
-                        hintText: "验证码",
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FlatButton(
-                              padding: EdgeInsets.all(8),
-                              textColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                              onPressed: () {
-                                print("onPressed");
-                                if (_countdownTime == 0 && validateEmail()) {
-                                  _userService.verification(emailEditingController.text);
-                                  setState(() {
-                                    _countdownTime = 60;
-                                  });
-                                  //开始倒计时
-                                  startCountdownTimer();
-                                }
-                              },
-                              color: Theme.of(context).primaryColor,
-                              child: Text(
-                                _countdownTime > 0 ? '$_countdownTime秒后重新获取' : '获取验证码',
-                              )),
-                        )),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    disabledColor: Colors.grey[600],
-                    color: Theme.of(context).primaryColor,
-                    textColor: Colors.white,
-                    disabledTextColor: Colors.white,
-                    onPressed: () {
-                      _submit();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        "提交",
-                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    child: TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (!ValidatorUtil.isEmail(value)) {
+                          return "邮箱格式有误，请输入正确的邮箱";
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: emailEditingController,
+                      decoration: InputDecoration(
+                        errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
                     ),
                   ),
-                )
-              ],
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "验证码",
+                        style: TextStyle(
+                          color: Color(0xFF6D6D6D),
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextFormField(
+                            validator: (value) {
+                              if (!ValidatorUtil.validateCode(6, value)) {
+                                return "请输入6位验证码";
+                              } else {
+                                return null;
+                              }
+                            },
+                            controller: verificationCodeEditingController,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 36,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            print("onPressed");
+                            if (_countdownTime == 0 && validateEmail()) {
+                              _userService.verification(emailEditingController.text);
+                              setState(() {
+                                _countdownTime = 60;
+                              });
+                              //开始倒计时
+                              startCountdownTimer();
+                            }
+                          },
+                          child: Text(
+                            _countdownTime > 0 ? '重新获取 $_countdownTime' : '发送验证码',
+                            style: TextStyle(
+                              color: _countdownTime > 0 ? Color(0xFF9B9B9B) : Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "账户新密码",
+                        style: TextStyle(
+                          color: Color(0xFF6D6D6D),
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    child: TextFormField(
+                      keyboardType: TextInputType.visiblePassword,
+                      validator: (value) {
+                        if (!ValidatorUtil.validatePassword(value)) {
+                          return "密码格式有误，请输入最少6位";
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: passwordEditingController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "确认新密码",
+                        style: TextStyle(
+                          color: Color(0xFF6D6D6D),
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    child: TextFormField(
+                      keyboardType: TextInputType.visiblePassword,
+                      validator: (value) {
+                        if (!ValidatorUtil.validatePassword(value)) {
+                          return "密码格式有误，请输入最少6位";
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: confirmPasswordEditingController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 16),
+                    constraints: BoxConstraints.expand(height: 48),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      disabledColor: Colors.grey[600],
+                      color: Theme.of(context).primaryColor,
+                      textColor: Colors.white,
+                      disabledTextColor: Colors.white,
+                      onPressed: () {
+                        _submit();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "提交",
+                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ],
