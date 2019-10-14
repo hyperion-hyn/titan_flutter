@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
+import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class WechatOfficialPage extends StatefulWidget {
   @override
@@ -12,8 +13,10 @@ class WechatOfficialPage extends StatefulWidget {
 class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   final String CATEGORY = "3";
 
+  static final int FIRST_PAGE = 1;
+
   static final int DOMESTIC_VIDEO = 43;
-  static final int FOREIGN_VIDEO = 46;
+  static final int FOREIGN_VIDEO = 45;
 
   static final int PAPER_TAG = 39;
   static final int VIDEO_TAG = 34;
@@ -21,14 +24,14 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   List<InfoItemVo> _InfoItemVoList = [];
   int selectedTag = 39;
   NewsApi _newsApi = NewsApi();
-  int page = 1;
+  int currentPage = FIRST_PAGE;
 
   int selectedVideoTag = DOMESTIC_VIDEO;
 
   @override
   void initState() {
     super.initState();
-    _getPowerListByPage(1);
+    _getPowerListByPage(FIRST_PAGE);
   }
 
   @override
@@ -78,8 +81,8 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                           return;
                         }
                         selectedVideoTag = value;
-                        page = 1;
-                        _getPowerListByPage(page);
+                        currentPage = 1;
+                        _getPowerListByPage(currentPage);
                         setState(() {});
                       },
                     )
@@ -88,14 +91,22 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-                itemBuilder: (context, index) {
-                  return buildInfoItem(_InfoItemVoList[index]);
-                },
-                separatorBuilder: (context, index) {
-                  return Divider();
-                },
-                itemCount: _InfoItemVoList.length),
+            child: SmartPullRefresh(
+              onRefresh: () {
+                _getPowerListByPage(FIRST_PAGE);
+              },
+              onLoading: () {
+                _getPowerListByPage(currentPage + 1);
+              },
+              child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    return buildInfoItem(_InfoItemVoList[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider();
+                  },
+                  itemCount: _InfoItemVoList.length),
+            ),
           ),
         ],
       ),
@@ -115,8 +126,8 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
             return;
           }
           selectedTag = value;
-          page = 1;
-          _getPowerListByPage(page);
+          currentPage = 1;
+          _getPowerListByPage(currentPage);
           setState(() {});
         },
         child: Container(
@@ -136,7 +147,7 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
     if (selectedTag == PAPER_TAG) {
       tags = selectedTag.toString();
     } else {
-      tags = "$selectedTag,$selectedVideoTag";
+      tags = selectedVideoTag.toString();
     }
     _getPowerList(CATEGORY, tags, page);
   }
@@ -153,12 +164,18 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
           publisher: "",
           publishTime: newsResponse.date * 1000);
     }).toList();
-    if (page == 1) {
+    if (newsVoList.length == 0) {
+      return;
+    }
+    if (page == FIRST_PAGE) {
       _InfoItemVoList.clear();
       _InfoItemVoList.addAll(newsVoList);
     } else {
       _InfoItemVoList.addAll(newsVoList);
     }
-    setState(() {});
+    currentPage = page;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

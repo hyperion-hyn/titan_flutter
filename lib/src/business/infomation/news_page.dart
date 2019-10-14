@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
+import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class NewsPage extends StatefulWidget {
   @override
@@ -11,18 +12,16 @@ class NewsPage extends StatefulWidget {
 
 class _NewsState extends InfoState<NewsPage> {
   final String CATEGORY = "1";
-
+  final int FIRST_PAGE = 1;
   List<InfoItemVo> _InfoItemVoList = [];
-
   int selectedTag = 26;
-
   NewsApi _newsApi = NewsApi();
-  int page = 1;
+  int currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    _getPowerList(CATEGORY, selectedTag.toString(), 1);
+    _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
   }
 
   @override
@@ -45,14 +44,22 @@ class _NewsState extends InfoState<NewsPage> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-                itemBuilder: (context, index) {
-                  return buildInfoItem(_InfoItemVoList[index]);
-                },
-                separatorBuilder: (context, index) {
-                  return Divider();
-                },
-                itemCount: _InfoItemVoList.length),
+            child: SmartPullRefresh(
+              onRefresh: () {
+                _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+              },
+              onLoading: () {
+                _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
+              },
+              child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    return buildInfoItem(_InfoItemVoList[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider();
+                  },
+                  itemCount: _InfoItemVoList.length),
+            ),
           ),
         ],
       ),
@@ -72,8 +79,8 @@ class _NewsState extends InfoState<NewsPage> {
             return;
           }
           selectedTag = value;
-          page = 1;
-          _getPowerList(CATEGORY, selectedTag.toString(), page);
+          currentPage = 1;
+          _getPowerList(CATEGORY, selectedTag.toString(), currentPage);
           setState(() {});
         },
         child: Container(
@@ -100,12 +107,18 @@ class _NewsState extends InfoState<NewsPage> {
           publisher: "",
           publishTime: newsResponse.date * 1000);
     }).toList();
-    if (page == 1) {
+    if (page == FIRST_PAGE) {
       _InfoItemVoList.clear();
       _InfoItemVoList.addAll(newsVoList);
     } else {
+      if (newsVoList.length == 0) {
+        return;
+      }
       _InfoItemVoList.addAll(newsVoList);
     }
-    setState(() {});
+    currentPage = page;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
