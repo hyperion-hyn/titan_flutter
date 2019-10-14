@@ -6,6 +6,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
+import 'package:titan/src/business/me/buy_hash_rate_page.dart';
+import 'package:titan/src/business/me/my_asset_page.dart';
+import 'package:titan/src/business/me/my_hash_rate_page.dart';
+import 'package:titan/src/business/me/my_node_mortgage_page.dart';
+import 'package:titan/src/business/me/user_info_state.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/dianping_poi.dart';
 import 'package:titan/src/utils/coord_convert.dart';
@@ -26,7 +32,7 @@ class HomePanel extends StatefulWidget {
   }
 }
 
-class HomePanelState extends State<HomePanel> {
+class HomePanelState extends UserState<HomePanel> {
   //附近的推荐
   List<DianPingPoi> nearPois = [];
 
@@ -159,12 +165,12 @@ class HomePanelState extends State<HomePanel> {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  print('TODD 我的账户');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
                 },
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '1483.3',
+                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)}",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     ),
                     Padding(
@@ -179,12 +185,12 @@ class HomePanelState extends State<HomePanel> {
               ),
               InkWell(
                 onTap: () {
-                  print('TODD 我的算力');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                 },
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '1483.3',
+                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalPower)}",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     ),
                     Padding(
@@ -199,12 +205,12 @@ class HomePanelState extends State<HomePanel> {
               ),
               InkWell(
                 onTap: () {
-                  print('TODD 我的抵押');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                 },
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '1483.3',
+                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)}",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     ),
                     Padding(
@@ -223,9 +229,7 @@ class HomePanelState extends State<HomePanel> {
             padding: const EdgeInsets.only(top: 32.0, left: 16, right: 16),
             child: InkWell(
               onTap: () async {
-                print('TODO 获得算力');
-                var pois = await Injector.of(context).repository.requestDianping(23.1209845, 113.3229411);
-                print('result is $pois');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePage()));
               },
               child: Ink(
                 height: 42,
