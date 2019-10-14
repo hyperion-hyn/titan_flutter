@@ -9,6 +9,7 @@ import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class MyNodeMortgagePage extends StatefulWidget {
   @override
@@ -26,6 +27,8 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
   PageResponse<NodeMortgageInfo> _nodeMortgagePage = PageResponse(0, 0, []);
 
   List nodeMortgageVoList = [];
+
+  var currentPage = 0;
 
   @override
   void initState() {
@@ -63,7 +66,7 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Text(
-                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)} U",
+                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)} USDT",
                       style: TextStyle(color: Colors.white, fontSize: 24),
                     ),
                   )
@@ -80,20 +83,28 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Expanded(
-                      child: ListView.separated(
-                          itemBuilder: (BuildContext context, int index) {
-                            return _buildNodeMortgageItem(nodeMortgageVoList[index]);
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Divider(
-                                thickness: 0.5,
-                                color: Colors.black12,
-                              ),
-                            );
-                          },
-                          itemCount: nodeMortgageVoList.length),
+                      child: SmartPullRefresh(
+                        onRefresh: () {
+                          _getNodeMortgageList(0);
+                        },
+                        onLoading: () {
+                          _getNodeMortgageList(currentPage + 1);
+                        },
+                        child: ListView.separated(
+                            itemBuilder: (BuildContext context, int index) {
+                              return _buildNodeMortgageItem(nodeMortgageVoList[index]);
+                            },
+                            separatorBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Divider(
+                                  thickness: 0.5,
+                                  color: Colors.black12,
+                                ),
+                              );
+                            },
+                            itemCount: nodeMortgageVoList.length),
+                      ),
                     )
                   ],
                 ),
@@ -222,10 +233,19 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
     List<NodeMortgageVo> list = _nodeMortgagePage.data.map((nodeMortgageDetail) {
       return _covertNodeMortgageInfoToVo(nodeMortgageDetail);
     }).toList();
-
-    nodeMortgageVoList.clear();
-    nodeMortgageVoList.addAll(list);
-    setState(() {});
+    if (list.length == 0) {
+      return;
+    }
+    if (page == 0) {
+      nodeMortgageVoList.clear();
+      nodeMortgageVoList.addAll(list);
+    } else {
+      nodeMortgageVoList.addAll(list);
+    }
+    currentPage = page;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   NodeMortgageVo _covertNodeMortgageInfoToVo(NodeMortgageInfo nodeMortgageInfo) {
@@ -233,7 +253,7 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
         iconColor: PRIMARY_COLOR,
         title: nodeMortgageInfo.name,
         subTitle: "抵押ID：${nodeMortgageInfo.id}",
-        count: "${Const.DOUBLE_NUMBER_FORMAT.format(nodeMortgageInfo.amount)} U",
+        count: "${Const.DOUBLE_NUMBER_FORMAT.format(nodeMortgageInfo.amount)} USDT",
         time: "抵押时间：${Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(nodeMortgageInfo.createAt * 1000))}",
         id: nodeMortgageInfo.id);
   }

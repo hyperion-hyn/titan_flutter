@@ -11,6 +11,7 @@ import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class MyAssetPage extends StatefulWidget {
   @override
@@ -164,6 +165,7 @@ class _BillHistoryState extends State<BillHistory> {
   UserService _userService = UserService();
 
   StreamSubscription _eventBusSubscription;
+  int currentPage = 0;
 
   @override
   void initState() {
@@ -174,53 +176,28 @@ class _BillHistoryState extends State<BillHistory> {
 
   @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
-      controller: _refreshController,
-      enablePullUp: true,
-      footer: ClassicFooter(
-        loadStyle: LoadStyle.ShowAlways,
-        completeDuration: Duration(milliseconds: 500),
-      ),
-      header: WaterDropHeader(),
-      onRefresh: () async {
-        //monitor fetch data from network
-        await Future.delayed(Duration(milliseconds: 1000));
-
-        _getBillList(0);
-        _refreshController.refreshCompleted();
-
-        /*
-        if(failed){
-         _refreshController.refreshFailed();
-        }
-      */
-      },
-      onLoading: () async {
-        //monitor fetch data from network
-        await Future.delayed(Duration(milliseconds: 1000));
-//        for (int i = 0; i < 10; i++) {
-//          data.add("Item $i");
-//        }
-        if (mounted) setState(() {});
-        _refreshController.loadComplete();
-//        _refreshController.loadFailed();
-      },
-      child: ListView.separated(
-          physics: ClampingScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return _buildBillDetailItem(billList[index]);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Divider(
-                thickness: 0.5,
-                color: Colors.black12,
-              ),
-            );
-          },
-          itemCount: billList.length),
-    );
+    return SmartPullRefresh(
+        child: ListView.separated(
+            physics: ClampingScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return _buildBillDetailItem(billList[index]);
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Divider(
+                  thickness: 0.5,
+                  color: Colors.black12,
+                ),
+              );
+            },
+            itemCount: billList.length),
+        onRefresh: () {
+          _getBillList(0);
+        },
+        onLoading: () {
+          _getBillList(currentPage + 1);
+        });
   }
 
   Widget _buildBillDetailItem(BillInfo billInfo) {
@@ -274,7 +251,17 @@ class _BillHistoryState extends State<BillHistory> {
   }
 
   Future _getBillList(int page) async {
-    billList = await _userService.getBillList(page);
+    var listData = await _userService.getBillList(page);
+    if (listData.length == 0) {
+      return;
+    }
+    if (page == 0) {
+      billList.clear();
+      billList.addAll(listData);
+    } else {
+      billList.addAll(listData);
+    }
+    currentPage = page;
     if (mounted) {
       setState(() {});
     }
@@ -315,13 +302,13 @@ class WithdrawalHistory extends StatefulWidget {
 }
 
 class _WithdrawalState extends State<WithdrawalHistory> {
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
-
-  PageResponse _pageResponse = PageResponse(0, 0, []);
+  PageResponse<WithdrawalInfoLog> _pageResponse = PageResponse(0, 0, []);
   List<WithdrawalInfoLog> withdrawalInfoList = [];
   UserService _userService = UserService();
 
   StreamSubscription _eventBusSubscription;
+
+  int currentPage = 0;
 
   @override
   void initState() {
@@ -332,53 +319,28 @@ class _WithdrawalState extends State<WithdrawalHistory> {
 
   @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
-      controller: _refreshController,
-      enablePullUp: true,
-      footer: ClassicFooter(
-        loadStyle: LoadStyle.ShowAlways,
-        completeDuration: Duration(milliseconds: 500),
-      ),
-      header: WaterDropHeader(),
-      onRefresh: () async {
-        //monitor fetch data from network
-        await Future.delayed(Duration(milliseconds: 1000));
-
-        _getWithdrawalList(0);
-        _refreshController.refreshCompleted();
-
-        /*
-        if(failed){
-         _refreshController.refreshFailed();
-        }
-      */
-      },
-      onLoading: () async {
-        //monitor fetch data from network
-        await Future.delayed(Duration(milliseconds: 1000));
-//        for (int i = 0; i < 10; i++) {
-//          data.add("Item $i");
-//        }
-        if (mounted) setState(() {});
-        _refreshController.loadComplete();
-//        _refreshController.loadFailed();
-      },
-      child: ListView.separated(
-          physics: ClampingScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return _buildWithdrawalItem(withdrawalInfoList[index]);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Divider(
-                thickness: 0.5,
-                color: Colors.black12,
-              ),
-            );
-          },
-          itemCount: withdrawalInfoList.length),
-    );
+    return SmartPullRefresh(
+        child: ListView.separated(
+            physics: ClampingScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return _buildWithdrawalItem(withdrawalInfoList[index]);
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Divider(
+                  thickness: 0.5,
+                  color: Colors.black12,
+                ),
+              );
+            },
+            itemCount: withdrawalInfoList.length),
+        onRefresh: () {
+          _getWithdrawalList(0);
+        },
+        onLoading: () {
+          _getWithdrawalList(currentPage + 1);
+        });
   }
 
   Widget _buildWithdrawalItem(WithdrawalInfoLog withdrawalInfo) {
@@ -454,7 +416,17 @@ class _WithdrawalState extends State<WithdrawalHistory> {
 
   Future _getWithdrawalList(int page) async {
     _pageResponse = await _userService.getWithdrawalLogList(page);
-    withdrawalInfoList = _pageResponse.data;
+    var dataList = _pageResponse.data;
+    if (dataList.length == 0) {
+      return;
+    }
+    if (page == 0) {
+      withdrawalInfoList.clear();
+      withdrawalInfoList.addAll(dataList);
+    } else {
+      withdrawalInfoList.addAll(dataList);
+    }
+    currentPage = page;
     if (mounted) {
       setState(() {});
     }

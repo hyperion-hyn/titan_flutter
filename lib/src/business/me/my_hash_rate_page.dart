@@ -8,6 +8,7 @@ import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class MyHashRatePage extends StatefulWidget {
   @override
@@ -27,11 +28,12 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
   List hashRateList = [];
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd");
+  int currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    _getFirstPowerList();
+    _getPowerList(0);
   }
 
   @override
@@ -82,17 +84,33 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ListView.separated(
-                            itemBuilder: (BuildContext context, int index) {
-                              return _buildHashRateItem(hashRateList[index]);
+                        child: SmartPullRefresh(
+                          onRefresh: () {
+                            _getPowerList(0);
+                          },
+                          onLoading: () {
+                            _getPowerList(currentPage + 1);
+                          },
+                          child: SmartPullRefresh(
+                            onRefresh: () {
+                              _getPowerList(0);
                             },
-                            separatorBuilder: (BuildContext context, int index) {
-                              return Divider(
-                                thickness: 0.5,
-                                color: Colors.black12,
-                              );
+                            onLoading: () {
+                              _getPowerList(currentPage + 1);
                             },
-                            itemCount: hashRateList.length),
+                            child: ListView.separated(
+                                itemBuilder: (BuildContext context, int index) {
+                                  return _buildHashRateItem(hashRateList[index]);
+                                },
+                                separatorBuilder: (BuildContext context, int index) {
+                                  return Divider(
+                                    thickness: 0.5,
+                                    color: Colors.black12,
+                                  );
+                                },
+                                itemCount: hashRateList.length),
+                          ),
+                        ),
                       ),
                     )
                   ],
@@ -153,11 +171,6 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
     );
   }
 
-  Future _getFirstPowerList() async {
-    await _getPowerList(0);
-    setState(() {});
-  }
-
   Future _getPowerList(int page) async {
     powerPageResponse = await _userService.getPowerList(page);
 
@@ -165,8 +178,21 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
       return _convertPowerDetailToHashRateVo(powerDetail);
     }).toList();
 
-    hashRateList.clear();
-    hashRateList.addAll(list);
+    if (list.length == 0) {
+      return;
+    }
+
+    if (page == 0) {
+      hashRateList.clear();
+      hashRateList.addAll(list);
+    } else {
+      hashRateList.addAll(list);
+    }
+
+    currentPage = page;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   HashRateVo _convertPowerDetailToHashRateVo(PowerDetail powerDetail) {
