@@ -82,3 +82,9 @@ class GoSearchEvent {
 }
 
 class ToMyLocationEvent {}
+
+class OnMapMovedEvent {
+  LatLng latLng;
+
+  OnMapMovedEvent({@required this.latLng});
+}

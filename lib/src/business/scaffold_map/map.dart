@@ -14,6 +14,7 @@ import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
@@ -370,13 +371,35 @@ class MapContainerState extends State<MapContainer> {
     return heavenMapPoiInfo;
   }
 
-  void onStyleLoaded(controller) async {
+  void onStyleLoaded(MapboxMapController controller) async {
     setState(() {
       mapboxMapController = controller;
     });
 
+    controller.addListener(mapMoveListener);
+
 //    _toMyLocation();
 //    _loadPurchasedMap();
+  }
+
+  LatLng _lastPosition;
+  void mapMoveListener() {
+    if (mapboxMapController?.isCameraMoving == false) {
+      var position = mapboxMapController?.cameraPosition?.target;
+      if (position != null && position != _lastPosition) {
+        if (_lastPosition != null) {
+          var distance = position.distanceTo(_lastPosition);
+          if (distance < 10) {
+            //小于10米不更新
+            return;
+          }
+        }
+        _lastPosition = position;
+        debounce(() {
+          eventBus.fire(OnMapMovedEvent(latLng: position));
+        }, 500)();
+      }
+    }
   }
 
   int _clickTimes = 0;
@@ -477,6 +500,7 @@ class MapContainerState extends State<MapContainer> {
 
   @override
   void dispose() {
+    mapboxMapController?.removeListener(mapMoveListener);
     _locationClickSubscription?.cancel();
     _eventBusSubscription?.cancel();
     super.dispose();

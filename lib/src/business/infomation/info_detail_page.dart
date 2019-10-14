@@ -8,8 +8,14 @@ class InfoDetailPage extends StatefulWidget {
   final String url;
   final String title;
   final int id;
+  final String userAgent;
 
-  InfoDetailPage({@required this.id, @required this.url, @required this.title});
+  InfoDetailPage({
+    this.id,
+    @required this.url,
+    @required this.title,
+    this.userAgent,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -52,13 +58,14 @@ class _InfoDetailState extends State<InfoDetailPage> {
     return WebView(
       javascriptMode: JavascriptMode.unrestricted,
       initialUrl: widget.url,
+      userAgent: widget.userAgent,
     );
   }
 
   Widget _loadContent() {
     return SingleChildScrollView(
       child: Html(
-        padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         data: newsDetail.content,
       ),
     );

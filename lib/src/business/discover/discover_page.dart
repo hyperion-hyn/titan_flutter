@@ -70,7 +70,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: <Widget>[
-                                    Text('DMapp地图应用接入文档', textAlign: TextAlign.center, style: TextStyle(fontSize: 13)),
+                                    Text('DMap地图应用接入文档', textAlign: TextAlign.center, style: TextStyle(fontSize: 13)),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 4.0),
                                       child: Text('文档优化中...',
@@ -303,7 +303,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                               child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    '更多DMapp应用持续添加~',
+                                    '更多DMap应用持续添加~',
                                     style: TextStyle(color: Colors.grey, fontSize: 13),
                                   )),
                             )

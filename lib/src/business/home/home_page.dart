@@ -5,30 +5,19 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/business/home/discover_content.dart';
 import 'package:titan/src/business/home/home_panel.dart';
 import 'package:titan/src/business/home/information_content.dart';
-import 'package:titan/src/business/home/map_content.dart';
-import 'package:titan/src/business/home/drawer/purchased_map/purchased_map_drawer_scenes.dart';
 import 'package:titan/src/business/home/improvement_dialog.dart';
 import 'package:titan/src/business/home/intro/intro_slider.dart';
 import 'package:titan/src/business/home/my_content.dart';
-import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as search;
-import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
-import 'package:titan/src/business/home/sheets/sheets.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/wallet_content.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 
-import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/business/updater/updater.dart';
-import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -39,17 +28,12 @@ import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
 import 'bloc/bloc.dart';
-import 'bootom_opt_bar_widget.dart';
-import 'map/bloc/bloc.dart';
-import 'map/map_scenes.dart';
 import 'bottom_fabs_widget.dart';
 import 'drawer/drawer_scenes.dart';
-import 'searchbar/searchbar.dart';
 
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter/services.dart' show PlatformException;
 
-import 'share_dialog.dart';
 
 class HomePage extends StatefulWidget {
   @override

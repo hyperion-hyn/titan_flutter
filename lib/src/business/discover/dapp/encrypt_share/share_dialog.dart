@@ -281,6 +281,7 @@ class ShareDialogState extends State<ShareDialog> {
 
     if (cipherText != null && cipherText.isNotEmpty) {
       Share.text(S.of(context).share_encrypted_location, cipherText, 'text/plain');
+      Navigator.pop(context, true);
     }
   }
 }

@@ -1,47 +1,69 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
+import 'package:titan/src/inject/injector.dart';
+import 'package:titan/src/model/dianping_poi.dart';
+import 'package:titan/src/utils/coord_convert.dart';
 import 'dart:math' as math;
 
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
 
-class HomePanel extends StatelessWidget {
+class HomePanel extends StatefulWidget {
   final ScrollController scrollController;
 
+  HomePanel({this.scrollController});
+
+  @override
+  State<StatefulWidget> createState() {
+    return HomePanelState();
+  }
+}
+
+class HomePanelState extends State<HomePanel> {
   //附近的推荐
-  final List<dynamic> nearPois;
+  List<DianPingPoi> nearPois = [];
 
-  HomePanel({this.scrollController, this.nearPois});
+  LatLng lastPosition;
 
-  List<dynamic> mockPois = [
-    {
-      'pic': 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3925233323,1705701801&fm=26&gp=0.jpg',
-      'name': '环球度过广场',
-      'tags': '旅游，美食'
-    },
-    {
-      'pic': 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3925233323,1705701801&fm=26&gp=0.jpg',
-      'name': '广东博物馆',
-      'tags': '旅游，美食'
-    },
-    {
-      'pic': 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3925233323,1705701801&fm=26&gp=0.jpg',
-      'name': '广州大剧院',
-      'tags': '旅游，美食'
-    },
-  ];
+  StreamSubscription streamSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    streamSubscription = eventBus.on().listen(eventBusListener);
+  }
+
+  @override
+  void dispose() {
+    streamSubscription.cancel();
+    super.dispose();
+  }
+
+  void eventBusListener(event) async {
+    if (event is OnMapMovedEvent) {
+      if (lastPosition == null || lastPosition.distanceTo(event.latLng) > 200) lastPosition = event.latLng;
+      var latlng = CoordConvert.wgs84togcj02(Coords(event.latLng.latitude, event.latLng.longitude));
+      var pois = await Injector.of(context).repository.requestDianping(latlng.latitude, latlng.longitude);
+      if (pois.length > 0) {
+        setState(() {
+          nearPois = pois;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    var pois = nearPois ?? mockPois;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: CustomScrollView(
-        controller: scrollController,
+        controller: widget.scrollController,
         slivers: <Widget>[
           /* 搜索 */
           SliverToBoxAdapter(
@@ -71,7 +93,10 @@ class HomePanel extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(top: 24.0, bottom: 16),
-              child: Text('附近推荐', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
+              child: Text(
+                '附近推荐',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
             ),
           ),
           SliverList(
@@ -79,14 +104,14 @@ class HomePanel extends StatelessWidget {
                   (context, index) {
                     final int itemIndex = index ~/ 2;
                     if (index.isEven) {
-                      var poi = pois[itemIndex];
-                      return _buildRecommendItem(poi);
+                      var poi = nearPois[itemIndex];
+                      return _buildRecommendItem(context, poi);
                     } else {
                       //devicer
                       return Divider(height: 0);
                     }
                   },
-                  childCount: _computeSemanticChildCount(pois.length),
+                  childCount: _computeSemanticChildCount(nearPois.length),
                   semanticIndexCallback: (Widget _, int index) {
                     return index.isEven ? index ~/ 2 : null;
                   })),
@@ -196,8 +221,10 @@ class HomePanel extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 32.0, left: 16, right: 16),
             child: InkWell(
-              onTap: () {
+              onTap: () async {
                 print('TODO 获得算力');
+                var pois = await Injector.of(context).repository.requestDianping(23.1209845, 113.3229411);
+                print('result is $pois');
               },
               child: Ink(
                 height: 42,
@@ -243,9 +270,9 @@ class HomePanel extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => InfoDetailPage(
-                                url: 'https://news.hyn.space/react-reduction/',
-                                title: 'map3全球节点',
-                              )));
+                                    url: 'https://news.hyn.space/react-reduction/',
+                                    title: 'map3全球节点',
+                                  )));
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -297,9 +324,9 @@ class HomePanel extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => InfoDetailPage(
-                                url: 'https://shimo.im/docs/GDp72cj3ATwEB7ke/read',
-                                title: '海伯利安',
-                              )));
+                                    url: 'https://shimo.im/docs/GDp72cj3ATwEB7ke/read',
+                                    title: '海伯利安',
+                                  )));
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -459,7 +486,7 @@ class HomePanel extends StatelessWidget {
     return math.max(0, itemCount * 2 - 1);
   }
 
-  Widget _buildRecommendItem(poi) {
+  Widget _buildRecommendItem(context, DianPingPoi poi) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Material(
@@ -468,36 +495,51 @@ class HomePanel extends StatelessWidget {
           onTap: () {
             //TODO
             print('poi item click');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => InfoDetailPage(
+                      url: poi.schema,
+                      title: poi.shopName,
+                    )));
           },
           child: Ink(
             child: Row(
 //            crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Image.network(
-                  poi['pic'],
+                  poi.defaultPic,
                   height: 78,
                   width: 110,
                   fit: BoxFit.cover,
                 ),
-                Container(
+                Expanded(
+                  child: Container(
 //                color: Colors.red,
-                  margin: EdgeInsets.only(left: 16, right: 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        poi['name'],
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          poi['tags'],
-                          style: TextStyle(fontSize: 13, color: Colors.black54),
+                    margin: EdgeInsets.only(left: 16, right: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          poi.shopName,
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  poi.dealGroupTitle,
+                                  style: TextStyle(fontSize: 13, color: Colors.black54),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

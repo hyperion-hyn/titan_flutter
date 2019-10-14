@@ -7,6 +7,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
 import '../../../global.dart';
 import './bloc.dart';
 
@@ -35,20 +36,30 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     //--------------
     /*search one poi*/
     else if (event is SearchPoiEvent) {
-      yield SearchingPoiState(searchingPoi: event.poi);
+      IPoi poi = event.poi;
+
+      yield SearchingPoiState(searchingPoi: poi);
 
       try {
         var searchInteractor = Injector
             .of(context)
             .searchInteractor;
-        PoiEntity poi =
-        await searchInteractor.reverseGeoSearch(event.poi.latLng, Localizations
+        PoiEntity searchPoi =
+        await searchInteractor.reverseGeoSearch(poi.latLng, Localizations
             .localeOf(context)
             .languageCode);
-        poi.name = event.poi.name ?? poi.name;
-        poi.address = event.poi.address ?? poi.address;
-        poi.remark = event.poi.remark ?? poi.remark;
-        poi.latLng = event.poi.latLng ?? poi.latLng;
+
+        if(poi.name == null) {
+          poi.name = searchPoi.name;
+        }
+        if(poi.address == null) {
+          poi.address = searchPoi.address;
+        }
+        
+//        searchPoi.name = event.poi.name ?? searchPoi.name;
+//        searchPoi.address = event.poi.address ?? searchPoi.address;
+//        searchPoi.remark = event.poi.remark ?? searchPoi.remark;
+//        searchPoi.latLng = event.poi.latLng ?? searchPoi.latLng;
 
         yield ShowPoiState(poi: poi);
       } catch (err) {
