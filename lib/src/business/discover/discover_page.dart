@@ -51,8 +51,8 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                             dotVerticalPadding: 16,
                             dotBgColor: Colors.transparent,
                             images: [
-                              NetworkImage("https://www.hyn.space/img/header.jpeg"),
-                              NetworkImage("https://www.hyn.space/img/header.jpeg"),
+                              NetworkImage("https:\/\/news.hyn.space\/wp-content\/uploads\/2019\/10\/WechatIMG16-768x443.jpeg"),
+                              NetworkImage("https:\/\/news.hyn.space\/wp-content\/uploads\/2019\/10\/WechatIMG13-768x443.jpeg"),
                             ],
                           ),
                         ),
