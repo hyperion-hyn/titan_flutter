@@ -9,6 +9,7 @@ import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/dianping_poi.dart';
 import 'package:titan/src/utils/coord_convert.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 
 import '../../global.dart';
@@ -492,16 +493,21 @@ class HomePanelState extends State<HomePanel> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            //TODO
-            print('poi item click');
+          onTap: () async {
+//            print('poi item click');
+//            if (await canLaunch(poi.schema)) {
+//              await launch(poi.schema);
+//            } else {
+//              print('Could not launch ${poi.schema}');
+//            }
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => InfoDetailPage(
-                      url: poi.schema,
-                      title: poi.shopName,
-                    )));
+                          url: poi.schema,
+                          title: poi.shopName,
+//                      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1',
+                        )));
           },
           child: Ink(
             child: Row(
