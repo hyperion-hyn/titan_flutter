@@ -217,7 +217,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                       style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      "我的算力(POH)",
+                                      "我的算力(T)",
                                       style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
                                     ),
                                   ],
@@ -314,6 +314,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                 imageAsset,
                 width: 42,
                 height: 42,
+                color: Theme.of(context).primaryColor,
               ),
               Padding(
                 padding: const EdgeInsets.all(12.0),

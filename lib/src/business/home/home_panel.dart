@@ -196,7 +196,7 @@ class HomePanelState extends UserState<HomePanel> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
                       child: Text(
-                        '我的算力(POH)',
+                        '我的算力(T)',
                         style: TextStyle(color: Colors.grey, fontSize: 13),
                       ),
                     ),

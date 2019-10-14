@@ -78,6 +78,7 @@ class _NodeMortgageState extends State<NodeMortgagePage> {
                   Image.asset(
                     "res/drawable/node_icon.png",
                     width: 24,
+                    color: Theme.of(context).primaryColor,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
@@ -88,7 +89,7 @@ class _NodeMortgageState extends State<NodeMortgagePage> {
                   ),
                   Spacer(),
                   Text(
-                    "每日返还",
+                    "",
                     style: TextStyle(color: Color(0xFF6D6D6D)),
                   )
                 ],

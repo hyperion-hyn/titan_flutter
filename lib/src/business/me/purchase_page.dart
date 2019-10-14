@@ -95,7 +95,7 @@ class _PurchaseState extends State<PurchasePage> {
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         Text(
-                          "${widget.contractInfo.power} POH算力",
+                          "${widget.contractInfo.power} T算力",
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ],

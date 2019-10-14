@@ -90,7 +90,7 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
                         style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                       Text(
-                        "每日返还",
+                        "",
                         style: TextStyle(color: Color(0xFF6D6D6D)),
                       )
                     ],

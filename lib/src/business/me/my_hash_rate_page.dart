@@ -66,7 +66,7 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Text(
-                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalPower)} POH",
+                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalPower)} T",
                       style: TextStyle(color: Colors.white, fontSize: 24),
                     ),
                   )
@@ -207,7 +207,7 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
     return HashRateVo(
         iconData: ExtendsIconFont.engine,
         iconColor: iconColor,
-        title: "${powerDetail.power} POH",
+        title: "${powerDetail.power} T",
         subTitle: "合约ID：${powerDetail.contractId}",
         validity: validity,
         validityColor: validityColor,
