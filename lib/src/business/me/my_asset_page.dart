@@ -54,7 +54,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     "提币",
-                    style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ))
@@ -102,6 +102,12 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
 //                      color: Colors.black54,
                       width: 200,
                       child: TabBar(
+                        indicatorColor: Theme.of(context).primaryColor,
+                        indicatorWeight: 5,
+                        controller: _tabController,
+                        labelColor: Color(0xFF252525),
+                        unselectedLabelColor: Colors.grey,
+                        indicatorSize: TabBarIndicatorSize.label,
                         tabs: <Widget>[
                           Tab(
                             child: Text(
@@ -116,11 +122,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                             ),
                           ),
                         ],
-                        indicatorColor: Theme.of(context).primaryColor,
-                        controller: _tabController,
-                        labelColor: Color(0xFF252525),
-                        unselectedLabelColor: Colors.grey,
-                        indicatorSize: TabBarIndicatorSize.label,
+
 //                        indicatorColor: Color(0xFFcb9521),
                       ),
                     ),
