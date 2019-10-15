@@ -245,7 +245,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is SearchPoiFailState) {
         //搜索poi失败
-        sheetPanel = FailPanel(message: state.message);
+        sheetPanel = FailPanel(message: state.message, showCloseBtn: true,);
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is SearchingPoiByTextState) {
         //搜索POI
@@ -263,7 +263,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         );
       } else if (state is SearchPoiByTextFailState) {
         //搜索失败
-        sheetPanel = FailPanel(message: state.message);
+        sheetPanel = FailPanel(message: state.message, showCloseBtn: true,);
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is RoutingState) {
         //路线规划中
