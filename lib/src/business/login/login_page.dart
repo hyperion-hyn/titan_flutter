@@ -177,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
                           children: <Widget>[
                             Text(
                               "注册账号",
-                              style: TextStyle(color: Color(0xFF3C94FF), fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16, fontWeight: FontWeight.bold),
                             )
                           ],
                         ),
