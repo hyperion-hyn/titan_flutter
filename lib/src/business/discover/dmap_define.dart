@@ -117,39 +117,40 @@ final embassyDMapConfigModel = DMapConfigModel(
 
 //警察服务站
 final policeDMapConfigModel = DMapConfigModel(
-  dMapName: 'policeStation',
-  heavenDataModelList: <HeavenDataModel>[
-    HeavenDataModel(
-      id: '3818230e27554203b638851aa246e7d3',
-      sourceLayer: 'police',
-      sourceUrl: "https://store.tile.map3.network/maps/global/police/{z}/{x}/{y}.vector.pbf",
-      color: 0xff836FFF,
-    )
-  ],
-  defaultLocation: LatLng(22.296797, 114.170900),
-  defaultZoom: 12,
-  onMapClickHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
-    var poi;
-    var feature = await _getFeature(point, coordinates, 'layer-heaven-3818230e27554203b638851aa246e7d3');
-    if (feature != null) {
-      poi = PoliceStationPoi.fromMapFeature(feature);
-      if (poi != null) {
-        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+    dMapName: 'policeStation',
+    heavenDataModelList: <HeavenDataModel>[
+      HeavenDataModel(
+        id: '3818230e27554203b638851aa246e7d3',
+        sourceLayer: 'police',
+        sourceUrl: "https://store.tile.map3.network/maps/global/police/{z}/{x}/{y}.vector.pbf",
+        color: 0xff836FFF,
+      )
+    ],
+    defaultLocation: LatLng(22.296797, 114.170900),
+    defaultZoom: 12,
+    onMapClickHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
+      var poi;
+      var feature = await _getFeature(point, coordinates, 'layer-heaven-3818230e27554203b638851aa246e7d3');
+      if (feature != null) {
+        poi = PoliceStationPoi.fromMapFeature(feature);
+        if (poi != null) {
+          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+        }
       }
-    }
-    if (poi == null) {
-      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
-    }
-    return true;
-  },
-  onMapLongPressHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
-    print('on long press police');
-    return true;
-  },
-  panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
-    return PoliceStationPanel(poi: poi, scrollController: scrollController);
-  },
-);
+      if (poi == null) {
+        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+      }
+      return true;
+    },
+    onMapLongPressHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
+      print('on long press police');
+      return true;
+    },
+    panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
+      return PoliceStationPanel(poi: poi, scrollController: scrollController);
+    },
+    panelPaddingTop: (context) => MediaQuery.of(context).padding.top + 56 - 12 //减去drag的高度
+    );
 
 //位置加密分享
 final encryptShareDMapConfigModel = DMapConfigModel(
