@@ -6,7 +6,7 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
   DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
 
   Widget buildInfoItem(InfoItemVo infoItemVo) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         Navigator.push(
             context,
