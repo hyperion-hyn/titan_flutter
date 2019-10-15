@@ -33,11 +33,11 @@ class _NodeMortgageState extends State<NodeMortgagePage> {
         elevation: 0,
         title: Text(
           "节点抵押",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
+//        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: CustomScrollView(
         slivers: <Widget>[

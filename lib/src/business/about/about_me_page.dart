@@ -40,11 +40,11 @@ class _AboueMeState extends State<AboutMePage> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
+//          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.white),
           title: Text(
             S.of(context).about_us,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
           centerTitle: true,
           elevation: 0,
