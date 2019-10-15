@@ -8,10 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,102 +38,61 @@ class _AboueMeState extends State<AboutMePage> {
   Widget build(BuildContext context) {
     var languageCode = Localizations.localeOf(context).languageCode;
     return Scaffold(
-        appBar: AppBar(title: Text(S.of(context).about_us)),
-        body: ListView(children: <Widget>[
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
+          title: Text(
+            S.of(context).about_us,
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: true,
+          elevation: 0,
+        ),
+        body: ListView(padding: EdgeInsets.symmetric(horizontal: 24), children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48),
+            padding: const EdgeInsets.only(top: 36, bottom: 24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset(
-                  'res/drawable/ic_logo.png',
-                  color: Colors.black,
-                  width: 50,
-                  height: 50,
-                ),
-                Image.asset(
-                  'res/drawable/logo_title.png',
-                  color: Colors.black,
-                  width: 100,
+                  'res/drawable/map_rich_application.png',
+                  width: 120,
                 )
               ],
             ),
           ),
-          Container(
-            color: Colors.white,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Column(
                 children: <Widget>[
-                  Text(
-                    S.of(context).app_version,
-                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  Text("泰坦掘金", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF252525))),
+                  SizedBox(
+                    height: 4,
                   ),
-                  Spacer(),
-                  Text(
-                    version,
-                    style: TextStyle(color: Colors.grey),
-                  )
+                  Text("1.0.0", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: Color(0xFF9B9B9B)))
                 ],
-              ),
-            ),
+              )
+            ],
           ),
           SizedBox(
-            height: 20,
+            height: 40,
           ),
-          _buildInfoContainer(
-              label: S.of(context).official_website,
-              showValue: "https://www.hyn.space/",
-              value: "https://www.hyn.space/",
-              isUrl: true),
-          _buildInfoContainer(
-              label: S.of(context).forum,
-              showValue: "https://talk.hyn.space/",
-              value: "https://talk.hyn.space/",
-              isUrl: true),
-          _buildInfoContainer(
-              label: S.of(context).telegram, showValue: "@hypersionOfficianHYN", value: "hypersionOfficianHYN"),
-          _buildInfoContainer(label: S.of(context).twitterhyperion, showValue: "@TitanHYN", value: "TitanHYN"),
-          _buildInfoContainer(
-            label: S.of(context).twittertitan,
-            showValue: "@HyperionHYN",
-            value: "HyperionHYN",
-          ),
-          _buildInfoContainer(
-            label: S.of(context).medium,
-            showValue: "@hyperionsgoffical",
-            value: "@hyperionsgoffical",
-          ),
-          _buildInfoContainer(label: S.of(context).wechat, showValue: "@HyperionHYN", value: "HyperionHYN"),
-          _buildInfoContainer(label: S.of(context).wechat_official_account, showValue: "@kaizshuo", value: "kaizshuo"),
-          if (languageCode == "en")
-            _buildInfoContainer(
-                label: S.of(context).telegram_operator, showValue: "@FriedrichLVZX", value: "FriedrichLVZX"),
-          if (languageCode == "zh")
-            _buildInfoContainer(
-              label: S.of(context).wechat_cs,
-              showValue: "@Bi321369",
-              value: "@Bi321369",
-            ),
+          Divider(),
+          _buildInfoContainer(label: "检查更新", onTap: () {}),
+          Divider()
         ]));
   }
 
-  Widget _buildInfoContainer({String label, String showValue, String value, bool isUrl: false}) {
-    Color showValueTextColor = isUrl ? Colors.grey : Colors.blue;
+  Widget _buildInfoContainer({String label, Function onTap}) {
     return GestureDetector(
-      onTap: () {
-        if (isUrl) {
-          _openUrl(value, label);
-        } else {
-          _copyText(value);
-        }
-      },
+      onTap: onTap,
       child: Container(
         margin: EdgeInsets.fromLTRB(0, 1, 0, 0),
         color: Colors.white,
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -142,15 +101,10 @@ class _AboueMeState extends State<AboutMePage> {
                 style: TextStyle(color: Colors.black, fontSize: 15),
               ),
               Spacer(),
-              Text(
-                showValue,
-                style: TextStyle(color: showValueTextColor),
-              ),
-              if (isUrl)
-                Icon(
-                  Icons.chevron_right,
-                  color: Colors.grey,
-                )
+              Icon(
+                Icons.chevron_right,
+                color: Colors.grey,
+              )
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/about/about_me_page.dart';
 import 'package:titan/src/business/me/buy_hash_rate_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
 import 'package:titan/src/business/me/model/common_response.dart';
@@ -291,7 +292,9 @@ class _MeState extends UserState<MePage> with RouteAware {
                   Divider(
                     height: 2,
                   ),
-                  _buildMemuBar("关于我们", ExtendsIconFont.person, () {}),
+                  _buildMemuBar("关于我们", ExtendsIconFont.person, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
+                  }),
                 ],
               ),
             )
