@@ -7,7 +7,9 @@ import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../../../global.dart';
@@ -29,7 +31,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
   LatLng _lastPosition;
 
   CancelToken cancelToken;
-  List<PoiEntity> nearPois;
+  List<GaodePoi> nearPois;
 
   int selectedId = 0;
 
@@ -74,11 +76,12 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
 
     try {
       cancelToken = CancelToken();
-      List<PoiEntity> pois = await _userService.nearSharePlaces(
+      var gaodeModel = await _userService.searchByGaode(
         lat: _lastPosition.latitude,
         lon: _lastPosition.longitude,
         cancelToken: cancelToken,
       );
+      List<GaodePoi> pois = gaodeModel.data;
       setState(() {
         nearPois = pois;
         isLoading = false;
@@ -121,7 +124,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
     return ListView.separated(
         controller: widget.scrollController,
         itemBuilder: (context, index) {
-          PoiEntity poi = nearPois[index];
+          IPoi poi = nearPois[index];
           return InkWell(
             onTap: () {
               setState(() {

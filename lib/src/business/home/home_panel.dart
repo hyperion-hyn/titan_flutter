@@ -4,18 +4,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/me/buy_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_asset_page.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
+import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
+import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/dianping_poi.dart';
 import 'package:titan/src/utils/coord_convert.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 
 import '../../global.dart';
@@ -33,6 +35,8 @@ class HomePanel extends StatefulWidget {
 }
 
 class HomePanelState extends UserState<HomePanel> {
+  UserService _userService = UserService();
+
   //附近的推荐
   List<DianPingPoi> nearPois = [];
 
@@ -54,13 +58,18 @@ class HomePanelState extends UserState<HomePanel> {
 
   void eventBusListener(event) async {
     if (event is OnMapMovedEvent) {
-      if (lastPosition == null || lastPosition.distanceTo(event.latLng) > 200) lastPosition = event.latLng;
-      var latlng = CoordConvert.wgs84togcj02(Coords(event.latLng.latitude, event.latLng.longitude));
-      var pois = await Injector.of(context).repository.requestDianping(latlng.latitude, latlng.longitude);
-      if (pois.length > 0) {
-        setState(() {
-          nearPois = pois;
-        });
+      print('xxx1 ${event.latLng}');
+      if (lastPosition == null || lastPosition.distanceTo(event.latLng) > 200) {
+        lastPosition = event.latLng;
+        var latlng = CoordConvert.wgs84togcj02(Coords(event.latLng.latitude, event.latLng.longitude));
+        print('xxx2 ${latlng.latitude}, ${latlng.longitude}');
+        var pois = await Injector.of(context).repository.requestDianping(latlng.latitude, latlng.longitude);
+        print('xxx3 ${pois}');
+        if (pois.length > 0) {
+          setState(() {
+            nearPois = pois;
+          });
+        }
       }
     }
   }
@@ -433,42 +442,105 @@ class HomePanelState extends UserState<HomePanel> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        _buildPoiItem('res/drawable/ic_food.png', '美食'),
-        _buildPoiItem('res/drawable/ic_hotel.png', '酒店'),
-        _buildPoiItem('res/drawable/ic_scenic_spotx.png', '景点'),
-        _buildPoiItem('res/drawable/ic_park.png', '停车场'),
-        _buildPoiItem('res/drawable/ic_gas_station.png', '加油站'),
+        _buildPoiItem('res/drawable/ic_food.png', '美食', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 1, center: center, searchText: '美食'));
+          }
+        }),
+        _buildPoiItem('res/drawable/ic_hotel.png', '酒店', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 2, center: center, searchText: '酒店'));
+          }
+        }),
+        _buildPoiItem('res/drawable/ic_scenic_spotx.png', '景点', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 3, center: center, searchText: '景点'));
+          }
+        }),
+        _buildPoiItem('res/drawable/ic_park.png', '停车场', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 4, center: center, searchText: '停车场'));
+          }
+        }),
+        _buildPoiItem('res/drawable/ic_gas_station.png', '加油站', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 5, center: center, searchText: '加油站'));
+          }
+        }),
       ],
     );
+  }
+
+  get mapCenter async {
+    var center = await (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController?.getCameraPosition();
+    return center?.target;
   }
 
   Widget poiRow2(context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        _buildPoiItem('res/drawable/ic_bank.png', '银行'),
-        _buildPoiItem('res/drawable/ic_supermarket.png', '超市'),
-        _buildPoiItem('res/drawable/ic_market.png', '商场'),
-        _buildPoiItem('res/drawable/ic_cybercafe.png', '网吧'),
-        _buildPoiItem('res/drawable/ic_wc.png', '厕所'),
+        _buildPoiItem('res/drawable/ic_bank.png', '银行', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 6, center: center, searchText: '银行'));
+          }
+        }),
+        _buildPoiItem('res/drawable/ic_supermarket.png', '超市', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 7, center: center, searchText: '超市'));
+          }
+        }),
+        _buildPoiItem('res/drawable/ic_market.png', '商场', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 8, center: center, searchText: '商场'));
+          }
+        }),
+        _buildPoiItem('res/drawable/ic_cybercafe.png', '网吧', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 9, center: center, searchText: '网吧'));
+          }
+        }),
+        _buildPoiItem('res/drawable/ic_wc.png', '厕所', onTap: () async {
+          var center = await mapCenter;
+          if(center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
+                isGaodeSearch: true, type: 10, center: center, searchText: '厕所'));
+          }
+        }),
       ],
     );
   }
 
-  Widget _buildPoiItem(String asset, String label) {
+  Widget _buildPoiItem(String asset, String label, {GestureTapCallback onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          //TODO
-          print('poi clicked $label');
-        },
+        onTap: onTap,
         child: Ink(
           padding: EdgeInsets.all(8),
           child: Column(
             children: <Widget>[
               Image.asset(
                 asset,
+                color: Theme.of(context).primaryColor,
                 width: 32,
                 height: 32,
               ),
@@ -493,7 +565,7 @@ class HomePanelState extends UserState<HomePanel> {
 
   Widget _buildRecommendItem(context, DianPingPoi poi) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Material(
         color: Colors.transparent,
         child: InkWell(

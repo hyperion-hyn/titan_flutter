@@ -21,6 +21,8 @@ import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
+import 'package:titan/src/domain/gaode_model.dart';
+import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/poi.dart';
 
 class UserService {
@@ -241,21 +243,36 @@ class UserService {
   }
 
   ///附近可以分享的位置
-  Future<List<PoiEntity>> nearSharePlaces({
+  ///type:
+  /// 1 美食
+  /// 2 酒店
+  /// 3 景点
+  /// 4 停车场
+  /// 5 加油站
+  /// 6 银行
+  /// 7 超市
+  /// 8 商场
+  /// 9 网吧
+  /// 10 厕所
+  Future<GaodeModel> searchByGaode({
     @required double lat,
     @required double lon,
-    double radius = 100,
+    int type,
+    double radius = 2000,
+    int page = 1,
     CancelToken cancelToken,
   }) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
-    return await _mapRichApi.nearSharePlaces(
+    return await _mapRichApi.searchByGaode(
       lat: lat,
       lon: lon,
       token: userToken.token,
       radius: radius,
+      type: type,
+      page: page,
       cancelToken: cancelToken,
     );
   }

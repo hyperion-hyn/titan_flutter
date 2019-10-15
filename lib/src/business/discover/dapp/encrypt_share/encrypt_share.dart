@@ -7,6 +7,7 @@ import 'package:titan/src/business/discover/dapp/encrypt_share/share_dialog.dart
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
 
 import 'event.dart';
 
@@ -18,7 +19,7 @@ class EncryptShare extends StatefulWidget {
 }
 
 class EncryptShareState extends State<EncryptShare> {
-  PoiEntity selectedPoi;
+  IPoi selectedPoi;
 
   StreamSubscription streamSubscription;
 
