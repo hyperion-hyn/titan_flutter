@@ -53,19 +53,20 @@ class _UpdaterState extends State<Updater> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _appBlocSubscription?.cancel();
-    _appBlocSubscription = BlocProvider.of<AppBloc>(context)?.state?.listen((AppState state) async {
-      if (state is UpdateState) {
-        if (state.appData.updateEntity != null) {
-          PackageInfo packageInfo = await PackageInfo.fromPlatform();
-          if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
-            _showUpdateDialog(state.appData.updateEntity);
-          } else {
-            print('已经是最新版本');
+    if(_appBlocSubscription == null) {
+      _appBlocSubscription = BlocProvider.of<AppBloc>(context)?.state?.listen((AppState state) async {
+        if (state is UpdateState) {
+          if (state.appData.updateEntity != null) {
+            PackageInfo packageInfo = await PackageInfo.fromPlatform();
+            if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
+              _showUpdateDialog(state.appData.updateEntity);
+            } else {
+              print('已经是最新版本');
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   void _showUpdateDialog(UpdateEntity updateEntity) async {
@@ -179,7 +180,7 @@ class _UpdaterState extends State<Updater> {
 
   void _checkUpdate() async {
     await Future.delayed(Duration(milliseconds: 3000));
-    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+//    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
     BlocProvider.of<AppBloc>(context).dispatch(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
   }
