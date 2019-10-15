@@ -93,7 +93,6 @@ class _DrawBalanceState extends State<DrawBalancePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
-        brightness: Brightness.light,
         backgroundColor: Colors.white,
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.black),

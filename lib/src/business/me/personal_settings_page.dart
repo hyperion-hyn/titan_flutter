@@ -23,12 +23,12 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+//        backgroundColor: Colors.white,
         title: Text(
           "个人信息",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
       body: Column(

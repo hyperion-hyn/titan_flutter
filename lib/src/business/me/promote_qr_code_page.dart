@@ -11,13 +11,13 @@ class PromoteQrCodePage extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+//        backgroundColor: Colors.white,
         title: Text(
           "邀请二维码",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Stack(
         children: <Widget>[

@@ -36,12 +36,12 @@ class _MyPromoteState extends UserState<MyPromotePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+//        backgroundColor: Colors.white,
         title: Text(
           "我的推广",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.white),
         elevation: 0,
         centerTitle: true,
       ),

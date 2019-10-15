@@ -28,13 +28,13 @@ class _GradeState extends State<GradePage> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+//          backgroundColor: Colors.white,
           title: Text(
             "等级",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: Colors.white),
           elevation: 0,
         ),
         body: Column(

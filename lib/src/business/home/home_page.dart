@@ -34,7 +34,6 @@ import 'drawer/drawer_scenes.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter/services.dart' show PlatformException;
 
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -51,13 +50,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   StreamSubscription _appLinkSubscription;
 
-//  GlobalKey mapScenseKey = GlobalKey();
-
-  var isFirst;
-  var isShowPlanDialog;
-  var isShowIntro = false;
-  var isPlanDialogIsShowing = false;
-
   var _currentIndex = 0;
 
   AnimationController animationController;
@@ -69,8 +61,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     initUniLinks();
     print("initState");
-    _isNeedShowIntro();
-    _isNeedShowPlanDialog();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
@@ -88,58 +78,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     print("didChangeDependencies");
   }
 
-  void _isNeedShowIntro() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isFirst = prefs.getBool('isFirstRun') ?? true;
-    print('isFirstRun: $isFirst');
-    setState(() {});
-  }
-
-  void _isNeedShowPlanDialog() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isShowPlanDialog = prefs.getBool('isShowPlanDialog') ?? false;
-    print('isShowPlanDialog: $isFirst');
-    setState(() {});
-  }
-
-  void _savePlanDialogState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isShowPlanDialog', true);
-//    setState(() {});
-    _isNeedShowIntro();
-  }
-
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((callback) {
-      if (isFirst == true && !isShowIntro) {
-        isShowIntro = true;
-        Navigator.push(context, MaterialPageRoute(builder: (context) => IntroScreen())).then((data) {
-          _isNeedShowIntro();
-          if (isShowPlanDialog == false && !isPlanDialogIsShowing) {
-            isPlanDialogIsShowing = true;
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return ImprovementDialog();
-                });
-
-            _savePlanDialogState();
-          }
-        });
-      }
-    });
-
-    if (isFirst == null) {
-      return Container(
-        color: Colors.white,
-      );
-    }
-    if (isFirst) {
-      return Container(
-        color: Colors.white,
-      );
-    }
     return MultiBlocListener(
       listeners: [
         BlocListener<ScaffoldMapBloc, ScaffoldMapState>(

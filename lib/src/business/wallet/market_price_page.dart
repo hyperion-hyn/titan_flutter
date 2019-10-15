@@ -47,11 +47,11 @@ class _MarketPriceState extends State<MarketPricePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
+//        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           "HYN行情",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         elevation: 0,

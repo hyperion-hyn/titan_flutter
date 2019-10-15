@@ -32,11 +32,11 @@ class _ResetPageState extends State<ResetPasswordPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
+//        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           "重置账户密码",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         elevation: 0,

@@ -43,12 +43,12 @@ class _InfoDetailState extends State<InfoDetailPage> {
     }
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
+//          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           title: Text(
             widget.title,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
         ),
         body: isLoadingContent ? _loadContent() : _loadUrl());

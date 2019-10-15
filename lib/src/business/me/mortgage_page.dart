@@ -45,11 +45,11 @@ class _MortgagePageState extends State<MortgagePage> {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
+//        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           '抵押支付',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
       ),
       body: Padding(

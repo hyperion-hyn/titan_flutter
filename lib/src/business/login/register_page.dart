@@ -33,11 +33,11 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
+//        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           "注册",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         elevation: 0,

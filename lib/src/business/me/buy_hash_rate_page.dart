@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
@@ -32,12 +35,12 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
     return Scaffold(
         appBar: AppBar(
           brightness: Brightness.light,
-          backgroundColor: Colors.white,
+//          backgroundColor: Colors.white,
           title: Text(
             "购买算力合约",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           elevation: 0,
         ),
