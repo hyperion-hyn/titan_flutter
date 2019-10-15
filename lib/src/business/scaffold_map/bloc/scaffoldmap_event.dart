@@ -34,7 +34,11 @@ class SearchTextEvent extends ScaffoldMapEvent {
   String searchText;
   LatLng center;
 
-  SearchTextEvent({this.searchText, this.center});
+  //is gaode search
+  bool isGaodeSearch;
+  int type;
+
+  SearchTextEvent({this.searchText, this.center, this.type, this.isGaodeSearch});
 }
 
 //---------------------

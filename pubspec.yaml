@@ -121,6 +121,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - res/drawable/img_placeholder.jpg
     - res/drawable/ic_dmap_bar.png
     - res/drawable/ic_dmap_location_share.png
     - res/drawable/ic_dmap_mbassy.png

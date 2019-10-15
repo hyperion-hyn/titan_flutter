@@ -18,6 +18,8 @@ import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
+import 'package:titan/src/domain/gaode_model.dart';
+import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/utils/open_location_code.dart';
 
@@ -207,28 +209,30 @@ class MapRichApi {
   }
 
   ///附近可以分享的位置
-  Future<List<PoiEntity>> nearSharePlaces({
+  Future<GaodeModel> searchByGaode({
     @required double lat,
     @required double lon,
     @required String token,
+    int type,
     double radius = 100,
+    int page = 1,
     CancelToken cancelToken,
   }) async {
     return await MapRichHttpCore.instance.getEntity(
       'map/around',
-      EntityFactory<List<PoiEntity>>((json) {
-        return (json as List).map((map) {
-          PoiEntity poi = PoiEntity();
-          poi.name = map['name'];
-          poi.address = map['address'];
-          poi.latLng = mapbox.LatLng(map['lat'], map['lon']);
-          return poi;
+      EntityFactory<GaodeModel>((json) {
+        var data = (json['data'] as List).map((map) {
+          return GaodePoi.fromJson(map);
         }).toList();
+        var gaodeModel = GaodeModel(page: json['page'], totalPage: json['total_pages'], data: data);
+        return gaodeModel;
       }),
       params: {
         "lat": lat,
         "lon": lon,
         "radius": radius,
+        "type": type,
+        "page": page,
       },
       options: RequestOptions(headers: {"Authorization": token}, cancelToken: cancelToken),
     );

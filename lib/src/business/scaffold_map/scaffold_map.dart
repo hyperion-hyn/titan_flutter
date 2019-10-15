@@ -8,9 +8,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/business/scaffold_map/bottom_panels/gaode_poi_panel.dart';
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
@@ -216,7 +218,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         topRadius = 16;
 //        topPadding = MediaQuery.of(context).padding.top;
 
-        //dmap poi panel
+        //dmap poi panel (by config)
         if (state.dMapConfigModel?.panelBuilder != null && state.getCurrentPoi() is IDMapPoi) {
           if (state.dMapConfigModel?.panelPaddingTop != null) {
             topPadding = state.dMapConfigModel?.panelPaddingTop(context);
@@ -224,11 +226,19 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           sheetPanel =
               state.dMapConfigModel?.panelBuilder(context, _bottomChildScrollController, state.getCurrentPoi());
         }
+
         if (sheetPanel == null) {
-          sheetPanel = PoiPanel(
-            scrollController: _bottomChildScrollController,
-            selectedPoiEntity: state.getCurrentPoi(),
-          );
+          if(state.getCurrentPoi() is PoiEntity) {
+            sheetPanel = PoiPanel(
+              scrollController: _bottomChildScrollController,
+              selectedPoiEntity: state.getCurrentPoi(),
+            );
+          } else if(state.getCurrentPoi() is GaodePoi) {
+            sheetPanel = GaodePoiPanel(
+              scrollController: _bottomChildScrollController,
+              poi: state.getCurrentPoi(),
+            );
+          }
         }
 
         collapsedHeight = widget.poiBottomSheetController.collapsedHeight;

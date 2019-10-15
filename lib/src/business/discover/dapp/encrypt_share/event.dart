@@ -1,7 +1,7 @@
-import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
 
 class SelectedSharePoiEvent {
-  PoiEntity poi;
+  IPoi poi;
 
   SelectedSharePoiEvent({this.poi});
 }

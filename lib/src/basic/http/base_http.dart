@@ -99,7 +99,9 @@ class BaseHttpCore {
       if (params != null && params.isNotEmpty) {
         StringBuffer sb = new StringBuffer("?");
         params.forEach((key, value) {
-          sb.write("$key=$value&");
+          if(value != null) {
+            sb.write("$key=$value&");
+          }
         });
         String paramStr = sb.toString();
         paramStr = paramStr.substring(0, paramStr.length - 1);
