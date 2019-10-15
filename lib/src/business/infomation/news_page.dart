@@ -11,12 +11,17 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsState extends InfoState<NewsPage> {
-  final String CATEGORY = "1";
-  final int FIRST_PAGE = 1;
+  static const int LAST_NEWS_TAG = 26;
+  static const int OFFICIAL_ANNOUNCEMENT_TAG = 22;
+  static const int TUTORIAL_TAG = 30;
+  static const int VIDEO_TAG = 48;
+  static const String CATEGORY = "1";
+  static const int FIRST_PAGE = 1;
+
   List<InfoItemVo> _InfoItemVoList = [];
-  int selectedTag = 26;
+  int selectedTag = LAST_NEWS_TAG;
   NewsApi _newsApi = NewsApi();
-  int currentPage = 1;
+  int currentPage = FIRST_PAGE;
 
   @override
   void initState() {
@@ -36,9 +41,10 @@ class _NewsState extends InfoState<NewsPage> {
               height: 48,
               child: Row(
                 children: <Widget>[
-                  _buildTag("最新资讯", 26),
-                  _buildTag("官方公告", 22),
-                  _buildTag("教程", 30),
+                  _buildTag("最新资讯", LAST_NEWS_TAG),
+                  _buildTag("官方公告", OFFICIAL_ANNOUNCEMENT_TAG),
+                  _buildTag("教程", TUTORIAL_TAG),
+                  _buildTag("视频", VIDEO_TAG),
                 ],
               ),
             ),
@@ -79,7 +85,7 @@ class _NewsState extends InfoState<NewsPage> {
             return;
           }
           selectedTag = value;
-          currentPage = 1;
+          currentPage = FIRST_PAGE;
           _getPowerList(CATEGORY, selectedTag.toString(), currentPage);
           setState(() {});
         },

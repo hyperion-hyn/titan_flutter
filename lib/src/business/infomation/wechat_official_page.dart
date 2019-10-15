@@ -11,18 +11,19 @@ class WechatOfficialPage extends StatefulWidget {
 }
 
 class _WechatOfficialState extends InfoState<WechatOfficialPage> {
-  final String CATEGORY = "3";
+  static const String CATEGORY = "3";
 
-  static final int FIRST_PAGE = 1;
+  static const int FIRST_PAGE = 1;
 
-  static final int DOMESTIC_VIDEO = 43;
-  static final int FOREIGN_VIDEO = 45;
+  static const int DOMESTIC_VIDEO = 43;
+  static const int FOREIGN_VIDEO = 45;
 
-  static final int PAPER_TAG = 39;
-  static final int VIDEO_TAG = 34;
+  static const int PAPER_TAG = 39;
+  static const int VIDEO_TAG = 34;
+  static const int AUDIO_TAG = 52;
 
   List<InfoItemVo> _InfoItemVoList = [];
-  int selectedTag = 39;
+  int selectedTag = PAPER_TAG;
   NewsApi _newsApi = NewsApi();
   int currentPage = FIRST_PAGE;
 
@@ -49,6 +50,7 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                 children: <Widget>[
                   _buildTag("文章", PAPER_TAG),
                   _buildTag("视频", VIDEO_TAG),
+                  _buildTag("音频", AUDIO_TAG),
                   Spacer(),
                   if (selectedTag == 34)
                     DropdownButton(
@@ -144,11 +146,12 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
 
   Future _getPowerListByPage(int page) {
     var tags = "";
-    if (selectedTag == PAPER_TAG) {
-      tags = selectedTag.toString();
-    } else {
+    if (selectedTag == VIDEO_TAG) {
       tags = selectedVideoTag.toString();
+    } else {
+      tags = selectedTag.toString();
     }
+
     _getPowerList(CATEGORY, tags, page);
   }
 

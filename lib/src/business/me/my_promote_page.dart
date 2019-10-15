@@ -167,7 +167,7 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   child: Text(
                     "已邀请${LOGIN_USER_INFO.totalInvitations}人",
-                    style: TextStyle(fontSize: 14, color: Color(0xFF3C94FF), fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 14, color:Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

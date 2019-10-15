@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 
+import 'market_price_page.dart';
 import 'wallert_create_new_account_page.dart';
 import 'wallert_import_account_page.dart';
 
@@ -92,9 +93,14 @@ class EmptyWallet extends StatelessWidget {
                     style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 14),
                   ),
                   Spacer(),
-                  Text(
-                    "查看全部",
-                    style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 14),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MarketPricePage()));
+                    },
+                    child: Text(
+                      "查看全部",
+                      style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 14),
+                    ),
                   ),
                   Icon(
                     Icons.chevron_right,

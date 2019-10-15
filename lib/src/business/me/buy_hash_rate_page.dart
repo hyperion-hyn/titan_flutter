@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
@@ -16,7 +17,9 @@ class BuyHashRatePage extends StatefulWidget {
 class _BuyHashRateState extends State<BuyHashRatePage> {
   UserService _userService = UserService();
 
-  List<ContractInfo> contractList = [];
+  List<ContractInfo> contractList = [ContractInfo(0, 0.0, 0, 0, 0, 0)];
+
+  ContractInfo _selectedContractInfo = ContractInfo(0, 0.0, 0, 0, 0, 0);
 
   @override
   void initState() {
@@ -27,27 +30,98 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        brightness: Brightness.light,
-        backgroundColor: Colors.white,
-        title: Text(
-          "购买算力合约",
-          style: TextStyle(color: Colors.black),
+        appBar: AppBar(
+          brightness: Brightness.light,
+          backgroundColor: Colors.white,
+          title: Text(
+            "购买算力合约",
+            style: TextStyle(color: Colors.black),
+          ),
+          iconTheme: IconThemeData(color: Colors.black),
+          centerTitle: true,
+          elevation: 0,
         ),
-        iconTheme: IconThemeData(color: Colors.black),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: Container(
-        color: Colors.white,
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            return _buildItem(contractList[index]);
-          },
-          itemCount: contractList.length,
-        ),
-      ),
-    );
+        body: Stack(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                Expanded(
+                  flex: 8,
+                  child: Container(),
+                ),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    child: CarouselSlider(
+                      onPageChanged: _onPageChanged,
+                      height: 300.0,
+                      enlargeCenterPage: true,
+                      items: contractList.map((_contractInfoTemp) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                                child: Text(
+                                  'text ${_contractInfoTemp.power} 算力.',
+                                  style: TextStyle(fontSize: 16.0),
+                                ));
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.all(36),
+                    child: Column(
+                      children: <Widget>[
+                        Spacer(),
+                        RaisedButton(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          color: Theme.of(context).primaryColor,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PurchasePage(
+                                          contractInfo: _selectedContractInfo,
+                                        )));
+                          },
+                          child: Container(
+                            constraints: BoxConstraints.expand(height: 48),
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 8),
+                              child: Text(
+                                "购买",
+                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        ));
   }
 
   Widget _buildItem(ContractInfo contractInfo) {
@@ -90,7 +164,7 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
                         style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                       Text(
-                        "每日返还",
+                        "",
                         style: TextStyle(color: Color(0xFF6D6D6D)),
                       )
                     ],
@@ -169,5 +243,9 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
     contractList = await _userService.getContractList();
 
     setState(() {});
+  }
+
+  Future _onPageChanged(int index) {
+    _selectedContractInfo = contractList[index];
   }
 }
