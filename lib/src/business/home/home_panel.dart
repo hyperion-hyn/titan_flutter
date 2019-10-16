@@ -112,7 +112,7 @@ class HomePanelState extends UserState<HomePanel> {
             child: Padding(
               padding: const EdgeInsets.only(top: 24.0, bottom: 16),
               child: Text(
-                '附近推荐',
+                '城市推荐',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
