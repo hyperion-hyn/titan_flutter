@@ -7,6 +7,8 @@ abstract class DiscoverEvent {}
 
 class InitDiscoverEvent extends DiscoverEvent {}
 
+class LoadFocusImageEvent extends DiscoverEvent {}
+
 class ActiveDMapEvent extends DiscoverEvent {
   final String name;
 

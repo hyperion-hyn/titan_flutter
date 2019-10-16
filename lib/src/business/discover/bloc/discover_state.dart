@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 
 @immutable
@@ -10,4 +11,10 @@ class ActiveDMapState extends DiscoverState {
   final String name;
 
   ActiveDMapState({@required this.name});
+}
+
+class LoadedFocusState extends DiscoverState {
+  final List<Focus> focusImages;
+
+  LoadedFocusState({@required this.focusImages});
 }
