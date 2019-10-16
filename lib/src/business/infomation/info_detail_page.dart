@@ -27,6 +27,9 @@ class _InfoDetailState extends State<InfoDetailPage> {
   NewsApi _newsApi = NewsApi();
 
   NewsDetail newsDetail = NewsDetail(0, 0, "", "", "", "", null);
+  bool isLoading = true;
+
+  WebViewController webViewController;
 
   @override
   void initState() {
@@ -55,10 +58,54 @@ class _InfoDetailState extends State<InfoDetailPage> {
   }
 
   Widget _loadUrl() {
-    return WebView(
-      javascriptMode: JavascriptMode.unrestricted,
-      initialUrl: widget.url,
-      userAgent: widget.userAgent,
+    return Column(
+      children: <Widget>[
+        if (isLoading)
+          SizedBox(
+            height: 2,
+            child: LinearProgressIndicator(),
+          ),
+        Expanded(
+          child: WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            initialUrl: widget.url,
+            userAgent: widget.userAgent,
+            onWebViewCreated: (WebViewController controller) {
+              webViewController = controller;
+            },
+            onPageFinished: (String url) async {
+              setState(() {
+                isLoading = false;
+              });
+            },
+            navigationDelegate: (NavigationRequest request) {
+              bool prevent = false;
+
+              //非http/https协议
+              if (!request.url.startsWith(RegExp('^https?://'))) {
+                prevent = true;
+              }
+              var strs = request.url.split('/');
+              var route = strs[strs.length - 1];
+              //下载apk
+              if (route.startsWith('.apk')) {
+                prevent = true;
+              }
+              if (prevent) {
+                print(('block ${request.url}'));
+                return NavigationDecision.prevent;
+              }
+
+              setState(() {
+                isLoading = true;
+              });
+
+              print('allow ${request.url}');
+              return NavigationDecision.navigate;
+            },
+          ),
+        ),
+      ],
     );
   }
 
