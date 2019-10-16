@@ -122,33 +122,16 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   }
 
   Widget _buildTag(String text, int value) {
-    Color textColor = value == selectedTag ? Theme.of(context).primaryColor : Color(0xFF252525);
-
-    Color borderColor = value == selectedTag ? Theme.of(context).primaryColor : Color(0xFFB7B7B7);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: GestureDetector(
-        onTap: () async {
-          if (selectedTag == value) {
-            return;
-          }
-          selectedTag = value;
-          currentPage = 1;
-          isLoading = true;
-          _getPowerListByPage(currentPage);
-          setState(() {});
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 15, color: textColor),
-          ),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), border: Border.all(color: borderColor)),
-        ),
-      ),
-    );
+    return super.buildTag(text, value, selectedTag, () async {
+      if (selectedTag == value) {
+        return;
+      }
+      selectedTag = value;
+      currentPage = 1;
+      isLoading = true;
+      _getPowerListByPage(currentPage);
+      setState(() {});
+    });
   }
 
   Future _getPowerListByPage(int page) {

@@ -20,7 +20,7 @@ class _LoadDataState extends State<LoadDataWidget> {
         if (!widget.isLoading) widget.child,
         if (widget.isLoading)
           Center(
-            child: Container(width: 48, height: 48, child: CircularProgressIndicator()),
+            child: Container(width: 36, height: 36, child: CircularProgressIndicator()),
           )
       ],
     );
