@@ -97,7 +97,7 @@ class WebViewContainerState extends State<WebViewContainer> {
                     var strs = request.url.split('/');
                     var route = strs[strs.length - 1];
                     //下载apk
-                    if (route.startsWith('.apk')) {
+                    if (route.contains('.apk')) {
                       prevent = true;
                     }
                     if (prevent) {
