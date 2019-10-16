@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
+import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class NewsPage extends StatefulWidget {
@@ -34,49 +35,43 @@ class _NewsState extends InfoState<NewsPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
-      child: Stack(
+      child: Column(
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Container(
-                  height: 48,
-                  child: Row(
-                    children: <Widget>[
-                      _buildTag("最新资讯", LAST_NEWS_TAG),
-                      _buildTag("官方公告", OFFICIAL_ANNOUNCEMENT_TAG),
-                      _buildTag("教程", TUTORIAL_TAG),
-                      _buildTag("视频", VIDEO_TAG),
-                    ],
-                  ),
-                ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Container(
+              height: 48,
+              child: Row(
+                children: <Widget>[
+                  _buildTag("最新资讯", LAST_NEWS_TAG),
+                  _buildTag("官方公告", OFFICIAL_ANNOUNCEMENT_TAG),
+                  _buildTag("教程", TUTORIAL_TAG),
+                  _buildTag("视频", VIDEO_TAG),
+                ],
               ),
-              if (!isLoading)
-                Expanded(
-                  child: SmartPullRefresh(
-                    onRefresh: () {
-                      _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
-                    },
-                    onLoading: () {
-                      _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
-                    },
-                    child: ListView.separated(
-                        itemBuilder: (context, index) {
-                          return buildInfoItem(_InfoItemVoList[index]);
-                        },
-                        separatorBuilder: (context, index) {
-                          return Divider();
-                        },
-                        itemCount: _InfoItemVoList.length),
-                  ),
-                ),
-            ],
+            ),
           ),
-          if (isLoading)
-            Center(
-              child: Container(width: 48, height: 48, child: CircularProgressIndicator()),
-            )
+          Expanded(
+            child: LoadDataWidget(
+              isLoading: isLoading,
+              child: SmartPullRefresh(
+                onRefresh: () {
+                  _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+                },
+                onLoading: () {
+                  _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
+                },
+                child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      return buildInfoItem(_InfoItemVoList[index]);
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                    itemCount: _InfoItemVoList.length),
+              ),
+            ),
+          ),
         ],
       ),
     );

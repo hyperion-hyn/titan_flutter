@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:titan/src/business/wallet/api/market_price_api.dart';
 import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/widget/load_data_widget.dart';
 
 class MarketPricePage extends StatefulWidget {
   @override
@@ -9,38 +12,18 @@ class MarketPricePage extends StatefulWidget {
 }
 
 class _MarketPriceState extends State<MarketPricePage> {
-  var marketPriceList = [
-    MarketPriceVo(
-        iconUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvuyezoVTDHfSBMjeBSqsXbxDmZKiw87GVMYlEUAutIyPSREbh",
-        marketName: "bibox",
-        price: 0.9),
-    MarketPriceVo(
-        iconUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvuyezoVTDHfSBMjeBSqsXbxDmZKiw87GVMYlEUAutIyPSREbh",
-        marketName: "bibox1",
-        price: 0.8),
-    MarketPriceVo(
-        iconUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvuyezoVTDHfSBMjeBSqsXbxDmZKiw87GVMYlEUAutIyPSREbh",
-        marketName: "bibox2",
-        price: 0.7),
-    MarketPriceVo(
-        iconUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvuyezoVTDHfSBMjeBSqsXbxDmZKiw87GVMYlEUAutIyPSREbh",
-        marketName: "bibox3",
-        price: 0.6),
-    MarketPriceVo(
-        iconUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvuyezoVTDHfSBMjeBSqsXbxDmZKiw87GVMYlEUAutIyPSREbh",
-        marketName: "bibox4",
-        price: 0.7),
-    MarketPriceVo(
-        iconUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvuyezoVTDHfSBMjeBSqsXbxDmZKiw87GVMYlEUAutIyPSREbh",
-        marketName: "bibox5",
-        price: 0.8),
-  ];
+  MarketPriceApi _marketPriceApi = MarketPriceApi();
+
+  var marketPriceList = [];
+
+  NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
+
+  var isLoading = true;
+
+  @override
+  void initState() {
+    _getPrice();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +40,15 @@ class _MarketPriceState extends State<MarketPricePage> {
         elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24,vertical: 16),
-        child: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return _buildItem(marketPriceList[index]);
-          },
-          itemCount: marketPriceList.length,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: LoadDataWidget(
+          isLoading: isLoading,
+          child: ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return _buildItem(marketPriceList[index]);
+            },
+            itemCount: marketPriceList.length,
+          ),
         ),
       ),
     );
@@ -86,12 +72,26 @@ class _MarketPriceState extends State<MarketPricePage> {
           ),
           Spacer(),
           Text(
-            "\$ ${Const.DOUBLE_NUMBER_FORMAT.format(marketPriceVo.price)}美元",
+            "\$ ${DOUBLE_NUMBER_FORMAT.format(marketPriceVo.price)}",
             style: TextStyle(fontSize: 16),
           )
         ],
       ),
     );
+  }
+
+  Future _getPrice() async {
+    var dataList = await _marketPriceApi.getHynMarketPriceInfoList();
+    isLoading = false;
+    marketPriceList = dataList.map((_priceTemp) {
+      return MarketPriceVo(
+        iconUrl: _priceTemp.icon,
+        marketName: _priceTemp.source,
+        price: double.parse(_priceTemp.price),
+      );
+    }).toList();
+
+    setState(() {});
   }
 }
 

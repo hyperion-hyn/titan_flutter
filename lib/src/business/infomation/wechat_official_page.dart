@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
+import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class WechatOfficialPage extends StatefulWidget {
@@ -40,87 +41,81 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
-      child: Stack(
+      child: Column(
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Container(
-                  height: 48,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      _buildTag("文章", PAPER_TAG),
-                      _buildTag("视频", VIDEO_TAG),
-                      _buildTag("音频", AUDIO_TAG),
-                      Spacer(),
-                      if (selectedTag == 34)
-                        DropdownButton(
-                          icon: Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Color(0xFFD2D2D2),
-                            size: 24,
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Container(
+              height: 48,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  _buildTag("文章", PAPER_TAG),
+                  _buildTag("视频", VIDEO_TAG),
+                  _buildTag("音频", AUDIO_TAG),
+                  Spacer(),
+                  if (selectedTag == 34)
+                    DropdownButton(
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Color(0xFFD2D2D2),
+                        size: 24,
+                      ),
+                      underline: Container(),
+                      style: TextStyle(fontSize: 15, color: Theme.of(context).primaryColor),
+                      value: selectedVideoTag,
+                      items: [
+                        DropdownMenuItem(
+                          child: Text(
+                            "国内视频",
+                            style: TextStyle(fontSize: 15),
                           ),
-                          underline: Container(),
-                          style: TextStyle(fontSize: 15, color: Theme.of(context).primaryColor),
-                          value: selectedVideoTag,
-                          items: [
-                            DropdownMenuItem(
-                              child: Text(
-                                "国内视频",
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              value: DOMESTIC_VIDEO,
-                            ),
-                            DropdownMenuItem(
-                              child: Text(
-                                "国外视频",
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              value: FOREIGN_VIDEO,
-                            )
-                          ],
-                          onChanged: (value) {
-                            if (selectedVideoTag == value) {
-                              return;
-                            }
-                            selectedVideoTag = value;
-                            currentPage = 1;
-                            isLoading = true;
-                            _getPowerListByPage(currentPage);
-                            setState(() {});
-                          },
+                          value: DOMESTIC_VIDEO,
+                        ),
+                        DropdownMenuItem(
+                          child: Text(
+                            "国外视频",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          value: FOREIGN_VIDEO,
                         )
-                    ],
-                  ),
-                ),
+                      ],
+                      onChanged: (value) {
+                        if (selectedVideoTag == value) {
+                          return;
+                        }
+                        selectedVideoTag = value;
+                        currentPage = 1;
+                        isLoading = true;
+                        _getPowerListByPage(currentPage);
+                        setState(() {});
+                      },
+                    )
+                ],
               ),
-              if (!isLoading)
-                Expanded(
-                  child: SmartPullRefresh(
-                    onRefresh: () {
-                      _getPowerListByPage(FIRST_PAGE);
-                    },
-                    onLoading: () {
-                      _getPowerListByPage(currentPage + 1);
-                    },
-                    child: ListView.separated(
-                        itemBuilder: (context, index) {
-                          return buildInfoItem(_InfoItemVoList[index]);
-                        },
-                        separatorBuilder: (context, index) {
-                          return Divider();
-                        },
-                        itemCount: _InfoItemVoList.length),
-                  ),
-                ),
-            ],
+            ),
           ),
-          if (isLoading)
-            Center(
-              child: Container(width: 48, height: 48, child: CircularProgressIndicator()),
-            )
+          Expanded(
+            child: LoadDataWidget(
+              isLoading: isLoading,
+              child: SmartPullRefresh(
+                onRefresh: () {
+                  _getPowerListByPage(FIRST_PAGE);
+                },
+                onLoading: () {
+                  _getPowerListByPage(currentPage + 1);
+                },
+                child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      return buildInfoItem(_InfoItemVoList[index]);
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                    itemCount: _InfoItemVoList.length),
+              ),
+            ),
+          ),
         ],
       ),
     );
