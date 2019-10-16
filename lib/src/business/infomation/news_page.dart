@@ -22,6 +22,7 @@ class _NewsState extends InfoState<NewsPage> {
   int selectedTag = LAST_NEWS_TAG;
   NewsApi _newsApi = NewsApi();
   int currentPage = FIRST_PAGE;
+  var isLoading = true;
 
   @override
   void initState() {
@@ -33,40 +34,49 @@ class _NewsState extends InfoState<NewsPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
-      child: Column(
+      child: Stack(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Container(
-              height: 48,
-              child: Row(
-                children: <Widget>[
-                  _buildTag("最新资讯", LAST_NEWS_TAG),
-                  _buildTag("官方公告", OFFICIAL_ANNOUNCEMENT_TAG),
-                  _buildTag("教程", TUTORIAL_TAG),
-                  _buildTag("视频", VIDEO_TAG),
-                ],
+          Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Container(
+                  height: 48,
+                  child: Row(
+                    children: <Widget>[
+                      _buildTag("最新资讯", LAST_NEWS_TAG),
+                      _buildTag("官方公告", OFFICIAL_ANNOUNCEMENT_TAG),
+                      _buildTag("教程", TUTORIAL_TAG),
+                      _buildTag("视频", VIDEO_TAG),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              if (!isLoading)
+                Expanded(
+                  child: SmartPullRefresh(
+                    onRefresh: () {
+                      _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+                    },
+                    onLoading: () {
+                      _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
+                    },
+                    child: ListView.separated(
+                        itemBuilder: (context, index) {
+                          return buildInfoItem(_InfoItemVoList[index]);
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider();
+                        },
+                        itemCount: _InfoItemVoList.length),
+                  ),
+                ),
+            ],
           ),
-          Expanded(
-            child: SmartPullRefresh(
-              onRefresh: () {
-                _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
-              },
-              onLoading: () {
-                _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
-              },
-              child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    return buildInfoItem(_InfoItemVoList[index]);
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
-                  itemCount: _InfoItemVoList.length),
-            ),
-          ),
+          if (isLoading)
+            Center(
+              child: Container(width: 48, height: 48, child: CircularProgressIndicator()),
+            )
         ],
       ),
     );
@@ -86,6 +96,7 @@ class _NewsState extends InfoState<NewsPage> {
           }
           selectedTag = value;
           currentPage = FIRST_PAGE;
+          isLoading = true;
           _getPowerList(CATEGORY, selectedTag.toString(), currentPage);
           setState(() {});
         },
@@ -104,6 +115,7 @@ class _NewsState extends InfoState<NewsPage> {
   Future _getPowerList(String categories, String tags, int page) async {
     var newsResponseList = await _newsApi.getNewsList(categories, tags, page);
 
+    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {
       return InfoItemVo(
           id: newsResponse.id,

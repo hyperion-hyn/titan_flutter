@@ -28,6 +28,7 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   int currentPage = FIRST_PAGE;
 
   int selectedVideoTag = DOMESTIC_VIDEO;
+  var isLoading = true;
 
   @override
   void initState() {
@@ -39,77 +40,87 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
-      child: Column(
+      child: Stack(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Container(
-              height: 48,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  _buildTag("文章", PAPER_TAG),
-                  _buildTag("视频", VIDEO_TAG),
-                  _buildTag("音频", AUDIO_TAG),
-                  Spacer(),
-                  if (selectedTag == 34)
-                    DropdownButton(
-                      icon: Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Color(0xFFD2D2D2),
-                        size: 24,
-                      ),
-                      underline: Container(),
-                      style: TextStyle(fontSize: 15, color: Theme.of(context).primaryColor),
-                      value: selectedVideoTag,
-                      items: [
-                        DropdownMenuItem(
-                          child: Text(
-                            "国内视频",
-                            style: TextStyle(fontSize: 15),
+          Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Container(
+                  height: 48,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      _buildTag("文章", PAPER_TAG),
+                      _buildTag("视频", VIDEO_TAG),
+                      _buildTag("音频", AUDIO_TAG),
+                      Spacer(),
+                      if (selectedTag == 34)
+                        DropdownButton(
+                          icon: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Color(0xFFD2D2D2),
+                            size: 24,
                           ),
-                          value: DOMESTIC_VIDEO,
-                        ),
-                        DropdownMenuItem(
-                          child: Text(
-                            "国外视频",
-                            style: TextStyle(fontSize: 15),
-                          ),
-                          value: FOREIGN_VIDEO,
+                          underline: Container(),
+                          style: TextStyle(fontSize: 15, color: Theme.of(context).primaryColor),
+                          value: selectedVideoTag,
+                          items: [
+                            DropdownMenuItem(
+                              child: Text(
+                                "国内视频",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              value: DOMESTIC_VIDEO,
+                            ),
+                            DropdownMenuItem(
+                              child: Text(
+                                "国外视频",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              value: FOREIGN_VIDEO,
+                            )
+                          ],
+                          onChanged: (value) {
+                            if (selectedVideoTag == value) {
+                              return;
+                            }
+                            selectedVideoTag = value;
+                            currentPage = 1;
+                            isLoading = true;
+                            _getPowerListByPage(currentPage);
+                            setState(() {});
+                          },
                         )
-                      ],
-                      onChanged: (value) {
-                        if (selectedVideoTag == value) {
-                          return;
-                        }
-                        selectedVideoTag = value;
-                        currentPage = 1;
-                        _getPowerListByPage(currentPage);
-                        setState(() {});
-                      },
-                    )
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
+              if (!isLoading)
+                Expanded(
+                  child: SmartPullRefresh(
+                    onRefresh: () {
+                      _getPowerListByPage(FIRST_PAGE);
+                    },
+                    onLoading: () {
+                      _getPowerListByPage(currentPage + 1);
+                    },
+                    child: ListView.separated(
+                        itemBuilder: (context, index) {
+                          return buildInfoItem(_InfoItemVoList[index]);
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider();
+                        },
+                        itemCount: _InfoItemVoList.length),
+                  ),
+                ),
+            ],
           ),
-          Expanded(
-            child: SmartPullRefresh(
-              onRefresh: () {
-                _getPowerListByPage(FIRST_PAGE);
-              },
-              onLoading: () {
-                _getPowerListByPage(currentPage + 1);
-              },
-              child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    return buildInfoItem(_InfoItemVoList[index]);
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
-                  itemCount: _InfoItemVoList.length),
-            ),
-          ),
+          if (isLoading)
+            Center(
+              child: Container(width: 48, height: 48, child: CircularProgressIndicator()),
+            )
         ],
       ),
     );
@@ -129,6 +140,7 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
           }
           selectedTag = value;
           currentPage = 1;
+          isLoading = true;
           _getPowerListByPage(currentPage);
           setState(() {});
         },
@@ -157,7 +169,7 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
 
   Future _getPowerList(String categories, String tags, int page) async {
     var newsResponseList = await _newsApi.getNewsList(categories, tags, page);
-
+    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {
       return InfoItemVo(
           id: newsResponse.id,
