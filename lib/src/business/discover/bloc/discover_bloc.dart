@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/business/infomation/api/news_api.dart';
+import 'package:titan/src/business/infomation/model/focus_response.dart' as focus;
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart' as map;
 import '../dmap_define.dart';
 import './bloc.dart';
 
 class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
   final BuildContext context;
+
+  NewsApi _newsApi = NewsApi();
 
   DiscoverBloc(this.context);
 
@@ -30,6 +34,9 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
           dMapConfigModel: model.dMapConfigModel,
         ));
       }
+    } else if (event is LoadFocusImageEvent) {
+      List<focus.Focus> focusList = await _newsApi.getFocusList();
+      yield (LoadedFocusState(focusImages: focusList));
     }
   }
 }

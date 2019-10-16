@@ -30,7 +30,12 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
                   alignment: Alignment.center,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Image.network(infoItemVo.photoUrl),
+                    child: Image.network(
+                      infoItemVo.photoUrl,
+                      height: 78,
+                      width: 110,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -58,6 +63,25 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildTag(String text, int value, int selectedTag, Function onTap) {
+    Color textColor = value == selectedTag ? Theme.of(context).primaryColor : Color(0xFF252525);
+    Color borderColor = value == selectedTag ? Theme.of(context).primaryColor : Color(0xFFB7B7B7);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 13, color: textColor),
+          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), border: Border.all(color: borderColor)),
         ),
       ),
     );

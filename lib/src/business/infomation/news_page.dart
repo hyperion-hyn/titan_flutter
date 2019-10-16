@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
+import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class NewsPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class _NewsState extends InfoState<NewsPage> {
   int selectedTag = LAST_NEWS_TAG;
   NewsApi _newsApi = NewsApi();
   int currentPage = FIRST_PAGE;
+  var isLoading = true;
 
   @override
   void initState() {
@@ -50,21 +52,24 @@ class _NewsState extends InfoState<NewsPage> {
             ),
           ),
           Expanded(
-            child: SmartPullRefresh(
-              onRefresh: () {
-                _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
-              },
-              onLoading: () {
-                _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
-              },
-              child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    return buildInfoItem(_InfoItemVoList[index]);
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
-                  itemCount: _InfoItemVoList.length),
+            child: LoadDataWidget(
+              isLoading: isLoading,
+              child: SmartPullRefresh(
+                onRefresh: () {
+                  _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+                },
+                onLoading: () {
+                  _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
+                },
+                child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      return buildInfoItem(_InfoItemVoList[index]);
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                    itemCount: _InfoItemVoList.length),
+              ),
             ),
           ),
         ],
@@ -73,37 +78,22 @@ class _NewsState extends InfoState<NewsPage> {
   }
 
   Widget _buildTag(String text, int value) {
-    Color textColor = value == selectedTag ? Theme.of(context).primaryColor : Color(0xFF252525);
-
-    Color borderColor = value == selectedTag ? Theme.of(context).primaryColor : Color(0xFFB7B7B7);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: GestureDetector(
-        onTap: () async {
-          if (selectedTag == value) {
-            return;
-          }
-          selectedTag = value;
-          currentPage = FIRST_PAGE;
-          _getPowerList(CATEGORY, selectedTag.toString(), currentPage);
-          setState(() {});
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 15, color: textColor),
-          ),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), border: Border.all(color: borderColor)),
-        ),
-      ),
-    );
+    return super.buildTag(text, value, selectedTag, () async {
+      if (selectedTag == value) {
+        return;
+      }
+      selectedTag = value;
+      currentPage = FIRST_PAGE;
+      isLoading = true;
+      _getPowerList(CATEGORY, selectedTag.toString(), currentPage);
+      setState(() {});
+    });
   }
 
   Future _getPowerList(String categories, String tags, int page) async {
     var newsResponseList = await _newsApi.getNewsList(categories, tags, page);
 
+    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {
       return InfoItemVo(
           id: newsResponse.id,

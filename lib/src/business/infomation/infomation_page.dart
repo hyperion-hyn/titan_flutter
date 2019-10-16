@@ -59,9 +59,14 @@ class _InformationPageState extends State<InformationPage> {
             ),
           ),
         ),
-        body: TabBarView(children: [NewsPage(), WechatOfficialPage()]),
+        body: TabBarView(
+          children: [
+            NewsPage(),
+            WechatOfficialPage(),
+          ],
+          physics: NeverScrollableScrollPhysics(),
+        ),
       ),
     );
   }
-
 }

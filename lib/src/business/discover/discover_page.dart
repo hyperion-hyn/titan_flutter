@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 
-import '../../global.dart';
 import 'bloc/bloc.dart';
 
 class DiscoverPageWidget extends StatefulWidget {
@@ -18,6 +16,14 @@ class DiscoverPageWidget extends StatefulWidget {
 }
 
 class DiscoverPageState extends State<DiscoverPageWidget> {
+  List<String> focusImages = ["https:\/\/news.hyn.space\/wp-content\/uploads\/2019\/10\/WechatIMG16-768x443.jpeg"];
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<DiscoverBloc>(context).dispatch(LoadFocusImageEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<DiscoverBloc, DiscoverState>(
@@ -33,8 +39,9 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
             if (model != null) {
               return model.createDAppWidgetFunction(context);
             }
+          } else if (state is LoadedFocusState) {
+            focusImages = state.focusImages.map((focusImageTemp) => focusImageTemp.cover).toList();
           }
-
           return Scaffold(
             backgroundColor: Theme.of(context).backgroundColor,
             body: Container(
@@ -50,10 +57,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                           child: Carousel(
                             dotVerticalPadding: 16,
                             dotBgColor: Colors.transparent,
-                            images: [
-                              NetworkImage("https:\/\/news.hyn.space\/wp-content\/uploads\/2019\/10\/WechatIMG16-768x443.jpeg"),
-                              NetworkImage("https:\/\/news.hyn.space\/wp-content\/uploads\/2019\/10\/WechatIMG13-768x443.jpeg"),
-                            ],
+                            images: focusImages.map((cover) => NetworkImage(cover)).toList(),
                           ),
                         ),
                         Align(
@@ -107,9 +111,10 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                               child: InkWell(
                                 onTap: () async {
                                   activeDMap('encryptShare');
-                                  var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+                                  var mapboxController =
+                                      (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
                                   var lastLocation = await mapboxController?.lastKnownLocation();
-                                  if(lastLocation != null) {
+                                  if (lastLocation != null) {
                                     mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
                                   }
                                 },
@@ -327,7 +332,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {
       var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
-      if(model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
+      if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
         mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
           model.dMapConfigModel.defaultLocation,
           model.dMapConfigModel.defaultZoom,

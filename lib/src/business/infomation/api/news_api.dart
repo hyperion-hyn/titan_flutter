@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/infomation/model/news_detail.dart';
 import 'package:titan/src/business/infomation/model/news_response.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
@@ -23,5 +24,16 @@ class NewsApi {
     ) as Map;
 
     return NewsDetail.fromJson(data);
+  }
+
+  Future<List<Focus>> getFocusList() async {
+    List dataList = await NewsHttpCore.instance.get(
+      "wp-json/wp/v2/posts",
+      params: {
+        "categories": 18,
+      },
+    ) as List;
+
+    return dataList.map((json) => Focus.fromJson(json["focus"])).toList();
   }
 }

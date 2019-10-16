@@ -60,96 +60,94 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
               ))
         ],
       ),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top: 0, bottom: 40),
+      body: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(top: 0, bottom: 40),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    "账户余额",
+                    style: TextStyle(
+                      color: Colors.white70,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(
+                    "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} USDT",
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+//                padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: Text(
-                      "账户余额",
-                      style: TextStyle(
-                        color: Colors.white70,
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 8),
+//                      color: Colors.black54,
+                    width: 200,
+                    child: TabBar(
+                      indicatorColor: Theme.of(context).primaryColor,
+                      indicatorWeight: 5,
+                      controller: _tabController,
+                      labelColor: Color(0xFF252525),
+                      unselectedLabelColor: Colors.grey,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      tabs: <Widget>[
+                        Tab(
+                          child: Text(
+                            '账单流水',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Tab(
+                          child: Text(
+                            '提币记录',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+
+//                        indicatorColor: Color(0xFFcb9521),
+                    ),
+                  ),
+                  Expanded(
+                    child: RefreshConfiguration.copyAncestor(
+                      enableLoadingWhenFailed: true,
+                      context: context,
+                      headerBuilder: () => WaterDropMaterialHeader(
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                      footerTriggerDistance: 30.0,
+                      child: TabBarView(
+                        controller: _tabController,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: <Widget>[
+                          BillHistory(),
+                          WithdrawalHistory(),
+                        ],
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Text(
-                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} USDT",
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                    ),
-                  )
                 ],
               ),
             ),
-            Expanded(
-              child: Container(
-//                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 8),
-//                      color: Colors.black54,
-                      width: 200,
-                      child: TabBar(
-                        indicatorColor: Theme.of(context).primaryColor,
-                        indicatorWeight: 5,
-                        controller: _tabController,
-                        labelColor: Color(0xFF252525),
-                        unselectedLabelColor: Colors.grey,
-                        indicatorSize: TabBarIndicatorSize.label,
-                        tabs: <Widget>[
-                          Tab(
-                            child: Text(
-                              '账单流水',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Tab(
-                            child: Text(
-                              '提币记录',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-
-//                        indicatorColor: Color(0xFFcb9521),
-                      ),
-                    ),
-                    Expanded(
-                      child: RefreshConfiguration.copyAncestor(
-                        enableLoadingWhenFailed: true,
-                        context: context,
-                        headerBuilder: () => WaterDropMaterialHeader(
-                          backgroundColor: Theme.of(context).primaryColor,
-                        ),
-                        footerTriggerDistance: 30.0,
-                        child: TabBarView(
-                          controller: _tabController,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: <Widget>[
-                            BillHistory(),
-                            WithdrawalHistory(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
