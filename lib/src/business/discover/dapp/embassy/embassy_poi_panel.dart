@@ -6,6 +6,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/discover/dapp/embassy/model/model.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 
 import '../../../../global.dart';
@@ -115,8 +116,8 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => InfoDetailPage(
-                            url: widget.poi.website,
+                      builder: (context) => WebViewContainer(
+                            initUrl: widget.poi.website,
                             title: widget.poi.name,
                           )));
             }),

@@ -14,10 +14,12 @@ import 'package:titan/src/business/me/my_node_mortgage_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/dianping_poi.dart';
 import 'package:titan/src/utils/coord_convert.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:math' as math;
 
 import '../../global.dart';
@@ -112,6 +114,15 @@ class HomePanelState extends UserState<HomePanel> {
               child: Text(
                 '附近推荐',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          //hack webview， just what is's cookie...
+          SliverToBoxAdapter(
+            child: Container(
+              height: 0,
+              child: WebView(
+                initialUrl: 'https://m.dianping.com/',
               ),
             ),
           ),
@@ -283,8 +294,8 @@ class HomePanelState extends UserState<HomePanel> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => InfoDetailPage(
-                                    url: 'https://news.hyn.space/react-reduction/',
+                              builder: (context) => WebViewContainer(
+                                    initUrl: 'https://news.hyn.space/react-reduction/',
                                     title: 'map3全球节点',
                                   )));
                     },
@@ -337,8 +348,8 @@ class HomePanelState extends UserState<HomePanel> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => InfoDetailPage(
-                                    url: 'https://shimo.im/docs/GDp72cj3ATwEB7ke/read',
+                              builder: (context) => WebViewContainer(
+                                    initUrl: 'https://shimo.im/docs/GDp72cj3ATwEB7ke/read',
                                     title: '海伯利安',
                                   )));
                     },
@@ -444,37 +455,37 @@ class HomePanelState extends UserState<HomePanel> {
       children: <Widget>[
         _buildPoiItem('res/drawable/ic_food.png', '美食', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 1, center: center, searchText: '美食'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 1, center: center, searchText: '美食'));
           }
         }),
         _buildPoiItem('res/drawable/ic_hotel.png', '酒店', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 2, center: center, searchText: '酒店'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 2, center: center, searchText: '酒店'));
           }
         }),
         _buildPoiItem('res/drawable/ic_scenic_spotx.png', '景点', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 3, center: center, searchText: '景点'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 3, center: center, searchText: '景点'));
           }
         }),
         _buildPoiItem('res/drawable/ic_park.png', '停车场', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 4, center: center, searchText: '停车场'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 4, center: center, searchText: '停车场'));
           }
         }),
         _buildPoiItem('res/drawable/ic_gas_station.png', '加油站', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 5, center: center, searchText: '加油站'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 5, center: center, searchText: '加油站'));
           }
         }),
       ],
@@ -492,37 +503,37 @@ class HomePanelState extends UserState<HomePanel> {
       children: <Widget>[
         _buildPoiItem('res/drawable/ic_bank.png', '银行', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 6, center: center, searchText: '银行'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 6, center: center, searchText: '银行'));
           }
         }),
         _buildPoiItem('res/drawable/ic_supermarket.png', '超市', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 7, center: center, searchText: '超市'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 7, center: center, searchText: '超市'));
           }
         }),
         _buildPoiItem('res/drawable/ic_market.png', '商场', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 8, center: center, searchText: '商场'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 8, center: center, searchText: '商场'));
           }
         }),
         _buildPoiItem('res/drawable/ic_cybercafe.png', '网吧', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 9, center: center, searchText: '网吧'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '网吧'));
           }
         }),
         _buildPoiItem('res/drawable/ic_wc.png', '厕所', onTap: () async {
           var center = await mapCenter;
-          if(center != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(
-                isGaodeSearch: true, type: 10, center: center, searchText: '厕所'));
+          if (center != null) {
+            BlocProvider.of<ScaffoldMapBloc>(context)
+                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 10, center: center, searchText: '厕所'));
           }
         }),
       ],
@@ -579,8 +590,8 @@ class HomePanelState extends UserState<HomePanel> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => InfoDetailPage(
-                          url: poi.schema,
+                    builder: (context) => WebViewContainer(
+                          initUrl: poi.schema,
                           title: poi.shopName,
 //                      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1',
                         )));

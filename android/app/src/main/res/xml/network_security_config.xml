@@ -6,6 +6,7 @@
         </trust-anchors>
     </debug-overrides>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">android.bugly.qq.com</domain>
+        <domain includeSubdomains="true">qq.com</domain>
+        <domain includeSubdomains="true">dianping.com</domain>
     </domain-config>
 </network-security-config>
