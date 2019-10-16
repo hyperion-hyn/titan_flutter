@@ -310,7 +310,7 @@ class _MeState extends UserState<MePage> with RouteAware {
       child: Container(
         alignment: Alignment.center,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 52),
+          padding: const EdgeInsets.symmetric(vertical: 52),
           child: Row(
             children: <Widget>[
               Image.asset(

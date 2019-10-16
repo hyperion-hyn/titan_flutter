@@ -45,73 +45,71 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top: 0, bottom: 40),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: Text(
-                      "总抵押",
-                      style: TextStyle(
-                        color: Colors.white70,
-                      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(top: 0, bottom: 40),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    "总抵押",
+                    style: TextStyle(
+                      color: Colors.white70,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Text(
-                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)} USDT",
-                      style: TextStyle(color: Colors.white, fontSize: 24),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(
+                    "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)} USDT",
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+//                padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: SmartPullRefresh(
+                      onRefresh: () {
+                        _getNodeMortgageList(0);
+                      },
+                      onLoading: () {
+                        _getNodeMortgageList(currentPage + 1);
+                      },
+                      child: ListView.separated(
+                          itemBuilder: (BuildContext context, int index) {
+                            return _buildNodeMortgageItem(nodeMortgageVoList[index]);
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Divider(
+                                thickness: 0.5,
+                                color: Colors.black12,
+                              ),
+                            );
+                          },
+                          itemCount: nodeMortgageVoList.length),
                     ),
                   )
                 ],
               ),
             ),
-            Expanded(
-              child: Container(
-//                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      child: SmartPullRefresh(
-                        onRefresh: () {
-                          _getNodeMortgageList(0);
-                        },
-                        onLoading: () {
-                          _getNodeMortgageList(currentPage + 1);
-                        },
-                        child: ListView.separated(
-                            itemBuilder: (BuildContext context, int index) {
-                              return _buildNodeMortgageItem(nodeMortgageVoList[index]);
-                            },
-                            separatorBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Divider(
-                                  thickness: 0.5,
-                                  color: Colors.black12,
-                                ),
-                              );
-                            },
-                            itemCount: nodeMortgageVoList.length),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
