@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/business/wallet/api/market_price_api.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 
@@ -57,38 +58,46 @@ class _MarketPriceState extends State<MarketPricePage> {
   Widget _buildItem(MarketPriceVo marketPriceVo) {
     return Padding(
       padding: const EdgeInsets.only(top: 16.0),
-      child: Row(
-        children: <Widget>[
-          Image.network(
-            marketPriceVo.iconUrl,
-            width: 48,
-          ),
-          SizedBox(
-            width: 24,
-          ),
-          Text(
-            marketPriceVo.marketName,
-            style: TextStyle(color: Color(0xFF252525), fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Spacer(),
-          Text(
-            "\$ ${DOUBLE_NUMBER_FORMAT.format(marketPriceVo.price)}",
-            style: TextStyle(fontSize: 16),
-          )
-        ],
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => WebViewContainer(
+                        initUrl: marketPriceVo.marketUrl,
+                      )));
+        },
+        child: Row(
+          children: <Widget>[
+            Image.network(
+              marketPriceVo.iconUrl,
+              width: 48,
+              height: 48,
+            ),
+            SizedBox(
+              width: 24,
+            ),
+            Text(
+              marketPriceVo.marketName,
+              style: TextStyle(color: Color(0xFF252525), fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Spacer(),
+            Text(
+              "\$ ${DOUBLE_NUMBER_FORMAT.format(marketPriceVo.price)}",
+              style: TextStyle(fontSize: 16),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Future _getPrice() async {
-    var dataList = await _marketPriceApi.getHynMarketPriceInfoList();
+    var marketPriceResponse = await _marketPriceApi.getHynMarketPriceResponse();
     isLoading = false;
-    marketPriceList = dataList.map((_priceTemp) {
+    marketPriceList = marketPriceResponse.markets.map((_priceTemp) {
       return MarketPriceVo(
-        iconUrl: _priceTemp.icon,
-        marketName: _priceTemp.source,
-        price: double.parse(_priceTemp.price),
-      );
+          iconUrl: _priceTemp.icon, marketName: _priceTemp.source, price: _priceTemp.price, marketUrl: _priceTemp.url);
     }).toList();
 
     setState(() {});
@@ -99,6 +108,7 @@ class MarketPriceVo {
   String iconUrl;
   String marketName;
   double price;
+  String marketUrl;
 
-  MarketPriceVo({@required this.iconUrl, @required this.marketName, @required this.price});
+  MarketPriceVo({@required this.iconUrl, @required this.marketName, @required this.price, @required this.marketUrl});
 }
