@@ -42,7 +42,7 @@ class _InformationPageState extends State<InformationPage> {
                         unselectedLabelColor: Colors.grey[400],
                         tabs: [
                           Tab(
-                            text: "资讯",
+                            text: "海伯利安",
                           ),
                           Tab(
                             text: "凯氏物语",
