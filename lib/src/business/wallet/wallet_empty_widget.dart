@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/wallet/api/market_price_api.dart';
+import 'package:titan/src/business/wallet/model/hyn_market_price_response.dart';
 
 import 'market_price_page.dart';
-import 'wallert_create_new_account_page.dart';
-import 'wallert_import_account_page.dart';
 
-class EmptyWallet extends StatelessWidget {
+class EmptyWallet extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _EmptyWalletState();
+  }
+}
+
+class _EmptyWalletState extends State<EmptyWallet> {
+  MarketPriceApi _marketPriceApi = MarketPriceApi();
+
+  var marketPriceResponse = HynMarketPriceResponse(0, [], 0);
+
+  NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
+
+  @override
+  void initState() {
+    super.initState();
+    _getPrice();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -80,69 +100,74 @@ class EmptyWallet extends StatelessWidget {
           ),
         ),
         Spacer(),
-        Container(
-          padding: EdgeInsets.all(16),
-          color: HexColor("#F5F5F5"),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text(
-                    "HYN行情",
-                    style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 14),
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MarketPricePage()));
-                    },
-                    child: Text(
+        InkWell(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MarketPricePage()));
+          },
+          child: Container(
+            padding: EdgeInsets.all(16),
+            color: HexColor("#F5F5F5"),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Text(
+                      "HYN行情",
+                      style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 14),
+                    ),
+                    Spacer(),
+                    Text(
                       "查看全部",
                       style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 14),
                     ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: HexColor("#9B9B9B"),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          "0.28美元",
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        Text(
-                          "HYN指数",
-                          style: TextStyle(color: HexColor("#6D6D6D"), fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          "12",
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        Text("上线交易所", style: TextStyle(color: HexColor("#6D6D6D"), fontSize: 14)),
-                      ],
+                    Icon(
+                      Icons.chevron_right,
+                      color: HexColor("#9B9B9B"),
                     )
                   ],
                 ),
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "${DOUBLE_NUMBER_FORMAT.format(marketPriceResponse.avgPrice)}美元",
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "HYN指数",
+                            style: TextStyle(color: HexColor("#6D6D6D"), fontSize: 14),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            marketPriceResponse.total.toString(),
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text("上线交易所", style: TextStyle(color: HexColor("#6D6D6D"), fontSize: 14)),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         )
       ],
     );
+  }
+
+  Future _getPrice() async {
+    marketPriceResponse = await _marketPriceApi.getHynMarketPriceResponse();
+    setState(() {});
   }
 }
