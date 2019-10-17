@@ -67,6 +67,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                   flex: 4,
                   child: Container(
                     child: CarouselSlider(
+                      enableInfiniteScroll:false,
                       onPageChanged: _onPageChanged,
                       height: 250.0,
                       enlargeCenterPage: true,
