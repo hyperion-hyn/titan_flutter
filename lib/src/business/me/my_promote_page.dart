@@ -23,7 +23,7 @@ class _MyPromoteState extends UserState<MyPromotePage> {
   UserService _userService = UserService();
   PageResponse<PromotionInfo> _pageResponse = PageResponse(0, 0, []);
 
-  String link = "https://www.baidu.com";
+  String link = "${Const.MAP_RICH_DOMAIN}register?code=${LOGIN_USER_INFO.id}";
 
   @override
   void initState() {
@@ -167,7 +167,7 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   child: Text(
                     "已邀请${LOGIN_USER_INFO.totalInvitations}人",
-                    style: TextStyle(fontSize: 14, color:Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
