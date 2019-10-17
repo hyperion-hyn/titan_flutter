@@ -79,3 +79,5 @@ Podfile.lock
 ios/Podfile.lock
 pubspec.lock
 .symlinks
+pMapping.txt
+shrinklist.txt

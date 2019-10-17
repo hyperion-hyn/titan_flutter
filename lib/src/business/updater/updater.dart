@@ -8,13 +8,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+//import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/updater/bloc/bloc.dart';
 import 'package:titan/src/model/update.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/utils/utils.dart';
 
 const APK_NAME = 'hmap.apk';
 
@@ -39,6 +40,7 @@ class _UpdaterState extends State<Updater> {
     super.initState();
     _checkUpdate();
 
+    /*
     FlutterDownloader.registerCallback((id, status, progress) async {
       if (taskId == id) {
         print('download process $progress, $status');
@@ -48,28 +50,33 @@ class _UpdaterState extends State<Updater> {
         }
       }
     });
+    */
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _appBlocSubscription?.cancel();
-    _appBlocSubscription = BlocProvider.of<AppBloc>(context)?.state?.listen((AppState state) async {
-      if (state is UpdateState) {
-        if (state.appData.updateEntity != null) {
-          PackageInfo packageInfo = await PackageInfo.fromPlatform();
-          if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
-            _showUpdateDialog(state.appData.updateEntity);
-          } else {
-            print('已经是最新版本');
+    if (_appBlocSubscription == null) {
+      _appBlocSubscription = BlocProvider.of<AppBloc>(context)?.listen((AppState state) async {
+        if (state is UpdateState) {
+          if (state.appData.updateEntity != null) {
+            PackageInfo packageInfo = await PackageInfo.fromPlatform();
+            if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
+              _showUpdateDialog(state.appData.updateEntity);
+            } else {
+              print('已经是最新版本');
+              if (state.isManual) {
+                Fluttertoast.showToast(msg: "已经是最新版本");
+              }
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   void _showUpdateDialog(UpdateEntity updateEntity) async {
-    var hasDownloaded = await _hasDownloaded(updateEntity);
+//    var hasDownloaded = await _hasDownloaded(updateEntity);
 
     await showDialog<String>(
       context: context,
@@ -77,7 +84,7 @@ class _UpdaterState extends State<Updater> {
       builder: (BuildContext context) {
         String title = S.of(context).new_update_available;
         String message = updateEntity.content;
-        String btnLabel = hasDownloaded ? S.of(context).install_now : S.of(context).update_now;
+//        String btnLabel = hasDownloaded ? S.of(context).install_now : S.of(context).update_now;
         String btnLabelCancel = S.of(context).later;
         return Platform.isIOS
             ? CupertinoAlertDialog(
@@ -89,8 +96,8 @@ class _UpdaterState extends State<Updater> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   FlatButton(
-                    child: Text(btnLabel),
-                    onPressed: () => _launch(updateEntity, hasDownloaded),
+                    child: Text(S.of(context).update_now),
+                    onPressed: () => _launch(updateEntity),
                   ),
                 ],
               )
@@ -103,8 +110,8 @@ class _UpdaterState extends State<Updater> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   FlatButton(
-                    child: Text(btnLabel),
-                    onPressed: () => _launch(updateEntity, hasDownloaded),
+                    child: Text(S.of(context).update_now),
+                    onPressed: () => _launch(updateEntity),
                   ),
                 ],
               );
@@ -112,19 +119,23 @@ class _UpdaterState extends State<Updater> {
     );
   }
 
-  void _launch(UpdateEntity versionModel, bool hasDownloaded) async {
-    if (env.channel == BuildChannel.OFFICIAL) {
-      if (hasDownloaded) {
-        var apkPath = await _getApkPath();
-        _installApk(apkPath);
-      } else {
-        _downloadApk(versionModel);
-        Fluttertoast.showToast(msg: S.of(context).downloading_update_file);
-      }
-    } else {
-      TitanPlugin.openMarket();
-    }
+  void _launch(UpdateEntity versionModel) async {
+//    if (env.channel == BuildChannel.OFFICIAL) {
+//      if (hasDownloaded) {
+//        var apkPath = await _getApkPath();
+//        _installApk(apkPath);
+//      } else {
+//        _downloadApk(versionModel);
+//        Fluttertoast.showToast(msg: S.of(context).downloading_update_file);
+//      }
+//    } else {
+//      TitanPlugin.openMarket();
+//    }
+
 //      AppPlugin.openMarket();
+
+    launchUrl(versionModel.downloadUrl);
+
     Navigator.pop(context);
   }
 
@@ -147,6 +158,7 @@ class _UpdaterState extends State<Updater> {
     return apkPath;
   }
 
+  /*
   void _downloadApk(UpdateEntity versionModel) async {
     var tempDir = await getTemporaryDirectory();
     var apkPath = '${tempDir.path}/$APK_NAME';
@@ -162,6 +174,7 @@ class _UpdaterState extends State<Updater> {
         showNotification: true // show download progress in status bar (for Android)
         );
   }
+  */
 
   void _installApk(String apkPath) async {
     var hasPermission = await TitanPlugin.canRequestPackageInstalls();
@@ -179,9 +192,9 @@ class _UpdaterState extends State<Updater> {
 
   void _checkUpdate() async {
     await Future.delayed(Duration(milliseconds: 3000));
-    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+//    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
-    BlocProvider.of<AppBloc>(context).dispatch(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
+    BlocProvider.of<AppBloc>(context).add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
   }
 
   @override
@@ -192,7 +205,7 @@ class _UpdaterState extends State<Updater> {
   @override
   void dispose() {
     _appBlocSubscription?.cancel();
-    FlutterDownloader.registerCallback(null);
+//    FlutterDownloader.registerCallback(null);
     super.dispose();
   }
 }

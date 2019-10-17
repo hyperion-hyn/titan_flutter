@@ -312,8 +312,9 @@ class _DraggableState extends State<DraggableBottomSheet>
   }
 
   @override
-  void setSheetState(DraggableBottomSheetState state) {
-    if (_state == state) {
+  void setSheetState(DraggableBottomSheetState state, {bool forceUpdate = false}) {
+    print('setsate $state, $forceUpdate');
+    if (_state == state && !forceUpdate) {
       return;
     }
 

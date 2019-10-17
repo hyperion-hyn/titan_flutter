@@ -12,52 +12,83 @@ import 'http_exception.dart';
 class BaseHttpCore {
   final Dio dio;
 
-  BaseHttpCore(this.dio);
+  BaseHttpCore(this.dio) {
+    //hack method
+    dio.options.connectTimeout = 10000;
+  }
 
   static const String GET = "get";
   static const String POST = "post";
+  static const String PATCH = "patch";
 
   Future<ResponseEntity<T>> getResponseEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params}) async {
-    var res = await get(url, params: params);
+      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    var res = await get(url, params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
   Future<ResponseEntity<T>> postResponseEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params}) async {
-    var res = await post(url, params: params);
+      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    var res = await post(url, params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
-  Future<T> getEntity<T>(String url, EntityFactory<T> factory, {Map<String, dynamic> params}) async {
-    var responseEntity = await getResponseEntity<T>(url, factory, params: params);
-    if (responseEntity.code != ResponseCode.SUCCESS) {
-      throw HttpResponseCodeNotSuccess(responseEntity.msg);
+  Future<ResponseEntity<T>> patchResponseEntity<T>(String url, EntityFactory<T> factory,
+      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    var res = await patch(url, params: params, options: options, cancelToken: cancelToken);
+    var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
+    return responseEntity;
+  }
+
+  Future<T> getEntity<T>(String url, EntityFactory<T> factory,
+      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    var responseEntity =
+        await getResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
+    if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
     return responseEntity.data;
   }
 
-  Future<T> postEntity<T>(String url, EntityFactory<T> factory, {Map<String, dynamic> params}) async {
-    var responseEntity = await postResponseEntity<T>(url, factory, params: params);
-    if (responseEntity.code != ResponseCode.SUCCESS) {
-      throw HttpResponseCodeNotSuccess(responseEntity.msg);
+  Future<T> postEntity<T>(String url, EntityFactory<T> factory,
+      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    var responseEntity =
+        await postResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
+    if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
+    }
+    return responseEntity.data;
+  }
+
+  Future<T> patchEntity<T>(String url, EntityFactory<T> factory,
+      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    var responseEntity =
+        await patchResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
+    if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
     return responseEntity.data;
   }
 
   //get method
-  Future<dynamic> get(String url, {Map<String, dynamic> params}) async {
-    return _request(url, method: GET, params: params);
+  Future<dynamic> get(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    return _request(url, method: GET, params: params, options: options, cancelToken: cancelToken);
   }
 
   //post method
-  Future<dynamic> post(String url, {Map<String, dynamic> params}) async {
-    return _request(url, method: POST, params: params);
+  Future<dynamic> post(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    return _request(url, method: POST, params: params, options: options, cancelToken: cancelToken);
   }
 
-  Future<dynamic> _request(String url, {String method, Map<String, dynamic> params}) async {
+  //post method
+  Future<dynamic> patch(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    return _request(url, method: PATCH, params: params, options: options, cancelToken: cancelToken);
+  }
+
+  Future<dynamic> _request(String url,
+      {String method, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
 //    dio.onHttpClientCreate = (HttpClient client) {
 //      client.findProxy = (uri) {
 //        //proxy all request to localhost:8888
@@ -71,18 +102,26 @@ class BaseHttpCore {
       if (params != null && params.isNotEmpty) {
         StringBuffer sb = new StringBuffer("?");
         params.forEach((key, value) {
-          sb.write("$key=$value&");
+          if (value != null) {
+            sb.write("$key=$value&");
+          }
         });
         String paramStr = sb.toString();
         paramStr = paramStr.substring(0, paramStr.length - 1);
         url += paramStr;
       }
-      response = await dio.get(url);
+      response = await dio.get(url, options: options, cancelToken: cancelToken);
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
-        response = await dio.post(url, data: params);
+        response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
       } else {
-        response = await dio.post(url);
+        response = await dio.post(url, options: options, cancelToken: cancelToken);
+      }
+    } else if (method == PATCH) {
+      if (params != null && params.isNotEmpty) {
+        response = await dio.patch(url, data: params, options: options, cancelToken: cancelToken);
+      } else {
+        response = await dio.patch(url, options: options, cancelToken: cancelToken);
       }
     }
 

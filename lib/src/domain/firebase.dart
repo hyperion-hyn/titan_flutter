@@ -1,10 +1,8 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 
 class FireBaseLogic extends InheritedWidget {
   final FirebaseAnalytics analytics;
+
 //  final FirebaseAnalyticsObserver observer;
 
   final Crashlytics crashlytics;
@@ -26,3 +24,9 @@ class FireBaseLogic extends InheritedWidget {
     return false;
   }
 }
+
+class FirebaseAnalytics {
+  logEvent({String name}) {}
+}
+
+class Crashlytics {}

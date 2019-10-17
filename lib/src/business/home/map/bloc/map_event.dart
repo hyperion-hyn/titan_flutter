@@ -1,6 +1,5 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
-import 'package:titan/src/business/map_store/model/purchased_map_item.dart';
 import 'package:titan/src/model/poi_interface.dart';
 
 @immutable
@@ -56,11 +55,3 @@ class CloseRouteEvent extends MapEvent {}
 ///location
 class MyLocationEvent extends MapEvent {}
 
-
-class ShowPurchasedMapEvent extends MapEvent{
-  List<PurchasedMap> purchasedMapList;
-
-  ShowPurchasedMapEvent(this.purchasedMapList);
-
-
-}

@@ -48,8 +48,8 @@ class BottomFasScenesState extends State<BottomFabsWidget> {
     searchInteractor.deleteAllHistory();
 
     //TODO UI back to global
-//    BlocProvider.of<home.HomeBloc>(context).dispatch(home.ExistSearchEvent());
-//    BlocProvider.of<map.MapBloc>(context).dispatch(map.ResetMapEvent());
+//    BlocProvider.of<home.HomeBloc>(context).add(home.ExistSearchEvent());
+//    BlocProvider.of<map.MapBloc>(context).add(map.ResetMapEvent());
   }
 
   void _showFireModalBottomSheet(context) {
@@ -115,7 +115,7 @@ class BottomFasScenesState extends State<BottomFabsWidget> {
                 FloatingActionButton(
                   onPressed: () {
                     eventBus.fire(ToMyLocationEvent());
-//                BlocProvider.of<MapBloc>(context).dispatch(MyLocationEvent());
+//                BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
                   },
                   mini: true,
                   heroTag: 'myLocation',

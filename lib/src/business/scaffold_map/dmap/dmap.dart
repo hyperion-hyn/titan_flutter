@@ -18,15 +18,26 @@ class DMapConfigModel {
 
   final PanelBuilder panelBuilder;
   final PaddingTopFun panelPaddingTop;
+  final bool panelDraggable;
+  final double panelCollapsedHeight;
+  final double panelAnchorHeight;
+  final bool alwaysShowPanel;
+
+  final bool showCenterMarker;
 
   DMapConfigModel({
     this.panelBuilder,
     this.panelPaddingTop,
+    this.panelAnchorHeight,
+    this.panelCollapsedHeight,
+    this.panelDraggable,
+    this.alwaysShowPanel,
     this.onMapLongPressHandle,
     this.onMapClickHandle,
     this.dMapName,
     this.heavenDataModelList,
     this.defaultLocation,
     this.defaultZoom,
+    this.showCenterMarker,
   });
 }

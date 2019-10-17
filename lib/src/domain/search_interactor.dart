@@ -4,6 +4,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/model/history_search.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
 
 class SearchInteractor {
   Repository repository;
@@ -49,7 +50,7 @@ class SearchInteractor {
     return repository.searchHistoryDao.deleteAll();
   }
 
-  Future<List<PoiEntity>> searchPoiByMapbox(String query, LatLng center, String language,
+  Future<List<IPoi>> searchPoiByMapbox(String query, LatLng center, String language,
       {String types = 'poi', int limit = 10}) async {
     var proximity = "${center.longitude},${center.latitude}";
     var ret = await repository.api.searchPoiByMapbox(query, proximity, language, types: types, limit: limit);

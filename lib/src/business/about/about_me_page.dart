@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -8,11 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutMePage extends StatefulWidget {

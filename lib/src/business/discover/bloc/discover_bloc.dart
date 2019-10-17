@@ -1,13 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/src/business/infomation/api/news_api.dart';
+import 'package:titan/src/business/infomation/model/focus_response.dart' as focus;
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart' as map;
 import '../dmap_define.dart';
 import './bloc.dart';
 
 class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
   final BuildContext context;
+
+  NewsApi _newsApi = NewsApi();
 
   DiscoverBloc(this.context);
 
@@ -19,17 +25,26 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
     if (event is InitDiscoverEvent) {
       yield InitialDiscoverState();
 
-      BlocProvider.of<map.ScaffoldMapBloc>(context).dispatch(map.InitMapEvent());
+      BlocProvider.of<map.ScaffoldMapBloc>(context).add(map.InitMapEvent());
     } else if (event is ActiveDMapEvent) {
       DMapCreationModel model = DMapDefine.kMapList[event.name];
       if (model != null) {
         yield ActiveDMapState(name: event.name);
 
         DMapCreationModel model = DMapDefine.kMapList[event.name];
-        BlocProvider.of<map.ScaffoldMapBloc>(context).dispatch(map.InitDMapEvent(
+        BlocProvider.of<map.ScaffoldMapBloc>(context).add(map.InitDMapEvent(
           dMapConfigModel: model.dMapConfigModel,
         ));
       }
+    } else if (event is LoadFocusImageEvent) {
+      List<focus.FocusImage> focusList = await _newsApi.getFocusList();
+
+      //save to cache
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var json = jsonEncode(focusList);
+      await prefs.setString("disc_focus", json);
+
+      yield (LoadedFocusState(focusImages: focusList));
     }
   }
 }

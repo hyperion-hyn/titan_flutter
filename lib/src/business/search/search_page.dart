@@ -72,7 +72,7 @@ class _SearchPageState extends State<SearchPage> {
 
     if (!loaded) {
       _searchBloc = SearchBloc(searchInteractor: Injector.of(context).searchInteractor);
-      _searchBloc.dispatch(FetchSearchItemsEvent(isHistory: true));
+      _searchBloc.add(FetchSearchItemsEvent(isHistory: true));
 
       loaded = true;
     }
@@ -81,7 +81,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void dispose() {
     _subscription?.cancel();
-    _searchBloc.dispose();
+    _searchBloc.close();
     _searchTextController.dispose();
     super.dispose();
   }
@@ -104,7 +104,7 @@ class _SearchPageState extends State<SearchPage> {
       _subscription = null;
       _subscription = Observable.timer(event, Duration(milliseconds: 1000)).listen((data) {
         if (data.searchText == currentText) {
-          _searchBloc.dispatch(data);
+          _searchBloc.add(data);
         }
       });
     } else {
@@ -113,7 +113,7 @@ class _SearchPageState extends State<SearchPage> {
           _visibleCloseIcon = false;
         });
       }
-      _searchBloc.dispatch(FetchSearchItemsEvent(isHistory: true));
+      _searchBloc.add(FetchSearchItemsEvent(isHistory: true));
     }
   }
 
@@ -129,7 +129,7 @@ class _SearchPageState extends State<SearchPage> {
       //encrypt text
       try {
         var poi = await ciphertextToPoi(Injector.of(context).repository, textOrPoi);
-        _searchBloc.dispatch(AddSearchItemEvent(textOrPoi));
+        _searchBloc.add(AddSearchItemEvent(textOrPoi));
         Navigator.pop(context, poi);
       } catch(err) {
         logger.e(err);
@@ -138,7 +138,7 @@ class _SearchPageState extends State<SearchPage> {
       return;
     }
 
-    _searchBloc.dispatch(AddSearchItemEvent(textOrPoi));
+    _searchBloc.add(AddSearchItemEvent(textOrPoi));
     Navigator.pop(context, textOrPoi);
   }
 
@@ -171,7 +171,7 @@ class _SearchPageState extends State<SearchPage> {
                                       style: TextStyle(color: Colors.blue),
                                     ),
                                     onPressed: () {
-                                      _searchBloc.dispatch(ClearSearchHisotoryEvent());
+                                      _searchBloc.add(ClearSearchHisotoryEvent());
                                     },
                                   )
                                 ],

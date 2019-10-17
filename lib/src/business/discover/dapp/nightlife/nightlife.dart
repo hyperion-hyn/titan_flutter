@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 
 import 'hot_area.dart';
 
@@ -44,17 +46,17 @@ class NightLifeState extends State<NightLife> {
                       Align(
                         child: InkWell(
                           onTap: () {
-                            BlocProvider.of<DiscoverBloc>(context).dispatch(InitDiscoverEvent());
+                            BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
                           },
                           child: Ink(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              '退出',
+                              '关闭',
                               style: TextStyle(color: Colors.blueAccent),
                             ),
                           ),
                         ),
-                        alignment: Alignment.centerRight,
+                        alignment: Alignment.centerLeft,
                       ),
                     ],
                   ),

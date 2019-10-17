@@ -13,6 +13,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
@@ -29,6 +31,7 @@ class MapContainer extends StatefulWidget {
   final LatLng defaultCenter;
   final OnMapClickHandle mapClickHandle;
   final OnMapLongPressHandle mapLongPressHandle;
+  final bool showCenterMarker;
 
   final DraggableBottomSheetController bottomPanelController;
 
@@ -42,6 +45,7 @@ class MapContainer extends StatefulWidget {
     this.bottomPanelController,
     this.mapClickHandle,
     this.mapLongPressHandle,
+    this.showCenterMarker,
   }) : super(key: key);
 
   @override
@@ -54,6 +58,8 @@ class MapContainerState extends State<MapContainer> {
   final MAX_POI_DIFF_DISTANCE = 10000;
 
   MapboxMapController mapboxMapController;
+
+  MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
 
   StreamSubscription _locationClickSubscription;
   StreamSubscription _eventBusSubscription;
@@ -74,11 +80,19 @@ class MapContainerState extends State<MapContainer> {
   double _mapTop = 0;
 
   void onDragPanelYChange() {
-    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight &&
-        widget.bottomPanelController.bottom > widget.bottomPanelController.collapsedHeight) {
+//    print('ch ${widget.bottomPanelController.collapsedHeight} bottom: ${widget.bottomPanelController.bottom}');
+//    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight) {
+    if (widget.bottomPanelController.bottom <= 400) {
       setState(() {
         _mapTop = -widget.bottomPanelController.bottom * 0.5;
       });
+//      if(widget.bottomPanelController.bottom > widget.bottomPanelController.collapsedHeight) {
+//        setState(() {
+//          _mapTop = -widget.bottomPanelController.bottom * 0.5;
+//        });
+//      } else if(_mapTop != 0) {
+//
+//      }
     }
   }
 
@@ -92,18 +106,20 @@ class MapContainerState extends State<MapContainer> {
     var range = 10;
     Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
     if (await _clickOnMarkerLayer(rect)) {
+      await mapboxMapController?.disableLocation();
       return;
     }
 //    if (await _clickOnHeavenLayer(rect)) {
 //      return;
 //    }
     if (await _clickOnCommonSymbolLayer(rect)) {
+      await mapboxMapController?.disableLocation();
       return;
     }
 
     //if click nothing on the map
     if (this.currentPoi != null) {
-      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
     }
   }
 
@@ -129,7 +145,7 @@ class MapContainerState extends State<MapContainer> {
 
     //if click on no symbol, then add the place where it is
     var poi = PoiEntity(latLng: coordinates);
-    BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
+    BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
   }
 
   void addMarker(IPoi poi) async {
@@ -262,7 +278,7 @@ class MapContainerState extends State<MapContainer> {
       print("poi:$poi");
 
       if (poi != null) {
-        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
         return true;
       }
     }
@@ -280,7 +296,7 @@ class MapContainerState extends State<MapContainer> {
       var firstFeature = json.decode(symbolFeatures[0]);
       print("firstFeature :$firstFeature");
       var poi = _convertHeavenMapPoiInfoFromFeature(firstFeature);
-      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+      BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
       return true;
     } else {
       return false;
@@ -333,7 +349,7 @@ class MapContainerState extends State<MapContainer> {
       }
 
       var poi = PoiEntity(name: name, latLng: coordinates);
-      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
+      BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
 
       return true;
     } else {
@@ -357,18 +373,51 @@ class MapContainerState extends State<MapContainer> {
     return heavenMapPoiInfo;
   }
 
-  void onStyleLoaded(controller) async {
+  void onStyleLoaded(MapboxMapController controller) async {
     setState(() {
       mapboxMapController = controller;
     });
 
-//    _toMyLocation();
-//    _loadPurchasedMap();
+    controller.addListener(mapMoveListener);
+
+    Future.delayed(Duration(milliseconds: 2000)).then((t) {
+      return controller.lastKnownLocation();
+    }).then((position) {
+      if (position != null) {
+        eventBus.fire(OnMapMovedEvent(latLng: position));
+      }
+    });
+//    controller.lastKnownLocation().then((position) {
+//      if (position != null) {
+//        eventBus.fire(OnMapMovedEvent(latLng: position));
+//      }
+//    });
+  }
+
+  LatLng _lastPosition;
+
+  void mapMoveListener() {
+    if (mapboxMapController?.isCameraMoving == false) {
+      var position = mapboxMapController?.cameraPosition?.target;
+      if (position != null && position != _lastPosition) {
+        if (_lastPosition != null) {
+          var distance = position.distanceTo(_lastPosition);
+          if (distance < 10) {
+            //小于10米不更新
+            return;
+          }
+        }
+        _lastPosition = position;
+        debounce(() {
+          eventBus.fire(OnMapMovedEvent(latLng: position));
+        }, 500)();
+      }
+    }
   }
 
   int _clickTimes = 0;
 
-  void _toMyLocation() {
+  Future _toMyLocation() async {
     _locationClickSubscription?.cancel();
 
     _clickTimes++;
@@ -379,6 +428,8 @@ class MapContainerState extends State<MapContainer> {
         double doubleClickZoom = 17;
         if (latLng != null) {
           mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom));
+
+          eventBus.fire(OnMapMovedEvent(latLng: latLng));
         } else {
           mapboxMapController?.animateCamera(CameraUpdate.zoomTo(doubleClickZoom));
         }
@@ -386,9 +437,13 @@ class MapContainerState extends State<MapContainer> {
         //single click
         if (latLng != null) {
           mapboxMapController?.animateCamera(CameraUpdate.newLatLng(latLng));
+
+          eventBus.fire(OnMapMovedEvent(latLng: latLng));
         }
       }
-      mapboxMapController?.enableLocation();
+      Future.delayed(Duration(milliseconds: 500), () {
+        mapboxMapController?.enableLocation();
+      });
       _clickTimes = 0;
     });
   }
@@ -457,8 +512,14 @@ class MapContainerState extends State<MapContainer> {
         });
   }
 
+  ///update user track mode
+  void updateTrackMode() {
+    //TODO
+  }
+
   @override
   void dispose() {
+    mapboxMapController?.removeListener(mapMoveListener);
     _locationClickSubscription?.cancel();
     _eventBusSubscription?.cancel();
     super.dispose();
@@ -489,44 +550,63 @@ class MapContainerState extends State<MapContainer> {
         child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
           builder: (context, state) {
             return Container(
-              height: MediaQuery.of(context).size.height + bottomBarHeight,
+              height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: MapboxMapParent(
-                  controller: mapboxMapController,
-                  child: MapboxMap(
-                    compassEnabled: false,
-                    onMapClick: (point, coordinates) {
-                      if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
-                        return;
-                      }
-                      _onMapClick(point, coordinates);
-                    },
-                    onMapLongPress: (point, coordinates) {
-                      if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
-                        return;
-                      }
-                      _onMapLongPress(point, coordinates);
-                    },
-                    styleString: widget.style,
-                    onStyleLoaded: onStyleLoaded,
-                    initialCameraPosition: CameraPosition(
-                      target: widget.defaultCenter,
-                      zoom: widget.defaultZoom,
-                    ),
-                    rotateGesturesEnabled: false,
-                    tiltGesturesEnabled: false,
-                    enableLogo: false,
-                    enableAttribution: false,
-                    compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
-                    minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-                    myLocationEnabled: true,
-                    myLocationTrackingMode: MyLocationTrackingMode.None,
-                    children: <Widget>[
-                      ///active plugins
-                      HeavenPlugin(models: widget.heavenDataList),
-                      RoutePlugin(model: widget.routeDataModel),
-                    ],
-                  )),
+              child: Stack(
+                children: <Widget>[
+                  MapboxMapParent(
+                      controller: mapboxMapController,
+                      child: MapboxMap(
+                        compassEnabled: false,
+                        onMapClick: (point, coordinates) {
+                          if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                            return;
+                          }
+                          _onMapClick(point, coordinates);
+                        },
+                        onMapLongPress: (point, coordinates) {
+                          if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                            return;
+                          }
+                          _onMapLongPress(point, coordinates);
+                        },
+                        trackCameraPosition: true,
+                        styleString: widget.style,
+                        onStyleLoaded: onStyleLoaded,
+                        initialCameraPosition: CameraPosition(
+                          target: widget.defaultCenter,
+                          zoom: widget.defaultZoom,
+                        ),
+                        rotateGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        enableLogo: false,
+                        enableAttribution: false,
+                        compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
+                        minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+                        myLocationEnabled: true,
+                        myLocationTrackingMode: locationTrackingMode,
+                        children: <Widget>[
+                          ///active plugins
+                          HeavenPlugin(models: widget.heavenDataList),
+                          RoutePlugin(model: widget.routeDataModel),
+                        ],
+                      )),
+                  if (widget.showCenterMarker)
+                    Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            ExtendsIconFont.position_marker,
+                            size: 64,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          SizedBox(height: 68)
+                        ],
+                      ),
+                    )
+                ],
+              ),
             );
           },
         ),

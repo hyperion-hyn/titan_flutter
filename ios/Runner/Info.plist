@@ -15,7 +15,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -30,31 +30,31 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MGLMapboxAccessToken</key>
 	<string>pk.eyJ1IjoibnVyYm90IiwiYSI6ImNpaG0ycXA3czBvamh2NWtsZzBzdHE2dmQifQ.B7NiVcQD0DFguQF1aRcOeQ</string>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
 	<true/>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Please allow obtain location permission</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Please allow obtain location permission</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Please allow obtain location permission</string>
-    <key>NSMotionUsageDescription</key>
-    <string>Please allow obtain motion permission</string>
-    <key>NSAppleMusicUsageDescription</key>
-    <string>Please allow obtain media library permission</string>
-    <key>NSCalendarsUsageDescription</key>
-    <string>Please allow obtain calendars permission</string>
-    <key>NSContactsUsageDescription</key>
-    <string>Please allow obtain contacts permission</string>
-    <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Please allow obtain speech recognition permission</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Please allow obtain media library permission</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Please allow obtain calendars permission</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Please allow obtain camera permission</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Please allow obtain contacts permission</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Please allow obtain location permission</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Please allow obtain location permission</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Please allow obtain location permission</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Please allow obtain motion permission</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Please allow obtain speech recognition permission</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 
@@ -37,9 +39,34 @@ class NightLifePanelState extends State<NightLifePanel> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
-            child: Text(
-              widget.poi.name,
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    widget.poi.name,
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+                  },
+                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  highlightColor: Colors.transparent,
+                  child: Ink(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xffececec),
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.grey,
+                      size: 18,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           Padding(

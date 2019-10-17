@@ -26,6 +26,9 @@ class ResponseEntity<T> {
   ResponseEntity._({this.code, this.msg, this.data});
 
   factory ResponseEntity.fromJson(Map<String, dynamic> json, {EntityFactory<T> factory}) {
-    return ResponseEntity._(code: json['code'] ?? ResponseCode.FAILED, msg: json['msg'] ?? '', data: factory?.constructor(json['data']));
+    return ResponseEntity._(
+        code: json['code'] ?? ResponseCode.FAILED,
+        msg: json['msg'] ?? '',
+        data: json['data'] != null ? factory?.constructor(json['data']) : null);
   }
 }

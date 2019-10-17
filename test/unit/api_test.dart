@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:matcher/matcher.dart';
@@ -14,7 +16,7 @@ void main() {
 
   test('update app api', () async {
     Api api = Api();
-    var data = await api.update('official', 'zh');
+    var data = await api.update('official', 'zh', Platform.isAndroid ? "android" : "ios");
     expect(data, TypeMatcher<UpdateEntity>());
   });
 

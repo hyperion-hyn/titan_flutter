@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/theme.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'business/discover/bloc/bloc.dart';
-import 'business/home/bloc/bloc.dart';
-import 'business/home/home_page.dart';
-import 'business/home/map/bloc/bloc.dart';
-import 'business/home/searchbar/bloc/bloc.dart';
-import 'business/home/sheets/bloc/bloc.dart';
-import 'business/scaffold_map/bloc/bloc.dart';
 import 'business/updater/bloc/bloc.dart';
+import 'global.dart';
+import 'home_build.dart';
 
 class App extends StatefulWidget {
   @override
@@ -37,60 +30,33 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return BlocProvider(
       builder: (context) => AppBloc(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        key: Keys.materialAppKey,
-        title: 'Titan',
-        theme: appTheme,
-        localizationsDelegates: [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        home: Builder(
-          key: Keys.mainContextKey,
-          builder: (context) {
-            var sheetsBloc = SheetsBloc();
-            var mapBloc = MapBloc();
-            var searchBarBloc = SearchbarBloc();
-            var homeBloc = HomeBloc();
-            var _purchasedMapBloc = PurchasedMapBloc(mapBloc);
-            homeBloc.mapBloc = mapBloc;
-            homeBloc.searchBarBloc = searchBarBloc;
-            homeBloc.sheetBloc = sheetsBloc;
-
-            sheetsBloc.homeBloc = homeBloc;
-            mapBloc.homeBloc = homeBloc;
-            mapBloc.sheetsBloc = sheetsBloc;
-            searchBarBloc.homeBloc = homeBloc;
-
-            DateTime _lastPressedAt;
-
-            return MultiBlocProvider(
-              child: WillPopScope(
-                onWillPop: () async {
-                  if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
-                    _lastPressedAt = DateTime.now();
-                    Fluttertoast.showToast(msg: '再按一下退出程序');
-                    return false;
-                  }
-                  return true;
-                },
-                child: HomePage(),
-              ),
-              providers: [
-                BlocProvider<SheetsBloc>(builder: (context) => sheetsBloc..context = context),
-                BlocProvider<MapBloc>(builder: (context) => mapBloc..context = context),
-                BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
-                BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
-                BlocProvider<PurchasedMapBloc>(builder: (context) => _purchasedMapBloc),
-                BlocProvider<ScaffoldMapBloc>(builder: (context) => ScaffoldMapBloc(context)),
-                BlocProvider<DiscoverBloc>(builder: (context) => DiscoverBloc(context)),
-              ],
-            );
-          },
+      child: RefreshConfiguration(
+        dragSpeedRatio: 0.91,
+        headerTriggerDistance: 80,
+        footerTriggerDistance: 80,
+        maxOverScrollExtent :100,
+        maxUnderScrollExtent:0,
+        headerBuilder: () => WaterDropMaterialHeader(),
+        footerBuilder: () => ClassicFooter(),
+        autoLoad: true,
+        enableLoadingWhenFailed: false,
+        hideFooterWhenNotFull: true,
+        enableBallisticLoad: true,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          key: Keys.materialAppKey,
+          title: 'Titan',
+          theme: appTheme,
+          localizationsDelegates: [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            RefreshLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: HomeBuilder(),
+          navigatorObservers: [routeObserver],
         ),
       ),
     );

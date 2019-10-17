@@ -1,14 +1,16 @@
+import 'dart:convert';
+
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/business/discover/dapp/embassy/embassy.dart';
-import 'package:titan/src/business/discover/dapp/nightlife/nightlife.dart';
-import 'package:titan/src/business/discover/dapp/police_service/police_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
+import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
 
 import 'bloc/bloc.dart';
 
@@ -20,6 +22,32 @@ class DiscoverPageWidget extends StatefulWidget {
 }
 
 class DiscoverPageState extends State<DiscoverPageWidget> {
+  List<FocusImage> focusImages = [FocusImage('res/drawable/discover_first_image.jpeg', "https://www.hyn.space")];
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadCacheData();
+
+    BlocProvider.of<DiscoverBloc>(context).add(LoadFocusImageEvent());
+  }
+
+  void loadCacheData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String ss1 = prefs.getString("disc_focus");
+    if (ss1 != null) {
+      var flist = (jsonDecode(ss1) as List<dynamic>).map((element) => FocusImage.fromJson(element)).toList();
+      if (flist != null && flist.isNotEmpty) {
+        focusImages = flist;
+
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<DiscoverBloc, DiscoverState>(
@@ -35,73 +63,322 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
             if (model != null) {
               return model.createDAppWidgetFunction(context);
             }
+          } else if (state is LoadedFocusState) {
+            focusImages = state.focusImages;
           }
-
           return Scaffold(
             backgroundColor: Theme.of(context).backgroundColor,
             body: Container(
               margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 220,
-                      child: Carousel(
-                        images: [
-                          NetworkImage("https://www.hyn.space/img/header.jpeg"),
-                          NetworkImage("https://www.hyn.space/img/header.jpeg"),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 290,
+                    child: Stack(
                       children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 90),
-                          decoration: BoxDecoration(border: Border.all(width: 1)),
-                          child: Text("地图应用接入文档"),
-                        )
-                      ],
-                    ),
-                    Divider(),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8, bottom: 16),
-                            child: Text(
-                              "地图DApp",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                        SizedBox(
+                          height: 220,
+                          child: Carousel(
+                            borderRadius: true,
+                            radius: Radius.circular(0),
+                            onImageTap: (int index) {
+                              var focusImage = focusImages[index];
+
+                              print(focusImage.toString());
+                              if (focusImage.link == null || focusImage.link.isEmpty) {
+                                return;
+                              }
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WebViewContainer(
+                                            initUrl: focusImage.link,
+                                            title: "",
+                                          )));
+                            },
+                            dotVerticalPadding: 16,
+                            dotBgColor: Colors.transparent,
+                            images: focusImages.map((focusImage) {
+                              return FadeInImage.assetNetwork(
+                                placeholder: 'res/drawable/img_placeholder.jpg',
+                                image: focusImage.cover,
+                                fit: BoxFit.cover,
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Material(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                              elevation: 10,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Text('DMap地图应用接入文档', textAlign: TextAlign.center, style: TextStyle(fontSize: 13)),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: Text('文档优化中...',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                          _buildDappItem(ExtendsIconFont.point, "私密分享", "分享加密位置，绝不泄露位置信息"),
-                          Divider(),
-                          _buildDappItem(ExtendsIconFont.female, "夜生活指南", "夜蒲不再迷路", () {
-                            BlocProvider.of<DiscoverBloc>(context).dispatch(ActiveDMapEvent(name: 'nightlife'));
-                            var model = DMapDefine.kMapList['nightlife'];
-                            if (model != null) {
-                              var mapboxController =
-                                  (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
-                              mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
-                                model.dMapConfigModel.defaultLocation,
-                                model.dMapConfigModel.defaultZoom,
-                              ));
-                            }
-                          }),
-                          Divider(),
-                          _buildDappItem(ExtendsIconFont.police_car, "警察服务站", "有困难找警察"),
-                          Divider(),
-                          _buildDappItem(ExtendsIconFont.embassy, "全球大使馆", "我家大使馆就在这"),
-                          Divider(),
-                        ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16, bottom: 24),
+                              child: Text(
+                                "地图DMap",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                              ),
+                            ),
+                            Text('工具类', style: TextStyle(color: Colors.grey)),
+                            Padding(
+                              padding: EdgeInsets.only(top: 16),
+                              child: InkWell(
+                                onTap: () async {
+                                  activeDMap('encryptShare');
+                                  var mapboxController =
+                                      (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+
+                                  var lastLocation = await mapboxController?.lastKnownLocation();
+                                  if (lastLocation != null) {
+                                    Future.delayed(Duration(milliseconds: 500)).then((value) {
+                                      mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
+                                    });
+                                  }
+                                },
+                                borderRadius: BorderRadius.all(Radius.circular(4)),
+                                child: Container(
+                                  padding: EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Color(0xFFE9E9E9)),
+                                      borderRadius: BorderRadius.all(Radius.circular(4))),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Image.asset('res/drawable/ic_dmap_location_share.png', width: 32, height: 32),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '私密分享',
+                                              style: TextStyle(fontWeight: FontWeight.w600),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0),
+                                              child: Text(
+                                                '分享加密位置，绝不泄露位置信息',
+                                                style: TextStyle(color: Colors.grey, fontSize: 13),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 24.0),
+                              child: Text('生活指引', style: TextStyle(color: Colors.grey)),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 16),
+                              child: SizedBox(
+                                height: 180,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          //全球大使馆
+                                          Expanded(
+                                            child: InkWell(
+                                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                                              onTap: () {
+                                                activeDMap('embassy');
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.all(16),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(color: Color(0xFFE9E9E9)),
+                                                    borderRadius: BorderRadius.all(Radius.circular(4))),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Image.asset(
+                                                      'res/drawable/ic_dmap_mbassy.png',
+                                                      width: 28,
+                                                      height: 28,
+                                                    ),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left: 8.0),
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: <Widget>[
+                                                            Text(
+                                                              '大使馆指南',
+                                                              style: TextStyle(fontWeight: FontWeight.w600),
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top: 8.0),
+                                                              child: Row(
+                                                                children: <Widget>[
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      '全球大使馆',
+                                                                      style:
+                                                                          TextStyle(color: Colors.grey, fontSize: 13),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          //夜生活指南
+                                          Expanded(
+                                            child: InkWell(
+                                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                                              onTap: () {
+//                                                activeDMap('nightlife');
+                                                Fluttertoast.showToast(msg: "敬请期待");
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.all(16),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(color: Color(0xFFE9E9E9)),
+                                                    borderRadius: BorderRadius.all(Radius.circular(4))),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Image.asset(
+                                                      'res/drawable/ic_dmap_bar.png',
+                                                      width: 28,
+                                                      height: 28,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: 8.0),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: <Widget>[
+                                                          Text(
+                                                            '折扣地图',
+                                                            style: TextStyle(fontWeight: FontWeight.w600),
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(top: 8.0),
+                                                            child: Text(
+                                                              '暂未开放',
+                                                              style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 12,
+                                    ),
+                                    //警察服务站
+                                    Expanded(
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                                        onTap: () {
+                                          activeDMap('policeStation');
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(color: Color(0xFFE9E9E9)),
+                                              borderRadius: BorderRadius.all(Radius.circular(4))),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Image.asset(
+                                                'res/drawable/ic_dmap_police.png',
+                                                width: 32,
+                                                height: 32,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 16.0),
+                                                child: Text(
+                                                  '警察安全站',
+                                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 8.0),
+                                                child: Text(
+                                                  '有困难，找警察',
+                                                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '更多DMap应用持续添加~',
+                                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                                  )),
+                            )
+                          ],
+                        ),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
             ),
           );
@@ -110,34 +387,22 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
     );
   }
 
-  Widget _buildDappItem(IconData iconData, String title, String description, [onTap]) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Container(
-              margin: EdgeInsets.only(top: 8, bottom: 8, right: 16),
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(width: 1),
-                color: Colors.white,
-              ),
-              child: Center(child: Icon(iconData, color: Colors.black, size: 24))),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              Text(description),
-            ],
-          )
-        ],
-      ),
-    );
+  void activeDMap(String dMapName) async {
+    BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
+
+    var model = DMapDefine.kMapList[dMapName];
+    if (model != null) {
+      var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+      await mapboxController?.disableLocation();
+
+      if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
+        Future.delayed(Duration(milliseconds: 500)).then((value) {
+          mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
+            model.dMapConfigModel.defaultLocation,
+            model.dMapConfigModel.defaultZoom,
+          ));
+        });
+      }
+    }
   }
 }
