@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Updater(
           child: Scaffold(
               resizeToAvoidBottomPadding: false,
-              drawer: DrawerScenes(),
+//              drawer: DrawerScenes(),
 //          endDrawer: PurchasedMapDrawerScenes(),
               bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
                 builder: (context, state) {

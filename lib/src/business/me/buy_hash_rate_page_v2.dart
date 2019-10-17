@@ -86,7 +86,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                         Image.memory(
                                           Base64Decoder().convert(
                                               (_contractInfoTemp.icon.replaceAll("data:image/jpeg;base64,", ""))),
-                                          width: 180,
+                                          height: 130,
                                         )
                                       ],
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -124,17 +124,19 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "矿机介绍",
+                              "合约介绍",
                               style: TextStyle(color: Colors.black, fontSize: 16),
                             )
                           ],
                         ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(child: Text(_selectedContractInfo.description)),
-                          ],
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Text(
+                              _selectedContractInfo.description,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
                         ),
-                        Spacer(),
                         RaisedButton(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           color: Theme.of(context).primaryColor,

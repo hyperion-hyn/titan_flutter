@@ -11,7 +11,7 @@ class NewsResponse {
   @JsonKey(name: "custom_cover")
   String customCover;
   String outlink;
-  Focus focus;
+  FocusImage focus;
 
   NewsResponse(this.id, this.date, this.title, this.customCover, this.outlink, this.focus);
 

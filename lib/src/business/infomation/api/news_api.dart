@@ -26,7 +26,7 @@ class NewsApi {
     return NewsDetail.fromJson(data);
   }
 
-  Future<List<Focus>> getFocusList() async {
+  Future<List<FocusImage>> getFocusList() async {
     List dataList = await NewsHttpCore.instance.get(
       "wp-json/wp/v2/posts",
       params: {
@@ -34,6 +34,6 @@ class NewsApi {
       },
     ) as List;
 
-    return dataList.map((json) => Focus.fromJson(json["focus"])).toList();
+    return dataList.map((json) => FocusImage.fromJson(json["focus"])).toList();
   }
 }
