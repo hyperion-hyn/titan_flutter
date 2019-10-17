@@ -67,7 +67,6 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                   flex: 4,
                   child: Container(
                     child: CarouselSlider(
-                      enableInfiniteScroll:false,
                       onPageChanged: _onPageChanged,
                       height: 250.0,
                       enlargeCenterPage: true,
@@ -130,12 +129,14 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                             )
                           ],
                         ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(child: Text(_selectedContractInfo.description)),
-                          ],
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Text(
+                              _selectedContractInfo.description,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
                         ),
-                        Spacer(),
                         RaisedButton(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           color: Theme.of(context).primaryColor,
