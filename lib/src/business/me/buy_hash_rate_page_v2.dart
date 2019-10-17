@@ -124,7 +124,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "矿机介绍",
+                              "合约介绍",
                               style: TextStyle(color: Colors.black, fontSize: 16),
                             )
                           ],
