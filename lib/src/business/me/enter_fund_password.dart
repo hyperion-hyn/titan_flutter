@@ -35,7 +35,7 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
                 ),
                 Spacer(),
                 GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Navigator.of(context).pop();
                     },
                     child: Container(padding: EdgeInsets.all(4), child: Text("取消")))
@@ -98,7 +98,9 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
                   child: SizedBox(
                     height: 42,
                     child: RaisedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
                       color: Theme.of(context).primaryColor,
                       child: Text(
                         "确认",

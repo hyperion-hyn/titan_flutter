@@ -56,7 +56,7 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Text(
-                    "总算力",
+                    "我的总算力",
                     style: TextStyle(
                       color: Colors.white70,
                     ),
@@ -155,7 +155,7 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   hashRateVo.validity,
-                  style: TextStyle(fontSize: 16, color: hashRateVo.validityColor),
+                  style: TextStyle(fontSize: 14, color: hashRateVo.validityColor),
                 ),
               ),
               Text(

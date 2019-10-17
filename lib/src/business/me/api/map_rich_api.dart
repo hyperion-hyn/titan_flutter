@@ -6,6 +6,7 @@ import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/business/me/api/map_rich_http.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
+import 'package:titan/src/business/me/model/contract_info_v2.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
 import 'package:titan/src/business/me/model/node_mortgage_info.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
@@ -106,6 +107,15 @@ class MapRichApi {
     return await MapRichHttpCore.instance.getEntity("contracts", EntityFactory<List<ContractInfo>>((json) {
       return (json as List).map((contractJson) {
         return ContractInfo.fromJson(contractJson);
+      }).toList();
+    }), options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  ///getContractList
+  Future<List<ContractInfoV2>> getContractListV2(String token) async {
+    return await MapRichHttpCore.instance.getEntity("contractsV2", EntityFactory<List<ContractInfoV2>>((json) {
+      return (json as List).map((contractJson) {
+        return ContractInfoV2.fromJson(contractJson);
       }).toList();
     }), options: RequestOptions(headers: {"Authorization": token}));
   }

@@ -346,10 +346,14 @@ class _WithdrawalState extends State<WithdrawalHistory> {
   }
 
   Widget _buildWithdrawalItem(WithdrawalInfoLog withdrawalInfo) {
-    Color stateColor = HexColor("#6DBA1A");
+    Color stateColor = Color(0xFF6DBA1A);
 
-    Color successColor = HexColor("#6DBA1A");
-    Color failColor = HexColor("#D0021B");
+    Color successColor = Color(0xFF6DBA1A);
+    Color failColor = Color(0xFFD0021B);
+
+    Color warnColor = Color(0xFFF7C43E);
+
+    Color grayColor = Colors.grey[500];
 
 //    waitForAudit: 待审核
 //    unapprove：审核不通过
@@ -359,13 +363,13 @@ class _WithdrawalState extends State<WithdrawalHistory> {
 //    approved：审核通过
 
     if (withdrawalInfo.state == "waitForAudit") {
-      stateColor = successColor;
+      stateColor = warnColor;
     } else if (withdrawalInfo.state == "unapprove") {
       stateColor = failColor;
     } else if (withdrawalInfo.state == "waitForTXConfirm") {
       stateColor = successColor;
     } else if (withdrawalInfo.state == "haveTransfer") {
-      stateColor = HexColor("#FF259B24");
+      stateColor = grayColor;
     } else if (withdrawalInfo.state == "transferFail") {
       stateColor = failColor;
     } else if (withdrawalInfo.state == "approved") {
@@ -402,7 +406,7 @@ class _WithdrawalState extends State<WithdrawalHistory> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   withdrawalInfo.stateTitle,
-                  style: TextStyle(fontSize: 16, color: stateColor),
+                  style: TextStyle(fontSize: 14, color: stateColor),
                 ),
               ),
               Text(

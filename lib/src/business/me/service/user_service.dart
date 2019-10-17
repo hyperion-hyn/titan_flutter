@@ -8,6 +8,7 @@ import 'package:titan/src/business/me/api/map_rich_api.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/common_response.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
+import 'package:titan/src/business/me/model/contract_info_v2.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
 import 'package:titan/src/business/me/model/node_mortgage_info.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
@@ -101,6 +102,15 @@ class UserService {
       throw new Exception("not login");
     }
     List<ContractInfo> contractList = await _mapRichApi.getContractList(userToken.token);
+    return contractList;
+  }
+
+  Future<List<ContractInfoV2>> getContractListV2() async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    List<ContractInfoV2> contractList = await _mapRichApi.getContractListV2(userToken.token);
     return contractList;
   }
 

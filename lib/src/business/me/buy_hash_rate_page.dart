@@ -143,12 +143,12 @@ class _BuyHashRateState extends State<BuyHashRatePage> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PurchasePage(
-                                contractInfo: contractInfo,
-                              )));
+//                  Navigator.push(
+//                      context,
+//                      MaterialPageRoute(
+//                          builder: (context) => PurchasePage(
+//                                contractInfo: contractInfo,
+//                              )));
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 8),

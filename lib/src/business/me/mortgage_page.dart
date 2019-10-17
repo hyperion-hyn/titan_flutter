@@ -8,6 +8,7 @@ import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 
+import 'enter_fund_password.dart';
 import 'model/mortgage_info.dart';
 
 class MortgagePage extends StatefulWidget {
@@ -142,14 +143,23 @@ class _MortgagePageState extends State<MortgagePage> {
               if (userInfo.balance < widget.mortgageInfo.amount) {
                 Fluttertoast.showToast(msg: '余额不足');
               } else {
-                try {
-                  await service.mortgage(confId: widget.mortgageInfo.id);
-                  Fluttertoast.showToast(msg: '抵押成功');
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
-                } catch (e) {
-                  logger.e(e);
-                  Fluttertoast.showToast(msg: '抵押异常');
-                }
+                showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return EnterFundPasswordWidget();
+                    }).then((value) async {
+                  if (!value) {
+                    return;
+                  }
+                  try {
+                    await service.mortgage(confId: widget.mortgageInfo.id);
+                    Fluttertoast.showToast(msg: '抵押成功');
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
+                  } catch (e) {
+                    logger.e(e);
+                    Fluttertoast.showToast(msg: '抵押异常');
+                  }
+                });
               }
             }
           },

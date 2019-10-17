@@ -17,6 +17,7 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 
+import 'buy_hash_rate_page_v2.dart';
 import 'my_asset_page.dart';
 import 'my_promote_page.dart';
 
@@ -266,7 +267,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       _buildCenterBigButton("获取算力", "res/drawable/get_power.png", () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
                       }),
                       VerticalDivider(),
                       _buildCenterBigButton("节点抵押", "res/drawable/node_mortgage.png", () {

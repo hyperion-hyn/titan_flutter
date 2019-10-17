@@ -43,11 +43,11 @@ class _DrawBalanceState extends State<DrawBalancePage> {
     amountTEController.addListener(() {
       if (withdrawalInfo != null && quotes != null) {
         double _amount = amountTEController.text.isEmpty ? 0.0 : double.parse(amountTEController.text);
-        if (_amount > withdrawalInfo.can_withdrawal) {
-          _amount = withdrawalInfo.can_withdrawal;
-          amountTEController.text = '$_amount';
-          amountTEController.selection = TextSelection.collapsed(offset: amountTEController.text.length - 1);
-        }
+//        if (_amount > withdrawalInfo.can_withdrawal) {
+//          _amount = withdrawalInfo.can_withdrawal;
+//          amountTEController.text = '$_amount';
+//          amountTEController.selection = TextSelection.collapsed(offset: amountTEController.text.length - 1);
+//        }
         /*else if(_amount < withdrawalInfo.min_limit) {
           _amount = withdrawalInfo.min_limit;
           amountTEController.text = '$_amount';
@@ -323,6 +323,9 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                     builder: (BuildContext context) {
                                       return EnterFundPasswordWidget();
                                     }).then((value) async {
+                                  if (!value) {
+                                    return;
+                                  }
                                   await _userService.withdrawalApply(amount: amount, address: address);
                                   Fluttertoast.showToast(msg: "提币申请成功");
                                   Navigator.pop(context, true);

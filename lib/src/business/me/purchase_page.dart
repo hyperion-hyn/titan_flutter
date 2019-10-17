@@ -12,13 +12,14 @@ import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
 import 'model/contract_info.dart';
+import 'model/contract_info_v2.dart';
 import 'model/pay_order.dart';
 import 'model/quotes.dart';
 import 'my_hash_rate_page.dart';
 import 'service/user_service.dart';
 
 class PurchasePage extends StatefulWidget {
-  final ContractInfo contractInfo;
+  final ContractInfoV2 contractInfo;
 
   PurchasePage({@required this.contractInfo});
 

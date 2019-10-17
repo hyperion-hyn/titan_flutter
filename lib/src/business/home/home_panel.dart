@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/me/buy_hash_rate_page.dart';
+import 'package:titan/src/business/me/buy_hash_rate_page_v2.dart';
 import 'package:titan/src/business/me/my_asset_page.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
@@ -249,7 +250,7 @@ class HomePanelState extends UserState<HomePanel> {
             padding: const EdgeInsets.only(top: 32.0, left: 16, right: 16),
             child: InkWell(
               onTap: () async {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
               },
               child: Ink(
                 height: 42,
