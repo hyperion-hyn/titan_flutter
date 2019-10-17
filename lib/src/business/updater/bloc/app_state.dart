@@ -12,7 +12,7 @@ class InitialAppState extends AppState {}
 
 class UpdateState extends AppState {
   UpdateState({UpdateEntity updateEntity, bool isError, bool isChecking}) {
-    appData.updateEntity = updateEntity ?? appData.updateEntity;
+    appData.updateEntity = updateEntity;
     appData.isError = isError ?? appData.isError;
     appData.isChecking = isChecking ?? appData.isChecking;
   }

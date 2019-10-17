@@ -13,8 +13,8 @@ class Repository {
       : api = api,
         searchHistoryDao = searchHistoryDao;
 
-  Future<UpdateEntity> checkNewVersion(String channel, String lang) {
-    return api.update(channel, lang);
+  Future<UpdateEntity> checkNewVersion(String channel, String lang, String platform) {
+    return api.update(channel, lang, platform);
   }
 
   Future<List<DianPingPoi>> requestDianping(double lat, double lon) async {
@@ -22,7 +22,7 @@ class Repository {
     var data = await api.requestDianping(lat, lon);
     try {
       List list = data['data']['moduleInfoList'][0]['moduleData']['data']['guessYouVoList'];
-      for(int i=0; i<list.length; i++) {
+      for (int i = 0; i < list.length; i++) {
         var item = list[i];
         var poi = DianPingPoi();
         poi.address = ''; //无经纬度
@@ -36,7 +36,7 @@ class Repository {
         poi.schema = item['schema'];
         pois.add(poi);
       }
-    } catch(e) {
+    } catch (e) {
       logger.e(e);
     }
     return pois;

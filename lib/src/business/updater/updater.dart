@@ -15,6 +15,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/updater/bloc/bloc.dart';
 import 'package:titan/src/model/update.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/utils/utils.dart';
 
 const APK_NAME = 'hmap.apk';
 
@@ -53,7 +54,7 @@ class _UpdaterState extends State<Updater> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if(_appBlocSubscription == null) {
+    if (_appBlocSubscription == null) {
       _appBlocSubscription = BlocProvider.of<AppBloc>(context)?.state?.listen((AppState state) async {
         if (state is UpdateState) {
           if (state.appData.updateEntity != null) {
@@ -70,7 +71,7 @@ class _UpdaterState extends State<Updater> {
   }
 
   void _showUpdateDialog(UpdateEntity updateEntity) async {
-    var hasDownloaded = await _hasDownloaded(updateEntity);
+//    var hasDownloaded = await _hasDownloaded(updateEntity);
 
     await showDialog<String>(
       context: context,
@@ -78,7 +79,7 @@ class _UpdaterState extends State<Updater> {
       builder: (BuildContext context) {
         String title = S.of(context).new_update_available;
         String message = updateEntity.content;
-        String btnLabel = hasDownloaded ? S.of(context).install_now : S.of(context).update_now;
+//        String btnLabel = hasDownloaded ? S.of(context).install_now : S.of(context).update_now;
         String btnLabelCancel = S.of(context).later;
         return Platform.isIOS
             ? CupertinoAlertDialog(
@@ -90,8 +91,8 @@ class _UpdaterState extends State<Updater> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   FlatButton(
-                    child: Text(btnLabel),
-                    onPressed: () => _launch(updateEntity, hasDownloaded),
+                    child: Text(S.of(context).update_now),
+                    onPressed: () => _launch(updateEntity),
                   ),
                 ],
               )
@@ -104,8 +105,8 @@ class _UpdaterState extends State<Updater> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   FlatButton(
-                    child: Text(btnLabel),
-                    onPressed: () => _launch(updateEntity, hasDownloaded),
+                    child: Text(S.of(context).update_now),
+                    onPressed: () => _launch(updateEntity),
                   ),
                 ],
               );
@@ -113,19 +114,23 @@ class _UpdaterState extends State<Updater> {
     );
   }
 
-  void _launch(UpdateEntity versionModel, bool hasDownloaded) async {
-    if (env.channel == BuildChannel.OFFICIAL) {
-      if (hasDownloaded) {
-        var apkPath = await _getApkPath();
-        _installApk(apkPath);
-      } else {
-        _downloadApk(versionModel);
-        Fluttertoast.showToast(msg: S.of(context).downloading_update_file);
-      }
-    } else {
-      TitanPlugin.openMarket();
-    }
+  void _launch(UpdateEntity versionModel) async {
+//    if (env.channel == BuildChannel.OFFICIAL) {
+//      if (hasDownloaded) {
+//        var apkPath = await _getApkPath();
+//        _installApk(apkPath);
+//      } else {
+//        _downloadApk(versionModel);
+//        Fluttertoast.showToast(msg: S.of(context).downloading_update_file);
+//      }
+//    } else {
+//      TitanPlugin.openMarket();
+//    }
+
 //      AppPlugin.openMarket();
+
+    launchUrl(versionModel.downloadUrl);
+
     Navigator.pop(context);
   }
 

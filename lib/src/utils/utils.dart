@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 String getExpiredTimeShowTip(BuildContext context, int expireTime) {
   var timeLeft = (expireTime - DateTime.now().millisecondsSinceEpoch) ~/ 1000;
@@ -40,6 +41,7 @@ String shortEthAddress(String address) {
 //    child: Text('Test'),
 //)
 Timer _debounce;
+
 Function debounce(Function fn, [int t = 100]) {
   return () {
     // 还在时间之内，抛弃上一次
@@ -49,4 +51,12 @@ Function debounce(Function fn, [int t = 100]) {
       fn();
     });
   };
+}
+
+Future launchUrl(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    print('Could not launch $url');
+  }
 }

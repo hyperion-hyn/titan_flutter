@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/updater/bloc/bloc.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -80,7 +82,12 @@ class _AboueMeState extends State<AboutMePage> {
             height: 40,
           ),
           Divider(),
-          _buildInfoContainer(label: "检查更新", onTap: () {}),
+          _buildInfoContainer(
+              label: "检查更新",
+              onTap: () {
+                BlocProvider.of<AppBloc>(context)
+                    .dispatch(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
+              }),
           Divider()
         ]));
   }

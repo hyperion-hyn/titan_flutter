@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -21,7 +22,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         } else if (env.channel == BuildChannel.STORE) {
           channel = "store";
         }
-        var versionModel = await injector.repository.checkNewVersion(channel, event.lang);
+
+        var platform = "";
+        if (Platform.isAndroid) {
+          platform = "android";
+        } else if (Platform.isIOS) {
+          platform = "ios";
+        }
+        var versionModel = await injector.repository.checkNewVersion(channel, event.lang, platform);
 
         yield UpdateState(isChecking: false, updateEntity: versionModel);
       } catch (err) {
