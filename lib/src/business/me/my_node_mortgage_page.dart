@@ -11,6 +11,8 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/widget/smart_pull_refresh.dart';
 
+import 'enter_fund_password.dart';
+
 class MyNodeMortgagePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -177,11 +179,20 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
                         title: Text("赎回抵押"),
                         onTap: () async {
                           try {
-                            await _userService.redemption(id: nodeMortgageVo.id);
-                            Navigator.of(context).pop();
-
-                            await _getNodeMortgageList(0);
-                            await getUserInfo();
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return EnterFundPasswordWidget();
+                                }).then((value) async {
+                              if (!value) {
+                                return;
+                              }
+                              await _userService.redemption(id: nodeMortgageVo.id);
+                              Navigator.pop(context, true);
+                              Fluttertoast.showToast(msg: "赎回成功");
+                              await _getNodeMortgageList(0);
+                              await getUserInfo();
+                            });
                           } catch (e) {
                             logger.e(e);
                             Fluttertoast.showToast(msg: '赎回出错');
