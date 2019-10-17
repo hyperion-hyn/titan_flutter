@@ -24,19 +24,48 @@ class SearchListPanel extends StatelessWidget {
 
     return Container(
       height: listHeight,
-      child: ListView.separated(
-        controller: scrollController,
-        padding: EdgeInsets.only(top: 8, bottom: 16),
-        itemBuilder: (context, index) {
-          return buildItem(context, pois[index]);
-        },
-        separatorBuilder: (context, index) {
-          return Container(
-            color: Colors.grey[200],
-            height: 1,
-          );
-        },
-        itemCount: pois.length,
+      child: Stack(
+        children: <Widget>[
+          ListView.separated(
+            controller: scrollController,
+            padding: EdgeInsets.only(top: 8, bottom: 16),
+            itemBuilder: (context, index) {
+              return buildItem(context, pois[index]);
+            },
+            separatorBuilder: (context, index) {
+              return Container(
+                color: Colors.grey[200],
+                height: 1,
+              );
+            },
+            itemCount: pois.length,
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0, top: 16),
+              child: InkWell(
+                onTap: () {
+                  BlocProvider.of<ScaffoldMapBloc>(context).dispatch(InitMapEvent());
+                },
+                borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                highlightColor: Colors.transparent,
+                child: Ink(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xffececec),
+                  ),
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.grey,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

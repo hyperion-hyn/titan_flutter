@@ -62,7 +62,7 @@ class HomePanelState extends UserState<HomePanel> {
   void eventBusListener(event) async {
     if (event is OnMapMovedEvent) {
       print('xxx1 ${event.latLng}');
-      if (lastPosition == null || lastPosition.distanceTo(event.latLng) > 200) {
+      if (nearPois.length == 0 && (lastPosition == null || lastPosition.distanceTo(event.latLng) > 200)) {
         lastPosition = event.latLng;
         var latlng = CoordConvert.wgs84togcj02(Coords(event.latLng.latitude, event.latLng.longitude));
         print('xxx2 ${latlng.latitude}, ${latlng.longitude}');

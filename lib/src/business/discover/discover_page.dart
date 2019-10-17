@@ -54,7 +54,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: 260,
+                    height: 290,
                     child: Stack(
                       children: <Widget>[
                         SizedBox(
@@ -202,26 +202,34 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                   children: <Widget>[
                                                     Image.asset(
                                                       'res/drawable/ic_dmap_mbassy.png',
-                                                      width: 32,
-                                                      height: 32,
+                                                      width: 28,
+                                                      height: 28,
                                                     ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(left: 8.0),
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: <Widget>[
-                                                          Text(
-                                                            '大使馆指南',
-                                                            style: TextStyle(fontWeight: FontWeight.w600),
-                                                          ),
-                                                          Padding(
-                                                            padding: const EdgeInsets.only(top: 8.0),
-                                                            child: Text(
-                                                              '全球大使馆地图',
-                                                              style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left: 8.0),
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: <Widget>[
+                                                            Text(
+                                                              '大使馆指南',
+                                                              style: TextStyle(fontWeight: FontWeight.w600),
                                                             ),
-                                                          ),
-                                                        ],
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top: 8.0),
+                                                              child: Row(
+                                                                children: <Widget>[
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      '全球大使馆',
+                                                                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     )
                                                   ],
@@ -248,8 +256,8 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                   children: <Widget>[
                                                     Image.asset(
                                                       'res/drawable/ic_dmap_bar.png',
-                                                      width: 32,
-                                                      height: 32,
+                                                      width: 28,
+                                                      height: 28,
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets.only(left: 8.0),
