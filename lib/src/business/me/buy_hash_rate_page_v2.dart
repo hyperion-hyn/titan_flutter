@@ -86,7 +86,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                         Image.memory(
                                           Base64Decoder().convert(
                                               (_contractInfoTemp.icon.replaceAll("data:image/jpeg;base64,", ""))),
-                                          width: 180,
+                                          height: 130,
                                         )
                                       ],
                                       mainAxisAlignment: MainAxisAlignment.center,
