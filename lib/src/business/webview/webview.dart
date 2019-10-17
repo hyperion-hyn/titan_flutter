@@ -127,6 +127,7 @@ class WebViewContainerState extends State<WebViewContainer> {
                         IconButton(
                           onPressed: onBackPress,
                           icon: Icon(Icons.chevron_left),
+                          disabledColor: Colors.grey[200],
                         ),
                         SizedBox(
                           width: 40,
@@ -134,6 +135,7 @@ class WebViewContainerState extends State<WebViewContainer> {
                         IconButton(
                           onPressed: onForwardPress,
                           icon: Icon(Icons.chevron_right),
+                          disabledColor: Colors.grey[200],
                         )
                       ],
                     ),

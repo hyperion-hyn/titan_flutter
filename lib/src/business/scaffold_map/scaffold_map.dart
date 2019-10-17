@@ -67,6 +67,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       var mapScenseState = Keys.mapKey.currentState as MapContainerState;
       var camraPosition = await mapScenseState.mapboxMapController.getCameraPosition();
       var center = camraPosition.target;
+      print('center is $center');
       var searchResult = await Navigator.push(
           context,
           MaterialPageRoute(
@@ -338,11 +339,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             mapLongPressHandle: onMapLongPressHandle,
             showCenterMarker: showCenterMarker,
           ),
-          if (showSearchBar)
-            SearchBar(
-              searchText: searchText,
-              bottomPanelController: widget.poiBottomSheetController,
-            ),
+//          if (showSearchBar)
+//            SearchBar(
+//              searchText: searchText,
+//              bottomPanelController: widget.poiBottomSheetController,
+//            ),
           if (showRoute)
             RouteBar(
               fromName: fromPoi.name,
@@ -369,18 +370,18 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             childScrollController: _bottomChildScrollController,
             child: sheetPanel ?? Container(),
           ),
-          if (showTopBar)
-            TopBar(
-              title: title,
-              onBack: onTopBarBack,
-              onClose: onTopBarClose,
-              bottomPanelController: widget.poiBottomSheetController,
-              heightCallBack: (double height) {
-//              setState(() {
-                topBarHeight = height;
-//              });
-              },
-            ),
+//          if (showTopBar)
+//            TopBar(
+//              title: title,
+//              onBack: onTopBarBack,
+//              onClose: onTopBarClose,
+//              bottomPanelController: widget.poiBottomSheetController,
+//              heightCallBack: (double height) {
+////              setState(() {
+//                topBarHeight = height;
+////              });
+//              },
+//            ),
           if (showOptBar)
             Positioned(
               bottom: 0,

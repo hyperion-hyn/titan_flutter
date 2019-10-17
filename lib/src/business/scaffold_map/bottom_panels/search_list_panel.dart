@@ -42,14 +42,14 @@ class SearchListPanel extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16.0, top: 16),
-              child: InkWell(
-                onTap: () {
-                  BlocProvider.of<ScaffoldMapBloc>(context).dispatch(InitMapEvent());
-                },
-                borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                highlightColor: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                BlocProvider.of<ScaffoldMapBloc>(context).dispatch(InitMapEvent());
+              },
+              borderRadius: BorderRadius.all(Radius.circular(32.0)),
+              highlightColor: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
                 child: Ink(
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(

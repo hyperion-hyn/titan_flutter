@@ -27,15 +27,13 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
               child: Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: Container(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Image.network(
-                      infoItemVo.photoUrl,
-                      height: 78,
-                      width: 110,
-                      fit: BoxFit.cover,
-                    ),
+//                  alignment: Alignment.center,
+                  child: FadeInImage.assetNetwork(
+                    image: infoItemVo.photoUrl,
+                    placeholder: 'res/drawable/img_placeholder.jpg',
+                    width: 112,
+                    height: 84,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
