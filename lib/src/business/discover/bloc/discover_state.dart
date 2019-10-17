@@ -14,7 +14,7 @@ class ActiveDMapState extends DiscoverState {
 }
 
 class LoadedFocusState extends DiscoverState {
-  final List<Focus> focusImages;
+  final List<FocusImage> focusImages;
 
   LoadedFocusState({@required this.focusImages});
 }

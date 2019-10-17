@@ -35,7 +35,7 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
         ));
       }
     } else if (event is LoadFocusImageEvent) {
-      List<focus.Focus> focusList = await _newsApi.getFocusList();
+      List<focus.FocusImage> focusList = await _newsApi.getFocusList();
       yield (LoadedFocusState(focusImages: focusList));
     }
   }

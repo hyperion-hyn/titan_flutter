@@ -3,13 +3,13 @@ import 'package:json_annotation/json_annotation.dart';
 part 'focus_response.g.dart';
 
 @JsonSerializable()
-class Focus {
+class FocusImage {
   String cover;
   String link;
 
-  Focus(this.cover, this.link);
+  FocusImage(this.cover, this.link);
 
-  factory Focus.fromJson(Map<String, dynamic> json) => _$FocusFromJson(json);
+  factory FocusImage.fromJson(Map<String, dynamic> json) => _$FocusImageFromJson(json);
 
-  Map<String, dynamic> toJson() => _$FocusToJson(this);
+  Map<String, dynamic> toJson() => _$FocusImageToJson(this);
 }

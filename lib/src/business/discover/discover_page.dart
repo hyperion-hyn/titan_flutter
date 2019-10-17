@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
+import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 
 import 'bloc/bloc.dart';
@@ -16,7 +18,10 @@ class DiscoverPageWidget extends StatefulWidget {
 }
 
 class DiscoverPageState extends State<DiscoverPageWidget> {
-  List<String> focusImages = ["https:\/\/news.hyn.space\/wp-content\/uploads\/2019\/10\/WechatIMG16-768x443.jpeg"];
+  List<FocusImage> focusImages = [
+    FocusImage(
+        "https:\/\/news.hyn.space\/wp-content\/uploads\/2019\/10\/WechatIMG16-768x443.jpeg", "https://www.hyn.space")
+  ];
 
   @override
   void initState() {
@@ -40,7 +45,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
               return model.createDAppWidgetFunction(context);
             }
           } else if (state is LoadedFocusState) {
-            focusImages = state.focusImages.map((focusImageTemp) => focusImageTemp.cover).toList();
+            focusImages = state.focusImages;
           }
           return Scaffold(
             backgroundColor: Theme.of(context).backgroundColor,
@@ -55,9 +60,25 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                         SizedBox(
                           height: 220,
                           child: Carousel(
+                            onImageTap: (int index) {
+                              var focusImage = focusImages[index];
+
+                              print(focusImage.toString());
+                              if (focusImage.link == null || focusImage.link.isEmpty) {
+                                return;
+                              }
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WebViewContainer(
+                                            initUrl: focusImage.link,
+                                            title: "",
+                                          )));
+                            },
                             dotVerticalPadding: 16,
                             dotBgColor: Colors.transparent,
-                            images: focusImages.map((cover) => NetworkImage(cover)).toList(),
+                            images: focusImages.map((focusImage) => NetworkImage(focusImage.cover)).toList(),
                           ),
                         ),
                         Align(

@@ -12,7 +12,7 @@ class NewsDetail {
   @JsonKey(name: "custom_cover")
   String customCover;
   String outlink;
-  Focus focus;
+  FocusImage focus;
 
   NewsDetail(this.id, this.date, this.title, this.content, this.customCover, this.outlink, this.focus);
 

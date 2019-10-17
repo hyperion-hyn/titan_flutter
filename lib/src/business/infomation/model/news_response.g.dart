@@ -15,7 +15,7 @@ NewsResponse _$NewsResponseFromJson(Map<String, dynamic> json) {
     json['outlink'] as String,
     json['focus'] == null
         ? null
-        : Focus.fromJson(json['focus'] as Map<String, dynamic>),
+        : FocusImage.fromJson(json['focus'] as Map<String, dynamic>),
   );
 }
 
