@@ -41,12 +41,14 @@ class MapRichApi {
   }
 
   ///注册
-  Future<String> signUp(String email, String password, int verificationCode, String invitationCode) async {
+  Future<String> signUp(
+      String email, String password, int verificationCode, String invitationCode, String fundPassword) async {
     return await MapRichHttpCore.instance.postEntity("sign_up", EntityFactory((json) => json), params: {
       "email": email,
       "password": password,
       "verification_code": verificationCode,
-      "invitation_code": invitationCode
+      "invitation_code": invitationCode,
+      "fund_password": fundPassword,
     });
   }
 

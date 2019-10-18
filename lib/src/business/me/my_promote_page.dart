@@ -58,7 +58,7 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                       Column(
                         children: <Widget>[
                           Text(
-                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.highPower)}",
+                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.highestPower)}",
                             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
@@ -66,6 +66,21 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                           ),
                           Text(
                             "大区算力",
+                            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.secondHighestPower)}",
+                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Text(
+                            "次大区算力",
                             style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                           ),
                         ],
@@ -218,7 +233,7 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "他的算力",
+                      "算力",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                   ],
@@ -228,12 +243,27 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(_promotion.high)}",
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(_promotion.highest)}",
                         style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     ),
                     Text(
-                      "他的大区算力",
+                      "大区算力",
+                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(_promotion.secondHighest)}",
+                        style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                    Text(
+                      "次大区算力",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                   ],
@@ -248,7 +278,7 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "他的小区算力",
+                      "小区算力",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                   ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/business/login/register_page.dart';
 import 'package:titan/src/business/login/reset_password_page.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
@@ -7,6 +8,7 @@ import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/md5_util.dart';
 
 import 'login_event.dart';
 
@@ -177,7 +179,8 @@ class _LoginPageState extends State<LoginPage> {
                           children: <Widget>[
                             Text(
                               "注册账号",
-                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor, fontSize: 16, fontWeight: FontWeight.bold),
                             )
                           ],
                         ),
@@ -200,18 +203,13 @@ class _LoginPageState extends State<LoginPage> {
       String email = emailEditingController.text;
       String password = passwordEditingController.text;
 
-      try {
-        UserToken userToken = await _userService.login(email, password);
-        if (userToken == null) {
-          Fluttertoast.showToast(msg: "用户名或密码错误");
-        } else {
-          Fluttertoast.showToast(msg: "登录成功");
-          LOGIN_STATUS = 2;
-          eventBus.fire(LoginSuccessEvent());
-        }
-      } catch (_) {
-        print(_);
-        Fluttertoast.showToast(msg: "用户名或密码错误");
+      UserToken userToken = await _userService.login(email, Md5Util.generateMd5(password));
+      if (userToken == null) {
+        Fluttertoast.showToast(msg: "系统错误");
+      } else {
+        Fluttertoast.showToast(msg: "登录成功");
+        LOGIN_STATUS = 2;
+        eventBus.fire(LoginSuccessEvent());
       }
     }
   }

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/about/about_me_page.dart';
-import 'package:titan/src/business/me/buy_hash_rate_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
-import 'package:titan/src/business/me/model/common_response.dart';
-import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
-import 'package:titan/src/business/me/node_mortgage_page.dart';
+import 'package:titan/src/business/me/node_mortgage_page_v2.dart';
 import 'package:titan/src/business/me/personal_settings_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
@@ -271,7 +268,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                       }),
                       VerticalDivider(),
                       _buildCenterBigButton("节点抵押", "res/drawable/node_mortgage.png", () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePageV2()));
                       }),
                     ],
                   ),
@@ -368,14 +365,10 @@ class _MeState extends UserState<MePage> with RouteAware {
   }
 
   Future _checkIn() async {
-    try {
-      await _userService.checkIn();
-      checkInCount = await _userService.checkInCount();
-      setState(() {});
-      Fluttertoast.showToast(msg: "打卡成功");
-    } catch (_) {
-      Fluttertoast.showToast(msg: "打卡间隔低于30分钟");
-    }
+    await _userService.checkIn();
+    checkInCount = await _userService.checkInCount();
+    setState(() {});
+    Fluttertoast.showToast(msg: "打卡成功");
   }
 
   Future _updateCheckInCount() async {

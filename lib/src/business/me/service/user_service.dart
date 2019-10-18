@@ -17,15 +17,12 @@ import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/model/promotion_info.dart';
 import 'package:titan/src/business/me/model/purchase_order_info.dart';
 import 'package:titan/src/business/me/model/quotes.dart';
-import 'package:titan/src/business/me/model/quotes.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/domain/gaode_model.dart';
-import 'package:titan/src/model/gaode_poi.dart';
-import 'package:titan/src/model/poi.dart';
 
 class UserService {
   MapRichApi _mapRichApi = MapRichApi();
@@ -43,8 +40,9 @@ class UserService {
     return _mapRichApi.verificationCode(email);
   }
 
-  Future<String> registoer(String email, String password, int verificationCode, String invitationCode) async {
-    return await _mapRichApi.signUp(email, password, verificationCode, invitationCode);
+  Future<String> registoer(
+      String email, String password, int verificationCode, String invitationCode, String fundPassword) async {
+    return await _mapRichApi.signUp(email, password, verificationCode, invitationCode, fundPassword);
   }
 
   Future<CommonResponse> resetPassword(String email, String password, int verificationCode) async {
