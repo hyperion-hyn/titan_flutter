@@ -1,8 +1,14 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
+import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/business/load_data_container/load_data_container.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/widget/smart_pull_refresh.dart';
+
+import '../../global.dart';
 
 class NewsPage extends StatefulWidget {
   @override
@@ -20,15 +26,27 @@ class _NewsState extends InfoState<NewsPage> {
   static const int FIRST_PAGE = 1;
 
   List<InfoItemVo> _InfoItemVoList = [];
-  int selectedTag = LAST_NEWS_TAG;
   NewsApi _newsApi = NewsApi();
-  int currentPage = FIRST_PAGE;
-  var isLoading = true;
+
+  int selectedTag; // = LAST_NEWS_TAG;
+  int currentPage; // = FIRST_PAGE;
+
+//  var isLoading = true;
+
+  LoadDataBloc loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
     super.initState();
-    _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      activeTag(LAST_NEWS_TAG);
+    });
+  }
+
+  @override
+  void dispose() {
+    loadDataBloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,24 +70,64 @@ class _NewsState extends InfoState<NewsPage> {
             ),
           ),
           Expanded(
-            child: LoadDataWidget(
-              isLoading: isLoading,
-              child: SmartPullRefresh(
-                onRefresh: () {
-                  _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
-                },
-                onLoading: () {
-                  _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
-                },
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return buildInfoItem(_InfoItemVoList[index]);
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                    itemCount: _InfoItemVoList.length),
-              ),
+            child: LoadDataContainer(
+              bloc: loadDataBloc,
+              onLoadData: () async {
+                try {
+                  await _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+
+                  if (_InfoItemVoList.length == 0) {
+                    loadDataBloc.dispatch(LoadEmptyEvent());
+                  } else {
+                    loadDataBloc.dispatch(RefreshSuccessEvent());
+                  }
+                } catch (e) {
+                  logger.e(e);
+                  loadDataBloc.dispatch(LoadFailEvent());
+                }
+              },
+              onRefresh: () async {
+                try {
+                  await _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+
+                  if (_InfoItemVoList.length == 0) {
+                    loadDataBloc.dispatch(LoadEmptyEvent());
+                  } else {
+                    loadDataBloc.dispatch(RefreshSuccessEvent());
+                  }
+                } catch (e) {
+                  logger.e(e);
+                  loadDataBloc.dispatch(RefreshFailEvent());
+                }
+              },
+              onLoadingMore: () async {
+                try {
+                  int lastSize = _InfoItemVoList.length;
+                  await _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
+
+                  if (_InfoItemVoList.length == lastSize) {
+                    loadDataBloc.dispatch(LoadMoreEmptyEvent());
+                  } else {
+                    loadDataBloc.dispatch(LoadingMoreSuccessEvent());
+                  }
+                } catch (e) {
+                  logger.e(e);
+                  //hack for wordpress rest_post_invalid_page_number
+                  if (e is DioError && e.message == 'Http status error [400]') {
+                    loadDataBloc.dispatch(LoadMoreEmptyEvent());
+                  } else {
+                    loadDataBloc.dispatch(LoadMoreFailEvent());
+                  }
+                }
+              },
+              child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    return buildInfoItem(_InfoItemVoList[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider();
+                  },
+                  itemCount: _InfoItemVoList.length),
             ),
           ),
         ],
@@ -78,22 +136,25 @@ class _NewsState extends InfoState<NewsPage> {
   }
 
   Widget _buildTag(String text, int value) {
-    return super.buildTag(text, value, selectedTag, () async {
-      if (selectedTag == value) {
-        return;
-      }
-      selectedTag = value;
+    return super.buildTag(text, value, selectedTag == value, activeTag);
+  }
+
+  void activeTag(int tagId) {
+    if (selectedTag == tagId) {
+      return;
+    }
+//      isLoading = true;
+    setState(() {
+      selectedTag = tagId;
       currentPage = FIRST_PAGE;
-      isLoading = true;
-      _getPowerList(CATEGORY, selectedTag.toString(), currentPage);
-      setState(() {});
     });
+    loadDataBloc.dispatch(LoadingEvent());
   }
 
   Future _getPowerList(String categories, String tags, int page) async {
     var newsResponseList = await _newsApi.getNewsList(categories, tags, page);
 
-    isLoading = false;
+//    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {
       return InfoItemVo(
           id: newsResponse.id,

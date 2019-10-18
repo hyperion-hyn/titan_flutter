@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
-import 'package:titan/src/widget/load_data_widget.dart';
-import 'package:titan/src/widget/smart_pull_refresh.dart';
+import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/business/load_data_container/load_data_container.dart';
+
+import '../../global.dart';
 
 class WechatOfficialPage extends StatefulWidget {
   @override
@@ -23,18 +27,26 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   static const int VIDEO_TAG = 34;
   static const int AUDIO_TAG = 52;
 
+  LoadDataBloc loadDataBloc = LoadDataBloc();
+
   List<InfoItemVo> _InfoItemVoList = [];
-  int selectedTag = PAPER_TAG;
   NewsApi _newsApi = NewsApi();
-  int currentPage = FIRST_PAGE;
+
+  int selectedTag; // = PAPER_TAG;
+  int currentPage; // = FIRST_PAGE;
 
   int selectedVideoTag = DOMESTIC_VIDEO;
-  var isLoading = true;
+
+//  var isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _getPowerListByPage(FIRST_PAGE);
+//    _getPowerListByPage(FIRST_PAGE);
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      activeTag(PAPER_TAG);
+    });
   }
 
   @override
@@ -84,11 +96,12 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                         if (selectedVideoTag == value) {
                           return;
                         }
-                        selectedVideoTag = value;
-                        currentPage = 1;
-                        isLoading = true;
+                        setState(() {
+                          selectedVideoTag = value;
+                          currentPage = 1;
+                        });
+//                        isLoading = true;
                         _getPowerListByPage(currentPage);
-                        setState(() {});
                       },
                     )
                 ],
@@ -96,25 +109,85 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
             ),
           ),
           Expanded(
-            child: LoadDataWidget(
-              isLoading: isLoading,
-              child: SmartPullRefresh(
-                onRefresh: () {
-                  _getPowerListByPage(FIRST_PAGE);
+            child: LoadDataContainer(
+              bloc: loadDataBloc,
+              onLoadData: () async {
+                try {
+                  await _getPowerListByPage(FIRST_PAGE);
+
+                  if (_InfoItemVoList.length == 0) {
+                    loadDataBloc.dispatch(LoadEmptyEvent());
+                  } else {
+                    loadDataBloc.dispatch(RefreshSuccessEvent());
+                  }
+                } catch (e) {
+                  logger.e(e);
+                  loadDataBloc.dispatch(LoadFailEvent());
+                }
+              },
+              onRefresh: () async {
+                try {
+                  await _getPowerListByPage(FIRST_PAGE);
+
+                  if (_InfoItemVoList.length == 0) {
+                    loadDataBloc.dispatch(LoadEmptyEvent());
+                  } else {
+                    loadDataBloc.dispatch(RefreshSuccessEvent());
+                  }
+                } catch (e) {
+                  logger.e(e);
+                  loadDataBloc.dispatch(RefreshFailEvent());
+                }
+              },
+              onLoadingMore: () async {
+                try {
+                  int lastSize = _InfoItemVoList.length;
+                  await _getPowerListByPage(currentPage + 1);
+
+                  if (_InfoItemVoList.length == lastSize) {
+                    loadDataBloc.dispatch(LoadMoreEmptyEvent());
+                  } else {
+                    loadDataBloc.dispatch(LoadingMoreSuccessEvent());
+                  }
+                } catch (e) {
+                  logger.e(e);
+                  //hack for wordpress rest_post_invalid_page_number
+                  if (e is DioError && e.message == 'Http status error [400]') {
+                    loadDataBloc.dispatch(LoadMoreEmptyEvent());
+                  } else {
+                    loadDataBloc.dispatch(LoadMoreFailEvent());
+                  }
+                }
+              },
+              child: ListView.separated(
+                itemBuilder: (context, index) {
+                  return buildInfoItem(_InfoItemVoList[index]);
                 },
-                onLoading: () {
-                  _getPowerListByPage(currentPage + 1);
+                separatorBuilder: (context, index) {
+                  return Divider();
                 },
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return buildInfoItem(_InfoItemVoList[index]);
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                    itemCount: _InfoItemVoList.length),
+                itemCount: _InfoItemVoList.length,
               ),
             ),
+//            child: LoadDataWidget(
+//              isLoading: isLoading,
+//              child: SmartPullRefresh(
+//                onRefresh: () {
+//                  _getPowerListByPage(FIRST_PAGE);
+//                },
+//                onLoading: () {
+//                  _getPowerListByPage(currentPage + 1);
+//                },
+//                child: ListView.separated(
+//                    itemBuilder: (context, index) {
+//                      return buildInfoItem(_InfoItemVoList[index]);
+//                    },
+//                    separatorBuilder: (context, index) {
+//                      return Divider();
+//                    },
+//                    itemCount: _InfoItemVoList.length),
+//              ),
+//            ),
           ),
         ],
       ),
@@ -122,16 +195,23 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   }
 
   Widget _buildTag(String text, int value) {
-    return super.buildTag(text, value, selectedTag, () async {
-      if (selectedTag == value) {
-        return;
-      }
-      selectedTag = value;
+    return super.buildTag(text, value, selectedTag == value, activeTag);
+  }
+
+  void activeTag(int tagId) {
+    if (selectedTag == tagId) {
+      return;
+    }
+
+    setState(() {
+      selectedTag = tagId;
       currentPage = 1;
-      isLoading = true;
-      _getPowerListByPage(currentPage);
-      setState(() {});
     });
+    loadDataBloc.dispatch(LoadingEvent());
+
+//      isLoading = true;
+//    _getPowerListByPage(currentPage);
+//    setState(() {});
   }
 
   Future _getPowerListByPage(int page) {
@@ -142,12 +222,12 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
       tags = selectedTag.toString();
     }
 
-    _getPowerList(CATEGORY, tags, page);
+    return _getPowerList(CATEGORY, tags, page);
   }
 
   Future _getPowerList(String categories, String tags, int page) async {
     var newsResponseList = await _newsApi.getNewsList(categories, tags, page);
-    isLoading = false;
+//    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {
       return InfoItemVo(
           id: newsResponse.id,

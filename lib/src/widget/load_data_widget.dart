@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LoadDataWidget extends StatefulWidget {
-  Widget child;
-  bool isLoading;
+  final Widget child;
+  final bool isLoading;
 
   LoadDataWidget({this.child, this.isLoading});
 

@@ -41,11 +41,17 @@ class _AppState extends State<App> {
     return BlocProvider(
       builder: (context) => AppBloc(),
       child: RefreshConfiguration(
-        footerTriggerDistance: 15,
         dragSpeedRatio: 0.91,
-        headerBuilder: () => MaterialClassicHeader(),
+        headerTriggerDistance: 80,
+        footerTriggerDistance: 80,
+        maxOverScrollExtent :100,
+        maxUnderScrollExtent:0,
+        headerBuilder: () => WaterDropMaterialHeader(),
         footerBuilder: () => ClassicFooter(),
         autoLoad: true,
+        enableLoadingWhenFailed: false,
+        hideFooterWhenNotFull: true,
+        enableBallisticLoad: true,
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           key: Keys.materialAppKey,

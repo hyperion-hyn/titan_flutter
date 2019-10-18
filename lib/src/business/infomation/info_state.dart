@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
 
+typedef OnActiveTag = void Function(int tagId);
+
 abstract class InfoState<T extends StatefulWidget> extends State<T> {
   DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
 
@@ -66,13 +68,17 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
     );
   }
 
-  Widget buildTag(String text, int value, int selectedTag, Function onTap) {
-    Color textColor = value == selectedTag ? Theme.of(context).primaryColor : Color(0xFF252525);
-    Color borderColor = value == selectedTag ? Theme.of(context).primaryColor : Color(0xFFB7B7B7);
+  Widget buildTag(String text, int value, bool isActive, OnActiveTag onActiveTag) {
+    Color textColor = isActive ? Theme.of(context).primaryColor : Color(0xFF252525);
+    Color borderColor = isActive ? Theme.of(context).primaryColor : Color(0xFFB7B7B7);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () {
+          if(onActiveTag != null) {
+            onActiveTag(value);
+          }
+        },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           child: Text(
