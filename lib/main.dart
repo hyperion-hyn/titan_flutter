@@ -53,7 +53,7 @@ void main() {
     } else if (error is DioError) {
       Fluttertoast.showToast(msg: "网络错误");
     } else {
-      Fluttertoast.showToast(msg: "服务器正忙，请稍后再试");
+//      Fluttertoast.showToast(msg: "服务器正忙，请稍后再试");
     }
   });
 }

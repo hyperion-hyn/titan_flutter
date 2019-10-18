@@ -74,11 +74,13 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
             child: Column(
               children: <Widget>[
                 _buildMemuBar("修改账户密码", ExtendsIconFont.lock, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ResetPasswordPage(email: LOGIN_USER_INFO.email)));
                 }),
                 Divider(),
                 _buildMemuBar("修改资金密码", ExtendsIconFont.lock, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResetFundPasswordPage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ResetFundPasswordPage(email: LOGIN_USER_INFO.email)));
                 }),
               ],
             ),

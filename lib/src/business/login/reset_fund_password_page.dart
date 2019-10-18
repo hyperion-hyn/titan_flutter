@@ -7,6 +7,10 @@ import 'package:titan/src/business/me/util/validator_util.dart';
 import 'package:titan/src/utils/md5_util.dart';
 
 class ResetFundPasswordPage extends StatefulWidget {
+  String email;
+
+  ResetFundPasswordPage({this.email});
+
   @override
   State<StatefulWidget> createState() {
     return _ResetFundPageState();
@@ -29,7 +33,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    emailEditingController.text = widget.email;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -61,25 +65,41 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                       )
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                    child: TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (!ValidatorUtil.isEmail(value)) {
-                          return "邮箱格式有误，请输入正确的邮箱";
-                        } else {
-                          return null;
-                        }
-                      },
-                      controller: emailEditingController,
-                      decoration: InputDecoration(
-                        errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  if (widget.email != null)
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            widget.email,
+                            style: TextStyle(
+                              color: Color(0xFF6D6D6D),
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  if (widget.email == null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                      child: TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (!ValidatorUtil.isEmail(value)) {
+                            return "邮箱格式有误，请输入正确的邮箱";
+                          } else {
+                            return null;
+                          }
+                        },
+                        controller: emailEditingController,
+                        decoration: InputDecoration(
+                          errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        ),
                       ),
                     ),
-                  ),
                   Row(
                     children: <Widget>[
                       Text(
