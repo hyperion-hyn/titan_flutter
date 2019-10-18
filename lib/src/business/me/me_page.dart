@@ -375,4 +375,10 @@ class _MeState extends UserState<MePage> with RouteAware {
     checkInCount = await _userService.checkInCount();
     setState(() {});
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    routeObserver.unsubscribe(this);
+  }
 }
