@@ -217,9 +217,6 @@ class _LoginPageState extends State<LoginPage> {
           Fluttertoast.showToast(msg: "用户名或密码错误");
           print(_);
         }
-      } catch (_) {
-        print(_);
-        Fluttertoast.showToast(msg: "网络错误");
       }
     }
   }
