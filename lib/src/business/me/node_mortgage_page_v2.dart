@@ -82,8 +82,11 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 16,
+                ),
                 Expanded(
-                  flex: 4,
+                  flex: 5,
                   child: Container(
                     child: CarouselSlider(
                       onPageChanged: _onPageChanged,
@@ -112,20 +115,49 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                       mainAxisSize: MainAxisSize.max,
                                     ),
                                     Spacer(),
-                                    Text(
-                                      _contractInfoTemp.name,
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                                    ),
+
                                     Row(
-                                      children: <Widget>[
-                                        Text(
-                                          DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount),
-                                          style: TextStyle(
-                                              color: Color(0xFFf6927f), fontSize: 18, fontWeight: FontWeight.bold),
-                                        ),
-                                        Text("  USDT")
-                                      ],
+                                       children: <Widget>[
+                                         Column(
+                                           children: <Widget>[
+                                             Text(
+                                               _contractInfoTemp.name,
+                                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                             ),
+                                             Row(
+                                               children: <Widget>[
+                                                 Text(
+                                                   DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount),
+                                                   style: TextStyle(
+                                                       color: Color(0xFFf6927f), fontSize: 18, fontWeight: FontWeight.bold),
+                                                 ),
+                                                 Text("  USDT")
+                                               ],
+                                             )
+                                           ],
+                                         ),
+                                         Spacer(),
+                                         Column(
+                                           children: <Widget>[
+                                             Text(
+                                               "30天收益(USDT)",
+                                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                                             ),
+                                             Row(
+                                               children: <Widget>[
+                                                 Text(
+                                                   _selectedMortgageInfo.incomeRate,
+                                                   style: TextStyle(
+                                                       color: Color(0xFFf6927f), fontSize: 14, fontWeight: FontWeight.normal),
+                                                 ),
+                                                 Text("")
+                                               ],
+                                             )
+                                           ],
+                                         )
+                                       ],
                                     )
+
                                   ],
                                 ));
                           },
@@ -135,7 +167,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                   ),
                 ),
                 Expanded(
-                  flex: 6,
+                  flex: 5,
                   child: Container(
                     margin: EdgeInsets.only(left: 32, right: 32, bottom: 16, top: 16),
                     child: Column(
