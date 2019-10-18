@@ -12,7 +12,10 @@ import 'http_exception.dart';
 class BaseHttpCore {
   final Dio dio;
 
-  BaseHttpCore(this.dio);
+  BaseHttpCore(this.dio) {
+    //hack method
+    dio.options.connectTimeout = 5000;
+  }
 
   static const String GET = "get";
   static const String POST = "post";
@@ -99,7 +102,7 @@ class BaseHttpCore {
       if (params != null && params.isNotEmpty) {
         StringBuffer sb = new StringBuffer("?");
         params.forEach((key, value) {
-          if(value != null) {
+          if (value != null) {
             sb.write("$key=$value&");
           }
         });

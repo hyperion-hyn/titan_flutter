@@ -22,9 +22,6 @@ class HttpCore extends BaseHttpCore {
     return _instance;
   }
 
-  static const String GET = "get";
-  static const String POST = "post";
-
   static var _dio = new Dio(BaseOptions(
     baseUrl: Const.DOMAIN,
     connectTimeout: 5000,
