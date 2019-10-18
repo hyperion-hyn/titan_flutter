@@ -218,7 +218,9 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
     contractList = await _userService.getContractListV2();
     _selectedContractInfo = contractList[0];
 
-    setState(() {});
+    if(mounted){
+      setState(() {});
+    }
   }
 
   Future _onPageChanged(int index) {

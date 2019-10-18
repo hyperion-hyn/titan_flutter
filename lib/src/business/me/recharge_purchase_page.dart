@@ -75,7 +75,11 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("充值"),
+        title: Text(
+          "充值",
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
         elevation: 0,
       ),
       body: SingleChildScrollView(

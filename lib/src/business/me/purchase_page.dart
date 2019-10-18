@@ -75,8 +75,9 @@ class _PurchaseState extends State<PurchasePage> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("支付"),
+        title: Text("支付",style: TextStyle(color: Colors.white),),
         elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(
