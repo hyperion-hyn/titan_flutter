@@ -28,7 +28,7 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   #https://github.com/flutterchina/dio
-  dio: ^3.0.1
+  dio: ^3.0.3
   #https://pub.dev/packages/package_info
   package_info: ^0.4.0+4
   #https://github.com/baseflowit/flutter-permission-handler
