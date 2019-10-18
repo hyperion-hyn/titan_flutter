@@ -365,18 +365,10 @@ class _MeState extends UserState<MePage> with RouteAware {
   }
 
   Future _checkIn() async {
-    try {
-      await _userService.checkIn();
-      checkInCount = await _userService.checkInCount();
-      setState(() {});
-      Fluttertoast.showToast(msg: "打卡成功");
-    } on HttpResponseCodeNotSuccess catch (_) {
-      if (_.code == ERROR_CHECK_IN_INTERVAL.code) {
-        Fluttertoast.showToast(msg: "打卡间隔低于30分钟");
-      } else if (_.code == ERROR_CHECK_IN_LIMIT.code) {
-        Fluttertoast.showToast(msg: "今天打卡任务已完成，请明日再来");
-      }
-    }
+    await _userService.checkIn();
+    checkInCount = await _userService.checkInCount();
+    setState(() {});
+    Fluttertoast.showToast(msg: "打卡成功");
   }
 
   Future _updateCheckInCount() async {

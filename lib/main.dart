@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/domain/firebase.dart';
 
 import 'env.dart';
@@ -46,7 +47,10 @@ void main() {
   }, onError: (error, stackTrace) {
     print(error);
     print(stackTrace);
-    if (error is DioError) {
+    if (error is HttpResponseCodeNotSuccess) {
+      HttpResponseCodeNotSuccess notSuccessError = NOT_SUCCESS_ERROR_CODE_MAP[error.code];
+      Fluttertoast.showToast(msg: notSuccessError.message);
+    } else if (error is DioError) {
       Fluttertoast.showToast(msg: "网络错误");
     } else {
       Fluttertoast.showToast(msg: "服务器正忙，请稍后再试");

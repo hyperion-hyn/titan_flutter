@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
+import 'package:titan/src/utils/md5_util.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -261,20 +262,17 @@ class _RegisterPageState extends State<RegisterPage> {
 
       String email = emailEditingController.text;
       String password = passwordEditingController.text;
+      String fundPassword = safetyPasswordEditingController.text;
       String invitationCode = invitationCodeEditingController.text;
       int verificationCode = int.parse(verificationCodeEditingController.text);
 
-      try {
-        String userId = await _userService.registoer(email, password, verificationCode, invitationCode);
-        if (userId == null) {
-          Fluttertoast.showToast(msg: "系统错误");
-        } else {
-          Fluttertoast.showToast(msg: "注册成功");
-          Navigator.pop(context, true);
-        }
-      } catch (_) {
-        print(_);
+      String userId = await _userService.registoer(
+          email, Md5Util.generateMd5(password), verificationCode, invitationCode, Md5Util.generateMd5(fundPassword));
+      if (userId == null) {
         Fluttertoast.showToast(msg: "系统错误");
+      } else {
+        Fluttertoast.showToast(msg: "注册成功");
+        Navigator.pop(context, true);
       }
     }
   }

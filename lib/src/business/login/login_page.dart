@@ -203,20 +203,13 @@ class _LoginPageState extends State<LoginPage> {
       String email = emailEditingController.text;
       String password = passwordEditingController.text;
 
-      try {
-        UserToken userToken = await _userService.login(email, Md5Util.generateMd5(password));
-        if (userToken == null) {
-          Fluttertoast.showToast(msg: "系统错误");
-        } else {
-          Fluttertoast.showToast(msg: "登录成功");
-          LOGIN_STATUS = 2;
-          eventBus.fire(LoginSuccessEvent());
-        }
-      } on HttpResponseCodeNotSuccess catch (_) {
-        if (_.code == ERROR_LOGIN.code) {
-          Fluttertoast.showToast(msg: "用户名或密码错误");
-          print(_);
-        }
+      UserToken userToken = await _userService.login(email, Md5Util.generateMd5(password));
+      if (userToken == null) {
+        Fluttertoast.showToast(msg: "系统错误");
+      } else {
+        Fluttertoast.showToast(msg: "登录成功");
+        LOGIN_STATUS = 2;
+        eventBus.fire(LoginSuccessEvent());
       }
     }
   }

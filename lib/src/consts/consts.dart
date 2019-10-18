@@ -14,7 +14,7 @@ class Const {
 
 //    static const String MAP_STORE_DOMAIN = "http://10.10.1.119:3000/"
 
-  static const String MAP_RICH_DOMAIN = "http://10.10.2.116:3000/";
+  static const String MAP_RICH_DOMAIN = "http://10.10.1.116:3000/";
 
   static const String NEWS_DOMAIN = "https://news.hyn.space/";
 
