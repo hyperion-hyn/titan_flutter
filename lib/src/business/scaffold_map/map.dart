@@ -531,7 +531,7 @@ class MapContainerState extends State<MapContainer> {
         child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
           builder: (context, state) {
             return Container(
-              height: MediaQuery.of(context).size.height + bottomBarHeight,
+              height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: <Widget>[
