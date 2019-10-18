@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "org.maprich.maprich"
+        applicationId "org.maprich.app"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()

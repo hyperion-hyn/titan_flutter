@@ -69,10 +69,12 @@ class _MarketPriceState extends State<MarketPricePage> {
         },
         child: Row(
           children: <Widget>[
-            Image.network(
-              marketPriceVo.iconUrl,
-              width: 48,
-              height: 48,
+            FadeInImage.assetNetwork(
+              placeholder: 'res/drawable/img_placeholder.jpg',
+              image: marketPriceVo.iconUrl,
+              width: 36,
+              height: 36,
+              fit: BoxFit.cover,
             ),
             SizedBox(
               width: 24,

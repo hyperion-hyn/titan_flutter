@@ -15,6 +15,7 @@ import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/pay_order.dart';
 import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/model/promotion_info.dart';
+import 'package:titan/src/business/me/model/purchase_order_info.dart';
 import 'package:titan/src/business/me/model/quotes.dart';
 import 'package:titan/src/business/me/model/quotes.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
@@ -156,6 +157,22 @@ class UserService {
     }
 
     return await _mapRichApi.createOrder(contractId: contractId, token: userToken.token);
+  }
+
+  Future<PurchaseOrderInfo> createPurchaseOrder({@required double count}) async {
+//    UserToken userToken = await getUserTokenFromSharedpref();
+//    if (userToken == null) {
+//      throw new Exception("not login");
+//    }
+//
+//    return await _mapRichApi.createOrder(contractId: contractId, token: userToken.token);
+    return PurchaseOrderInfo(
+        "0xFD70c5DB8e4b3B88426CC3a8A495769A4fC99382",
+        200,
+        108,
+        "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAABlBMVEX///8AAABVwtN+AAACpUlEQVR42uyYW8ojQQiFBbcluHXBbQkO59iZdMK8lgOhC36S1P89FF6OF3nOc57zw0e7OzOzPEM7vExLs7tjEQjR8O4MLQBZ4p24XASyM7y0tMTMwzzEE5e7AB5WZmL4wJ/+ByBEOzu7y2mibQA/yxtREpohHhr65c3TwBW0n+cfUX0QGGOFeeF52RM23wl8FtC59YK7OhQ2E9gtFgE8S7QDOdvl3YHsyZI9QMQ8Q5A2XrAW41XfQbsBmIhCRR0eg9NgKdP3I88D+CdUI/xyWTkl3RYBMYVvkK/e5ZnDdC0CUI+itZKKbloGTDaBDvNmZQ3Yy8Zo73jZAKasF9STNoN6ocLGHkDVxvsUL0XcwkxmugigpYF6J7OFRTWYw5tAwj9QERbVMljsHjELANS8p7Ch3wozQ9t1E7kFwLxgG/QXiW9jqVthWwBY3dHg1TwOGtYfQXsc0ISAGQs7a6yZMIlkFUCiIF7JdjCD7gJyHBC8rxs1BTpijJ7QG7EA+N9el2UEkZPdt8TZAMLQ6MBXyGQISon4KkDfNMceJhD8JbcGZAHAVxRTDiJo+cpG2jaBbo5ixkMxEZa3TYAZAw2XVx3x+jTUeQAdLpp+tN+Im4nbVYB9jUM2EDHT+GNQfw9i54EZgamcLCPOH7fEWQAuGQvDEEhr8dEZmwCumC34IExR7VgEmCJoNdH0xwwA+d1wHgZsBuJiDjU6fzbfvQnQQ/Zam0FJMJnd1f44wGoes5xAdatXEi0CI2TImJo10bUt+SAOA+z1cCfcGcaoWH5tkw4Dsx/j5hBva0QPsUUgX52+c1k0+yIK2SpACcfsIUjg7GIcLQNcVs0+V65x7MNQpwG2mmiwrkWqUUt9FUDQInuTnnKuSprT6RrwnOc85xfPnwAAAP//jrcJk78fR9gAAAAASUVORK5CYII=",
+        0,
+        "3511.975800000000108");
   }
 
   ///支付确认

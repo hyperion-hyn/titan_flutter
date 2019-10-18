@@ -1,17 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/draw_balance_page.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
+import 'package:titan/src/business/me/recharge_purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/widget/smart_pull_refresh.dart';
+import "enter_recharge_count.dart";
 
 class MyAssetPage extends StatefulWidget {
   @override
@@ -26,7 +29,6 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -41,22 +43,48 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
         actions: <Widget>[
           Align(
               alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () async {
-                  var isSuccess =
-                      await Navigator.push(context, MaterialPageRoute(builder: (context) => DrawBalancePage()));
-                  if (isSuccess != null && isSuccess) {
-                    eventBus.fire(Refresh());
-                    _tabController.animateTo(1);
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    "提币",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              child: Row(
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () async {
+                      var isSuccess =
+                          await Navigator.push(context, MaterialPageRoute(builder: (context) => DrawBalancePage()));
+                      if (isSuccess != null && isSuccess) {
+                        eventBus.fire(Refresh());
+                        _tabController.animateTo(1);
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        "提币",
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: () async {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EnterRechargeCount();
+                          }).then((value) async {
+                        if (value == null) {
+                          return;
+                        }
+                        Fluttertoast.showToast(msg: "充值成功");
+
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        "充值",
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
               ))
         ],
       ),
