@@ -7,6 +7,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
+import 'package:titan/src/business/me/my_asset_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -20,9 +21,9 @@ import 'my_hash_rate_page.dart';
 import 'service/user_service.dart';
 
 class RechargePurchasePage extends StatefulWidget {
-  final double rechargeCount;
+  final double rechargeAmount;
 
-  RechargePurchasePage({@required this.rechargeCount});
+  RechargePurchasePage({@required this.rechargeAmount});
 
   @override
   State<StatefulWidget> createState() {
@@ -45,7 +46,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 
   void loadData() async {
     try {
-      var data = await service.createPurchaseOrder(count: widget.rechargeCount);
+      var data = await service.createPurchaseOrder(amount: widget.rechargeAmount);
       setState(() {
         rechargeOrder = data;
       });
@@ -95,7 +96,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         Text(
-                          "${Const.DOUBLE_NUMBER_FORMAT.format(widget.rechargeCount)} U",
+                          "${Const.DOUBLE_NUMBER_FORMAT.format(widget.rechargeAmount)} U",
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
                         )
                       ],
@@ -147,9 +148,9 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (rechargeOrder?.qr_code != null)
+              if (rechargeOrder?.qrCode != null)
                 Image.memory(
-                  Base64Decoder().convert(rechargeOrder?.qr_code),
+                  Base64Decoder().convert(rechargeOrder?.qrCode),
                   height: 240,
                   width: 240,
                 )
@@ -188,8 +189,8 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               ),
               InkWell(
                 onTap: () {
-                  if (rechargeOrder?.hyn_amount != null) {
-                    Clipboard.setData(ClipboardData(text: rechargeOrder?.hyn_amount));
+                  if (rechargeOrder?.hynAmount != null) {
+                    Clipboard.setData(ClipboardData(text: rechargeOrder?.hynAmount));
                     Fluttertoast.showToast(msg: "支付金额复制成功");
                   }
                 },
@@ -205,7 +206,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                       Padding(
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
-                          '${rechargeOrder?.hyn_amount} HYN',
+                          '${rechargeOrder?.hynAmount} HYN',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
                         ),
                       ),
@@ -250,11 +251,11 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 child: RaisedButton(
                   color: Color(0xFF73C42D),
                   onPressed: () async {
-                    var ret = await service.confirmPay(orderId: rechargeOrder.order_id, payType: 'HYN');
+                    var ret = await service.confirmRecharge(orderId: rechargeOrder.orderId);
                     if (ret.code == 0) {
                       //支付成功
-                      Fluttertoast.showToast(msg: '购买成功');
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                      Fluttertoast.showToast(msg: '充值成功');
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
                     } else {
                       if (ret.code == -1007) {
                         Fluttertoast.showToast(msg: '已到达购买上限');

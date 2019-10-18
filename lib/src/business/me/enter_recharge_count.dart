@@ -73,7 +73,7 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    RechargePurchasePage(rechargeCount: double.parse(_rechargeCountController.text))));
+                                    RechargePurchasePage(rechargeAmount: double.parse(_rechargeCountController.text))));
                       },
                       color: Theme.of(context).primaryColor,
                       child: Text(

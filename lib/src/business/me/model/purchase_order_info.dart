@@ -1,10 +1,22 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'purchase_order_info.g.dart';
+
+@JsonSerializable()
 class PurchaseOrderInfo {
   String address;
   int amount;
-  int order_id;
-  String qr_code;
+  @JsonKey(name: "order_id")
+  int orderId;
+  @JsonKey(name: "qr_code")
+  String qrCode;
   int state;
-  String hyn_amount;
+  @JsonKey(name: "hyn_amount")
+  String hynAmount;
 
-  PurchaseOrderInfo(this.address, this.amount, this.order_id, this.qr_code, this.state, this.hyn_amount);
+  PurchaseOrderInfo(this.address, this.amount, this.orderId, this.qrCode, this.state, this.hynAmount);
+
+  factory PurchaseOrderInfo.fromJson(Map<String, dynamic> json) => _$PurchaseOrderInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PurchaseOrderInfoToJson(this);
 }

@@ -13,6 +13,7 @@ import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/pay_order.dart';
 import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/model/promotion_info.dart';
+import 'package:titan/src/business/me/model/purchase_order_info.dart';
 import 'package:titan/src/business/me/model/quotes.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/model/user_level_info.dart';
@@ -129,11 +130,24 @@ class MapRichApi {
         params: {"contractId": contractId}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
+  ///充值订单创建
+  Future<PurchaseOrderInfo> createRechargeOrder({@required double amount, @required String token}) async {
+    return await MapRichHttpCore.instance.postEntity(
+        'recharge/create', EntityFactory<PurchaseOrderInfo>((json) => PurchaseOrderInfo.fromJson(json)),
+        params: {"amount": amount}, options: RequestOptions(headers: {"Authorization": token}));
+  }
+
   ///确认支付订单
   Future<ResponseEntity<dynamic>> confirmPay(
       {@required int orderId, @required String payType, @required String token}) async {
     return await MapRichHttpCore.instance.postResponseEntity('order/pay', null,
         params: {"orderId": orderId, "payType": payType}, options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  ///确认支付订单
+  Future<ResponseEntity<dynamic>> confirmRecharge({@required int orderId, @required String token}) async {
+    return await MapRichHttpCore.instance.postResponseEntity('recharge/pay', null,
+        params: {"orderId": orderId}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
   ///行情

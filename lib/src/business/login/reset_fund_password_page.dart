@@ -9,7 +9,6 @@ import 'package:titan/src/utils/md5_util.dart';
 class ResetPasswordPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _ResetPageState();
   }
 }

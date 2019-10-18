@@ -56,9 +56,4 @@ void main() {
       Fluttertoast.showToast(msg: "服务器正忙，请稍后再试");
     }
   });
-
-//  FlutterBugly.postCatchedException(() {
-//    //init dependency
-//
-//  });
 }
