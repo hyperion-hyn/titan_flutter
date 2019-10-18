@@ -122,11 +122,11 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   }
 
   Widget _buildTag(String text, int value) {
-    return super.buildTag(text, value, selectedTag, () async {
-      if (selectedTag == value) {
+    return super.buildTag(text, value, selectedTag == value, (int tagId) async {
+      if (selectedTag == tagId) {
         return;
       }
-      selectedTag = value;
+      selectedTag = tagId;
       currentPage = 1;
       isLoading = true;
       _getPowerListByPage(currentPage);
