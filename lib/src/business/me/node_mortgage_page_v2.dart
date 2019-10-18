@@ -82,9 +82,6 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 16,
-                ),
                 Expanded(
                   flex: 5,
                   child: Container(
