@@ -6,10 +6,12 @@ part 'promotion_info.g.dart';
 class PromotionInfo {
   String email;
   int total;
-  int high;
+  int highest;
+  @JsonKey(name: "second_highest")
+  int secondHighest;
   int low;
 
-  PromotionInfo(this.email, this.total, this.high, this.low);
+  PromotionInfo(this.email, this.total, this.highest, this.secondHighest, this.low);
 
   factory PromotionInfo.fromJson(Map<String, dynamic> json) => _$PromotionInfoFromJson(json);
 

@@ -42,9 +42,9 @@ class BaseHttpCore {
   Future<T> getEntity<T>(String url, EntityFactory<T> factory,
       {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
     var responseEntity =
-    await getResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
+        await getResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
-      throw HttpResponseCodeNotSuccess(responseEntity.msg);
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
     return responseEntity.data;
   }
@@ -52,9 +52,9 @@ class BaseHttpCore {
   Future<T> postEntity<T>(String url, EntityFactory<T> factory,
       {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
     var responseEntity =
-    await postResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
+        await postResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
-      throw HttpResponseCodeNotSuccess(responseEntity.msg);
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
     return responseEntity.data;
   }
@@ -62,9 +62,9 @@ class BaseHttpCore {
   Future<T> patchEntity<T>(String url, EntityFactory<T> factory,
       {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
     var responseEntity =
-    await patchResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
+        await patchResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
-      throw HttpResponseCodeNotSuccess(responseEntity.msg);
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
     return responseEntity.data;
   }
