@@ -190,7 +190,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                 height: 48,
                                 alignment: Alignment.center,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                  padding: const EdgeInsets.only(left: 30,top: 8,bottom: 8,right: 0),
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
