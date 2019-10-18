@@ -27,7 +27,7 @@ class PromoteQrCodePage extends StatelessWidget {
               child: QrImage(
                 data: url,
                 backgroundColor: Colors.white,
-                version: 2,
+                version: 4,
                 size: 240,
               ),
               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
