@@ -6,14 +6,14 @@ import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 import 'package:titan/src/utils/md5_util.dart';
 
-class ResetPasswordPage extends StatefulWidget {
+class ResetFundPasswordPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _ResetPageState();
+    return _ResetFundPageState();
   }
 }
 
-class _ResetPageState extends State<ResetPasswordPage> {
+class _ResetFundPageState extends State<ResetFundPasswordPage> {
   UserService _userService = UserService();
   Timer _timer;
   int _countdownTime = 0;
@@ -21,7 +21,8 @@ class _ResetPageState extends State<ResetPasswordPage> {
 
   TextEditingController emailEditingController = TextEditingController();
   TextEditingController passwordEditingController = TextEditingController();
-  TextEditingController confirmPasswordEditingController = TextEditingController();
+  TextEditingController fundPasswordEditingController = TextEditingController();
+  TextEditingController confirmFundPasswordEditingController = TextEditingController();
   TextEditingController verificationCodeEditingController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -35,7 +36,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "重置账户密码",
+          "重置资金密码",
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -139,7 +140,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "账户新密码",
+                        "账户密码",
                         style: TextStyle(
                           color: Color(0xFF6D6D6D),
                           fontSize: 16,
@@ -169,7 +170,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "确认新密码",
+                        "资金新密码",
                         style: TextStyle(
                           color: Color(0xFF6D6D6D),
                           fontSize: 16,
@@ -188,7 +189,40 @@ class _ResetPageState extends State<ResetPasswordPage> {
                           return null;
                         }
                       },
-                      controller: confirmPasswordEditingController,
+                      controller: fundPasswordEditingController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "确认资金新密码",
+                        style: TextStyle(
+                          color: Color(0xFF6D6D6D),
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    child: TextFormField(
+                      keyboardType: TextInputType.visiblePassword,
+                      validator: (value) {
+                        if (!ValidatorUtil.validatePassword(value)) {
+                          return "密码格式有误，请输入最少6位";
+                        }
+                        if (fundPasswordEditingController.text != value) {
+                          return "资金密码与确认资金密码不一致";
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: confirmFundPasswordEditingController,
                       obscureText: true,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
@@ -231,11 +265,13 @@ class _ResetPageState extends State<ResetPasswordPage> {
       print("validate success");
 
       String email = emailEditingController.text;
-      String password = passwordEditingController.text;
+      String loginPassword = passwordEditingController.text;
+      String fundPassword = fundPasswordEditingController.text;
       int verificationCode = int.parse(verificationCodeEditingController.text);
 
       try {
-        await _userService.resetPassword(email, Md5Util.generateMd5(password), verificationCode);
+        await _userService.resetFundPassword(
+            email, Md5Util.generateMd5(loginPassword), Md5Util.generateMd5(fundPassword), verificationCode);
         Fluttertoast.showToast(msg: "修改成功");
         Navigator.pop(context, true);
       } catch (_) {

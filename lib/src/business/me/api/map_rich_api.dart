@@ -59,6 +59,16 @@ class MapRichApi {
         params: {"email": email, "verification_code": verificationCode, "new_password": password});
   }
 
+  ///重置密码
+  Future resetFundPassword(String email, String loginPassword, String fundPassword, int verificationCode) async {
+    await MapRichHttpCore.instance.patchEntity("users/attr/password", EntityFactory((json) => json), params: {
+      "email": email,
+      "verification_code": verificationCode,
+      "login_password": loginPassword,
+      "new_password": fundPassword
+    });
+  }
+
   ///checkin
   Future checkIn(String token, String userId) async {
     await MapRichHttpCore.instance.postEntity("sign_in/$userId", EntityFactory((json) => json),

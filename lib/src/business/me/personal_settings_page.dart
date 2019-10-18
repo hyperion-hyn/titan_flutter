@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/login/login_event.dart';
+import 'package:titan/src/business/login/reset_fund_password_page.dart';
 import 'package:titan/src/business/login/reset_password_page.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/global.dart';
@@ -77,7 +78,7 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
                 }),
                 Divider(),
                 _buildMemuBar("修改资金密码", ExtendsIconFont.lock, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResetFundPasswordPage()));
                 }),
               ],
             ),

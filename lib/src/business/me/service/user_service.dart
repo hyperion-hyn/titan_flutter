@@ -50,8 +50,10 @@ class UserService {
     return commonResponse;
   }
 
-  Future<CommonResponse> resetFundPassword(String email, String fundPassword, int verificationCode) async {
-    CommonResponse commonResponse = await _mapRichApi.resetPassword(email, fundPassword, verificationCode);
+  Future<CommonResponse> resetFundPassword(
+      String email, String loginPassword, String fundPassword, int verificationCode) async {
+    CommonResponse commonResponse =
+        await _mapRichApi.resetFundPassword(email, loginPassword, fundPassword, verificationCode);
     return commonResponse;
   }
 
@@ -162,7 +164,6 @@ class UserService {
     return await _mapRichApi.createOrder(contractId: contractId, token: userToken.token);
   }
 
-
   //充值订单创建
   Future<PurchaseOrderInfo> createPurchaseOrder({@required double amount}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
@@ -182,7 +183,6 @@ class UserService {
 
     return await _mapRichApi.confirmPay(orderId: orderId, payType: payType, token: userToken.token);
   }
-
 
   ///充值支付确认
   Future<ResponseEntity<dynamic>> confirmRecharge({@required int orderId}) async {
