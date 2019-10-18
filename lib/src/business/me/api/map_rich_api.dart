@@ -8,6 +8,7 @@ import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/model/contract_info_v2.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
+import 'package:titan/src/business/me/model/mortgage_info_v2.dart';
 import 'package:titan/src/business/me/model/node_mortgage_info.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/pay_order.dart';
@@ -188,6 +189,15 @@ class MapRichApi {
     }), options: RequestOptions(headers: {"Authorization": token}));
   }
 
+  ///getMortgageList
+  Future<List<MortgageInfoV2>> getMortgageListV2(String token) async {
+    return await MapRichHttpCore.instance.getEntity("mortgage/listV2", EntityFactory<List<MortgageInfoV2>>((json) {
+      return (json as List).map((mortgageJson) {
+        return MortgageInfoV2.fromJson(mortgageJson);
+      }).toList();
+    }), options: RequestOptions(headers: {"Authorization": token}));
+  }
+
   ///getBillList
   Future<List<BillInfo>> getBillList(String token, int page) async {
     return await MapRichHttpCore.instance.getEntity("bills", EntityFactory<List<BillInfo>>((json) {
@@ -235,6 +245,12 @@ class MapRichApi {
   ///抵押
   Future<dynamic> mortgage({@required int confId, @required token}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/buy', null,
+        params: {"confId": confId}, options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  ///抵押抢购
+  Future<dynamic> mortgageSnapUp({@required int confId, @required token}) async {
+    return await MapRichHttpCore.instance.postEntity('mortgage/snap_up', null,
         params: {"confId": confId}, options: RequestOptions(headers: {"Authorization": token}));
   }
 

@@ -4,10 +4,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/business/me/mortgage_page.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 
 import 'model/contract_info_v2.dart';
+import 'model/mortgage_info_v2.dart';
+import 'mortgage_snap_up_page.dart';
 
 class NodeMortgagePageV2 extends StatefulWidget {
   @override
@@ -19,9 +22,9 @@ class NodeMortgagePageV2 extends StatefulWidget {
 class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
   UserService _userService = UserService();
 
-  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0)];
+  List<MortgageInfoV2> contractList = [MortgageInfoV2(0, "", "", "", 0, "", 0, 0)];
 
-  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0);
+  MortgageInfoV2 _selectedMortgageInfo = MortgageInfoV2(0, "", "", "", 0, "", 0, 0);
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
 
@@ -101,7 +104,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                       children: <Widget>[
                                         Image.memory(
                                           Base64Decoder().convert(
-                                              (_contractInfoTemp.icon.replaceAll("data:image/jpeg;base64,", ""))),
+                                              (_contractInfoTemp.icon.replaceAll("data:image/png;base64,", ""))),
                                           height: 130,
                                         )
                                       ],
@@ -148,7 +151,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                         Expanded(
                           child: SingleChildScrollView(
                             child: Text(
-                              _selectedContractInfo.description,
+                              _selectedMortgageInfo.description,
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
@@ -163,8 +166,8 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => PurchasePage(
-                                              contractInfo: _selectedContractInfo,
+                                        builder: (context) => MortgagePage(
+                                              _selectedMortgageInfo,
                                             )));
                               },
                               child: Container(
@@ -182,22 +185,26 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                             RaisedButton(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                               color: Colors.red,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => PurchasePage(
-                                              contractInfo: _selectedContractInfo,
-                                            )));
-                              },
+                              onPressed: _selectedMortgageInfo.snapUpStocks == 0 ? null : snapUpOnTap,
                               child: Container(
                                 height: 48,
                                 alignment: Alignment.center,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 8),
-                                  child: Text(
-                                    "抢购",
-                                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(
+                                        "抢购",
+                                        style:
+                                            TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        "  剩余 ${_selectedMortgageInfo.snapUpStocks}",
+                                        style:
+                                            TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -215,16 +222,20 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
   }
 
   Future _getContractList() async {
-    contractList = await _userService.getContractListV2();
-    _selectedContractInfo = contractList[0];
+    contractList = await _userService.getMortgageListV2();
+    _selectedMortgageInfo = contractList[0];
 
-    if(mounted){
+    if (mounted) {
       setState(() {});
     }
   }
 
   Future _onPageChanged(int index) {
-    _selectedContractInfo = contractList[index];
+    _selectedMortgageInfo = contractList[index];
     setState(() {});
+  }
+
+  void snapUpOnTap() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MortgageSnapUpPage(_selectedMortgageInfo)));
   }
 }

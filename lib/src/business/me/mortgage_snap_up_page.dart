@@ -12,18 +12,18 @@ import 'enter_fund_password.dart';
 import 'model/mortgage_info.dart';
 import 'model/mortgage_info_v2.dart';
 
-class MortgagePage extends StatefulWidget {
+class MortgageSnapUpPage extends StatefulWidget {
   final MortgageInfoV2 mortgageInfo;
 
-  MortgagePage(this.mortgageInfo);
+  MortgageSnapUpPage(this.mortgageInfo);
 
   @override
   State<StatefulWidget> createState() {
-    return _MortgagePageState();
+    return _MortgageSnapUpPageState();
   }
 }
 
-class _MortgagePageState extends State<MortgagePage> {
+class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
   var service = UserService();
   UserInfo userInfo;
 
@@ -50,7 +50,7 @@ class _MortgagePageState extends State<MortgagePage> {
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          '抵押支付',
+          '抢购支付',
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -65,7 +65,7 @@ class _MortgagePageState extends State<MortgagePage> {
                   child: Row(
                     children: <Widget>[
                       Text(
-                        "抵押产品：${widget.mortgageInfo.name}",
+                        "抢购产品：${widget.mortgageInfo.name}",
                         style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                       ),
                     ],
@@ -109,7 +109,7 @@ class _MortgagePageState extends State<MortgagePage> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        "请抵押",
+                        "请支付",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Padding(
@@ -125,7 +125,7 @@ class _MortgagePageState extends State<MortgagePage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
-                    "余额 ${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.balance ?? 0)} USDT",
+                    "余额 ${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.chargeBalance ?? 0)} USDT",
                     style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
                   ),
                 ),
@@ -141,7 +141,7 @@ class _MortgagePageState extends State<MortgagePage> {
           color: Theme.of(context).primaryColor,
           onPressed: () async {
             if (widget.mortgageInfo != null && userInfo != null) {
-              if (userInfo.balance < widget.mortgageInfo.amount) {
+              if (userInfo.chargeBalance < widget.mortgageInfo.amount) {
                 Fluttertoast.showToast(msg: '余额不足');
               } else {
                 showModalBottomSheet(
@@ -153,12 +153,12 @@ class _MortgagePageState extends State<MortgagePage> {
                     return;
                   }
                   try {
-                    await service.mortgage(confId: widget.mortgageInfo.id);
-                    Fluttertoast.showToast(msg: '抵押成功');
+                    await service.mortgageSnapUp(confId: widget.mortgageInfo.id);
+                    Fluttertoast.showToast(msg: '抢购成功');
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                   } catch (e) {
                     logger.e(e);
-                    Fluttertoast.showToast(msg: '抵押异常');
+                    Fluttertoast.showToast(msg: '抢购失败');
                   }
                 });
               }
@@ -169,7 +169,7 @@ class _MortgagePageState extends State<MortgagePage> {
             height: 56,
             child: Center(
               child: Text(
-                "确认抵押",
+                "确认抢购",
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),

@@ -12,6 +12,8 @@ class UserInfo {
   String parentId;
   @JsonKey(name: "balance")
   double balance;
+  @JsonKey(name: "charge_balance")
+  double chargeBalance;
   @JsonKey(name: "total_power")
   int totalPower;
   @JsonKey(name: "mortgage_nodes")
@@ -27,8 +29,8 @@ class UserInfo {
   @JsonKey(name: "level")
   String level;
 
-  UserInfo(this.id, this.email, this.parentId, this.balance, this.totalPower, this.mortgageNodes, this.highestPower,
-      this.secondHighestPower, this.lowPower, this.totalInvitations, this.level);
+  UserInfo(this.id, this.email, this.parentId, this.balance, this.chargeBalance, this.totalPower, this.mortgageNodes,
+      this.highestPower, this.secondHighestPower, this.lowPower, this.totalInvitations, this.level);
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserInfoFromJson(json);
 

@@ -56,40 +56,40 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(hintText: "请输入资金密码"),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(
-              "邮箱验证码",
-              style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.bold),
-            ),
-          ),
-          TextField(
-            decoration: InputDecoration(
-                hintText: "验证码",
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: FlatButton(
-                      padding: EdgeInsets.all(8),
-                      textColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      onPressed: () {
-                        print("onPressed");
-                        if (_countdownTime == 0) {
-                          _userService.verification(email);
-                          setState(() {
-                            _countdownTime = 60;
-                          });
-                          //开始倒计时
-                          startCountdownTimer();
-                        }
-                      },
-                      color: Theme.of(context).primaryColor,
-                      child: Text(
-                        _countdownTime > 0 ? '$_countdownTime秒后重新获取' : '获取验证码',
-                      )),
-                )),
-            keyboardType: TextInputType.number,
-          ),
+//          Padding(
+//            padding: const EdgeInsets.symmetric(vertical: 16.0),
+//            child: Text(
+//              "邮箱验证码",
+//              style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.bold),
+//            ),
+//          ),
+//          TextField(
+//            decoration: InputDecoration(
+//                hintText: "验证码",
+//                suffixIcon: Padding(
+//                  padding: const EdgeInsets.all(8.0),
+//                  child: FlatButton(
+//                      padding: EdgeInsets.all(8),
+//                      textColor: Colors.white,
+//                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+//                      onPressed: () {
+//                        print("onPressed");
+//                        if (_countdownTime == 0) {
+//                          _userService.verification(email);
+//                          setState(() {
+//                            _countdownTime = 60;
+//                          });
+//                          //开始倒计时
+//                          startCountdownTimer();
+//                        }
+//                      },
+//                      color: Theme.of(context).primaryColor,
+//                      child: Text(
+//                        _countdownTime > 0 ? '$_countdownTime秒后重新获取' : '获取验证码',
+//                      )),
+//                )),
+//            keyboardType: TextInputType.number,
+//          ),
           Row(
             children: <Widget>[
               Expanded(

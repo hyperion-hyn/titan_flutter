@@ -140,7 +140,7 @@ class _NodeMortgageState extends State<NodeMortgagePage> {
               RaisedButton(
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MortgagePage(mortgageInfo)));
+//                  Navigator.push(context, MaterialPageRoute(builder: (context) => MortgagePage(mortgageInfo)));
                 },
                 child: SizedBox(
                   width: 172,

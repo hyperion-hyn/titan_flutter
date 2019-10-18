@@ -10,6 +10,7 @@ import 'package:titan/src/business/me/model/common_response.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/model/contract_info_v2.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
+import 'package:titan/src/business/me/model/mortgage_info_v2.dart';
 import 'package:titan/src/business/me/model/node_mortgage_info.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/pay_order.dart';
@@ -126,6 +127,15 @@ class UserService {
       throw new Exception("not login");
     }
     List<MortgageInfo> mortgageList = await _mapRichApi.getMortgageList(userToken.token);
+    return mortgageList;
+  }
+
+  Future<List<MortgageInfoV2>> getMortgageListV2() async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    List<MortgageInfoV2> mortgageList = await _mapRichApi.getMortgageListV2(userToken.token);
     return mortgageList;
   }
 
@@ -266,6 +276,15 @@ class UserService {
       throw new Exception("not login");
     }
     return await _mapRichApi.mortgage(token: userToken.token, confId: confId);
+  }
+
+  ///抵押抢购
+  Future<dynamic> mortgageSnapUp({@required int confId}) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    return await _mapRichApi.mortgageSnapUp(token: userToken.token, confId: confId);
   }
 
   ///赎回
