@@ -1,15 +1,15 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'purchase_order_info.dart';
+part of 'recharge_order_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PurchaseOrderInfo _$PurchaseOrderInfoFromJson(Map<String, dynamic> json) {
-  return PurchaseOrderInfo(
+RechargeOrderInfo _$RechargeOrderInfoFromJson(Map<String, dynamic> json) {
+  return RechargeOrderInfo(
     json['address'] as String,
-    json['amount'] as int,
+    (json['amount'] as num)?.toDouble(),
     json['order_id'] as int,
     json['qr_code'] as String,
     json['state'] as int,
@@ -17,7 +17,7 @@ PurchaseOrderInfo _$PurchaseOrderInfoFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$PurchaseOrderInfoToJson(PurchaseOrderInfo instance) =>
+Map<String, dynamic> _$RechargeOrderInfoToJson(RechargeOrderInfo instance) =>
     <String, dynamic>{
       'address': instance.address,
       'amount': instance.amount,

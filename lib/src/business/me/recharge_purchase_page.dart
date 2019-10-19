@@ -15,7 +15,7 @@ import '../../global.dart';
 import 'model/contract_info.dart';
 import 'model/contract_info_v2.dart';
 import 'model/pay_order.dart';
-import 'model/purchase_order_info.dart';
+import 'model/recharge_order_info.dart';
 import 'model/quotes.dart';
 import 'my_hash_rate_page.dart';
 import 'service/user_service.dart';
@@ -34,7 +34,7 @@ class RechargePurchasePage extends StatefulWidget {
 class _RechargePurchaseState extends State<RechargePurchasePage> {
   var service = UserService();
 
-  PurchaseOrderInfo rechargeOrder;
+  RechargeOrderInfo rechargeOrder;
   Quotes quotes;
   UserInfo userInfo;
 
@@ -46,7 +46,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 
   void loadData() async {
     try {
-      var data = await service.createPurchaseOrder(amount: widget.rechargeAmount);
+      var data = await service.createRechargeOrder(amount: widget.rechargeAmount);
       setState(() {
         rechargeOrder = data;
       });

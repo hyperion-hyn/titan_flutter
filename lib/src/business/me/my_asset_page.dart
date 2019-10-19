@@ -76,7 +76,8 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                         if (value == null) {
                           return;
                         }
-                        Fluttertoast.showToast(msg: "充值成功");
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => RechargePurchasePage(rechargeAmount: value)));
                       });
                     },
                     child: Padding(
