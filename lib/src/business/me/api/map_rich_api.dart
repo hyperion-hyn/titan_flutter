@@ -15,7 +15,7 @@ import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/pay_order.dart';
 import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/model/promotion_info.dart';
-import 'package:titan/src/business/me/model/purchase_order_info.dart';
+import 'package:titan/src/business/me/model/recharge_order_info.dart';
 import 'package:titan/src/business/me/model/quotes.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/model/user_level_info.dart';
@@ -150,9 +150,9 @@ class MapRichApi {
   }
 
   ///充值订单创建
-  Future<PurchaseOrderInfo> createRechargeOrder({@required double amount, @required String token}) async {
+  Future<RechargeOrderInfo> createRechargeOrder({@required double amount, @required String token}) async {
     return await MapRichHttpCore.instance.postEntity(
-        'recharge/create', EntityFactory<PurchaseOrderInfo>((json) => PurchaseOrderInfo.fromJson(json)),
+        'recharge/create', EntityFactory<RechargeOrderInfo>((json) => RechargeOrderInfo.fromJson(json)),
         params: {"amount": amount}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
@@ -176,10 +176,10 @@ class MapRichApi {
   }
 
   ///提币信息
-  Future<WithdrawalInfo> withdrawalInfo({@required String token}) async {
+  Future<WithdrawalInfo> withdrawalInfo({@required String token, @required String type}) async {
     return await MapRichHttpCore.instance.getEntity(
         'withdrawal/info', EntityFactory<WithdrawalInfo>((json) => WithdrawalInfo.fromJson(json)),
-        options: RequestOptions(headers: {"Authorization": token}));
+        params: {"type": type}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
   ///提币

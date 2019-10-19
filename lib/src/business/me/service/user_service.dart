@@ -17,7 +17,7 @@ import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/pay_order.dart';
 import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/model/promotion_info.dart';
-import 'package:titan/src/business/me/model/purchase_order_info.dart';
+import 'package:titan/src/business/me/model/recharge_order_info.dart';
 import 'package:titan/src/business/me/model/quotes.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/model/user_level_info.dart';
@@ -184,7 +184,7 @@ class UserService {
   }
 
   //充值订单创建
-  Future<PurchaseOrderInfo> createPurchaseOrder({@required double amount}) async {
+  Future<RechargeOrderInfo> createRechargeOrder({@required double amount}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
@@ -218,13 +218,13 @@ class UserService {
   }
 
   ///提币信息
-  Future<WithdrawalInfo> withdrawalInfo() async {
+  Future<WithdrawalInfo> withdrawalInfo(String type) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
 
-    return await _mapRichApi.withdrawalInfo(token: userToken.token);
+    return await _mapRichApi.withdrawalInfo(token: userToken.token, type: type);
   }
 
   ///提币

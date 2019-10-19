@@ -154,6 +154,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                 Fluttertoast.showToast(msg: '余额不足');
               } else {
                 showModalBottomSheet(
+                  isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context) {
                       return EnterFundPasswordWidget();
@@ -161,7 +162,6 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                   if (value == null) {
                     return;
                   }
-                  print("fund-token:$value");
                   try {
                     await service.mortgageSnapUp(confId: widget.mortgageInfo.id, fundToken: value);
                     Fluttertoast.showToast(msg: '抢购成功');

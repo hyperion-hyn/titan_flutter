@@ -63,6 +63,9 @@ class _UpdaterState extends State<Updater> {
               _showUpdateDialog(state.appData.updateEntity);
             } else {
               print('已经是最新版本');
+              if (state.isManual) {
+                Fluttertoast.showToast(msg: "已经是最新版本");
+              }
             }
           }
         }

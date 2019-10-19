@@ -31,9 +31,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         }
         var versionModel = await injector.repository.checkNewVersion(channel, event.lang, platform);
 
-        yield UpdateState(isChecking: false, updateEntity: versionModel);
+        yield UpdateState(isChecking: false, updateEntity: versionModel, isManual: event.isManual);
       } catch (err) {
-        yield UpdateState(isError: true, isChecking: false);
+        yield UpdateState(isError: true, isChecking: false, isManual: event.isManual);
       }
     }
   }

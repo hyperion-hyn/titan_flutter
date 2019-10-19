@@ -19,9 +19,9 @@ class BuyHashRatePageV2 extends StatefulWidget {
 class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   UserService _userService = UserService();
 
-  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0)];
+  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0)];
 
-  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0);
+  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
 
@@ -119,7 +119,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                         Column(
                                           children: <Widget>[
                                             Text(
-                                              "30天收益(USDT)",
+                                              "${_contractInfoTemp.timeCycle}天收益(USDT)",
                                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                                             ),
                                             Row(
@@ -156,7 +156,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                           children: <Widget>[
                             Text(
                               "合约介绍",
-                              style: TextStyle(color: Colors.black, fontSize: 16,fontWeight: FontWeight.bold),
+                              style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             Spacer(),
                             Text(

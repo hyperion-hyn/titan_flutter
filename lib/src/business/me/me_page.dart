@@ -11,9 +11,12 @@ import 'package:titan/src/business/me/personal_settings_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/utils.dart';
 
 import 'buy_hash_rate_page_v2.dart';
 import 'my_asset_page.dart';
@@ -31,10 +34,19 @@ class _MeState extends UserState<MePage> with RouteAware {
 
   int checkInCount = 0;
 
+  String _pubKey = "";
+
   @override
   void initState() {
     super.initState();
     _updateCheckInCount();
+
+    _loadData();
+  }
+
+  Future _loadData() async {
+    _pubKey = await TitanPlugin.getPublicKey();
+    setState(() {});
   }
 
   @override
@@ -287,7 +299,15 @@ class _MeState extends UserState<MePage> with RouteAware {
                   Divider(
                     height: 2,
                   ),
-                  _buildMemuBar("使用教程", ExtendsIconFont.document, () {}),
+                  _buildMemuBar("使用教程", ExtendsIconFont.document, () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WebViewContainer(
+                                  initUrl: "https://www.maprich.net/intro",
+                                  title: "使用教程",
+                                )));
+                  }),
                   Divider(
                     height: 2,
                   ),
@@ -314,7 +334,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  _buildDappItem(ExtendsIconFont.point, "私密分享", "接受地址:0x543254543542545342542545435", () {
+                  _buildDappItem(ExtendsIconFont.point, "私密分享", "接收地址:${shortEthAddress(_pubKey)}", () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
                   }),
                 ],
@@ -410,7 +430,7 @@ class _MeState extends UserState<MePage> with RouteAware {
               ),
               Text(
                 description,
-                style: TextStyle(fontSize: 12),
+                style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),

@@ -36,6 +36,11 @@ class _DrawBalanceState extends State<DrawBalancePage> {
   double canGetHynAmount = 0;
   double amount = 0;
 
+  static const EARNING = "earning";
+  static const RECHARGE = "recharge";
+
+  String _currentBalanceType = EARNING;
+
   @override
   void initState() {
     super.initState();
@@ -67,7 +72,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
 
   void loadData() async {
     try {
-      var _withdrawalInfo = await _userService.withdrawalInfo();
+      var _withdrawalInfo = await _userService.withdrawalInfo(_currentBalanceType);
       var _quotes = await _userService.quotes();
       setState(() {
         withdrawalInfo = _withdrawalInfo;
@@ -93,12 +98,12 @@ class _DrawBalanceState extends State<DrawBalancePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+//        backgroundColor: Colors.white,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           "提币",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
         ),
       ),
       body: SingleChildScrollView(
@@ -116,12 +121,40 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "余额",
-                          style: TextStyle(color: Color(0xFF9B9B9B)),
-                        ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: RadioListTile(
+                              activeColor: Theme.of(context).primaryColor,
+                              groupValue: _currentBalanceType,
+                              title: Text("收益余额"),
+                              value: EARNING,
+                              onChanged: (value) {
+                                setState(() {
+                                  _currentBalanceType = value;
+                                  loadData();
+                                });
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: RadioListTile(
+                              activeColor: Theme.of(context).primaryColor,
+                              groupValue: _currentBalanceType,
+                              title: Text("充值余额"),
+                              value: RECHARGE,
+                              onChanged: (value) {
+                                setState(() {
+                                  _currentBalanceType = value;
+                                  loadData();
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 8,
                       ),
                       Text(
                         "$balance USDT",
@@ -319,11 +352,12 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                             } else {
                               try {
                                 showModalBottomSheet(
+                                    isScrollControlled: true,
                                     context: context,
                                     builder: (BuildContext context) {
                                       return EnterFundPasswordWidget();
                                     }).then((value) async {
-                                  if (!value) {
+                                  if (value == null) {
                                     return;
                                   }
                                   await _userService.withdrawalApply(amount: amount, address: address);
@@ -339,6 +373,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
 
 //
                         },
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         color: Theme.of(context).primaryColor,
                         child: Text(
                           "提币",
