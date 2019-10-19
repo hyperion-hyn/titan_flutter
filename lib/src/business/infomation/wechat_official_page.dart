@@ -101,7 +101,8 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                           currentPage = 1;
                         });
 //                        isLoading = true;
-                        _getPowerListByPage(currentPage);
+//                        _getPowerListByPage(currentPage);
+                        loadDataBloc.dispatch(LoadingEvent());
                       },
                     )
                 ],

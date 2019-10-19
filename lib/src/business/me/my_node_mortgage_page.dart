@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/data_list_state.dart';
+import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/business/load_data_container/load_data_container.dart';
 import 'package:titan/src/business/me/model/node_mortgage_info.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -20,22 +23,29 @@ class MyNodeMortgagePage extends StatefulWidget {
   }
 }
 
-class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
+class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
   static Color PRIMARY_COLOR = HexColor("#FF259B24");
   static Color GRAY_COLOR = HexColor("#9E101010");
 
   UserService _userService = UserService();
 
-  PageResponse<NodeMortgageInfo> _nodeMortgagePage = PageResponse(0, 0, []);
+//  PageResponse<NodeMortgageInfo> _nodeMortgagePage = PageResponse(0, 0, []);
+//  List nodeMortgageVoList = [];
+//  var currentPage = 0;
 
-  List nodeMortgageVoList = [];
-
-  var currentPage = 0;
+//  @override
+//  void initState() {
+//    super.initState();
+//    _getNodeMortgageList(0);
+//  }
 
   @override
-  void initState() {
-    super.initState();
-    _getNodeMortgageList(0);
+  void postFrameCallBackAfterInitState() async {
+    loadDataBloc.dispatch(LoadingEvent());
+  }
+
+  Future _updateUserInstance() async {
+    LOGIN_USER_INFO = await _userService.getUserInfo();
   }
 
   @override
@@ -58,7 +68,7 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Text(
-                    "总抵押",
+                    "我的节点抵押",
                     style: TextStyle(
                       color: Colors.white70,
                     ),
@@ -84,28 +94,45 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Expanded(
-                    child: SmartPullRefresh(
-                      onRefresh: () {
-                        _getNodeMortgageList(0);
-                      },
-                      onLoading: () {
-                        _getNodeMortgageList(currentPage + 1);
-                      },
+                    child: LoadDataContainer(
+                      bloc: loadDataBloc,
+                      onLoadData: onWidgetLoadDataCallback,
+                      onRefresh: onWidgetRefreshCallback,
+                      onLoadingMore: onWidgetLoadingMoreCallback,
                       child: ListView.separated(
                           itemBuilder: (BuildContext context, int index) {
-                            return _buildNodeMortgageItem(nodeMortgageVoList[index]);
+                            return _buildNodeMortgageItem(dataList[index]);
                           },
                           separatorBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Divider(
-                                thickness: 0.5,
-                                color: Colors.black12,
-                              ),
+                            return Divider(
+                              thickness: 0.5,
+                              color: Colors.black12,
                             );
                           },
-                          itemCount: nodeMortgageVoList.length),
+                          itemCount: dataList.length),
                     ),
+//                    child: SmartPullRefresh(
+//                      onRefresh: () {
+//                        _getNodeMortgageList(0);
+//                      },
+//                      onLoading: () {
+//                        _getNodeMortgageList(currentPage + 1);
+//                      },
+//                      child: ListView.separated(
+//                          itemBuilder: (BuildContext context, int index) {
+//                            return _buildNodeMortgageItem(dataList[index]);
+//                          },
+//                          separatorBuilder: (BuildContext context, int index) {
+//                            return Padding(
+//                              padding: const EdgeInsets.symmetric(horizontal: 16),
+//                              child: Divider(
+//                                thickness: 0.5,
+//                                color: Colors.black12,
+//                              ),
+//                            );
+//                          },
+//                          itemCount: dataList.length),
+//                    ),
                   )
                 ],
               ),
@@ -190,8 +217,8 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
                               await _userService.redemption(id: nodeMortgageVo.id);
                               Navigator.pop(context, true);
                               Fluttertoast.showToast(msg: "赎回成功");
-                              await _getNodeMortgageList(0);
-                              await getUserInfo();
+
+                              loadDataBloc.dispatch(LoadingEvent());
                             });
                           } catch (e) {
                             logger.e(e);
@@ -236,26 +263,38 @@ class _MyNodeMortgageState extends UserState<MyNodeMortgagePage> {
     );
   }
 
-  Future _getNodeMortgageList(int page) async {
-    _nodeMortgagePage = await _userService.getNodeMortgageList(page);
+  @override
+  Future<List<dynamic>> onLoadData(int page) async {
+    //刷新金额
+    _updateUserInstance();
 
-    List<NodeMortgageVo> list = _nodeMortgagePage.data.map((nodeMortgageDetail) {
+    PageResponse<NodeMortgageInfo> _nodeMortgagePage = await _userService.getNodeMortgageList(page);
+
+    return _nodeMortgagePage.data.map((nodeMortgageDetail) {
       return _covertNodeMortgageInfoToVo(nodeMortgageDetail);
     }).toList();
-    if (list.length == 0) {
-      return;
-    }
-    if (page == 0) {
-      nodeMortgageVoList.clear();
-      nodeMortgageVoList.addAll(list);
-    } else {
-      nodeMortgageVoList.addAll(list);
-    }
-    currentPage = page;
-    if (mounted) {
-      setState(() {});
-    }
   }
+
+//  Future _getNodeMortgageList(int page) async {
+//    _nodeMortgagePage = await _userService.getNodeMortgageList(page);
+//
+//    List<NodeMortgageVo> list = _nodeMortgagePage.data.map((nodeMortgageDetail) {
+//      return _covertNodeMortgageInfoToVo(nodeMortgageDetail);
+//    }).toList();
+//    if (list.length == 0) {
+//      return;
+//    }
+//    if (page == 0) {
+//      nodeMortgageVoList.clear();
+//      nodeMortgageVoList.addAll(list);
+//    } else {
+//      nodeMortgageVoList.addAll(list);
+//    }
+//    currentPage = page;
+//    if (mounted) {
+//      setState(() {});
+//    }
+//  }
 
   NodeMortgageVo _covertNodeMortgageInfoToVo(NodeMortgageInfo nodeMortgageInfo) {
     return NodeMortgageVo(

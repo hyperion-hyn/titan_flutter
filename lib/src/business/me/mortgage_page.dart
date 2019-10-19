@@ -124,9 +124,18 @@ class _MortgagePageState extends State<MortgagePage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    "余额 ${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.balance ?? 0)} USDT",
-                    style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        '可抵押余额：',
+                        style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
+                      ),
+                      Text(
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(userInfo == null ? 0 : userInfo.balance - userInfo.chargeBalance)} USDT",
+                        style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -141,8 +150,8 @@ class _MortgagePageState extends State<MortgagePage> {
           color: Theme.of(context).primaryColor,
           onPressed: () async {
             if (widget.mortgageInfo != null && userInfo != null) {
-              if (userInfo.balance < widget.mortgageInfo.amount) {
-                Fluttertoast.showToast(msg: '余额不足');
+              if (userInfo.balance - userInfo.chargeBalance < widget.mortgageInfo.amount) {
+                Fluttertoast.showToast(msg: '可用于抵押的余额不足');
               } else {
                 showModalBottomSheet(
                     context: context,
@@ -175,6 +184,13 @@ class _MortgagePageState extends State<MortgagePage> {
             ),
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 64.0),
+          child: Text(
+            '提示：直充的余额不可以用来支付抵押节点',
+            style: TextStyle(color: Colors.grey),
+          ),
         ),
       ],
     );
