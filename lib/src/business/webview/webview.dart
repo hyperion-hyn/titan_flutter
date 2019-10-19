@@ -25,9 +25,9 @@ class WebViewContainerState extends State<WebViewContainer> {
 
   @override
   Widget build(BuildContext context) {
+    print('xxx url:${widget.initUrl}');
     return WillPopScope(
       onWillPop: () async {
-        print('back');
         if (webViewController != null) {
           if (await webViewController.canGoBack()) {
             webViewController.goBack();

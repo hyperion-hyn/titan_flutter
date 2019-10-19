@@ -29,7 +29,7 @@ class _MarketPriceState extends State<MarketPricePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+//      backgroundColor: Colors.white,
       appBar: AppBar(
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
@@ -40,24 +40,23 @@ class _MarketPriceState extends State<MarketPricePage> {
         centerTitle: true,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: LoadDataWidget(
-          isLoading: isLoading,
-          child: ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return _buildItem(marketPriceList[index]);
-            },
-            itemCount: marketPriceList.length,
-          ),
+      body: LoadDataWidget(
+        isLoading: isLoading,
+        child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return _buildItem(marketPriceList[index]);
+          },
+          itemCount: marketPriceList.length,
         ),
       ),
     );
   }
 
   Widget _buildItem(MarketPriceVo marketPriceVo) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.only(bottom: 1),
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -72,8 +71,8 @@ class _MarketPriceState extends State<MarketPricePage> {
             FadeInImage.assetNetwork(
               placeholder: 'res/drawable/img_placeholder.jpg',
               image: marketPriceVo.iconUrl,
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
               fit: BoxFit.cover,
             ),
             SizedBox(

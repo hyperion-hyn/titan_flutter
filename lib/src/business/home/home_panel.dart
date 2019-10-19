@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -61,18 +62,20 @@ class HomePanelState extends UserState<HomePanel> {
 
   void eventBusListener(event) async {
     if (event is OnMapMovedEvent) {
-      print('xxx1 ${event.latLng}');
-      if (nearPois.length == 0 && (lastPosition == null || lastPosition.distanceTo(event.latLng) > 200)) {
-        lastPosition = event.latLng;
-        var latlng = CoordConvert.wgs84togcj02(Coords(event.latLng.latitude, event.latLng.longitude));
-        print('xxx2 ${latlng.latitude}, ${latlng.longitude}');
-        var pois = await Injector.of(context).repository.requestDianping(latlng.latitude, latlng.longitude);
-        print('xxx3 ${pois}');
-        if (pois.length > 0) {
-          setState(() {
-            nearPois = pois;
-          });
-        }
+      loadCityRecommend(event.latLng);
+    }
+  }
+
+  void loadCityRecommend(LatLng latLng) async {
+    if (nearPois.length == 0 && (lastPosition == null || lastPosition.distanceTo(latLng) > 2000)) {
+      lastPosition = latLng;
+      var latlng = CoordConvert.wgs84togcj02(Coords(latLng.latitude, latLng.longitude));
+      var pois = await Injector.of(context).repository.requestDianping(latlng.latitude, latlng.longitude);
+      print('xxx3 ${pois}');
+      if (pois.length > 0) {
+        setState(() {
+          nearPois = pois;
+        });
       }
     }
   }
@@ -111,7 +114,7 @@ class HomePanelState extends UserState<HomePanel> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 24.0, bottom: 16),
+              padding: const EdgeInsets.only(top: 24.0, bottom: 4),
               child: Text(
                 '城市推荐',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -120,11 +123,20 @@ class HomePanelState extends UserState<HomePanel> {
           ),
           //hack webview， just what is's cookie...
           SliverToBoxAdapter(
-            child: Container(
-              height: 0,
-              child: WebView(
-                initialUrl: 'https://m.dianping.com/',
-              ),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: 2,
+//                  width: 80,
+                  child: WebViewContainer(
+                    initUrl: "https://m.dianping.com/",
+                  ),
+                ),
+                Container(
+                  height: 16,
+                  color: Colors.white,
+                ),
+              ],
             ),
           ),
           SliverList(

@@ -54,7 +54,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           fit: StackFit.expand,
           children: <Widget>[
             //loading\empty\fail
-            if (state is LoadingState)
+            if (state is LoadingState || state is InitialLoadDataState)
               buildLoading(context)
             else if (state is LoadEmptyState)
               buildEmpty(context)
