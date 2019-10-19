@@ -149,11 +149,12 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                     builder: (BuildContext context) {
                       return EnterFundPasswordWidget();
                     }).then((value) async {
-                  if (!value) {
+                  if (value == null) {
                     return;
                   }
+                  print("fund-token:$value");
                   try {
-                    await service.mortgageSnapUp(confId: widget.mortgageInfo.id);
+                    await service.mortgageSnapUp(confId: widget.mortgageInfo.id, fundToken: value);
                     Fluttertoast.showToast(msg: '抢购成功');
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                   } catch (e) {

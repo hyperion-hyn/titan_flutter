@@ -49,7 +49,11 @@ void main() {
     print(stackTrace);
     if (error is HttpResponseCodeNotSuccess) {
       HttpResponseCodeNotSuccess notSuccessError = NOT_SUCCESS_ERROR_CODE_MAP[error.code];
-      Fluttertoast.showToast(msg: notSuccessError.message);
+      if (notSuccessError == null) {
+        Fluttertoast.showToast(msg: "未定义错误");
+      } else {
+        Fluttertoast.showToast(msg: notSuccessError.message);
+      }
     } else if (error is DioError) {
       Fluttertoast.showToast(msg: "网络错误");
     } else {

@@ -7,6 +7,7 @@ import 'package:titan/src/business/me/api/map_rich_http.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/model/contract_info_v2.dart';
+import 'package:titan/src/business/me/model/fund_token.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
 import 'package:titan/src/business/me/model/mortgage_info_v2.dart';
 import 'package:titan/src/business/me/model/node_mortgage_info.dart';
@@ -62,7 +63,7 @@ class MapRichApi {
 
   ///重置密码
   Future resetFundPassword(String email, String loginPassword, String fundPassword, int verificationCode) async {
-    await MapRichHttpCore.instance.patchEntity("users/attr/password", EntityFactory((json) => json), params: {
+    await MapRichHttpCore.instance.patchEntity("users/attr/fund_password", EntityFactory((json) => json), params: {
       "email": email,
       "verification_code": verificationCode,
       "login_password": loginPassword,
@@ -80,6 +81,13 @@ class MapRichApi {
   Future<int> checkInCount(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity("sign_in/$userId/stats", EntityFactory((json) => json as int),
         options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  ///getFundToken
+  Future<FundToken> getFundToken(String token, String userId, String password) async {
+    return await MapRichHttpCore.instance.postEntity(
+        "users/$userId/fund_token", EntityFactory((json) => FundToken.fromJson(json)),
+        params: {"password": password}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
   ///getUserInfo
@@ -249,9 +257,10 @@ class MapRichApi {
   }
 
   ///抵押抢购
-  Future<dynamic> mortgageSnapUp({@required int confId, @required token}) async {
+  Future<dynamic> mortgageSnapUp({@required int confId, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/snap_up', null,
-        params: {"confId": confId}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"confId": confId},
+        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///赎回

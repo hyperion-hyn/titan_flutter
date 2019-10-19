@@ -70,21 +70,21 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                           ),
                         ],
                       ),
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.secondHighestPower)}",
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 16,
-                          ),
-                          Text(
-                            "次大区算力",
-                            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                          ),
-                        ],
-                      ),
+//                      Column(
+//                        children: <Widget>[
+//                          Text(
+//                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.secondHighestPower)}",
+//                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+//                          ),
+//                          SizedBox(
+//                            height: 16,
+//                          ),
+//                          Text(
+//                            "次大区算力",
+//                            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+//                          ),
+//                        ],
+//                      ),
                       Column(
                         children: <Widget>[
                           Text(
@@ -253,21 +253,21 @@ class _MyPromoteState extends UserState<MyPromotePage> {
                     ),
                   ],
                 ),
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(_promotion.secondHighest)}",
-                        style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                    ),
-                    Text(
-                      "次大区算力",
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                    ),
-                  ],
-                ),
+//                Column(
+//                  children: <Widget>[
+//                    Padding(
+//                      padding: const EdgeInsets.symmetric(vertical: 8),
+//                      child: Text(
+//                        "${Const.DOUBLE_NUMBER_FORMAT.format(_promotion.secondHighest)}",
+//                        style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
+//                      ),
+//                    ),
+//                    Text(
+//                      "次大区算力",
+//                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+//                    ),
+//                  ],
+//                ),
                 Column(
                   children: <Widget>[
                     Padding(
