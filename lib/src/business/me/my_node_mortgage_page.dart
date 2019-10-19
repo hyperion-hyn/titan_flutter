@@ -211,11 +211,11 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return EnterFundPasswordWidget();
-                                }).then((value) async {
-                              if (value == null) {
+                                }).then((fundToken) async {
+                              if (fundToken == null) {
                                 return;
                               }
-                              await _userService.redemption(id: nodeMortgageVo.id);
+                              await _userService.redemption(id: nodeMortgageVo.id, fundToken: fundToken);
                               Navigator.pop(context, true);
                               Fluttertoast.showToast(msg: "赎回成功");
 

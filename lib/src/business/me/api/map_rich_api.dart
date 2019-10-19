@@ -265,9 +265,9 @@ class MapRichApi {
   }
 
   ///赎回
-  Future<dynamic> redemption({@required int id, @required token}) async {
+  Future<dynamic> redemption({@required int id, @required token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/redemption', null,
-        params: {"id": id}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"id": id}, options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///附近可以分享的位置

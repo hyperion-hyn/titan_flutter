@@ -297,12 +297,12 @@ class UserService {
   }
 
   ///赎回
-  Future<dynamic> redemption({@required int id}) async {
+  Future<dynamic> redemption({@required int id,@required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
-    return await _mapRichApi.redemption(token: userToken.token, id: id);
+    return await _mapRichApi.redemption(token: userToken.token, id: id,fundToken: fundToken);
   }
 
   ///附近可以分享的位置
