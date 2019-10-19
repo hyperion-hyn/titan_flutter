@@ -128,7 +128,7 @@ class _MortgagePageState extends State<MortgagePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Text(
-                        '可抵押余额：',
+                        '收益余额：',
                         style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                       ),
                       Text(
@@ -188,7 +188,7 @@ class _MortgagePageState extends State<MortgagePage> {
         Padding(
           padding: const EdgeInsets.only(top: 64.0),
           child: Text(
-            '提示：直充的余额不可以用来支付抵押节点',
+            '提示：只能使用收益余额进行节点抵押支付',
             style: TextStyle(color: Colors.grey),
           ),
         ),

@@ -124,9 +124,18 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    "可支付抢购余额 ${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.chargeBalance ?? 0)} USDT",
-                    style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        '充值余额：',
+                        style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
+                      ),
+                      Text(
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.chargeBalance ?? 0)} USDT",
+                        style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -176,6 +185,13 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
             ),
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 64.0),
+          child: Text(
+            '提示：抢购节点只能使用充值余额进行支付',
+            style: TextStyle(color: Colors.grey),
+          ),
         ),
       ],
     );
