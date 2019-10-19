@@ -70,7 +70,6 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
                       child: RaisedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -78,6 +77,7 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
                                       rechargeAmount: double.parse(_rechargeCountController.text))));
                         },
                         color: Theme.of(context).primaryColor,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         child: Text(
                           "确认",
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
