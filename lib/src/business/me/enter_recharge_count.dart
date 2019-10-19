@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/me/recharge_purchase_page.dart';
-import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 
 class EnterRechargeCount extends StatefulWidget {
@@ -83,11 +81,7 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
                           onPressed: () {
                             if (_formKey.currentState.validate()) {
                               double amount = double.parse(_rechargeCountController.text);
-                              Navigator.of(context).pop();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RechargePurchasePage(rechargeAmount: amount)));
+                              Navigator.of(context).pop(amount);
                             }
                           },
                           color: Theme.of(context).primaryColor,

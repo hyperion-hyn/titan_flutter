@@ -25,12 +25,17 @@ import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/domain/gaode_model.dart';
+import 'package:titan/src/global.dart';
 
 class UserService {
   MapRichApi _mapRichApi = MapRichApi();
 
   static const String SHARED_PREF_USER_EMAIL_KEY = "user_email";
   static const String SHARED_PREF_USER_TOKEN_KEY = "user_token";
+
+  static syncUserInfo() async {
+    LOGIN_USER_INFO = await UserService().getUserInfo();
+  }
 
   Future<UserToken> login(String email, String password) async {
     UserToken userToken = await _mapRichApi.login(email, password);

@@ -72,11 +72,21 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                           context: context,
                           builder: (BuildContext context) {
                             return EnterRechargeCount();
-                          }).then((value) async {
-                        if (value == null) {
+                          }).then((rechargeAmount) async {
+                        if (rechargeAmount == null) {
                           return;
                         }
-
+                        Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RechargePurchasePage(rechargeAmount: rechargeAmount)))
+                            .then((value) async {
+                          if (value == null || value == false) {
+                            return;
+                          }
+                          await UserService.syncUserInfo();
+                          setState(() {});
+                        });
                       });
                     },
                     child: Padding(

@@ -259,7 +259,8 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     if (ret.code == 0) {
                       //支付成功
                       Fluttertoast.showToast(msg: '充值成功');
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
+//                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
+                      Navigator.pop(context, true);
                     } else {
                       if (ret.code == -1007) {
                         Fluttertoast.showToast(msg: '已到达购买上限');
