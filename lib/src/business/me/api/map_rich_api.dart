@@ -176,10 +176,10 @@ class MapRichApi {
   }
 
   ///提币信息
-  Future<WithdrawalInfo> withdrawalInfo({@required String token}) async {
+  Future<WithdrawalInfo> withdrawalInfo({@required String token, @required String type}) async {
     return await MapRichHttpCore.instance.getEntity(
         'withdrawal/info', EntityFactory<WithdrawalInfo>((json) => WithdrawalInfo.fromJson(json)),
-        options: RequestOptions(headers: {"Authorization": token}));
+        params: {"type": type}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
   ///提币

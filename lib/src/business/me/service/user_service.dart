@@ -218,13 +218,13 @@ class UserService {
   }
 
   ///提币信息
-  Future<WithdrawalInfo> withdrawalInfo() async {
+  Future<WithdrawalInfo> withdrawalInfo(String type) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
 
-    return await _mapRichApi.withdrawalInfo(token: userToken.token);
+    return await _mapRichApi.withdrawalInfo(token: userToken.token, type: type);
   }
 
   ///提币
