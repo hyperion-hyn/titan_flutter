@@ -236,7 +236,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                               suffixIcon: Container(
                                 margin: const EdgeInsets.only(left: 16, right: 8, top: 20),
                                 child: Text(
-                                  "U",
+                                  "USDT",
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF9B9B9B)),
                                 ),
                               )),
@@ -263,7 +263,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text("${Const.DOUBLE_NUMBER_FORMAT.format(fee)} U"),
+                          child: Text("${Const.DOUBLE_NUMBER_FORMAT.format(fee)} USDT"),
                         ),
                         Divider(),
                         Text(
