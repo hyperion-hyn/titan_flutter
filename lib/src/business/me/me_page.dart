@@ -10,6 +10,7 @@ import 'package:titan/src/business/me/node_mortgage_page_v2.dart';
 import 'package:titan/src/business/me/personal_settings_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
+import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
@@ -295,7 +296,33 @@ class _MeState extends UserState<MePage> with RouteAware {
                   }),
                 ],
               ),
-            )
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0, bottom: 16),
+                    child: Text(
+                      "DMap设置",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  _buildDappItem(ExtendsIconFont.point, "私密分享", "接受地址:0x543254543542545342542545435", () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
+                  }),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
           ],
         ),
       ),
@@ -360,6 +387,39 @@ class _MeState extends UserState<MePage> with RouteAware {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDappItem(IconData iconData, String title, String description, Function ontap) {
+    return InkWell(
+      onTap: ontap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+              margin: EdgeInsets.only(top: 8, bottom: 8, right: 16),
+              child: Center(child: Icon(iconData, color: HexColor("#B4B4B4"), size: 24))),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                title,
+                style: TextStyle(color: Colors.black, fontSize: 14),
+              ),
+              Text(
+                description,
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+          Spacer(),
+          Icon(
+            Icons.chevron_right,
+            color: Colors.black54,
+          )
+        ],
       ),
     );
   }
