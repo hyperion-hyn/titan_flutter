@@ -73,7 +73,7 @@ class _AboueMeState extends State<AboutMePage> {
                   SizedBox(
                     height: 4,
                   ),
-                  Text("1.0.0", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: Color(0xFF9B9B9B)))
+                  Text(version, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: Color(0xFF9B9B9B)))
                 ],
               )
             ],
