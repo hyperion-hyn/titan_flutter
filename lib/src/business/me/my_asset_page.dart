@@ -68,6 +68,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   GestureDetector(
                     onTap: () async {
                       showModalBottomSheet(
+                        isScrollControlled: true,
                           context: context,
                           builder: (BuildContext context) {
                             return EnterRechargeCount();
