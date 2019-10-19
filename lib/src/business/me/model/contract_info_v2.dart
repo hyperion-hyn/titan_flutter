@@ -21,9 +21,11 @@ class ContractInfoV2 {
   int limit;
   @JsonKey(name: "mission_req")
   int missionReq;
+  @JsonKey(name: "time_cycle")
+  int timeCycle;
 
   ContractInfoV2(this.id, this.name, this.icon, this.description, this.amount, this.hynAmount, this.power,
-      this.monthInc, this.limit, this.missionReq);
+      this.monthInc, this.limit, this.missionReq, this.timeCycle);
 
   factory ContractInfoV2.fromJson(Map<String, dynamic> json) => _$ContractInfoV2FromJson(json);
 
