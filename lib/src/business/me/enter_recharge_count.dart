@@ -83,7 +83,11 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
                           onPressed: () {
                             if (_formKey.currentState.validate()) {
                               double amount = double.parse(_rechargeCountController.text);
-                              Navigator.of(context).pop(amount);
+                              Navigator.of(context).pop();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RechargePurchasePage(rechargeAmount: amount)));
                             }
                           },
                           color: Theme.of(context).primaryColor,

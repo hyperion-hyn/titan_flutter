@@ -76,8 +76,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                         if (value == null) {
                           return;
                         }
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => RechargePurchasePage(rechargeAmount: value)));
+
                       });
                     },
                     child: Padding(
