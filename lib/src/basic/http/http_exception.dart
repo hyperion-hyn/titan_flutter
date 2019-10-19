@@ -39,6 +39,7 @@ class HttpResponseCodeNotSuccess implements Exception {
 //var ERROR_RESET_PASSWORD = HttpResponseCodeNotSuccess(-20008, "fail to reset password"); //重置密码错误
 //var ERROR_CHECK_IN_LIMIT = HttpResponseCodeNotSuccess(-20009, "check-in reach the upper limit"); //签到达到上限
 //var ERROR_CHECK_IN_INTERVAL = HttpResponseCodeNotSuccess(-20010, "check-in interval is 30 minutes."); //签到时间间隔var
+var ERROR_FUND_PASSWORD = HttpResponseCodeNotSuccess(-20011, "资金密码错误"); //签到时间间隔var
 
 List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   HttpResponseCodeNotSuccess(-10000, "未知错误"),
@@ -58,6 +59,7 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   HttpResponseCodeNotSuccess(-20008, "重置密码错误"),
   HttpResponseCodeNotSuccess(-20009, "今天打卡任务已完成，请明日再来"),
   HttpResponseCodeNotSuccess(-20010, "打卡间隔低于30分钟"),
+  ERROR_FUND_PASSWORD
 ];
 
 Map<int, HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_MAP =

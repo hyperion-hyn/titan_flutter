@@ -289,15 +289,10 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
       String fundPassword = fundPasswordEditingController.text;
       int verificationCode = int.parse(verificationCodeEditingController.text);
 
-      try {
-        await _userService.resetFundPassword(
-            email, Md5Util.generateMd5(loginPassword), Md5Util.generateMd5(fundPassword), verificationCode);
-        Fluttertoast.showToast(msg: "修改成功");
-        Navigator.pop(context, true);
-      } catch (_) {
-        print(_);
-        Fluttertoast.showToast(msg: "系统错误");
-      }
+      await _userService.resetFundPassword(
+          email, Md5Util.generateMd5(loginPassword), Md5Util.generateMd5(fundPassword), verificationCode);
+      Fluttertoast.showToast(msg: "修改成功");
+      Navigator.pop(context, true);
     }
   }
 

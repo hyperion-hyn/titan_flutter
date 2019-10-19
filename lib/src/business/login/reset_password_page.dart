@@ -255,14 +255,9 @@ class _ResetPageState extends State<ResetPasswordPage> {
       String password = passwordEditingController.text;
       int verificationCode = int.parse(verificationCodeEditingController.text);
 
-      try {
-        await _userService.resetPassword(email, Md5Util.generateMd5(password), verificationCode);
-        Fluttertoast.showToast(msg: "修改成功");
-        Navigator.pop(context, true);
-      } catch (_) {
-        print(_);
-        Fluttertoast.showToast(msg: "系统错误");
-      }
+      await _userService.resetPassword(email, Md5Util.generateMd5(password), verificationCode);
+      Fluttertoast.showToast(msg: "修改成功");
+      Navigator.pop(context, true);
     }
   }
 
