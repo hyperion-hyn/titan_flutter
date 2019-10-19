@@ -39,7 +39,11 @@ class _DrawBalanceState extends State<DrawBalancePage> {
   static const EARNING = "earning";
   static const RECHARGE = "recharge";
 
-  String _currentBalanceType = EARNING;
+  static const EARNING_INT_TYPE = 0;
+  static const RECHARGE_INT_TYPE = 1;
+
+
+  String _selectedWithdrawalTypeString = EARNING;
 
   @override
   void initState() {
@@ -72,7 +76,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
 
   void loadData() async {
     try {
-      var _withdrawalInfo = await _userService.withdrawalInfo(_currentBalanceType);
+      var _withdrawalInfo = await _userService.withdrawalInfo(_selectedWithdrawalTypeString);
       var _quotes = await _userService.quotes();
       setState(() {
         withdrawalInfo = _withdrawalInfo;
@@ -126,12 +130,12 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                           Expanded(
                             child: RadioListTile(
                               activeColor: Theme.of(context).primaryColor,
-                              groupValue: _currentBalanceType,
+                              groupValue: _selectedWithdrawalTypeString,
                               title: Text("收益余额"),
                               value: EARNING,
                               onChanged: (value) {
                                 setState(() {
-                                  _currentBalanceType = value;
+                                  _selectedWithdrawalTypeString = value;
                                   loadData();
                                 });
                               },
@@ -140,12 +144,12 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                           Expanded(
                             child: RadioListTile(
                               activeColor: Theme.of(context).primaryColor,
-                              groupValue: _currentBalanceType,
+                              groupValue: _selectedWithdrawalTypeString,
                               title: Text("充值余额"),
                               value: RECHARGE,
                               onChanged: (value) {
                                 setState(() {
-                                  _currentBalanceType = value;
+                                  _selectedWithdrawalTypeString = value;
                                   loadData();
                                 });
                               },
@@ -360,7 +364,13 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                   if (fundToken == null) {
                                     return;
                                   }
-                                  await _userService.withdrawalApply(amount: amount, address: address,fundToken: fundToken);
+                                  int type;
+                                  if(_selectedWithdrawalTypeString==EARNING){
+                                    type = EARNING_INT_TYPE;
+                                  }else  if(_selectedWithdrawalTypeString==RECHARGE){
+                                    type = RECHARGE_INT_TYPE;
+                                  }
+                                  await _userService.withdrawalApply(amount: amount, address: address,fundToken: fundToken,type:type);
                                   Fluttertoast.showToast(msg: "提币申请成功");
                                   Navigator.pop(context, true);
                                 });
