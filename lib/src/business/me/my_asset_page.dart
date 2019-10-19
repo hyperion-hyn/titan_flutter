@@ -68,7 +68,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   GestureDetector(
                     onTap: () async {
                       showModalBottomSheet(
-                        isScrollControlled: true,
+                          isScrollControlled: true,
                           context: context,
                           builder: (BuildContext context) {
                             return EnterRechargeCount();
@@ -94,26 +94,88 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
       body: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(top: 0, bottom: 40),
+            padding: EdgeInsets.only(top: 0, bottom: 24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  child: Text(
-                    "账户余额",
-                    style: TextStyle(
-                      color: Colors.white70,
-                    ),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            "账户余额(USDT)",
+                            style: TextStyle(
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Text(
+                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} ",
+                            style: TextStyle(color: Colors.white, fontSize: 24),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Text(
-                    "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} USDT",
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
+                SizedBox(
+                  height: 24,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 0),
+                          child: Text(
+                            "收益余额",
+                            style: TextStyle(
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Text(
+                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance - LOGIN_USER_INFO.chargeBalance)} ",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 0),
+                          child: Text(
+                            "充值余额",
+                            style: TextStyle(
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Text(
+                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.chargeBalance)} ",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 )
               ],
             ),
