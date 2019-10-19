@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/data_list_state.dart';
+import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/business/load_data_container/load_data_container.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -17,23 +20,29 @@ class MyHashRatePage extends StatefulWidget {
   }
 }
 
-class _MyHashRateState extends UserState<MyHashRatePage> {
+class _MyHashRateState extends DataListState<MyHashRatePage> {
+  UserService _userService = UserService();
+
   static Color PRIMARY_COLOR = HexColor("#FF259B24");
   static Color GRAY_COLOR = HexColor("#9E101010");
 
-  UserService _userService = UserService();
-
-  PageResponse<PowerDetail> powerPageResponse = PageResponse(0, 0, []);
-
-  List hashRateList = [];
+//  LOGIN_USER_INFO = await _userService.getUserInfo();
+//  List hashRateList = [];
+//  int currentPage = 0;
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd");
-  int currentPage = 0;
+
+//  @override
+//  void initState() {
+//    super.initState();
+//    _getPowerList(0);
+//  }
 
   @override
-  void initState() {
-    super.initState();
-    _getPowerList(0);
+  void postFrameCallBackAfterInitState() async {
+    loadDataBloc.dispatch(LoadingEvent());
+
+    LOGIN_USER_INFO = await _userService.getUserInfo();
   }
 
   @override
@@ -83,32 +92,22 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: SmartPullRefresh(
-                        onRefresh: () {
-                          _getPowerList(0);
-                        },
-                        onLoading: () {
-                          _getPowerList(currentPage + 1);
-                        },
-                        child: SmartPullRefresh(
-                          onRefresh: () {
-                            _getPowerList(0);
-                          },
-                          onLoading: () {
-                            _getPowerList(currentPage + 1);
-                          },
-                          child: ListView.separated(
-                              itemBuilder: (BuildContext context, int index) {
-                                return _buildHashRateItem(hashRateList[index]);
-                              },
-                              separatorBuilder: (BuildContext context, int index) {
-                                return Divider(
-                                  thickness: 0.5,
-                                  color: Colors.black12,
-                                );
-                              },
-                              itemCount: hashRateList.length),
-                        ),
+                      child: LoadDataContainer(
+                        bloc: loadDataBloc,
+                        onLoadData: onWidgetLoadDataCallback,
+                        onRefresh: onWidgetRefreshCallback,
+                        onLoadingMore: onWidgetLoadingMoreCallback,
+                        child: ListView.separated(
+                            itemBuilder: (BuildContext context, int index) {
+                              return _buildHashRateItem(dataList[index]);
+                            },
+                            separatorBuilder: (BuildContext context, int index) {
+                              return Divider(
+                                thickness: 0.5,
+                                color: Colors.black12,
+                              );
+                            },
+                            itemCount: dataList.length),
                       ),
                     ),
                   )
@@ -169,28 +168,13 @@ class _MyHashRateState extends UserState<MyHashRatePage> {
     );
   }
 
-  Future _getPowerList(int page) async {
-    powerPageResponse = await _userService.getPowerList(page);
+  @override
+  Future<List<dynamic>> onLoadData(int page) async {
+    PageResponse<PowerDetail> powerPageResponse = await _userService.getPowerList(page);
 
-    List<HashRateVo> list = powerPageResponse.data.map((powerDetail) {
+    return powerPageResponse.data.map((powerDetail) {
       return _convertPowerDetailToHashRateVo(powerDetail);
     }).toList();
-
-    if (list.length == 0) {
-      return;
-    }
-
-    if (page == 0) {
-      hashRateList.clear();
-      hashRateList.addAll(list);
-    } else {
-      hashRateList.addAll(list);
-    }
-
-    currentPage = page;
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   HashRateVo _convertPowerDetailToHashRateVo(PowerDetail powerDetail) {

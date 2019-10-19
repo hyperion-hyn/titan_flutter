@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/business/load_data_container/load_data_container.dart';
 import 'package:titan/src/business/me/draw_balance_page.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
@@ -73,7 +76,6 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                           return;
                         }
                         Fluttertoast.showToast(msg: "充值成功");
-
                       });
                     },
                     child: Padding(
@@ -189,45 +191,89 @@ class BillHistory extends StatefulWidget {
 }
 
 class _BillHistoryState extends State<BillHistory> {
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
-
   List<BillInfo> billList = [];
   UserService _userService = UserService();
 
   StreamSubscription _eventBusSubscription;
   int currentPage = 0;
 
+  LoadDataBloc loadDataBloc = LoadDataBloc();
+
   @override
   void initState() {
     super.initState();
-    _getBillList(0);
+//    _getBillList(0);
     _listenEventBus();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      loadDataBloc.dispatch(LoadingEvent());
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SmartPullRefresh(
-        child: ListView.separated(
-            physics: ClampingScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              return _buildBillDetailItem(billList[index]);
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Divider(
-                  thickness: 0.5,
-                  color: Colors.black12,
-                ),
-              );
-            },
-            itemCount: billList.length),
-        onRefresh: () {
-          _getBillList(0);
-        },
-        onLoading: () {
-          _getBillList(currentPage + 1);
-        });
+    return LoadDataContainer(
+      bloc: loadDataBloc,
+      onLoadData: () async {
+        try {
+          await _getBillList(0);
+
+          if (billList.length == 0) {
+            loadDataBloc.dispatch(LoadEmptyEvent());
+          } else {
+            loadDataBloc.dispatch(RefreshSuccessEvent());
+          }
+        } catch (e) {
+          logger.e(e);
+          loadDataBloc.dispatch(LoadFailEvent());
+        }
+      },
+      onRefresh: () async {
+        try {
+//          await Future.delayed(Duration(seconds: 2));
+          await _getBillList(0);
+
+          if (billList.length == 0) {
+            loadDataBloc.dispatch(LoadEmptyEvent());
+          } else {
+            loadDataBloc.dispatch(RefreshSuccessEvent());
+          }
+        } catch (e) {
+          logger.e(e);
+          loadDataBloc.dispatch(RefreshFailEvent());
+        }
+      },
+      onLoadingMore: () async {
+        try {
+          int lastSize = billList.length;
+          await _getBillList(currentPage + 1);
+
+          if (billList.length == lastSize) {
+            loadDataBloc.dispatch(LoadMoreEmptyEvent());
+          } else {
+            loadDataBloc.dispatch(LoadingMoreSuccessEvent());
+          }
+        } catch (e) {
+          logger.e(e);
+          loadDataBloc.dispatch(LoadMoreFailEvent());
+        }
+      },
+      child: ListView.separated(
+          physics: ClampingScrollPhysics(),
+          itemBuilder: (BuildContext context, int index) {
+            return _buildBillDetailItem(billList[index]);
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Divider(
+                thickness: 0.5,
+                color: Colors.black12,
+              ),
+            );
+          },
+          itemCount: billList.length),
+    );
   }
 
   Widget _buildBillDetailItem(BillInfo billInfo) {
@@ -301,7 +347,8 @@ class _BillHistoryState extends State<BillHistory> {
     _eventBusSubscription = eventBus.on().listen((event) async {
       print("event:$event");
       if (event is Refresh) {
-        _getBillList(0);
+//        _getBillList(0);
+        loadDataBloc.dispatch(RefreshingEvent());
       }
     });
   }
@@ -309,6 +356,7 @@ class _BillHistoryState extends State<BillHistory> {
   @override
   void dispose() {
     _eventBusSubscription?.cancel();
+    loadDataBloc.dispose();
     super.dispose();
   }
 }
@@ -336,6 +384,8 @@ class _WithdrawalState extends State<WithdrawalHistory> {
   List<WithdrawalInfoLog> withdrawalInfoList = [];
   UserService _userService = UserService();
 
+  LoadDataBloc loadDataBloc = LoadDataBloc();
+
   StreamSubscription _eventBusSubscription;
 
   int currentPage = 0;
@@ -343,34 +393,78 @@ class _WithdrawalState extends State<WithdrawalHistory> {
   @override
   void initState() {
     super.initState();
-    _getWithdrawalList(0);
     _listenEventBus();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      loadDataBloc.dispatch(LoadingEvent());
+    });
+//    _getWithdrawalList(0);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SmartPullRefresh(
-        child: ListView.separated(
-            physics: ClampingScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              return _buildWithdrawalItem(withdrawalInfoList[index]);
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Divider(
-                  thickness: 0.5,
-                  color: Colors.black12,
-                ),
-              );
-            },
-            itemCount: withdrawalInfoList.length),
-        onRefresh: () {
-          _getWithdrawalList(0);
-        },
-        onLoading: () {
-          _getWithdrawalList(currentPage + 1);
-        });
+    return LoadDataContainer(
+      bloc: loadDataBloc,
+      onLoadData: () async {
+        try {
+          await _getWithdrawalList(0);
+
+          if (withdrawalInfoList.length == 0) {
+            loadDataBloc.dispatch(LoadEmptyEvent());
+          } else {
+            loadDataBloc.dispatch(RefreshSuccessEvent());
+          }
+        } catch (e) {
+          logger.e(e);
+          loadDataBloc.dispatch(LoadFailEvent());
+        }
+      },
+      onRefresh: () async {
+        try {
+//          await Future.delayed(Duration(seconds: 2));
+          await _getWithdrawalList(0);
+
+          if (withdrawalInfoList.length == 0) {
+            loadDataBloc.dispatch(LoadEmptyEvent());
+          } else {
+            loadDataBloc.dispatch(RefreshSuccessEvent());
+          }
+        } catch (e) {
+          logger.e(e);
+          loadDataBloc.dispatch(RefreshFailEvent());
+        }
+      },
+      onLoadingMore: () async {
+        try {
+          int lastSize = withdrawalInfoList.length;
+          await _getWithdrawalList(currentPage + 1);
+
+          if (withdrawalInfoList.length == lastSize) {
+            loadDataBloc.dispatch(LoadMoreEmptyEvent());
+          } else {
+            loadDataBloc.dispatch(LoadingMoreSuccessEvent());
+          }
+        } catch (e) {
+          logger.e(e);
+          loadDataBloc.dispatch(LoadMoreFailEvent());
+        }
+      },
+      child: ListView.separated(
+          physics: ClampingScrollPhysics(),
+          itemBuilder: (BuildContext context, int index) {
+            return _buildWithdrawalItem(withdrawalInfoList[index]);
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Divider(
+                thickness: 0.5,
+                color: Colors.black12,
+              ),
+            );
+          },
+          itemCount: withdrawalInfoList.length),
+    );
   }
 
   Widget _buildWithdrawalItem(WithdrawalInfoLog withdrawalInfo) {
@@ -470,13 +564,15 @@ class _WithdrawalState extends State<WithdrawalHistory> {
     _eventBusSubscription = eventBus.on().listen((event) async {
       print("event:$event");
       if (event is Refresh) {
-        _getWithdrawalList(0);
+//        _getWithdrawalList(0);
+        loadDataBloc.dispatch(RefreshingEvent());
       }
     });
   }
 
   @override
   void dispose() {
+    loadDataBloc.dispose();
     _eventBusSubscription?.cancel();
     super.dispose();
   }
