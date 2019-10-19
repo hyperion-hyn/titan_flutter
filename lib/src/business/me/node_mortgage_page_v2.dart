@@ -178,7 +178,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                           children: <Widget>[
                             Text(
                               "节点介绍",
-                              style: TextStyle(color: Colors.black, fontSize: 16),
+                              style: TextStyle(color: Colors.black, fontSize: 16,fontWeight: FontWeight.bold),
                             )
                           ],
                         ),

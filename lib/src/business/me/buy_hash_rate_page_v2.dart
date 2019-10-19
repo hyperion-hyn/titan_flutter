@@ -93,18 +93,49 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                       mainAxisSize: MainAxisSize.max,
                                     ),
                                     Spacer(),
-                                    Text(
-                                      _contractInfoTemp.name,
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                                    ),
                                     Row(
                                       children: <Widget>[
-                                        Text(
-                                          DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount),
-                                          style: TextStyle(
-                                              color: Color(0xFFf6927f), fontSize: 18, fontWeight: FontWeight.bold),
+                                        Column(
+                                          children: <Widget>[
+                                            Text(
+                                              _contractInfoTemp.name,
+                                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount),
+                                                  style: TextStyle(
+                                                      color: Color(0xFFf6927f),
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                                Text("  USDT")
+                                              ],
+                                            )
+                                          ],
                                         ),
-                                        Text("  USDT")
+                                        Spacer(),
+                                        Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "30天收益(USDT)",
+                                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.monthInc),
+                                                  style: TextStyle(
+                                                      color: Color(0xFFf6927f),
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.normal),
+                                                ),
+                                                Text("")
+                                              ],
+                                            )
+                                          ],
+                                        )
                                       ],
                                     )
                                   ],
@@ -125,7 +156,12 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                           children: <Widget>[
                             Text(
                               "合约介绍",
-                              style: TextStyle(color: Colors.black, fontSize: 16),
+                              style: TextStyle(color: Colors.black, fontSize: 16,fontWeight: FontWeight.bold),
+                            ),
+                            Spacer(),
+                            Text(
+                              "每人限购${_selectedContractInfo.limit}份",
+                              style: TextStyle(color: Colors.grey, fontSize: 14),
                             )
                           ],
                         ),
@@ -139,6 +175,9 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
+                        ),
+                        SizedBox(
+                          height: 8,
                         ),
                         RaisedButton(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
