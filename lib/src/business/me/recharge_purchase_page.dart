@@ -100,7 +100,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         Text(
-                          "${Const.DOUBLE_NUMBER_FORMAT.format(widget.rechargeAmount)} U",
+                          "${Const.DOUBLE_NUMBER_FORMAT.format(widget.rechargeAmount)} USDT",
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
                         )
                       ],

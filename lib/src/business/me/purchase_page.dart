@@ -110,7 +110,7 @@ class _PurchaseState extends State<PurchasePage> {
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(widget.contractInfo.amount)} U",
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(widget.contractInfo.amount)} USDT",
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       )
                     ],
