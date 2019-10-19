@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/me/buy_hash_rate_page.dart';
@@ -23,6 +25,8 @@ import 'package:titan/src/model/dianping_poi.dart';
 import 'package:titan/src/utils/coord_convert.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:math' as math;
+
+import 'package:fake_cookie_manager/fake_cookie_manager.dart' as fake;
 
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
@@ -115,9 +119,15 @@ class HomePanelState extends UserState<HomePanel> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(top: 24.0, bottom: 4),
-              child: Text(
-                '城市推荐',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              child: InkWell(
+                onTap: () async {
+                  var cookie = Cookie.fromSetCookieValue('_lxsdk_cuid=16dd39a12ffc8-08a9200bd0e877-2d604637-4a574-16dd39a12ffc8');
+                  await fake.CookieManager.saveCookies(url: 'https://m.dianping.com/', cookies: [cookie]);
+                },
+                child: Text(
+                  '城市推荐',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
               ),
             ),
           ),

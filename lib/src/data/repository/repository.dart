@@ -33,7 +33,7 @@ class Repository {
         poi.marketPrice = item['marketPrice'];
         poi.defaultPic = item['defaultPic'];
         poi.salesdesc = item['salesdesc'];
-        poi.schema = item['schema'] + '?from=m_reculike&rec_query_id=bae6ed6c-2d0f-486f-bb49-14617b59664a';
+        poi.schema = item['schema'] + '?from=m_reculike';
         pois.add(poi);
       }
     } catch (e) {

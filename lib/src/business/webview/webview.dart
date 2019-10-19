@@ -89,6 +89,10 @@ class WebViewContainerState extends State<WebViewContainer> {
                   navigationDelegate: (NavigationRequest request) {
                     bool prevent = false;
 
+//                    if(request.url.contains('verify.meituan.com')) {
+//                      prevent = true;
+//                    }
+
                     //非http/https协议
                     if (!request.url.startsWith(RegExp('^https?://'))) {
                       prevent = true;
