@@ -25,7 +25,6 @@ class WebViewContainerState extends State<WebViewContainer> {
 
   @override
   Widget build(BuildContext context) {
-    print('xxx url:${widget.initUrl}');
     return WillPopScope(
       onWillPop: () async {
         if (webViewController != null) {
