@@ -251,9 +251,10 @@ class MapRichApi {
   }
 
   ///抵押
-  Future<dynamic> mortgage({@required int confId, @required token}) async {
+  Future<dynamic> mortgage({@required int confId, @required token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/buy', null,
-        params: {"confId": confId}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"confId": confId},
+        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///抵押抢购

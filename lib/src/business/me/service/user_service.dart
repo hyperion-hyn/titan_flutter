@@ -279,12 +279,12 @@ class UserService {
   }
 
   ///抵押
-  Future<dynamic> mortgage({@required int confId}) async {
+  Future<dynamic> mortgage({@required int confId,@required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
-    return await _mapRichApi.mortgage(token: userToken.token, confId: confId);
+    return await _mapRichApi.mortgage(token: userToken.token, confId: confId,fundToken: fundToken);
   }
 
   ///抵押抢购
