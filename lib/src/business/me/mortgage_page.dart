@@ -158,12 +158,12 @@ class _MortgagePageState extends State<MortgagePage> {
                     context: context,
                     builder: (BuildContext context) {
                       return EnterFundPasswordWidget();
-                    }).then((value) async {
-                  if (value == null) {
+                    }).then((fundToken) async {
+                  if (fundToken == null) {
                     return;
                   }
                   try {
-                    await service.mortgage(confId: widget.mortgageInfo.id);
+                    await service.mortgage(confId: widget.mortgageInfo.id, fundToken: fundToken);
                     Fluttertoast.showToast(msg: '抵押成功');
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                   } catch (e) {

@@ -158,9 +158,10 @@ class MapRichApi {
 
   ///确认支付订单
   Future<ResponseEntity<dynamic>> confirmPay(
-      {@required int orderId, @required String payType, @required String token}) async {
+      {@required int orderId, @required String payType, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postResponseEntity('order/pay', null,
-        params: {"orderId": orderId, "payType": payType}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"orderId": orderId, "payType": payType},
+        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///确认支付订单
@@ -183,9 +184,11 @@ class MapRichApi {
   }
 
   ///提币
-  Future<dynamic> withdrawalApply({@required double amount, @required String address, @required String token}) async {
+  Future<dynamic> withdrawalApply(
+      {@required double amount, @required String address, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('withdrawal/apply', null,
-        params: {"amount": amount, "address": address}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"amount": amount, "address": address},
+        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///getMortgageList
@@ -251,9 +254,10 @@ class MapRichApi {
   }
 
   ///抵押
-  Future<dynamic> mortgage({@required int confId, @required token}) async {
+  Future<dynamic> mortgage({@required int confId, @required token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/buy', null,
-        params: {"confId": confId}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"confId": confId},
+        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///抵押抢购
@@ -264,9 +268,9 @@ class MapRichApi {
   }
 
   ///赎回
-  Future<dynamic> redemption({@required int id, @required token}) async {
+  Future<dynamic> redemption({@required int id, @required token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/redemption', null,
-        params: {"id": id}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"id": id}, options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///附近可以分享的位置

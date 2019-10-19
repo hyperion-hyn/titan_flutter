@@ -194,13 +194,15 @@ class UserService {
   }
 
   ///支付确认
-  Future<ResponseEntity<dynamic>> confirmPay({@required int orderId, @required String payType}) async {
+  Future<ResponseEntity<dynamic>> confirmPay(
+      {@required int orderId, @required String payType, @required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
 
-    return await _mapRichApi.confirmPay(orderId: orderId, payType: payType, token: userToken.token);
+    return await _mapRichApi.confirmPay(
+        orderId: orderId, payType: payType, token: userToken.token, fundToken: fundToken);
   }
 
   ///充值支付确认
@@ -228,13 +230,15 @@ class UserService {
   }
 
   ///提币
-  Future<dynamic> withdrawalApply({@required double amount, @required String address}) async {
+  Future<dynamic> withdrawalApply(
+      {@required double amount, @required String address, @required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
 
-    return await _mapRichApi.withdrawalApply(address: address, amount: amount, token: userToken.token);
+    return await _mapRichApi.withdrawalApply(
+        address: address, amount: amount, token: userToken.token, fundToken: fundToken);
   }
 
   Future<UserToken> getUserTokenFromSharedpref() async {
@@ -279,12 +283,12 @@ class UserService {
   }
 
   ///抵押
-  Future<dynamic> mortgage({@required int confId}) async {
+  Future<dynamic> mortgage({@required int confId, @required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
-    return await _mapRichApi.mortgage(token: userToken.token, confId: confId);
+    return await _mapRichApi.mortgage(token: userToken.token, confId: confId, fundToken: fundToken);
   }
 
   ///抵押抢购
@@ -297,12 +301,12 @@ class UserService {
   }
 
   ///赎回
-  Future<dynamic> redemption({@required int id}) async {
+  Future<dynamic> redemption({@required int id, @required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
-    return await _mapRichApi.redemption(token: userToken.token, id: id);
+    return await _mapRichApi.redemption(token: userToken.token, id: id, fundToken: fundToken);
   }
 
   ///附近可以分享的位置

@@ -76,6 +76,7 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
                 },
                 controller: fundPasswordEditingController,
                 keyboardType: TextInputType.emailAddress,
+                obscureText: true,
                 decoration:
                     InputDecoration(hintText: "请输入资金密码", errorText: fundEditErrorMsg != null ? fundEditErrorMsg : null),
               ),
