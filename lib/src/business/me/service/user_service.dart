@@ -228,13 +228,13 @@ class UserService {
   }
 
   ///提币
-  Future<dynamic> withdrawalApply({@required double amount, @required String address}) async {
+  Future<dynamic> withdrawalApply({@required double amount, @required String address,@required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
 
-    return await _mapRichApi.withdrawalApply(address: address, amount: amount, token: userToken.token);
+    return await _mapRichApi.withdrawalApply(address: address, amount: amount, token: userToken.token,fundToken: fundToken);
   }
 
   Future<UserToken> getUserTokenFromSharedpref() async {

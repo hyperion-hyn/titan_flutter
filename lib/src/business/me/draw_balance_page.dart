@@ -356,11 +356,11 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return EnterFundPasswordWidget();
-                                    }).then((value) async {
-                                  if (value == null) {
+                                    }).then((fundToken) async {
+                                  if (fundToken == null) {
                                     return;
                                   }
-                                  await _userService.withdrawalApply(amount: amount, address: address);
+                                  await _userService.withdrawalApply(amount: amount, address: address,fundToken: fundToken);
                                   Fluttertoast.showToast(msg: "提币申请成功");
                                   Navigator.pop(context, true);
                                 });

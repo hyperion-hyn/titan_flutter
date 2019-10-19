@@ -183,9 +183,11 @@ class MapRichApi {
   }
 
   ///提币
-  Future<dynamic> withdrawalApply({@required double amount, @required String address, @required String token}) async {
+  Future<dynamic> withdrawalApply(
+      {@required double amount, @required String address, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('withdrawal/apply', null,
-        params: {"amount": amount, "address": address}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"amount": amount, "address": address},
+        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///getMortgageList
