@@ -158,9 +158,10 @@ class MapRichApi {
 
   ///确认支付订单
   Future<ResponseEntity<dynamic>> confirmPay(
-      {@required int orderId, @required String payType, @required String token}) async {
+      {@required int orderId, @required String payType, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postResponseEntity('order/pay', null,
-        params: {"orderId": orderId, "payType": payType}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"orderId": orderId, "payType": payType},
+        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
   ///确认支付订单

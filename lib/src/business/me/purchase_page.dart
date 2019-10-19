@@ -11,6 +11,7 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
+import 'enter_fund_password.dart';
 import 'model/contract_info.dart';
 import 'model/contract_info_v2.dart';
 import 'model/pay_order.dart';
@@ -75,7 +76,10 @@ class _PurchaseState extends State<PurchasePage> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         centerTitle: true,
-        title: Text("支付",style: TextStyle(color: Colors.white),),
+        title: Text(
+          "支付",
+          style: TextStyle(color: Colors.white),
+        ),
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
       ),
@@ -317,7 +321,7 @@ class _PurchaseState extends State<PurchasePage> {
                 child: RaisedButton(
                   color: Color(0xFF73C42D),
                   onPressed: () async {
-                    var ret = await service.confirmPay(orderId: payOrder.order_id, payType: 'HYN');
+                    var ret = await service.confirmPay(orderId: payOrder.order_id, payType: 'HYN', fundToken: " ");
                     if (ret.code == 0) {
                       //支付成功
                       Fluttertoast.showToast(msg: '购买成功');
@@ -429,19 +433,30 @@ class _PurchaseState extends State<PurchasePage> {
                         Fluttertoast.showToast(msg: '余额不足');
                       } else {
                         try {
-                          var ret = await service.confirmPay(orderId: payOrder.order_id, payType: 'B_HYN');
-                          if (ret.code == 0) {
-                            //支付成功
-                            Fluttertoast.showToast(msg: '购买成功');
-                            Navigator.pushReplacement(
-                                context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                          } else {
-                            if (ret.code == -1007) {
-                              Fluttertoast.showToast(msg: '已到达购买上限');
-                            } else {
-                              Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
+                          showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return EnterFundPasswordWidget();
+                              }).then((fundToken) async {
+                            if (fundToken == null) {
+                              return;
                             }
-                          }
+                            var ret = await service.confirmPay(
+                                orderId: payOrder.order_id, payType: 'B_HYN', fundToken: fundToken);
+                            if (ret.code == 0) {
+                              //支付成功
+                              Fluttertoast.showToast(msg: '购买成功');
+                              Navigator.pushReplacement(
+                                  context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                            } else {
+                              if (ret.code == -1007) {
+                                Fluttertoast.showToast(msg: '已到达购买上限');
+                              } else {
+                                Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
+                              }
+                            }
+                          });
                         } catch (e) {
                           logger.e(e);
                           Fluttertoast.showToast(msg: '支付异常');
