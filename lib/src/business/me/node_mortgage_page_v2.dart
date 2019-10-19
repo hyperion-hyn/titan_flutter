@@ -141,7 +141,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                         Column(
                                           children: <Widget>[
                                             Text(
-                                              "${contractList[selectedIndex].incomeCycle}天收益(USDT)",
+                                              "${contractList[selectedIndex].incomeCycle}天收益(%)",
                                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                                             ),
                                             Row(
