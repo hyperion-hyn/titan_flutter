@@ -14,14 +14,15 @@ class MortgageInfoV2 {
   double amount;
   @JsonKey(name: "income_rate")
   String incomeRate;
+  @JsonKey(name: "income_cycle")
+  int incomeCycle;
   @JsonKey(name: "snap_up_total")
   int snapUpTotal;
   @JsonKey(name: "snap_up_stocks")
   int snapUpStocks;
 
-
-  MortgageInfoV2(this.id, this.name, this.icon, this.description, this.amount, this.incomeRate, this.snapUpTotal,
-      this.snapUpStocks);
+  MortgageInfoV2(this.id, this.name, this.icon, this.description, this.amount, this.incomeRate, this.incomeCycle,
+      this.snapUpTotal, this.snapUpStocks);
 
   factory MortgageInfoV2.fromJson(Map<String, dynamic> json) => _$MortgageInfoV2FromJson(json);
 

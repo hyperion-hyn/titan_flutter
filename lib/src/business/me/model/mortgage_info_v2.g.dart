@@ -14,6 +14,7 @@ MortgageInfoV2 _$MortgageInfoV2FromJson(Map<String, dynamic> json) {
     json['description'] as String,
     (json['amount'] as num)?.toDouble(),
     json['income_rate'] as String,
+    json['income_cycle'] as int,
     json['snap_up_total'] as int,
     json['snap_up_stocks'] as int,
   );
@@ -27,6 +28,7 @@ Map<String, dynamic> _$MortgageInfoV2ToJson(MortgageInfoV2 instance) =>
       'description': instance.description,
       'amount': instance.amount,
       'income_rate': instance.incomeRate,
+      'income_cycle': instance.incomeCycle,
       'snap_up_total': instance.snapUpTotal,
       'snap_up_stocks': instance.snapUpStocks,
     };

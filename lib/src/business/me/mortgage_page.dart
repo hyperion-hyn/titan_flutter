@@ -74,7 +74,7 @@ class _MortgagePageState extends State<MortgagePage> {
                 Row(
                   children: <Widget>[
                     Text(
-                      "金额：${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} U",
+                      "金额：${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} USDT",
                       style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                     ),
                   ],

@@ -129,6 +129,9 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                             )
                           ],
                         ),
+                        SizedBox(
+                          height: 8,
+                        ),
                         Expanded(
                           child: SingleChildScrollView(
                             child: Text(

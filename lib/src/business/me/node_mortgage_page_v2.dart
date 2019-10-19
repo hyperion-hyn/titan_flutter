@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/business/me/mortgage_page.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
@@ -22,9 +23,11 @@ class NodeMortgagePageV2 extends StatefulWidget {
 class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
   UserService _userService = UserService();
 
-  List<MortgageInfoV2> contractList = [MortgageInfoV2(0, "", "", "", 0, "", 0, 0)];
+  List<MortgageInfoV2> contractList = [MortgageInfoV2(0, "", "", "", 0, "", 0, 0, 0)];
 
-  MortgageInfoV2 _selectedMortgageInfo = MortgageInfoV2(0, "", "", "", 0, "", 0, 0);
+//  MortgageInfoV2 _selectedMortgageInfo = MortgageInfoV2(0, "", "", "", 0, "", 0, 0, 0);
+
+  int selectedIndex = 0;
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
 
@@ -112,49 +115,51 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                       mainAxisSize: MainAxisSize.max,
                                     ),
                                     Spacer(),
-
                                     Row(
-                                       children: <Widget>[
-                                         Column(
-                                           children: <Widget>[
-                                             Text(
-                                               _contractInfoTemp.name,
-                                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                                             ),
-                                             Row(
-                                               children: <Widget>[
-                                                 Text(
-                                                   DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount),
-                                                   style: TextStyle(
-                                                       color: Color(0xFFf6927f), fontSize: 18, fontWeight: FontWeight.bold),
-                                                 ),
-                                                 Text("  USDT")
-                                               ],
-                                             )
-                                           ],
-                                         ),
-                                         Spacer(),
-                                         Column(
-                                           children: <Widget>[
-                                             Text(
-                                               "30天收益(USDT)",
-                                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                                             ),
-                                             Row(
-                                               children: <Widget>[
-                                                 Text(
-                                                   _selectedMortgageInfo.incomeRate,
-                                                   style: TextStyle(
-                                                       color: Color(0xFFf6927f), fontSize: 14, fontWeight: FontWeight.normal),
-                                                 ),
-                                                 Text("")
-                                               ],
-                                             )
-                                           ],
-                                         )
-                                       ],
+                                      children: <Widget>[
+                                        Column(
+                                          children: <Widget>[
+                                            Text(
+                                              _contractInfoTemp.name,
+                                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount),
+                                                  style: TextStyle(
+                                                      color: Color(0xFFf6927f),
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                                Text("  USDT")
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        Spacer(),
+                                        Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "${contractList[selectedIndex].incomeCycle}天收益(USDT)",
+                                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  contractList[selectedIndex].incomeRate,
+                                                  style: TextStyle(
+                                                      color: Color(0xFFf6927f),
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.normal),
+                                                ),
+                                                Text("")
+                                              ],
+                                            )
+                                          ],
+                                        )
+                                      ],
                                     )
-
                                   ],
                                 ));
                           },
@@ -172,15 +177,18 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "合约介绍",
+                              "节点介绍",
                               style: TextStyle(color: Colors.black, fontSize: 16),
                             )
                           ],
                         ),
+                        SizedBox(
+                          height: 8,
+                        ),
                         Expanded(
                           child: SingleChildScrollView(
                             child: Text(
-                              _selectedMortgageInfo.description,
+                              contractList[selectedIndex].description,
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
@@ -196,7 +204,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => MortgagePage(
-                                              _selectedMortgageInfo,
+                                              contractList[selectedIndex],
                                             )));
                               },
                               child: Container(
@@ -213,13 +221,13 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                             ),
                             RaisedButton(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                              color: Colors.red,
-                              onPressed: _selectedMortgageInfo.snapUpStocks == 0 ? null : snapUpOnTap,
+                              color: Color(0xFFBF3330),
+                              onPressed: contractList[selectedIndex].snapUpStocks == 0 ? null : snapUpOnTap,
                               child: Container(
                                 height: 48,
                                 alignment: Alignment.center,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 30,top: 8,bottom: 8,right: 0),
+                                  padding: const EdgeInsets.only(left: 30, top: 8, bottom: 8, right: 0),
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
@@ -229,9 +237,9 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                             TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
                                       Text(
-                                        "  剩余 ${_selectedMortgageInfo.snapUpStocks}",
+                                        "  剩余 ${contractList[selectedIndex].snapUpStocks}",
                                         style:
-                                            TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                            TextStyle(color: Color(0xFFFFC500), fontSize: 14, fontWeight: FontWeight.normal),
                                       ),
                                     ],
                                   ),
@@ -252,19 +260,25 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
 
   Future _getContractList() async {
     contractList = await _userService.getMortgageListV2();
-    _selectedMortgageInfo = contractList[0];
-
     if (mounted) {
       setState(() {});
     }
   }
 
   Future _onPageChanged(int index) {
-    _selectedMortgageInfo = contractList[index];
+    selectedIndex = index;
     setState(() {});
   }
 
-  void snapUpOnTap() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MortgageSnapUpPage(_selectedMortgageInfo)));
+  void snapUpOnTap() async {
+    //获取最新的合约记录及库存
+    await _getContractList();
+
+    var selectedContract = contractList[selectedIndex];
+    if (selectedContract.snapUpStocks <= 0) {
+      Fluttertoast.showToast(msg: "节点已抢购完");
+      return;
+    }
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MortgageSnapUpPage(contractList[selectedIndex])));
   }
 }

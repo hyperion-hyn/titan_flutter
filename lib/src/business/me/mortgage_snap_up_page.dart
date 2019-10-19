@@ -50,7 +50,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          '抢购支付',
+          '抢购',
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -74,7 +74,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                 Row(
                   children: <Widget>[
                     Text(
-                      "金额：${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} U",
+                      "金额：${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} USDT",
                       style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                     ),
                   ],
@@ -109,7 +109,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        "请支付",
+                        "需支付",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Padding(
@@ -125,7 +125,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
-                    "余额 ${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.chargeBalance ?? 0)} USDT",
+                    "可支付抢购余额 ${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.chargeBalance ?? 0)} USDT",
                     style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
                   ),
                 ),

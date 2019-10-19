@@ -189,7 +189,7 @@ class MapRichApi {
     }), options: RequestOptions(headers: {"Authorization": token}));
   }
 
-  ///getMortgageList
+  ///getMortgageListV2
   Future<List<MortgageInfoV2>> getMortgageListV2(String token) async {
     return await MapRichHttpCore.instance.getEntity("mortgage/listV2", EntityFactory<List<MortgageInfoV2>>((json) {
       return (json as List).map((mortgageJson) {
