@@ -11,6 +11,7 @@ import 'package:titan/src/business/me/personal_settings_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -298,7 +299,15 @@ class _MeState extends UserState<MePage> with RouteAware {
                   Divider(
                     height: 2,
                   ),
-                  _buildMemuBar("使用教程", ExtendsIconFont.document, () {}),
+                  _buildMemuBar("使用教程", ExtendsIconFont.document, () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WebViewContainer(
+                                  initUrl: "https://www.maprich.net/intro",
+                                  title: "使用教程",
+                                )));
+                  }),
                   Divider(
                     height: 2,
                   ),
@@ -421,7 +430,7 @@ class _MeState extends UserState<MePage> with RouteAware {
               ),
               Text(
                 description,
-                style: TextStyle(fontSize: 12,color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
