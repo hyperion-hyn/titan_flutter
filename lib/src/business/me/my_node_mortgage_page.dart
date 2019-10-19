@@ -207,11 +207,12 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
                         onTap: () async {
                           try {
                             showModalBottomSheet(
+                                isScrollControlled: true,
                                 context: context,
                                 builder: (BuildContext context) {
                                   return EnterFundPasswordWidget();
                                 }).then((value) async {
-                              if (!value) {
+                              if (value == null) {
                                 return;
                               }
                               await _userService.redemption(id: nodeMortgageVo.id);

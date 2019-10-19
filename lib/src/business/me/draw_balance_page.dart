@@ -357,7 +357,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                     builder: (BuildContext context) {
                                       return EnterFundPasswordWidget();
                                     }).then((value) async {
-                                  if (!value) {
+                                  if (value == null) {
                                     return;
                                   }
                                   await _userService.withdrawalApply(amount: amount, address: address);

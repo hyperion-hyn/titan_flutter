@@ -154,11 +154,12 @@ class _MortgagePageState extends State<MortgagePage> {
                 Fluttertoast.showToast(msg: '可用于抵押的余额不足');
               } else {
                 showModalBottomSheet(
+                    isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context) {
                       return EnterFundPasswordWidget();
                     }).then((value) async {
-                  if (!value) {
+                  if (value == null) {
                     return;
                   }
                   try {
