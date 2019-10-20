@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
 import 'package:titan/src/business/me/draw_balance_page.dart';
@@ -263,78 +264,38 @@ class BillHistory extends StatefulWidget {
   }
 }
 
-class _BillHistoryState extends State<BillHistory> {
-  List<BillInfo> billList = [];
+class _BillHistoryState extends DataListState<BillHistory> {
   UserService _userService = UserService();
 
   StreamSubscription _eventBusSubscription;
-  int currentPage = 0;
 
-  LoadDataBloc loadDataBloc = LoadDataBloc();
+//  List<BillInfo> billList = [];
+//  int currentPage = 0;
+//  LoadDataBloc loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
     super.initState();
 //    _getBillList(0);
     _listenEventBus();
+  }
 
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      loadDataBloc.dispatch(LoadingEvent());
-    });
+  @override
+  void postFrameCallBackAfterInitState() {
+    loadDataBloc.dispatch(LoadingEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return LoadDataContainer(
       bloc: loadDataBloc,
-      onLoadData: () async {
-        try {
-          await _getBillList(0);
-
-          if (billList.length == 0) {
-            loadDataBloc.dispatch(LoadEmptyEvent());
-          } else {
-            loadDataBloc.dispatch(RefreshSuccessEvent());
-          }
-        } catch (e) {
-          logger.e(e);
-          loadDataBloc.dispatch(LoadFailEvent());
-        }
-      },
-      onRefresh: () async {
-        try {
-//          await Future.delayed(Duration(seconds: 2));
-          await _getBillList(0);
-
-          if (billList.length == 0) {
-            loadDataBloc.dispatch(LoadEmptyEvent());
-          } else {
-            loadDataBloc.dispatch(RefreshSuccessEvent());
-          }
-        } catch (e) {
-          logger.e(e);
-          loadDataBloc.dispatch(RefreshFailEvent());
-        }
-      },
-      onLoadingMore: () async {
-        try {
-          int lastSize = billList.length;
-          await _getBillList(currentPage + 1);
-
-          if (billList.length == lastSize) {
-            loadDataBloc.dispatch(LoadMoreEmptyEvent());
-          } else {
-            loadDataBloc.dispatch(LoadingMoreSuccessEvent());
-          }
-        } catch (e) {
-          logger.e(e);
-          loadDataBloc.dispatch(LoadMoreFailEvent());
-        }
-      },
+      onLoadData: onWidgetLoadDataCallback,
+      onRefresh: onWidgetRefreshCallback,
+      onLoadingMore: onWidgetLoadingMoreCallback,
       child: ListView.separated(
           physics: ClampingScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
-            return _buildBillDetailItem(billList[index]);
+            return _buildBillDetailItem(dataList[index]);
           },
           separatorBuilder: (BuildContext context, int index) {
             return Padding(
@@ -345,7 +306,7 @@ class _BillHistoryState extends State<BillHistory> {
               ),
             );
           },
-          itemCount: billList.length),
+          itemCount: dataList.length),
     );
   }
 
@@ -399,21 +360,9 @@ class _BillHistoryState extends State<BillHistory> {
     );
   }
 
-  Future _getBillList(int page) async {
-    var listData = await _userService.getBillList(page);
-    if (listData.length == 0) {
-      return;
-    }
-    if (page == 0) {
-      billList.clear();
-      billList.addAll(listData);
-    } else {
-      billList.addAll(listData);
-    }
-    currentPage = page;
-    if (mounted) {
-      setState(() {});
-    }
+  @override
+  Future<List> onLoadData(int page) {
+    return _userService.getBillList(page);
   }
 
   void _listenEventBus() {
@@ -452,80 +401,39 @@ class WithdrawalHistory extends StatefulWidget {
   }
 }
 
-class _WithdrawalState extends State<WithdrawalHistory> {
-  PageResponse<WithdrawalInfoLog> _pageResponse = PageResponse(0, 0, []);
-  List<WithdrawalInfoLog> withdrawalInfoList = [];
+class _WithdrawalState extends DataListState<WithdrawalHistory> {
   UserService _userService = UserService();
-
-  LoadDataBloc loadDataBloc = LoadDataBloc();
 
   StreamSubscription _eventBusSubscription;
 
-  int currentPage = 0;
+//  List<WithdrawalInfoLog> withdrawalInfoList = [];
+//  LoadDataBloc loadDataBloc = LoadDataBloc();
+//  PageResponse<WithdrawalInfoLog> _pageResponse = PageResponse(0, 0, []);
+//  int currentPage = 0;
 
   @override
   void initState() {
     super.initState();
     _listenEventBus();
-
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      loadDataBloc.dispatch(LoadingEvent());
-    });
 //    _getWithdrawalList(0);
+  }
+
+  @override
+  void postFrameCallBackAfterInitState() {
+    loadDataBloc.dispatch(LoadingEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return LoadDataContainer(
       bloc: loadDataBloc,
-      onLoadData: () async {
-        try {
-          await _getWithdrawalList(0);
-
-          if (withdrawalInfoList.length == 0) {
-            loadDataBloc.dispatch(LoadEmptyEvent());
-          } else {
-            loadDataBloc.dispatch(RefreshSuccessEvent());
-          }
-        } catch (e) {
-          logger.e(e);
-          loadDataBloc.dispatch(LoadFailEvent());
-        }
-      },
-      onRefresh: () async {
-        try {
-//          await Future.delayed(Duration(seconds: 2));
-          await _getWithdrawalList(0);
-
-          if (withdrawalInfoList.length == 0) {
-            loadDataBloc.dispatch(LoadEmptyEvent());
-          } else {
-            loadDataBloc.dispatch(RefreshSuccessEvent());
-          }
-        } catch (e) {
-          logger.e(e);
-          loadDataBloc.dispatch(RefreshFailEvent());
-        }
-      },
-      onLoadingMore: () async {
-        try {
-          int lastSize = withdrawalInfoList.length;
-          await _getWithdrawalList(currentPage + 1);
-
-          if (withdrawalInfoList.length == lastSize) {
-            loadDataBloc.dispatch(LoadMoreEmptyEvent());
-          } else {
-            loadDataBloc.dispatch(LoadingMoreSuccessEvent());
-          }
-        } catch (e) {
-          logger.e(e);
-          loadDataBloc.dispatch(LoadMoreFailEvent());
-        }
-      },
+      onLoadData: onWidgetLoadDataCallback,
+      onRefresh: onWidgetRefreshCallback,
+      onLoadingMore: onWidgetLoadingMoreCallback,
       child: ListView.separated(
           physics: ClampingScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
-            return _buildWithdrawalItem(withdrawalInfoList[index]);
+            return _buildWithdrawalItem(dataList[index]);
           },
           separatorBuilder: (BuildContext context, int index) {
             return Padding(
@@ -536,7 +444,7 @@ class _WithdrawalState extends State<WithdrawalHistory> {
               ),
             );
           },
-          itemCount: withdrawalInfoList.length),
+          itemCount: dataList.length),
     );
   }
 
@@ -615,22 +523,11 @@ class _WithdrawalState extends State<WithdrawalHistory> {
     );
   }
 
-  Future _getWithdrawalList(int page) async {
-    _pageResponse = await _userService.getWithdrawalLogList(page);
+  @override
+  Future<List> onLoadData(int page) async {
+    PageResponse<WithdrawalInfoLog> _pageResponse = await _userService.getWithdrawalLogList(page);
     var dataList = _pageResponse.data;
-    if (dataList.length == 0) {
-      return;
-    }
-    if (page == 0) {
-      withdrawalInfoList.clear();
-      withdrawalInfoList.addAll(dataList);
-    } else {
-      withdrawalInfoList.addAll(dataList);
-    }
-    currentPage = page;
-    if (mounted) {
-      setState(() {});
-    }
+    return dataList;
   }
 
   void _listenEventBus() {
@@ -649,6 +546,7 @@ class _WithdrawalState extends State<WithdrawalHistory> {
     _eventBusSubscription?.cancel();
     super.dispose();
   }
+
 }
 
 class Refresh {}
