@@ -52,7 +52,7 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  "充值金额",
+                  "充值金额(USDT)",
                   style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.bold),
                 ),
               ),
