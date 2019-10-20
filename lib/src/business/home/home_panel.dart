@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/business/infomation/info_detail_page.dart';
-import 'package:titan/src/business/me/buy_hash_rate_page.dart';
+import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/me/buy_hash_rate_page_v2.dart';
 import 'package:titan/src/business/me/my_asset_page.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
@@ -23,7 +22,6 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/dianping_poi.dart';
 import 'package:titan/src/utils/coord_convert.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:math' as math;
 
 import 'package:fake_cookie_manager/fake_cookie_manager.dart' as fake;
@@ -121,8 +119,26 @@ class HomePanelState extends UserState<HomePanel> {
               padding: const EdgeInsets.only(top: 24.0, bottom: 4),
               child: InkWell(
                 onTap: () async {
+//                  await fake.CookieManager.clearAllCookies();
+//                  Fluttertoast.showToast(msg: '清除cookie成功');
+
+//                  var html = await HttpCore.instance.get('https://m.dianping.com/', options: RequestOptions(
+//                    headers: {
+//                      'User-Agent':
+//                      'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Mobile Safari/537.36',
+//                    }
+//                  ));
+//                  print(html);
+
                   var cookie = Cookie.fromSetCookieValue('_lxsdk_cuid=16dd39a12ffc8-08a9200bd0e877-2d604637-4a574-16dd39a12ffc8');
-                  await fake.CookieManager.saveCookies(url: 'https://m.dianping.com/', cookies: [cookie]);
+                  await fake.CookieManager.saveCookies(url: 'm.dianping.com', cookies: [cookie]);
+//
+//                  var cookies = await fake.CookieManager.loadCookies(url: 'm.dianping.com');
+//                  print('>>>---' * 10);
+//                  for(var cookie in cookies) {
+//                    print(cookie);
+//                  }
+//                  print('<<<---' * 10);
                 },
                 child: Text(
                   '城市推荐',
