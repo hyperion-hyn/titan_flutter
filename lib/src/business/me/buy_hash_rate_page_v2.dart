@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
+import 'package:loading/loading.dart';
 import 'package:titan/src/business/me/model/pay_order.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -29,6 +31,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -82,7 +85,8 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                 width: MediaQuery.of(context).size.width,
                                 margin: EdgeInsets.symmetric(horizontal: 5.0),
                                 padding: EdgeInsets.all(16),
-                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                                decoration:
+                                    BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -190,6 +194,9 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           color: Theme.of(context).primaryColor,
                           onPressed: () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
                             if (_selectedContractInfo.amount > 0) {
                               try {
                                 PayOrder payOrder =
@@ -203,17 +210,32 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                               payOrder: payOrder,
                                             )));
                               } on HttpResponseCodeNotSuccess catch (_) {
+                                print("errorCOde os :${_.code}");
                                 if (_.code == ERROR_OUT_OF_RANGE.code) {
                                   Fluttertoast.showToast(msg: "超过购买限制数量");
                                 } else {
                                   throw _;
                                 }
+                              } finally {
+                                closeLoading();
                               }
                             } else {
-                              PayOrder payOrder =
-                                  await _userService.createFreeOrder(contractId: _selectedContractInfo.id);
-                              Navigator.pushReplacement(
-                                  context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                              try {
+                                PayOrder payOrder =
+                                    await _userService.createFreeOrder(contractId: _selectedContractInfo.id);
+                                closeLoading();
+                                Navigator.pushReplacement(
+                                    context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                              } on HttpResponseCodeNotSuccess catch (_) {
+                                print("errorCOde os :${_.code}");
+                                if (_.code == ERROR_OUT_OF_RANGE.code) {
+                                  Fluttertoast.showToast(msg: "超过领取限制数量");
+                                } else {
+                                  throw _;
+                                }
+                              } finally {
+                                closeLoading();
+                              }
                             }
                           },
                           child: Container(
@@ -233,9 +255,23 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                   ),
                 )
               ],
-            )
+            ),
+            if (_isLoading)
+              Opacity(
+                child: new ModalBarrier(dismissible: false, color: Colors.grey),
+                opacity: 0.3,
+              ),
+            if (_isLoading) Center(child: Loading(indicator: BallSpinFadeLoaderIndicator(), size: 50.0)),
           ],
         ));
+  }
+
+  void closeLoading() {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future _getContractList() async {
