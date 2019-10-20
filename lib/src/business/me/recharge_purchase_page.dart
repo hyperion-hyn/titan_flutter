@@ -230,6 +230,10 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 '请务必支付指定的HYN金额！',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
+              Text(
+                '推荐使用imToken扫码支付',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 22.0),
                 child: RaisedButton(
