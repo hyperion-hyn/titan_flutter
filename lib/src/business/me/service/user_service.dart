@@ -188,6 +188,17 @@ class UserService {
     return await _mapRichApi.createOrder(contractId: contractId, token: userToken.token);
   }
 
+
+  ///订单免费创建
+  Future<PayOrder> createFreeOrder({@required int contractId}) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+
+    return await _mapRichApi.createFreeOrder(contractId: contractId, token: userToken.token);
+  }
+
   //充值订单创建
   Future<RechargeOrderInfo> createRechargeOrder({@required double amount}) async {
     UserToken userToken = await getUserTokenFromSharedpref();

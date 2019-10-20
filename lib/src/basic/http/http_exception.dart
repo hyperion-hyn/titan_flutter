@@ -29,7 +29,7 @@ class HttpResponseCodeNotSuccess implements Exception {
 //var CONTENT_CONFLICT = HttpResponseCodeNotSuccess(-1004, "Content conflict");
 //var NO_CONTENT = HttpResponseCodeNotSuccess(-1005, "Not content");
 //var NETWORK_ERROR = HttpResponseCodeNotSuccess(-1006, "network error");
-//var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, "out of range");
+var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, "超过限制");
 //final HttpResponseCodeNotSuccess ERROR_USER_CREATED = HttpResponseCodeNotSuccess(-20001, "create user error"); //用户创建失败
 //var ERROR_USER_EXIST = HttpResponseCodeNotSuccess(-20002, "user already exist"); //用户已存在
 //var ERROR_USER_UPATED = HttpResponseCodeNotSuccess(-20004, "update user error"); //用户更新失败
@@ -49,7 +49,7 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   HttpResponseCodeNotSuccess(-1004, "内容冲突"),
   HttpResponseCodeNotSuccess(-1005, "无内容"),
   HttpResponseCodeNotSuccess(-1006, "网络错误"),
-  HttpResponseCodeNotSuccess(-1007, "超过范围"),
+  ERROR_OUT_OF_RANGE,
   HttpResponseCodeNotSuccess(-20001, "创建用户失败"),
   HttpResponseCodeNotSuccess(-20002, "用户已存在"),
   HttpResponseCodeNotSuccess(-20004, "更新用户信息失败"),

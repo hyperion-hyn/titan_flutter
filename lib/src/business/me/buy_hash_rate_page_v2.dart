@@ -3,11 +3,16 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/business/me/model/pay_order.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 
+import 'package:titan/src/basic/http/http_exception.dart';
+
 import 'model/contract_info_v2.dart';
+import 'my_hash_rate_page.dart';
 
 class BuyHashRatePageV2 extends StatefulWidget {
   @override
@@ -127,13 +132,13 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                             Row(
                                               children: <Widget>[
                                                 Text(
-                                                  DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.monthInc+_contractInfoTemp.amount),
+                                                  DOUBLE_NUMBER_FORMAT
+                                                      .format(_contractInfoTemp.monthInc + _contractInfoTemp.amount),
                                                   style: TextStyle(
                                                       color: Color(0xFFf6927f),
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.normal),
                                                 ),
-                                                Text("")
                                               ],
                                             )
                                           ],
@@ -184,13 +189,32 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                         RaisedButton(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           color: Theme.of(context).primaryColor,
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PurchasePage(
-                                          contractInfo: _selectedContractInfo,
-                                        )));
+                          onPressed: () async {
+                            if (_selectedContractInfo.amount > 0) {
+                              try {
+                                PayOrder payOrder =
+                                    await _userService.createOrder(contractId: _selectedContractInfo.id);
+
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => PurchasePage(
+                                              contractInfo: _selectedContractInfo,
+                                              payOrder: payOrder,
+                                            )));
+                              } on HttpResponseCodeNotSuccess catch (_) {
+                                if (_.code == ERROR_OUT_OF_RANGE.code) {
+                                  Fluttertoast.showToast(msg: "超过购买限制数量");
+                                } else {
+                                  throw _;
+                                }
+                              }
+                            } else {
+                              PayOrder payOrder =
+                                  await _userService.createFreeOrder(contractId: _selectedContractInfo.id);
+                              Navigator.pushReplacement(
+                                  context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                            }
                           },
                           child: Container(
                             constraints: BoxConstraints.expand(height: 48),
@@ -198,7 +222,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 8),
                               child: Text(
-                                _selectedContractInfo.amount!=0?"购买":"免费领取",
+                                _selectedContractInfo.amount != 0 ? "购买" : "免费领取",
                                 style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),

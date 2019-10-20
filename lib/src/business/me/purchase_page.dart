@@ -22,7 +22,9 @@ import 'service/user_service.dart';
 class PurchasePage extends StatefulWidget {
   final ContractInfoV2 contractInfo;
 
-  PurchasePage({@required this.contractInfo});
+  final PayOrder payOrder;
+
+  PurchasePage({@required this.contractInfo, @required this.payOrder});
 
   @override
   State<StatefulWidget> createState() {
@@ -35,7 +37,7 @@ class _PurchaseState extends State<PurchasePage> {
 
   var service = UserService();
 
-  PayOrder payOrder;
+//  PayOrder payOrder;
   Quotes quotes;
   UserInfo userInfo;
 
@@ -46,15 +48,15 @@ class _PurchaseState extends State<PurchasePage> {
   }
 
   void loadData() async {
-    try {
-      var data = await service.createOrder(contractId: widget.contractInfo.id);
-      setState(() {
-        payOrder = data;
-      });
-    } catch (e) {
-      logger.e(e);
-      Fluttertoast.showToast(msg: "创建订单失败");
-    }
+//    try {
+//      var data = await service.createOrder(contractId: widget.contractInfo.id);
+//      setState(() {
+//        payOrder = data;
+//      });
+//    } catch (e) {
+//      logger.e(e);
+//      Fluttertoast.showToast(msg: "创建订单失败");
+//    }
 
     //行情
     var quotesData = await service.quotes();
@@ -101,7 +103,7 @@ class _PurchaseState extends State<PurchasePage> {
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         Text(
-                          "${widget.contractInfo.power} T算力",
+                          "${widget.contractInfo.name}",
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ],
@@ -218,9 +220,9 @@ class _PurchaseState extends State<PurchasePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (payOrder?.qr_code != null)
+              if (widget.payOrder?.qr_code != null)
                 Image.memory(
-                  Base64Decoder().convert(payOrder?.qr_code),
+                  Base64Decoder().convert(widget.payOrder?.qr_code),
                   height: 240,
                   width: 240,
                 )
@@ -232,8 +234,8 @@ class _PurchaseState extends State<PurchasePage> {
                 ),
               InkWell(
                 onTap: () {
-                  if (payOrder?.address != null) {
-                    Clipboard.setData(ClipboardData(text: payOrder?.address));
+                  if (widget.payOrder?.address != null) {
+                    Clipboard.setData(ClipboardData(text: widget.payOrder?.address));
                     Fluttertoast.showToast(msg: "地址复制成功");
                   }
                 },
@@ -245,7 +247,7 @@ class _PurchaseState extends State<PurchasePage> {
                       "支付地址",
                       style: TextStyle(fontSize: 14),
                     ),
-                    Text('${shortEthAddress(payOrder?.address)}', style: TextStyle(fontSize: 14)),
+                    Text('${shortEthAddress(widget.payOrder?.address)}', style: TextStyle(fontSize: 14)),
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: Icon(
@@ -259,8 +261,8 @@ class _PurchaseState extends State<PurchasePage> {
               ),
               InkWell(
                 onTap: () {
-                  if (payOrder?.hyn_amount != null) {
-                    Clipboard.setData(ClipboardData(text: payOrder?.hyn_amount));
+                  if (widget.payOrder?.hyn_amount != null) {
+                    Clipboard.setData(ClipboardData(text: widget.payOrder?.hyn_amount));
                     Fluttertoast.showToast(msg: "支付金额复制成功");
                   }
                 },
@@ -275,10 +277,10 @@ class _PurchaseState extends State<PurchasePage> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Container(
-                        constraints:BoxConstraints(maxWidth: 220),
+                        constraints: BoxConstraints(maxWidth: 220),
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
-                          '${payOrder?.hyn_amount}',
+                          '${widget.payOrder?.hyn_amount}',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
                           softWrap: true,
                         ),
@@ -306,7 +308,6 @@ class _PurchaseState extends State<PurchasePage> {
                 '请务必支付指定的HYN金额！',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
-
               Text(
                 '推荐使用imToken扫码支付',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
@@ -336,7 +337,7 @@ class _PurchaseState extends State<PurchasePage> {
                 child: RaisedButton(
                   color: Color(0xFF73C42D),
                   onPressed: () async {
-                    var ret = await service.confirmPay(orderId: payOrder.order_id, payType: 'HYN', fundToken: " ");
+                    var ret = await service.confirmPay(orderId: widget.payOrder.order_id, payType: 'HYN', fundToken: " ");
                     if (ret.code == 0) {
                       //支付成功
                       Fluttertoast.showToast(msg: '购买成功');
@@ -414,7 +415,7 @@ class _PurchaseState extends State<PurchasePage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: Text(
-                        '${payOrder?.amount}',
+                        '${widget.payOrder?.amount}',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFFCE9D40)),
                       ),
                     ),
@@ -443,8 +444,8 @@ class _PurchaseState extends State<PurchasePage> {
                   elevation: 1,
                   color: Color(0xFFD6A734),
                   onPressed: () async {
-                    if (userInfo != null && payOrder != null) {
-                      if (userInfo.balance < payOrder.amount) {
+                    if (userInfo != null && widget.payOrder != null) {
+                      if (userInfo.balance < widget.payOrder.amount) {
                         Fluttertoast.showToast(msg: '余额不足');
                       } else {
                         try {
@@ -458,7 +459,7 @@ class _PurchaseState extends State<PurchasePage> {
                               return;
                             }
                             var ret = await service.confirmPay(
-                                orderId: payOrder.order_id, payType: 'B_HYN', fundToken: fundToken);
+                                orderId: widget.payOrder.order_id, payType: 'B_HYN', fundToken: fundToken);
                             if (ret.code == 0) {
                               //支付成功
                               Fluttertoast.showToast(msg: '购买成功');

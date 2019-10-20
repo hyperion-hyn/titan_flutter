@@ -149,6 +149,13 @@ class MapRichApi {
         params: {"contractId": contractId}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
+  ///订单创建
+  Future<PayOrder> createFreeOrder({@required int contractId, @required String token}) async {
+    return await MapRichHttpCore.instance.postEntity(
+        'order/free', EntityFactory<PayOrder>((json) => PayOrder.fromJson(json)),
+        params: {"contractId": contractId}, options: RequestOptions(headers: {"Authorization": token}));
+  }
+
   ///充值订单创建
   Future<RechargeOrderInfo> createRechargeOrder({@required double amount, @required String token}) async {
     return await MapRichHttpCore.instance.postEntity(
