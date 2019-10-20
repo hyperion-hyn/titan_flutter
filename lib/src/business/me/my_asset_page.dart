@@ -81,16 +81,13 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => RechargePurchasePage(rechargeAmount: rechargeAmount)))
-                            .then((value) async {
-                          if (value == null || value == false) {
-                            return;
+                            .then((isSuccess) async {
+                          if (isSuccess != null && isSuccess) {
+                            await UserService.syncUserInfo();
+                            setState(() {});
+                            _tabController.index = 0;
+                            eventBus.fire(Refresh());
                           }
-                          await UserService.syncUserInfo();
-                          _tabController.index  = 0;
-
-                          eventBus.fire(Refresh());
-
-                          setState(() {});
                         });
                       });
                     },
@@ -550,7 +547,6 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
     _eventBusSubscription?.cancel();
     super.dispose();
   }
-
 }
 
 class Refresh {}
