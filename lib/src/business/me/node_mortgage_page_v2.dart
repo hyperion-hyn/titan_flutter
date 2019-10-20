@@ -23,7 +23,7 @@ class NodeMortgagePageV2 extends StatefulWidget {
 class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
   UserService _userService = UserService();
 
-  List<MortgageInfoV2> contractList = [MortgageInfoV2(0, "", "", "", 0, "", 0, 0, 0)];
+  List<MortgageInfoV2> _mortgageList = [MortgageInfoV2(0, "", "", "", 0, "", 0, 0, 0)];
 
 //  MortgageInfoV2 _selectedMortgageInfo = MortgageInfoV2(0, "", "", "", 0, "", 0, 0, 0);
 
@@ -92,7 +92,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                       onPageChanged: _onPageChanged,
                       height: 250.0,
                       enlargeCenterPage: true,
-                      items: contractList.map((_contractInfoTemp) {
+                      items: _mortgageList.map((_mortgageInfoTemp) {
                         return Builder(
                           builder: (BuildContext context) {
                             return Container(
@@ -105,11 +105,14 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                   children: <Widget>[
                                     Row(
                                       children: <Widget>[
-                                        Image.memory(
-                                          Base64Decoder().convert(
-                                              (_contractInfoTemp.icon.replaceAll("data:image/png;base64,", ""))),
+                                        FadeInImage.assetNetwork(
+                                          image: _mortgageInfoTemp.icon,
+                                          placeholder: 'res/drawable/img_placeholder.jpg',
+//                                          width: 170,
                                           height: 130,
+                                          fit: BoxFit.cover,
                                         )
+
                                       ],
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.max,
@@ -120,13 +123,13 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                         Column(
                                           children: <Widget>[
                                             Text(
-                                              _contractInfoTemp.name,
+                                              _mortgageInfoTemp.name,
                                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                             ),
                                             Row(
                                               children: <Widget>[
                                                 Text(
-                                                  DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount),
+                                                  DOUBLE_NUMBER_FORMAT.format(_mortgageInfoTemp.amount),
                                                   style: TextStyle(
                                                       color: Color(0xFFf6927f),
                                                       fontSize: 18,
@@ -141,13 +144,13 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                         Column(
                                           children: <Widget>[
                                             Text(
-                                              "${contractList[selectedIndex].incomeCycle}天收益(%)",
+                                              "${_mortgageList[selectedIndex].incomeCycle}天收益(%)",
                                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                                             ),
                                             Row(
                                               children: <Widget>[
                                                 Text(
-                                                  contractList[selectedIndex].incomeRate,
+                                                  _mortgageList[selectedIndex].incomeRate,
                                                   style: TextStyle(
                                                       color: Color(0xFFf6927f),
                                                       fontSize: 14,
@@ -188,7 +191,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                         Expanded(
                           child: SingleChildScrollView(
                             child: Text(
-                              contractList[selectedIndex].description,
+                              _mortgageList[selectedIndex].description,
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
@@ -204,7 +207,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => MortgagePage(
-                                              contractList[selectedIndex],
+                                              _mortgageList[selectedIndex],
                                             )));
                               },
                               child: Container(
@@ -222,7 +225,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                             RaisedButton(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                               color: Color(0xFFBF3330),
-                              onPressed: contractList[selectedIndex].snapUpStocks == 0 ? null : snapUpOnTap,
+                              onPressed: _mortgageList[selectedIndex].snapUpStocks == 0 ? null : snapUpOnTap,
                               child: Container(
                                 height: 48,
                                 alignment: Alignment.center,
@@ -237,7 +240,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                             TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
                                       Text(
-                                        "  剩余 ${contractList[selectedIndex].snapUpStocks}",
+                                        "  剩余 ${_mortgageList[selectedIndex].snapUpStocks}",
                                         style:
                                             TextStyle(color: Color(0xFFFFC500), fontSize: 14, fontWeight: FontWeight.normal),
                                       ),
@@ -259,7 +262,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
   }
 
   Future _getContractList() async {
-    contractList = await _userService.getMortgageListV2();
+    _mortgageList = await _userService.getMortgageListV2();
     if (mounted) {
       setState(() {});
     }
@@ -274,11 +277,11 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
     //获取最新的合约记录及库存
     await _getContractList();
 
-    var selectedContract = contractList[selectedIndex];
+    var selectedContract = _mortgageList[selectedIndex];
     if (selectedContract.snapUpStocks <= 0) {
       Fluttertoast.showToast(msg: "节点已抢购完");
       return;
     }
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MortgageSnapUpPage(contractList[selectedIndex])));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MortgageSnapUpPage(_mortgageList[selectedIndex])));
   }
 }

@@ -86,7 +86,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                         FadeInImage.assetNetwork(
                                           image: _contractInfoTemp.icon,
                                           placeholder: 'res/drawable/img_placeholder.jpg',
-                                          width: 170,
+//                                          width: 170,
                                           height: 130,
                                           fit: BoxFit.cover,
                                         )
