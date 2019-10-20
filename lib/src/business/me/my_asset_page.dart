@@ -85,6 +85,10 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                             return;
                           }
                           await UserService.syncUserInfo();
+                          _tabController.index  = 0;
+
+                          eventBus.fire(Refresh());
+
                           setState(() {});
                         });
                       });
