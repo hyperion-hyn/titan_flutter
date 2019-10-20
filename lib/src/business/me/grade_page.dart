@@ -60,7 +60,7 @@ class _GradeState extends State<GradePage> {
                         height: 8,
                       ),
                       Text(
-                        LOGIN_USER_INFO.level,
+                        LOGIN_USER_INFO.level==""?"无等级":LOGIN_USER_INFO.level,
                         style: TextStyle(fontSize: 16, color: Color(0xFF3C94FF)),
                       ),
                     ],

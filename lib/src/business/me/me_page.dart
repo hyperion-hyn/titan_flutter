@@ -132,7 +132,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                             child: Text(
-                                              LOGIN_USER_INFO.level,
+                                              LOGIN_USER_INFO.level==""?"无等级":LOGIN_USER_INFO.level,
                                               style: TextStyle(fontSize: 10, color: HexColor("#B4B4B4")),
                                             ),
                                           ),
