@@ -121,13 +121,13 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                         Column(
                                           children: <Widget>[
                                             Text(
-                                              "${_contractInfoTemp.timeCycle}天收益(USDT)",
+                                              "${_contractInfoTemp.timeCycle}天产出(USDT)",
                                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                                             ),
                                             Row(
                                               children: <Widget>[
                                                 Text(
-                                                  DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.monthInc),
+                                                  DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.monthInc+_contractInfoTemp.amount),
                                                   style: TextStyle(
                                                       color: Color(0xFFf6927f),
                                                       fontSize: 14,
@@ -198,7 +198,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 8),
                               child: Text(
-                                "购买",
+                                _selectedContractInfo.amount!=0?"购买":"免费领取",
                                 style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
