@@ -83,10 +83,12 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                   children: <Widget>[
                                     Row(
                                       children: <Widget>[
-                                        Image.memory(
-                                          Base64Decoder().convert(
-                                              (_contractInfoTemp.icon.replaceAll("data:image/jpeg;base64,", ""))),
+                                        FadeInImage.assetNetwork(
+                                          image: _contractInfoTemp.icon,
+                                          placeholder: 'res/drawable/img_placeholder.jpg',
+                                          width: 170,
                                           height: 130,
+                                          fit: BoxFit.cover,
                                         )
                                       ],
                                       mainAxisAlignment: MainAxisAlignment.center,
