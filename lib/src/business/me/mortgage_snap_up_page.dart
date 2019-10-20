@@ -4,11 +4,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
+import 'package:titan/src/business/me/recharge_purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 
 import 'enter_fund_password.dart';
+import 'enter_recharge_count.dart';
 import 'model/mortgage_info.dart';
 import 'model/mortgage_info_v2.dart';
 
@@ -25,7 +27,7 @@ class MortgageSnapUpPage extends StatefulWidget {
 
 class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
   var service = UserService();
-  UserInfo userInfo;
+//  UserInfo userInfo;
 
   @override
   void initState() {
@@ -34,10 +36,10 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
   }
 
   void loadData() async {
-    var _userInfo = await service.getUserInfo();
-    setState(() {
-      userInfo = _userInfo;
-    });
+   await UserService.syncUserInfo();
+   setState(() {
+
+   });
   }
 
   @override
@@ -132,7 +134,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                         style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                       ),
                       Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(userInfo?.chargeBalance ?? 0)} USDT",
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO?.chargeBalance ?? 0)} USDT",
                         style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
                       ),
                     ],
@@ -145,16 +147,61 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
         SizedBox(
           height: 32,
         ),
+        if (LOGIN_USER_INFO.chargeBalance < widget.mortgageInfo.amount)
+          Container(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "余额不足以支付",
+                  style: TextStyle(color: Colors.red),
+                ),
+                SizedBox(
+                  width: 16,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EnterRechargeCount();
+                        }).then((rechargeAmount) async {
+                      if (rechargeAmount == null) {
+                        return;
+                      }
+                      Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RechargePurchasePage(rechargeAmount: rechargeAmount)))
+                          .then((value) async {
+                        if (value == null || value == false) {
+                          return;
+                        }
+                        await UserService.syncUserInfo();
+                        setState(() {});
+                      });
+                    });
+                  },
+                  child: Text(
+                    "点击充值余额",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
+              ],
+            ),
+          ),
         RaisedButton(
           elevation: 1,
           color: Theme.of(context).primaryColor,
           onPressed: () async {
-            if (widget.mortgageInfo != null && userInfo != null) {
-              if (userInfo.chargeBalance < widget.mortgageInfo.amount) {
+            if (widget.mortgageInfo != null && LOGIN_USER_INFO != null) {
+              if (LOGIN_USER_INFO.chargeBalance < widget.mortgageInfo.amount) {
                 Fluttertoast.showToast(msg: '余额不足');
               } else {
                 showModalBottomSheet(
-                  isScrollControlled: true,
+                    isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context) {
                       return EnterFundPasswordWidget();

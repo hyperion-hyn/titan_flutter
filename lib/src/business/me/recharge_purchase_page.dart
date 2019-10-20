@@ -230,6 +230,10 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 '请务必支付指定的HYN金额！',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
+              Text(
+                '推荐使用imToken扫码支付',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 22.0),
                 child: RaisedButton(
@@ -259,7 +263,8 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     if (ret.code == 0) {
                       //支付成功
                       Fluttertoast.showToast(msg: '充值成功');
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
+//                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
+                      Navigator.pop(context, true);
                     } else {
                       if (ret.code == -1007) {
                         Fluttertoast.showToast(msg: '已到达购买上限');

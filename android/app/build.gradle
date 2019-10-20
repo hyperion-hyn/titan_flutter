@@ -75,15 +75,15 @@ android {
         }
 
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
 
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
                     if(output.outputFileName.contains('-release')) {
-                        def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
+                        def fileName = "maprich_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
                         output.outputFileName = fileName
                     }
                 }
