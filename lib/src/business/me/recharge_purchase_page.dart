@@ -202,15 +202,25 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
                         "请支付",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
+                      Container(
+                        constraints: BoxConstraints(maxWidth: 220),
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          '${rechargeOrder?.hynAmount}',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
+                          softWrap: true,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
-                          '${rechargeOrder?.hynAmount} HYN',
+                          'HYN',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
                         ),
                       ),

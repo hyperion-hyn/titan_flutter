@@ -268,15 +268,25 @@ class _PurchaseState extends State<PurchasePage> {
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
                         "请支付",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
+                      Container(
+                        constraints:BoxConstraints(maxWidth: 220),
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          '${payOrder?.hyn_amount}',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
+                          softWrap: true,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
-                          '${payOrder?.hyn_amount} HYN',
+                          'HYN',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
                         ),
                       ),
