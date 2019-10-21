@@ -54,6 +54,7 @@ class HomePanelState extends UserState<HomePanel> {
   void initState() {
     super.initState();
     streamSubscription = eventBus.on().listen(eventBusListener);
+    setDianpingCookies();
   }
 
   @override
@@ -80,6 +81,12 @@ class HomePanelState extends UserState<HomePanel> {
         });
       }
     }
+  }
+
+  Future setDianpingCookies() async {
+    String cookies = await _userService.getDianpingCookies();
+    var cookie = Cookie.fromSetCookieValue('_lxsdk_cuid=$cookies');
+    await fake.CookieManager.saveCookies(url: 'm.dianping.com', cookies: [cookie]);
   }
 
   @override
@@ -130,8 +137,6 @@ class HomePanelState extends UserState<HomePanel> {
 //                  ));
 //                  print(html);
 
-                  var cookie = Cookie.fromSetCookieValue('_lxsdk_cuid=16dd39a12ffc8-08a9200bd0e877-2d604637-4a574-16dd39a12ffc8');
-                  await fake.CookieManager.saveCookies(url: 'm.dianping.com', cookies: [cookie]);
 //
 //                  var cookies = await fake.CookieManager.loadCookies(url: 'm.dianping.com');
 //                  print('>>>---' * 10);

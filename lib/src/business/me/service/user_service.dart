@@ -188,7 +188,6 @@ class UserService {
     return await _mapRichApi.createOrder(contractId: contractId, token: userToken.token);
   }
 
-
   ///订单免费创建
   Future<PayOrder> createFreeOrder({@required int contractId}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
@@ -247,14 +246,14 @@ class UserService {
 
   ///提币
   Future<dynamic> withdrawalApply(
-      {@required double amount, @required String address, @required String fundToken,@required int type}) async {
+      {@required double amount, @required String address, @required String fundToken, @required int type}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
 
     return await _mapRichApi.withdrawalApply(
-        address: address, amount: amount, token: userToken.token, fundToken: fundToken,type:type);
+        address: address, amount: amount, token: userToken.token, fundToken: fundToken, type: type);
   }
 
   Future<UserToken> getUserTokenFromSharedpref() async {
@@ -323,6 +322,10 @@ class UserService {
       throw new Exception("not login");
     }
     return await _mapRichApi.redemption(token: userToken.token, id: id, fundToken: fundToken);
+  }
+
+  Future<String> getDianpingCookies() async {
+    return await _mapRichApi.getDianpingCookies();
   }
 
   ///附近可以分享的位置
