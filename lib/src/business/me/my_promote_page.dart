@@ -29,7 +29,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
 
 //  PageResponse<PromotionInfo> _pageResponse = PageResponse(0, 0, []);
 
-  String link = "${Const.MAP_RICH_DOMAIN}register?code=${LOGIN_USER_INFO.id}";
+  String link = "${Const.MAP_RICH_DOMAIN_WEBSITE}register?code=${LOGIN_USER_INFO.id}";
 
   @override
   void postFrameCallBackAfterInitState() async {
