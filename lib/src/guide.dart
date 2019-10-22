@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:titan/src/business/login/login_event.dart';
+import 'package:titan/src/business/login/login_bus_event.dart';
 import 'package:titan/src/business/login/login_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/home_build.dart';
@@ -51,11 +51,11 @@ class _GuildState extends State<GuidePage> {
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
       print("event:$event");
-      if (event is ReloginEvent) {
+      if (event is ReloginBusEvent) {
         Navigator.popUntil(context, (r) => r.isFirst);
         await _userService.signOut();
         _checkLoginStatus();
-      } else if (event is LoginSuccessEvent) {
+      } else if (event is LoginSuccessBusEvent) {
         setState(() {});
       }
     });
