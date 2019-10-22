@@ -404,7 +404,7 @@ class MapContainerState extends State<MapContainer> {
 
   int _clickTimes = 0;
 
-  void _toMyLocation() {
+  Future _toMyLocation() async {
     _locationClickSubscription?.cancel();
 
     _clickTimes++;
@@ -424,7 +424,9 @@ class MapContainerState extends State<MapContainer> {
           mapboxMapController?.animateCamera(CameraUpdate.newLatLng(latLng));
         }
       }
-      mapboxMapController?.enableLocation();
+      Future.delayed(Duration(milliseconds: 500), () {
+        mapboxMapController?.enableLocation();
+      });
       _clickTimes = 0;
     });
   }
