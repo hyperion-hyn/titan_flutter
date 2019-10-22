@@ -157,13 +157,6 @@ class HomePanelState extends UserState<HomePanel> {
             child: Stack(
               children: <Widget>[
                 Container(
-                  height: 2,
-//                  width: 80,
-                  child: WebViewContainer(
-                    initUrl: "https://m.dianping.com/",
-                  ),
-                ),
-                Container(
                   height: 16,
                   color: Colors.white,
                 ),
