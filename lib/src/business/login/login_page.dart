@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
-import 'package:titan/src/business/login/bloc/bloc.dart';
 import 'package:titan/src/business/login/register_page.dart';
 import 'package:titan/src/business/login/reset_password_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+
+import 'login_bloc/bloc.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -33,10 +34,6 @@ class _LoginPageState extends State<LoginPage> {
         var loginButtonText = state is Logining ? "登录中" : "登录";
         Function loginOnPress = state is Logining ? null : _submit;
         var fieldEnable = state is Logining ? false : true;
-
-        if (state is LoginFail) {
-          Fluttertoast.showToast(msg: "登录失败");
-        }
 
         return Scaffold(
           backgroundColor: Colors.white,

@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:titan/src/business/login/bloc/login_event.dart';
-import 'package:titan/src/business/login/bloc/login_state.dart';
-
 import 'package:bloc/bloc.dart';
 import 'package:titan/src/business/login/login_bus_event.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/md5_util.dart';
+
+import 'bloc.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   UserService _userService;
@@ -38,7 +38,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
     } catch (_) {
       yield LoginFail("系统错误");
-      throw _;
+      ExceptionProcess.process(_);
     }
   }
 }
