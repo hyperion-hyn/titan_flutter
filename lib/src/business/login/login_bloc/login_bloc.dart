@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:titan/src/business/login/login_bus_event.dart';
+import 'package:titan/src/business/login/submit_bloc/bloc.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/global.dart';
@@ -10,34 +11,30 @@ import 'package:titan/src/utils/md5_util.dart';
 
 import 'bloc.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class LoginBloc extends Bloc<LoginEvent, SubmitState> {
   UserService _userService;
 
   LoginBloc(this._userService);
 
   @override
-  LoginState get initialState => WaittingLogin();
+  SubmitState get initialState => InitSubmitState();
 
   @override
-  Stream<LoginState> mapEventToState(LoginEvent event) async* {
+  Stream<SubmitState> mapEventToState(LoginEvent event) async* {
     if (event is Login) {
       yield* _mapLogin(event);
     }
   }
 
-  Stream<LoginState> _mapLogin(Login event) async* {
-    yield Logining();
+  Stream<SubmitState> _mapLogin(Login event) async* {
+    yield Submiting();
     try {
-      UserToken userToken = await _userService.login(event.email, Md5Util.generateMd5(event.password));
-      if (userToken == null) {
-        yield LoginFail("系统错误");
-      } else {
-        LOGIN_STATUS = 2;
-        eventBus.fire(LoginSuccessBusEvent());
-        yield LoginSuccess();
-      }
+      await _userService.login(event.email, Md5Util.generateMd5(event.password));
+      LOGIN_STATUS = 2;
+      eventBus.fire(LoginSuccessBusEvent());
+      yield SubmitSuccess();
     } catch (_) {
-      yield LoginFail("系统错误");
+      yield SubmitFail(message: "系统错误");
       ExceptionProcess.process(_);
     }
   }

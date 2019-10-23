@@ -5,6 +5,7 @@ import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
 import 'package:titan/src/business/login/register_page.dart';
 import 'package:titan/src/business/login/reset_password_page.dart';
+import 'package:titan/src/business/login/submit_bloc/bloc.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
@@ -28,12 +29,12 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<LoginBloc, SubmitState>(
       bloc: _loginBloc,
-      builder: (BuildContext context, LoginState state) {
-        var loginButtonText = state is Logining ? "登录中" : "登录";
-        Function loginOnPress = state is Logining ? null : _submit;
-        var fieldEnable = state is Logining ? false : true;
+      builder: (BuildContext context, SubmitState state) {
+        var loginButtonText = state is Submiting ? "登录中" : "登录";
+        Function loginOnPress = state is Submiting ? null : _submit;
+        var fieldEnable = state is Submiting ? false : true;
 
         return Scaffold(
           backgroundColor: Colors.white,
@@ -170,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  if (state is Logining)
+                                  if (state is Submiting)
                                     Padding(
                                       padding: const EdgeInsets.only(right: 16.0),
                                       child: SizedBox(

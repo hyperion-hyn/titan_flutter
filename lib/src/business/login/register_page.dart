@@ -6,9 +6,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
 import 'package:titan/src/business/login/register_bloc/bloc.dart';
+import 'package:titan/src/business/login/submit_bloc/bloc.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
-import 'package:titan/src/utils/md5_util.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -36,14 +36,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RegisterBloc, RegisterState>(
+    return BlocBuilder<RegisterBloc, SubmitState>(
         bloc: _registerBloc,
-        builder: (BuildContext context, RegisterState state) {
-          var _registerButtonText = state is Registering ? "处理中" : "注册";
-          Function _registerOnPress = state is Registering ? null : _submit;
-          var _fieldEnable = state is Registering ? false : true;
+        builder: (BuildContext context, SubmitState state) {
+          var _registerButtonText = state is Submiting ? "处理中" : "注册";
+          Function _registerOnPress = state is Submiting ? null : _submit;
+          var _fieldEnable = state is Submiting ? false : true;
 
-          if (state is RegisterSuccess) {
+          if (state is SubmitSuccess) {
             Fluttertoast.showToast(msg: "注册成功");
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pop(context, true);
@@ -263,7 +263,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  if (state is Registering)
+                                  if (state is Submiting)
                                     Padding(
                                       padding: const EdgeInsets.only(right: 16.0),
                                       child: SizedBox(

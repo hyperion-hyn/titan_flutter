@@ -1,4 +1,6 @@
-abstract class RegisterEvent {
+import 'package:titan/src/business/login/submit_bloc/bloc.dart';
+
+abstract class RegisterEvent extends SubmitEvent {
   const RegisterEvent();
 }
 
