@@ -5,29 +5,29 @@ import 'package:titan/src/utils/md5_util.dart';
 
 import 'bloc.dart';
 
-class RegisterBloc extends SubmitBloc<RegisterEvent, SubmitState> {
+class ResetFundPasswordBloc extends SubmitBloc<SubmitEvent, SubmitState> {
   UserService _userService;
 
-  RegisterBloc(this._userService);
+  ResetFundPasswordBloc(this._userService);
 
   @override
   SubmitState get initialState => InitSubmitState();
 
   @override
   Stream<SubmitState> mapEventToState(SubmitEvent event) async* {
-    if (event is Register) {
-      yield* _mapRegister(event);
+    if (event is ResetFundPassword) {
+      yield* _mapResetPassword(event);
     }
   }
 
-  Stream<SubmitState> _mapRegister(Register event) async* {
+  Stream<SubmitState> _mapResetPassword(ResetFundPassword event) async* {
     yield Submiting();
     try {
-      await _userService.registoer(event.email, Md5Util.generateMd5(event.password), event.verificationCode,
-          event.invitationCode, Md5Util.generateMd5(event.fundPassword));
+      await _userService.resetFundPassword(event.email, Md5Util.generateMd5(event.loginPassword),
+          Md5Util.generateMd5(event.fundPassword), event.verificationCode);
       yield SubmitSuccess();
     } catch (_) {
-      yield SubmitFail(message: "系统错误");
+      yield SubmitFail();
       ExceptionProcess.process(_);
     }
   }

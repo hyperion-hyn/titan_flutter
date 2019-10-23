@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
+import 'package:titan/src/basic/bloc/submit_bloc/bloc.dart';
 import 'package:titan/src/business/login/register_bloc/bloc.dart';
-import 'package:titan/src/business/login/submit_bloc/bloc.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 
