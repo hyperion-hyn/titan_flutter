@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/app.dart';
-import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/domain/firebase.dart';
+import 'package:titan/src/utils/exception_process.dart';
 
 import 'env.dart';
 import 'src/basic/bloc/app_bloc_delegate.dart';
@@ -47,17 +45,6 @@ void main() {
   }, onError: (error, stackTrace) {
     print(error);
     print(stackTrace);
-    if (error is HttpResponseCodeNotSuccess) {
-      HttpResponseCodeNotSuccess notSuccessError = NOT_SUCCESS_ERROR_CODE_MAP[error.code];
-      if (notSuccessError == null) {
-        Fluttertoast.showToast(msg: "未定义错误");
-      } else {
-        Fluttertoast.showToast(msg: notSuccessError.message);
-      }
-    } else if (error is DioError) {
-      Fluttertoast.showToast(msg: "网络错误");
-    } else {
-//      Fluttertoast.showToast(msg: "服务器正忙，请稍后再试");
-    }
+    ExceptionProcess.process(error, isThrow: false);
   });
 }
