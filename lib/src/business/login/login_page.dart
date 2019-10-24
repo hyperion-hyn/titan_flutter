@@ -10,7 +10,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/md5_util.dart';
 
-import 'login_event.dart';
+import 'login_bus_event.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -209,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         Fluttertoast.showToast(msg: "登录成功");
         LOGIN_STATUS = 2;
-        eventBus.fire(LoginSuccessEvent());
+        eventBus.fire(LoginSuccessBusEvent());
       }
     }
   }

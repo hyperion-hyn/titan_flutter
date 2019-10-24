@@ -277,7 +277,7 @@ class _PurchaseState extends State<PurchasePage> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Container(
-                        constraints: BoxConstraints(maxWidth: 220),
+                        constraints: BoxConstraints(maxWidth: 180),
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
                           '${widget.payOrder?.hyn_amount}',
