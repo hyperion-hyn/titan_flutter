@@ -3,21 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:titan/src/app.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
-import 'package:titan/src/business/me/my_asset_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
-import 'model/contract_info.dart';
-import 'model/contract_info_v2.dart';
-import 'model/pay_order.dart';
-import 'model/recharge_order_info.dart';
 import 'model/quotes.dart';
-import 'my_hash_rate_page.dart';
+import 'model/recharge_order_info.dart';
 import 'service/user_service.dart';
 
 class RechargePurchasePage extends StatefulWidget {
@@ -146,12 +138,64 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
     return Column(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              InkWell(
+                onTap: () {
+                  if (rechargeOrder?.hynAmount != null) {
+                    Clipboard.setData(ClipboardData(text: rechargeOrder?.hynAmount));
+                    Fluttertoast.showToast(msg: "支付金额复制成功");
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "请支付",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      Container(
+                        constraints: BoxConstraints(maxWidth: 220),
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          '${rechargeOrder?.hynAmount}',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
+                          softWrap: true,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          'HYN',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Icon(
+                          Icons.content_copy,
+                          size: 16,
+                          color: Colors.black54,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Text(
+                '请务必支付指定的HYN金额！',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
+              ),
               if (rechargeOrder?.qrCode != null)
                 Image.memory(
                   Base64Decoder().convert(rechargeOrder?.qrCode),
@@ -191,59 +235,15 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                   ],
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  if (rechargeOrder?.hynAmount != null) {
-                    Clipboard.setData(ClipboardData(text: rechargeOrder?.hynAmount));
-                    Fluttertoast.showToast(msg: "支付金额复制成功");
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "请支付",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Container(
-                        constraints: BoxConstraints(maxWidth: 180),
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          '${rechargeOrder?.hynAmount}',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
-                          softWrap: true,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          'HYN',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Icon(
-                          Icons.content_copy,
-                          size: 16,
-                          color: Colors.black54,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+
+              SizedBox(
+                height: 16,
               ),
-              Text(
-                '请务必支付指定的HYN金额！',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
-              ),
-              Text(
-                '推荐使用imToken扫码支付',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
-              ),
+
+//              Text(
+//                '推荐使用imToken扫码支付',
+//                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
+//              ),
               Padding(
                 padding: const EdgeInsets.only(top: 22.0),
                 child: RaisedButton(

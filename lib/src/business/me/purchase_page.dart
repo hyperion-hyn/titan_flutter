@@ -205,45 +205,6 @@ class _PurchaseState extends State<PurchasePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (widget.payOrder?.qr_code != null)
-                Image.memory(
-                  Base64Decoder().convert(widget.payOrder?.qr_code),
-                  height: 240,
-                  width: 240,
-                )
-              else
-                Container(
-                  color: Colors.white,
-                  height: 240,
-                  width: 240,
-                ),
-              InkWell(
-                onTap: () {
-                  if (widget.payOrder?.address != null) {
-                    Clipboard.setData(ClipboardData(text: widget.payOrder?.address));
-                    Fluttertoast.showToast(msg: "地址复制成功");
-                  }
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "支付地址",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    Text('${shortEthAddress(widget.payOrder?.address)}', style: TextStyle(fontSize: 14)),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Icon(
-                        Icons.content_copy,
-                        size: 16,
-                        color: Colors.black54,
-                      ),
-                    )
-                  ],
-                ),
-              ),
               InkWell(
                 onTap: () {
                   if (widget.payOrder?.hyn_amount != null) {
@@ -289,14 +250,57 @@ class _PurchaseState extends State<PurchasePage> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 8,
+              ),
               Text(
                 '请务必支付指定的HYN金额！',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
-              Text(
-                '推荐使用imToken扫码支付',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
+              if (widget.payOrder?.qr_code != null)
+                Image.memory(
+                  Base64Decoder().convert(widget.payOrder?.qr_code),
+                  height: 240,
+                  width: 240,
+                )
+              else
+                Container(
+                  color: Colors.white,
+                  height: 240,
+                  width: 240,
+                ),
+              InkWell(
+                onTap: () {
+                  if (widget.payOrder?.address != null) {
+                    Clipboard.setData(ClipboardData(text: widget.payOrder?.address));
+                    Fluttertoast.showToast(msg: "地址复制成功");
+                  }
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "支付地址",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    Text('${shortEthAddress(widget.payOrder?.address)}', style: TextStyle(fontSize: 14)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Icon(
+                        Icons.content_copy,
+                        size: 16,
+                        color: Colors.black54,
+                      ),
+                    )
+                  ],
+                ),
               ),
+
+//              Text(
+//                '推荐使用imToken扫码支付',
+//                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
+//              ),
               Padding(
                 padding: const EdgeInsets.only(top: 22.0),
                 child: RaisedButton(

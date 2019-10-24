@@ -6,7 +6,7 @@ import 'package:titan/src/business/about/about_me_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
-import 'package:titan/src/business/me/node_mortgage_page_v2.dart';
+import 'package:titan/src/business/me/node_mortgage/node_mortgage_page_v2.dart';
 import 'package:titan/src/business/me/personal_settings_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
