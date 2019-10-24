@@ -20,11 +20,6 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   @override
   ScaffoldMapState get initialState => InitialScaffoldMapState();
 
-  @override
-  Stream<ScaffoldMapState> transform(
-      Stream<ScaffoldMapEvent> events, Stream<ScaffoldMapState> Function(ScaffoldMapEvent event) next) {
-    return super.transform(events, next);
-  }
 
   @override
   Stream<ScaffoldMapState> mapEventToState(ScaffoldMapEvent event) async* {
@@ -83,7 +78,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     /*clear selected poi*/
     else if (event is ClearSelectPoiEvent) {
       //check if have search list
-      var searchPoiList = currentState.getSearchPoiList();
+      var searchPoiList = state.getSearchPoiList();
       if (searchPoiList == null || searchPoiList.isEmpty) {
         yield _getHomeState();
       } else {
@@ -159,8 +154,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
         );
       }
     } else if (event is ExistRouteEvent) {
-      if (currentState.getCurrentPoi() != null) {
-        yield ShowPoiState(poi: currentState.getCurrentPoi());
+      if (state.getCurrentPoi() != null) {
+        yield ShowPoiState(poi: state.getCurrentPoi());
       } else {
         yield _getHomeState();
       }
@@ -174,16 +169,16 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   }
 
   ScaffoldMapState _getHomeState() {
-    DMapConfigModel dmap = currentState.dMapConfigModel;
-    ScaffoldMapState state;
+    DMapConfigModel dmap = state.dMapConfigModel;
+    ScaffoldMapState mapState;
     print('dmapname ${dmap?.dMapName}');
     if (dmap == null) {
-      state = InitialScaffoldMapState();
+      mapState = InitialScaffoldMapState();
     } else {
-      state = InitDMapState(dMapConfigModel: dmap);
+      mapState = InitDMapState(dMapConfigModel: dmap);
     }
 
-    return state;
+    return mapState;
   }
 
   ///profile: driving, walking, cycling";

@@ -30,9 +30,9 @@ class MapRoute extends StatelessWidget {
   Widget buildHeader(BuildContext context, RouteSceneState state) {
     return WillPopScope(
       onWillPop: () async {
-        BlocProvider.of<MapBloc>(context).dispatch(CloseRouteEvent());
+        BlocProvider.of<MapBloc>(context).add(CloseRouteEvent());
         if (state.selectedPoi != null) {
-          BlocProvider.of<home.HomeBloc>(context).dispatch(home.ShowPoiEvent(poi: state.selectedPoi));
+          BlocProvider.of<home.HomeBloc>(context).add(home.ShowPoiEvent(poi: state.selectedPoi));
         }
         return false;
       },
@@ -51,9 +51,9 @@ class MapRoute extends StatelessWidget {
                       child: Icon(Icons.arrow_back_ios),
                     ),
                     onTap: () {
-                      BlocProvider.of<MapBloc>(context).dispatch(CloseRouteEvent());
+                      BlocProvider.of<MapBloc>(context).add(CloseRouteEvent());
                       if (state.selectedPoi != null) {
-                        BlocProvider.of<home.HomeBloc>(context).dispatch(home.ShowPoiEvent(poi: state.selectedPoi));
+                        BlocProvider.of<home.HomeBloc>(context).add(home.ShowPoiEvent(poi: state.selectedPoi));
                       }
                     },
                   ),

@@ -26,7 +26,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<DiscoverBloc>(context).dispatch(LoadFocusImageEvent());
+    BlocProvider.of<DiscoverBloc>(context).add(LoadFocusImageEvent());
   }
 
   @override
@@ -356,7 +356,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
   }
 
   void activeDMap(String dMapName) {
-    BlocProvider.of<DiscoverBloc>(context).dispatch(ActiveDMapEvent(name: dMapName));
+    BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
 
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {

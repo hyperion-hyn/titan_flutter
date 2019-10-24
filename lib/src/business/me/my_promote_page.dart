@@ -35,7 +35,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
   void postFrameCallBackAfterInitState() async {
     await _updateUserInstance();
 
-    loadDataBloc.dispatch(LoadingEvent());
+    loadDataBloc.add(LoadingEvent());
   }
 
 //  @override

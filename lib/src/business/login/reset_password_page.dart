@@ -293,7 +293,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
       String password = passwordEditingController.text;
       int verificationCode = int.parse(verificationCodeEditingController.text);
 
-      _resetPasswordBloc.dispatch(ResetPassword(email, password, verificationCode));
+      _resetPasswordBloc.add(ResetPassword(email, password, verificationCode));
     }
   }
 

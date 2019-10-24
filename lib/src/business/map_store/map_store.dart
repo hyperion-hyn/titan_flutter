@@ -36,7 +36,7 @@ class _MapStorePageState extends State<MapStorePage> {
 
     _mapStoreBloc = MapStoreBloc(context: context, mapStoreNetworkRepository: _mapStoreNetworkRepository);
 
-    _mapStoreBloc.dispatch(LoadMapStoreItemsEvent(channel: "", language: ""));
+    _mapStoreBloc.add(LoadMapStoreItemsEvent(channel: "", language: ""));
 
     _purchasedMapBloc = BlocProvider.of<PurchasedMapBloc>(context);
   }

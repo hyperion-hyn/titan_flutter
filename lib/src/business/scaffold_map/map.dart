@@ -117,7 +117,7 @@ class MapContainerState extends State<MapContainer> {
 
     //if click nothing on the map
     if (this.currentPoi != null) {
-      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
     }
   }
 
@@ -143,7 +143,7 @@ class MapContainerState extends State<MapContainer> {
 
     //if click on no symbol, then add the place where it is
     var poi = PoiEntity(latLng: coordinates);
-    BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
+    BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
   }
 
   void addMarker(IPoi poi) async {
@@ -276,7 +276,7 @@ class MapContainerState extends State<MapContainer> {
       print("poi:$poi");
 
       if (poi != null) {
-        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
         return true;
       }
     }
@@ -294,7 +294,7 @@ class MapContainerState extends State<MapContainer> {
       var firstFeature = json.decode(symbolFeatures[0]);
       print("firstFeature :$firstFeature");
       var poi = _convertHeavenMapPoiInfoFromFeature(firstFeature);
-      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+      BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
       return true;
     } else {
       return false;
@@ -347,7 +347,7 @@ class MapContainerState extends State<MapContainer> {
       }
 
       var poi = PoiEntity(name: name, latLng: coordinates);
-      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
+      BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
 
       return true;
     } else {

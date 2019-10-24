@@ -301,7 +301,7 @@ class _RegisterPageState extends State<RegisterPage> {
       String fundPassword = safetyPasswordEditingController.text;
       String invitationCode = invitationCodeEditingController.text;
       int verificationCode = int.parse(verificationCodeEditingController.text);
-      _registerBloc.dispatch(Register(email, password, fundPassword, invitationCode, verificationCode));
+      _registerBloc.add(Register(email, password, fundPassword, invitationCode, verificationCode));
     }
   }
 

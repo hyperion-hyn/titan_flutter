@@ -102,7 +102,7 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                         });
 //                        isLoading = true;
 //                        _getPowerListByPage(currentPage);
-                        loadDataBloc.dispatch(LoadingEvent());
+                        loadDataBloc.add(LoadingEvent());
                       },
                     )
                 ],
@@ -117,13 +117,13 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                   await _getPowerListByPage(FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
-                    loadDataBloc.dispatch(LoadEmptyEvent());
+                    loadDataBloc.add(LoadEmptyEvent());
                   } else {
-                    loadDataBloc.dispatch(RefreshSuccessEvent());
+                    loadDataBloc.add(RefreshSuccessEvent());
                   }
                 } catch (e) {
                   logger.e(e);
-                  loadDataBloc.dispatch(LoadFailEvent());
+                  loadDataBloc.add(LoadFailEvent());
                 }
               },
               onRefresh: () async {
@@ -131,13 +131,13 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                   await _getPowerListByPage(FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
-                    loadDataBloc.dispatch(LoadEmptyEvent());
+                    loadDataBloc.add(LoadEmptyEvent());
                   } else {
-                    loadDataBloc.dispatch(RefreshSuccessEvent());
+                    loadDataBloc.add(RefreshSuccessEvent());
                   }
                 } catch (e) {
                   logger.e(e);
-                  loadDataBloc.dispatch(RefreshFailEvent());
+                  loadDataBloc.add(RefreshFailEvent());
                 }
               },
               onLoadingMore: () async {
@@ -146,17 +146,17 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                   await _getPowerListByPage(currentPage + 1);
 
                   if (_InfoItemVoList.length == lastSize) {
-                    loadDataBloc.dispatch(LoadMoreEmptyEvent());
+                    loadDataBloc.add(LoadMoreEmptyEvent());
                   } else {
-                    loadDataBloc.dispatch(LoadingMoreSuccessEvent());
+                    loadDataBloc.add(LoadingMoreSuccessEvent());
                   }
                 } catch (e) {
                   logger.e(e);
                   //hack for wordpress rest_post_invalid_page_number
                   if (e is DioError && e.message == 'Http status error [400]') {
-                    loadDataBloc.dispatch(LoadMoreEmptyEvent());
+                    loadDataBloc.add(LoadMoreEmptyEvent());
                   } else {
-                    loadDataBloc.dispatch(LoadMoreFailEvent());
+                    loadDataBloc.add(LoadMoreFailEvent());
                   }
                 }
               },
@@ -208,7 +208,7 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
       selectedTag = tagId;
       currentPage = 1;
     });
-    loadDataBloc.dispatch(LoadingEvent());
+    loadDataBloc.add(LoadingEvent());
 
 //      isLoading = true;
 //    _getPowerListByPage(currentPage);

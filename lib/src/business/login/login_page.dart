@@ -227,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
       String email = emailEditingController.text;
       String password = passwordEditingController.text;
 
-      _loginBloc.dispatch(Login(email, password));
+      _loginBloc.add(Login(email, password));
     }
   }
 }

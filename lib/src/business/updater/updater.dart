@@ -55,7 +55,7 @@ class _UpdaterState extends State<Updater> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_appBlocSubscription == null) {
-      _appBlocSubscription = BlocProvider.of<AppBloc>(context)?.state?.listen((AppState state) async {
+      _appBlocSubscription = BlocProvider.of<AppBloc>(context)?.listen((AppState state) async {
         if (state is UpdateState) {
           if (state.appData.updateEntity != null) {
             PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -190,7 +190,7 @@ class _UpdaterState extends State<Updater> {
     await Future.delayed(Duration(milliseconds: 3000));
 //    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
-    BlocProvider.of<AppBloc>(context).dispatch(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
+    BlocProvider.of<AppBloc>(context).add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
   }
 
   @override

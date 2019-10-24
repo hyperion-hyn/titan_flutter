@@ -86,9 +86,9 @@ class _MapContentState extends State<MapContentWidget> {
                   draggableBottomSheetController: _draggableBottomSheetController,
                   onMenu: () => Scaffold.of(context).openDrawer(),
                   backToPrvSearch: (String searchText) {
-                    BlocProvider.of<HomeBloc>(context).dispatch(SearchTextEvent(searchText: searchText));
+                    BlocProvider.of<HomeBloc>(context).add(SearchTextEvent(searchText: searchText));
                   },
-                  onExistSearch: () => BlocProvider.of<HomeBloc>(context).dispatch(ExistSearchEvent()),
+                  onExistSearch: () => BlocProvider.of<HomeBloc>(context).add(ExistSearchEvent()),
                   onSearch: (searchText) async {
                     var mapScenseState = mapScenseKey.currentState as MapScenesState;
                     print("get mapScenseState ");
@@ -105,13 +105,13 @@ class _MapContentState extends State<MapContentWidget> {
                                 )));
                     if (searchResult is String) {
                       BlocProvider.of<HomeBloc>(context)
-                          .dispatch(SearchTextEvent(searchText: searchResult, center: center));
+                          .add(SearchTextEvent(searchText: searchResult, center: center));
                     } else if (searchResult is PoiEntity) {
                       if (searchResult.address == null) {
                         //we need to full fil all properties
-                        BlocProvider.of<HomeBloc>(context).dispatch(SearchPoiEvent(poi: searchResult));
+                        BlocProvider.of<HomeBloc>(context).add(SearchPoiEvent(poi: searchResult));
                       } else {
-                        BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: searchResult));
+                        BlocProvider.of<HomeBloc>(context).add(ShowPoiEvent(poi: searchResult));
                       }
                     }
                   },
@@ -123,7 +123,7 @@ class _MapContentState extends State<MapContentWidget> {
                     if (state is sheets.PoiLoadedState || state is sheets.HeavenPoiLoadedState) {
                       return BottomOptBarWidget(
                         onRouteTap: () {
-//                                BlocProvider.of<HomeBloc>(context).dispatch(RouteEvent());
+//                                BlocProvider.of<HomeBloc>(context).add(RouteEvent());
                           eventBus.fire(RouteClickEvent());
                         },
                         onShareTap: () async {

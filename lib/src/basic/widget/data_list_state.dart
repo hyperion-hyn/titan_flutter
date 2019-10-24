@@ -26,13 +26,13 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == 0) {
-        loadDataBloc.dispatch(LoadEmptyEvent());
+        loadDataBloc.add(LoadEmptyEvent());
       } else {
-        loadDataBloc.dispatch(RefreshSuccessEvent());
+        loadDataBloc.add(RefreshSuccessEvent());
       }
     } catch (e) {
       logger.e(e);
-      loadDataBloc.dispatch(LoadFailEvent());
+      loadDataBloc.add(LoadFailEvent());
     }
   }
 
@@ -43,13 +43,13 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == 0) {
-        loadDataBloc.dispatch(LoadEmptyEvent());
+        loadDataBloc.add(LoadEmptyEvent());
       } else {
-        loadDataBloc.dispatch(RefreshSuccessEvent());
+        loadDataBloc.add(RefreshSuccessEvent());
       }
     } catch (e) {
       logger.e(e);
-      loadDataBloc.dispatch(RefreshFailEvent());
+      loadDataBloc.add(RefreshFailEvent());
     }
   }
 
@@ -62,13 +62,13 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       _updateDataListOnReceive(list, currentPage);
 
       if (dataList.length == lastSize) {
-        loadDataBloc.dispatch(LoadMoreEmptyEvent());
+        loadDataBloc.add(LoadMoreEmptyEvent());
       } else {
-        loadDataBloc.dispatch(LoadingMoreSuccessEvent());
+        loadDataBloc.add(LoadingMoreSuccessEvent());
       }
     } catch (e) {
       logger.e(e);
-      loadDataBloc.dispatch(LoadMoreFailEvent());
+      loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 
@@ -96,7 +96,7 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
 
   @override
   void dispose() {
-    loadDataBloc.dispose();
+    loadDataBloc.close();
     super.dispose();
   }
 }

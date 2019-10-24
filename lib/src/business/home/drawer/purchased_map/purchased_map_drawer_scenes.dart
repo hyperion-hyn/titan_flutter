@@ -27,7 +27,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
   void initState() {
     super.initState();
     _purchasedMapBloc = BlocProvider.of<PurchasedMapBloc>(context);
-    _purchasedMapBloc.dispatch(LoadPurchasedMapsEvent());
+    _purchasedMapBloc.add(LoadPurchasedMapsEvent());
   }
 
   @override
@@ -156,7 +156,7 @@ class _PurchasedMapDrawerScenesState extends State<PurchasedMapDrawerScenes> {
       padding: const EdgeInsets.all(2.0),
       child: GestureDetector(
         onTap: () {
-          _purchasedMapBloc.dispatch(SelectedPurchasedMapEvent(purchasedMap));
+          _purchasedMapBloc.add(SelectedPurchasedMapEvent(purchasedMap));
         },
         child: Container(
           decoration: BoxDecoration(

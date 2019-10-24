@@ -331,7 +331,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
       String fundPassword = fundPasswordEditingController.text;
       int verificationCode = int.parse(verificationCodeEditingController.text);
 
-      _resetFundPasswordBloc.dispatch(ResetFundPassword(email, loginPassword, fundPassword, verificationCode));
+      _resetFundPasswordBloc.add(ResetFundPassword(email, loginPassword, fundPassword, verificationCode));
     }
   }
 

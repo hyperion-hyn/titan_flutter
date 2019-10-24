@@ -27,7 +27,7 @@ class _WalletPageState extends State<WalletPage> {
   @override
   void initState() {
     _walletBloc = WalletBloc();
-//    _walletBloc.dispatch(ScanWalletEvent());
+//    _walletBloc.add(ScanWalletEvent());
   }
 
   Widget _buildWalletView(BuildContext context) {

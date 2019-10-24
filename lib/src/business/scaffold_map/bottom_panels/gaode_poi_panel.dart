@@ -53,7 +53,7 @@ class _GaodePoiPanelState extends State<GaodePoiPanel> {
       controller: widget.scrollController,
       child: WillPopScope(
         onWillPop: () async {
-          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
           return false;
         },
         child: Column(
@@ -77,7 +77,7 @@ class _GaodePoiPanelState extends State<GaodePoiPanel> {
                       ),
                       InkWell(
                         onTap: () {
-                          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+                          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
                         },
                         borderRadius: BorderRadius.all(Radius.circular(32.0)),
                         highlightColor: Colors.transparent,

@@ -95,7 +95,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           ),
           FlatButton(
               onPressed: () {
-                widget.bloc.dispatch(LoadingEvent());
+                widget.bloc.add(LoadingEvent());
               },
               child: Text(
                 '点击重试',

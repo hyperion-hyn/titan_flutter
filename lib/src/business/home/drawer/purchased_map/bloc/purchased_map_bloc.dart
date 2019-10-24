@@ -31,7 +31,7 @@ class PurchasedMapBloc extends Bloc<PurchasedMapEvent, PurchasedMapState> {
       final purchasedMapItems = await _purchasedMapRepository.getPurchasedMapItems();
       yield PurchasedMapLoaded(purchasedMapItems);
       final selectedMapList = purchasedMapItems.where((selectedMap) => selectedMap.selected).toList();
-      mapBloc.dispatch(ShowPurchasedMapEvent(selectedMapList));
+      mapBloc.add(ShowPurchasedMapEvent(selectedMapList));
     } catch (_) {
       logger.e(_);
       yield PurchasedMapNotLoaded();

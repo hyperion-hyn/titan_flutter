@@ -46,7 +46,7 @@ class NightLifeState extends State<NightLife> {
                       Align(
                         child: InkWell(
                           onTap: () {
-                            BlocProvider.of<DiscoverBloc>(context).dispatch(InitDiscoverEvent());
+                            BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
                           },
                           child: Ink(
                             padding: const EdgeInsets.all(16.0),

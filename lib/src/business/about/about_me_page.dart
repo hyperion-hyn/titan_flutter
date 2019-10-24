@@ -86,7 +86,7 @@ class _AboueMeState extends State<AboutMePage> {
               label: "检查更新",
               onTap: () {
                 BlocProvider.of<AppBloc>(context)
-                    .dispatch(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
+                    .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
               }),
           Divider()
         ]));

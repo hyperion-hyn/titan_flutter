@@ -283,7 +283,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
 
   @override
   void postFrameCallBackAfterInitState() {
-    loadDataBloc.dispatch(LoadingEvent());
+    loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -371,7 +371,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
       print("event:$event");
       if (event is Refresh) {
 //        _getBillList(0);
-        loadDataBloc.dispatch(RefreshingEvent());
+        loadDataBloc.add(RefreshingEvent());
       }
     });
   }
@@ -379,7 +379,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
   @override
   void dispose() {
     _eventBusSubscription?.cancel();
-    loadDataBloc.dispose();
+    loadDataBloc.close();
     super.dispose();
   }
 }
@@ -421,7 +421,7 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
 
   @override
   void postFrameCallBackAfterInitState() {
-    loadDataBloc.dispatch(LoadingEvent());
+    loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -536,14 +536,14 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
       print("event:$event");
       if (event is Refresh) {
 //        _getWithdrawalList(0);
-        loadDataBloc.dispatch(RefreshingEvent());
+        loadDataBloc.add(RefreshingEvent());
       }
     });
   }
 
   @override
   void dispose() {
-    loadDataBloc.dispose();
+    loadDataBloc.close();
     _eventBusSubscription?.cancel();
     super.dispose();
   }

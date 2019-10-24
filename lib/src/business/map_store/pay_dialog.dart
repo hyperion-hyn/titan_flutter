@@ -39,11 +39,11 @@ class _PayDialogState extends State<PayDialog> {
   void initState() {
     super.initState();
     if (Platform.isIOS) {
-      BlocProvider.of<MapStoreOrderBloc>(context).dispatch(BuyAppleMapEvent(mapStoreItem));
+      BlocProvider.of<MapStoreOrderBloc>(context).add(BuyAppleMapEvent(mapStoreItem));
     } else if (mapStoreItem.isFree) {
-      BlocProvider.of<MapStoreOrderBloc>(context).dispatch(BuyFreeMapEvent(mapStoreItem));
+      BlocProvider.of<MapStoreOrderBloc>(context).add(BuyFreeMapEvent(mapStoreItem));
     } else {
-      BlocProvider.of<MapStoreOrderBloc>(context).dispatch(ShowPayingMapPriceEvent(mapStoreItem));
+      BlocProvider.of<MapStoreOrderBloc>(context).add(ShowPayingMapPriceEvent(mapStoreItem));
     }
   }
 
@@ -162,7 +162,7 @@ class _PayDialogState extends State<PayDialog> {
                     if (Navigator.of(context).canPop()) {
                       _dismissDialog(false, false);
                     }
-                    BlocProvider.of<MapStoreOrderBloc>(context).dispatch(CancelPurchaseEvent());
+                    BlocProvider.of<MapStoreOrderBloc>(context).add(CancelPurchaseEvent());
                     //pay success
                     await FireBaseLogic.of(context).analytics.logEvent(name: 'pay_cancel');
                   },
@@ -239,7 +239,7 @@ class _PayDialogState extends State<PayDialog> {
           RaisedButton(
             onPressed: () async {
               await FireBaseLogic.of(context).analytics.logEvent(name: 'pay_cancel');
-              BlocProvider.of<MapStoreOrderBloc>(context).dispatch(CancelPurchaseEvent());
+              BlocProvider.of<MapStoreOrderBloc>(context).add(CancelPurchaseEvent());
               _dismissDialog(false, false);
             },
             child: Text(S.of(context).cancel_payment),
@@ -377,7 +377,7 @@ class _PayDialogState extends State<PayDialog> {
 
   void _handlePay(BuildContext context, MapPrice mapPrice) async {
 //    FireBaseLogic.of(context).analytics.logEvent(name: 'pay_comfirn', parameters: {'platform': env.channel});
-    BlocProvider.of<MapStoreOrderBloc>(context).dispatch(PurchaseEvent(mapStoreItem, mapPrice));
+    BlocProvider.of<MapStoreOrderBloc>(context).add(PurchaseEvent(mapStoreItem, mapPrice));
   }
 
   void _dismissDialog(bool isBuySuccess, bool isDelay) {

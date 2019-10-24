@@ -55,11 +55,11 @@ DMapConfigModel get nightLifeDMapConfigModel {
         if (feature != null) {
           poi = HeavenMapPoiInfo.fromMapFeature(feature);
           if (poi != null) {
-            BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+            BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
           }
         }
         if (poi == null) {
-          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
         }
         return true;
       },
@@ -96,11 +96,11 @@ final embassyDMapConfigModel = DMapConfigModel(
       if (feature != null) {
         poi = EmbassyPoi.fromMapFeature(feature);
         if (poi != null) {
-          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+          BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
         }
       }
       if (poi == null) {
-        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+        BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
       }
       return true;
     },
@@ -134,11 +134,11 @@ final policeDMapConfigModel = DMapConfigModel(
       if (feature != null) {
         poi = PoliceStationPoi.fromMapFeature(feature);
         if (poi != null) {
-          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+          BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
         }
       }
       if (poi == null) {
-        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ClearSelectPoiEvent());
+        BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
       }
       return true;
     },

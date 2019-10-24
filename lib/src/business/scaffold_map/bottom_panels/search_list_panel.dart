@@ -44,7 +44,7 @@ class SearchListPanel extends StatelessWidget {
             alignment: Alignment.topRight,
             child: InkWell(
               onTap: () {
-                BlocProvider.of<ScaffoldMapBloc>(context).dispatch(InitMapEvent());
+                BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
               },
               borderRadius: BorderRadius.all(Radius.circular(32.0)),
               highlightColor: Colors.transparent,
@@ -155,6 +155,6 @@ class SearchListPanel extends StatelessWidget {
   }
 
   void onTapPoi(context, IPoi poi) {
-    BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+    BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
   }
 }

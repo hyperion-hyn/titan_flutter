@@ -29,7 +29,7 @@ class EncryptShareState extends State<EncryptShare> {
 
 //    //动态设置收缩高度
 //    SchedulerBinding.instance.addPostFrameCallback((_) {
-//      HeaderHeightNotification(height: 400).dispatch(context);
+//      HeaderHeightNotification(height: 400).add(context);
 //    });
 
     streamSubscription = eventBus.on().listen(eventBusListener);
@@ -77,7 +77,7 @@ class EncryptShareState extends State<EncryptShare> {
                         Align(
                           child: InkWell(
                             onTap: () {
-                              BlocProvider.of<DiscoverBloc>(context).dispatch(InitDiscoverEvent());
+                              BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
                             },
                             child: Ink(
                               padding: const EdgeInsets.only(left: 24.0, top: 8),
@@ -105,7 +105,7 @@ class EncryptShareState extends State<EncryptShare> {
                                   //成功打开分享
                                   if (suc) {
                                     //关闭分享位置
-//                                    BlocProvider.of<DiscoverBloc>(context).dispatch(InitDiscoverEvent());
+//                                    BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
                                     print('成功打开分享');
                                   }
                                 }

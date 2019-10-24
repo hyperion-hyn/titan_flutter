@@ -52,7 +52,7 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
       yield* _cancelPurchase();
     } else if (event is PurchaseSuccessEvent) {
       await _savePurchasedToken(event.mapStoreItem, event.purchasedSuccessToken);
-      purchasedMapBloc.dispatch(LoadPurchasedMapsEvent());
+      purchasedMapBloc.add(LoadPurchasedMapsEvent());
       yield OrderSuccessState();
     } else if (event is PurchaseFailEvent) {
       yield OrderFailState();
@@ -60,8 +60,8 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void close() {
+    super.close();
   }
 
   Stream<MapStoreOrderState> _cancelPurchase() async* {
@@ -120,16 +120,16 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
 
   void _handlePurchaseUpdates(MapStoreItem mapStoreItem, List<PurchaseDetails> purchaseDetailsList) {
     if (purchaseDetailsList == null || purchaseDetailsList.isEmpty) {
-      dispatch(PurchaseFailEvent());
+      add(PurchaseFailEvent());
       return;
     }
     PurchaseDetails purchaseDetails = purchaseDetailsList[0];
     if (purchaseDetails.billingClientPurchase == null) {
-      dispatch(PurchaseFailEvent());
+      add(PurchaseFailEvent());
       return;
     }
     if (purchaseDetails.status == PurchaseStatus.error) {
-      dispatch(PurchaseFailEvent());
+      add(PurchaseFailEvent());
       return;
     }
 
@@ -154,7 +154,7 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
       print("enter listen");
       _checkGooglePayStatusSubscription?.cancel();
       _checkGooglePayStatusSubscription = null;
-      dispatch(PurchaseSuccessEvent(mapStoreItem, purchasedSuccessToken));
+      add(PurchaseSuccessEvent(mapStoreItem, purchasedSuccessToken));
       FireBaseLogic.of(context).analytics.logEvent(name: 'pay_success');
     }, onError: (err) => print(err));
   }
@@ -210,7 +210,7 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
       print("enter listen");
       _checkAliPayStatusSubscription?.cancel();
       _checkAliPayStatusSubscription = null;
-      dispatch(PurchaseSuccessEvent(mapStoreItem, purchasedSuccessToken));
+      add(PurchaseSuccessEvent(mapStoreItem, purchasedSuccessToken));
       FireBaseLogic.of(context).analytics.logEvent(name: 'pay_success');
     }, onError: (err) => print(err));
   }
@@ -280,7 +280,7 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
       var policyId = "${mapStoreItem.id}.${firstPolicy.duration}";
 
       PurchasedSuccessToken successToken = await _mapStoreNetworkRepository.orderFreeMap(policyId);
-      dispatch(PurchaseSuccessEvent(mapStoreItem, successToken));
+      add(PurchaseSuccessEvent(mapStoreItem, successToken));
     } catch (err) {
       logger.e(err);
       yield OrderFailState();
@@ -296,7 +296,7 @@ class MapStoreOrderBloc extends Bloc<MapStoreOrderEvent, MapStoreOrderState> {
       var policyId = "${mapStoreItem.id}.${firstPolicy.duration}";
 
       PurchasedSuccessToken successToken = await _mapStoreNetworkRepository.orderAppleFreeMap(policyId);
-      dispatch(PurchaseSuccessEvent(mapStoreItem, successToken));
+      add(PurchaseSuccessEvent(mapStoreItem, successToken));
     } catch (err) {
       logger.e(err);
       yield OrderFailState();

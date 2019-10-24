@@ -76,17 +76,17 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                     searchText: event.searchText,
                   )));
 
-      BlocProvider.of<ScaffoldMapBloc>(context).dispatch(InitMapEvent());
+      BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
 
       if (searchResult is String) {
-        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchTextEvent(searchText: searchResult, center: center));
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(searchText: searchResult, center: center));
       } else if (searchResult is PoiEntity) {
         var poi = searchResult;
         if (searchResult.address == null) {
           //we need to full fil all properties
-          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(SearchPoiEvent(poi: poi));
+          BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
         } else {
-          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+          BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
         }
       }
     }
@@ -148,7 +148,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         showTopBar = true;
         title = state.getSearchText();
         onTopBarClose = () {
-          BlocProvider.of<ScaffoldMapBloc>(context).dispatch(InitMapEvent());
+          BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
         };
         onTopBarBack = () {
           eventBus.fire(GoSearchEvent());
@@ -350,10 +350,10 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
               toName: toPoi.name,
               profile: profile,
               onBack: () {
-                BlocProvider.of<ScaffoldMapBloc>(context).dispatch(ExistRouteEvent());
+                BlocProvider.of<ScaffoldMapBloc>(context).add(ExistRouteEvent());
               },
               onRoute: (String toProfile) {
-                BlocProvider.of<ScaffoldMapBloc>(context).dispatch(RouteEvent(
+                BlocProvider.of<ScaffoldMapBloc>(context).add(RouteEvent(
                   fromPoi: fromPoi,
                   toPoi: toPoi,
                   profile: toProfile,
@@ -407,7 +407,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         var toPoi = currentPoi;
         var language = Localizations.localeOf(context).languageCode;
         var profile = 'driving';
-        BlocProvider.of<ScaffoldMapBloc>(context).dispatch(RouteEvent(
+        BlocProvider.of<ScaffoldMapBloc>(context).add(RouteEvent(
           fromPoi: fromPoi,
           toPoi: toPoi,
           language: language,

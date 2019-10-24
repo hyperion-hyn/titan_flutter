@@ -45,7 +45,7 @@ class _NewsState extends InfoState<NewsPage> {
 
   @override
   void dispose() {
-    loadDataBloc.dispose();
+    loadDataBloc.close();
     super.dispose();
   }
 
@@ -77,13 +77,13 @@ class _NewsState extends InfoState<NewsPage> {
                   await _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
-                    loadDataBloc.dispatch(LoadEmptyEvent());
+                    loadDataBloc.add(LoadEmptyEvent());
                   } else {
-                    loadDataBloc.dispatch(RefreshSuccessEvent());
+                    loadDataBloc.add(RefreshSuccessEvent());
                   }
                 } catch (e) {
                   logger.e(e);
-                  loadDataBloc.dispatch(LoadFailEvent());
+                  loadDataBloc.add(LoadFailEvent());
                 }
               },
               onRefresh: () async {
@@ -91,13 +91,13 @@ class _NewsState extends InfoState<NewsPage> {
                   await _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
-                    loadDataBloc.dispatch(LoadEmptyEvent());
+                    loadDataBloc.add(LoadEmptyEvent());
                   } else {
-                    loadDataBloc.dispatch(RefreshSuccessEvent());
+                    loadDataBloc.add(RefreshSuccessEvent());
                   }
                 } catch (e) {
                   logger.e(e);
-                  loadDataBloc.dispatch(RefreshFailEvent());
+                  loadDataBloc.add(RefreshFailEvent());
                 }
               },
               onLoadingMore: () async {
@@ -106,17 +106,17 @@ class _NewsState extends InfoState<NewsPage> {
                   await _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
 
                   if (_InfoItemVoList.length == lastSize) {
-                    loadDataBloc.dispatch(LoadMoreEmptyEvent());
+                    loadDataBloc.add(LoadMoreEmptyEvent());
                   } else {
-                    loadDataBloc.dispatch(LoadingMoreSuccessEvent());
+                    loadDataBloc.add(LoadingMoreSuccessEvent());
                   }
                 } catch (e) {
                   logger.e(e);
                   //hack for wordpress rest_post_invalid_page_number
                   if (e is DioError && e.message == 'Http status error [400]') {
-                    loadDataBloc.dispatch(LoadMoreEmptyEvent());
+                    loadDataBloc.add(LoadMoreEmptyEvent());
                   } else {
-                    loadDataBloc.dispatch(LoadMoreFailEvent());
+                    loadDataBloc.add(LoadMoreFailEvent());
                   }
                 }
               },
@@ -148,7 +148,7 @@ class _NewsState extends InfoState<NewsPage> {
       selectedTag = tagId;
       currentPage = FIRST_PAGE;
     });
-    loadDataBloc.dispatch(LoadingEvent());
+    loadDataBloc.add(LoadingEvent());
   }
 
   Future _getPowerList(String categories, String tags, int page) async {

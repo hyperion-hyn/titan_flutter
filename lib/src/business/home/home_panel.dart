@@ -494,35 +494,35 @@ class HomePanelState extends UserState<HomePanel> {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 1, center: center, searchText: '美食'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 1, center: center, searchText: '美食'));
           }
         }),
         _buildPoiItem('res/drawable/ic_hotel.png', '酒店', onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 2, center: center, searchText: '酒店'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 2, center: center, searchText: '酒店'));
           }
         }),
         _buildPoiItem('res/drawable/ic_scenic_spotx.png', '景点', onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 3, center: center, searchText: '景点'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 3, center: center, searchText: '景点'));
           }
         }),
         _buildPoiItem('res/drawable/ic_park.png', '停车场', onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 4, center: center, searchText: '停车场'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 4, center: center, searchText: '停车场'));
           }
         }),
         _buildPoiItem('res/drawable/ic_gas_station.png', '加油站', onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 5, center: center, searchText: '加油站'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 5, center: center, searchText: '加油站'));
           }
         }),
       ],
@@ -542,35 +542,35 @@ class HomePanelState extends UserState<HomePanel> {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 6, center: center, searchText: '银行'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 6, center: center, searchText: '银行'));
           }
         }),
         _buildPoiItem('res/drawable/ic_supermarket.png', '超市', onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 7, center: center, searchText: '超市'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 7, center: center, searchText: '超市'));
           }
         }),
         _buildPoiItem('res/drawable/ic_market.png', '商场', onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 8, center: center, searchText: '商场'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 8, center: center, searchText: '商场'));
           }
         }),
         _buildPoiItem('res/drawable/ic_cybercafe.png', '网吧', onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '网吧'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '网吧'));
           }
         }),
         _buildPoiItem('res/drawable/ic_wc.png', '厕所', onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
-                .dispatch(SearchTextEvent(isGaodeSearch: true, type: 10, center: center, searchText: '厕所'));
+                .add(SearchTextEvent(isGaodeSearch: true, type: 10, center: center, searchText: '厕所'));
           }
         }),
       ],

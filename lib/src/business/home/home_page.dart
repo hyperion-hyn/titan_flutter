@@ -85,9 +85,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
           listener: (context, state) {
             if (state is InitialScaffoldMapState) {
-              BlocProvider.of<home.HomeBloc>(context).dispatch(home.HomeInitEvent());
+              BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
             } else {
-              BlocProvider.of<home.HomeBloc>(context).dispatch(home.MapOperatingEvent());
+              BlocProvider.of<home.HomeBloc>(context).add(home.MapOperatingEvent());
             }
           },
         ),
@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         }
         IPoi poi = await ciphertextToPoi(Injector.of(context).repository, initialLink.toString());
         BlocProvider.of<home.HomeBloc>(context)
-            .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
+            .add(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {
         logger.e(err);
       }
@@ -245,7 +245,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       try {
         IPoi poi = await ciphertextToPoi(Injector.of(context).repository, link.toString());
         BlocProvider.of<home.HomeBloc>(context)
-            .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
+            .add(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {
         logger.e(err);
       }

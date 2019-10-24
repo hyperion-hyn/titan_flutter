@@ -40,7 +40,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
 
   @override
   void postFrameCallBackAfterInitState() async {
-    loadDataBloc.dispatch(LoadingEvent());
+    loadDataBloc.add(LoadingEvent());
 
     LOGIN_USER_INFO = await _userService.getUserInfo();
   }

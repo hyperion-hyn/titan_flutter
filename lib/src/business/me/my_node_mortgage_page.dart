@@ -41,7 +41,7 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
 
   @override
   void postFrameCallBackAfterInitState() async {
-    loadDataBloc.dispatch(LoadingEvent());
+    loadDataBloc.add(LoadingEvent());
   }
 
   Future _updateUserInstance() async {
@@ -219,7 +219,7 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
                               Navigator.pop(context, true);
                               Fluttertoast.showToast(msg: "赎回成功");
 
-                              loadDataBloc.dispatch(LoadingEvent());
+                              loadDataBloc.add(LoadingEvent());
                             });
                           } catch (e) {
                             logger.e(e);

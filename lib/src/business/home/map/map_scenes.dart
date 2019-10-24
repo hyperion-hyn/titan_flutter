@@ -105,9 +105,9 @@ class MapScenesState extends State<MapScenes> {
     //clear selected poi
     var homeBloc = BlocProvider.of<home.HomeBloc>(context);
     if (homeBloc.searchText != null) {
-      homeBloc.dispatch(home.SearchTextEvent(searchText: homeBloc.searchText));
+      homeBloc.add(home.SearchTextEvent(searchText: homeBloc.searchText));
     } else {
-      homeBloc.dispatch(home.ExistSearchEvent());
+      homeBloc.add(home.ExistSearchEvent());
     }
   }
 
@@ -122,7 +122,7 @@ class MapScenesState extends State<MapScenes> {
       var firstFeature = json.decode(symbolFeatures[0]);
       print("firstFeature :$firstFeature");
       var heavenMapInfo = _convertHeavenMapPoiInfoFromFeature(firstFeature);
-      BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchHeavenPoiEvent(poi: heavenMapInfo));
+      BlocProvider.of<home.HomeBloc>(context).add(home.SearchHeavenPoiEvent(poi: heavenMapInfo));
       return true;
     } else {
       return false;
@@ -185,7 +185,7 @@ class MapScenesState extends State<MapScenes> {
       }
 
       BlocProvider.of<home.HomeBloc>(context)
-          .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates, name: name)));
+          .add(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates, name: name)));
       return true;
     } else {
       return false;
@@ -222,7 +222,7 @@ class MapScenesState extends State<MapScenes> {
       var coordinates = poi.latLng;
 
       BlocProvider.of<home.HomeBloc>(context)
-          .dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates, name: poi.name)));
+          .add(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates, name: poi.name)));
       return true;
     } else {
       return false;
@@ -230,7 +230,7 @@ class MapScenesState extends State<MapScenes> {
   }
 
   _onMapLongPress(Point<double> point, LatLng coordinates) async {
-    BlocProvider.of<home.HomeBloc>(context).dispatch(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates)));
+    BlocProvider.of<home.HomeBloc>(context).add(home.SearchPoiEvent(poi: PoiEntity(latLng: coordinates)));
   }
 
   void onStyleLoaded(controller) async {
@@ -243,7 +243,7 @@ class MapScenesState extends State<MapScenes> {
   }
 
   void _loadPurchasedMap() {
-    BlocProvider.of<PurchasedMapBloc>(context).dispatch(LoadPurchasedMapsEvent());
+    BlocProvider.of<PurchasedMapBloc>(context).add(LoadPurchasedMapsEvent());
   }
 
   void _addMarker(IPoi poi) async {
@@ -463,11 +463,11 @@ class MapScenesState extends State<MapScenes> {
             return;
           }
 
-          BlocProvider.of<sheets.SheetsBloc>(context).dispatch(sheets.CloseSheetEvent());
+          BlocProvider.of<sheets.SheetsBloc>(context).add(sheets.CloseSheetEvent());
 
           LatLng end = toPoi.latLng;
           String lang = Localizations.localeOf(context).languageCode;
-          BlocProvider.of<MapBloc>(context).dispatch(QueryRouteEvent(
+          BlocProvider.of<MapBloc>(context).add(QueryRouteEvent(
             start: start,
             end: end,
             languageCode: lang,
@@ -478,7 +478,7 @@ class MapScenesState extends State<MapScenes> {
             padding: 450,
           ));
 
-          BlocProvider.of<searchBar.SearchbarBloc>(context).dispatch(searchBar.HideSearchBarEvent());
+          BlocProvider.of<searchBar.SearchbarBloc>(context).add(searchBar.HideSearchBarEvent());
         }
       } else if (event is MyLocationEvent) {
         PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
