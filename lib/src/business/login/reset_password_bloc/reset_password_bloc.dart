@@ -21,12 +21,12 @@ class ResetPasswordBloc extends SubmitBloc<SubmitEvent, SubmitState> {
   }
 
   Stream<SubmitState> _mapResetPassword(ResetPassword event) async* {
-    yield Submiting();
+    yield SubmitIngState();
     try {
       await _userService.resetPassword(event.email, Md5Util.generateMd5(event.password), event.verificationCode);
-      yield SubmitSuccess();
+      yield SubmitSuccessState();
     } catch (_) {
-      yield SubmitFail();
+      yield SubmitFailState();
       ExceptionProcess.process(_);
     }
   }

@@ -4,12 +4,12 @@ abstract class SubmitState {
 
 class InitSubmitState extends SubmitState {}
 
-class Submiting extends SubmitState {}
+class SubmitIngState extends SubmitState {}
 
-class SubmitSuccess extends SubmitState {}
+class SubmitSuccessState extends SubmitState {}
 
-class SubmitFail extends SubmitState {
+class SubmitFailState extends SubmitState {
   String message;
 
-  SubmitFail({this.message});
+  SubmitFailState({this.message});
 }

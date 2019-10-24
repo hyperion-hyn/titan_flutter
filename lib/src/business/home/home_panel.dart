@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/business/me/buy_hash_rate_page_v2.dart';
+import 'package:titan/src/business/me/contract/buy_hash_rate_page_v2.dart';
 import 'package:titan/src/business/me/my_asset_page.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';

@@ -32,9 +32,9 @@ class _LoginPageState extends State<LoginPage> {
     return BlocBuilder<LoginBloc, SubmitState>(
       bloc: _loginBloc,
       builder: (BuildContext context, SubmitState state) {
-        var loginButtonText = state is Submiting ? "登录中" : "登录";
-        Function loginOnPress = state is Submiting ? null : _submit;
-        var fieldEnable = state is Submiting ? false : true;
+        var loginButtonText = state is SubmitIngState ? "登录中" : "登录";
+        Function loginOnPress = state is SubmitIngState ? null : _submit;
+        var fieldEnable = state is SubmitIngState ? false : true;
 
         return Scaffold(
           backgroundColor: Colors.white,
@@ -171,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  if (state is Submiting)
+                                  if (state is SubmitIngState)
                                     Padding(
                                       padding: const EdgeInsets.only(right: 16.0),
                                       child: SizedBox(

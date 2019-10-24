@@ -27,14 +27,14 @@ class LoginBloc extends Bloc<LoginEvent, SubmitState> {
   }
 
   Stream<SubmitState> _mapLogin(Login event) async* {
-    yield Submiting();
+    yield SubmitIngState();
     try {
       await _userService.login(event.email, Md5Util.generateMd5(event.password));
       LOGIN_STATUS = 2;
       eventBus.fire(LoginSuccessBusEvent());
-      yield SubmitSuccess();
+      yield SubmitSuccessState();
     } catch (_) {
-      yield SubmitFail(message: "系统错误");
+      yield SubmitFailState(message: "系统错误");
       ExceptionProcess.process(_);
     }
   }

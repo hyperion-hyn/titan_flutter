@@ -47,11 +47,11 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
     return BlocBuilder<ResetFundPasswordBloc, SubmitState>(
         bloc: _resetFundPasswordBloc,
         builder: (BuildContext context, SubmitState state) {
-          var _registerButtonText = state is Submiting ? "处理中" : "提交";
-          Function _registerOnPress = state is Submiting ? null : _submit;
-          var _fieldEnable = state is Submiting ? false : true;
+          var _registerButtonText = state is SubmitIngState ? "处理中" : "提交";
+          Function _registerOnPress = state is SubmitIngState ? null : _submit;
+          var _fieldEnable = state is SubmitIngState ? false : true;
 
-          if (state is SubmitSuccess) {
+          if (state is SubmitSuccessState) {
             Fluttertoast.showToast(msg: "修改成功");
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pop(context, true);
@@ -293,7 +293,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  if (state is Submiting)
+                                  if (state is SubmitIngState)
                                     Padding(
                                       padding: const EdgeInsets.only(right: 16.0),
                                       child: SizedBox(

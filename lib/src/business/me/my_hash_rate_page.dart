@@ -7,11 +7,9 @@ import 'package:titan/src/business/load_data_container/load_data_container.dart'
 import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
-import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
-import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 class MyHashRatePage extends StatefulWidget {
   @override

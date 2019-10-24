@@ -21,13 +21,13 @@ class RegisterBloc extends SubmitBloc<RegisterEvent, SubmitState> {
   }
 
   Stream<SubmitState> _mapRegister(Register event) async* {
-    yield Submiting();
+    yield SubmitIngState();
     try {
       await _userService.registoer(event.email, Md5Util.generateMd5(event.password), event.verificationCode,
           event.invitationCode, Md5Util.generateMd5(event.fundPassword));
-      yield SubmitSuccess();
+      yield SubmitSuccessState();
     } catch (_) {
-      yield SubmitFail(message: "系统错误");
+      yield SubmitFailState(message: "系统错误");
       ExceptionProcess.process(_);
     }
   }

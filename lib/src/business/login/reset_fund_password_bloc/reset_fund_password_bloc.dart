@@ -21,13 +21,13 @@ class ResetFundPasswordBloc extends SubmitBloc<SubmitEvent, SubmitState> {
   }
 
   Stream<SubmitState> _mapResetPassword(ResetFundPassword event) async* {
-    yield Submiting();
+    yield SubmitIngState();
     try {
       await _userService.resetFundPassword(event.email, Md5Util.generateMd5(event.loginPassword),
           Md5Util.generateMd5(event.fundPassword), event.verificationCode);
-      yield SubmitSuccess();
+      yield SubmitSuccessState();
     } catch (_) {
-      yield SubmitFail();
+      yield SubmitFailState();
       ExceptionProcess.process(_);
     }
   }

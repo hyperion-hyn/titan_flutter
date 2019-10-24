@@ -48,27 +48,12 @@ class _PurchaseState extends State<PurchasePage> {
   }
 
   void loadData() async {
-//    try {
-//      var data = await service.createOrder(contractId: widget.contractInfo.id);
-//      setState(() {
-//        payOrder = data;
-//      });
-//    } catch (e) {
-//      logger.e(e);
-//      Fluttertoast.showToast(msg: "创建订单失败");
-//    }
-
     //行情
-    var quotesData = await service.quotes();
-    setState(() {
-      quotes = quotesData;
-    });
-
+    quotes = await service.quotes();
     //用户余额等信息
-    var _userInfo = await service.getUserInfo();
-    setState(() {
-      userInfo = _userInfo;
-    });
+    userInfo = await service.getUserInfo();
+
+    setState(() {});
   }
 
   @override
@@ -337,7 +322,8 @@ class _PurchaseState extends State<PurchasePage> {
                 child: RaisedButton(
                   color: Color(0xFF73C42D),
                   onPressed: () async {
-                    var ret = await service.confirmPay(orderId: widget.payOrder.order_id, payType: 'HYN', fundToken: " ");
+                    var ret =
+                        await service.confirmPay(orderId: widget.payOrder.order_id, payType: 'HYN', fundToken: " ");
                     if (ret.code == 0) {
                       //支付成功
                       Fluttertoast.showToast(msg: '购买成功');

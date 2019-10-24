@@ -5,8 +5,6 @@ import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
-import 'package:titan/src/widget/load_data_widget.dart';
-import 'package:titan/src/widget/smart_pull_refresh.dart';
 
 import '../../global.dart';
 

@@ -18,7 +18,7 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 
-import 'buy_hash_rate_page_v2.dart';
+import 'contract/buy_hash_rate_page_v2.dart';
 import 'my_asset_page.dart';
 import 'my_promote_page.dart';
 
