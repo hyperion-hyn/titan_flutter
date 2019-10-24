@@ -36,6 +36,18 @@ String shortEthAddress(String address) {
   return address.substring(0, 9) + "..." + address.substring(address.length - 9, address.length);
 }
 
+String shortEmail(String email) {
+  if (email == null || email == "") {
+    return "";
+  }
+
+  int atIconIndex = email.indexOf("@");
+  if (atIconIndex < 3) {
+    return email;
+  }
+  return email.substring(0, 3) + "*" + email.substring(atIconIndex);
+}
+
 ///防抖动
 ///RaisedButton(
 //      onPressed: debounce(() {

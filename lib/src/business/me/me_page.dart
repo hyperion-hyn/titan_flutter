@@ -114,7 +114,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      "Hi,${LOGIN_USER_INFO.email}",
+                                      "${shortEmail(LOGIN_USER_INFO.email)}",
                                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                                     ),
                                     GestureDetector(

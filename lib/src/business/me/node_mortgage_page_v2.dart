@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/business/me/mortgage_page.dart';
-import 'package:titan/src/business/me/purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 
-import 'model/contract_info_v2.dart';
 import 'model/mortgage_info_v2.dart';
 import 'mortgage_snap_up_page.dart';
 
@@ -199,52 +195,60 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            RaisedButton(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                              color: Theme.of(context).primaryColor,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MortgagePage(
-                                              _mortgageList[selectedIndex],
-                                            )));
-                              },
-                              child: Container(
-                                height: 48,
-                                alignment: Alignment.center,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 8),
-                                  child: Text(
-                                    "购买",
-                                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                            Expanded(
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                color: Theme.of(context).primaryColor,
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MortgagePage(
+                                                _mortgageList[selectedIndex],
+                                              )));
+                                },
+                                child: Container(
+                                  height: 48,
+                                  alignment: Alignment.center,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric( vertical: 8),
+                                    child: Text(
+                                      "购买",
+                                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            RaisedButton(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                              color: Color(0xFFBF3330),
-                              onPressed: _mortgageList[selectedIndex].snapUpStocks == 0 ? null : snapUpOnTap,
-                              child: Container(
-                                height: 48,
-                                alignment: Alignment.center,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 30, top: 8, bottom: 8, right: 0),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(
-                                        "抢购",
-                                        style:
-                                            TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        "  剩余 ${_mortgageList[selectedIndex].snapUpStocks}",
-                                        style:
-                                            TextStyle(color: Color(0xFFFFC500), fontSize: 14, fontWeight: FontWeight.normal),
-                                      ),
-                                    ],
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Expanded(
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                color: Color(0xFFBF3330),
+                                onPressed: _mortgageList[selectedIndex].snapUpStocks == 0 ? null : snapUpOnTap,
+                                child: Container(
+                                  height: 48,
+                                  alignment: Alignment.center,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 0, top: 8, bottom: 8, right: 0),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "抢购",
+                                          style:
+                                              TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          "  剩余 ${_mortgageList[selectedIndex].snapUpStocks}",
+                                          style:
+                                              TextStyle(color: Color(0xFFFFC500), fontSize: 14, fontWeight: FontWeight.normal),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

@@ -29,8 +29,8 @@ import 'search_bar.dart';
 import 'top_bar.dart';
 import 'route_bar.dart';
 
-final kStyleZh = 'https://static.xuantu.mobi/maptiles/see-it-all-boundary-cdn-zh.json';
-final kStyleEn = 'https://static.xuantu.mobi/maptiles/see-it-all-boundary-cdn-en.json';
+final kStyleZh = 'https://tile.maprich.net/see-it-all-boundary-cdn-zh.json';
+final kStyleEn = 'https://tile.maprich.net/see-it-all-boundary-cdn-en.json';
 
 typedef PanelBuilder = Widget Function(BuildContext context, ScrollController scrollController, IDMapPoi poi);
 
