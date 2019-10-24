@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/business/login/login_event.dart';
+import 'package:titan/src/business/login/login_bus_event.dart';
 import 'package:titan/src/business/login/reset_fund_password_page.dart';
 import 'package:titan/src/business/login/reset_password_page.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
@@ -92,7 +92,7 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
               elevation: 1,
               color: Color(0xFFBCC1C7),
               onPressed: () {
-                eventBus.fire(ReloginEvent());
+                eventBus.fire(ReloginBusEvent());
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),

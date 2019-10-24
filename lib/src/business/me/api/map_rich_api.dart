@@ -284,6 +284,11 @@ class MapRichApi {
         params: {"id": id}, options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
+  ///赎回
+  Future<String> getDianpingCookies() async {
+    return await MapRichHttpCore.instance.getEntity('cookie', EntityFactory<String>((json) => json));
+  }
+
   ///附近可以分享的位置
   Future<GaodeModel> searchByGaode({
     @required double lat,

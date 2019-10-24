@@ -95,7 +95,6 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     // search
     //--------------
     else if (event is SearchTextEvent) {
-      print('xxx');
       yield SearchingPoiByTextState(searchText: event.searchText);
 
       try {

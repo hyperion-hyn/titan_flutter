@@ -19,6 +19,8 @@ class Const {
 //  static const String MAP_RICH_DOMAIN = "https://www.maprich.net/";
   static const String MAP_RICH_DOMAIN = "https://api.maprich.net/";
 
+  static const String MAP_RICH_DOMAIN_WEBSITE = "https://www.maprich.net/";
+
   static const String NEWS_DOMAIN = "https://news.hyn.space/";
 
   static Color PRIMARY_COLOR = HexColor("#FF259B24");
