@@ -7,14 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
-import 'package:loading/loading.dart';
 import 'package:titan/src/business/me/contract/contract_bloc/bloc.dart';
 import 'package:titan/src/business/me/contract/order_contract/order_contract_state.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
-import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/progress_dialog_mask/bloc/bloc.dart';
 
 import '../model/contract_info_v2.dart';
 import '../my_hash_rate_page.dart';
@@ -40,8 +36,6 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   ContractBloc _contractBloc;
 
   OrderContractBloc _orderContractBloc;
-
-  ProgressMaskDialogBloc _progressMaskDialogBloc;
 
   @override
   void initState() {
@@ -79,14 +73,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
               return BlocBuilder<OrderContractBloc, OrderContractState>(
                 bloc: _orderContractBloc,
                 builder: (context, orderContractState) {
-                  if (orderContractState is! OrderingState) {
-                    _progressMaskDialogBloc?.add(CloseDialogEvent());
-                    _progressMaskDialogBloc = null;
-                  }
-
                   if (orderContractState is OrderSuccessState) {
-                    print(" lalala OrderSuccessState lalalal");
-
                     _orderContractBloc.add(ResetToInit());
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       Navigator.push(
@@ -290,7 +277,6 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   }
 
   Function _orderSubmit() {
-    _progressMaskDialogBloc = UtilUi.showMaskDialog(context);
     if (_selectedContractInfo.amount > 0) {
       _orderContractBloc.add(OrderContract(_selectedContractInfo.id));
     } else {

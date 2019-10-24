@@ -199,7 +199,7 @@ class _PurchaseState extends State<PurchasePage> {
     return Column(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 0),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle),
           child: Column(
@@ -223,7 +223,7 @@ class _PurchaseState extends State<PurchasePage> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Container(
-                        constraints: BoxConstraints(maxWidth: 180),
+                        constraints: BoxConstraints(maxWidth: 220),
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
                           '${widget.payOrder?.hyn_amount}',
