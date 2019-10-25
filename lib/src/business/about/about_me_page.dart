@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -9,13 +7,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/updater/bloc/bloc.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../env.dart';
 
 class AboutMePage extends StatefulWidget {
   @override
@@ -32,6 +28,9 @@ class _AboueMeState extends State<AboutMePage> {
     super.initState();
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       version = packageInfo.version;
+      if (env.buildType == BuildType.DEV) {
+        version = version + ".test";
+      }
       setState(() {});
     });
   }
@@ -73,7 +72,7 @@ class _AboueMeState extends State<AboutMePage> {
                   SizedBox(
                     height: 4,
                   ),
-                  Text(version+".test", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: Color(0xFF9B9B9B)))
+                  Text(version, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: Color(0xFF9B9B9B)))
                 ],
               )
             ],

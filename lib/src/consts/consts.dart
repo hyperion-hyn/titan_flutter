@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 
+import '../../env.dart';
+
 class Const {
   static const String DOMAIN = 'https://api.hyn.space/';
 
@@ -18,7 +20,13 @@ class Const {
 //  static const String MAP_RICH_DOMAIN = "http://113.71.210.38:3000/";
 //  static const String MAP_RICH_DOMAIN = "https://www.maprich.net/";
 //  static const String MAP_RICH_DOMAIN = "https://api.maprich.net/";
-  static const String MAP_RICH_DOMAIN = "http://api-test.maprich.net/";
+
+  static const String MAP_RICH_DOMAIN_DEV = "http://api-test.maprich.net/";
+  static const String MAP_RICH_DOMAIN_PROD = "https://mainnet.maprich.net/";
+
+  static String get MAP_RICH_DOMAIN {
+    return env.buildType == BuildType.DEV ? MAP_RICH_DOMAIN_DEV : MAP_RICH_DOMAIN_PROD;
+  }
 
   static const String MAP_RICH_DOMAIN_WEBSITE = "https://www.maprich.net/";
 
