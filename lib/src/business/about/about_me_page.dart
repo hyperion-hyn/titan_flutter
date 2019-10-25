@@ -93,11 +93,10 @@ class _AboueMeState extends State<AboutMePage> {
   }
 
   Widget _buildInfoContainer({String label, Function onTap}) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.fromLTRB(0, 1, 0, 0),
-        color: Colors.white,
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           child: Row(
