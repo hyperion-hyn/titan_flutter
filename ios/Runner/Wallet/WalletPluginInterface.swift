@@ -12,12 +12,12 @@ import Flutter
 class WalletPluginInterface {
     func setMethodCallHandler(call: FlutterMethodCall, result: FlutterResult) -> Bool {
         
-        switch(methodCall.method) {
+//        switch(methodCall.method) {
         //产生助记词
-        case "wallet_make_mnemonic":
-            print("hello")
-            return true
-        }
+//        case "wallet_make_mnemonic":
+//            print("hello")
+//            return true
+//        }
         return false
     }
 }
