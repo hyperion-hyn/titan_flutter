@@ -17,7 +17,8 @@ class Const {
 //  static const String MAP_RICH_DOMAIN = "http://10.10.1.116:3000/";
 //  static const String MAP_RICH_DOMAIN = "http://113.71.210.38:3000/";
 //  static const String MAP_RICH_DOMAIN = "https://www.maprich.net/";
-  static const String MAP_RICH_DOMAIN = "https://api.maprich.net/";
+//  static const String MAP_RICH_DOMAIN = "https://api.maprich.net/";
+  static const String MAP_RICH_DOMAIN = "http://api-test.maprich.net/";
 
   static const String MAP_RICH_DOMAIN_WEBSITE = "https://www.maprich.net/";
 
