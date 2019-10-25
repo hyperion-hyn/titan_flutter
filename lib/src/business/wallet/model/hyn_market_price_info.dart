@@ -12,8 +12,10 @@ class HynMarketPriceInfo {
   @JsonKey(name: "is_best")
   bool isBest;
   String url;
+  @JsonKey(name: "cny_price")
+  double cnyPrice;
 
-  HynMarketPriceInfo(this.source, this.icon, this.txPair, this.price, this.isBest, this.url);
+  HynMarketPriceInfo(this.source, this.icon, this.txPair, this.price, this.isBest, this.url, this.cnyPrice);
 
   factory HynMarketPriceInfo.fromJson(Map<String, dynamic> json) => _$HynMarketPriceInfoFromJson(json);
 

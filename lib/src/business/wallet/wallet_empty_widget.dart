@@ -17,7 +17,12 @@ class EmptyWallet extends StatefulWidget {
 class _EmptyWalletState extends State<EmptyWallet> {
   MarketPriceApi _marketPriceApi = MarketPriceApi();
 
-  var marketPriceResponse = HynMarketPriceResponse(0, [], 0);
+  var marketPriceResponse = HynMarketPriceResponse(
+    0,
+    0,
+    [],
+    0,
+  );
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
 
@@ -135,7 +140,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "${DOUBLE_NUMBER_FORMAT.format(marketPriceResponse.avgPrice)}美元",
+                            "${DOUBLE_NUMBER_FORMAT.format(marketPriceResponse.avgCNYPrice)}人民币",
                             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(

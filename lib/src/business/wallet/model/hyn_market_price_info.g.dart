@@ -14,6 +14,7 @@ HynMarketPriceInfo _$HynMarketPriceInfoFromJson(Map<String, dynamic> json) {
     (json['price'] as num)?.toDouble(),
     json['is_best'] as bool,
     json['url'] as String,
+    (json['cny_price'] as num)?.toDouble(),
   );
 }
 
@@ -25,4 +26,5 @@ Map<String, dynamic> _$HynMarketPriceInfoToJson(HynMarketPriceInfo instance) =>
       'price': instance.price,
       'is_best': instance.isBest,
       'url': instance.url,
+      'cny_price': instance.cnyPrice,
     };

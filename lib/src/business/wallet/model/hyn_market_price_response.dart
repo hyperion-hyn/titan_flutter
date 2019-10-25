@@ -6,10 +6,11 @@ part 'hyn_market_price_response.g.dart';
 @JsonSerializable()
 class HynMarketPriceResponse {
   double avgPrice;
+  double avgCNYPrice;
   List<HynMarketPriceInfo> markets;
   int total;
 
-  HynMarketPriceResponse(this.avgPrice, this.markets, this.total);
+  HynMarketPriceResponse(this.avgPrice, this.avgCNYPrice, this.markets, this.total);
 
   factory HynMarketPriceResponse.fromJson(Map<String, dynamic> json) => _$HynMarketPriceResponseFromJson(json);
 

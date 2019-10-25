@@ -84,7 +84,7 @@ class _MarketPriceState extends State<MarketPricePage> {
             ),
             Spacer(),
             Text(
-              "\$ ${DOUBLE_NUMBER_FORMAT.format(marketPriceVo.price)}",
+              "\¥ ${DOUBLE_NUMBER_FORMAT.format(marketPriceVo.price)}",
               style: TextStyle(fontSize: 16),
             )
           ],
@@ -98,7 +98,7 @@ class _MarketPriceState extends State<MarketPricePage> {
     isLoading = false;
     marketPriceList = marketPriceResponse.markets.map((_priceTemp) {
       return MarketPriceVo(
-          iconUrl: _priceTemp.icon, marketName: _priceTemp.source, price: _priceTemp.price, marketUrl: _priceTemp.url);
+          iconUrl: _priceTemp.icon, marketName: _priceTemp.source, price: _priceTemp.cnyPrice, marketUrl: _priceTemp.url);
     }).toList();
 
     setState(() {});

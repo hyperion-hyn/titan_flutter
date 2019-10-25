@@ -10,6 +10,7 @@ HynMarketPriceResponse _$HynMarketPriceResponseFromJson(
     Map<String, dynamic> json) {
   return HynMarketPriceResponse(
     (json['avgPrice'] as num)?.toDouble(),
+    (json['avgCNYPrice'] as num)?.toDouble(),
     (json['markets'] as List)
         ?.map((e) => e == null
             ? null
@@ -23,6 +24,7 @@ Map<String, dynamic> _$HynMarketPriceResponseToJson(
         HynMarketPriceResponse instance) =>
     <String, dynamic>{
       'avgPrice': instance.avgPrice,
+      'avgCNYPrice': instance.avgCNYPrice,
       'markets': instance.markets,
       'total': instance.total,
     };
