@@ -372,11 +372,18 @@ class MapContainerState extends State<MapContainer> {
   }
 
   void onStyleLoaded(MapboxMapController controller) async {
+    print('xxx style loaded');
     setState(() {
       mapboxMapController = controller;
     });
 
     controller.addListener(mapMoveListener);
+
+    var position = (await controller.getCameraPosition()).target;
+    print('xxx $position');
+    if(position != null) {
+      eventBus.fire(OnMapMovedEvent(latLng: position));
+    }
 
 //    _toMyLocation();
 //    _loadPurchasedMap();
@@ -415,6 +422,8 @@ class MapContainerState extends State<MapContainer> {
         double doubleClickZoom = 17;
         if (latLng != null) {
           mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom));
+
+          eventBus.fire(OnMapMovedEvent(latLng: latLng));
         } else {
           mapboxMapController?.animateCamera(CameraUpdate.zoomTo(doubleClickZoom));
         }
@@ -422,6 +431,8 @@ class MapContainerState extends State<MapContainer> {
         //single click
         if (latLng != null) {
           mapboxMapController?.animateCamera(CameraUpdate.newLatLng(latLng));
+
+          eventBus.fire(OnMapMovedEvent(latLng: latLng));
         }
       }
       Future.delayed(Duration(milliseconds: 500), () {

@@ -70,11 +70,10 @@ class HomePanelState extends UserState<HomePanel> {
   }
 
   void loadCityRecommend(LatLng latLng) async {
-    if (nearPois.length == 0 && (lastPosition == null || lastPosition.distanceTo(latLng) > 2000)) {
+    if (/*nearPois.length == 0 && */ (lastPosition == null || lastPosition.distanceTo(latLng) > 5000)) {
       lastPosition = latLng;
       var latlng = CoordConvert.wgs84togcj02(Coords(latLng.latitude, latLng.longitude));
       var pois = await Injector.of(context).repository.requestDianping(latlng.latitude, latlng.longitude);
-      print('xxx3 ${pois}');
       if (pois.length > 0) {
         setState(() {
           nearPois = pois;
