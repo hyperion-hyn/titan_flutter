@@ -21,10 +21,7 @@ class DiscoverPageWidget extends StatefulWidget {
 }
 
 class DiscoverPageState extends State<DiscoverPageWidget> {
-  List<FocusImage> focusImages = [
-    FocusImage(
-        "https:\/\/news.hyn.space\/wp-content\/uploads\/2019\/10\/WechatIMG16-768x443.jpeg", "https://www.hyn.space")
-  ];
+  List<FocusImage> focusImages = [FocusImage('res/drawable/discover_first_image.jpeg', "https://www.hyn.space")];
 
   @override
   void initState() {
@@ -79,6 +76,8 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                         SizedBox(
                           height: 220,
                           child: Carousel(
+                            borderRadius: true,
+                            radius: Radius.circular(0),
                             onImageTap: (int index) {
                               var focusImage = focusImages[index];
 
@@ -97,7 +96,13 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                             },
                             dotVerticalPadding: 16,
                             dotBgColor: Colors.transparent,
-                            images: focusImages.map((focusImage) => NetworkImage(focusImage.cover)).toList(),
+                            images: focusImages.map((focusImage) {
+                              return FadeInImage.assetNetwork(
+                                placeholder: 'res/drawable/img_placeholder.jpg',
+                                image: focusImage.cover,
+                                fit: BoxFit.cover,
+                              );
+                            }).toList(),
                           ),
                         ),
                         Align(

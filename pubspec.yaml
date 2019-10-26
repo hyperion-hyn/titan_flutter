@@ -175,6 +175,7 @@ flutter:
     - res/drawable/email_icon.png
     - res/drawable/map3_node_introduction.jpeg
     - res/drawable/map_rich_application.png
+    - res/drawable/discover_first_image.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
