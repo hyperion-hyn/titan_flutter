@@ -12,4 +12,9 @@ class FocusImage {
   factory FocusImage.fromJson(Map<String, dynamic> json) => _$FocusImageFromJson(json);
 
   Map<String, dynamic> toJson() => _$FocusImageToJson(this);
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

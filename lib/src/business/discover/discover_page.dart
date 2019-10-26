@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
 import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
@@ -26,7 +29,23 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
   @override
   void initState() {
     super.initState();
+
+    loadCacheData();
+
     BlocProvider.of<DiscoverBloc>(context).add(LoadFocusImageEvent());
+  }
+
+  void loadCacheData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String ss1 = prefs.getString("disc_focus");
+    var flist = (jsonDecode(ss1) as List<dynamic>).map((element) => FocusImage.fromJson(element)).toList();
+    if (flist != null && flist.isNotEmpty) {
+      focusImages = flist;
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -134,6 +153,8 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                   activeDMap('encryptShare');
                                   var mapboxController =
                                       (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+                                  mapboxController?.disableLocation();
+
                                   var lastLocation = await mapboxController?.lastKnownLocation();
                                   if (lastLocation != null) {
                                     mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
@@ -222,7 +243,8 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                                   Expanded(
                                                                     child: Text(
                                                                       '全球大使馆',
-                                                                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                                      style:
+                                                                          TextStyle(color: Colors.grey, fontSize: 13),
                                                                     ),
                                                                   ),
                                                                 ],
@@ -361,6 +383,8 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {
       var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+      mapboxController?.disableLocation();
+
       if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
         mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
           model.dMapConfigModel.defaultLocation,

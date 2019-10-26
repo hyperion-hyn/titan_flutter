@@ -90,7 +90,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
       });
     } catch (e) {
       logger.e(e);
-      Fluttertoast.showToast(msg: '加载数据失败！');
+//      Fluttertoast.showToast(msg: '加载数据失败！');
     }
   }
 
