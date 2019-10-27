@@ -158,11 +158,13 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                   activeDMap('encryptShare');
                                   var mapboxController =
                                       (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
-                                  mapboxController?.disableLocation();
+                                  await mapboxController?.disableLocation();
 
                                   var lastLocation = await mapboxController?.lastKnownLocation();
                                   if (lastLocation != null) {
-                                    mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
+                                    Future.delayed(Duration(milliseconds: 500)).then((value) {
+                                      mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
+                                    });
                                   }
                                 },
                                 borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -271,9 +273,9 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                           Expanded(
                                             child: InkWell(
                                               borderRadius: BorderRadius.all(Radius.circular(4)),
-                                              onTap: () {
+                                              /*onTap: () {
                                                 activeDMap('nightlife');
-                                              },
+                                              },*/
                                               child: Container(
                                                 padding: const EdgeInsets.all(16),
                                                 decoration: BoxDecoration(
@@ -298,7 +300,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                           Padding(
                                                             padding: const EdgeInsets.only(top: 8.0),
                                                             child: Text(
-                                                              '夜蒲不再迷路',
+                                                              '暂未开放',
                                                               style: TextStyle(color: Colors.grey, fontSize: 13),
                                                             ),
                                                           ),
@@ -382,19 +384,26 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
     );
   }
 
-  void activeDMap(String dMapName) {
+  void activeDMap(String dMapName) async {
     BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
 
     var model = DMapDefine.kMapList[dMapName];
+    print('xxx0 $dMapName');
     if (model != null) {
       var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
-      mapboxController?.disableLocation();
+      print('xxx0-0');
+      await mapboxController?.disableLocation();
 
+      print('xxx1');
       if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
-        mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
-          model.dMapConfigModel.defaultLocation,
-          model.dMapConfigModel.defaultZoom,
-        ));
+        print('xxx2');
+        Future.delayed(Duration(milliseconds: 500)).then((value) {
+          print('xxx3');
+          mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
+            model.dMapConfigModel.defaultLocation,
+            model.dMapConfigModel.defaultZoom,
+          ));
+        });
       }
     }
   }

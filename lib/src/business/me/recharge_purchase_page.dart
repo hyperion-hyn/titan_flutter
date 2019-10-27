@@ -62,7 +62,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 
   @override
   Widget build(BuildContext context) {
-    var payTypeName = "HYN支付";
+    var payTypeName = "使用HYN";
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
@@ -148,7 +148,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 onTap: () {
                   if (rechargeOrder?.hynAmount != null) {
                     Clipboard.setData(ClipboardData(text: rechargeOrder?.hynAmount));
-                    Fluttertoast.showToast(msg: "支付金额复制成功");
+                    Fluttertoast.showToast(msg: "金额复制成功");
                   }
                 },
                 child: Padding(
@@ -158,7 +158,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "请支付",
+                        "请抵押",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Container(
@@ -193,7 +193,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 height: 8,
               ),
               Text(
-                '请务必支付指定的HYN金额！',
+                '请务必转账指定的HYN金额！',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
               if (rechargeOrder?.qrCode != null)
@@ -220,7 +220,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "支付地址",
+                      "转账地址",
                       style: TextStyle(fontSize: 14),
                     ),
                     Text('${shortEthAddress(rechargeOrder?.address)}', style: TextStyle(fontSize: 14)),
@@ -256,7 +256,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "使用HYN钱包支付",
+                        "使用HYN钱包转账",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -277,7 +277,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                       Navigator.pop(context, true);
                     } else {
                       if (ret.code == -1007) {
-                        Fluttertoast.showToast(msg: '已到达购买上限');
+                        Fluttertoast.showToast(msg: '已到达上限');
                       } else {
                         Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
                       }
@@ -288,7 +288,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "我已使用外部钱包支付",
+                        "我已使用外部钱包转账",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -314,7 +314,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${quotes?.rate}${quotes?.to}。\n请勿往上述地址转入非HYN资产，否则资产将不可找回。您支付后后，需要整个网络节点的确认，大约需要20分钟。",
+                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${quotes?.rate}${quotes?.to}。\n请勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),

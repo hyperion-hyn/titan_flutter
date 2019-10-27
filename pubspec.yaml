@@ -127,6 +127,7 @@ flutter:
     - res/drawable/load_fail.png
     - res/drawable/empty_data.png
     - res/drawable/img_placeholder.jpg
+    - res/drawable/img_placeholder_circle.png
     - res/drawable/ic_dmap_bar.png
     - res/drawable/ic_dmap_location_share.png
     - res/drawable/ic_dmap_mbassy.png

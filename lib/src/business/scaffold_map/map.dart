@@ -372,7 +372,6 @@ class MapContainerState extends State<MapContainer> {
   }
 
   void onStyleLoaded(MapboxMapController controller) async {
-    print('xxx style loaded');
     setState(() {
       mapboxMapController = controller;
     });
@@ -380,7 +379,6 @@ class MapContainerState extends State<MapContainer> {
     controller.addListener(mapMoveListener);
 
     var position = (await controller.getCameraPosition()).target;
-    print('xxx $position');
     if(position != null) {
       eventBus.fire(OnMapMovedEvent(latLng: position));
     }

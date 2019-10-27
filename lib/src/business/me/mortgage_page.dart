@@ -50,7 +50,7 @@ class _MortgagePageState extends State<MortgagePage> {
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          '抵押支付',
+          '抵押',
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -189,7 +189,7 @@ class _MortgagePageState extends State<MortgagePage> {
         Padding(
           padding: const EdgeInsets.only(top: 64.0),
           child: Text(
-            '提示：只能使用收益余额进行节点抵押支付',
+            '提示：只能使用收益余额进行节点抵押',
             style: TextStyle(color: Colors.grey),
           ),
         ),

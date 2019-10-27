@@ -52,7 +52,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
         appBar: AppBar(
           brightness: Brightness.light,
           title: Text(
-            "购买算力合约",
+            "算力合约",
             style: TextStyle(color: Colors.white),
           ),
           iconTheme: IconThemeData(color: Colors.white),
@@ -92,9 +92,9 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                       return;
                     });
                   } else if (orderContractState is OrderOverRangeState) {
-                    Fluttertoast.showToast(msg: "超过购买限制数量");
+                    Fluttertoast.showToast(msg: "超过限制数量");
                   } else if (orderContractState is OrderFailState) {
-                    Fluttertoast.showToast(msg: "购买失败");
+                    Fluttertoast.showToast(msg: "抵押失败");
                   }
 
                   return Stack(
@@ -120,7 +120,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                             child: Container(
                               child: CarouselSlider(
                                 onPageChanged: _onPageChanged,
-                                height: 250.0,
+                                height: 280.0,
                                 enlargeCenterPage: true,
                                 items: contractList.map((_contractInfoTemp) {
                                   return Builder(
@@ -134,23 +134,23 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              Row(
-                                                children: <Widget>[
-                                                  FadeInImage.assetNetwork(
-                                                    image: _contractInfoTemp.icon,
-                                                    placeholder: 'res/drawable/img_placeholder.jpg',
-//                                          width: 170,
-                                                    height: 130,
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                ],
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                mainAxisSize: MainAxisSize.max,
+                                              Expanded(
+                                                  child: Center(
+                                                child: Image.network(_contractInfoTemp.icon),
+                                                /*FadeInImage.assetNetwork(
+                                                  image: _contractInfoTemp.icon,
+                                                  placeholder: 'res/drawable/img_placeholder_circle.png',
+//                                                height: constraint.biggest.height,
+                                                  fit: BoxFit.cover,
+                                                )*/
+                                              )),
+                                              SizedBox(
+                                                height: 16,
                                               ),
-                                              Spacer(),
                                               Row(
                                                 children: <Widget>[
                                                   Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: <Widget>[
                                                       Text(
                                                         _contractInfoTemp.name,
@@ -159,40 +159,49 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount),
+                                                            '${DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount)}',
                                                             style: TextStyle(
                                                                 color: Color(0xFFf6927f),
                                                                 fontSize: 18,
                                                                 fontWeight: FontWeight.bold),
                                                           ),
-                                                          Text("  USDT")
+                                                          Text(
+                                                            " USDT",
+                                                            style: TextStyle(
+                                                              color: Color(0xFFf6927f),
+                                                            ),
+                                                          ),
                                                         ],
-                                                      )
+                                                      ),
                                                     ],
                                                   ),
                                                   Spacer(),
                                                   Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: <Widget>[
-                                                      Text(
-                                                        "${_contractInfoTemp.timeCycle}天产出(USDT)",
-                                                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                                                      ),
+                                                      Text('${_contractInfoTemp.timeCycle}天产出'),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
                                                             DOUBLE_NUMBER_FORMAT.format(
-                                                                _contractInfoTemp.monthInc + _contractInfoTemp.amount),
+                                                                _contractInfoTemp.amount + _contractInfoTemp.monthInc),
                                                             style: TextStyle(
                                                                 color: Color(0xFFf6927f),
-                                                                fontSize: 14,
-                                                                fontWeight: FontWeight.normal),
+                                                                fontSize: 18,
+                                                                fontWeight: FontWeight.bold),
+                                                          ),
+                                                          Text(
+                                                            " USDT",
+                                                            style: TextStyle(
+                                                              color: Color(0xFFf6927f),
+                                                            ),
                                                           ),
                                                         ],
-                                                      )
+                                                      ),
                                                     ],
-                                                  )
+                                                  ),
                                                 ],
-                                              )
+                                              ),
                                             ],
                                           ));
                                     },
@@ -206,19 +215,20 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                             child: Container(
                               margin: EdgeInsets.only(left: 32, right: 32, bottom: 16, top: 16),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
                                   Row(
                                     children: <Widget>[
                                       Text(
                                         "合约介绍",
                                         style:
-                                            TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                                            TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                                       ),
-                                      Spacer(),
-                                      Text(
-                                        "每人限购${_selectedContractInfo.limit}份",
-                                        style: TextStyle(color: Colors.grey, fontSize: 14),
-                                      )
+//                                      Spacer(),
+//                                      Text(
+//                                        "每人限购${_selectedContractInfo.limit}份",
+//                                        style: TextStyle(color: Colors.grey, fontSize: 14),
+//                                      )
                                     ],
                                   ),
                                   SizedBox(
@@ -246,13 +256,21 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                         padding: const EdgeInsets.symmetric(horizontal: 42, vertical: 8),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
                                           children: <Widget>[
                                             Text(
                                               orderContractState is OrderingState
                                                   ? "提交中"
-                                                  : (_selectedContractInfo.amount != 0 ? "购买" : "免费领取"),
+                                                  : (_selectedContractInfo.amount != 0 ? "抵押" : "免费领取"),
                                               style: TextStyle(
-                                                  color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                                  color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+                                            ),
+                                            SizedBox(
+                                              width: 4,
+                                            ),
+                                            Text(
+                                              '限购${_selectedContractInfo.limit}份',
+                                              style: TextStyle(color: Colors.white70),
                                             ),
                                           ],
                                         ),
