@@ -120,7 +120,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                               child: Container(
                                 child: CarouselSlider(
                                   onPageChanged: _onPageChanged,
-                                  height: 250.0,
+                                  height: 280.0,
                                   enlargeCenterPage: true,
                                   items: _mortgageList.map((_mortgageInfoTemp) {
                                     return Builder(
@@ -134,23 +134,16 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: <Widget>[
-                                                Row(
-                                                  children: <Widget>[
-                                                    FadeInImage.assetNetwork(
-                                                      image: _mortgageInfoTemp.icon,
-                                                      placeholder: 'res/drawable/img_placeholder.jpg',
-//                                          width: 170,
-                                                      height: 130,
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  ],
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  mainAxisSize: MainAxisSize.max,
+                                                Expanded(
+                                                  child: Center(
+                                                    child: Image.network(_mortgageInfoTemp.icon, fit: BoxFit.cover,),
+                                                  ),
                                                 ),
-                                                Spacer(),
+                                                SizedBox(height: 16,),
                                                 Row(
                                                   children: <Widget>[
                                                     Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: <Widget>[
                                                         Text(
                                                           _mortgageInfoTemp.name,
@@ -165,16 +158,22 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                                   fontSize: 18,
                                                                   fontWeight: FontWeight.bold),
                                                             ),
-                                                            Text("  USDT")
+                                                            Text(
+                                                              " USDT",
+                                                              style: TextStyle(
+                                                                color: Color(0xFFf6927f),
+                                                              ),
+                                                            ),
                                                           ],
                                                         )
                                                       ],
                                                     ),
                                                     Spacer(),
                                                     Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: <Widget>[
                                                         Text(
-                                                          "${_mortgageList[selectedIndex].incomeCycle}天收益(%)",
+                                                          "${_mortgageList[selectedIndex].incomeCycle}天收益",
                                                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                                                         ),
                                                         Row(
@@ -183,10 +182,10 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                               _mortgageList[selectedIndex].incomeRate,
                                                               style: TextStyle(
                                                                   color: Color(0xFFf6927f),
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.normal),
+                                                                  fontSize: 18,
+                                                                  fontWeight: FontWeight.bold),
                                                             ),
-                                                            Text("")
+//                                                            Text("")
                                                           ],
                                                         )
                                                       ],
@@ -206,6 +205,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                               child: Container(
                                 margin: EdgeInsets.only(left: 32, right: 32, bottom: 16, top: 16),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: <Widget>[
                                     Row(
                                       children: <Widget>[
@@ -248,7 +248,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                               child: Padding(
                                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                                 child: Text(
-                                                  "购买",
+                                                  "抵押",
                                                   style: TextStyle(
                                                       color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                                                 ),

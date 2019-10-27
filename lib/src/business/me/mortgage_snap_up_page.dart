@@ -111,7 +111,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        "需支付",
+                        "需转账",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Padding(
@@ -154,7 +154,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "余额不足以支付",
+                  "余额不足",
                   style: TextStyle(color: Colors.red),
                 ),
                 SizedBox(
@@ -236,7 +236,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
         Padding(
           padding: const EdgeInsets.only(top: 64.0),
           child: Text(
-            '提示：抢购节点只能使用充值余额进行支付',
+            '提示：抢购节点只能使用充值余额进行抵押',
             style: TextStyle(color: Colors.grey),
           ),
         ),

@@ -58,13 +58,13 @@ class _PurchaseState extends State<PurchasePage> {
 
   @override
   Widget build(BuildContext context) {
-    var payTypeName = payType == 0 ? "HYN支付" : "余额支付";
+    var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "支付",
+          "算力合约抵押",
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
@@ -84,7 +84,7 @@ class _PurchaseState extends State<PurchasePage> {
                     child: Row(
                       children: <Widget>[
                         Text(
-                          "购买产品：",
+                          "产品：",
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         Text(
@@ -151,7 +151,7 @@ class _PurchaseState extends State<PurchasePage> {
                                         ),
                                         PopupMenuItem(
                                           value: 1,
-                                          child: Text("余额支付", style: TextStyle(fontSize: 14)),
+                                          child: Text("使用余额", style: TextStyle(fontSize: 14)),
                                         ),
                                       ],
                                       initialValue: payType)
@@ -165,7 +165,7 @@ class _PurchaseState extends State<PurchasePage> {
                               });
                             },
                             child: Text(
-                              "切换支付方式>",
+                              "切换方式>",
                               style: TextStyle(fontSize: 14, color: HexColor("#9E101010")),
                             ),
                           )
@@ -209,7 +209,7 @@ class _PurchaseState extends State<PurchasePage> {
                 onTap: () {
                   if (widget.payOrder?.hyn_amount != null) {
                     Clipboard.setData(ClipboardData(text: widget.payOrder?.hyn_amount));
-                    Fluttertoast.showToast(msg: "支付金额复制成功");
+                    Fluttertoast.showToast(msg: "金额复制成功");
                   }
                 },
                 child: Padding(
@@ -219,7 +219,7 @@ class _PurchaseState extends State<PurchasePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "请支付",
+                        "请抵押",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Container(
@@ -254,7 +254,7 @@ class _PurchaseState extends State<PurchasePage> {
                 height: 8,
               ),
               Text(
-                '请务必支付指定的HYN金额！',
+                '请务必转账指定的HYN金额！',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
               if (widget.payOrder?.qr_code != null)
@@ -281,7 +281,7 @@ class _PurchaseState extends State<PurchasePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "支付地址",
+                      "转账地址",
                       style: TextStyle(fontSize: 14),
                     ),
                     Text('${shortEthAddress(widget.payOrder?.address)}', style: TextStyle(fontSize: 14)),
@@ -313,7 +313,7 @@ class _PurchaseState extends State<PurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "使用HYN钱包支付",
+                        "使用HYN钱包转账",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -330,11 +330,11 @@ class _PurchaseState extends State<PurchasePage> {
                         await service.confirmPay(orderId: widget.payOrder.order_id, payType: 'HYN', fundToken: " ");
                     if (ret.code == 0) {
                       //支付成功
-                      Fluttertoast.showToast(msg: '购买成功');
+                      Fluttertoast.showToast(msg: '操作成功');
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                     } else {
                       if (ret.code == -1007) {
-                        Fluttertoast.showToast(msg: '已到达购买上限');
+                        Fluttertoast.showToast(msg: '已到达上限');
                       } else {
                         Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
                       }
@@ -345,7 +345,7 @@ class _PurchaseState extends State<PurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "我已使用外部钱包支付",
+                        "我已使用外部钱包转账",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -371,7 +371,7 @@ class _PurchaseState extends State<PurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${quotes?.rate}${quotes?.to}。\n请勿往上述地址转入非HYN资产，否则资产将不可找回。您支付后后，需要整个网络节点的确认，大约需要20分钟。",
+                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${quotes?.rate}${quotes?.to}。\n请勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),
@@ -399,7 +399,7 @@ class _PurchaseState extends State<PurchasePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      "请支付",
+                      "请转账",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     Padding(
@@ -452,12 +452,12 @@ class _PurchaseState extends State<PurchasePage> {
                                 orderId: widget.payOrder.order_id, payType: 'B_HYN', fundToken: fundToken);
                             if (ret.code == 0) {
                               //支付成功
-                              Fluttertoast.showToast(msg: '购买成功');
+                              Fluttertoast.showToast(msg: '操作成功');
                               Navigator.pushReplacement(
                                   context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                             } else {
                               if (ret.code == -1007) {
-                                Fluttertoast.showToast(msg: '已到达购买上限');
+                                Fluttertoast.showToast(msg: '已到达上限');
                               } else {
                                 Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
                               }
@@ -465,11 +465,11 @@ class _PurchaseState extends State<PurchasePage> {
                           });
                         } catch (e) {
                           logger.e(e);
-                          Fluttertoast.showToast(msg: '支付异常');
+                          Fluttertoast.showToast(msg: '转账异常');
                         }
                       }
                     } else {
-                      Fluttertoast.showToast(msg: "数据异常，请重新购买");
+                      Fluttertoast.showToast(msg: "数据异常，请重试");
                     }
                   },
                   child: Padding(
@@ -479,7 +479,7 @@ class _PurchaseState extends State<PurchasePage> {
                         width: 192,
                         child: Center(
                             child: Text(
-                          "确认支付",
+                          "确认转账",
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ))),
                   ),
