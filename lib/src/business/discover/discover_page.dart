@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
@@ -273,9 +274,10 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                           Expanded(
                                             child: InkWell(
                                               borderRadius: BorderRadius.all(Radius.circular(4)),
-                                              /*onTap: () {
-                                                activeDMap('nightlife');
-                                              },*/
+                                              onTap: () {
+//                                                activeDMap('nightlife');
+                                                Fluttertoast.showToast(msg: "敬请期待");
+                                              },
                                               child: Container(
                                                 padding: const EdgeInsets.all(16),
                                                 decoration: BoxDecoration(
@@ -294,7 +296,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: <Widget>[
                                                           Text(
-                                                            '夜生活指南',
+                                                            '折扣地图',
                                                             style: TextStyle(fontWeight: FontWeight.w600),
                                                           ),
                                                           Padding(
