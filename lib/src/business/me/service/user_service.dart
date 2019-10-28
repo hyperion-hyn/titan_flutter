@@ -34,7 +34,11 @@ class UserService {
   static const String SHARED_PREF_USER_TOKEN_KEY = "user_token";
 
   static syncUserInfo() async {
-    LOGIN_USER_INFO = await UserService().getUserInfo();
+    try {
+      LOGIN_USER_INFO = await UserService().getUserInfo();
+    } catch (e) {
+      logger.e(e);
+    }
   }
 
   Future<UserToken> login(String email, String password) async {

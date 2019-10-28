@@ -42,7 +42,11 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
   }
 
   Future _updateUserInstance() async {
-    LOGIN_USER_INFO = await _userService.getUserInfo();
+    try {
+      LOGIN_USER_INFO = await _userService.getUserInfo();
+    } catch (e) {
+      logger.e(e);
+    }
   }
 
   @override

@@ -130,9 +130,9 @@ class _MeState extends UserState<MePage> with RouteAware {
                                               border: Border.all(color: HexColor("#B4B4B4")),
                                               shape: BoxShape.rectangle),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                             child: Text(
-                                              LOGIN_USER_INFO.level==""?"无等级":LOGIN_USER_INFO.level,
+                                              LOGIN_USER_INFO.level == "" ? "无等级" : LOGIN_USER_INFO.level,
                                               style: TextStyle(fontSize: 10, color: HexColor("#B4B4B4")),
                                             ),
                                           ),
@@ -290,7 +290,7 @@ class _MeState extends UserState<MePage> with RouteAware {
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"))),
+              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
               child: Column(
                 children: <Widget>[
                   _buildMemuBar("我的推广", ExtendsIconFont.mail_read, () {
@@ -320,6 +320,9 @@ class _MeState extends UserState<MePage> with RouteAware {
             SizedBox(
               height: 16,
             ),
+            Divider(
+              height: 0,
+            ),
             Container(
               color: Colors.white,
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -339,6 +342,9 @@ class _MeState extends UserState<MePage> with RouteAware {
                   }),
                 ],
               ),
+            ),
+            Divider(
+              height: 0,
             ),
             SizedBox(
               height: 16,

@@ -156,7 +156,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            '${DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount)}',
+                                                            '${DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.amount == 0 ? 10 : _contractInfoTemp.amount)}',
                                                             style: TextStyle(
                                                                 color: Color(0xFFf6927f),
                                                                 fontSize: 18,

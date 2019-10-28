@@ -201,7 +201,7 @@ class HomePanelState extends UserState<HomePanel> {
               ),
             ),
             Text(
-              '搜索',
+              '搜索 / 解码位置密文',
               style: TextStyle(
                 color: Color(0xff8193AE),
               ),

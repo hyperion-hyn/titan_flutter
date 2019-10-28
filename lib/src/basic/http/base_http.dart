@@ -14,7 +14,7 @@ class BaseHttpCore {
 
   BaseHttpCore(this.dio) {
     //hack method
-    dio.options.connectTimeout = 5000;
+    dio.options.connectTimeout = 10000;
   }
 
   static const String GET = "get";

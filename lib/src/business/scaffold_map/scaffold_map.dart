@@ -67,7 +67,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       var mapScenseState = Keys.mapKey.currentState as MapContainerState;
       var camraPosition = await mapScenseState.mapboxMapController.getCameraPosition();
       var center = camraPosition.target;
-      print('center is $center');
+
       var searchResult = await Navigator.push(
           context,
           MaterialPageRoute(

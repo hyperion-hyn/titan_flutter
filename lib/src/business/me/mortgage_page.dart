@@ -34,10 +34,14 @@ class _MortgagePageState extends State<MortgagePage> {
   }
 
   void loadData() async {
-    var _userInfo = await service.getUserInfo();
-    setState(() {
-      userInfo = _userInfo;
-    });
+    try {
+      var _userInfo = await service.getUserInfo();
+      setState(() {
+        userInfo = _userInfo;
+      });
+    } catch (e) {
+      logger.e((e));
+    }
   }
 
   @override

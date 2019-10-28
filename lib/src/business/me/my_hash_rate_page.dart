@@ -41,7 +41,11 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
   void postFrameCallBackAfterInitState() async {
     loadDataBloc.add(LoadingEvent());
 
-    LOGIN_USER_INFO = await _userService.getUserInfo();
+    try {
+      LOGIN_USER_INFO = await _userService.getUserInfo();
+    } catch(e) {
+      logger.e(e);
+    }
   }
 
   @override
@@ -141,7 +145,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
               if (hashRateVo.subTitle != null)
                 Text(
                   hashRateVo.subTitle,
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
                 )
             ],
           ),
@@ -158,7 +162,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
               ),
               Text(
                 hashRateVo.time,
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+                style: TextStyle(fontSize: 12, color: Colors.black54),
               )
             ],
           )
