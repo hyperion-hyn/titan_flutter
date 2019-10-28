@@ -65,6 +65,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
     });
+
+    Future.delayed(Duration(milliseconds: 2000)).then((value) {
+      eventBus.fire(ToMyLocationEvent());
+    });
   }
 
   @override
