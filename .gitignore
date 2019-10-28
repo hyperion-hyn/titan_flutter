@@ -82,3 +82,4 @@ pubspec.lock
 .symlinks
 pMapping.txt
 shrinklist.txt
+flutter_export_environment.sh
