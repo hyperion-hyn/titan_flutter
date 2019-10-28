@@ -14,7 +14,9 @@ class ExceptionProcess {
         Fluttertoast.showToast(msg: notSuccessError.message);
       }
     } else if (error is DioError) {
-      Fluttertoast.showToast(msg: "网络错误");
+      if (error.type == DioErrorType.CONNECT_TIMEOUT) {
+        Fluttertoast.showToast(msg: "网络错误");
+      }
     }
     if (isThrow) {
       throw e;
