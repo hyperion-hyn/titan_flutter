@@ -19,6 +19,7 @@ ContractInfoV2 _$ContractInfoV2FromJson(Map<String, dynamic> json) {
     json['limit'] as int,
     json['mission_req'] as int,
     json['time_cycle'] as int,
+    (json['total_income'] as num)?.toDouble(),
   );
 }
 
@@ -35,4 +36,5 @@ Map<String, dynamic> _$ContractInfoV2ToJson(ContractInfoV2 instance) =>
       'limit': instance.limit,
       'mission_req': instance.missionReq,
       'time_cycle': instance.timeCycle,
+      'total_income': instance.totalIncome,
     };

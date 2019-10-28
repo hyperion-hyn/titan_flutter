@@ -27,9 +27,9 @@ class BuyHashRatePageV2 extends StatefulWidget {
 class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   UserService _userService = UserService();
 
-  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0)];
+  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0)];
 
-  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0);
+  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0);
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
 
@@ -47,7 +47,6 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
 
   @override
   Widget build(BuildContext context) {
-    print("lallal,build");
     return Scaffold(
         appBar: AppBar(
           brightness: Brightness.light,
@@ -62,8 +61,6 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
         body: BlocBuilder<ContractBloc, ContractState>(
             bloc: _contractBloc,
             builder: (BuildContext context, ContractState contractState) {
-              print("lalala, first builder");
-
               if (contractState is LoadedState) {
                 contractList = contractState.contrctInfoList;
                 _selectedContractInfo = contractList[0];
@@ -183,8 +180,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            DOUBLE_NUMBER_FORMAT.format(
-                                                                _contractInfoTemp.amount + _contractInfoTemp.monthInc),
+                                                            DOUBLE_NUMBER_FORMAT.format(_contractInfoTemp.totalIncome),
                                                             style: TextStyle(
                                                                 color: Color(0xFFf6927f),
                                                                 fontSize: 18,

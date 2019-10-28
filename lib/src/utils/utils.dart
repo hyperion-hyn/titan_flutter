@@ -75,3 +75,12 @@ Future launchUrl(String url) async {
     print('Could not launch $url');
   }
 }
+
+class Utils {
+
+  /// 后台算力单位转成UI显示单位
+  static double powerForShow(int power) {
+    return power / 10.0;
+  }
+
+}

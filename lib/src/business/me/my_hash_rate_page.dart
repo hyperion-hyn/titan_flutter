@@ -10,6 +10,7 @@ import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class MyHashRatePage extends StatefulWidget {
   @override
@@ -72,7 +73,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
                   child: Text(
-                    "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalPower)} T",
+                    "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.totalPower))} T",
                     style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                 )
@@ -187,7 +188,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
     return HashRateVo(
         iconData: ExtendsIconFont.engine,
         iconColor: iconColor,
-        title: "${powerDetail.power} T",
+        title: "${Utils.powerForShow(powerDetail.power)} T",
         subTitle: "合约ID：${powerDetail.contractId}",
         validity: validity,
         validityColor: validityColor,

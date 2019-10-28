@@ -25,6 +25,7 @@ import 'package:titan/src/utils/coord_convert.dart';
 import 'dart:math' as math;
 
 import 'package:fake_cookie_manager/fake_cookie_manager.dart' as fake;
+import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
@@ -246,7 +247,7 @@ class HomePanelState extends UserState<HomePanel> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalPower)}",
+                      "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.totalPower))}",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     ),
                     Padding(

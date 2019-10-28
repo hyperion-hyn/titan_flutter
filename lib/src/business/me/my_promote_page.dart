@@ -16,6 +16,7 @@ import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class MyPromotePage extends StatefulWidget {
   @override
@@ -77,38 +78,18 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Text(
-                              "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.highestPower)}",
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Text(
-                              "大区算力",
-                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                            ),
-                          ],
+                        Text(
+                          "我的小区算力",
+                          style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         ),
-                        Column(
-                          children: <Widget>[
-                            Text(
-                              "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.lowPower)}",
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Text(
-                              "小区算力",
-                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                            ),
-                          ],
-                        )
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Text(
+                          "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.lowPower))}",
+                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
                       ],
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     ),
                     Divider(
                       thickness: 0.5,
@@ -204,7 +185,10 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       Image.asset('res/drawable/empty_data.png', width: 100.0),
                       Padding(
                         padding: const EdgeInsets.only(top: 24.0),
-                        child: Text('你还没成功邀请人~', style: TextStyle(color: Colors.grey),),
+                        child: Text(
+                          '你还没成功邀请人~',
+                          style: TextStyle(color: Colors.grey),
+                        ),
                       ),
                     ],
                   ),
@@ -244,7 +228,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(promotion.total)}",
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(promotion.total))}",
                         style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     ),
@@ -254,27 +238,27 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                     ),
                   ],
                 ),
+//                Column(
+//                  children: <Widget>[
+//                    Padding(
+//                      padding: const EdgeInsets.symmetric(vertical: 8),
+//                      child: Text(
+//                        "${Const.DOUBLE_NUMBER_FORMAT.format(promotion.highest)}",
+//                        style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
+//                      ),
+//                    ),
+//                    Text(
+//                      "大区算力",
+//                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+//                    ),
+//                  ],
+//                ),
                 Column(
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(promotion.highest)}",
-                        style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                    ),
-                    Text(
-                      "大区算力",
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(promotion.low)}",
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(promotion.low))}",
                         style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     ),

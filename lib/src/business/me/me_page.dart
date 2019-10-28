@@ -225,7 +225,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     Text(
-                                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalPower)}",
+                                      "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.totalPower))}",
                                       style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                     Text(
