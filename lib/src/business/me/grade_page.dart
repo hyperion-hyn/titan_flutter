@@ -125,7 +125,7 @@ class _GradeState extends State<GradePage> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                "奖励： $award",
+                "贡献奖励： $award",
                 style: TextStyle(color: Color(0xFF6D6D6D)),
               ),
             ),
@@ -133,7 +133,7 @@ class _GradeState extends State<GradePage> {
           TableRow(children: [
             Container(),
             Text(
-              "要求： $require",
+              "等级要求： $require",
               style: TextStyle(color: Color(0xFF6D6D6D)),
             ),
           ])
