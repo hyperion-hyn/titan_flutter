@@ -51,7 +51,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
         appBar: AppBar(
           brightness: Brightness.light,
           title: Text(
-            "算力合约",
+            "获得算力",
             style: TextStyle(color: Colors.white),
           ),
           iconTheme: IconThemeData(color: Colors.white),
@@ -216,7 +216,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                   Row(
                                     children: <Widget>[
                                       Text(
-                                        "合约介绍",
+                                        "介绍",
                                         style:
                                             TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                                       ),
