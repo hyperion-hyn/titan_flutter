@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/domain/firebase.dart';
 import 'package:titan/src/utils/exception_process.dart';
@@ -34,7 +35,9 @@ void main() {
 
   BlocSupervisor.delegate = AppBlocDelegate();
 
-  runZoned<Future<void>>(() async {
+  FlutterBugly.init(androidAppId: "a1e5897dd1", iOSAppId: "0cf5dbc8d8");
+
+  FlutterBugly.postCatchedException(() {
     runApp(Injector(
       child: FireBaseLogic(
         child: App(),
@@ -42,9 +45,5 @@ void main() {
       repository: repository,
       searchInteractor: searchInteractor,
     ));
-  }, onError: (error, stackTrace) {
-    print(error);
-    print(stackTrace);
-    ExceptionProcess.process(error, isThrow: false);
   });
 }
