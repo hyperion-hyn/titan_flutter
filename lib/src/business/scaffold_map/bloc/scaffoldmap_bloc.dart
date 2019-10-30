@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/inject/injector.dart';
@@ -15,14 +17,17 @@ import './bloc.dart';
 class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   final BuildContext context;
 
+  CancelToken _cancelToken;
+
   ScaffoldMapBloc(this.context);
 
   @override
   ScaffoldMapState get initialState => InitialScaffoldMapState();
 
-
   @override
   Stream<ScaffoldMapState> mapEventToState(ScaffoldMapEvent event) async* {
+    print("currentEvent:$event");
+
     if (event is InitMapEvent) {
       ScaffoldMapStore.shared.clearAll();
       yield InitialScaffoldMapState();
@@ -35,13 +40,13 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       IPoi poi = event.poi;
 
       //暂时只需要补全地址
-      if(poi.address == null) {
+      if (poi.address == null) {
         yield SearchingPoiState(searchingPoi: poi);
 
         try {
           var searchInteractor = Injector.of(context).searchInteractor;
           PoiEntity searchPoi =
-          await searchInteractor.reverseGeoSearch(poi.latLng, Localizations.localeOf(context).languageCode);
+              await searchInteractor.reverseGeoSearch(poi.latLng, Localizations.localeOf(context).languageCode);
 
           if (poi.name == null) {
             poi.name = searchPoi.name;
@@ -154,6 +159,9 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
         );
       }
     } else if (event is ExistRouteEvent) {
+      if (_cancelToken != null) {
+        _cancelToken.cancel();
+      }
       if (state.getCurrentPoi() != null) {
         yield ShowPoiState(poi: state.getCurrentPoi());
       } else {
@@ -183,16 +191,13 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 
   ///profile: driving, walking, cycling";
   Future<String> _fetchRoute(LatLng start, LatLng end, String language, {String profile = 'driving'}) async {
+    _cancelToken = CancelToken();
     var url =
         'https://api.hyn.space/directions/v5/hyperion/$profile/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=polyline6&language=$language&steps=true&banner_instructions=true&voice_instructions=true&voice_units=metric&access_token=pk.hyn';
     print(url);
-    var httpClient = new HttpClient();
-    var request = await httpClient.getUrl(Uri.parse(url));
-    var response = await request.close();
-    if (response.statusCode == HttpStatus.ok) {
-      var responseBody = await response.transform(utf8.decoder).join();
-      return responseBody;
-    }
-    throw Exception('fetch error');
+    var responseMap = await HttpCore.instance.get(url, cancelToken: _cancelToken);
+    _cancelToken = null;
+    var response = json.encode(responseMap);
+    return response;
   }
 }
