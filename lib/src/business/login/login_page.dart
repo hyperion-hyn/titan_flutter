@@ -190,7 +190,11 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                        GestureDetector(
+                        InkWell(
+                          hoverColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
                           },

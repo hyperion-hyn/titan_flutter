@@ -1,6 +1,6 @@
 import 'package:titan/src/basic/bloc/submit_bloc/bloc.dart';
 
-abstract class RegisterEvent extends SubmitEvent {
+abstract class RegisterEvent {
   const RegisterEvent();
 }
 
@@ -13,3 +13,5 @@ class Register extends RegisterEvent {
 
   Register(this.email, this.password, this.fundPassword, this.invitationCode, this.verificationCode);
 }
+
+class ResetToInit extends RegisterEvent {}

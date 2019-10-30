@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
-import 'package:titan/src/basic/bloc/submit_bloc/bloc.dart';
 import 'package:titan/src/business/login/register_bloc/bloc.dart';
+import 'package:titan/src/business/login/register_bloc/register_state.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 
@@ -36,9 +36,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RegisterBloc, SubmitState>(
+    return BlocBuilder<RegisterBloc, RegisterState>(
         bloc: _registerBloc,
-        builder: (BuildContext context, SubmitState state) {
+        builder: (BuildContext context, RegisterState state) {
           var _registerButtonText = state is SubmitIngState ? "处理中" : "注册";
           Function _registerOnPress = state is SubmitIngState ? null : _submit;
           var _fieldEnable = state is SubmitIngState ? false : true;
@@ -47,7 +47,9 @@ class _RegisterPageState extends State<RegisterPage> {
             Fluttertoast.showToast(msg: "注册成功");
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pop(context, true);
+              return;
             });
+            _registerBloc.add(ResetToInit());
           }
           return Scaffold(
             backgroundColor: Colors.white,

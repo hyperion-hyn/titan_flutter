@@ -1,5 +1,3 @@
-import 'package:titan/src/basic/bloc/submit_bloc/bloc.dart';
-
 abstract class ResetPasswordEvent {
   const ResetPasswordEvent();
 }

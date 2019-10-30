@@ -55,7 +55,7 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   HttpResponseCodeNotSuccess(-20004, "更新用户信息失败"),
   HttpResponseCodeNotSuccess(-20005, "验证码错误"),
   HttpResponseCodeNotSuccess(-20006, "邀请码错误"),
-  HttpResponseCodeNotSuccess(-20007, "登录错误"),
+  HttpResponseCodeNotSuccess(-20007, "用户名和密码不匹配"),
   HttpResponseCodeNotSuccess(-20008, "重置密码错误"),
   HttpResponseCodeNotSuccess(-20009, "今天打卡任务已完成，请明日再来"),
   HttpResponseCodeNotSuccess(-20010, "打卡间隔低于30分钟"),
