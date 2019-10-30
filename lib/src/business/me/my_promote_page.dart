@@ -4,7 +4,6 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
@@ -12,7 +11,6 @@ import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/promotion_info.dart';
 import 'package:titan/src/business/me/promote_qr_code_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
-import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
@@ -82,18 +80,38 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Text(
-                          "我的小区算力",
-                          style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.highestPower))}",
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              "大联盟算力",
+                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Text(
-                          "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.lowPower))}",
-                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.lowPower))}",
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              "小联盟算力",
+                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                            ),
+                          ],
+                        )
                       ],
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     ),
                     Divider(
                       thickness: 0.5,
@@ -242,21 +260,21 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                     ),
                   ],
                 ),
-//                Column(
-//                  children: <Widget>[
-//                    Padding(
-//                      padding: const EdgeInsets.symmetric(vertical: 8),
-//                      child: Text(
-//                        "${Const.DOUBLE_NUMBER_FORMAT.format(promotion.highest)}",
-//                        style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
-//                      ),
-//                    ),
-//                    Text(
-//                      "大区算力",
-//                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-//                    ),
-//                  ],
-//                ),
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(promotion.highest))}",
+                        style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                    Text(
+                      "大联盟算力",
+                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                    ),
+                  ],
+                ),
                 Column(
                   children: <Widget>[
                     Padding(
@@ -267,7 +285,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "小区算力",
+                      "小联盟算力",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                   ],
