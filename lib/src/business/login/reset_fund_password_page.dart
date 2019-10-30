@@ -6,11 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
-import 'package:titan/src/basic/bloc/submit_bloc/bloc.dart';
 import 'package:titan/src/business/login/reset_fund_password_bloc/bloc.dart';
+import 'package:titan/src/business/login/reset_fund_password_bloc/reset_fund_password_state.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
-import 'package:titan/src/utils/md5_util.dart';
 
 class ResetFundPasswordPage extends StatefulWidget {
   String email;
@@ -44,9 +43,9 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
   Widget build(BuildContext context) {
     emailEditingController.text = widget.email;
 
-    return BlocBuilder<ResetFundPasswordBloc, SubmitState>(
+    return BlocBuilder<ResetFundPasswordBloc, ResetFundPasswordState>(
         bloc: _resetFundPasswordBloc,
-        builder: (BuildContext context, SubmitState state) {
+        builder: (BuildContext context, ResetFundPasswordState state) {
           var _registerButtonText = state is SubmitIngState ? "处理中" : "提交";
           Function _registerOnPress = state is SubmitIngState ? null : _submit;
           var _fieldEnable = state is SubmitIngState ? false : true;
@@ -55,7 +54,9 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
             Fluttertoast.showToast(msg: "修改成功");
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pop(context, true);
+              return null;
             });
+            _resetFundPasswordBloc.add(ResetToInit());
           }
           return Scaffold(
             backgroundColor: Colors.white,

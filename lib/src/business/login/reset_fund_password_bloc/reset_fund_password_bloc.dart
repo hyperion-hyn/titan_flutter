@@ -1,26 +1,28 @@
-import 'package:titan/src/basic/bloc/submit_bloc/bloc.dart';
+import 'package:titan/src/business/login/reset_fund_password_bloc/reset_fund_password_state.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/md5_util.dart';
-
+import 'package:bloc/bloc.dart';
 import 'bloc.dart';
 
-class ResetFundPasswordBloc extends SubmitBloc<SubmitEvent, SubmitState> {
+class ResetFundPasswordBloc extends Bloc<ResetFundPasswordEvent, ResetFundPasswordState> {
   UserService _userService;
 
   ResetFundPasswordBloc(this._userService);
 
   @override
-  SubmitState get initialState => InitSubmitState();
+  ResetFundPasswordState get initialState => InitSubmitState();
 
   @override
-  Stream<SubmitState> mapEventToState(SubmitEvent event) async* {
+  Stream<ResetFundPasswordState> mapEventToState(ResetFundPasswordEvent event) async* {
     if (event is ResetFundPassword) {
       yield* _mapResetPassword(event);
+    } else if (event is ResetToInit) {
+      yield initialState;
     }
   }
 
-  Stream<SubmitState> _mapResetPassword(ResetFundPassword event) async* {
+  Stream<ResetFundPasswordState> _mapResetPassword(ResetFundPassword event) async* {
     yield SubmitIngState();
     try {
       await _userService.resetFundPassword(event.email, Md5Util.generateMd5(event.loginPassword),

@@ -16,6 +16,7 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import 'contract/buy_hash_rate_page_v2.dart';
@@ -451,15 +452,25 @@ class _MeState extends UserState<MePage> with RouteAware {
   }
 
   Future _checkIn() async {
-    await _userService.checkIn();
-    checkInCount = await _userService.checkInCount();
-    setState(() {});
-    Fluttertoast.showToast(msg: "打卡成功");
+    try {
+      await _userService.checkIn();
+      checkInCount = await _userService.checkInCount();
+      setState(() {});
+      Fluttertoast.showToast(msg: "打卡成功");
+    } catch (_) {
+      ExceptionProcess.process(_);
+      throw _;
+    }
   }
 
   Future _updateCheckInCount() async {
-    checkInCount = await _userService.checkInCount();
-    setState(() {});
+    try {
+      checkInCount = await _userService.checkInCount();
+      setState(() {});
+    } catch (_) {
+      ExceptionProcess.process(_);
+      throw _;
+    }
   }
 
   @override

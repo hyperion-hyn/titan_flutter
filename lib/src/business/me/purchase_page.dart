@@ -423,7 +423,7 @@ class _PurchaseState extends State<PurchasePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "账户余额 ${userInfo?.balance} USDT",
+                    "收益余额 ${userInfo?.balance - userInfo.chargeBalance} USDT",
                     style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                   ),
                 ],
@@ -435,7 +435,7 @@ class _PurchaseState extends State<PurchasePage> {
                   color: Color(0xFFD6A734),
                   onPressed: () async {
                     if (userInfo != null && widget.payOrder != null) {
-                      if (userInfo.balance < widget.payOrder.amount) {
+                      if ((userInfo.balance - userInfo.chargeBalance) < widget.payOrder.amount) {
                         Fluttertoast.showToast(msg: '余额不足');
                       } else {
                         try {
@@ -459,7 +459,7 @@ class _PurchaseState extends State<PurchasePage> {
                               if (ret.code == -1007) {
                                 Fluttertoast.showToast(msg: '已到达上限');
                               } else {
-                                Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
+                                Fluttertoast.showToast(msg: '支付失败');
                               }
                             }
                           });
