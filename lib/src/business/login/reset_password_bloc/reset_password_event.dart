@@ -1,9 +1,10 @@
-
 import 'package:titan/src/basic/bloc/submit_bloc/bloc.dart';
 
-abstract class ResetPasswordEvent extends SubmitEvent {
+abstract class ResetPasswordEvent {
   const ResetPasswordEvent();
 }
+
+class ResetToInit extends ResetPasswordEvent {}
 
 class ResetPassword extends ResetPasswordEvent {
   String email;
