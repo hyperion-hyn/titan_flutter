@@ -58,7 +58,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
       appBar: AppBar(
 //        backgroundColor: Colors.white,
         title: Text(
-          "我的推广",
+          "邀请分享",
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -323,7 +323,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
 //  }
 
   void shareLink(String link) async {
-    Share.text("我的推广链接", "我的推广链接：" + link, "text/plain");
+    Share.text("我的邀请链接", "我的邀请链接：" + link, "text/plain");
 //    await Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
   }
 }

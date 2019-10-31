@@ -294,7 +294,7 @@ class _MeState extends UserState<MePage> with RouteAware {
               decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
               child: Column(
                 children: <Widget>[
-                  _buildMemuBar("我的推广", ExtendsIconFont.mail_read, () {
+                  _buildMemuBar("邀请分享", ExtendsIconFont.mail_read, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
                   }),
                   Divider(
