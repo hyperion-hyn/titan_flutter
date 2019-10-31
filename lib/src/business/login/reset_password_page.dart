@@ -116,6 +116,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
                               },
                               controller: emailEditingController,
                               decoration: InputDecoration(
+                                hintText: "请输入邮箱",
                                 errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -149,6 +150,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
                                   },
                                   controller: verificationCodeEditingController,
                                   decoration: InputDecoration(
+                                    hintText: "请输入6位的验证码",
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                   ),
@@ -206,6 +208,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
                             controller: passwordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
+                              hintText: "请输入至少6位的密码",
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -237,6 +240,7 @@ class _ResetPageState extends State<ResetPasswordPage> {
                             controller: confirmPasswordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
+                              hintText: "请再次输入密码",
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),

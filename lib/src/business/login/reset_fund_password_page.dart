@@ -119,6 +119,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                               },
                               controller: emailEditingController,
                               decoration: InputDecoration(
+                                hintText: "请输入邮箱",
                                 errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -152,6 +153,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                                   },
                                   controller: verificationCodeEditingController,
                                   decoration: InputDecoration(
+                                    hintText: "请输入6位的验证码",
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                   ),
@@ -209,6 +211,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             controller: passwordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
+                              hintText: "请输入账户密码",
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -240,6 +243,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             controller: fundPasswordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
+                              hintText: "请输入至少6位的资金密码",
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -274,6 +278,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             controller: confirmFundPasswordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
+                              hintText: "请再次输入资金密码",
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),

@@ -94,6 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             },
                             controller: emailEditingController,
                             decoration: InputDecoration(
+                              hintText: "请输入邮箱",
                               errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -128,6 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   },
                                   controller: verificationCodeEditingController,
                                   decoration: InputDecoration(
+                                    hintText: "请输入6位的验证码",
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                   ),
@@ -183,6 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               },
                               controller: invitationCodeEditingController,
                               decoration: InputDecoration(
+                                hintText: "请输入6位邀请码",
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                               ),
@@ -213,6 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: passwordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
+                              hintText: "请输入至少6位的密码",
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -244,6 +248,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: safetyPasswordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
+                              hintText: "请输入至少6位的资金密码",
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
