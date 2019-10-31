@@ -71,6 +71,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                 bloc: _orderContractBloc,
                 builder: (context, orderContractState) {
                   if (orderContractState is OrderSuccessState) {
+                    Fluttertoast.showToast(msg: "购买成功");
                     _orderContractBloc.add(ResetToInit());
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       Navigator.push(
@@ -83,6 +84,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                       return;
                     });
                   } else if (orderContractState is OrderFreeSuccessState) {
+                    Fluttertoast.showToast(msg: "领取成功");
                     _orderContractBloc.add(ResetToInit());
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
