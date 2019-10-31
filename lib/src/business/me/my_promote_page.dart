@@ -90,7 +90,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                               height: 16,
                             ),
                             Text(
-                              "大联盟算力",
+                              "最大星际算力",
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                             ),
                           ],
@@ -105,7 +105,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                               height: 16,
                             ),
                             Text(
-                              "小联盟算力",
+                              "其他星际算力",
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                             ),
                           ],
@@ -270,7 +270,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "大联盟算力",
+                      "最大星际算力",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                   ],
@@ -285,7 +285,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "小联盟算力",
+                      "其他星际算力",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                   ],
