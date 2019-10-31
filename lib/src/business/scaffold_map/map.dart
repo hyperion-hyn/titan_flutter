@@ -106,12 +106,14 @@ class MapContainerState extends State<MapContainer> {
     var range = 10;
     Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
     if (await _clickOnMarkerLayer(rect)) {
+      await mapboxMapController?.disableLocation();
       return;
     }
 //    if (await _clickOnHeavenLayer(rect)) {
 //      return;
 //    }
     if (await _clickOnCommonSymbolLayer(rect)) {
+      await mapboxMapController?.disableLocation();
       return;
     }
 

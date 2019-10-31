@@ -159,7 +159,6 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                   activeDMap('encryptShare');
                                   var mapboxController =
                                       (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
-                                  await mapboxController?.disableLocation();
 
                                   var lastLocation = await mapboxController?.lastKnownLocation();
                                   if (lastLocation != null) {
@@ -390,17 +389,12 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
     BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
 
     var model = DMapDefine.kMapList[dMapName];
-    print('xxx0 $dMapName');
     if (model != null) {
       var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
-      print('xxx0-0');
       await mapboxController?.disableLocation();
 
-      print('xxx1');
       if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
-        print('xxx2');
         Future.delayed(Duration(milliseconds: 500)).then((value) {
-          print('xxx3');
           mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
             model.dMapConfigModel.defaultLocation,
             model.dMapConfigModel.defaultZoom,
