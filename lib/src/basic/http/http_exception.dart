@@ -51,7 +51,7 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   HttpResponseCodeNotSuccess(-1006, "网络错误"),
   ERROR_OUT_OF_RANGE,
   HttpResponseCodeNotSuccess(-20001, "创建用户失败"),
-  HttpResponseCodeNotSuccess(-20002, "用户已存在"),
+  HttpResponseCodeNotSuccess(-20002, "账号已存在，请直接登录账号"),
   HttpResponseCodeNotSuccess(-20004, "更新用户信息失败"),
   HttpResponseCodeNotSuccess(-20005, "验证码错误"),
   HttpResponseCodeNotSuccess(-20006, "邀请码错误"),
