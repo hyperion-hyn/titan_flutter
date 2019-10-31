@@ -66,7 +66,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
         setState(() {
           amount = _amount;
           fee = withdrawalInfo.free_rate * amount;
-          canGetHynAmount = (amount - fee) / quotes.rate;
+          canGetHynAmount = (amount - fee) / quotes.avgRate;
         });
       }
     });

@@ -11,6 +11,7 @@ Quotes _$QuotesFromJson(Map<String, dynamic> json) {
     json['currency'] as String,
     json['to'] as String,
     (json['rate'] as num)?.toDouble(),
+    (json['avgRate'] as num)?.toDouble(),
   );
 }
 
@@ -18,4 +19,5 @@ Map<String, dynamic> _$QuotesToJson(Quotes instance) => <String, dynamic>{
       'currency': instance.currency,
       'to': instance.to,
       'rate': instance.rate,
+      'avgRate': instance.avgRate,
     };
