@@ -278,7 +278,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is RouteFailState) {
         //路线规划失败
-        sheetPanel = FailPanel(message: state.message);
+        sheetPanel = FailPanel(message: state.message, showCloseBtn: false,);
         dragState = DraggableBottomSheetState.COLLAPSED;
       }
 
