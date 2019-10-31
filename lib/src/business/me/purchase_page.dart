@@ -64,7 +64,7 @@ class _PurchaseState extends State<PurchasePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "算力合约抵押",
+          "算力抵押",
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
@@ -330,7 +330,7 @@ class _PurchaseState extends State<PurchasePage> {
                         await service.confirmPay(orderId: widget.payOrder.order_id, payType: 'HYN', fundToken: " ");
                     if (ret.code == 0) {
                       //支付成功
-                      Fluttertoast.showToast(msg: '操作成功');
+                      Fluttertoast.showToast(msg: '支付成功');
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                     } else {
                       if (ret.code == -1007) {
@@ -399,7 +399,7 @@ class _PurchaseState extends State<PurchasePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      "请转账",
+                      "请抵押",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     Padding(
@@ -479,11 +479,19 @@ class _PurchaseState extends State<PurchasePage> {
                         width: 192,
                         child: Center(
                             child: Text(
-                          "确认转账",
+                          "确认抵押",
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ))),
                   ),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 64.0),
+                child: Text(
+                  '提示：算力抵押只能使用收益余额进行抵押',
+                  style: TextStyle(color: Colors.grey),
                 ),
               ),
             ],

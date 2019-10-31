@@ -43,7 +43,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
 
     try {
       LOGIN_USER_INFO = await _userService.getUserInfo();
-    } catch(e) {
+    } catch (e) {
       logger.e(e);
     }
   }
@@ -192,7 +192,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
     return HashRateVo(
         iconData: ExtendsIconFont.engine,
         iconColor: iconColor,
-        title: "${Utils.powerForShow(powerDetail.power)} T",
+        title: "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(powerDetail.power))} T",
         subTitle: "合约ID：${powerDetail.contractId}",
         validity: validity,
         validityColor: validityColor,
