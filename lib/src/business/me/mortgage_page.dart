@@ -7,6 +7,7 @@ import 'package:titan/src/business/me/my_node_mortgage_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/utils/exception_process.dart';
 
 import 'enter_fund_password.dart';
 import 'model/mortgage_info.dart';
@@ -172,7 +173,8 @@ class _MortgagePageState extends State<MortgagePage> {
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                   } catch (e) {
                     logger.e(e);
-                    Fluttertoast.showToast(msg: '抵押异常');
+                    ExceptionProcess.process(e);
+//                    Fluttertoast.showToast(msg: '抵押异常');
                   }
                 });
               }
