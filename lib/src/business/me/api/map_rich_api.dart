@@ -1,7 +1,6 @@
 import 'dart:core';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/business/me/api/map_rich_http.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
@@ -24,8 +23,6 @@ import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/domain/gaode_model.dart';
 import 'package:titan/src/model/gaode_poi.dart';
-import 'package:titan/src/model/poi.dart';
-import 'package:titan/src/utils/open_location_code.dart';
 
 class MapRichApi {
   ///
@@ -93,7 +90,7 @@ class MapRichApi {
   ///getUserInfo
   Future<UserInfo> getUserInfo(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity(
-        "users/${userId}", EntityFactory<UserInfo>((json) => UserInfo.fromJson(json)),
+        "users/$userId", EntityFactory<UserInfo>((json) => UserInfo.fromJson(json)),
         options: RequestOptions(headers: {"Authorization": token}));
   }
 
