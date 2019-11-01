@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -165,7 +166,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                         constraints: BoxConstraints(maxWidth: 220),
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
-                          '${rechargeOrder?.hynAmount}',
+                          '${rechargeOrder?.hynAmount ?? "--"}',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
                           softWrap: true,
                         ),
@@ -314,7 +315,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${quotes?.rate}${quotes?.to}。\n请勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
+                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}。\n禁止从交易所直接提到上述地址，请使用数字钱包转账。勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),

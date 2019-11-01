@@ -36,6 +36,13 @@ class PurchasePage extends StatefulWidget {
 class _PurchaseState extends State<PurchasePage> {
   int payType = 0; //0: HYN 1：HYN余额
 
+  ///直充余额类型支付
+  static const String PAY_BALANCE_TYPE_RECHARGE = "B_HYN";
+
+  ///收益余额类型支付
+  static const String PAY_BALANCE_TYPE_INCOME = "RB_HYN";
+  String payBalanceType = PAY_BALANCE_TYPE_INCOME;
+
   var service = UserService();
 
 //  PayOrder payOrder;
@@ -384,6 +391,15 @@ class _PurchaseState extends State<PurchasePage> {
     );
   }
 
+  double getBalanceByType(String type) {
+    if (type == PAY_BALANCE_TYPE_INCOME) {
+      return userInfo?.balance ?? 0 - userInfo.chargeBalance ?? 0;
+    } else if (type == PAY_BALANCE_TYPE_RECHARGE) {
+      return userInfo.chargeBalance ?? 0;
+    }
+    return 0;
+  }
+
   Widget _buildHynBalancePayBox() {
     return Column(
       children: <Widget>[
@@ -394,6 +410,37 @@ class _PurchaseState extends State<PurchasePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: RadioListTile(
+                      groupValue: payBalanceType,
+                      onChanged: (value) {
+                        setState(() {
+                          payBalanceType = value;
+                        });
+                      },
+                      activeColor: Theme.of(context).primaryColor,
+                      value: PAY_BALANCE_TYPE_INCOME,
+                      title: Text('收益余额'),
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile(
+                      groupValue: payBalanceType,
+                      onChanged: (value) {
+                        setState(() {
+                          payBalanceType = value;
+                        });
+                      },
+                      activeColor: Theme.of(context).primaryColor,
+                      value: PAY_BALANCE_TYPE_RECHARGE,
+                      title: Text('充值余额'),
+                    ),
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 child: Row(
@@ -424,19 +471,19 @@ class _PurchaseState extends State<PurchasePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "收益余额 ${userInfo?.balance - userInfo.chargeBalance} USDT",
+                    "可用余额 ${Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))} USDT",
                     style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                   ),
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 24),
+                padding: const EdgeInsets.only(top: 32),
                 child: RaisedButton(
                   elevation: 1,
                   color: Color(0xFFD6A734),
                   onPressed: () async {
                     if (userInfo != null && widget.payOrder != null) {
-                      if ((userInfo.balance - userInfo.chargeBalance) < widget.payOrder.amount) {
+                      if (getBalanceByType(payBalanceType) < widget.payOrder.amount) {
                         Fluttertoast.showToast(msg: '余额不足');
                       } else {
                         try {
@@ -450,7 +497,7 @@ class _PurchaseState extends State<PurchasePage> {
                               return;
                             }
                             var ret = await service.confirmPay(
-                                orderId: widget.payOrder.order_id, payType: 'B_HYN', fundToken: fundToken);
+                                orderId: widget.payOrder.order_id, payType: payBalanceType, fundToken: fundToken);
                             if (ret.code == 0) {
                               //支付成功
                               Fluttertoast.showToast(msg: '操作成功');
@@ -474,7 +521,7 @@ class _PurchaseState extends State<PurchasePage> {
                     }
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                     child: SizedBox(
                         height: 40,
                         width: 192,
@@ -487,13 +534,13 @@ class _PurchaseState extends State<PurchasePage> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 64.0),
-                child: Text(
-                  '提示：算力抵押只能使用收益余额进行抵押',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
+//              Padding(
+//                padding: const EdgeInsets.symmetric(vertical: 64.0),
+//                child: Text(
+//                  '提示：算力抵押只能使用收益余额进行抵押',
+//                  style: TextStyle(color: Colors.grey),
+//                ),
+//              ),
             ],
           ),
         ),

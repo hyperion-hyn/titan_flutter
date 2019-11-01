@@ -224,7 +224,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                       ),
 //                                      Spacer(),
 //                                      Text(
-//                                        "每人限购${_selectedContractInfo.limit}份",
+//                                        "每人限抵${_selectedContractInfo.limit}份",
 //                                        style: TextStyle(color: Colors.grey, fontSize: 14),
 //                                      )
                                     ],
@@ -267,7 +267,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                               width: 4,
                                             ),
                                             Text(
-                                              '限购${_selectedContractInfo.limit}份',
+                                              '限抵${_selectedContractInfo.limit}份',
                                               style: TextStyle(color: Colors.white70),
                                             ),
                                           ],

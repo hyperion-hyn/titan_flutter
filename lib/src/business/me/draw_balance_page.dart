@@ -380,8 +380,6 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                               }
                             }
                           }
-
-//
                         },
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         color: Theme.of(context).primaryColor,

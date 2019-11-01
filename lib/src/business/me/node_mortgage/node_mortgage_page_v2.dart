@@ -69,7 +69,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                   bloc: _snapUpBloc,
                   builder: (BuildContext context, SnapUpState snapUpState) {
                     if (snapUpState is SnapUpOverRangeState) {
-                      Fluttertoast.showToast(msg: "节点已抢购完");
+                      Fluttertoast.showToast(msg: "节点已抢注完");
                     }
 
                     if (snapUpState is SnapSuccessState) {
@@ -276,7 +276,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
                                                     Text(
-                                                      "抢购",
+                                                      "抢注",
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 18,

@@ -310,7 +310,7 @@ class UserService {
     return await _mapRichApi.mortgage(token: userToken.token, confId: confId, fundToken: fundToken);
   }
 
-  ///抵押抢购
+  ///抵押抢注
   Future<dynamic> mortgageSnapUp({@required int confId, @required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {

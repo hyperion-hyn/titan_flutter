@@ -52,7 +52,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          '抢购',
+          '抢注',
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -67,7 +67,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                   child: Row(
                     children: <Widget>[
                       Text(
-                        "抢购产品：${widget.mortgageInfo.name}",
+                        "抢注产品：${widget.mortgageInfo.name}",
                         style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                       ),
                     ],
@@ -211,11 +211,11 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                   }
                   try {
                     await service.mortgageSnapUp(confId: widget.mortgageInfo.id, fundToken: value);
-                    Fluttertoast.showToast(msg: '抢购成功');
+                    Fluttertoast.showToast(msg: '抢注成功');
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                   } catch (e) {
                     logger.e(e);
-                    Fluttertoast.showToast(msg: '抢购失败');
+                    Fluttertoast.showToast(msg: '抢注失败');
                   }
                 });
               }
@@ -226,7 +226,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
             height: 56,
             child: Center(
               child: Text(
-                "确认抢购",
+                "确认抢注",
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
@@ -236,7 +236,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
         Padding(
           padding: const EdgeInsets.only(top: 64.0),
           child: Text(
-            '提示：抢购节点只能使用充值余额进行抵押',
+            '提示：抢注节点只能使用充值余额进行抵押',
             style: TextStyle(color: Colors.grey),
           ),
         ),

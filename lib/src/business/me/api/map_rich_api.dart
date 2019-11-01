@@ -268,7 +268,7 @@ class MapRichApi {
         options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
-  ///抵押抢购
+  ///抵押抢注
   Future<dynamic> mortgageSnapUp({@required int confId, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/snap_up', null,
         params: {"confId": confId},
