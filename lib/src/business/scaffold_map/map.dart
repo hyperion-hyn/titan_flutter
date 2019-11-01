@@ -380,16 +380,22 @@ class MapContainerState extends State<MapContainer> {
 
     controller.addListener(mapMoveListener);
 
-    var position = (await controller.getCameraPosition()).target;
-    if(position != null) {
-      eventBus.fire(OnMapMovedEvent(latLng: position));
-    }
-
-//    _toMyLocation();
-//    _loadPurchasedMap();
+    Future.delayed(Duration(milliseconds: 2000)).then((t) {
+      return controller.lastKnownLocation();
+    }).then((position) {
+      if (position != null) {
+        eventBus.fire(OnMapMovedEvent(latLng: position));
+      }
+    });
+//    controller.lastKnownLocation().then((position) {
+//      if (position != null) {
+//        eventBus.fire(OnMapMovedEvent(latLng: position));
+//      }
+//    });
   }
 
   LatLng _lastPosition;
+
   void mapMoveListener() {
     if (mapboxMapController?.isCameraMoving == false) {
       var position = mapboxMapController?.cameraPosition?.target;

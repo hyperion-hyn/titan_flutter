@@ -37,10 +37,9 @@ class _PurchaseState extends State<PurchasePage> {
   int payType = 0; //0: HYN 1：HYN余额
 
   ///直充余额类型支付
-  static const String PAY_BALANCE_TYPE_RECHARGE = "B_HYN";
-
+  static const String PAY_BALANCE_TYPE_RECHARGE = "RB_HYN";
   ///收益余额类型支付
-  static const String PAY_BALANCE_TYPE_INCOME = "RB_HYN";
+  static const String PAY_BALANCE_TYPE_INCOME = "B_HYN";
   String payBalanceType = PAY_BALANCE_TYPE_INCOME;
 
   var service = UserService();
@@ -393,9 +392,9 @@ class _PurchaseState extends State<PurchasePage> {
 
   double getBalanceByType(String type) {
     if (type == PAY_BALANCE_TYPE_INCOME) {
-      return userInfo?.balance ?? 0 - userInfo.chargeBalance ?? 0;
+      return userInfo?.balance ?? 0 - userInfo?.chargeBalance ?? 0;
     } else if (type == PAY_BALANCE_TYPE_RECHARGE) {
-      return userInfo.chargeBalance ?? 0;
+      return userInfo?.chargeBalance ?? 0;
     }
     return 0;
   }
