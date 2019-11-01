@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/api/market_price_api.dart';
 import 'package:titan/src/business/wallet/model/hyn_market_price_response.dart';
+import 'package:titan/src/global.dart';
 
 import 'market_price_page.dart';
 
@@ -62,7 +63,9 @@ class _EmptyWalletState extends State<EmptyWallet> {
             children: <Widget>[
               FlatButton(
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
+                    side: BorderSide(color: Theme
+                        .of(context)
+                        .primaryColor), borderRadius: BorderRadius.circular(36)),
                 onPressed: () {
 //                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                   Fluttertoast.showToast(msg: "即将开放");
@@ -73,7 +76,9 @@ class _EmptyWalletState extends State<EmptyWallet> {
                     child: Text(
                       "创建钱包",
                       style:
-                          TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 16, color: Theme
+                          .of(context)
+                          .primaryColor, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -83,7 +88,9 @@ class _EmptyWalletState extends State<EmptyWallet> {
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
+                      side: BorderSide(color: Theme
+                          .of(context)
+                          .primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
 //                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                     Fluttertoast.showToast(msg: "即将开放");
@@ -94,7 +101,9 @@ class _EmptyWalletState extends State<EmptyWallet> {
                       child: Text(
                         "导入钱包",
                         style:
-                            TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                        TextStyle(fontSize: 16, color: Theme
+                            .of(context)
+                            .primaryColor, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -172,7 +181,11 @@ class _EmptyWalletState extends State<EmptyWallet> {
   }
 
   Future _getPrice() async {
-    marketPriceResponse = await _marketPriceApi.getHynMarketPriceResponse();
-    setState(() {});
+    try {
+      marketPriceResponse = await _marketPriceApi.getHynMarketPriceResponse();
+      setState(() {});
+    } catch (e) {
+      logger.e(e);
+    }
   }
 }

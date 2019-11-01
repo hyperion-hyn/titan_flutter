@@ -41,7 +41,7 @@ class FailPanel extends StatelessWidget {
             child: Text(message ?? 'search fault'),
           ),
         ),
-        if (showCloseBtn)
+        if (showCloseBtn == true)
           Positioned(
             right: 16,
             top: 16,

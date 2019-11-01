@@ -36,12 +36,14 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
   void loadCacheData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String ss1 = prefs.getString("disc_focus");
-    var flist = (jsonDecode(ss1) as List<dynamic>).map((element) => FocusImage.fromJson(element)).toList();
-    if (flist != null && flist.isNotEmpty) {
-      focusImages = flist;
+    if (ss1 != null) {
+      var flist = (jsonDecode(ss1) as List<dynamic>).map((element) => FocusImage.fromJson(element)).toList();
+      if (flist != null && flist.isNotEmpty) {
+        focusImages = flist;
 
-      if (mounted) {
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       }
     }
   }
