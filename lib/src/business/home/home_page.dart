@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     height = 0;
                   }
                   return AnimatedContainer(
-                    duration: Duration(milliseconds: 5000),
+                    duration: Duration(milliseconds: 500),
                     height: height,
 //                  curve: Curves.fastOutSlowIn,
                     child: BottomNavigationBar(
