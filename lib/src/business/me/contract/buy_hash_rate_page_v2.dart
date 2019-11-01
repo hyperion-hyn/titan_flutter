@@ -71,7 +71,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                 bloc: _orderContractBloc,
                 builder: (context, orderContractState) {
                   if (orderContractState is OrderSuccessState) {
-                    Fluttertoast.showToast(msg: "购买成功");
+//                    Fluttertoast.showToast(msg: "购买成功");
                     _orderContractBloc.add(ResetToInit());
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       Navigator.push(
