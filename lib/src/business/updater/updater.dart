@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+//import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/i18n.dart';
@@ -40,6 +40,7 @@ class _UpdaterState extends State<Updater> {
     super.initState();
     _checkUpdate();
 
+    /*
     FlutterDownloader.registerCallback((id, status, progress) async {
       if (taskId == id) {
         print('download process $progress, $status');
@@ -49,6 +50,7 @@ class _UpdaterState extends State<Updater> {
         }
       }
     });
+    */
   }
 
   @override
@@ -156,6 +158,7 @@ class _UpdaterState extends State<Updater> {
     return apkPath;
   }
 
+  /*
   void _downloadApk(UpdateEntity versionModel) async {
     var tempDir = await getTemporaryDirectory();
     var apkPath = '${tempDir.path}/$APK_NAME';
@@ -171,6 +174,7 @@ class _UpdaterState extends State<Updater> {
         showNotification: true // show download progress in status bar (for Android)
         );
   }
+  */
 
   void _installApk(String apkPath) async {
     var hasPermission = await TitanPlugin.canRequestPackageInstalls();
@@ -201,7 +205,7 @@ class _UpdaterState extends State<Updater> {
   @override
   void dispose() {
     _appBlocSubscription?.cancel();
-    FlutterDownloader.registerCallback(null);
+//    FlutterDownloader.registerCallback(null);
     super.dispose();
   }
 }
