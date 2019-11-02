@@ -34,7 +34,7 @@ class PurchasePage extends StatefulWidget {
 }
 
 class _PurchaseState extends State<PurchasePage> {
-  int payType = 0; //0: HYN 1：HYN余额
+  int payType = 1; //0: HYN 1：HYN余额
 
   ///直充余额类型支付
   static const String PAY_BALANCE_TYPE_RECHARGE = "RB_HYN";
@@ -65,7 +65,10 @@ class _PurchaseState extends State<PurchasePage> {
 
   @override
   Widget build(BuildContext context) {
-    var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
+    // todo: jison edit
+    //var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
+    var payTypeName = payType == 0 ? "使用HYN" : "选择抵押方式";
+
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
@@ -138,44 +141,45 @@ class _PurchaseState extends State<PurchasePage> {
                         children: <Widget>[
                           Text(payTypeName),
                           Spacer(),
-                          GestureDetector(
-                            onTapUp: (detail) {
-                              RenderBox overlay = Overlay.of(context).context.findRenderObject();
-                              var position = RelativeRect.fromRect(
-                                  detail.globalPosition & Size(80, 80), // smaller rect, the touch area
-                                  Offset.zero & overlay.size // Bigger rect, the entire screen
-                                  );
-                              showMenu(
-                                      context: context,
-                                      position: position,
-                                      items: <PopupMenuEntry>[
-                                        PopupMenuItem(
-                                          value: 0,
-                                          child: Text(
-                                            "HYN",
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                        PopupMenuItem(
-                                          value: 1,
-                                          child: Text("使用余额", style: TextStyle(fontSize: 14)),
-                                        ),
-                                      ],
-                                      initialValue: payType)
-                                  .then((selected) {
-                                print("selected:$selected ");
-                                if (selected == null) {
-                                  return;
-                                }
-                                payType = selected;
-                                setState(() {});
-                              });
-                            },
-                            child: Text(
-                              "切换方式>",
-                              style: TextStyle(fontSize: 14, color: HexColor("#9E101010")),
-                            ),
-                          )
+// todo: jison edit
+//                          GestureDetector(
+//                            onTapUp: (detail) {
+//                              RenderBox overlay = Overlay.of(context).context.findRenderObject();
+//                              var position = RelativeRect.fromRect(
+//                                  detail.globalPosition & Size(80, 80), // smaller rect, the touch area
+//                                  Offset.zero & overlay.size // Bigger rect, the entire screen
+//                                  );
+//                              showMenu(
+//                                      context: context,
+//                                      position: position,
+//                                      items: <PopupMenuEntry>[
+//                                        PopupMenuItem(
+//                                          value: 0,
+//                                          child: Text(
+//                                            "HYN",
+//                                            style: TextStyle(fontSize: 14),
+//                                          ),
+//                                        ),
+//                                        PopupMenuItem(
+//                                          value: 1,
+//                                          child: Text("使用余额", style: TextStyle(fontSize: 14)),
+//                                        ),
+//                                      ],
+//                                      initialValue: payType)
+//                                  .then((selected) {
+//                                print("selected:$selected ");
+//                                if (selected == null) {
+//                                  return;
+//                                }
+//                                payType = selected;
+//                                setState(() {});
+//                              });
+//                            },
+//                            child: Text(
+//                              "切换方式>",
+//                              style: TextStyle(fontSize: 14, color: HexColor("#9E101010")),
+//                            ),
+//                          )
                         ],
                       )),
                   if (payType == 0) _buildHynPayBox(),
@@ -392,7 +396,7 @@ class _PurchaseState extends State<PurchasePage> {
 
   double getBalanceByType(String type) {
     if (type == PAY_BALANCE_TYPE_INCOME) {
-      return userInfo?.balance ?? 0 - userInfo?.chargeBalance ?? 0;
+      return (userInfo?.balance ?? 0) - (userInfo?.chargeBalance ?? 0);
     } else if (type == PAY_BALANCE_TYPE_RECHARGE) {
       return userInfo?.chargeBalance ?? 0;
     }
