@@ -65,7 +65,10 @@ class _PurchaseState extends State<PurchasePage> {
 
   @override
   Widget build(BuildContext context) {
-    var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
+    // todo: jison edit
+    //var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
+    var payTypeName = payType == 0 ? "使用HYN" : "选择抵押方式";
+
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
