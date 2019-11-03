@@ -23,7 +23,7 @@ class DrawBalancePage extends StatefulWidget {
 
 class _DrawBalanceState extends State<DrawBalancePage> {
   UserService _userService = UserService();
-  WithdrawalInfo withdrawalInfo;
+  WithdrawalInfo withdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
   Quotes quotes;
 
   TextEditingController amountTEController = TextEditingController();
@@ -41,7 +41,6 @@ class _DrawBalanceState extends State<DrawBalancePage> {
 
   static const EARNING_INT_TYPE = 0;
   static const RECHARGE_INT_TYPE = 1;
-
 
   String _selectedWithdrawalTypeString = EARNING;
 
@@ -295,7 +294,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                       children: <Widget>[
                         Divider(),
                         Text(
-                          "手续费",
+                          "手续费(${Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.free_rate*100)}%)",
                           style: TextStyle(color: Colors.black54),
                         ),
                         Padding(
@@ -365,12 +364,13 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                     return;
                                   }
                                   int type;
-                                  if(_selectedWithdrawalTypeString==EARNING){
+                                  if (_selectedWithdrawalTypeString == EARNING) {
                                     type = EARNING_INT_TYPE;
-                                  }else  if(_selectedWithdrawalTypeString==RECHARGE){
+                                  } else if (_selectedWithdrawalTypeString == RECHARGE) {
                                     type = RECHARGE_INT_TYPE;
                                   }
-                                  await _userService.withdrawalApply(amount: amount, address: address,fundToken: fundToken,type:type);
+                                  await _userService.withdrawalApply(
+                                      amount: amount, address: address, fundToken: fundToken, type: type);
                                   Fluttertoast.showToast(msg: "提币申请成功");
                                   Navigator.pop(context, true);
                                 });

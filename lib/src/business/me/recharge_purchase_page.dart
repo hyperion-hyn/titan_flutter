@@ -4,19 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/business/me/model/user_eth_address.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
-import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
 import 'model/quotes.dart';
-import 'model/recharge_order_info.dart';
 import 'service/user_service.dart';
 
 class RechargePurchasePage extends StatefulWidget {
-  final double rechargeAmount;
-
-  RechargePurchasePage({@required this.rechargeAmount});
+  RechargePurchasePage();
 
   @override
   State<StatefulWidget> createState() {
@@ -27,9 +24,11 @@ class RechargePurchasePage extends StatefulWidget {
 class _RechargePurchaseState extends State<RechargePurchasePage> {
   var service = UserService();
 
-  RechargeOrderInfo rechargeOrder;
   Quotes quotes;
+
   UserInfo userInfo;
+
+  UserEthAddress userEthAddress;
 
   @override
   void initState() {
@@ -39,13 +38,13 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 
   void loadData() async {
     try {
-      var data = await service.createRechargeOrder(amount: widget.rechargeAmount);
+      var data = await service.getUserEthAddress();
       setState(() {
-        rechargeOrder = data;
+        userEthAddress = data;
       });
     } catch (e) {
       logger.e(e);
-      Fluttertoast.showToast(msg: "创建订单失败");
+      Fluttertoast.showToast(msg: "获取用户充值地址失败");
     }
 
     //行情
@@ -63,7 +62,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 
   @override
   Widget build(BuildContext context) {
-    var payTypeName = "使用HYN";
+    var payTypeName = "";
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
@@ -79,55 +78,13 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-              alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(2)), shape: BoxShape.rectangle),
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "充值数量：",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                        Text(
-                          "${Const.DOUBLE_NUMBER_FORMAT.format(widget.rechargeAmount)} USDT",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
               margin: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              padding: EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          color: Color(0xFFF2F2F2),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          )),
-                      child: Row(
-                        children: <Widget>[
-                          Text(payTypeName),
-                        ],
-                      )),
-                  _buildHynPayBox(),
-                ],
-              ),
+              child: _buildHynPayBox(),
             )
           ],
         ),
@@ -145,61 +102,39 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              InkWell(
-                onTap: () {
-                  if (rechargeOrder?.hynAmount != null) {
-                    Clipboard.setData(ClipboardData(text: rechargeOrder?.hynAmount));
-                    Fluttertoast.showToast(msg: "金额复制成功");
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "请抵押",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Container(
-                        constraints: BoxConstraints(maxWidth: 220),
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          '${rechargeOrder?.hynAmount ?? "--"}',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
-                          softWrap: true,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          'HYN',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Icon(
-                          Icons.content_copy,
-                          size: 16,
-                          color: Colors.black54,
-                        ),
-                      )
-                    ],
+              if (quotes != null)
+                Text(
+                  '当前 ${quotes?.to} 兑换 ${quotes?.currency} 的比例为',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.normal,
+                  ),
+                )
+              else
+                Text(
+                  '',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
-              ),
               SizedBox(
                 height: 8,
               ),
-              Text(
-                '请务必转账指定的HYN金额！',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
-              ),
-              if (rechargeOrder?.qrCode != null)
+              if (quotes != null)
+                Text(
+                  '1${quotes?.to} ≈ ${NumberFormat("#,###.####").format(quotes?.rate == null ? 0 : (1 / quotes?.rate))}${quotes?.currency}',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[800]),
+                )
+              else
+                Text(
+                  '',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[800]),
+                ),
+
+              if (userEthAddress?.qrCode != null)
                 Image.memory(
-                  Base64Decoder().convert(rechargeOrder?.qrCode),
+                  Base64Decoder().convert(userEthAddress?.qrCode),
                   height: 240,
                   width: 240,
                 )
@@ -211,8 +146,8 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 ),
               InkWell(
                 onTap: () {
-                  if (rechargeOrder?.address != null) {
-                    Clipboard.setData(ClipboardData(text: rechargeOrder?.address));
+                  if (userEthAddress?.address != null) {
+                    Clipboard.setData(ClipboardData(text: userEthAddress?.address));
                     Fluttertoast.showToast(msg: "地址复制成功");
                   }
                 },
@@ -221,10 +156,9 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "转账地址",
+                      "转账地址: ${shortEthAddress(userEthAddress?.address)}",
                       style: TextStyle(fontSize: 14),
                     ),
-                    Text('${shortEthAddress(rechargeOrder?.address)}', style: TextStyle(fontSize: 14)),
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: Icon(
@@ -270,7 +204,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 child: RaisedButton(
                   color: Color(0xFF73C42D),
                   onPressed: () async {
-                    var ret = await service.confirmRecharge(orderId: rechargeOrder.orderId);
+                    var ret = await service.confirmRechargeV2(LOGIN_USER_INFO.balance);
                     if (ret.code == 0) {
                       //支付成功
                       Fluttertoast.showToast(msg: '充值成功');
@@ -315,7 +249,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}。\n禁止从交易所直接提到上述地址，请使用数字钱包转账。勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
+                  "勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要10-30分钟。",
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),

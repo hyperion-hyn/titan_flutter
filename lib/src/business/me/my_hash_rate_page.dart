@@ -192,8 +192,8 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
     return HashRateVo(
         iconData: ExtendsIconFont.engine,
         iconColor: iconColor,
-        title: "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(powerDetail.power))} T",
-        subTitle: "合约ID：${powerDetail.contractId}",
+        title: "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(powerDetail.power))} T 算力",
+        subTitle: "",
         validity: validity,
         validityColor: validityColor,
         time: time);

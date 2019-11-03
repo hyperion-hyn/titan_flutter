@@ -27,6 +27,7 @@ class MortgageSnapUpPage extends StatefulWidget {
 
 class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
   var service = UserService();
+
 //  UserInfo userInfo;
 
   @override
@@ -36,10 +37,8 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
   }
 
   void loadData() async {
-   await UserService.syncUserInfo();
-   setState(() {
-
-   });
+    await UserService.syncUserInfo();
+    setState(() {});
   }
 
   @override
@@ -162,26 +161,13 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return EnterRechargeCount();
-                        }).then((rechargeAmount) async {
-                      if (rechargeAmount == null) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => RechargePurchasePage()))
+                        .then((value) async {
+                      if (value == null || value == false) {
                         return;
                       }
-                      Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => RechargePurchasePage(rechargeAmount: rechargeAmount)))
-                          .then((value) async {
-                        if (value == null || value == false) {
-                          return;
-                        }
-                        await UserService.syncUserInfo();
-                        setState(() {});
-                      });
+                      await UserService.syncUserInfo();
+                      setState(() {});
                     });
                   },
                   child: Text(

@@ -19,6 +19,7 @@ import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/model/promotion_info.dart';
 import 'package:titan/src/business/me/model/recharge_order_info.dart';
 import 'package:titan/src/business/me/model/quotes.dart';
+import 'package:titan/src/business/me/model/user_eth_address.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
@@ -68,6 +69,15 @@ class UserService {
     return commonResponse;
   }
 
+  ///充值支付确认V2
+  Future<ResponseEntity<dynamic>> confirmRechargeV2(double balance) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    return await _mapRichApi.rechargePayV2(token: userToken.token, balance: balance);
+  }
+
   Future checkIn() async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
@@ -82,6 +92,14 @@ class UserService {
       throw new Exception("not login");
     }
     return await _mapRichApi.getFundToken(userToken.token, userToken.userId, password);
+  }
+
+  Future<UserEthAddress> getUserEthAddress() async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    return await _mapRichApi.getUserEthAddress(userToken.token, userToken.userId);
   }
 
   Future<int> checkInCount() async {
