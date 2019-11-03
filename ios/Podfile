@@ -65,7 +65,7 @@ target 'Runner' do
   pod 'RxSwift', '~> 5.0'
   pod 'RxCocoa', '~> 5.0'
   pod 'TrustWalletCore'
-  pod 'web3swift.pod'
+#  pod 'web3swift.pod'
 end
 
 post_install do |installer|
