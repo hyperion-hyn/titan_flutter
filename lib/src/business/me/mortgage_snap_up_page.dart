@@ -171,7 +171,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                     });
                   },
                   child: Text(
-                    "点击充值余额",
+                    "点击充值",
                     style: TextStyle(color: Colors.blue),
                   ),
                 ),

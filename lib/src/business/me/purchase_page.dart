@@ -18,6 +18,7 @@ import 'model/contract_info_v2.dart';
 import 'model/pay_order.dart';
 import 'model/quotes.dart';
 import 'my_hash_rate_page.dart';
+import 'recharge_purchase_page.dart';
 import 'service/user_service.dart';
 
 class PurchasePage extends StatefulWidget {
@@ -38,9 +39,10 @@ class _PurchaseState extends State<PurchasePage> {
 
   ///直充余额类型支付
   static const String PAY_BALANCE_TYPE_RECHARGE = "RB_HYN";
+
   ///收益余额类型支付
   static const String PAY_BALANCE_TYPE_INCOME = "B_HYN";
-  String payBalanceType = PAY_BALANCE_TYPE_INCOME;
+  String payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
 
   var service = UserService();
 
@@ -408,7 +410,7 @@ class _PurchaseState extends State<PurchasePage> {
       children: <Widget>[
         Container(
           margin: EdgeInsets.all(16),
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 4),
           alignment: Alignment.topCenter,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -425,8 +427,8 @@ class _PurchaseState extends State<PurchasePage> {
                         });
                       },
                       activeColor: Theme.of(context).primaryColor,
-                      value: PAY_BALANCE_TYPE_INCOME,
-                      title: Text('收益余额'),
+                      value: PAY_BALANCE_TYPE_RECHARGE,
+                      title: Text('充值余额'),
                     ),
                   ),
                   Expanded(
@@ -438,8 +440,8 @@ class _PurchaseState extends State<PurchasePage> {
                         });
                       },
                       activeColor: Theme.of(context).primaryColor,
-                      value: PAY_BALANCE_TYPE_RECHARGE,
-                      title: Text('充值余额'),
+                      value: PAY_BALANCE_TYPE_INCOME,
+                      title: Text('收益余额'),
                     ),
                   ),
                 ],
@@ -456,7 +458,7 @@ class _PurchaseState extends State<PurchasePage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: Text(
-                        '${widget.payOrder?.amount}',
+                        '${widget.payOrder?.amount ?? 0}',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFFCE9D40)),
                       ),
                     ),
@@ -537,6 +539,39 @@ class _PurchaseState extends State<PurchasePage> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               ),
+              if (getBalanceByType(payBalanceType) < widget.payOrder.amount)
+                Container(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "余额不足",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => RechargePurchasePage()))
+                              .then((value) async {
+//                            if (value == null || value == false) {
+//                              return;
+//                            }
+                            userInfo = await service.getUserInfo();
+                            payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                            setState(() {});
+                          });
+                        },
+                        child: Text(
+                          "点击充值",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 //              Padding(
 //                padding: const EdgeInsets.symmetric(vertical: 64.0),
 //                child: Text(
