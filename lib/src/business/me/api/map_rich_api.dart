@@ -16,6 +16,7 @@ import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/model/promotion_info.dart';
 import 'package:titan/src/business/me/model/recharge_order_info.dart';
 import 'package:titan/src/business/me/model/quotes.dart';
+import 'package:titan/src/business/me/model/user_eth_address.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/model/user_token.dart';
@@ -77,6 +78,13 @@ class MapRichApi {
   ///获取checkincount
   Future<int> checkInCount(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity("sign_in/$userId/stats", EntityFactory((json) => json as int),
+        options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  ///获取用户Eth address
+  Future<UserEthAddress> getUserEthAddress(String token, String userId) async {
+    return await MapRichHttpCore.instance.getEntity(
+        "users/$userId/addr", EntityFactory((json) => UserEthAddress.fromJson(json)),
         options: RequestOptions(headers: {"Authorization": token}));
   }
 
@@ -284,6 +292,12 @@ class MapRichApi {
   ///赎回
   Future<String> getDianpingCookies() async {
     return await MapRichHttpCore.instance.getEntity('cookie', EntityFactory<String>((json) => json));
+  }
+
+  ///确认支付订单V2
+  Future<ResponseEntity<dynamic>> rechargePayV2({@required token, @required double balance}) async {
+    return await MapRichHttpCore.instance.postResponseEntity('recharge/v2/pay', null,
+        params: {"balance": balance}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
   ///附近可以分享的位置

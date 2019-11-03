@@ -66,27 +66,14 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   ),
                   GestureDetector(
                     onTap: () async {
-                      showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return EnterRechargeCount();
-                          }).then((rechargeAmount) async {
-                        if (rechargeAmount == null) {
-                          return;
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => RechargePurchasePage()))
+                          .then((isSuccess) async {
+                        if (isSuccess != null && isSuccess) {
+                          await UserService.syncUserInfo();
+                          setState(() {});
+                          _tabController.index = 0;
+                          eventBus.fire(Refresh());
                         }
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => RechargePurchasePage(rechargeAmount: rechargeAmount)))
-                            .then((isSuccess) async {
-                          if (isSuccess != null && isSuccess) {
-                            await UserService.syncUserInfo();
-                            setState(() {});
-                            _tabController.index = 0;
-                            eventBus.fire(Refresh());
-                          }
-                        });
                       });
                     },
                     child: Padding(
