@@ -25,6 +25,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
   var service = UserService();
 
   Quotes quotes;
+
   UserInfo userInfo;
 
   UserEthAddress userEthAddress;
@@ -101,20 +102,35 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                '当前 ${quotes?.to} 兑换 ${quotes?.currency} 的比例为',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.normal,
+              if (quotes != null)
+                Text(
+                  '当前 ${quotes?.to} 兑换 ${quotes?.currency} 的比例为',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.normal,
+                  ),
+                )
+              else
+                Text(
+                  '',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
-              ),
               SizedBox(
                 height: 8,
               ),
-              Text(
-                '1${quotes?.to} ≈ ${NumberFormat("#,###.####").format(quotes?.rate == null ? 0 : (1 / quotes?.rate))}${quotes?.currency}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[800]),
-              ),
+              if (quotes != null)
+                Text(
+                  '1${quotes?.to} ≈ ${NumberFormat("#,###.####").format(quotes?.rate == null ? 0 : (1 / quotes?.rate))}${quotes?.currency}',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[800]),
+                )
+              else
+                Text(
+                  '',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[800]),
+                ),
 
               if (userEthAddress?.qrCode != null)
                 Image.memory(
@@ -233,7 +249,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
+                  "勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要10-30分钟。",
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),
