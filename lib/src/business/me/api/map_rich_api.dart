@@ -289,7 +289,7 @@ class MapRichApi {
         params: {"id": id}, options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
   }
 
-  ///赎回
+  ///cookie
   Future<String> getDianpingCookies() async {
     return await MapRichHttpCore.instance.getEntity('cookie', EntityFactory<String>((json) => json));
   }
