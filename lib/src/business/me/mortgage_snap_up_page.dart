@@ -110,7 +110,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        "需转账",
+                        "需转入",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Padding(

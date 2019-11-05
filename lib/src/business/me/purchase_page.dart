@@ -267,7 +267,7 @@ class _PurchaseState extends State<PurchasePage> {
                 height: 8,
               ),
               Text(
-                '请务必转账指定的HYN金额！',
+                '请务必转入指定的HYN金额！',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
               if (widget.payOrder?.qr_code != null)
@@ -294,7 +294,7 @@ class _PurchaseState extends State<PurchasePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "转账地址",
+                      "转入地址",
                       style: TextStyle(fontSize: 14),
                     ),
                     Text('${shortEthAddress(widget.payOrder?.address)}', style: TextStyle(fontSize: 14)),
@@ -326,7 +326,7 @@ class _PurchaseState extends State<PurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "使用HYN钱包转账",
+                        "使用HYN钱包转入",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -349,7 +349,7 @@ class _PurchaseState extends State<PurchasePage> {
                       if (ret.code == -1007) {
                         Fluttertoast.showToast(msg: '已到达上限');
                       } else {
-                        Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
+                        Fluttertoast.showToast(msg: '暂未发现转入信息，请稍后再试');
                       }
                     }
                   },
@@ -358,7 +358,7 @@ class _PurchaseState extends State<PurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "我已使用外部钱包转账",
+                        "我已使用外部钱包转入",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -384,7 +384,7 @@ class _PurchaseState extends State<PurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}。\n禁止从交易所直接提到上述地址，请使用数字钱包转账。勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
+                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}。\n禁止从交易所直接提到上述地址，请使用数字钱包转账入。勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),
@@ -518,7 +518,7 @@ class _PurchaseState extends State<PurchasePage> {
                           });
                         } catch (e) {
                           logger.e(e);
-                          Fluttertoast.showToast(msg: '转账异常');
+                          Fluttertoast.showToast(msg: '转入异常');
                         }
                       }
                     } else {

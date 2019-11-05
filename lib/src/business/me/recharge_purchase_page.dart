@@ -156,7 +156,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "转账地址: ${shortEthAddress(userEthAddress?.address)}",
+                      "转入地址: ${shortEthAddress(userEthAddress?.address)}",
                       style: TextStyle(fontSize: 14),
                     ),
                     Padding(
@@ -191,7 +191,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "使用HYN钱包转账",
+                        "使用HYN钱包转入",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -214,7 +214,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                       if (ret.code == -1007) {
                         Fluttertoast.showToast(msg: '已到达上限');
                       } else {
-                        Fluttertoast.showToast(msg: '暂未发现转账信息，请稍后再试');
+                        Fluttertoast.showToast(msg: '暂未发现转入信息，请稍后再试');
                       }
                     }
                   },
@@ -223,7 +223,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "我已使用外部钱包转账",
+                        "我已使用外部钱包转入",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -249,7 +249,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要10-30分钟。",
+                  "勿往上述地址转入非HYN资产，否则资产将不可找回。您转入后后，需要整个网络节点的确认，大约需要10-30分钟。",
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),
