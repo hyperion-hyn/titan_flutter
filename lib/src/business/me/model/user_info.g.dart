@@ -20,6 +20,10 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
     json['low_power'] as int,
     json['total_invitations'] as int,
     json['level'] as String,
+    json['num_of_team_member'] as int,
+    json['parent_user'] == null
+        ? null
+        : ParentUser.fromJson(json['parent_user'] as Map<String, dynamic>),
   );
 }
 
@@ -36,4 +40,6 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'low_power': instance.lowPower,
       'total_invitations': instance.totalInvitations,
       'level': instance.level,
+      'num_of_team_member': instance.numOfTeamMember,
+      'parent_user': instance.parentUser,
     };

@@ -95,12 +95,21 @@ class MapRichApi {
         params: {"password": password}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
+  // todo: jison edit_userInfo
   ///getUserInfo
+  Future<UserInfo> getUserInfo(String token, String userId) async {
+    return await MapRichHttpCore.instance.getEntity(
+        "v2/users/$userId", EntityFactory<UserInfo>((json) => UserInfo.fromJson(json)),
+        options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  /*
   Future<UserInfo> getUserInfo(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity(
         "users/$userId", EntityFactory<UserInfo>((json) => UserInfo.fromJson(json)),
         options: RequestOptions(headers: {"Authorization": token}));
   }
+  */
 
   ///获取算力列表
   Future<PageResponse<PowerDetail>> getPowerList(String token, String userId, int page) async {
@@ -116,8 +125,9 @@ class MapRichApi {
   }
 
   ///获取推广列表
+  // todo: jison edit_promotion
   Future<PageResponse<PromotionInfo>> getPrmotionsList(String token, String userId, int page) async {
-    return MapRichHttpCore.instance.getEntity("promotions/${userId}",
+    return MapRichHttpCore.instance.getEntity("v2/promotions/${userId}",
         EntityFactory<PageResponse<PromotionInfo>>((json) {
       var currentPage = json["page"] as int;
       var totalPages = json["total_pages"] as int;
@@ -128,6 +138,20 @@ class MapRichApi {
       return PageResponse<PromotionInfo>(currentPage, totalPages, promotionList);
     }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
   }
+
+  /*
+  Future<PageResponse<PromotionInfo>> getPrmotionsList(String token, String userId, int page) async {
+    return MapRichHttpCore.instance.getEntity("promotions/${userId}",
+        EntityFactory<PageResponse<PromotionInfo>>((json) {
+          var currentPage = json["page"] as int;
+          var totalPages = json["total_pages"] as int;
+          var dataList = json["data"] as List;
+          var promotionList = dataList.map((promotionItemMap) {
+            return PromotionInfo.fromJson(promotionItemMap);
+          }).toList();
+          return PageResponse<PromotionInfo>(currentPage, totalPages, promotionList);
+        }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+  }*/
 
   ///getContractList
   Future<List<ContractInfo>> getContractList(String token) async {

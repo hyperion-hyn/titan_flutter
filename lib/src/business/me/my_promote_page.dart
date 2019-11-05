@@ -78,40 +78,78 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                 child: Column(
                   children: <Widget>[
+                    // todo: jison edit_团队成员
                     Row(
                       children: <Widget>[
                         Column(
                           children: <Widget>[
                             Text(
-                              "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.highestPower))}",
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              "团队人员",
+                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                             ),
                             SizedBox(
                               height: 16,
                             ),
                             Text(
-                              "最大星际量",
-                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                              "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.numOfTeamMember)}",
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                         Column(
                           children: <Widget>[
                             Text(
-                              "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.lowPower))}",
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              "最大星际量",
+                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                             ),
                             SizedBox(
                               height: 16,
                             ),
                             Text(
+                              "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.highestPower))}",
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Text(
                               "其他星际量",
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.lowPower))}",
+                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                             ),
                           ],
                         )
                       ],
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    ),
+                    Divider(
+                      thickness: 0.5,
+                      height: 48,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        GestureDetector(
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            backgroundImage: AssetImage("res/drawable/default_avator.png"),
+                          ),
+                        ),
+                        SizedBox(width: 16,),
+                        Expanded(
+                          child: Text(
+                            "推荐人 ${getParentEmail()}",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.start,
                     ),
                     Divider(
                       thickness: 0.5,
@@ -250,12 +288,13 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(promotion.total))}",
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(promotion.numOfTeamMember)}",
                         style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     ),
+                    // todo: jison edit_团队注册量
                     Text(
-                      "算力",
+                      "团队注册量",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                   ],
@@ -311,6 +350,18 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
     retList.addAll(_pageResponse.data);
 
     return retList;
+  }
+
+  String getParentEmail() {
+//    return LOGIN_USER_INFO?.parentUser["email"]??LOGIN_USER_INFO.email;
+
+    if (LOGIN_USER_INFO.parentUser != null) {
+      if (LOGIN_USER_INFO.parentUser.email != null) {
+        return LOGIN_USER_INFO?.parentUser.email;
+      }
+      return LOGIN_USER_INFO.email;
+    }
+    return LOGIN_USER_INFO.email;
   }
 
 //  Future _getFirstPromitionList() async {

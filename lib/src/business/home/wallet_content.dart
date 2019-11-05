@@ -25,7 +25,7 @@ class _WalletContentState extends State<WalletContentWidget> {
                     flex: 1,
                   ),
                   Expanded(
-                    flex: 3,
+                    flex: 5,
                     child: TabBar(
                       labelColor: Colors.black,
                       labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
@@ -53,6 +53,7 @@ class _WalletContentState extends State<WalletContentWidget> {
         ),
         body: TabBarView(
           children: [
+            // todo: jison edit_padding
             WalletPage(),
             Map3NodeIntroductionPage(),
           ],

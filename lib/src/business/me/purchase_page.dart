@@ -67,7 +67,7 @@ class _PurchaseState extends State<PurchasePage> {
 
   @override
   Widget build(BuildContext context) {
-    // todo: jison edit
+    // todo: jison edit_抵押方式
     //var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
     var payTypeName = payType == 0 ? "使用HYN" : "选择抵押方式";
 
@@ -143,7 +143,7 @@ class _PurchaseState extends State<PurchasePage> {
                         children: <Widget>[
                           Text(payTypeName),
                           Spacer(),
-// todo: jison edit
+// todo: jison edit_抵押方式
 //                          GestureDetector(
 //                            onTapUp: (detail) {
 //                              RenderBox overlay = Overlay.of(context).context.findRenderObject();

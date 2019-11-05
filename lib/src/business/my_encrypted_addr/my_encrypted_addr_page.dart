@@ -174,10 +174,12 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
 
+      // todo: jison edit_esys_flutter_share
       final path = 'qrcode.jpg';
       final tempDir = await getTemporaryDirectory();
       final file = await File('${tempDir.path}/$path').create();
       await file.writeAsBytes(pngBytes);
+      print(file);
 
       TitanPlugin.shareImage(path, S.of(context).share_qrcode);
     } catch (e) {

@@ -13,6 +13,7 @@ PromotionInfo _$PromotionInfoFromJson(Map<String, dynamic> json) {
     json['highest'] as int,
     json['second_highest'] as int,
     json['low'] as int,
+    json['num_of_team_member'] as int,
   );
 }
 
@@ -23,4 +24,5 @@ Map<String, dynamic> _$PromotionInfoToJson(PromotionInfo instance) =>
       'highest': instance.highest,
       'second_highest': instance.secondHighest,
       'low': instance.low,
+      'num_of_team_member': instance.numOfTeamMember,
     };
