@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
@@ -454,6 +455,8 @@ class MapContainerState extends State<MapContainer> {
         PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
+        } else if (permission == PermissionStatus.disabled) {
+          Fluttertoast.showToast(msg: "请开启系统定位服务");
         } else {
           Map<PermissionGroup, PermissionStatus> permissions =
               await PermissionHandler().requestPermissions([PermissionGroup.location]);
