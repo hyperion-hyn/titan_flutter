@@ -85,7 +85,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                           children: <Widget>[
                             Text(
                               "团队人员",
-                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
                               height: 16,
@@ -99,8 +99,8 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                         Column(
                           children: <Widget>[
                             Text(
-                              "最大星际量",
-                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                              "最大星际算力",
+                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
                               height: 16,
@@ -114,8 +114,8 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                         Column(
                           children: <Widget>[
                             Text(
-                              "其他星际量",
-                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                              "其他星际算力",
+                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
                               height: 16,
@@ -294,8 +294,8 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                     ),
                     // todo: jison edit_团队注册量
                     Text(
-                      "团队注册量",
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                      "团队人员",
+                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],
                 ),
@@ -310,7 +310,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                     ),
                     Text(
                       "最大星际算力",
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],
                 ),
@@ -325,7 +325,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                     ),
                     Text(
                       "其他星际算力",
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],
                 ),
