@@ -4,17 +4,31 @@ import 'package:flutter/services.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/about/about_me_page.dart';
 import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class MyPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _MyPageState();
   }
 }
 
 class _MyPageState extends State<MyPage> {
+  String _pubKey = "";
+
+  @override
+  Future initState() {
+    loadData();
+    super.initState();
+  }
+
+  Future loadData() async {
+    _pubKey = await TitanPlugin.getPublicKey();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,29 +74,42 @@ class _MyPageState extends State<MyPage> {
                   ],
                 ),
               ),
-              _buildMemuBar("分享app", Icons.share, () {
-                shareApp();
-              }),
-              _buildMemuBar("关于我们", Icons.info, () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
-              }),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    _buildMemuBar("分享app", Icons.share, () {
+                      shareApp();
+                    }),
+                    Divider(),
+                    _buildMemuBar("关于我们", Icons.info, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
+                    }),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 16, left: 16),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "DApp设置",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8, bottom: 16),
-                      child: Text(
-                        "DApp设置",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    _buildDappItem(ExtendsIconFont.point, "私密分享", "接受地址:0x543254543542545342542545435", () {
+                    _buildDappItem(Icons.location_on, "私密分享", "接收地址:${shortEthAddress(_pubKey)}", () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
                     }),
-                    Divider(),
                   ],
                 ),
               )
@@ -98,16 +125,15 @@ class _MyPageState extends State<MyPage> {
       onTap: onTap,
       child: Container(
         alignment: Alignment.center,
-        decoration:
-            BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black12), shape: BoxShape.rectangle),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
         child: Row(
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Icon(
                 iconData,
-                color: Colors.black54,
+                color: Color(0xffb4b4b4),
               ),
             ),
             Padding(
@@ -135,22 +161,16 @@ class _MyPageState extends State<MyPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-              margin: EdgeInsets.only(top: 8, bottom: 8, right: 16),
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(width: 1),
-                color: Colors.white,
-              ),
-              child: Center(child: Icon(iconData, color: Colors.black, size: 24))),
+          Padding(padding: const EdgeInsets.all(8.0), child: Icon(iconData, color: Color(0xffb4b4b4), size: 32)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+              ),
+              SizedBox(
+                height: 4,
               ),
               Text(
                 description,

@@ -35,7 +35,7 @@ void main() {
 
   BlocSupervisor.delegate = AppBlocDelegate();
 
-  FlutterBugly.init(androidAppId: "a1e5897dd1", iOSAppId: "0cf5dbc8d8");
+  FlutterBugly.init(androidAppId: "103fd7ef12", iOSAppId: "0198fbe26a");
 
   FlutterBugly.postCatchedException(() {
     runApp(Injector(

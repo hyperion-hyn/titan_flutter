@@ -310,7 +310,7 @@ class HomePanelState extends State<HomePanel> {
   }
 
   get mapCenter async {
-    var center = await (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController?.getCameraPosition();
+    var center = await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.getCameraPosition();
     return center?.target;
   }
 

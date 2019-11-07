@@ -1,16 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/consts/consts.dart';
 
 import '../../../global.dart';
 
 class RoutePanel extends StatelessWidget {
   final RouteDataModel routeDataModel;
+  final String profile;
 
-  RoutePanel({this.routeDataModel});
+  RoutePanel({this.routeDataModel, this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +22,12 @@ class RoutePanel extends StatelessWidget {
       var routes = json.decode(routeDataModel.directionsResponse);
       double duration = (routes['routes'][0]['duration'] as num).toDouble();
       double distance = (routes['routes'][0]['distance'] as num).toDouble();
+
+      var navigationDataModel = NavigationDataModel(
+          startLatLng: routeDataModel.startLatLng,
+          endLatLng: routeDataModel.endLatLng,
+          directionsResponse: routeDataModel.directionsResponse,
+          profile: profile);
 
       return Row(
         children: <Widget>[
@@ -30,7 +40,7 @@ class RoutePanel extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 24,
+                  vertical: 16,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,6 +54,51 @@ class RoutePanel extends StatelessWidget {
                       distanceString(context, distance),
                       style: TextStyle(color: Colors.grey[600]),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black87,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          height: 28,
+                          child: MaterialButton(
+                            elevation: 0,
+                            highlightElevation: 0,
+                            minWidth: 60,
+                            onPressed: () {
+                              if (Platform.isAndroid) {
+                                Navigation.navigation(Keys.mapParentKey.currentContext, navigationDataModel);
+                              } else {
+                                Fluttertoast.showToast(msg: "敬请期待");
+                              }
+                            },
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            textColor: Color(0xddffffff),
+                            highlightColor: Colors.black,
+                            splashColor: Colors.white10,
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.navigation,
+                                  color: Color(0xddffffff),
+                                  size: 15,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  "导航",
+                                  style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 8),
                   ],
                 ),
               ),

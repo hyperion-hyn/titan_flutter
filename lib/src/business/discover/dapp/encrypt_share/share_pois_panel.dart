@@ -106,7 +106,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
   }
 
   MapboxMapController get mapController {
-    return (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+    return (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
   }
 
   @override

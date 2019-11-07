@@ -22,5 +22,6 @@ class Const {
 class Keys {
   static final materialAppKey = GlobalKey(debugLabel: '__app__');
   static final mainContextKey = GlobalKey(debugLabel: '__main_context__');
-  static final mapKey = GlobalKey(debugLabel: '__map__');
+  static final mapContainerKey = GlobalKey(debugLabel: '__map__');
+  static final mapParentKey = GlobalKey(debugLabel: '__map_parent__');
 }

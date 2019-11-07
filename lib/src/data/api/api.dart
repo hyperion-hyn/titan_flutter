@@ -13,7 +13,7 @@ class Api {
     @required double lat,
     @required double lon,
     int type,
-    double radius = 100,
+    double radius = 2000,
     int page = 1,
     CancelToken cancelToken,
   }) async {

@@ -64,7 +64,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
   void eventBusListener(event) async {
     if (event is GoSearchEvent) {
-      var mapScenseState = Keys.mapKey.currentState as MapContainerState;
+      var mapScenseState = Keys.mapContainerKey.currentState as MapContainerState;
       var camraPosition = await mapScenseState.mapboxMapController.getCameraPosition();
       var center = camraPosition.target;
 
@@ -229,12 +229,12 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         }
 
         if (sheetPanel == null) {
-          if(state.getCurrentPoi() is PoiEntity) {
+          if (state.getCurrentPoi() is PoiEntity) {
             sheetPanel = PoiPanel(
               scrollController: _bottomChildScrollController,
               selectedPoiEntity: state.getCurrentPoi(),
             );
-          } else if(state.getCurrentPoi() is GaodePoi) {
+          } else if (state.getCurrentPoi() is GaodePoi) {
             sheetPanel = GaodePoiPanel(
               scrollController: _bottomChildScrollController,
               poi: state.getCurrentPoi(),
@@ -246,7 +246,10 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is SearchPoiFailState) {
         //搜索poi失败
-        sheetPanel = FailPanel(message: state.message, showCloseBtn: true,);
+        sheetPanel = FailPanel(
+          message: state.message,
+          showCloseBtn: true,
+        );
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is SearchingPoiByTextState) {
         //搜索POI
@@ -257,9 +260,9 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         draggable = true;
         topRadius = 16;
         topPadding = topBarHeight - 12; //减去"抓" 的范围
-        if(state.getSearchPoiList()!=null&&state.getSearchPoiList().length>0){
+        if (state.getSearchPoiList() != null && state.getSearchPoiList().length > 0) {
           dragState = DraggableBottomSheetState.ANCHOR_POINT;
-        }else{
+        } else {
           dragState = DraggableBottomSheetState.COLLAPSED;
         }
 
@@ -269,7 +272,10 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         );
       } else if (state is SearchPoiByTextFailState) {
         //搜索失败
-        sheetPanel = FailPanel(message: state.message, showCloseBtn: true,);
+        sheetPanel = FailPanel(
+          message: state.message,
+          showCloseBtn: true,
+        );
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is RoutingState) {
         //路线规划中
@@ -279,11 +285,15 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         //路线规划成功
         sheetPanel = RoutePanel(
           routeDataModel: routeDataModel,
+          profile: profile,
         );
         dragState = DraggableBottomSheetState.COLLAPSED;
       } else if (state is RouteFailState) {
         //路线规划失败
-        sheetPanel = FailPanel(message: state.message, showCloseBtn: false,);
+        sheetPanel = FailPanel(
+          message: state.message,
+          showCloseBtn: false,
+        );
         dragState = DraggableBottomSheetState.COLLAPSED;
       }
 
@@ -335,7 +345,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         children: <Widget>[
           Container(), //need a container to expand the stack???
           MapContainer(
-            key: Keys.mapKey,
+            key: Keys.mapContainerKey,
             heavenDataList: heavenModelList,
             bottomPanelController: widget.poiBottomSheetController,
             style: style,
@@ -423,6 +433,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
   }
 
   MapContainerState get getMapState {
-    return Keys.mapKey.currentState as MapContainerState;
+    return Keys.mapContainerKey.currentState as MapContainerState;
   }
 }
