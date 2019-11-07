@@ -155,7 +155,7 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget _buildDappItem(IconData iconData, String title, String description, Function ontap) {
-    return GestureDetector(
+    return InkWell(
       onTap: ontap,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
