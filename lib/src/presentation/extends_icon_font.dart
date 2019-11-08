@@ -10,4 +10,12 @@ class ExtendsIconFont {
   static const IconData point = const IconData(0xe77d, fontFamily: _kFontFam);
 
   static const IconData position_marker = const IconData(0xe6e4, fontFamily: _kFontFam);
+
+  static const IconData copy_content = const IconData(0xeef0, fontFamily: _kFontFam);
+
+  static const IconData send = const IconData(0xe7e0, fontFamily: _kFontFam);
+
+  static const IconData share = const IconData(0xe660, fontFamily: _kFontFam);
+
+  static const IconData receiver = const IconData(0xe63b, fontFamily: _kFontFam);
 }

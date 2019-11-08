@@ -3,7 +3,7 @@ import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class WalletAccountVo {
-  TrustWallet wallet;
+  Wallet wallet;
   Account account;
   AssetToken assetToken;
   String name;
@@ -28,7 +28,7 @@ class WalletAccountVo {
 }
 
 class WalletVo {
-  TrustWallet wallet;
+  Wallet wallet;
   double amount;
   String amountUnit;
   List<WalletAccountVo> accountList;

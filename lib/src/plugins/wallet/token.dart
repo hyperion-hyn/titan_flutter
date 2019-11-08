@@ -1,4 +1,10 @@
 //数字资产
+
+import 'package:json_annotation/json_annotation.dart';
+
+part 'token.g.dart';
+
+@JsonSerializable()
 class AssetToken {
   final int decimals;
   final String id;
@@ -7,29 +13,26 @@ class AssetToken {
   final String logo;
   final String erc20ContractAddress;
 
-  const AssetToken(
-      {this.id,
-      this.name,
-      this.decimals,
-      this.erc20ContractAddress,
-      this.symbol,
-      this.logo});
+  const AssetToken({this.id, this.name, this.decimals, this.erc20ContractAddress, this.symbol, this.logo});
 
   @override
   String toString() {
     return 'AssetToken{decimals: $decimals, id: $id, name: $name, symbol: $symbol, logo: $logo, erc20ContractAddress: $erc20ContractAddress}';
   }
+
+  factory AssetToken.fromJson(Map<String, dynamic> json) => _$AssetTokenFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AssetTokenToJson(this);
 }
 
 ///可用的数字资产
-class Tokens {
+class SupportedTokens {
   static const ETHEREUM = const AssetToken(
       name: 'Ethereum',
       id: 'ethereum',
       decimals: 18,
       erc20ContractAddress: null,
-      logo:
-          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+      logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
       symbol: 'ETH');
 
   static const HYN = const AssetToken(

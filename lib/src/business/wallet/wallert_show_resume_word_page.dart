@@ -29,9 +29,11 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
         body: Container(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.symmetric(vertical: 10),
           alignment: Alignment.center,
           child: Column(
             children: <Widget>[
@@ -44,66 +46,82 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text("按正确的顺序记下或复制这些单词，并将他们保存在安全的地方。"),
+                child: Text(
+                  "按正确的顺序记下或复制这些单词，并将他们保存在安全的地方。",
+                  style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                ),
+              ),
+              SizedBox(
+                height: 8,
               ),
               Container(
                 height: 240,
                 width: 360,
                 child: GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
                     gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4, mainAxisSpacing: 10.0, crossAxisSpacing: 10.0, childAspectRatio: 2),
+                        crossAxisCount: 3, mainAxisSpacing: 10.0, crossAxisSpacing: 10.0, childAspectRatio: 3),
                     itemCount: _resumeWords.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(border: Border.all(
-                            color: HexColor("#FFBBBBBB")
-                          )),
-                          child: Text(_resumeWords[index]));
+                          decoration: BoxDecoration(
+                              border: Border.all(color: HexColor("#FFB7B7B7")),
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Text("${index + 1} ${_resumeWords[index]}"));
                     }),
               ),
               Padding(
-                padding: const EdgeInsets.all(32.0),
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Container(
                   padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.grey), color: HexColor("#223F51B5")),
+                  decoration: BoxDecoration(color: HexColor("#FFFAEAEC")),
                   child: Row(
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Icon(
                           Icons.notification_important,
-                          color: HexColor("#FFFF9800"),
+                          color: Color(0xFFD0021B),
                         ),
                       ),
                       Flexible(
                           child: Text(
                         "永远不要与任何人共享恢复短语，安全的存储它！",
-                        style: TextStyle(color: HexColor("#FF3F51B5")),
+                        style: TextStyle(color: Color(0xFFD0021B)),
                         softWrap: true,
                       ))
                     ],
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, left: 18, right: 18, bottom: 18),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
+                constraints: BoxConstraints.expand(height: 48),
                 child: RaisedButton(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  disabledColor: Colors.grey[600],
+                  color: Theme.of(context).primaryColor,
+                  textColor: Colors.white,
+                  disabledTextColor: Colors.white,
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmResumeWordPage()));
                   },
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 128.0, vertical: 16.0),
-                      child: Text(
-                        "继续",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "继续",
+                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                        ),
+                      ],
                     ),
                   ),
-                  color: Colors.blue,
                 ),
-              )
+              ),
             ],
           ),
         ));

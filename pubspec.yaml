@@ -91,6 +91,7 @@ dependencies:
   #https://pub.dev/packages/carousel_pro
   carousel_pro: ^1.0.0
   web3dart: ^1.1.1
+  bip39: ^1.0.3
   intl: 0.15.8
   webview_flutter: ^0.3.14+1
   pull_to_refresh: ^1.5.7
@@ -165,6 +166,10 @@ flutter:
     - res/drawable/safe_lock.png
     - res/drawable/map3_node_introduction.jpeg
     - res/drawable/discover_first_image.jpeg
+    - res/drawable/eth_logo.png
+    - res/drawable/hyn_logo.png
+    - res/drawable/backup_wallet_main.png
+    - res/drawable/backup_notice_image.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

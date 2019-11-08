@@ -27,6 +27,7 @@ import 'package:uni_links/uni_links.dart';
 import '../../global.dart';
 import 'bloc/bloc.dart';
 import 'bottom_fabs_widget.dart';
+import 'drawer/drawer_scenes.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -93,7 +94,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Updater(
           child: Scaffold(
               resizeToAvoidBottomPadding: false,
-//              drawer: DrawerScenes(),
+              drawer: DrawerScenes(),
 //          endDrawer: PurchasedMapDrawerScenes(),
               bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
                 builder: (context, state) {

@@ -8,11 +8,14 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/etherscan_api.dart';
 import 'package:titan/src/business/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/business/wallet/model/eth_transfer_history.dart';
-import 'package:titan/src/business/wallet/model_vo.dart';
 import 'package:titan/src/business/wallet/wallet_receive_page.dart';
 import 'package:titan/src/business/wallet/wallet_send_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/utils/wallet_icon_utils.dart';
+
+import 'model/wallet_account_vo.dart';
 
 class ShowAccountPage extends StatefulWidget {
   final WalletAccountVo walletAccountVo;
@@ -32,7 +35,7 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
 
   EtherscanApi _etherscanApi = EtherscanApi();
 
-  DateFormat dateFormat = new DateFormat("yy/MM/dd");
+  DateFormat dateFormat = new DateFormat("yyyy/MM/dd");
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
@@ -45,10 +48,15 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
         appBar: AppBar(
-          title: Text("${widget.walletAccountVo.name} Token"),
+          elevation: 0,
+          centerTitle: true,
+          iconTheme: IconThemeData(color: Colors.white),
+          title: Text(
+            "${widget.walletAccountVo.name} 令牌",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         body: SmartRefresher(
           controller: _refreshController,
@@ -77,16 +85,18 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.only(top: 32, bottom: 24),
                           child: Container(
                             alignment: Alignment.center,
-                            width: 68,
-                            height: 68,
+                            width: 80,
+                            height: 80,
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey, width: 1),
+                              border: Border.all(color: Color(0xFF9B9B9B), width: 0),
                               shape: BoxShape.circle,
                             ),
-                            child: Text("${widget.walletAccountVo.symbol}"),
+                            child: Image.asset(
+                              WalletIconUtils.getIcon(widget.walletAccountVo.symbol),
+                            ),
                           ),
                         ),
                         Text(
@@ -97,126 +107,121 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             "≈${widget.walletAccountVo.currencyUnit}${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.amount)}",
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                           ),
+                        ),
+                        SizedBox(
+                          height: 24,
+                        ),
+                        Divider(
+                          height: 2,
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 18),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => WalletSendPage(widget.walletAccountVo)));
-                                },
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 68,
-                                      height: 68,
-                                      decoration: BoxDecoration(
-                                        color: HexColor("#FF3F51B5"),
-                                        border: Border.all(color: Colors.grey, width: 0),
-                                        shape: BoxShape.circle,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => WalletSendPage(widget.walletAccountVo)));
+                                  },
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        ExtendsIconFont.send,
+                                        color: Theme.of(context).primaryColor,
+                                        size: 32,
                                       ),
-                                      child: Icon(
-                                        Icons.arrow_upward,
-                                        color: Colors.white,
+                                      SizedBox(
+                                        width: 8,
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        "发送",
-                                        style: TextStyle(
-                                          color: HexColor(
-                                            "#FF3F51B5",
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => WalletReceivePage(widget.walletAccountVo)));
-                                },
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      alignment: Alignment.center,
-                                      width: 68,
-                                      height: 68,
-                                      decoration: BoxDecoration(
-                                        color: HexColor("#FF3F51B5"),
-                                        border: Border.all(color: Colors.grey, width: 0),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.arrow_downward,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        "接收",
-                                        style: TextStyle(
-                                          color: HexColor(
-                                            "#FF3F51B5",
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Builder(
-                                builder: (BuildContext context) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Clipboard.setData(ClipboardData(text: widget.walletAccountVo.account.address));
-                                      Scaffold.of(context).showSnackBar(SnackBar(content: Text("地址已复制")));
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        Container(
-                                          alignment: Alignment.center,
-                                          width: 68,
-                                          height: 68,
-                                          decoration: BoxDecoration(
-                                            color: HexColor("#FF3F51B5"),
-                                            border: Border.all(color: Colors.grey, width: 0),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Icon(
-                                            Icons.content_copy,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "复制",
-                                            style: TextStyle(
-                                              color: HexColor(
-                                                "#FF3F51B5",
-                                              ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "发送",
+                                          style: TextStyle(
+                                            color: HexColor(
+                                              "#FF6D6D6D",
                                             ),
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                              )
-                            ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                VerticalDivider(),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => WalletReceivePage(widget.walletAccountVo)));
+                                  },
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        ExtendsIconFont.receiver,
+                                        color: Theme.of(context).primaryColor,
+                                        size: 24,
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "接收",
+                                          style: TextStyle(
+                                            color: HexColor(
+                                              "#FF6D6D6D",
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                VerticalDivider(),
+                                Builder(
+                                  builder: (BuildContext context) {
+                                    return InkWell(
+                                      onTap: () {
+                                        Clipboard.setData(ClipboardData(text: widget.walletAccountVo.account.address));
+                                        Scaffold.of(context).showSnackBar(SnackBar(content: Text("地址已复制")));
+                                      },
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            ExtendsIconFont.copy_content,
+                                            color: Theme.of(context).primaryColor,
+                                            size: 24,
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "复制",
+                                              style: TextStyle(
+                                                color: HexColor(
+                                                  "#FF6D6D6D",
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                )
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -248,18 +253,18 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
     var amountColor = null;
     var amountText = null;
     if (transtionDetail.type == TranstionType.TRANSFER_IN) {
-      iconData = Icons.arrow_downward;
+      iconData = ExtendsIconFont.receiver;
       title = "已收到";
       account = "From:" + shortEthAddress(transtionDetail.fromAddress);
       amountColor = HexColor("#FF259B24");
-      amountText = "+${transtionDetail.amount}${transtionDetail.unit}";
+      amountText = "+ ${transtionDetail.amount} ${transtionDetail.unit}";
     } else if (transtionDetail.type == TranstionType.TRANSFER_OUT) {
-      iconData = Icons.arrow_upward;
+      iconData = ExtendsIconFont.send;
       title = "已发送";
       account = "To:" + shortEthAddress(transtionDetail.toAddress);
 
       amountColor = HexColor("#FFE51C23");
-      amountText = "-${transtionDetail.amount}${transtionDetail.unit}";
+      amountText = "- ${transtionDetail.amount} ${transtionDetail.unit}";
     }
 
     var time = dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transtionDetail.time));
@@ -271,37 +276,29 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
     return Column(
       children: <Widget>[
         if (isShowTime)
-          Column(
-            children: <Widget>[
-              Divider(
-                thickness: 1.5,
-                height: 2,
-              ),
-              Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    child: Text(time),
-                  )),
-              Divider(
-                thickness: 1.5,
-                height: 2,
-              ),
-            ],
-          ),
+          Container(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              color: Color(0xFFF5F5F5),
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Text(
+                  time,
+                  style: TextStyle(color: Color(0xFF9B9B9B)),
+                ),
+              )),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 1),
-                  shape: BoxShape.circle,
+              Padding(
+                padding: const EdgeInsets.only(top: 8, right: 8),
+                child: Icon(
+                  iconData,
+                  color: Color(0xFFCDCDCD),
+                  size: 24,
                 ),
-                child: Icon(iconData),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -310,13 +307,13 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                   children: <Widget>[
                     Text(
                       title,
-                      style: TextStyle(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
                         account,
-                        style: TextStyle(fontSize: 12, color: HexColor("#FF848181")),
+                        style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                       ),
                     ),
                   ],
@@ -329,7 +326,7 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                   children: <Widget>[
                     Text(
                       amountText,
-                      style: TextStyle(color: amountColor),
+                      style: TextStyle(color: amountColor, fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -365,7 +362,7 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
       return TranstionDetailVo(
           type: type,
           state: 0,
-          amount: Convert.weiToNum(BigInt.parse(erc20TransferHistory.value)).toDouble(),
+          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(erc20TransferHistory.value)).toDouble(),
           unit: erc20TransferHistory.tokenSymbol,
           fromAddress: erc20TransferHistory.from,
           toAddress: erc20TransferHistory.to,
@@ -381,14 +378,16 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
       _transtionDetails.addAll(detailList);
     }
     _currentPage = page;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future _getEthTransferList(int page) async {
     var contractAddress = widget.walletAccountVo.assetToken.erc20ContractAddress;
 
     List<EthTransferHistory> ethTransferHistoryList =
-        await _etherscanApi.queryEthHistory( widget.walletAccountVo.account.address, page);
+        await _etherscanApi.queryEthHistory(widget.walletAccountVo.account.address, page);
 
     List<TranstionDetailVo> detailList = ethTransferHistoryList.map((ethTransferHistory) {
       var type = 0;
@@ -400,7 +399,7 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
       return TranstionDetailVo(
           type: type,
           state: 0,
-          amount: Convert.weiToNum(BigInt.parse(ethTransferHistory.value)).toDouble(),
+          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(ethTransferHistory.value)).toDouble(),
           unit: "ETH",
           fromAddress: ethTransferHistory.from,
           toAddress: ethTransferHistory.to,

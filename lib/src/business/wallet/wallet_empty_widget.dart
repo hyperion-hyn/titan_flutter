@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/wallet/api/market_price_api.dart';
-import 'package:titan/src/business/wallet/model/hyn_market_price_response.dart';
-import 'package:titan/src/global.dart';
+import 'package:titan/src/business/wallet/wallert_import_account_page.dart';
 
-import 'market_price_page.dart';
+import 'wallert_create_new_account_page.dart';
 
 class EmptyWallet extends StatefulWidget {
   @override
@@ -16,21 +11,9 @@ class EmptyWallet extends StatefulWidget {
 }
 
 class _EmptyWalletState extends State<EmptyWallet> {
-  MarketPriceApi _marketPriceApi = MarketPriceApi();
-
-  var marketPriceResponse = HynMarketPriceResponse(
-    0,
-    0,
-    [],
-    0,
-  );
-
-  NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
-
   @override
   void initState() {
     super.initState();
-    _getPrice();
   }
 
   @override
@@ -63,12 +46,10 @@ class _EmptyWalletState extends State<EmptyWallet> {
             children: <Widget>[
               FlatButton(
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Theme
-                        .of(context)
-                        .primaryColor), borderRadius: BorderRadius.circular(36)),
+                    side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                 onPressed: () {
-//                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
-                  Fluttertoast.showToast(msg: "即将开放");
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+//                  Fluttertoast.showToast(msg: "即将开放");
                 },
                 child: Container(
                   child: Padding(
@@ -76,9 +57,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
                     child: Text(
                       "创建钱包",
                       style:
-                      TextStyle(fontSize: 16, color: Theme
-                          .of(context)
-                          .primaryColor, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -88,12 +67,10 @@ class _EmptyWalletState extends State<EmptyWallet> {
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme
-                          .of(context)
-                          .primaryColor), borderRadius: BorderRadius.circular(36)),
+                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
-//                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
-                    Fluttertoast.showToast(msg: "即将开放");
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+//                    Fluttertoast.showToast(msg: "即将开放");
                   },
                   child: Container(
                     child: Padding(
@@ -101,9 +78,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
                       child: Text(
                         "导入钱包",
                         style:
-                        TextStyle(fontSize: 16, color: Theme
-                            .of(context)
-                            .primaryColor, fontWeight: FontWeight.bold),
+                            TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -113,79 +88,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
             ],
           ),
         ),
-        Spacer(),
-        InkWell(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MarketPricePage()));
-          },
-          child: Container(
-            padding: EdgeInsets.all(16),
-            color: HexColor("#F5F5F5"),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      "HYN行情",
-                      style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 14),
-                    ),
-                    Spacer(),
-                    Text(
-                      "查看全部",
-                      style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 14),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: HexColor("#9B9B9B"),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "${DOUBLE_NUMBER_FORMAT.format(marketPriceResponse.avgCNYPrice)}人民币",
-                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text(
-                            "HYN指数",
-                            style: TextStyle(color: HexColor("#6D6D6D"), fontSize: 14),
-                          ),
-                        ],
-                      ),
-                      Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            marketPriceResponse.total.toString(),
-                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text("上线交易所", style: TextStyle(color: HexColor("#6D6D6D"), fontSize: 14)),
-                        ],
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        )
       ],
     );
-  }
-
-  Future _getPrice() async {
-    try {
-      marketPriceResponse = await _marketPriceApi.getHynMarketPriceResponse();
-      setState(() {});
-    } catch (e) {
-      logger.e(e);
-    }
   }
 }

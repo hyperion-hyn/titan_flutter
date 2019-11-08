@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/wallet/model_vo.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
+import 'model/wallet_account_vo.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
   final WalletAccountVo walletAccountVo;
@@ -37,42 +39,48 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(),
+        appBar: AppBar(
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.white),
+          centerTitle: true,
+          title: Text(
+            "确认",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
         body: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey, width: 0.5),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.arrow_upward,
-                      color: Colors.grey,
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: Color(0xFFF5F5F5),
+                    padding: const EdgeInsets.only(top: 24, bottom: 24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          ExtendsIconFont.send,
+                          color: Theme.of(context).primaryColor,
+                          size: 48,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                          child: Text(
+                            "-${widget.count} ${widget.walletAccountVo.symbol}",
+                            style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
+                        Text(
+                          "(${widget.walletAccountVo.currencyUnit}${currency_format.format(widget.count * widget.walletAccountVo.currencyRate)})",
+                          style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                        )
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Text(
-                      "-${widget.count} ${widget.walletAccountVo.symbol}",
-                      style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 24),
-                    ),
-                  ),
-                  Text(
-                    "(${widget.walletAccountVo.currencyUnit}${currency_format.format(widget.count * widget.walletAccountVo.currencyRate)})",
-                    style: TextStyle(color: Colors.grey[500], fontSize: 16),
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
-            Divider(),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
@@ -80,15 +88,18 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        "From",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          "From",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B)),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "${(widget.walletAccountVo.wallet.keystore as TrustWalletKeyStore).name}(${widget.walletAccountVo.account.address})",
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                          "${(widget.walletAccountVo.wallet.keystore as KeyStore).name}(${shortEthAddress(widget.walletAccountVo.account.address)})",
+                          style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
                         ),
@@ -98,7 +109,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                 ],
               ),
             ),
-            Divider(),
+            Divider(
+              height: 2,
+            ),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
@@ -106,15 +119,18 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        "To",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          "To",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B)),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          widget.receiverAddress,
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                          shortEthAddress(widget.receiverAddress),
+                          style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                         ),
                       )
                     ],
@@ -122,62 +138,73 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                 ],
               ),
             ),
-            Divider(),
+            Divider(
+              height: 2,
+            ),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: <Widget>[
-                  Text(
-                    "网络费用",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-                  ),
-                  Spacer(),
-                  Text(
-                    "${ethFee * widget.count} ETH(USD ${currency_format.format(usdFee * widget.count)})",
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          "网络费用",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          "${ethFee * widget.count} ETH(USD ${currency_format.format(usdFee * widget.count)})",
+                          style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
+                        ),
+                      )
+                    ],
                   )
                 ],
               ),
             ),
-            Container(
-              decoration: BoxDecoration(color: HexColor("#fbf8f9")),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "最大总计",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    Spacer(),
-                    Text(
-                      "0.000058985 ETH(USD\$0.10)",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                    )
-                  ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    "最大总计 USD\$0.10",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                  ),
                 ),
-              ),
+              ],
             ),
-            Spacer(),
-            Row(children: <Widget>[
-              Expanded(
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
+              constraints: BoxConstraints.expand(height: 48),
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                disabledColor: Colors.grey[600],
+                color: Theme.of(context).primaryColor,
+                textColor: Colors.white,
+                disabledTextColor: Colors.white,
+                onPressed: () {
+                  _transfer();
+                },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-                  child: RaisedButton(
-                    color: Colors.blue,
-                    padding: EdgeInsets.symmetric(horizontal: 128, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    onPressed: () {
-                      _transfer();
-                    },
-                    child: Text(
-                      "发送",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "发送",
+                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ])
+            ),
           ],
         ));
   }
@@ -193,9 +220,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         toAddress: toAddress,
         coinType: CoinType.ETHEREUM,
         erc20ContractAddress: contract,
-        amount: Convert.numToWei(amount, decimals).toRadixString(16));
+        amount: ConvertTokenUnit.numToWei(amount, decimals).toRadixString(16));
 
-    ethFee = Convert.weiToNum(gasFee).toDouble();
+    ethFee = ConvertTokenUnit.weiToDecimal(gasFee).toDouble();
     usdFee = ethFee * widget.walletAccountVo.ethCurrencyRate;
 
     logger.i('费率是 $ethFee eth');
@@ -211,7 +238,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
           return Center(child: Container(width: 48, height: 48, child: CircularProgressIndicator()));
         });
     var password = 'my password';
-    var amount = Convert.numToWei(widget.count).toRadixString(16);
+    var amount = ConvertTokenUnit.numToWei(widget.count).toRadixString(16);
     try {
       var txHash = await WalletUtil.transferErc20Token(
         password: password,

@@ -4,7 +4,8 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/wallet/coin_market_api.dart';
-import 'package:titan/src/business/wallet/model_vo.dart';
+import 'package:titan/src/business/wallet/model/wallet_account_vo.dart';
+import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -30,20 +31,21 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
   Stream<WalletState> _scanWallet() async* {
     var wallets = await WalletUtil.scanWallets();
+    print("wallets is ${wallets.length}");
     if (wallets.length == 0) {
       yield WalletEmptyState();
     } else {
       Wallet wallet = wallets[0];
-      yield ShowWalletState(await _buildWalletVo(wallet));
+      var walletVo = await _buildWalletVo(wallet);
+      yield ShowWalletState(walletVo);
+      yield ShowWalletState(await _buildWalletVoPrice(walletVo));
     }
   }
 
   Future<WalletVo> _buildWalletVo(Wallet wallet) async {
     Account account;
-    if (wallet is TrustWallet) {
+    if (wallet is Wallet) {
       account = wallet.getEthAccount();
-    } else if (wallet is V3Wallet) {
-      account = wallet.account;
     }
 
     if (account == null) {
@@ -58,16 +60,20 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       walletAccountList.add(await _buildErc20TokenAccountVo(wallet, account, token));
     }
 
-    await _buildPrice(walletAccountList);
+    WalletVo walletVo = WalletVo(wallet: wallet, amount: 0, amountUnit: QUOTE_UNIT, accountList: walletAccountList);
+    return walletVo;
+  }
+
+  Future<WalletVo> _buildWalletVoPrice(WalletVo walletVo) async {
+    await _buildPrice(walletVo.accountList);
 
     var amount = 0.0;
 
-    walletAccountList.forEach((element) {
+    walletVo.accountList.forEach((element) {
       amount += element.amount;
     });
 
-    WalletVo walletVo =
-        WalletVo(wallet: wallet, amount: amount, amountUnit: QUOTE_UNIT, accountList: walletAccountList);
+    walletVo.amount = amount;
     return walletVo;
   }
 
