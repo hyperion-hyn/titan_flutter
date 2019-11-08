@@ -24,6 +24,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
     json['parent_user'] == null
         ? null
         : ParentUser.fromJson(json['parent_user'] as Map<String, dynamic>),
+      json["directly_power"] as int,
   );
 }
 
@@ -42,4 +43,5 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'level': instance.level,
       'num_of_team_member': instance.numOfTeamMember,
       'parent_user': instance.parentUser,
+      'directly_power': instance.directlyPower,
     };

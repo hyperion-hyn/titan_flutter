@@ -10,7 +10,7 @@ import 'package:package_info/package_info.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/updater/bloc/bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import '../about/customerServicePage.dart';
 import '../../../env.dart';
 
 class AboutMePage extends StatefulWidget {
@@ -87,6 +87,15 @@ class _AboueMeState extends State<AboutMePage> {
                 BlocProvider.of<AppBloc>(context)
                     .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
               }),
+          Divider(),
+          _buildInfoContainer(
+              label: "联系客服",
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerServicePage("微信ID：titan5321")));
+
+//                BlocProvider.of<AppBloc>(context)
+//                    .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
+              }),
           Divider()
         ]));
   }
@@ -97,7 +106,7 @@ class _AboueMeState extends State<AboutMePage> {
       child: Container(
         margin: EdgeInsets.fromLTRB(0, 1, 0, 0),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[

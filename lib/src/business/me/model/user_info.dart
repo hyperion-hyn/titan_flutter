@@ -34,6 +34,8 @@ class UserInfo {
   int numOfTeamMember;
   @JsonKey(name: "parent_user")
   ParentUser parentUser;
+  @JsonKey(name: "directly_power")
+  int directlyPower;
 
   UserInfo(
       this.id,
@@ -49,7 +51,9 @@ class UserInfo {
       this.totalInvitations,
       this.level,
       this.numOfTeamMember,
-      this.parentUser);
+      this.parentUser,
+      this.directlyPower,
+      );
 
   factory UserInfo.fromJson(Map<String, dynamic> json) =>
       _$UserInfoFromJson(json);

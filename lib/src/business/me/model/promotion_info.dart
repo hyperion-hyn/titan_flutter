@@ -12,8 +12,10 @@ class PromotionInfo {
   int low;
   @JsonKey(name: "num_of_team_member")
   int numOfTeamMember;
+  @JsonKey(name: "directly_power")
+  int directlyPower;
 
-  PromotionInfo(this.email, this.total, this.highest, this.secondHighest, this.low, this.numOfTeamMember);
+  PromotionInfo(this.email, this.total, this.highest, this.secondHighest, this.low, this.numOfTeamMember, this.directlyPower);
 
   factory PromotionInfo.fromJson(Map<String, dynamic> json) => _$PromotionInfoFromJson(json);
 

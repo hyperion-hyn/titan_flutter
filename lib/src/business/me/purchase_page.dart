@@ -410,13 +410,15 @@ class _PurchaseState extends State<PurchasePage> {
       children: <Widget>[
         Container(
           margin: EdgeInsets.all(16),
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+          padding: EdgeInsets.symmetric(vertical: 12),
           alignment: Alignment.topCenter,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
+//                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Expanded(
                     child: RadioListTile(

@@ -12,6 +12,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 
 class MyEncryptedAddrPage extends StatefulWidget {
   @override
@@ -172,32 +173,50 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
       RenderRepaintBoundary boundary = _qrImageBoundaryKey.currentContext.findRenderObject();
       var image = await boundary.toImage();
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
-
       // todo: jison edit_esys_flutter_share
-      final path = 'qrcode.jpg';
-      final tempDir = await getTemporaryDirectory();
-      final file = await File('${tempDir.path}/$path').create();
-      await file.writeAsBytes(pngBytes);
-      print(file);
-
-      TitanPlugin.shareImage(path, S.of(context).share_qrcode);
+      await Share.file(S.of(context).key_manager_title, 'qrcode.jpg', byteData.buffer.asUint8List(), 'image/jpeg');
     } catch (e) {
       print(e.toString());
       Fluttertoast.showToast(msg: S.of(context).share_fail);
     }
-
-//    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-//    print(permission);
-//    if (permission != PermissionStatus.granted) {
-//      Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-//    }
-//
-//    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.storage);
-//    print(serviceStatus);
-//
-//    PermissionHandler().openAppSettings();
-//    var canInstall = await TitanPlugin.requestInstallUnknownSourceSetting();
-//    print(canInstall);
   }
+
+  /*
+  static Future<void> file(
+      String title, String name, List<int> bytes, String mimeType, {String text = ''}) async {
+    Map argsMap = <String, String>{
+      'title': '$title',
+      'name': '$name',
+      'mimeType': '$mimeType',
+      'text': '$text'
+    };
+
+    final tempDir = await getTemporaryDirectory();
+    final file = await new File('${tempDir.path}/$name').create();
+    await file.writeAsBytes(bytes);
+
+    _channel.invokeMethod('file', argsMap);
+  }
+  */
+
+//  void share() async {
+//    try {
+//      RenderRepaintBoundary boundary = _qrImageBoundaryKey.currentContext.findRenderObject();
+//      var image = await boundary.toImage();
+//      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+//      Uint8List pngBytes = byteData.buffer.asUint8List();
+//
+//      final path = 'qrcode.jpg';
+//      final tempDir = await getTemporaryDirectory();
+//      final file = await new File('${tempDir.path}/$path').create();
+//      await file.writeAsBytes(pngBytes);
+//      print(file);
+//
+//      TitanPlugin.shareImage(path, S.of(context).share_qrcode);
+//    } catch (e) {
+//      print(e.toString());
+//      Fluttertoast.showToast(msg: S.of(context).share_fail);
+//    }
+//  }
+
 }

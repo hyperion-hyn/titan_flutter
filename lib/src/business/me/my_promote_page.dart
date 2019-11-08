@@ -78,13 +78,13 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                 child: Column(
                   children: <Widget>[
-                    // todo: jison edit_团队成员
+                    // todo: jison edit_星际数
                     Row(
                       children: <Widget>[
                         Column(
                           children: <Widget>[
                             Text(
-                              "团队人员",
+                              "星际数",
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
@@ -92,14 +92,29 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                             ),
                             Text(
                               "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.numOfTeamMember)}",
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                         Column(
                           children: <Widget>[
                             Text(
-                              "最大星际算力",
+                              "直连星际量",
+                              style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.directlyPower))}",
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              "最大星际量",
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
@@ -107,14 +122,14 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                             ),
                             Text(
                               "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.highestPower))}",
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                         Column(
                           children: <Widget>[
                             Text(
-                              "其他星际算力",
+                              "其他星际量",
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
@@ -122,7 +137,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                             ),
                             Text(
                               "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.lowPower))}",
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ],
                         )
@@ -283,8 +298,9 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
+                // todo: jison edit_团队注册量
                 Column(
-                  children: <Widget>[
+                children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
@@ -292,9 +308,23 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                         style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     ),
-                    // todo: jison edit_团队注册量
                     Text(
-                      "团队人员",
+                      "星际数",
+                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(promotion.directlyPower))}",
+                        style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                    Text(
+                      "直连星际量",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],
@@ -309,7 +339,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "最大星际算力",
+                      "最大星际量",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],
@@ -324,7 +354,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "其他星际算力",
+                      "其他星际量",
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],

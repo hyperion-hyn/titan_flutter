@@ -37,3 +37,4 @@ class PromoteQrCodePage extends StatelessWidget {
     );
   }
 }
+

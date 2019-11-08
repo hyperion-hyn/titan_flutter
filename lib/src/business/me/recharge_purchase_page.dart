@@ -235,7 +235,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(top: 8),
+          margin: EdgeInsets.only(top: 8, right: 8),
           padding: EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
             children: <Widget>[
@@ -249,8 +249,8 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "勿往上述地址转入非HYN资产，否则资产将不可找回。您转入后后，需要整个网络节点的确认，大约需要10-30分钟。",
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  "勿往上述地址转入非HYN资产，否则资产将不可找回。您转入后，需要整个网络节点的确认，大约需要10-30分钟。",
+                  style: TextStyle(color: Color(0xFFCE9D40), fontSize: 13),
                   softWrap: true,
                 ),
               )

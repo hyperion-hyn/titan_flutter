@@ -17,6 +17,6 @@ const saveAreaTopPadding = 32.0;
 
 int LOGIN_STATUS = 0; //0:还没有读取到数据 1：没有登录 2：登录
 
-UserInfo LOGIN_USER_INFO = UserInfo("", "", "", 0, 0, 0, 0, 0, 0, 0, 0, "",0, ParentUser("",""));
+UserInfo LOGIN_USER_INFO = UserInfo("", "", "", 0, 0, 0, 0, 0, 0, 0, 0, "",0, ParentUser("",""),0);
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
