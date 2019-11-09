@@ -1,5 +1,5 @@
 {
-  "app_name": "泰坦",
+  "app_name": "星际掘金",
   "network_request_err": "网络请求错误,状态码: $code",
   "offline_map": "离线地图",
   "route": "路线",
