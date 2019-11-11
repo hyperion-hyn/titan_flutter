@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -6,10 +8,13 @@ import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
 import 'package:titan/src/business/wallet/wallet_empty_widget.dart';
 import 'package:titan/src/business/wallet/wallet_show_widget.dart';
+import 'package:titan/src/global.dart';
 
 import 'api/market_price_api.dart';
 import 'market_price_page.dart';
 import 'model/hyn_market_price_response.dart';
+
+import 'event_bus_event.dart';
 
 class WalletPage extends StatefulWidget {
   @override
@@ -22,6 +27,8 @@ class _WalletPageState extends State<WalletPage> {
   WalletBloc _walletBloc;
 
   MarketPriceApi _marketPriceApi = MarketPriceApi();
+
+  StreamSubscription _eventbusSubcription;
 
   var marketPriceResponse = HynMarketPriceResponse(
     0,
@@ -38,6 +45,12 @@ class _WalletPageState extends State<WalletPage> {
     _walletBloc.add(ScanWalletEvent());
 
     _getPrice();
+
+    _eventbusSubcription = eventBus.on().listen((event) {
+      if (event is ReScanWalletEvent) {
+        _walletBloc.add(ScanWalletEvent());
+      }
+    });
     super.initState();
   }
 
@@ -137,4 +150,12 @@ class _WalletPageState extends State<WalletPage> {
     marketPriceResponse = await _marketPriceApi.getHynMarketPriceResponse();
     setState(() {});
   }
+
+  @override
+  void dispose() {
+    _eventbusSubcription?.cancel();
+    super.dispose();
+  }
 }
+
+

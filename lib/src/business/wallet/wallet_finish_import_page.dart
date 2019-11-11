@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/business/wallet/wallert_show_resume_word_page.dart';
+import 'package:titan/src/business/wallet/wallet_show_resume_word_page.dart';
 
-class BackupNoticePage extends StatefulWidget {
+class FinishImportPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _BackupNoticePageState();
+    return _FinishImportState();
   }
 }
 
-class _BackupNoticePageState extends State<BackupNoticePage> {
+class _FinishImportState extends State<FinishImportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,41 +21,29 @@ class _BackupNoticePageState extends State<BackupNoticePage> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "现在备份你的账户",
-                  style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.normal, fontSize: 20),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "在下一步中，您将看到12个允许您恢复账户的单词",
-                  style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 12),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Image.asset(
-                  "res/drawable/backup_wallet_main.png",
-                  height: 200,
-                  width: 200,
+                  "res/drawable/check_outline.png",
+                  height: 60,
+                  width: 60,
                 ),
               ),
-              Row(
-                children: <Widget>[
-                  Checkbox(
-                    value: false,
-                    onChanged: (isSelect) {},
-                  ),
-                  Flexible(
-                    child: Text(
-                      "我明白，如果我丢失了恢复单词，我将无法访问我的钱包",
-                      softWrap: true,
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  )
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  "账户导入成功",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "恭喜，您的私密钱包已经导入成功",
+                  style: TextStyle(color: Color(0xFF9B9B9B)),
+                ),
+              ),
+              SizedBox(
+                height: 36,
               ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
@@ -66,16 +54,14 @@ class _BackupNoticePageState extends State<BackupNoticePage> {
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowResumeWordPage()));
-                  },
+                  onPressed: () {},
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "继续",
+                          "使用该私密账户",
                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],

@@ -14,3 +14,7 @@ const safeAreaBottomPadding = 24.0;
 const saveAreaTopPadding = 32.0;
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
+String createWalletNameTemp = "";
+String createWalletPasswordTemp = "";
+String createWalletMnemonicTemp = "";

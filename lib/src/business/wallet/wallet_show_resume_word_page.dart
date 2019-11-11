@@ -1,29 +1,38 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/wallet/wallert_backup_confirm_resume_word_page.dart';
+import 'package:titan/src/business/wallet/wallet_confirm_resume_word_page.dart';
+import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
-class BackupShowResumeWordPage extends StatefulWidget {
+class ShowResumeWordPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _BackupShowResumeWordState();
+    return _ShowResumeWordState();
   }
 }
 
-class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
-  List _resumeWords = [
-    "hello1",
-    "hello2",
-    "hello3",
-    "hello4",
-    "hello5",
-    "hello6",
-    "hello7",
-    "hello8",
-    "hello9",
-    "hello10",
-    "hello11",
-    "hello12"
-  ];
+class _ShowResumeWordState extends State<ShowResumeWordPage> {
+  List _resumeWords = [];
+
+  @override
+  void initState() {
+    getMnemonic();
+    super.initState();
+  }
+
+  Future getMnemonic() async {
+    var mnemonic = await WalletUtil.makeMnemonic();
+
+    logger.i("mnemonic:$mnemonic");
+
+    if (mnemonic != null && mnemonic.isNotEmpty) {
+      _resumeWords = mnemonic.split(" ");
+      createWalletMnemonicTemp = mnemonic;
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +114,7 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => BackupConfirmResumeWordPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmResumeWordPage()));
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/business/wallet/wallert_show_resume_word_page.dart';
+import 'package:titan/src/business/wallet/wallet_show_resume_word_page.dart';
+import 'package:titan/src/global.dart';
+
+import 'event_bus_event.dart';
 
 class FinishCreatePage extends StatefulWidget {
   @override
@@ -54,7 +57,10 @@ class _FinishCreateState extends State<FinishCreatePage> {
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
-                  onPressed: () {},
+                  onPressed: () {
+                    eventBus.fire(ReScanWalletEvent());
+                    Navigator.of(context).popUntil((r) => r.isFirst);
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(

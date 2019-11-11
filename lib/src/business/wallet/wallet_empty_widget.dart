@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/business/wallet/wallert_import_account_page.dart';
+import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 
-import 'wallert_create_new_account_page.dart';
+import 'wallet_create_new_account_page.dart';
 
 class EmptyWallet extends StatefulWidget {
   @override
@@ -23,9 +23,13 @@ class _EmptyWalletState extends State<EmptyWallet> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(38.0),
-          child: Image.asset(
-            "res/drawable/safe_lock.png",
-            width: 72,
+          child: Container(
+            width: 73,
+            height: 86,
+            child: Image.asset(
+              "res/drawable/safe_lock.png",
+              width: 72,
+            ),
           ),
         ),
         Text(
@@ -49,7 +53,6 @@ class _EmptyWalletState extends State<EmptyWallet> {
                     side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
-//                  Fluttertoast.showToast(msg: "即将开放");
                 },
                 child: Container(
                   child: Padding(
@@ -70,7 +73,6 @@ class _EmptyWalletState extends State<EmptyWallet> {
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
-//                    Fluttertoast.showToast(msg: "即将开放");
                   },
                   child: Container(
                     child: Padding(

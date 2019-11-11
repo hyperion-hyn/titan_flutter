@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/validator_util.dart';
 
-import 'wallert_finish_import_page.dart';
+import 'wallet_finish_import_page.dart';
 
 class ImportAccountPage extends StatefulWidget {
   @override
