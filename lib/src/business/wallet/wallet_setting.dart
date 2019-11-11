@@ -149,6 +149,30 @@ class _WalletSettingState extends State<WalletSettingPage> {
                 ),
               ),
             ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
+              constraints: BoxConstraints.expand(height: 48),
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                disabledColor: Colors.grey[600],
+                color: Color(0xFF9B9B9B),
+                textColor: Colors.white,
+                disabledTextColor: Colors.white,
+                onPressed: () {},
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "删除",
+                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

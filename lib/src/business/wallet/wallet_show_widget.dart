@@ -88,14 +88,19 @@ class _ShowWalletState extends State<ShowWallet> {
                                   builder: (context) => WalletManagerPage(),
                                   settings: RouteSettings(name: "/wallet_manager_page")));
                         },
-                        child: Text(
-                          "${walletName}",
-                          style: TextStyle(color: Color(0xFF252525)),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              "${walletName}",
+                              style: TextStyle(color: Color(0xFF252525)),
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              color: Color(0xFF9B9B9B),
+                            )
+                          ],
                         ),
-                      ),
-                      Icon(
-                        Icons.chevron_right,
-                        color: Color(0xFF9B9B9B),
                       )
                     ],
                   ),
