@@ -16,11 +16,11 @@ class WalletPluginInterface {
     
     func setMethodCallHandler(methodCall: FlutterMethodCall, result: FlutterResult) -> Bool {
         switch(methodCall.method) {
-        case "wallet_make_mnemonic":
-            //产生助记词
-            let mnemonics = Mnemonics(entropySize: .b128, language: .english)
-            result(mnemonics.string)
-            return true
+//        case "wallet_make_mnemonic":
+//            //产生助记词
+//            let mnemonics = Mnemonics(entropySize: .b128, language: .english)
+//            result(mnemonics.string)
+//            return true
         case "wallet_import_mnemonic":
             /*通过助记词保存、导入*/
             guard let params = methodCall.arguments as? [String: Any] else {
