@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/wallet/wallert_backup_notice_page.dart';
-import 'package:titan/src/business/wallet/wallert_confirm_resume_word_page.dart';
+import 'package:titan/src/business/wallet/wallet_backup_confirm_resume_word_page.dart';
 
-class ShowResumeWordPage extends StatefulWidget {
+class BackupShowResumeWordPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _ShowResumeWordState();
+    return _BackupShowResumeWordState();
   }
 }
 
-class _ShowResumeWordState extends State<ShowResumeWordPage> {
+class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
   List _resumeWords = [
     "hello1",
     "hello2",
@@ -106,7 +105,7 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmResumeWordPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => BackupConfirmResumeWordPage()));
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

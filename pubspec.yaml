@@ -170,6 +170,7 @@ flutter:
     - res/drawable/hyn_logo.png
     - res/drawable/backup_wallet_main.png
     - res/drawable/backup_notice_image.png
+    - res/drawable/check_outline.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

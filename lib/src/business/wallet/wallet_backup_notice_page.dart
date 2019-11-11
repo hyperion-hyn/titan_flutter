@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/business/wallet/wallert_backup_show_resume_word_page.dart';
+import 'package:titan/src/business/wallet/wallet_backup_show_resume_word_page.dart';
 
 class WalletBackupNoticePage extends StatefulWidget {
   @override

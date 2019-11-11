@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/wallet/wallert_backup_notice_page.dart';
-import 'package:titan/src/business/wallet/wallert_finish_create_page.dart';
 
 class BackupConfirmResumeWordPage extends StatefulWidget {
   @override

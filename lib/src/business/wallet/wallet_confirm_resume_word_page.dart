@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/wallet/wallert_backup_notice_page.dart';
-import 'package:titan/src/business/wallet/wallert_finish_create_page.dart';
+import 'package:titan/src/business/wallet/wallet_finish_create_page.dart';
+import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 class ConfirmResumeWordPage extends StatefulWidget {
   @override
@@ -11,22 +13,23 @@ class ConfirmResumeWordPage extends StatefulWidget {
 }
 
 class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
-  List<CandidateWordVo> _candidateWords = [
-    CandidateWordVo("hello1", false),
-    CandidateWordVo("hello2", false),
-    CandidateWordVo("hello3", false),
-    CandidateWordVo("hello4", false),
-    CandidateWordVo("hello5", false),
-    CandidateWordVo("hello6", false),
-    CandidateWordVo("hello7", false),
-    CandidateWordVo("hello8", false),
-    CandidateWordVo("hello9", false),
-    CandidateWordVo("hello10", false),
-    CandidateWordVo("hello11", false),
-    CandidateWordVo("hello12", false),
-  ];
+  List<CandidateWordVo> _candidateWords = [];
 
-  List _selectedResumeWords = [];
+  List<String> _selectedResumeWords = [];
+
+  @override
+  void initState() {
+    initMnemonic();
+    super.initState();
+  }
+
+  void initMnemonic() {
+    logger.i("createWalletMnemonicTemp:$createWalletMnemonicTemp");
+    _candidateWords = createWalletMnemonicTemp.split(" ").map((word) => CandidateWordVo(word, false)).toList();
+
+    _candidateWords.shuffle();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +122,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage()));
+                      _submit();
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -167,6 +170,20 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
       }
     });
     setState(() {});
+  }
+
+  Future _submit() async {
+    var selectedMnemonitc = "";
+    _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word + " ");
+
+    logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
+    if (selectedMnemonitc.trim() == createWalletMnemonicTemp.trim()) {
+      var wallet = await WalletUtil.storeByMnemonic(
+          name: createWalletNameTemp, password: createWalletPasswordTemp, mnemonic: createWalletMnemonicTemp.trim());
+      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage()));
+    } else {
+      Fluttertoast.showToast(msg: "您的恢复短语不正确，请重新尝试");
+    }
   }
 }
 
