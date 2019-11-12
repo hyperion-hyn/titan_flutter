@@ -58,8 +58,8 @@ class _WalletPageState extends State<WalletPage> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        _buildWalletView(context),
-        Spacer(),
+        Expanded(child: _buildWalletView(context)),
+//        Spacer(),
         InkWell(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => MarketPricePage()));
@@ -139,10 +139,24 @@ class _WalletPageState extends State<WalletPage> {
           return Container(
             child: ShowWallet(state.wallet),
           );
+        } else if (state is ScanWalletLoadingState) {
+          return buildLoading(context);
         } else {
           return Container();
         }
       },
+    );
+  }
+
+  Widget buildLoading(context) {
+    return Center(
+      child: SizedBox(
+        height: 40,
+        width: 40,
+        child: CircularProgressIndicator(
+          strokeWidth: 3,
+        ),
+      ),
     );
   }
 
@@ -157,5 +171,3 @@ class _WalletPageState extends State<WalletPage> {
     super.dispose();
   }
 }
-
-

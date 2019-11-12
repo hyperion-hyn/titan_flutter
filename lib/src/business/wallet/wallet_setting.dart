@@ -26,12 +26,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
 
   KeyStore _walletKeyStore;
 
-  Account _ethAccount;
-
   @override
   void initState() {
     _walletKeyStore = widget.trustWallet.keystore;
-    _ethAccount = widget.trustWallet.getEthAccount();
     _walletNameController.text = _walletKeyStore.name;
     super.initState();
   }

@@ -1,8 +1,6 @@
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:titan/src/business/wallet/coin_market_api.dart';
 import 'package:titan/src/business/wallet/model/wallet_account_vo.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
@@ -30,6 +28,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
   }
 
   Stream<WalletState> _scanWallet() async* {
+    yield ScanWalletLoadingState();
     var wallets = await WalletUtil.scanWallets();
     print("wallets is ${wallets.length}");
     if (wallets.length == 0) {

@@ -5,6 +5,8 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 @immutable
 abstract class WalletState {}
 
+class ScanWalletLoadingState extends WalletState {}
+
 class WalletEmptyState extends WalletState {}
 
 class ShowWalletState extends WalletState {
