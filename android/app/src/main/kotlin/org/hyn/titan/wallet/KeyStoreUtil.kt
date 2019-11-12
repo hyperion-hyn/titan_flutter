@@ -31,10 +31,7 @@ object KeyStoreUtil {
      * only support eth now
      */
     fun getPrvKey(filePath: String, password: String, coinType: CoinType): String? {
-        val storedKey = StoredKey.load(filePath)
-        if (storedKey == null) {
-            return null;
-        }
+        val storedKey = StoredKey.load(filePath) ?: return null
 
         return getPrvKey(storedKey, password, coinType)
     }

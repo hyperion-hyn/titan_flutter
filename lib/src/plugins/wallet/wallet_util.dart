@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
@@ -174,6 +176,29 @@ class WalletUtil {
     return wallet;
   }
 
+  static Uint8List getErc20FuncAbi({
+    String erc20Address,
+    String funName,
+    List<dynamic> params = const [],
+  }) {
+    final abiCode = EthereumConst.HYN_ERC20_ABI;
+    final contract =
+        web3.DeployedContract(web3.ContractAbi.fromJson(abiCode, 'HYN'), web3.EthereumAddress.fromHex(erc20Address));
+    final func = contract.function(funName);
+    return func.encodeCall(params);
+  }
+
+  static String getErc20FuncAbiHex({
+    String ethAccountAddress,
+    String erc20Address,
+    String funName,
+    List<dynamic> params = const [],
+    bool include0x = true,
+  }) {
+    var abi = getErc20FuncAbi(erc20Address: erc20Address, params: params, funName: funName);
+    return bytesToHex(abi, include0x: include0x);
+  }
+
   static Wallet _parseWalletJson(dynamic map) {
     var keystore = KeyStore.fromDynamicMap(map);
     var accounts = List<Account>.from(
@@ -182,13 +207,13 @@ class WalletUtil {
     return wallet;
   }
 
-  static web3.Web3Client newWeb3Client() {
+  static web3.Web3Client _newWeb3Client() {
     return web3.Web3Client(WalletConfig.getInfuraApi(), Client());
   }
 
-  static web3.DeployedContract newHynContract(String contractAddress) {
+  static web3.DeployedContract _newHynContract(String contractAddress) {
     final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(WalletConfig.HYN_ERC20_ABI, 'HYN'), web3.EthereumAddress.fromHex(contractAddress));
+        web3.ContractAbi.fromJson(EthereumConst.HYN_ERC20_ABI, 'HYN'), web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
@@ -196,5 +221,30 @@ class WalletUtil {
     return HttpCore.instance.post(WalletConfig.getInfuraApi(),
         params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},
         options: RequestOptions(contentType: Headers.jsonContentType));
+  }
+
+  static web3.DeployedContract _hynErc20Contract;
+  static web3.Web3Client _web3clientMain;
+  static web3.Web3Client _web3clientRopsten;
+
+  static web3.DeployedContract getHynErc20Contract(String contractAddress) {
+    if (_hynErc20Contract == null || _hynErc20Contract?.address?.hex?.contains(contractAddress) != true) {
+      _hynErc20Contract = WalletUtil._newHynContract(contractAddress);
+    }
+    return _hynErc20Contract;
+  }
+
+  static web3.Web3Client getWeb3Client() {
+    if (WalletConfig.isMainNet) {
+      if (_web3clientMain == null) {
+        _web3clientMain = WalletUtil._newWeb3Client();
+      }
+      return _web3clientMain;
+    } else {
+      if (_web3clientRopsten == null) {
+        _web3clientRopsten = WalletUtil._newWeb3Client();
+      }
+      return _web3clientRopsten;
+    }
   }
 }
