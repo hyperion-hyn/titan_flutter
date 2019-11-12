@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/business/wallet/wallet_backup_notice_page.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
+
+import 'event_bus_event.dart';
 
 class WalletSettingPage extends StatefulWidget {
   Wallet trustWallet;
@@ -158,7 +164,37 @@ class _WalletSettingState extends State<WalletSettingPage> {
                 color: Color(0xFF9B9B9B),
                 textColor: Colors.white,
                 disabledTextColor: Colors.white,
-                onPressed: () {},
+                onPressed: () {
+                  showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return EnterWalletPasswordWidget();
+                      }).then((walletPassword) async {
+                    print("walletPassword:$walletPassword");
+                    if (walletPassword == null) {
+                      return;
+                    }
+                    try {
+                      var result = await widget.trustWallet.delete(walletPassword);
+                      print("删除结果 ${widget.trustWallet.keystore.fileName} $result");
+                      if (result) {
+                        Fluttertoast.showToast(msg: "删除成功");
+                        eventBus.fire(ReScanWalletEvent());
+                        Navigator.of(context).popUntil((r) => r.isFirst);
+                      } else {
+                        Fluttertoast.showToast(msg: "删除失败");
+                      }
+                    } catch (_) {
+                      logger.e(_);
+                      if (_.code == 1) {
+                        Fluttertoast.showToast(msg: "密码错误");
+                      } else {
+                        Fluttertoast.showToast(msg: "删除失败");
+                      }
+                    }
+                  });
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
