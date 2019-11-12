@@ -483,20 +483,18 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               try {
                 var password = 'my_password';
-                var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.01).toRadixString(16);
+                var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.01); //.toRadixString(16);
                 var wallets = await WalletUtil.scanWallets();
                 if (wallets.length > 0) {
                   var wallet0 = wallets[0];
 
                   var toAddress = '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0';
 
-                  var txHash = await WalletUtil.transfer(
+                  final txHash = await wallet0.sendEthTransaction(
                     password: password,
-                    fileName: wallet0.keystore.fileName,
-                    coinType: wallet0.getEthAccount().coinType,
-                    fromAddress: wallet0.getEthAccount().address,
                     toAddress: toAddress,
-                    amount: amount,
+                    gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
+                    value: amount,
                   );
 
                   logger.i('ETH交易已提交，交易hash $txHash');
@@ -511,7 +509,7 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               try {
                 var password = 'my_password';
-                var amount = ConvertTokenUnit.etherToWei(etherDouble: 1).toRadixString(16);
+                var amount = ConvertTokenUnit.etherToWei(etherDouble: 1); //.toRadixString(16);
                 var wallets = await WalletUtil.scanWallets();
                 if (wallets.length > 0) {
                   var wallet0 = wallets[0];
@@ -519,13 +517,12 @@ class _WalletDemoState extends State<WalletDemo> {
 
                   var toAddress = '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0';
 
-                  var txHash = await WalletUtil.transferErc20Token(
+                  final txHash = await wallet0.sendErc20Transaction(
+                    contractAddress: hynErc20ContractAddress,
                     password: password,
-                    fileName: wallet0.keystore.fileName,
-                    erc20ContractAddress: hynErc20ContractAddress,
-                    fromAddress: wallet0.getEthAccount().address,
+                    gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
+                    value: amount,
                     toAddress: toAddress,
-                    amount: amount,
                   );
 
                   logger.i('HYN交易已提交，交易hash $txHash');

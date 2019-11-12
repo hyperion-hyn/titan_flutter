@@ -363,10 +363,6 @@ class Wallet {
     return null;
   }
 
-  Future<BigInt> ethGasPrice() {
-    return WalletUtil.ethGasPrice();
-  }
-
   ///get balance of account
   ///black: an integer block number, or the string "latest", "earliest" or "pending"
   Future<BigInt> getBalance(Account account, [dynamic block = 'latest']) async {
@@ -425,6 +421,52 @@ class Wallet {
     }
 
     return BigInt.from(0);
+  }
+
+  Future<String> sendEthTransaction({
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+  }) async {
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client();
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    final txHash = await client.sendTransaction(
+      credentials,
+      web3.Transaction(
+        to: web3.EthereumAddress.fromHex(toAddress),
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: EthereumConst.ETH_GAS_LIMIT,
+        value: web3.EtherAmount.inWei(value),
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return txHash;
+  }
+
+  Future<String> sendErc20Transaction({
+    String contractAddress,
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+  }) async {
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client();
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    final contract = WalletUtil.getHynErc20Contract(contractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: contract,
+        function: contract.function('transfer'),
+        parameters: [web3.EthereumAddress.fromHex(toAddress), value],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: EthereumConst.ERC20_GAS_LIMIT,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
   }
 
   Future<bool> delete(String password) async {
