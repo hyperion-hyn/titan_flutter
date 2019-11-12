@@ -67,7 +67,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     val path = importByMnemonic(mnemonic, name, password, KeyStoreUtil.parseCoinTypes(activeCoins))
                     result.success(path)
                 } else {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "parameters error", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "parameters error", null)
                 }
                 true
             }
@@ -84,7 +84,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     val path = importByPrvKey(prvKeyHex, name, password, coinType)
                     result.success(path)
                 } else {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "parameters error", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "parameters error", null)
                 }
                 true
             }
@@ -106,10 +106,10 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                                 result.success(it)
                             }, {
                                 it.printStackTrace()
-                                result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
+                                result.error(ErrorCode.PASSWORD_WRONG, it.message, null)
                             })
                 } else {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "parameters error", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "parameters error", null)
                 }
                 true
             }
@@ -117,7 +117,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
             "wallet_load_keystore" -> {
                 val fileName = call.argument<String>("fileName")
                 if (fileName == null) {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "fileName cannot be null", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "fileName cannot be null", null)
                 } else {
                     val map = loadKeyStore(fileName)
                     if (map != null) {
@@ -136,17 +136,17 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
 
                 val coinType = KeyStoreUtil.parseCoinType(coinTypeValue)
                 if (fileName == null) {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "fileName cannot be null", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "fileName cannot be null", null)
                     return true
                 }
                 if (password == null) {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "password cannot be null", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "password cannot be null", null)
                     return true
                 }
 
                 val prvKeyHex = KeyStoreUtil.getPrvKey(getKeyStorePath(fileName), password, coinType)
                 if (prvKeyHex == null) {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "password is wrong", null)
+                    result.error(ErrorCode.PASSWORD_WRONG, "password is wrong", null)
                     return true
                 }
 
@@ -177,15 +177,15 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val activeCoins = call.argument<List<Int>>("activeCoins")
 
                 if (oldPassword == null) {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "old password should not be null", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "old password should not be null", null)
                     return true
                 }
                 if (newPassword == null) {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "new password should not be null", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "new password should not be null", null)
                     return true
                 }
                 if (fileName == null) {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "fileName should not be null", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "fileName should not be null", null)
                     return true
                 }
 
@@ -245,7 +245,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                         result.error(ErrorCode.PASSWORD_WRONG, "password error.", null)
                     }
                 } else {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "file not exist.", null)
+                    result.error(ErrorCode.PASSWORD_WRONG, "file not exist.", null)
                 }
                 true
             }
@@ -271,7 +271,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     }
                     result.error(ErrorCode.UNKNOWN_ERROR, "cannot get mnemonic.", null)
                 } else {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "file not exist.", null)
+                    result.error(ErrorCode.PARAMETERS_WRONG, "file not exist.", null)
                 }
                 true
             }
