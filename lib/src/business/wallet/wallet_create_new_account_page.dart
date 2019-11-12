@@ -93,19 +93,21 @@ class _CreateAccountState extends State<CreateAccountPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                     child: TextFormField(
-                        validator: (value) {
-                          if (!ValidatorUtil.validatePassword(value)) {
-                            return "请输入至少6位的密码";
-                          } else {
-                            return null;
-                          }
-                        },
-                        controller: _walletPasswordController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        ),
-                        keyboardType: TextInputType.text),
+                      validator: (value) {
+                        if (!ValidatorUtil.validatePassword(value)) {
+                          return "请输入至少6位的密码";
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: _walletPasswordController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: true,
+                    ),
                   ),
                   Row(
                     children: <Widget>[
@@ -121,22 +123,23 @@ class _CreateAccountState extends State<CreateAccountPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                     child: TextFormField(
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return "请再次输入密码";
-                          }
-                          else if (value != _walletPasswordController.text) {
-                            return "密码不一致";
-                          } else {
-                            return null;
-                          }
-                        },
-                        controller: _walletConfimPasswordController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        ),
-                        keyboardType: TextInputType.text),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "请再次输入密码";
+                        } else if (value != _walletPasswordController.text) {
+                          return "密码不一致";
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: _walletConfimPasswordController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: true,
+                    ),
                   ),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 16),
