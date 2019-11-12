@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -23,16 +26,13 @@ class TokenUnit {
   static const ETHER = 1000000000000000000;
 }
 
-class WalletConfig {
-  static const String INFURA_MAIN_API = 'https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226';
-  static const String INFURA_ROPSTEN_API = 'https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226';
-
-  static const ETH_GAS_LIMIT = 21000;
-  static const ERC20_GAS_LIMIT = 60000;
-
+class EthereumConst {
   static const LOW_SPEED = 3 * TokenUnit.G_WEI;
   static const FAST_SPEED = 10 * TokenUnit.G_WEI;
   static const SUPER_FAST_SPEED = 30 * TokenUnit.G_WEI;
+
+  static const ETH_GAS_LIMIT = 21000;
+  static const ERC20_GAS_LIMIT = 60000;
 
   static const HYN_ERC20_ABI = '''
 [
@@ -320,6 +320,11 @@ class WalletConfig {
   }
 ]
   ''';
+}
+
+class WalletConfig {
+  static const String INFURA_MAIN_API = 'https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226';
+  static const String INFURA_ROPSTEN_API = 'https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226';
 
   static bool isMainNet = true;
 
@@ -339,9 +344,9 @@ class Wallet {
   Future<BigInt> getErc20Balance(String contractAddress) async {
     var account = getEthAccount();
     if (account != null) {
-      final contract = WalletUtil.newHynContract(contractAddress);
+      final contract = WalletUtil.getHynErc20Contract(contractAddress);
       final balanceFun = contract.function('balanceOf');
-      final balance = await WalletUtil.newWeb3Client()
+      final balance = await WalletUtil.getWeb3Client()
           .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(account.address)]);
       return balance.first;
     }
@@ -393,14 +398,13 @@ class Wallet {
     if (account != null) {
       if (gasLimit == null) {
         if (data == null) {
-          gasLimit = BigInt.from(WalletConfig.ETH_GAS_LIMIT);
+          gasLimit = BigInt.from(EthereumConst.ETH_GAS_LIMIT);
         } else {
-          gasLimit = BigInt.from(WalletConfig.ERC20_GAS_LIMIT);
+          gasLimit = BigInt.from(EthereumConst.ERC20_GAS_LIMIT);
         }
       }
       if (gasPrice == null) {
-//        gasPrice = await ethGasPrice();
-        gasPrice = BigInt.from(WalletConfig.FAST_SPEED);
+        gasPrice = BigInt.from(EthereumConst.FAST_SPEED);
       }
       var params = {};
       params['from'] = account.address;

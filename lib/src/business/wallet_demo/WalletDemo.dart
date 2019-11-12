@@ -454,24 +454,24 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var fromAddress = '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0';
               var toAddress = '0xe7147924489DbA4b6eF71CFC3b0615eD74C34c39';
-              var contract = null; //'0xaebbada2bece10c84cbeac637c438cb63e1446c9';
+              var erc20contract = '0xaebbada2bece10c84cbeac637c438cb63e1446c9';
               var decimals = 18;
               var amount = 13.45;
-
-              const GWEI = 1000000000;
-              var lowSpeed = 3 * GWEI; //慢
-              var fastSpeed = 10 * GWEI; //快
-              var extremelyFastSpeed = 30 * GWEI; //极速
 
               var wallets = await WalletUtil.scanWallets();
               if (wallets.isNotEmpty) {
                 var wallet = wallets.first;
+                var erc20FunAbi = WalletUtil.getErc20FuncAbiHex(
+                    erc20Address: erc20contract,
+                    funName: 'transfer',
+                    params: [EthereumAddress.fromHex(toAddress), ConvertTokenUnit.etherToWei(etherDouble: amount)]);
                 var ret = await wallet.estimateGasPrice(
-                    toAddress: '0xe7147924489DbA4b6eF71CFC3b0615eD74C34c39',
-                    value: ConvertTokenUnit.etherToWei(etherDouble:  amount),
-                    gasPrice: BigInt.from(fastSpeed));
+                  toAddress: '0xe7147924489DbA4b6eF71CFC3b0615eD74C34c39',
+                  value: ConvertTokenUnit.etherToWei(etherDouble: amount),
+                  gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
+                  data: erc20FunAbi,
+                );
                 print('xxx $ret, ${ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.fromInt(192)}');
               } else {
                 print('无钱包');
