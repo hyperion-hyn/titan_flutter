@@ -165,7 +165,7 @@ class _ShowWalletState extends State<ShowWallet> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${account.currencyUnit} ${DOUBLE_NUMBER_FORMAT.format(account.currencyRate)}",
+                    "${account.currencyUnitSymbol} ${DOUBLE_NUMBER_FORMAT.format(account.currencyRate)}",
                     style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                   ),
                 ),
@@ -179,7 +179,7 @@ class _ShowWalletState extends State<ShowWallet> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "${DOUBLE_NUMBER_FORMAT.format(account.count)} ${account.symbol}",
+                  "${DOUBLE_NUMBER_FORMAT.format(account.balance)} ${account.symbol}",
                   style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                 ),
                 SizedBox(
@@ -188,7 +188,7 @@ class _ShowWalletState extends State<ShowWallet> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${account.currencyUnit} ${DOUBLE_NUMBER_FORMAT.format(account.amount)}",
+                    "${account.currencyUnitSymbol} ${DOUBLE_NUMBER_FORMAT.format(account.amount)}",
                     style: TextStyle(fontSize: 14, color: HexColor("#FF848181")),
                   ),
                 ),

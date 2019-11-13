@@ -123,7 +123,7 @@ class _WalletSendState extends State<WalletSendPage> {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            _countController.text = widget.walletAccountVo.count.toString();
+                            _countController.text = widget.walletAccountVo.balance.toString();
                             amount = double.parse(_countController.text) * widget.walletAccountVo.currencyRate;
                             setState(() {});
                           },
@@ -151,7 +151,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
                             return "请输入正确的数量";
                           }
-                          if (double.parse(value) > widget.walletAccountVo.count) {
+                          if (double.parse(value) > widget.walletAccountVo.balance) {
                             return "超过余额";
                           }
                           return null;

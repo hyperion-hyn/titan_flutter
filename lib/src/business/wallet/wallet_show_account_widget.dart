@@ -100,7 +100,7 @@ class _ShowAccountPageState extends State<ShowAccountPage> {
                           ),
                         ),
                         Text(
-                          "${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.count)}${widget.walletAccountVo.symbol}",
+                          "${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.balance)}${widget.walletAccountVo.symbol}",
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                         ),
                         Padding(

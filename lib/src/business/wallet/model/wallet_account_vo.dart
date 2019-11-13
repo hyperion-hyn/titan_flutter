@@ -11,7 +11,7 @@ class WalletAccountVo {
   Account account;
   AssetToken assetToken;
   String name;
-  double count;
+  double balance;
   double currencyRate;
   double ethCurrencyRate;
   String currencyUnit;
@@ -24,7 +24,7 @@ class WalletAccountVo {
       this.account,
       this.assetToken,
       this.name,
-      this.count = 0,
+      this.balance = 0,
       this.currencyRate = 0,
       this.currencyUnit = "",
       this.currencyUnitSymbol = "\$",
