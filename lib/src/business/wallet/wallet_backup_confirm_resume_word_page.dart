@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class BackupConfirmResumeWordPage extends StatefulWidget {
+  Wallet wallet;
+  String mnemonic;
+
+  BackupConfirmResumeWordPage(this.wallet, this.mnemonic);
+
   @override
   State<StatefulWidget> createState() {
     return _BackupConfirmResumeWordState();
@@ -9,22 +17,23 @@ class BackupConfirmResumeWordPage extends StatefulWidget {
 }
 
 class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
-  List<CandidateWordVo> _candidateWords = [
-    CandidateWordVo("hello1", false),
-    CandidateWordVo("hello2", false),
-    CandidateWordVo("hello3", false),
-    CandidateWordVo("hello4", false),
-    CandidateWordVo("hello5", false),
-    CandidateWordVo("hello6", false),
-    CandidateWordVo("hello7", false),
-    CandidateWordVo("hello8", false),
-    CandidateWordVo("hello9", false),
-    CandidateWordVo("hello10", false),
-    CandidateWordVo("hello11", false),
-    CandidateWordVo("hello12", false),
-  ];
+  List<CandidateWordVo> _candidateWords = [];
 
   List _selectedResumeWords = [];
+
+  @override
+  void initState() {
+    initMnemonic();
+    super.initState();
+  }
+
+  void initMnemonic() {
+    logger.i("mnemonic:${widget.mnemonic}");
+    _candidateWords = widget.mnemonic.split(" ").map((word) => CandidateWordVo(word, false)).toList();
+
+    _candidateWords.shuffle();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +62,9 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                   ),
                 ),
                 Container(
+                  constraints: BoxConstraints(minHeight: 230),
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(8),
-                  height: 230,
                   decoration: BoxDecoration(
                       border: Border.all(color: Color(0xFFB7B7B7)), borderRadius: BorderRadius.circular(16)),
                   child: GridView.builder(
@@ -117,9 +126,16 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () {
-//                      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage()));
+                      var selectedMnemonitc = "";
+                      _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word + " ");
 
-                      Navigator.of(context).popUntil(ModalRoute.withName("/wallet_manager_page"));
+                      logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
+                      if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
+                        Fluttertoast.showToast(msg: "备份完成");
+                        Navigator.of(context).popUntil(ModalRoute.withName("/wallet_manager_page"));
+                      } else {
+                        Fluttertoast.showToast(msg: "您的恢复短语不正确，请重新尝试");
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/business/wallet/wallet_backup_show_resume_word_page.dart';
+import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
 
 class WalletBackupNoticePage extends StatefulWidget {
+  Wallet wallet;
+
+  WalletBackupNoticePage(this.wallet);
+
   @override
   State<StatefulWidget> createState() {
     return _WalletBackupNoticeState();
@@ -114,7 +125,37 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => BackupShowResumeWordPage()));
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EnterWalletPasswordWidget();
+                        }).then((walletPassword) async {
+                      print("walletPassword:$walletPassword");
+                      if (walletPassword == null) {
+                        return;
+                      }
+                      var wallet = widget.wallet;
+                      try {
+                        if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
+                          var mnemonic = await WalletUtil.exportMnemonic(
+                              fileName: wallet.keystore.fileName, password: walletPassword);
+                          logger.i('your mnemonic is: $mnemonic');
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => BackupShowResumeWordPage(wallet, mnemonic)));
+                        } else {
+                          print('不是TrustWallet钱包，不支持导出助记词');
+                        }
+                      } catch (_) {
+                        _ as PlatformException;
+                        logger.e(_);
+                        if (_.code == WalletError.PASSWORD_WRONG) {
+                          Fluttertoast.showToast(msg: "密码错误");
+                        } else {
+                          Fluttertoast.showToast(msg: "提取助记词失败");
+                        }
+                      }
+                    });
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
