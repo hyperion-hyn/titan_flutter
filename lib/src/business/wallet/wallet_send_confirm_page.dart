@@ -260,7 +260,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         } else {
           await _transferErc20(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
         }
-        Fluttertoast.showToast(msg: "转账成功");
+        Fluttertoast.showToast(msg: "转账已提交");
         Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
       } catch (_) {
         _ as PlatformException;
