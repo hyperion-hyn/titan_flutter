@@ -15,6 +15,7 @@ class WalletAccountVo {
   double currencyRate;
   double ethCurrencyRate;
   String currencyUnit;
+  String currencyUnitSymbol;
   String symbol;
   double amount;
 
@@ -26,6 +27,7 @@ class WalletAccountVo {
       this.count = 0,
       this.currencyRate = 0,
       this.currencyUnit = "",
+      this.currencyUnitSymbol = "\$",
       this.ethCurrencyRate = 0,
       this.symbol,
       this.amount = 0});

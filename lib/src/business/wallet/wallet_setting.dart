@@ -184,7 +184,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                       }
                     } catch (_) {
                       logger.e(_);
-                      if (_.code == 1) {
+                      if (_.code == WalletError.PASSWORD_WRONG) {
                         Fluttertoast.showToast(msg: "密码错误");
                       } else {
                         Fluttertoast.showToast(msg: "删除失败");

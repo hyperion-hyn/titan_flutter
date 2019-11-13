@@ -1,12 +1,16 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:web3dart/credentials.dart' as web3;
 
 import '../../global.dart';
 import 'model/wallet_account_vo.dart';
@@ -15,8 +19,9 @@ class WalletSendConfirmPage extends StatefulWidget {
   final WalletAccountVo walletAccountVo;
   final double count;
   final String receiverAddress;
+  final int speed;
 
-  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress);
+  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress, this.speed);
 
   @override
   State<StatefulWidget> createState() {
@@ -29,6 +34,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   double usdFee = 0.0;
 
   NumberFormat currency_format = new NumberFormat("#,###.##");
+  NumberFormat token_fee_format = new NumberFormat("#,###.########");
 
   @override
   void initState() {
@@ -72,7 +78,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                           ),
                         ),
                         Text(
-                          "(${widget.walletAccountVo.currencyUnit}${currency_format.format(widget.count * widget.walletAccountVo.currencyRate)})",
+                          "≈ ${widget.walletAccountVo.currencyUnitSymbol}${currency_format.format(widget.count * widget.walletAccountVo.currencyRate)}",
                           style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
@@ -158,7 +164,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "${ethFee * widget.count} ETH(USD ${currency_format.format(usdFee * widget.count)})",
+                          "${ethFee} ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(usdFee)})",
                           style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                         ),
                       )
@@ -167,17 +173,8 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    "最大总计 USD\$0.10",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
-                  ),
-                ),
-              ],
+            SizedBox(
+              height: 36,
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
@@ -210,20 +207,34 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   }
 
   Future _getGasFee() async {
-    var fromAddress = widget.walletAccountVo.account.address;
+    var wallet = widget.walletAccountVo.wallet;
     var toAddress = widget.receiverAddress;
     var contract = widget.walletAccountVo.assetToken.erc20ContractAddress;
-    var decimals = 18;
-    var amount = 13.45;
-    var gasFee = await WalletUtil.estimateGas(
-        fromAddress: fromAddress,
-        toAddress: toAddress,
-        coinType: CoinType.ETHEREUM,
-        erc20ContractAddress: contract,
-        amount: ConvertTokenUnit.numToWei(amount, decimals).toRadixString(16));
+    var decimals = widget.walletAccountVo.assetToken.decimals;
+    var amount = widget.count;
 
-    ethFee = ConvertTokenUnit.weiToDecimal(gasFee).toDouble();
-    usdFee = ethFee * widget.walletAccountVo.ethCurrencyRate;
+    var ethCurrencyRate = widget.walletAccountVo.ethCurrencyRate;
+
+    var erc20FunAbi;
+
+    if (widget.walletAccountVo.assetToken.erc20ContractAddress != null) {
+      erc20FunAbi = WalletUtil.getErc20FuncAbiHex(
+          erc20Address: contract,
+          funName: 'transfer',
+          params: [web3.EthereumAddress.fromHex(toAddress), ConvertTokenUnit.etherToWei(etherDouble: amount)]);
+    }
+
+    var ret = await wallet.estimateGasPrice(
+      toAddress: toAddress,
+      value: ConvertTokenUnit.etherToWei(etherDouble: amount),
+      gasPrice: BigInt.from(widget.speed),
+      data: erc20FunAbi,
+    );
+
+    ethFee = ConvertTokenUnit.weiToDecimal(ret, decimals).toDouble();
+    usdFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
+
+    print('xxx $ret, ');
 
     logger.i('费率是 $ethFee eth');
     logger.i('费率是 $usdFee usd');
@@ -232,29 +243,62 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   }
 
   Future _transfer() async {
-    showDialog(
+    showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (BuildContext context) {
-          return Center(child: Container(width: 48, height: 48, child: CircularProgressIndicator()));
-        });
-    var password = 'my password';
-    var amount = ConvertTokenUnit.numToWei(widget.count).toRadixString(16);
-    try {
-      var txHash = await WalletUtil.transferErc20Token(
-        password: password,
-        fileName: widget.walletAccountVo.wallet.keystore.fileName,
-        erc20ContractAddress: widget.walletAccountVo.assetToken.erc20ContractAddress,
-        fromAddress: widget.walletAccountVo.account.address,
-        toAddress: widget.receiverAddress,
-        amount: amount,
-      );
+          return EnterWalletPasswordWidget();
+        }).then((walletPassword) async {
+      print("walletPassword:$walletPassword");
+      if (walletPassword == null) {
+        return;
+      }
 
-      logger.i('HYN交易已提交，交易hash $txHash');
+      try {
+        if (widget.walletAccountVo.symbol == "ETH") {
+          await _transferEth(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
+        } else {
+          await _transferErc20(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
+        }
+        Fluttertoast.showToast(msg: "转账成功");
+        Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
+      } catch (_) {
+        _ as PlatformException;
+        logger.e(_);
+        if (_.code == WalletError.PASSWORD_WRONG) {
+          Fluttertoast.showToast(msg: "密码错误");
+        } else {
+          Fluttertoast.showToast(msg: "转账失败");
+        }
+      }
+    });
+  }
 
-      Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
-    } catch (e) {
-      Navigator.of(context).pop();
-      logger.e(e);
-    }
+  Future _transferEth(String password, double etherDouble, String toAddress, Wallet wallet) async {
+    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
+
+    final txHash = await wallet.sendEthTransaction(
+      password: password,
+      toAddress: toAddress,
+      gasPrice: BigInt.from(widget.speed),
+      value: amount,
+    );
+
+    logger.i('ETH交易已提交，交易hash $txHash');
+  }
+
+  Future _transferErc20(String password, double etherDouble, String toAddress, Wallet wallet) async {
+    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
+    var contractAddress = widget.walletAccountVo.assetToken.erc20ContractAddress;
+
+    final txHash = await wallet.sendErc20Transaction(
+      contractAddress: contractAddress,
+      password: password,
+      gasPrice: BigInt.from(widget.speed),
+      value: amount,
+      toAddress: toAddress,
+    );
+
+    logger.i('HYN交易已提交，交易hash $txHash ');
   }
 }

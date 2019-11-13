@@ -322,6 +322,12 @@ class EthereumConst {
   ''';
 }
 
+class WalletError {
+  static const UNKNOWN_ERROR = "0";
+  static const PASSWORD_WRONG = "1";
+  static const PARAMETERS_WRONG = "2";
+}
+
 class WalletConfig {
   static const String INFURA_MAIN_API = 'https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226';
   static const String INFURA_ROPSTEN_API = 'https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226';
