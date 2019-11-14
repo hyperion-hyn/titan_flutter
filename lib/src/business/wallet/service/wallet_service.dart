@@ -137,6 +137,9 @@ class WalletService {
   ///
   /// 从服务器中获取价格
   Future<Map<String, double>> getPriceFromApi(List<String> symbols) async {
+    if (!symbols.contains("ETH")) {
+      symbols.add("ETH");
+    }
     return _coinMarketApi.quotes(symbols, QUOTE_UNIT);
   }
 }

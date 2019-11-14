@@ -31,7 +31,7 @@ class WalletSendConfirmPage extends StatefulWidget {
 
 class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   double ethFee = 0.0;
-  double usdFee = 0.0;
+  double currencyFee = 0.0;
 
   NumberFormat currency_format = new NumberFormat("#,###.##");
   NumberFormat token_fee_format = new NumberFormat("#,###.########");
@@ -164,7 +164,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "${ethFee} ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(usdFee)})",
+                          "${ethFee} ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(currencyFee)})",
                           style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                         ),
                       )
@@ -232,12 +232,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     );
 
     ethFee = ConvertTokenUnit.weiToDecimal(ret, decimals).toDouble();
-    usdFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
+    currencyFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
 
     print('xxx $ret, ');
 
     logger.i('费率是 $ethFee eth');
-    logger.i('费率是 $usdFee usd');
+    logger.i('费率是 $currencyFee usd');
 
     setState(() {});
   }
