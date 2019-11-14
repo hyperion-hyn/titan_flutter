@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/business/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/business/wallet/wallet_setting.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
+
+import '../wallet_import_account_page.dart';
 
 class WalletManagerPage extends StatefulWidget {
   @override
@@ -20,8 +24,11 @@ class _WalletManagerState extends State<WalletManagerPage> {
   @override
   void initState() {
     _walletManagerBloc.add(ScanWalletEvent());
+    initData();
     super.initState();
   }
+
+  void initData() {}
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +41,44 @@ class _WalletManagerState extends State<WalletManagerPage> {
             "钱包管理",
             style: TextStyle(color: Colors.white),
           ),
+          actions: <Widget>[
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  ExtendsIconFont.import,
+                  size: 20,
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(ExtendsIconFont.add),
+              ),
+            ),
+            SizedBox(
+              width: 8,
+            )
+          ],
         ),
         body: BlocBuilder<WalletManagerBloc, WalletManagerState>(
           bloc: _walletManagerBloc,
           builder: (context, walletManagerState) {
             if (walletManagerState is ShowWalletState) {
+              var defaultWalletFileName = walletManagerState.defaultWalletFileName;
               var walletList = walletManagerState.wallets;
               return ListView.builder(
                 primary: false,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
-                  return _buildWallet(walletList[index]);
+                  return _buildWallet(walletList[index], defaultWalletFileName);
                 },
                 itemCount: walletList.length,
               );
@@ -55,10 +89,11 @@ class _WalletManagerState extends State<WalletManagerPage> {
         ));
   }
 
-  Widget _buildWallet(Wallet wallet) {
+  Widget _buildWallet(Wallet wallet, String defaultWalletFileName) {
     Wallet trustWallet = wallet;
     KeyStore walletKeyStore = trustWallet.keystore;
     Account ethAccount = trustWallet.getEthAccount();
+    var isSelected = (wallet.keystore.fileName == defaultWalletFileName);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       child: Column(
@@ -70,7 +105,27 @@ class _WalletManagerState extends State<WalletManagerPage> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF4F4F4)),
-                child: Text("HYN"),
+                child: InkWell(
+                  onTap: () {
+                    if (!isSelected) {
+                      _walletManagerBloc.add(SwitchWalletEvent(wallet));
+                    }
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      Align(alignment: Alignment.center, child: Text("HYN")),
+                      if (isSelected)
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Icon(
+                            Icons.check_circle,
+                            size: 18,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        )
+                    ],
+                  ),
+                ),
               ),
               SizedBox(
                 width: 12,

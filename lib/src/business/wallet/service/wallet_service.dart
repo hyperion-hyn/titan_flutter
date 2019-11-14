@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -10,6 +11,8 @@ import '../model/wallet_account_vo.dart';
 import '../model/wallet_vo.dart';
 
 class WalletService {
+  static const String DEFAULT_WALLET_FILE_NAME = "default_wallet_file_name";
+
   CoinMarketApi _coinMarketApi = CoinMarketApi();
 
   ///
@@ -141,5 +144,31 @@ class WalletService {
       symbols.add("ETH");
     }
     return _coinMarketApi.quotes(symbols, QUOTE_UNIT);
+  }
+
+  ///
+  /// 保存默认的wallet 的filename
+  ///
+  Future saveDefaultWalletFileName(String fileName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (fileName == null) {
+      await prefs.remove(DEFAULT_WALLET_FILE_NAME);
+    } else {
+      await prefs.setString(DEFAULT_WALLET_FILE_NAME, fileName);
+    }
+  }
+
+  ///
+  /// 获取默认的wallet的filename
+  ///
+  Future<String> getDefaultWalletFileName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.getString(DEFAULT_WALLET_FILE_NAME);
+  }
+
+  Future<bool> isDefaultWallet(Wallet wallet) async {
+    String defaultWalletFileName = await getDefaultWalletFileName();
+    String walletFileName = wallet.keystore.fileName;
+    return defaultWalletFileName == walletFileName;
   }
 }

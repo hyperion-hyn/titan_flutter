@@ -2,6 +2,8 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
+import 'business/wallet/model/wallet_vo.dart';
+
 /// The global [EventBus] object.
 EventBus eventBus = EventBus();
 
@@ -21,3 +23,5 @@ String createWalletMnemonicTemp = "";
 
 const String QUOTE_UNIT = "CNY";
 const String QUOTE_UNIT_SYMBOL = "¥";
+
+WalletVo currentWalletVo;

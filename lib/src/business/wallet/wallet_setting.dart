@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -25,6 +26,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
   TextEditingController _walletNameController = TextEditingController();
 
   KeyStore _walletKeyStore;
+
+  WalletService _walletService = WalletService();
 
   @override
   void initState() {
@@ -174,10 +177,15 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     if (walletPassword == null) {
                       return;
                     }
+
                     try {
                       var result = await widget.trustWallet.delete(walletPassword);
                       print("删除结果 ${widget.trustWallet.keystore.fileName} $result");
                       if (result) {
+                        if (await _walletService.isDefaultWallet(widget.trustWallet)) {
+                          _walletService.saveDefaultWalletFileName(null);
+                          currentWalletVo = null;
+                        }
                         Fluttertoast.showToast(msg: "删除成功");
                         eventBus.fire(ReScanWalletEvent());
                         Navigator.of(context).popUntil((r) => r.isFirst);

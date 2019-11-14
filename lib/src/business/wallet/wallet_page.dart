@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:titan/src/business/wallet/model/wallet_vo.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
@@ -12,10 +12,9 @@ import 'package:titan/src/business/wallet/wallet_show_widget.dart';
 import 'package:titan/src/global.dart';
 
 import 'api/market_price_api.dart';
+import 'event_bus_event.dart';
 import 'market_price_page.dart';
 import 'model/hyn_market_price_response.dart';
-
-import 'event_bus_event.dart';
 
 class WalletPage extends StatefulWidget {
   @override
@@ -31,6 +30,8 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
 
   StreamSubscription _eventbusSubcription;
 
+  WalletService _walletService = WalletService();
+
   var marketPriceResponse = HynMarketPriceResponse(
     0,
     0,
@@ -40,8 +41,6 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
 
-  WalletVo _currentWalletVo;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -49,9 +48,27 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
   }
 
   @override
-  void didPopNext() {
-    if (_currentWalletVo != null) {
-      _walletBloc.add(UpdateWalletEvent(_currentWalletVo));
+  Future didPopNext() {
+    print("didPopNext");
+    doDidPopNext();
+  }
+
+  Future doDidPopNext() async {
+    if (currentWalletVo != null) {
+      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
+      logger.i("defaultWalletFileName:$defaultWalletFileName");
+      String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
+      logger.i("updateWalletFileName:$updateWalletFileName");
+      if (defaultWalletFileName == updateWalletFileName) {
+        logger.i("do UpdateWalletEvent");
+        _walletBloc.add(UpdateWalletEvent(currentWalletVo));
+      } else {
+        currentWalletVo = null;
+        logger.i("do ScanWalletEvent");
+        _walletBloc.add(ScanWalletEvent());
+      }
+    } else {
+      _walletBloc.add(ScanWalletEvent());
     }
   }
 
@@ -152,7 +169,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
             child: EmptyWallet(),
           );
         } else if (state is ShowWalletState) {
-          _currentWalletVo = state.wallet;
+          currentWalletVo = state.wallet;
           return Container(
             child: ShowWallet(state.wallet),
           );

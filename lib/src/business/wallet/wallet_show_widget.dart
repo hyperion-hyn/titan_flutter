@@ -22,18 +22,17 @@ class ShowWallet extends StatefulWidget {
 }
 
 class _ShowWalletState extends State<ShowWallet> {
-  WalletVo wallet;
 
   static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.####");
 
   @override
   void initState() {
     super.initState();
-    wallet = widget.wallet;
   }
 
   @override
   Widget build(BuildContext context) {
+    var wallet = widget.wallet;
     KeyStore walletKeyStore = wallet.wallet.keystore;
     var walletName = walletKeyStore.name;
     return Padding(

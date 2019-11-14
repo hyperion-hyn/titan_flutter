@@ -18,4 +18,8 @@ class ExtendsIconFont {
   static const IconData share = const IconData(0xe660, fontFamily: _kFontFam);
 
   static const IconData receiver = const IconData(0xe63b, fontFamily: _kFontFam);
+
+  static const IconData add = const IconData(0xe603, fontFamily: _kFontFam);
+
+  static const IconData import = const IconData(0xe68e, fontFamily: _kFontFam);
 }

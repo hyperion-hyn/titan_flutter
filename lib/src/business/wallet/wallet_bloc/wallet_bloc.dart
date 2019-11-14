@@ -35,7 +35,22 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     if (wallets.length == 0) {
       yield WalletEmptyState();
     } else {
-      Wallet wallet = wallets[0];
+      Wallet wallet;
+      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
+      if (defaultWalletFileName == null) {
+        wallet = wallets[0];
+        await _walletService.saveDefaultWalletFileName(wallet.keystore.fileName);
+      } else {
+        for (var walletTemp in wallets) {
+          if (walletTemp.keystore.fileName == defaultWalletFileName) {
+            wallet = walletTemp;
+            break;
+          }
+        }
+        if (wallet == null) {
+          wallet = wallets[0];
+        }
+      }
       var walletVo = await _walletService.buildWalletVo(wallet);
       yield ShowWalletState(walletVo);
       await _walletService.updateWalletVoBalace(walletVo);

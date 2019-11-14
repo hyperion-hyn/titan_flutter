@@ -8,6 +8,7 @@ class WalletEmptyState extends WalletManagerState {}
 
 class ShowWalletState extends WalletManagerState {
   List<Wallet> wallets;
+  String defaultWalletFileName;
 
-  ShowWalletState(this.wallets);
+  ShowWalletState(this.wallets, this.defaultWalletFileName);
 }
