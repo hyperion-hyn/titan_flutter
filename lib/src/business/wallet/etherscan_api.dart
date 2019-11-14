@@ -3,6 +3,7 @@ import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/business/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:web3dart/crypto.dart';
 
 class EtherscanApi {
   String host = "";
@@ -37,7 +38,7 @@ class EtherscanApi {
   }
 
   Future<List<Erc20TransferHistory>> queryErc20History(String contractAddress, String address, int page) async {
-    Map result = await HttpCore.instance.get("https://${host}/api", params: {
+    Map result = await HttpCore.instance.get("https://$host/api", params: {
       "module": "account",
       "action": "tokentx",
       "contractaddress": contractAddress,
@@ -52,6 +53,37 @@ class EtherscanApi {
       return resultList.map((json) => Erc20TransferHistory.fromJson(json)).toList();
     } else {
       return [];
+    }
+  }
+
+  Future<BigInt> queryBalance(String address, [tag = 'latest']) async {
+    Map result = await HttpCore.instance.get("https://$host/api", params: {
+      "module": "account",
+      "action": "balance",
+      "apikey": Config.ETHERSCAN_APIKEY,
+      "address": address,
+      "tag": tag,
+    });
+    if (result['status'] == '1') {
+      return BigInt.parse(result['result']);
+    } else {
+      return BigInt.from(0);
+    }
+  }
+
+  Future<BigInt> queryErc20TokenBalance({String address, String contractAddress, tag = 'latest'}) async {
+    Map result = await HttpCore.instance.get("https://$host/api", params: {
+      "module": "account",
+      "action": "tokenbalance",
+      "apikey": Config.ETHERSCAN_APIKEY,
+      "address": address,
+      "contractaddress": contractAddress,
+      "tag": tag,
+    });
+    if (result['status'] == '1') {
+      return BigInt.parse(result['result']);
+    } else {
+      return BigInt.from(0);
     }
   }
 }

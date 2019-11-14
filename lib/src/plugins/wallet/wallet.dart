@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/business/wallet/etherscan_api.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -348,11 +349,12 @@ class Wallet {
   Future<BigInt> getErc20Balance(String contractAddress) async {
     var account = getEthAccount();
     if (account != null) {
-      final contract = WalletUtil.getHynErc20Contract(contractAddress);
-      final balanceFun = contract.function('balanceOf');
-      final balance = await WalletUtil.getWeb3Client()
-          .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(account.address)]);
-      return balance.first;
+      return await EtherscanApi().queryErc20TokenBalance(address: account.address, contractAddress: contractAddress);
+//      final contract = WalletUtil.getHynErc20Contract(contractAddress);
+//      final balanceFun = contract.function('balanceOf');
+//      final balance = await WalletUtil.getWeb3Client()
+//          .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(account.address)]);
+//      return balance.first;
     }
 
     return BigInt.from(0);
@@ -373,11 +375,12 @@ class Wallet {
     if (account != null) {
       switch (account.coinType) {
         case CoinType.ETHEREUM:
-          var response = await WalletUtil.postInfura(method: "eth_getBalance", params: [account.address, block]);
-          if (response['result'] != null) {
-            return hexToInt(response['result']);
-          }
-          break;
+          return await EtherscanApi().queryBalance(account.address, block);
+//          var response = await WalletUtil.postInfura(method: "eth_getBalance", params: [account.address, block]);
+//          if (response['result'] != null) {
+//            return hexToInt(response['result']);
+//          }
+//          break;
       }
     }
     return BigInt.from(0);
