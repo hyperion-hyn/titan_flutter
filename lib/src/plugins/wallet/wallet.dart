@@ -1,14 +1,11 @@
-import 'dart:typed_data';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
+import 'package:titan/config.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
@@ -323,8 +320,9 @@ class EthereumConst {
 }
 
 class WalletConfig {
-  static const String INFURA_MAIN_API = 'https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226';
-  static const String INFURA_ROPSTEN_API = 'https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226';
+  static String get INFURA_MAIN_API => 'https://mainnet.infura.io/v3/${Config.INFURA_PRVKEY}';
+
+  static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
 
   static bool isMainNet = true;
 

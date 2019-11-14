@@ -8,7 +8,6 @@ part of 'token.dart';
 
 AssetToken _$AssetTokenFromJson(Map<String, dynamic> json) {
   return AssetToken(
-    id: json['id'] as String,
     name: json['name'] as String,
     decimals: json['decimals'] as int,
     erc20ContractAddress: json['erc20ContractAddress'] as String,
@@ -20,7 +19,6 @@ AssetToken _$AssetTokenFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$AssetTokenToJson(AssetToken instance) =>
     <String, dynamic>{
       'decimals': instance.decimals,
-      'id': instance.id,
       'name': instance.name,
       'symbol': instance.symbol,
       'logo': instance.logo,
