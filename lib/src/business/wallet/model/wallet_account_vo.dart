@@ -27,7 +27,7 @@ class WalletAccountVo {
       this.balance = 0,
       this.currencyRate = 0,
       this.currencyUnit = "",
-      this.currencyUnitSymbol = "\$",
+      this.currencyUnitSymbol = "¥",
       this.ethCurrencyRate = 0,
       this.symbol,
       this.amount = 0});

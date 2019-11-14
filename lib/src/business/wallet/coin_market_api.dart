@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/http.dart';
 
-import '../../../config.dart';
 
 class CoinMarketApi {
   Future<Map<String, double>> quotes(List<String> symbols, String convert) async {
@@ -23,4 +23,6 @@ class CoinMarketApi {
     }
     return priceMap;
   }
+
+
 }

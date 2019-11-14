@@ -18,3 +18,6 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 String createWalletNameTemp = "";
 String createWalletPasswordTemp = "";
 String createWalletMnemonicTemp = "";
+
+const String QUOTE_UNIT = "CNY";
+const String QUOTE_UNIT_SYMBOL = "¥";

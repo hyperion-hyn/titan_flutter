@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/wallet_manager/wallet_manager.dart';
 import 'package:titan/src/business/wallet/wallet_show_account_widget.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/utils/wallet_icon_utils.dart';
 
@@ -23,7 +24,7 @@ class ShowWallet extends StatefulWidget {
 class _ShowWalletState extends State<ShowWallet> {
   WalletVo wallet;
 
-  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
+  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.####");
 
   @override
   void initState() {
@@ -64,7 +65,7 @@ class _ShowWalletState extends State<ShowWallet> {
                           Row(
                             children: <Widget>[
                               Text(
-                                "\$",
+                                QUOTE_UNIT_SYMBOL,
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                               SizedBox(
@@ -156,7 +157,7 @@ class _ShowWalletState extends State<ShowWallet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  account.name,
+                  account.symbol,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
                 ),
                 SizedBox(
@@ -179,7 +180,7 @@ class _ShowWalletState extends State<ShowWallet> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "${DOUBLE_NUMBER_FORMAT.format(account.balance)} ${account.symbol}",
+                  "${DOUBLE_NUMBER_FORMAT.format(account.balance)}",
                   style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                 ),
                 SizedBox(

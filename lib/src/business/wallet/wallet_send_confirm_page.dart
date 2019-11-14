@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -12,7 +13,6 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/credentials.dart' as web3;
 
-import '../../global.dart';
 import 'model/wallet_account_vo.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
@@ -31,10 +31,12 @@ class WalletSendConfirmPage extends StatefulWidget {
 
 class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   double ethFee = 0.0;
-  double usdFee = 0.0;
+  double currencyFee = 0.0;
 
   NumberFormat currency_format = new NumberFormat("#,###.##");
   NumberFormat token_fee_format = new NumberFormat("#,###.########");
+
+  var isLoading = false;
 
   @override
   void initState() {
@@ -164,7 +166,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "${ethFee} ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(usdFee)})",
+                          "${ethFee} ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(currencyFee)})",
                           style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                         ),
                       )
@@ -185,16 +187,14 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
                 disabledTextColor: Colors.white,
-                onPressed: () {
-                  _transfer();
-                },
+                onPressed: isLoading ? null : _transfer,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "发送",
+                        isLoading ? "请稍后" : "发送",
                         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                       ),
                     ],
@@ -232,12 +232,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     );
 
     ethFee = ConvertTokenUnit.weiToDecimal(ret, decimals).toDouble();
-    usdFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
+    currencyFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
 
     print('xxx $ret, ');
 
     logger.i('费率是 $ethFee eth');
-    logger.i('费率是 $usdFee usd');
+    logger.i('费率是 $currencyFee usd');
 
     setState(() {});
   }
@@ -255,6 +255,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
       }
 
       try {
+        setState(() {
+          isLoading = true;
+        });
         if (widget.walletAccountVo.symbol == "ETH") {
           await _transferEth(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
         } else {
@@ -264,6 +267,10 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
       } catch (_) {
         _ as PlatformException;
+
+        setState(() {
+          isLoading = false;
+        });
         logger.e(_);
         if (_.code == WalletError.PASSWORD_WRONG) {
           Fluttertoast.showToast(msg: "密码错误");
