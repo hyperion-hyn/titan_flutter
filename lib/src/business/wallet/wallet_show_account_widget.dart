@@ -24,7 +24,7 @@ import 'model/transtion_detail_vo.dart';
 import 'model/wallet_account_vo.dart';
 
 class ShowAccountPage extends StatefulWidget {
-  final WalletAccountVo walletAccountVo;
+  WalletAccountVo walletAccountVo;
 
   ShowAccountPage(this.walletAccountVo);
 
@@ -50,7 +50,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   @override
   void postFrameCallBackAfterInitState() async {
     await _walletService.updateAccountVo(widget.walletAccountVo);
-
     loadDataBloc.add(LoadingEvent());
   }
 
@@ -95,7 +94,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                           ),
                         ),
                         Text(
-                          "${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.balance)}${widget.walletAccountVo.symbol}",
+                          "${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.balance)} ${widget.walletAccountVo.symbol}",
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                         ),
                         Padding(
@@ -340,7 +339,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
 
   @override
   Future<List<TranstionDetailVo>> onLoadData(int page) async {
-    await _walletService.updateAccountPrice(widget.walletAccountVo);
+    await _walletService.updateAccountVo(widget.walletAccountVo);
+//    setState(() {});
     return await _accountTransferService.getTransferList(widget.walletAccountVo, page);
   }
 }

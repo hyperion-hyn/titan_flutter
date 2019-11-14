@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
@@ -23,7 +24,7 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends State<WalletPage> {
+class _WalletPageState extends State<WalletPage> with RouteAware {
   WalletBloc _walletBloc;
 
   MarketPriceApi _marketPriceApi = MarketPriceApi();
@@ -38,6 +39,21 @@ class _WalletPageState extends State<WalletPage> {
   );
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
+
+  WalletVo _currentWalletVo;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void didPopNext() {
+    if (_currentWalletVo != null) {
+      _walletBloc.add(UpdateWalletEvent(_currentWalletVo));
+    }
+  }
 
   @override
   void initState() {
@@ -168,6 +184,7 @@ class _WalletPageState extends State<WalletPage> {
   @override
   void dispose() {
     _eventbusSubcription?.cancel();
+    routeObserver.unsubscribe(this);
     super.dispose();
   }
 }

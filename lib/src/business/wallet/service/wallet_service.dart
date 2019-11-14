@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -9,8 +10,6 @@ import '../model/wallet_account_vo.dart';
 import '../model/wallet_vo.dart';
 
 class WalletService {
-  static const String QUOTE_UNIT = "USD";
-
   CoinMarketApi _coinMarketApi = CoinMarketApi();
 
   ///
@@ -115,7 +114,7 @@ class WalletService {
 
   ///
   /// 构建account 的价格
-  void updateAccountPrice(WalletAccountVo accountVo) async {
+  Future<WalletAccountVo> updateAccountPrice(WalletAccountVo accountVo) async {
     var symbolList = [accountVo.symbol];
 
     var priceMap = await getPriceFromApi(symbolList);
@@ -125,13 +124,14 @@ class WalletService {
     accountVo.ethCurrencyRate = priceMap["ETH"];
     accountVo.currencyUnit = QUOTE_UNIT;
     accountVo.amount = price * accountVo.balance;
+    return accountVo;
   }
 
   ///
   /// 更新单个account的价格
   Future updateAccountVo(WalletAccountVo accountVo) async {
-    updateAccountBalance(accountVo, accountVo.wallet);
-    updateAccountPrice(accountVo);
+    await updateAccountBalance(accountVo, accountVo.wallet);
+    await updateAccountPrice(accountVo);
   }
 
   ///

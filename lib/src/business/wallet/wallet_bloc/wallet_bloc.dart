@@ -23,6 +23,8 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
   Stream<WalletState> mapEventToState(WalletEvent event) async* {
     if (event is ScanWalletEvent) {
       yield* _scanWallet();
+    } else if (event is UpdateWalletEvent) {
+      yield* _updateWallet(event.walletVo);
     }
   }
 
@@ -40,5 +42,13 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       yield ShowWalletState(walletVo);
       yield ShowWalletState(await _walletService.updateWalletVoPrice(walletVo));
     }
+  }
+
+  Stream<WalletState> _updateWallet(WalletVo walletVo) async* {
+    yield ScanWalletLoadingState();
+    yield ShowWalletState(walletVo);
+    await _walletService.updateWalletVoBalace(walletVo);
+    yield ShowWalletState(walletVo);
+    yield ShowWalletState(await _walletService.updateWalletVoPrice(walletVo));
   }
 }
