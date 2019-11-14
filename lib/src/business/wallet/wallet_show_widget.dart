@@ -157,7 +157,7 @@ class _ShowWalletState extends State<ShowWallet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  account.name,
+                  account.symbol,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
                 ),
                 SizedBox(
@@ -180,7 +180,7 @@ class _ShowWalletState extends State<ShowWallet> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "${DOUBLE_NUMBER_FORMAT.format(account.balance)} ${account.symbol}",
+                  "${DOUBLE_NUMBER_FORMAT.format(account.balance)}",
                   style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                 ),
                 SizedBox(
