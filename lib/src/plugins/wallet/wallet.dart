@@ -319,6 +319,12 @@ class EthereumConst {
   ''';
 }
 
+class WalletError {
+  static const UNKNOWN_ERROR = "0";
+  static const PASSWORD_WRONG = "1";
+  static const PARAMETERS_WRONG = "2";
+}
+
 class WalletConfig {
   static String get INFURA_MAIN_API => 'https://mainnet.infura.io/v3/${Config.INFURA_PRVKEY}';
 

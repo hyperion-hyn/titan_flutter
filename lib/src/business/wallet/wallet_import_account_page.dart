@@ -67,7 +67,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   height: 36,
                 ),
                 Text(
-                  "输入12个用空格隔开的备份助记词",
+                  "输入用空格隔开的备份助记词",
                   style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                 ),
                 SizedBox(

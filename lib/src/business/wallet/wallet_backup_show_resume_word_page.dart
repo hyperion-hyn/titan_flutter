@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/wallet_backup_confirm_resume_word_page.dart';
+import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class BackupShowResumeWordPage extends StatefulWidget {
+  Wallet wallet;
+  String mnemonic;
+
+  BackupShowResumeWordPage(this.wallet, this.mnemonic);
+
   @override
   State<StatefulWidget> createState() {
     return _BackupShowResumeWordState();
@@ -10,20 +17,24 @@ class BackupShowResumeWordPage extends StatefulWidget {
 }
 
 class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
-  List _resumeWords = [
-    "hello1",
-    "hello2",
-    "hello3",
-    "hello4",
-    "hello5",
-    "hello6",
-    "hello7",
-    "hello8",
-    "hello9",
-    "hello10",
-    "hello11",
-    "hello12"
-  ];
+  List _resumeWords = [];
+
+  @override
+  void initState() {
+    getMnemonic();
+    super.initState();
+  }
+
+  Future getMnemonic() async {
+    var mnemonic = widget.mnemonic;
+
+    logger.i("mnemonic:$mnemonic");
+
+    if (mnemonic != null && mnemonic.isNotEmpty) {
+      _resumeWords = mnemonic.split(" ");
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +116,10 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => BackupConfirmResumeWordPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BackupConfirmResumeWordPage(widget.wallet, widget.mnemonic)));
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

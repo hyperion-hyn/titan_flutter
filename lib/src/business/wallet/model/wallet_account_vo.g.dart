@@ -18,7 +18,7 @@ WalletAccountVo _$WalletAccountVoFromJson(Map<String, dynamic> json) {
         ? null
         : AssetToken.fromJson(json['assetToken'] as Map<String, dynamic>),
     name: json['name'] as String,
-    count: (json['count'] as num)?.toDouble(),
+    balance: (json['count'] as num)?.toDouble(),
     currencyRate: (json['currencyRate'] as num)?.toDouble(),
     currencyUnit: json['currencyUnit'] as String,
     ethCurrencyRate: (json['ethCurrencyRate'] as num)?.toDouble(),
@@ -33,7 +33,7 @@ Map<String, dynamic> _$WalletAccountVoToJson(WalletAccountVo instance) =>
       'account': instance.account,
       'assetToken': instance.assetToken,
       'name': instance.name,
-      'count': instance.count,
+      'count': instance.balance,
       'currencyRate': instance.currencyRate,
       'ethCurrencyRate': instance.ethCurrencyRate,
       'currencyUnit': instance.currencyUnit,

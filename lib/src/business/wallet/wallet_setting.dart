@@ -63,6 +63,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: TextFormField(
+                  enabled: false,
                   controller: _walletNameController,
                   validator: (value) {
                     if (value.isEmpty) {
@@ -94,7 +95,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
             Divider(),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => WalletBackupNoticePage()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => WalletBackupNoticePage(widget.trustWallet)));
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -128,30 +130,30 @@ class _WalletSettingState extends State<WalletSettingPage> {
             SizedBox(
               height: 36,
             ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
-              constraints: BoxConstraints.expand(height: 48),
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                disabledColor: Colors.grey[600],
-                color: Theme.of(context).primaryColor,
-                textColor: Colors.white,
-                disabledTextColor: Colors.white,
-                onPressed: () {},
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "保存",
-                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+//            Container(
+//              margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
+//              constraints: BoxConstraints.expand(height: 48),
+//              child: RaisedButton(
+//                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+//                disabledColor: Colors.grey[600],
+//                color: Theme.of(context).primaryColor,
+//                textColor: Colors.white,
+//                disabledTextColor: Colors.white,
+//                onPressed: () {},
+//                child: Padding(
+//                  padding: const EdgeInsets.all(8.0),
+//                  child: Row(
+//                    mainAxisAlignment: MainAxisAlignment.center,
+//                    children: <Widget>[
+//                      Text(
+//                        "保存",
+//                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+//                      ),
+//                    ],
+//                  ),
+//                ),
+//              ),
+//            ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
               constraints: BoxConstraints.expand(height: 48),
@@ -184,7 +186,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                       }
                     } catch (_) {
                       logger.e(_);
-                      if (_.code == 1) {
+                      if (_.code == WalletError.PASSWORD_WRONG) {
                         Fluttertoast.showToast(msg: "密码错误");
                       } else {
                         Fluttertoast.showToast(msg: "删除失败");

@@ -37,10 +37,15 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       Wallet wallet = wallets[0];
       var walletVo = await _buildWalletVo(wallet);
       yield ShowWalletState(walletVo);
+      await _buildWalletVoBalace(walletVo);
+      yield ShowWalletState(walletVo);
       yield ShowWalletState(await _buildWalletVoPrice(walletVo));
     }
   }
 
+  ///
+  /// 构建walleto
+  ///
   Future<WalletVo> _buildWalletVo(Wallet wallet) async {
     Account account;
     if (wallet is Wallet) {
@@ -63,6 +68,33 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     return walletVo;
   }
 
+  ///
+  /// 获取wallet的balance
+  ///
+  Future _buildWalletVoBalace(WalletVo walletVo) async {
+    List<WalletAccountVo> accountList = walletVo.accountList;
+
+    for (var accountVoTemp in accountList) {
+      await _buildAccountBalance(accountVoTemp, walletVo.wallet);
+    }
+  }
+
+  ///
+  /// 获取account的balance
+  ///
+  Future _buildAccountBalance(WalletAccountVo accountVo, Wallet wallet) async {
+    if (accountVo.assetToken.erc20ContractAddress == null) {
+      var balance = await wallet.getBalance(accountVo.account);
+      accountVo.balance = balance / BigInt.from(pow(10, accountVo.assetToken.decimals));
+    } else {
+      var balance = await wallet.getErc20Balance(accountVo.assetToken.erc20ContractAddress);
+      accountVo.balance = balance / BigInt.from(pow(10, accountVo.assetToken.decimals));
+    }
+  }
+
+  ///
+  ///
+  /// 计算wallet的总价格
   Future<WalletVo> _buildWalletVoPrice(WalletVo walletVo) async {
     await _buildPrice(walletVo.accountList);
 
@@ -76,32 +108,25 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     return walletVo;
   }
 
+  ///
+  /// 构建 eth account
   Future<WalletAccountVo> _buildMainTokenAccountVo(Wallet wallet, Account account, AssetToken token) async {
-    var balance = await wallet.getBalance(account);
-
     WalletAccountVo walletAccountVo = WalletAccountVo(
-        wallet: wallet,
-        account: account,
-        assetToken: token,
-        name: token.name,
-        count: balance / BigInt.from(pow(10, token.decimals)),
-        symbol: token.symbol);
+        wallet: wallet, account: account, assetToken: token, name: token.name, balance: 0, symbol: token.symbol);
     return walletAccountVo;
   }
+
+  ///
+  /// 构建erc20 account
 
   Future<WalletAccountVo> _buildErc20TokenAccountVo(Wallet wallet, Account account, AssetToken token) async {
-    var balance = await wallet.getErc20Balance(token.erc20ContractAddress);
-
     WalletAccountVo walletAccountVo = WalletAccountVo(
-        wallet: wallet,
-        account: account,
-        assetToken: token,
-        name: token.name,
-        count: balance / BigInt.from(pow(10, token.decimals)),
-        symbol: token.symbol);
+        wallet: wallet, account: account, assetToken: token, name: token.name, balance: 0, symbol: token.symbol);
     return walletAccountVo;
   }
 
+  ///
+  /// 构建wallet 的价格
   _buildPrice(List<WalletAccountVo> accountList) async {
     var symbolList = accountList.map((accountVo) {
       return accountVo.symbol;
@@ -114,10 +139,12 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       accountVo.currencyRate = price;
       accountVo.ethCurrencyRate = priceMap["ETH"];
       accountVo.currencyUnit = QUOTE_UNIT;
-      accountVo.amount = price * accountVo.count;
+      accountVo.amount = price * accountVo.balance;
     }
   }
 
+  ///
+  /// 从服务器中获取价格
   Future<Map<String, double>> _getPriceFromApi(List<String> symbols) async {
     return _coinMarketApi.quotes(symbols, QUOTE_UNIT);
   }
