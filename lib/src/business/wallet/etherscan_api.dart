@@ -1,3 +1,4 @@
+import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/business/wallet/model/eth_transfer_history.dart';
@@ -15,7 +16,7 @@ class EtherscanApi {
   }
 
   Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {
-    Map result = await HttpCore.instance.get("https://${host}/api", params: {
+    Map result = await HttpCore.instance.get("https://$host/api", params: {
       "module": "account",
       "action": "txlist",
       "address": address,
@@ -24,7 +25,7 @@ class EtherscanApi {
       "page": page,
       "offset": "10",
       "sort": "desc",
-      "apikey": "FPW6MQZ4CDT3AZE95BNAAACAX1NY71HK6S",
+      "apikey": Config.ETHERSCAN_APIKEY,
     });
 
     if (result["status"] == "1") {
@@ -43,14 +44,14 @@ class EtherscanApi {
       "page": page,
       "offset": "10",
       "sort": "desc",
-      "apikey": "FPW6MQZ4CDT3AZE95BNAAACAX1NY71HK6S",
+      "apikey": Config.ETHERSCAN_APIKEY,
       "address": address
     });
     if (result["status"] == "1") {
       List resultList = result["result"] as List;
       return resultList.map((json) => Erc20TransferHistory.fromJson(json)).toList();
     } else {
-     return [];
+      return [];
     }
   }
 }

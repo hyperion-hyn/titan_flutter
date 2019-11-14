@@ -26,9 +26,10 @@ class Account {
     var erc20Tokens = <AssetToken>[];
     if (json['coinType'] == CoinType.ETHEREUM) {
       token = SupportedTokens.ETHEREUM;
-      //支持的ERC20代币
+      //active erc20 tokens
       if (isMainNet) {
         erc20Tokens.add(SupportedTokens.HYN);
+//        erc20Tokens.add(SupportedTokens.USDT_ERC20);
       } else {
         erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
       }
