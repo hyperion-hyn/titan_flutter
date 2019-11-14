@@ -152,6 +152,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
             child: EmptyWallet(),
           );
         } else if (state is ShowWalletState) {
+          _currentWalletVo = state.wallet;
           return Container(
             child: ShowWallet(state.wallet),
           );
