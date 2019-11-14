@@ -24,4 +24,6 @@ class CoinMarketApi {
     }
     return priceMap;
   }
+
+
 }
