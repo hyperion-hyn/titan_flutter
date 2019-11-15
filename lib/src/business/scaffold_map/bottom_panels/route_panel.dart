@@ -68,11 +68,11 @@ class RoutePanel extends StatelessWidget {
                             highlightElevation: 0,
                             minWidth: 60,
                             onPressed: () {
-                              if (Platform.isAndroid) {
+//                              if (Platform.isAndroid) {
                                 Navigation.navigation(Keys.mapParentKey.currentContext, navigationDataModel);
-                              } else {
-                                Fluttertoast.showToast(msg: "敬请期待");
-                              }
+//                              } else {
+//                                Fluttertoast.showToast(msg: "敬请期待");
+//                              }
                             },
                             padding: EdgeInsets.symmetric(horizontal: 8),
                             textColor: Color(0xddffffff),
