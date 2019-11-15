@@ -104,7 +104,7 @@ class _WalletManagerState extends State<WalletManagerPage> {
                 alignment: Alignment.center,
                 width: 52,
                 height: 52,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF4F4F4)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
                 child: InkWell(
                   onTap: () {
                     if (!isSelected) {
@@ -113,14 +113,18 @@ class _WalletManagerState extends State<WalletManagerPage> {
                   },
                   child: Stack(
                     children: <Widget>[
-                      Align(alignment: Alignment.center, child: Text("HYN")),
+                      Align(alignment: Alignment.center, child: Image.asset("res/drawable/hyn_wallet.png",width: 24,height: 24,)),
                       if (isSelected)
                         Align(
                           alignment: Alignment.bottomRight,
-                          child: Icon(
-                            Icons.check_circle,
-                            size: 18,
-                            color: Theme.of(context).primaryColor,
+                          child: Container(
+                            padding: EdgeInsets.all(0),
+                            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                            child: Icon(
+                              Icons.check_circle,
+                              size: 18,
+                              color: Colors.blue,
+                            ),
                           ),
                         )
                     ],
