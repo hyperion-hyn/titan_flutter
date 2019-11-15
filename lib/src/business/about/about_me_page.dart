@@ -68,7 +68,7 @@ class _AboueMeState extends State<AboutMePage> {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  Text("泰坦掘金", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF252525))),
+                  Text("星际掘金", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF252525))),
                   SizedBox(
                     height: 4,
                   ),
