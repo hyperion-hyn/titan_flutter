@@ -16,12 +16,13 @@ import 'package:web3dart/credentials.dart' as web3;
 import 'model/wallet_account_vo.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
-  final WalletAccountVo walletAccountVo;
+  WalletAccountVo walletAccountVo;
   final double count;
   final String receiverAddress;
   final int speed;
+  final String backRouteName;
 
-  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress, this.speed);
+  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress, this.speed, {this.backRouteName});
 
   @override
   State<StatefulWidget> createState() {
@@ -262,7 +263,11 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
           await _transferErc20(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
         }
         Fluttertoast.showToast(msg: "转账已提交");
-        Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
+        if (widget.backRouteName == null) {
+          Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
+        } else {
+          Navigator.of(context).popUntil(ModalRoute.withName(widget.backRouteName));
+        }
       } catch (_) {
         logger.e(_);
         setState(() {
