@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/wallet/model/wallet_vo.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_send_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
@@ -12,9 +14,14 @@ import '../../global.dart';
 import 'model/wallet_account_vo.dart';
 
 class WalletSendPage extends StatefulWidget {
-  final WalletAccountVo walletAccountVo;
+  WalletAccountVo walletAccountVo;
+  String receiverAddress;
+  double count;
+  String symbol;
+  String currencyUnit = "CNY";
+  String backRouteName;
 
-  WalletSendPage(this.walletAccountVo);
+  WalletSendPage(this.walletAccountVo, {this.receiverAddress, this.count, this.symbol = "HYN", this.backRouteName});
 
   @override
   State<StatefulWidget> createState() {
@@ -34,6 +41,47 @@ class _WalletSendState extends State<WalletSendPage> {
 
   int selected_transfer_speed = EthereumConst.FAST_SPEED;
 
+  WalletService _walletService = WalletService();
+
+  var walletAccountVo;
+
+  @override
+  void initState() {
+    widget.symbol = widget.walletAccountVo != null ? widget.walletAccountVo.symbol : widget.symbol;
+    widget.currencyUnit = widget.walletAccountVo != null ? widget.walletAccountVo.currencyUnit : widget.currencyUnit;
+    loadData();
+    super.initState();
+  }
+
+  Future loadData() async {
+    if (widget.walletAccountVo == null) {
+      WalletVo _walletVo = await _walletService.getDefaultWalletVo();
+      logger.i("walletVo:$_walletVo");
+
+      var account = _walletVo.accountList.firstWhere((accountTemp) {
+        return accountTemp.symbol == widget.symbol;
+      }, orElse: () {
+        return null;
+      });
+      if (account == null) {
+        Fluttertoast.showToast(msg: "账户错误");
+        return;
+      }
+      widget.walletAccountVo = account;
+    }
+
+    await _walletService.updateAccountBalance(widget.walletAccountVo, widget.walletAccountVo.wallet);
+
+    if (widget.receiverAddress != null) {
+      _receiverAddressController.text = widget.receiverAddress;
+    }
+    if (widget.count != null) {
+      _countController.text = widget.count.toString();
+    }
+    walletAccountVo = widget.walletAccountVo;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +91,7 @@ class _WalletSendState extends State<WalletSendPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "发送 ${widget.walletAccountVo.symbol}",
+          "发送 ${widget.symbol}",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -114,7 +162,7 @@ class _WalletSendState extends State<WalletSendPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          "${widget.walletAccountVo.symbol}数量",
+                          "${widget.symbol}数量",
                           style: TextStyle(
                             color: Color(0xFF6D6D6D),
                             fontSize: 16,
@@ -123,8 +171,8 @@ class _WalletSendState extends State<WalletSendPage> {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            _countController.text = widget.walletAccountVo.balance.toString();
-                            amount = double.parse(_countController.text) * widget.walletAccountVo.currencyRate;
+                            _countController.text = walletAccountVo.balance.toString();
+                            amount = double.parse(_countController.text) * walletAccountVo.currencyRate;
                             setState(() {});
                           },
                           child: Padding(
@@ -151,7 +199,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
                             return "请输入正确的数量";
                           }
-                          if (double.parse(value) > widget.walletAccountVo.balance) {
+                          if (double.parse(value) > walletAccountVo.balance) {
                             return "超过余额";
                           }
                           return null;
@@ -163,11 +211,11 @@ class _WalletSendState extends State<WalletSendPage> {
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
-                          amount = double.parse(value) * widget.walletAccountVo.currencyRate;
+                          amount = double.parse(value) * walletAccountVo.currencyRate;
                           setState(() {});
                         },
                         onFieldSubmitted: (value) {
-                          amount = double.parse(_countController.text) * widget.walletAccountVo.currencyRate;
+                          amount = double.parse(_countController.text) * walletAccountVo.currencyRate;
                           setState(() {});
                         },
                       ),
@@ -283,9 +331,7 @@ class _WalletSendState extends State<WalletSendPage> {
                   ],
                 ),
               ),
-              Padding(
-                  padding: EdgeInsets.only(left: 8, top: 8),
-                  child: Text("≈ ${amount} ${widget.walletAccountVo.currencyUnit}")),
+              Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ ${amount} ${widget.currencyUnit}")),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                 constraints: BoxConstraints.expand(height: 48),
@@ -301,7 +347,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => WalletSendConfirmPage(
-                                  widget.walletAccountVo,
+                                  walletAccountVo,
                                   double.parse(_countController.text),
                                   _receiverAddressController.text,
                                   selected_transfer_speed)));
