@@ -27,6 +27,7 @@ import 'package:uni_links/uni_links.dart';
 import '../../global.dart';
 import 'bloc/bloc.dart';
 import 'bottom_fabs_widget.dart';
+import 'drawer/drawer_scenes.dart';
 
 class HomePage extends StatefulWidget {
   @override
