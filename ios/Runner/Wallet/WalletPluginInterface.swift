@@ -11,7 +11,29 @@ import Flutter
 import TrustWalletCore
 
 class WalletPluginInterface {
-    private lazy var keyStoreDir: URL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("keystore")
+//    private lazy var keyStoreDir: URL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("keystore")
+    private lazy var keyStoreDir: URL = {
+       let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+       let cachesDir = paths[0]
+       let keyStore = NSString(string: cachesDir).appendingPathComponent("keystore")
+       print("KeyStore: \(keyStore)")
+               
+       //ensure the path is exist
+       var isExist = FileManager.default.fileExists(atPath: keyStore)
+       print("before_isExist: \(isExist)")
+       
+       if !isExist {
+           do {
+               try FileManager.default.createDirectory(atPath: keyStore, withIntermediateDirectories: false, attributes: nil)
+               isExist = FileManager.default.fileExists(atPath: keyStore)
+               print("after_isExist: \(isExist)")
+           } catch let error as NSError {
+               print(error.localizedDescription);
+           }
+       }
+       
+       return URL(fileURLWithPath: keyStore)
+    }()
     private lazy var keyStore: KeyStore = try! KeyStore(keyDirectory: keyStoreDir)
     
     func setMethodCallHandler(methodCall: FlutterMethodCall, result: FlutterResult) -> Bool {

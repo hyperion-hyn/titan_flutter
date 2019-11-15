@@ -234,8 +234,6 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     ethFee = ConvertTokenUnit.weiToDecimal(ret, decimals).toDouble();
     currencyFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
 
-    print('xxx $ret, ');
-
     logger.i('费率是 $ethFee eth');
     logger.i('费率是 $currencyFee usd');
 
