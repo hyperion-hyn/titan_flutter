@@ -1,14 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/model/gaode_poi.dart';
-import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -27,7 +25,7 @@ class SharePoisPanel extends StatefulWidget {
 }
 
 class SharePoisPanelState extends BaseState<SharePoisPanel> {
-  UserService _userService = UserService();
+  Api _api = Api();
   LatLng _lastPosition;
 
   CancelToken cancelToken;
@@ -76,7 +74,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
 
     try {
       cancelToken = CancelToken();
-      var gaodeModel = await _userService.searchByGaode(
+      var gaodeModel = await _api.searchByGaode(
         lat: _lastPosition.latitude,
         lon: _lastPosition.longitude,
         cancelToken: cancelToken,
@@ -108,7 +106,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
   }
 
   MapboxMapController get mapController {
-    return (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+    return (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
   }
 
   @override

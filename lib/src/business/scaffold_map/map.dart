@@ -11,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -558,6 +559,7 @@ class MapContainerState extends State<MapContainer> {
               child: Stack(
                 children: <Widget>[
                   MapboxMapParent(
+                      key: Keys.mapParentKey,
                       controller: mapboxMapController,
                       child: MapboxMap(
                         compassEnabled: false,

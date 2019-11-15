@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 class TitanPlugin {
   static final MethodChannel callChannel = MethodChannel('org.hyn.titan/call_channel');
@@ -104,8 +105,7 @@ class TitanPlugin {
   }
 
   static Future<dynamic> openMarket({String packageName}) async {
-    return await callChannel
-        .invokeMethod('openMarket', {'packageName': packageName});
+    return await callChannel.invokeMethod('openMarket', {'packageName': packageName});
   }
 
   static Future<String> fileMd5(String path) async {

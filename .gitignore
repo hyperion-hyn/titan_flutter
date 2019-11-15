@@ -82,5 +82,7 @@ pubspec.lock
 .symlinks
 pMapping.txt
 shrinklist.txt
+
+lib/config.dart
 flutter_export_environment.sh
 _mode.md

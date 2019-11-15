@@ -15,11 +15,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
-import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
-import 'package:titan/src/business/home/drawer/purchased_map/bloc/purchased_map_event.dart';
 import 'package:titan/src/business/home/searchbar/bloc/bloc.dart' as searchBar;
 import 'package:titan/src/business/home/sheets/bloc/bloc.dart' as sheets;
-import 'package:titan/src/business/map_store/model/purchased_map_item.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -66,27 +63,6 @@ class MapScenesState extends State<MapScenes> {
   List<HeavenDataModel> _addedHeavenDataModelList = List();
 
   List<String> heavenMapLayers = [];
-
-  _addPurchasedMap(List<PurchasedMap> newPurchasedMapList) {
-    //将purchasedMapList 转成HeavenDataModel
-
-    print("ennter _addPurchasedMap :$newPurchasedMapList");
-
-    _addedHeavenDataModelList = newPurchasedMapList.map((purchasedMap) {
-      return HeavenDataModel(
-          id: purchasedMap.id,
-          sourceUrl: purchasedMap.sourceUrl,
-          color: HexColor(purchasedMap.color).value,
-          sourceLayer: purchasedMap.sourceLayer);
-    }).toList();
-
-    var addHeavenLayerIds = newPurchasedMapList.map((purchaseMapTemp) {
-      return "layer-heaven-" + purchaseMapTemp.id;
-    }).toList();
-
-    heavenMapLayers.clear();
-    heavenMapLayers.addAll(addHeavenLayerIds);
-  }
 
   _onMapClick(Point<double> point, LatLng coordinates) async {
     var range = 10;
@@ -239,11 +215,6 @@ class MapScenesState extends State<MapScenes> {
     });
 
     _toMyLocation();
-    _loadPurchasedMap();
-  }
-
-  void _loadPurchasedMap() {
-    BlocProvider.of<PurchasedMapBloc>(context).add(LoadPurchasedMapsEvent());
   }
 
   void _addMarker(IPoi poi) async {
@@ -522,8 +493,6 @@ class MapScenesState extends State<MapScenes> {
           }
         } else if (state is ResetMapState) {
           _resetMap();
-        } else if (state is LoadedPurchasedMapState) {
-          _addPurchasedMap(state.purchasedMapList);
         }
       },
       child: MapboxMapParent(

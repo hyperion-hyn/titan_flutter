@@ -2,21 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/discover_content.dart';
 import 'package:titan/src/business/home/home_panel.dart';
 import 'package:titan/src/business/home/information_content.dart';
-import 'package:titan/src/business/home/improvement_dialog.dart';
-import 'package:titan/src/business/home/intro/intro_slider.dart';
 import 'package:titan/src/business/home/my_content.dart';
-import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/wallet_content.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
-
 import 'package:titan/src/business/updater/updater.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
@@ -25,14 +22,12 @@ import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
+import 'package:uni_links/uni_links.dart';
 
 import '../../global.dart';
 import 'bloc/bloc.dart';
 import 'bottom_fabs_widget.dart';
 import 'drawer/drawer_scenes.dart';
-
-import 'package:uni_links/uni_links.dart';
-import 'package:flutter/services.dart' show PlatformException;
 
 class HomePage extends StatefulWidget {
   @override
@@ -99,7 +94,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Updater(
           child: Scaffold(
               resizeToAvoidBottomPadding: false,
-//              drawer: DrawerScenes(),
+              drawer: DrawerScenes(),
 //          endDrawer: PurchasedMapDrawerScenes(),
               bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
                 builder: (context, state) {

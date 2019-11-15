@@ -5,7 +5,6 @@ import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 
 import 'business/home/bloc/bloc.dart';
-import 'business/home/drawer/purchased_map/bloc/purchased_map_bloc.dart';
 import 'business/home/home_page.dart';
 import 'business/home/map/bloc/bloc.dart';
 import 'business/home/searchbar/bloc/bloc.dart';
@@ -30,7 +29,6 @@ class _HomeBuilderState extends State<HomeBuilder> {
         var mapBloc = MapBloc();
         var searchBarBloc = SearchbarBloc();
         var homeBloc = HomeBloc();
-        var _purchasedMapBloc = PurchasedMapBloc(mapBloc);
         homeBloc.mapBloc = mapBloc;
         homeBloc.searchBarBloc = searchBarBloc;
         homeBloc.sheetBloc = sheetsBloc;
@@ -59,7 +57,6 @@ class _HomeBuilderState extends State<HomeBuilder> {
             BlocProvider<MapBloc>(builder: (context) => mapBloc..context = context),
             BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
             BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
-            BlocProvider<PurchasedMapBloc>(builder: (context) => _purchasedMapBloc),
             BlocProvider<ScaffoldMapBloc>(builder: (context) => ScaffoldMapBloc(context)),
             BlocProvider<DiscoverBloc>(builder: (context) => DiscoverBloc(context)),
           ],

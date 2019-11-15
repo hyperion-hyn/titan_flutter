@@ -1,0 +1,6 @@
+class Config {
+  static const String INFURA_PRVKEY = 'your infura api key';
+  static const String COINMARKETCAP_PRVKEY = 'your coinmarketcap api key';
+  static const String ETHERSCAN_APIKEY = 'you ether scan api key';
+
+}

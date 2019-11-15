@@ -186,7 +186,7 @@ Future<Map<String, dynamic>> _getFeature(Point<double> point, LatLng coordinates
 }
 
 MapboxMapController get mapboxMapController {
-  return (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+  return (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
 }
 
 class DMapDefine {

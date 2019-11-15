@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
+import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
-import '../../../global.dart';
+
 import './bloc.dart';
+import '../../../global.dart';
 
 class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   final BuildContext context;
@@ -106,9 +107,9 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           yield SearchPoiByTextSuccessState(list: pois);
         } else {
           //gaode search
-          var userService = UserService();
-          var gaodeModel = await userService.searchByGaode(
-              lat: event.center.latitude, lon: event.center.longitude, type: event.type);
+          var _api = Api();
+          var gaodeModel =
+              await _api.searchByGaode(lat: event.center.latitude, lon: event.center.longitude, type: event.type);
           yield SearchPoiByTextSuccessState(list: gaodeModel.data);
         }
       } catch (e) {
