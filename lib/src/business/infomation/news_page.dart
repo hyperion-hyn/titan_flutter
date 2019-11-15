@@ -72,7 +72,7 @@ class _NewsState extends InfoState<NewsPage> {
               bloc: loadDataBloc,
               onLoadData: () async {
                 try {
-                  await _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+                  await _loadNewsData(FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
                     loadDataBloc.add(LoadEmptyEvent());
@@ -86,7 +86,7 @@ class _NewsState extends InfoState<NewsPage> {
               },
               onRefresh: () async {
                 try {
-                  await _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+                 await  _loadNewsData(FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
                     loadDataBloc.add(LoadEmptyEvent());
@@ -101,7 +101,8 @@ class _NewsState extends InfoState<NewsPage> {
               onLoadingMore: () async {
                 try {
                   int lastSize = _InfoItemVoList.length;
-                  await _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
+
+                  await _loadNewsData(currentPage + 1);
 
                   if (_InfoItemVoList.length == lastSize) {
                     loadDataBloc.add(LoadMoreEmptyEvent());
@@ -149,8 +150,44 @@ class _NewsState extends InfoState<NewsPage> {
     loadDataBloc.add(LoadingEvent());
   }
 
-  Future _getPowerList(String categories, String tags, int page) async {
+  Future _loadNewsData(int page) async {
+    if (selectedTag == OFFICIAL_ANNOUNCEMENT_TAG) {
+      await _getOfficialNewsList(page);
+    } else {
+      await _getNewsList(CATEGORY, selectedTag.toString(), page);
+    }
+  }
+
+  Future _getNewsList(String categories, String tags, int page) async {
     var newsResponseList = await _newsApi.getNewsList(categories, tags, page);
+
+//    isLoading = false;
+    var newsVoList = newsResponseList.map((newsResponse) {
+      return InfoItemVo(
+          id: newsResponse.id,
+          url: newsResponse.outlink,
+          photoUrl: newsResponse.customCover,
+          title: newsResponse.title,
+          publisher: "",
+          publishTime: newsResponse.date * 1000);
+    }).toList();
+    if (page == FIRST_PAGE) {
+      _InfoItemVoList.clear();
+      _InfoItemVoList.addAll(newsVoList);
+    } else {
+      if (newsVoList.length == 0) {
+        return;
+      }
+      _InfoItemVoList.addAll(newsVoList);
+    }
+    currentPage = page;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future _getOfficialNewsList(int page) async {
+    var newsResponseList = await _newsApi.getOfficialNewsList(page);
 
 //    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {

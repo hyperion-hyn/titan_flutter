@@ -14,6 +14,14 @@ class NewsApi {
     return dataList.map((json) => NewsResponse.fromJson(json)).toList();
   }
 
+  Future<List<NewsResponse>> getOfficialNewsList(int page) async {
+    List dataList = await NewsHttpCore.instance.get(
+      "wp-json/wp/v2/posts?page=$page&categories=1&tags[]=22&tags[]=57",
+    ) as List;
+
+    return dataList.map((json) => NewsResponse.fromJson(json)).toList();
+  }
+
   Future<NewsDetail> getNewsDetai(int id) async {
     var data = await NewsHttpCore.instance.get(
       "wp-json/wp/v2/posts/${id}",
