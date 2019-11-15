@@ -236,7 +236,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
 
                         var wallet =
                             await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: mnemonic);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => FinishImportPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => FinishImportPage(wallet)));
                       }
                     },
                     child: Padding(

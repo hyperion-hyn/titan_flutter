@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 
 import 'event_bus_event.dart';
 
 class FinishImportPage extends StatefulWidget {
+  Wallet wallet;
+
+  FinishImportPage(this.wallet);
+
   @override
   State<StatefulWidget> createState() {
     return _FinishImportState();
@@ -12,6 +18,8 @@ class FinishImportPage extends StatefulWidget {
 }
 
 class _FinishImportState extends State<FinishImportPage> {
+  WalletService _walletService = WalletService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +65,8 @@ class _FinishImportState extends State<FinishImportPage> {
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
-                  onPressed: () {
+                  onPressed: () async {
+                    await _walletService.saveDefaultWalletFileName(widget.wallet.keystore.fileName);
                     eventBus.fire(ReScanWalletEvent());
                     Navigator.of(context).popUntil((r) => r.isFirst);
                   },

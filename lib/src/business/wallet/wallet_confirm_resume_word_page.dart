@@ -180,7 +180,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
     if (selectedMnemonitc.trim() == createWalletMnemonicTemp.trim()) {
       var wallet = await WalletUtil.storeByMnemonic(
           name: createWalletNameTemp, password: createWalletPasswordTemp, mnemonic: createWalletMnemonicTemp.trim());
-      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage(wallet)));
     } else {
       Fluttertoast.showToast(msg: "您的恢复短语不正确，请重新尝试");
     }
