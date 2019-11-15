@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +14,7 @@ import 'package:titan/src/business/wallet/service/account_transfer_service.dart'
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_receive_page.dart';
 import 'package:titan/src/business/wallet/wallet_send_page.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/utils/wallet_icon_utils.dart';
@@ -33,6 +35,8 @@ class ShowAccountPage extends StatefulWidget {
 
 class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
+
+  static NumberFormat token_format = new NumberFormat("#,###.####");
 
   DateFormat dateFormat = new DateFormat("yyyy/MM/dd");
 
@@ -58,7 +62,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           title: Text(
-            "${widget.walletAccountVo.name} 令牌",
+            "${widget.walletAccountVo.name} (${widget.walletAccountVo.symbol})",
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -218,19 +222,27 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                       ],
                     ),
                   ),
-                  ListView.builder(
-                    primary: false,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      var currentTranstionDetail = dataList[index];
-                      TranstionDetailVo lastTranstionDetail = null;
-                      if (index > 0) {
-                        lastTranstionDetail = dataList[index - 1];
-                      }
-                      return _buildTransactionItem(context, currentTranstionDetail, lastTranstionDetail);
-                    },
-                    itemCount: dataList.length,
-                  )
+                  if (dataList.length > 1)
+                    ListView.builder(
+                      primary: false,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index == 0) {
+                          return SizedBox(
+                            height: 0,
+                            width: 0,
+                          );
+                        } else {
+                          var currentTranstionDetail = dataList[index];
+                          TranstionDetailVo lastTranstionDetail = null;
+                          if (index > 1) {
+                            lastTranstionDetail = dataList[index - 1];
+                          }
+                          return _buildTransactionItem(context, currentTranstionDetail, lastTranstionDetail);
+                        }
+                      },
+                      itemCount: max<int>(0, dataList.length),
+                    )
                 ]),
           ),
         ));
@@ -248,14 +260,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       title = "已收到";
       account = "From:" + shortEthAddress(transtionDetail.fromAddress);
       amountColor = HexColor("#FF259B24");
-      amountText = "+ ${transtionDetail.amount} ${transtionDetail.unit}";
+      amountText = "+ ${token_format.format(transtionDetail.amount)} ${transtionDetail.unit}";
     } else if (transtionDetail.type == TranstionType.TRANSFER_OUT) {
       iconData = ExtendsIconFont.send;
       title = "已发送";
       account = "To:" + shortEthAddress(transtionDetail.toAddress);
 
       amountColor = HexColor("#FFE51C23");
-      amountText = "- ${transtionDetail.amount} ${transtionDetail.unit}";
+      amountText = "- ${token_format.format(transtionDetail.amount)} ${transtionDetail.unit}";
     }
 
     var time = dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transtionDetail.time));
@@ -348,10 +360,22 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   }
 
   @override
-  Future<List<TranstionDetailVo>> onLoadData(int page) async {
+  Future<List<dynamic>> onLoadData(int page) async {
     await _walletService.updateAccountVo(widget.walletAccountVo);
-//    setState(() {});
-    return await _accountTransferService.getTransferList(widget.walletAccountVo, page);
+    var retList = [];
+    if (page == getStartPage()) {
+      retList.add('header');
+    }
+
+    var trasferList = [];
+
+    try {
+      trasferList = await _accountTransferService.getTransferList(widget.walletAccountVo, page);
+    } catch (_) {
+      logger.e(_);
+    }
+    retList.addAll(trasferList);
+    return retList;
   }
 }
 

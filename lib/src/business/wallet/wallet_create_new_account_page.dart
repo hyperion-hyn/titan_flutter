@@ -67,13 +67,16 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     child: TextFormField(
                         validator: (value) {
                           if (value.isEmpty) {
-                            return "请输入正确的钱包名称";
+                            return "请输入钱包名称";
+                          }else if (value.length>6) {
+                            return "请输入6位以内的名称";
                           } else {
                             return null;
                           }
                         },
                         controller: _walletNameController,
                         decoration: InputDecoration(
+                          hintText: "请输入6位以内的钱包名称",
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         ),
@@ -102,6 +105,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       },
                       controller: _walletPasswordController,
                       decoration: InputDecoration(
+                        hintText: "请输入至少6位数的钱包密码",
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
@@ -134,6 +138,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       },
                       controller: _walletConfimPasswordController,
                       decoration: InputDecoration(
+                        hintText: "请再次输入至少6位数的钱包密码",
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),

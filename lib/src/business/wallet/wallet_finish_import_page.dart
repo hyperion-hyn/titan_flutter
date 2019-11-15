@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
-import 'package:titan/src/business/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 

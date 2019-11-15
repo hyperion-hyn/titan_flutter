@@ -266,14 +266,16 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         Fluttertoast.showToast(msg: "转账已提交");
         Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
       } catch (_) {
-        _ as PlatformException;
-
+        logger.e(_);
         setState(() {
           isLoading = false;
         });
-        logger.e(_);
-        if (_.code == WalletError.PASSWORD_WRONG) {
-          Fluttertoast.showToast(msg: "密码错误");
+        if (_ is PlatformException) {
+          if (_.code == WalletError.PASSWORD_WRONG) {
+            Fluttertoast.showToast(msg: "密码错误");
+          } else {
+            Fluttertoast.showToast(msg: "转账失败");
+          }
         } else {
           Fluttertoast.showToast(msg: "转账失败");
         }

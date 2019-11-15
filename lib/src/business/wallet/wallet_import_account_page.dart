@@ -140,12 +140,15 @@ class _ImportAccountState extends State<ImportAccountPage> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return "请输入钱包名称";
+                        } else if (value.length > 6) {
+                          return "请输入6位以内的名称";
                         } else {
                           return null;
                         }
                       },
                       controller: _walletNameController,
                       decoration: InputDecoration(
+                        hintText: "请输入6位以内的钱包名称",
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
@@ -177,6 +180,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                     },
                     controller: _walletPasswordController,
                     decoration: InputDecoration(
+                      hintText: "请输入至少6位数的钱包密码",
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
@@ -212,6 +216,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                     },
                     controller: _walletConfimPasswordController,
                     decoration: InputDecoration(
+                      hintText: "请再次输入至少6位数的钱包密码",
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
@@ -234,9 +239,13 @@ class _ImportAccountState extends State<ImportAccountPage> {
                         var password = _walletPasswordController.text;
                         var mnemonic = _mnemonicController.text;
 
-                        var wallet =
-                            await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: mnemonic);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => FinishImportPage(wallet)));
+                        try {
+                          var wallet = await WalletUtil.storeByMnemonic(
+                              name: walletName, password: password, mnemonic: mnemonic);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => FinishImportPage(wallet)));
+                        } catch (_) {
+                          Fluttertoast.showToast(msg: "导入失败");
+                        }
                       }
                     },
                     child: Padding(
