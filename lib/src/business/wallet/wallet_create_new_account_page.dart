@@ -68,7 +68,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                         validator: (value) {
                           if (value.isEmpty) {
                             return "请输入钱包名称";
-                          }else if (value.length>6) {
+                          } else if (value.length > 6) {
                             return "请输入6位以内的名称";
                           } else {
                             return null;
@@ -80,6 +80,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         ),
+                        maxLength: 6,
                         keyboardType: TextInputType.text),
                   ),
                   Row(

@@ -152,6 +152,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
+                      maxLength: 6,
                       keyboardType: TextInputType.text),
                 ),
                 SizedBox(
