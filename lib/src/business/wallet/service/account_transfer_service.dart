@@ -36,7 +36,8 @@ class AccountTransferService {
           unit: erc20TransferHistory.tokenSymbol,
           fromAddress: erc20TransferHistory.from,
           toAddress: erc20TransferHistory.to,
-          time: int.parse(erc20TransferHistory.timeStamp + "000"));
+          time: int.parse(erc20TransferHistory.timeStamp + "000"),
+          hash: erc20TransferHistory.hash);
     }).toList();
     return detailList;
   }
@@ -59,7 +60,8 @@ class AccountTransferService {
           unit: "ETH",
           fromAddress: ethTransferHistory.from,
           toAddress: ethTransferHistory.to,
-          time: int.parse(ethTransferHistory.timeStamp + "000"));
+          time: int.parse(ethTransferHistory.timeStamp + "000"),
+          hash: ethTransferHistory.hash);
     }).toList();
     return detailList;
   }

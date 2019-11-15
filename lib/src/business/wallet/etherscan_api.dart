@@ -16,6 +16,14 @@ class EtherscanApi {
     }
   }
 
+  static String getTxDetailUrl(String txHash) {
+    if (WalletConfig.isMainNet) {
+      return "https://etherscan.io/tx/$txHash";
+    } else {
+      return "https://ropsten.etherscan.io/tx/$txHash";
+    }
+  }
+
   Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {
     Map result = await HttpCore.instance.get("https://$host/api", params: {
       "module": "account",

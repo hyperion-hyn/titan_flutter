@@ -3,19 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
+import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
 import 'package:titan/src/business/wallet/etherscan_api.dart';
-import 'package:titan/src/business/wallet/model/erc20_transfer_history.dart';
-import 'package:titan/src/business/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/business/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_receive_page.dart';
 import 'package:titan/src/business/wallet/wallet_send_page.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/utils/wallet_icon_utils.dart';
@@ -281,51 +278,64 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                   style: TextStyle(color: Color(0xFF9B9B9B)),
                 ),
               )),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 8, right: 8),
-                child: Icon(
-                  iconData,
-                  color: Color(0xFFCDCDCD),
-                  size: 24,
+        InkWell(
+          onTap: () {
+            var url = EtherscanApi.getTxDetailUrl(transtionDetail.hash);
+            print("txUrl:$url");
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => InfoDetailPage(
+                          url: url,
+                          title: "交易详情",
+                        )));
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, right: 8),
+                  child: Icon(
+                    iconData,
+                    color: Color(0xFFCDCDCD),
+                    size: 24,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      title,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(
-                        account,
-                        style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        title,
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          account,
+                          style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      amountText,
-                      style: TextStyle(color: amountColor, fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        amountText,
+                        style: TextStyle(color: amountColor, fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

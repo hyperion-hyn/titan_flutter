@@ -6,6 +6,8 @@ class TranstionDetailVo {
   String fromAddress;
   String toAddress;
   int time;
+  String hash;
 
-  TranstionDetailVo({this.type, this.state, this.amount, this.unit, this.fromAddress, this.toAddress, this.time});
+  TranstionDetailVo(
+      {this.type, this.state, this.amount, this.unit, this.fromAddress, this.toAddress, this.time, this.hash});
 }
