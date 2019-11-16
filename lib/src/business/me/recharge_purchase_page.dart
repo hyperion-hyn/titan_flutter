@@ -1,11 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/business/me/model/user_eth_address.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
+import 'package:titan/src/business/me/recharge_by_titan_finish_page.dart';
+import 'package:titan/src/business/wallet/model/wallet_vo.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
+import 'package:titan/src/business/wallet/wallet_create_new_account_page.dart';
+import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
+import 'package:titan/src/business/wallet/wallet_send_page.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
@@ -23,6 +31,8 @@ class RechargePurchasePage extends StatefulWidget {
 
 class _RechargePurchaseState extends State<RechargePurchasePage> {
   var service = UserService();
+
+  WalletService _walletService = WalletService();
 
   Quotes quotes;
 
@@ -183,8 +193,84 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 padding: const EdgeInsets.only(top: 22.0),
                 child: RaisedButton(
                   color: Color(0xFFD6A734),
-                  onPressed: () {
-                    Fluttertoast.showToast(msg: 'HYN钱包即将开放');
+                  onPressed: () async {
+                    WalletVo _walletVo = await _walletService.getDefaultWalletVo();
+                    if (_walletVo == null) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Platform.isIOS
+                                ? CupertinoAlertDialog(
+                                    title: Text('提示'),
+                                    content: Text('你还没有钱包.'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        onPressed: () {
+                                          createWalletPopUtilName = "/recharge_purchase_page";
+                                          Navigator.push(
+                                              context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                                        },
+                                        child: new Text("创建"),
+                                      ),
+                                      new FlatButton(
+                                        onPressed: () {
+                                          createWalletPopUtilName = "/recharge_purchase_page";
+                                          Navigator.push(
+                                              context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                                        },
+                                        child: new Text("导入"),
+                                      ),
+                                      new FlatButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: new Text("取消"),
+                                      ),
+                                    ],
+                                  )
+                                : AlertDialog(
+                                    title: new Text("提示"),
+                                    content: new Text("你还没有钱包"),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        onPressed: () {
+                                          createWalletPopUtilName = "/recharge_purchase_page";
+                                          Navigator.push(
+                                              context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                                        },
+                                        child: new Text("创建"),
+                                      ),
+                                      new FlatButton(
+                                        onPressed: () {
+                                          createWalletPopUtilName = "/recharge_purchase_page";
+                                          Navigator.push(
+                                              context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                                        },
+                                        child: new Text("导入"),
+                                      ),
+                                      new FlatButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: new Text("取消"),
+                                      ),
+                                    ],
+                                  );
+                          });
+                    } else {
+                      isRechargeByTianWalletFinish = false;
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WalletSendPage(null,
+                                  receiverAddress: userEthAddress.address,
+                                  backRouteName: "/recharge_purchase_page"))).then((value) {
+                        if (isRechargeByTianWalletFinish) {
+                          Navigator.pushReplacement(
+                              context, MaterialPageRoute(builder: (context) => RechargeByTitanFinishPage()));
+                        }
+                      });
+                    }
                   },
                   child: SizedBox(
                     height: 48,

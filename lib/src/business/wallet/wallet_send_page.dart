@@ -54,6 +54,15 @@ class _WalletSendState extends State<WalletSendPage> {
   }
 
   Future loadData() async {
+    if (widget.receiverAddress != null) {
+      _receiverAddressController.text = widget.receiverAddress;
+    }
+    if (widget.count != null) {
+      _countController.text = widget.count.toString();
+    }
+    if (mounted) {
+      setState(() {});
+    }
     if (widget.walletAccountVo == null) {
       WalletVo _walletVo = await _walletService.getDefaultWalletVo();
       logger.i("walletVo:$_walletVo");
@@ -72,12 +81,6 @@ class _WalletSendState extends State<WalletSendPage> {
 
     await _walletService.updateAccountBalance(widget.walletAccountVo, widget.walletAccountVo.wallet);
 
-    if (widget.receiverAddress != null) {
-      _receiverAddressController.text = widget.receiverAddress;
-    }
-    if (widget.count != null) {
-      _countController.text = widget.count.toString();
-    }
     walletAccountVo = widget.walletAccountVo;
     setState(() {});
   }
@@ -341,18 +344,7 @@ class _WalletSendState extends State<WalletSendPage> {
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
-                  onPressed: () {
-                    if (_fromKey.currentState.validate()) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WalletSendConfirmPage(
-                                  walletAccountVo,
-                                  double.parse(_countController.text),
-                                  _receiverAddressController.text,
-                                  selected_transfer_speed)));
-                    }
-                  },
+                  onPressed: walletAccountVo == null ? null : submit,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -372,6 +364,25 @@ class _WalletSendState extends State<WalletSendPage> {
         ),
       ),
     );
+  }
+
+  void submit() {
+    if (_fromKey.currentState.validate()) {
+      if (walletAccountVo == null) {
+        Fluttertoast.showToast(msg: "账户为空");
+        return;
+      }
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WalletSendConfirmPage(
+                    walletAccountVo,
+                    double.parse(_countController.text),
+                    _receiverAddressController.text,
+                    selected_transfer_speed,
+                    backRouteName: widget.backRouteName,
+                  )));
+    }
   }
 
   Future onScan() async {

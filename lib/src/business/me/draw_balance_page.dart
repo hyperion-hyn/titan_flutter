@@ -1,11 +1,16 @@
 import 'dart:io';
 
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/enter_fund_password.dart';
+import 'package:titan/src/business/wallet/model/wallet_vo.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
+import 'package:titan/src/business/wallet/wallet_create_new_account_page.dart';
+import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
@@ -43,6 +48,8 @@ class _DrawBalanceState extends State<DrawBalancePage> {
   static const RECHARGE_INT_TYPE = 1;
 
   String _selectedWithdrawalTypeString = EARNING;
+
+  WalletService _walletService = WalletService();
 
   @override
   void initState() {
@@ -162,8 +169,8 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                         ),
                         Text(
                           "$balance USDT",
-                          style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0, bottom: 8),
@@ -198,9 +205,23 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        "HYN提币地址",
-                        style: TextStyle(color: Color(0xFF6D6D6D)),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "HYN提币地址",
+                            style: TextStyle(color: Color(0xFF6D6D6D)),
+                          ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () async {
+                              getAddressTitanWallet();
+                            },
+                            child: Text(
+                              "我的钱包地址",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Row(
@@ -274,7 +295,8 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                   margin: const EdgeInsets.only(left: 16, right: 8, top: 20),
                                   child: Text(
                                     "USDT",
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF9B9B9B)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF9B9B9B)),
                                   ),
                                 )),
                           ),
@@ -295,7 +317,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                         children: <Widget>[
                           Divider(),
                           Text(
-                            "手续费(${Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.free_rate*100)}%)",
+                            "手续费(${Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.free_rate * 100)}%)",
                             style: TextStyle(color: Colors.black54),
                           ),
                           Padding(
@@ -463,8 +485,8 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                         ),
                         Text(
                           "$balance USDT",
-                          style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0, bottom: 8),
@@ -499,9 +521,23 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        "HYN提币地址",
-                        style: TextStyle(color: Color(0xFF6D6D6D)),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "HYN提币地址",
+                            style: TextStyle(color: Color(0xFF6D6D6D)),
+                          ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () async {
+                              getAddressTitanWallet();
+                            },
+                            child: Text(
+                              "我的钱包地址",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Row(
@@ -575,7 +611,8 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                   margin: const EdgeInsets.only(left: 16, right: 8, top: 20),
                                   child: Text(
                                     "USDT",
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF9B9B9B)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF9B9B9B)),
                                   ),
                                 )),
                           ),
@@ -699,6 +736,74 @@ class _DrawBalanceState extends State<DrawBalancePage> {
           ),
         ),
       );
+    }
+  }
+
+  Future getAddressTitanWallet() async {
+    WalletVo _walletVo = await _walletService.getDefaultWalletVo();
+    if (_walletVo == null) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Platform.isIOS
+                ? CupertinoAlertDialog(
+                    title: Text('提示'),
+                    content: Text('你还没有钱包.'),
+                    actions: <Widget>[
+                      new FlatButton(
+                        onPressed: () {
+                          createWalletPopUtilName = "/draw_balance_page";
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                        },
+                        child: new Text("创建"),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          createWalletPopUtilName = "/draw_balance_page";
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                        },
+                        child: new Text("导入"),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: new Text("取消"),
+                      ),
+                    ],
+                  )
+                : AlertDialog(
+                    title: new Text("提示"),
+                    content: new Text("你还没有钱包"),
+                    actions: <Widget>[
+                      new FlatButton(
+                        onPressed: () {
+                          createWalletPopUtilName = "/draw_balance_page";
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                        },
+                        child: new Text("创建"),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          createWalletPopUtilName = "/draw_balance_page";
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                        },
+                        child: new Text("导入"),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: new Text("取消"),
+                      ),
+                    ],
+                  );
+          });
+    } else {
+      var address = _walletVo.accountList[0].account.address;
+      setState(() {
+        addressTEController.text = address;
+      });
     }
   }
 }

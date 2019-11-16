@@ -12,6 +12,7 @@ import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/credentials.dart' as web3;
+import 'package:web3dart/json_rpc.dart';
 
 import 'model/wallet_account_vo.dart';
 
@@ -238,7 +239,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     logger.i('费率是 $ethFee eth');
     logger.i('费率是 $currencyFee usd');
 
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future _transfer() async {
@@ -262,10 +265,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         } else {
           await _transferErc20(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
         }
-        Fluttertoast.showToast(msg: "转账已提交");
+
         if (widget.backRouteName == null) {
+          Fluttertoast.showToast(msg: "转账已提交");
           Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
         } else {
+          isRechargeByTianWalletFinish = true;
           Navigator.of(context).popUntil(ModalRoute.withName(widget.backRouteName));
         }
       } catch (_) {
@@ -276,6 +281,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         if (_ is PlatformException) {
           if (_.code == WalletError.PASSWORD_WRONG) {
             Fluttertoast.showToast(msg: "密码错误");
+          } else {
+            Fluttertoast.showToast(msg: "转账失败");
+          }
+        } else if (_ is RPCError) {
+          if (_.errorCode == -32000) {
+            Fluttertoast.showToast(msg: "ETH余额不足支付网络费用");
           } else {
             Fluttertoast.showToast(msg: "转账失败");
           }

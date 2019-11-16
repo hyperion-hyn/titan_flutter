@@ -3,22 +3,16 @@ import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
-import 'event_bus_event.dart';
-
-class FinishCreatePage extends StatefulWidget {
-  Wallet wallet;
-
-  FinishCreatePage(this.wallet);
+class RechargeByTitanFinishPage extends StatefulWidget {
+  RechargeByTitanFinishPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _FinishCreateState();
+    return _RechargeByTitanFinishState();
   }
 }
 
-class _FinishCreateState extends State<FinishCreatePage> {
-  WalletService _walletService = WalletService();
-
+class _RechargeByTitanFinishState extends State<RechargeByTitanFinishPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,14 +35,14 @@ class _FinishCreateState extends State<FinishCreatePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  "账户创建成功",
+                  "充值已提交",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "恭喜，你的私密账户已经创建成功",
+                  "请留意账户的到账情况",
                   style: TextStyle(color: Color(0xFF9B9B9B)),
                 ),
               ),
@@ -65,15 +59,7 @@ class _FinishCreateState extends State<FinishCreatePage> {
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
                   onPressed: () async {
-                    var walletVo = await _walletService.buildWalletVo(widget.wallet);
-                    await _walletService.saveDefaultWalletVo(walletVo);
-                    await _walletService.saveDefaultWalletFileName(widget.wallet.keystore.fileName);
-                    if (createWalletPopUtilName == null) {
-                      eventBus.fire(ReScanWalletEvent());
-                      Navigator.of(context).popUntil((r) => r.isFirst);
-                    } else {
-                      Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                    }
+                    Navigator.of(context).pop();
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -81,7 +67,7 @@ class _FinishCreateState extends State<FinishCreatePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "使用该私密账户",
+                          "确定",
                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],

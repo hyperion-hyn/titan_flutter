@@ -33,6 +33,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     var wallets = await WalletUtil.scanWallets();
     print("wallets is ${wallets.length}");
     if (wallets.length == 0) {
+      _walletService.saveDefaultWalletVo(null);
       yield WalletEmptyState();
     } else {
       Wallet wallet;
@@ -52,6 +53,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         }
       }
       var walletVo = await _walletService.buildWalletVo(wallet);
+      _walletService.saveDefaultWalletVo(walletVo);
       yield ShowWalletState(walletVo);
       await _walletService.updateWalletVoBalace(walletVo);
       yield ShowWalletState(walletVo);

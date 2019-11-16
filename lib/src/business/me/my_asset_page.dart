@@ -49,8 +49,11 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                 children: <Widget>[
                   GestureDetector(
                     onTap: () async {
-                      var isSuccess =
-                          await Navigator.push(context, MaterialPageRoute(builder: (context) => DrawBalancePage()));
+                      var isSuccess = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DrawBalancePage(),
+                              settings: RouteSettings(name: "/draw_balance_page")));
                       if (isSuccess != null && isSuccess) {
                         eventBus.fire(Refresh());
                         _tabController.animateTo(1);
@@ -66,7 +69,11 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   ),
                   GestureDetector(
                     onTap: () async {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => RechargePurchasePage()))
+                      Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RechargePurchasePage(),
+                                  settings: RouteSettings(name: "/recharge_purchase_page")))
                           .then((isSuccess) async {
                         if (isSuccess != null && isSuccess) {
                           await UserService.syncUserInfo();
