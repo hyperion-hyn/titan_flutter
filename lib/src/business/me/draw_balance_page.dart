@@ -214,75 +214,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                           Spacer(),
                           InkWell(
                             onTap: () async {
-                              WalletVo _walletVo = await _walletService.getDefaultWalletVo();
-                              if (_walletVo == null) {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Platform.isIOS
-                                          ? CupertinoAlertDialog(
-                                              title: Text('提示'),
-                                              content: Text('你还没有钱包.'),
-                                              actions: <Widget>[
-                                                new FlatButton(
-                                                  onPressed: () {
-                                                    createWalletPopUtilName = "/draw_balance_page";
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(builder: (context) => CreateAccountPage()));
-                                                  },
-                                                  child: new Text("创建"),
-                                                ),
-                                                new FlatButton(
-                                                  onPressed: () {
-                                                    createWalletPopUtilName = "/draw_balance_page";
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(builder: (context) => ImportAccountPage()));
-                                                  },
-                                                  child: new Text("导入"),
-                                                ),
-                                                new FlatButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: new Text("取消"),
-                                                ),
-                                              ],
-                                            )
-                                          : AlertDialog(
-                                              title: new Text("提示"),
-                                              content: new Text("你还没有钱包"),
-                                              actions: <Widget>[
-                                                new FlatButton(
-                                                  onPressed: () {
-                                                    createWalletPopUtilName = "/draw_balance_page";
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(builder: (context) => CreateAccountPage()));
-                                                  },
-                                                  child: new Text("创建"),
-                                                ),
-                                                new FlatButton(
-                                                  onPressed: () {
-                                                    createWalletPopUtilName = "/draw_balance_page";
-                                                    Navigator.push(context,
-                                                        MaterialPageRoute(builder: (context) => ImportAccountPage()));
-                                                  },
-                                                  child: new Text("导入"),
-                                                ),
-                                                new FlatButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: new Text("取消"),
-                                                ),
-                                              ],
-                                            );
-                                    });
-                              } else {
-                                var address = _walletVo.accountList[0].account.address;
-                                setState(() {
-                                  addressTEController.text = address;
-                                });
-                              }
+                              getAddressTitanWallet();
                             },
                             child: Text(
                               "我的钱包地址",
@@ -589,9 +521,23 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        "HYN提币地址",
-                        style: TextStyle(color: Color(0xFF6D6D6D)),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "HYN提币地址",
+                            style: TextStyle(color: Color(0xFF6D6D6D)),
+                          ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () async {
+                              getAddressTitanWallet();
+                            },
+                            child: Text(
+                              "我的钱包地址",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Row(
@@ -790,6 +736,74 @@ class _DrawBalanceState extends State<DrawBalancePage> {
           ),
         ),
       );
+    }
+  }
+
+  Future getAddressTitanWallet() async {
+    WalletVo _walletVo = await _walletService.getDefaultWalletVo();
+    if (_walletVo == null) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Platform.isIOS
+                ? CupertinoAlertDialog(
+                    title: Text('提示'),
+                    content: Text('你还没有钱包.'),
+                    actions: <Widget>[
+                      new FlatButton(
+                        onPressed: () {
+                          createWalletPopUtilName = "/draw_balance_page";
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                        },
+                        child: new Text("创建"),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          createWalletPopUtilName = "/draw_balance_page";
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                        },
+                        child: new Text("导入"),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: new Text("取消"),
+                      ),
+                    ],
+                  )
+                : AlertDialog(
+                    title: new Text("提示"),
+                    content: new Text("你还没有钱包"),
+                    actions: <Widget>[
+                      new FlatButton(
+                        onPressed: () {
+                          createWalletPopUtilName = "/draw_balance_page";
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                        },
+                        child: new Text("创建"),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          createWalletPopUtilName = "/draw_balance_page";
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                        },
+                        child: new Text("导入"),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: new Text("取消"),
+                      ),
+                    ],
+                  );
+          });
+    } else {
+      var address = _walletVo.accountList[0].account.address;
+      setState(() {
+        addressTEController.text = address;
+      });
     }
   }
 }
