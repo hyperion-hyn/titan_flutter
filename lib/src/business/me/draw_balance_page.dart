@@ -351,7 +351,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                     ),
                     Expanded(
                       child: Text(
-                        "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核，请耐心等待工作人员电话或邮件联系。",
+                        "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早9:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。",
                         style: TextStyle(color: Color(0xFFCE9D40), fontSize: 14),
                       ),
                     ),
@@ -667,7 +667,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                     ),
                     Expanded(
                       child: Text(
-                        "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核，请耐心等待工作人员电话或邮件联系。",
+                        "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早9:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。",
                         style: TextStyle(color: Color(0xFFCE9D40), fontSize: 14),
                       ),
                     ),
