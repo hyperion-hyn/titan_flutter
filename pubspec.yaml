@@ -101,6 +101,8 @@ dependencies:
   #https://pub.flutter-io.cn/packages/flutter_bugly
   flutter_bugly: 0.2.7
 
+  #https://pub.dev/packages/percent_indicator
+  percent_indicator: "^2.1.1"
 
 dev_dependencies:
   flutter_test:

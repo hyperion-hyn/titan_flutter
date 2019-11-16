@@ -18,7 +18,7 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/utils.dart';
-
+import 'me_check_in_page.dart';
 import 'contract/buy_hash_rate_page_v2.dart';
 import 'my_asset_page.dart';
 import 'my_promote_page.dart';
@@ -164,7 +164,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                                 size: 14,
                                               ),
                                               Text(
-                                                " 打卡",
+                                                " 任务",
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
@@ -451,7 +451,12 @@ class _MeState extends UserState<MePage> with RouteAware {
     );
   }
 
-  Future _checkIn() async {
+  // todo: jison edit 打卡
+  Future _checkIn() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckIn()));
+  }
+
+  Future _checkIn1() async {
     try {
       await _userService.checkIn();
       checkInCount = await _userService.checkInCount();
