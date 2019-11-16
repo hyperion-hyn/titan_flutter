@@ -163,7 +163,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                                 size: 14,
                                               ),
                                               Text(
-                                                " 任务",
+                                                checkInCount >= 3 ? '完成' : " 任务",
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
@@ -173,14 +173,17 @@ class _MeState extends UserState<MePage> with RouteAware {
                                             ],
                                           ),
                                         )),
-                                    onTap: () {
-                                      _checkIn();
-                                    },
+                                    onTap: checkInCount < 3
+                                        ? () {
+                                            _checkIn();
+                                          }
+                                        : null,
+//                                    onTap: _checkIn,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 4),
                                     child: Text(
-                                      "${checkInCount}/3",
+                                      "$checkInCount/3",
                                       style: TextStyle(color: Theme.of(context).primaryColor),
                                     ),
                                   )

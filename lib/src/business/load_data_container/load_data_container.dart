@@ -89,7 +89,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: Text(
-              '网络请求异常~',
+              '网络异常~',
               style: TextStyle(color: Colors.grey),
             ),
           ),

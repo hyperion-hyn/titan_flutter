@@ -27,9 +27,9 @@ class BuyHashRatePageV2 extends StatefulWidget {
 class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   UserService _userService = UserService();
 
-  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0)];
+  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0)];
 
-  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0);
+  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
 
@@ -246,7 +246,9 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                   RaisedButton(
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                     color: Theme.of(context).primaryColor,
-                                    onPressed: orderContractState is OrderingState ? null : _orderSubmit,
+                                    onPressed: (_selectedContractInfo.remaining ?? 0) > 0
+                                        ? (orderContractState is OrderingState ? null : _orderSubmit)
+                                        : null,
                                     child: Container(
                                       constraints: BoxConstraints.expand(height: 48),
                                       alignment: Alignment.center,
@@ -267,7 +269,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                               width: 4,
                                             ),
                                             Text(
-                                              '限抵${_selectedContractInfo.limit}份',
+                                              '可抵${_selectedContractInfo.remaining ?? 0}份',
                                               style: TextStyle(color: Colors.white70),
                                             ),
                                           ],

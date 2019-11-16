@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -5,6 +6,9 @@ import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'dart:async';
+
+import 'package:titan/src/global.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class MeCheckIn extends StatefulWidget {
   @override
@@ -29,9 +33,36 @@ class _MeCheckIn extends State<MeCheckIn> {
 
   StreamController<double> progressStreamController = StreamController.broadcast();
 
+  double minZoom = 18;
+  int maxMeter = 30;
+
   @override
   void initState() {
     super.initState();
+    //根据算力计算扫描范围
+    if (LOGIN_USER_INFO.totalPower <= 1) {
+      minZoom = 18;
+      maxMeter = 30;
+    } else if (LOGIN_USER_INFO.totalPower <= 10) {
+      minZoom = 17;
+      maxMeter = 100;
+    } else if (LOGIN_USER_INFO.totalPower <= 20) {
+      minZoom = 16;
+      maxMeter = 500;
+    } else if (LOGIN_USER_INFO.totalPower <= 50) {
+      minZoom = 15;
+      maxMeter = 1200;
+    } else if (LOGIN_USER_INFO.totalPower <= 100) {
+      minZoom = 14;
+      maxMeter = 2000;
+    } else if (LOGIN_USER_INFO.totalPower <= 500) {
+      minZoom = 13;
+      maxMeter = 5000;
+    } else {
+      minZoom = 12;
+      maxMeter = 10000;
+    }
+
     initPosition();
   }
 
@@ -51,6 +82,8 @@ class _MeCheckIn extends State<MeCheckIn> {
 
   void startScan() async {
     progressStreamController.add(0);
+    duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
+    var timeStep = duration / (defaultZoom - minZoom + 1);
     var timerObservable = Observable.periodic(Duration(milliseconds: 500), (x) => x);
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
@@ -63,7 +96,7 @@ class _MeCheckIn extends State<MeCheckIn> {
       progressStreamController.add(timeGap / duration.toDouble());
       if (timeGap < duration) {
         //scan 30s
-        if (nowTime - lastMoveTime > 6000) {
+        if (nowTime - lastMoveTime > timeStep) {
           mapController.animateCameraWithTime(CameraUpdate.zoomTo(lastZoom--), 1000);
           lastMoveTime = DateTime.now().millisecondsSinceEpoch;
         }
@@ -108,6 +141,29 @@ class _MeCheckIn extends State<MeCheckIn> {
               }
               return Container();
             },
+          ),
+
+          Positioned(
+            top: 32,
+            left: 16,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    child: Text('总算力：${Utils.powerForShow(LOGIN_USER_INFO.totalPower)}', style: TextStyle(color: Colors.white),),
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(30)),
+                  ),
+                  Container(
+                    child: Text('最大范围约：$maxMeter 米', style: TextStyle(color: Colors.white),),
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    margin: EdgeInsets.only(top: 8,),
+                    decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(30)),
+                  ),
+                ],
+              ),
+            ),
           ),
 
           Positioned(
