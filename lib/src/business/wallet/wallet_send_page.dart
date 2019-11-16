@@ -84,7 +84,7 @@ class _WalletSendState extends State<WalletSendPage> {
       walletAccountVo = widget.walletAccountVo;
     }
 
-    await _walletService.updateAccountBalance(widget.walletAccountVo, widget.walletAccountVo.wallet);
+    await _walletService.updateAccountBalance(walletAccountVo, walletAccountVo.wallet);
 
     setState(() {});
   }
