@@ -31,3 +31,6 @@ const String QUOTE_UNIT = "CNY";
 const String QUOTE_UNIT_SYMBOL = "¥";
 
 WalletVo currentWalletVo;
+
+
+String createWalletPopUtilName ;

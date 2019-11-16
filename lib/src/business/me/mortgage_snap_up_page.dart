@@ -161,7 +161,11 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => RechargePurchasePage()))
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RechargePurchasePage(),
+                                settings: RouteSettings(name: "/recharge_purchase_page")))
                         .then((value) async {
                       if (value == null || value == false) {
                         return;

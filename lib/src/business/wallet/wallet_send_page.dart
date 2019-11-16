@@ -347,10 +347,12 @@ class _WalletSendState extends State<WalletSendPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => WalletSendConfirmPage(
-                                  walletAccountVo,
-                                  double.parse(_countController.text),
-                                  _receiverAddressController.text,
-                                  selected_transfer_speed)));
+                                    walletAccountVo,
+                                    double.parse(_countController.text),
+                                    _receiverAddressController.text,
+                                    selected_transfer_speed,
+                                    backRouteName: widget.backRouteName,
+                                  )));
                     }
                   },
                   child: Padding(

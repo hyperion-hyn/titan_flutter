@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/business/me/model/user_eth_address.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
+import 'package:titan/src/business/wallet/wallet_send_page.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
@@ -184,7 +185,14 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 child: RaisedButton(
                   color: Color(0xFFD6A734),
                   onPressed: () {
-                    Fluttertoast.showToast(msg: 'HYN钱包即将开放');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WalletSendPage(
+                                  null,
+                                receiverAddress: userEthAddress.address,
+                                backRouteName:"/recharge_purchase_page"
+                                )));
                   },
                   child: SizedBox(
                     height: 48,

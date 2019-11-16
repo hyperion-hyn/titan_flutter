@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/business/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/business/wallet/wallet_setting.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -44,6 +45,7 @@ class _WalletManagerState extends State<WalletManagerPage> {
           actions: <Widget>[
             InkWell(
               onTap: () {
+                createWalletPopUtilName = null;
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
               },
               child: Padding(
@@ -56,6 +58,7 @@ class _WalletManagerState extends State<WalletManagerPage> {
             ),
             InkWell(
               onTap: () {
+                createWalletPopUtilName = null;
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
               },
               child: Padding(
@@ -113,7 +116,13 @@ class _WalletManagerState extends State<WalletManagerPage> {
                   },
                   child: Stack(
                     children: <Widget>[
-                      Align(alignment: Alignment.center, child: Image.asset("res/drawable/hyn_wallet.png",width: 24,height: 24,)),
+                      Align(
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            "res/drawable/hyn_wallet.png",
+                            width: 24,
+                            height: 24,
+                          )),
                       if (isSelected)
                         Align(
                           alignment: Alignment.bottomRight,

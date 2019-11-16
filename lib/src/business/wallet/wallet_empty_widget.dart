@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
+import 'package:titan/src/global.dart';
 
 import 'wallet_create_new_account_page.dart';
 
@@ -52,6 +53,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                 onPressed: () {
+                  createWalletPopUtilName = null;
                   Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                 },
                 child: Container(
@@ -72,6 +74,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
+                    createWalletPopUtilName = null;
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                   },
                   child: Container(

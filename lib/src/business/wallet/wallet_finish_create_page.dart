@@ -65,9 +65,15 @@ class _FinishCreateState extends State<FinishCreatePage> {
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
                   onPressed: () async {
+                    var walletVo = await _walletService.buildWalletVo(widget.wallet);
+                    await _walletService.saveDefaultWalletVo(walletVo);
                     await _walletService.saveDefaultWalletFileName(widget.wallet.keystore.fileName);
-                    eventBus.fire(ReScanWalletEvent());
-                    Navigator.of(context).popUntil((r) => r.isFirst);
+                    if (createWalletPopUtilName == null) {
+                      eventBus.fire(ReScanWalletEvent());
+                      Navigator.of(context).popUntil((r) => r.isFirst);
+                    } else {
+                      Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
+                    }
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
