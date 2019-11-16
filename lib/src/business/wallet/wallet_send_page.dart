@@ -344,7 +344,6 @@ class _WalletSendState extends State<WalletSendPage> {
                   ],
                 ),
               ),
-
               Container(
                 margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                 constraints: BoxConstraints.expand(height: 48),
@@ -399,7 +398,38 @@ class _WalletSendState extends State<WalletSendPage> {
 //    print('TODO scan');
     try {
       String barcode = await BarcodeScanner.scan();
-      _receiverAddressController.text = barcode;
+      if (barcode.contains("ethereum")) {
+        //是imtoken的标准格式
+
+        var barcodeArray = barcode.split("?");
+        if (barcodeArray.length >= 1) {
+          //处理地址
+
+          var withAddress = barcodeArray[0];
+          var address = withAddress.replaceAll("ethereum:", "");
+          _receiverAddressController.text = address;
+
+          //处理value
+          var withValue = barcodeArray[1];
+          var valuesArray = withValue.split("&");
+          var valueMap = Map();
+          valuesArray.forEach((valueStringTemp) {
+            var keyValueArray = valueStringTemp.split("=");
+            valueMap[keyValueArray[0]] = keyValueArray[1];
+          });
+          var value = valueMap["value"];
+          if (double.parse(value) > 0) {
+            _countController.text = value;
+            amount = double.parse(_countController.text) * walletAccountVo.currencyRate;
+          }
+        } else {
+          var address = barcode.replaceAll("ethereum:", "");
+          _receiverAddressController.text = address;
+        }
+      } else {
+        _receiverAddressController.text = barcode;
+      }
+
       setState(() => {});
     } catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
