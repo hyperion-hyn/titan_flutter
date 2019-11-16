@@ -12,6 +12,7 @@ import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/credentials.dart' as web3;
+import 'package:web3dart/json_rpc.dart';
 
 import 'model/wallet_account_vo.dart';
 
@@ -276,6 +277,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         if (_ is PlatformException) {
           if (_.code == WalletError.PASSWORD_WRONG) {
             Fluttertoast.showToast(msg: "密码错误");
+          } else {
+            Fluttertoast.showToast(msg: "转账失败");
+          }
+        } else if (_ is RPCError) {
+          if (_.errorCode == -32000) {
+            Fluttertoast.showToast(msg: "ETH余额不足支付网络费用");
           } else {
             Fluttertoast.showToast(msg: "转账失败");
           }
