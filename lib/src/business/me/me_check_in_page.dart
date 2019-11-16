@@ -41,7 +41,7 @@ class _MeCheckIn extends State<MeCheckIn> {
     super.initState();
     //根据算力计算扫描范围
     if (LOGIN_USER_INFO.totalPower <= 1) {
-      minZoom = 18;
+      minZoom = 17;
       maxMeter = 30;
     } else if (LOGIN_USER_INFO.totalPower <= 10) {
       minZoom = 17;
