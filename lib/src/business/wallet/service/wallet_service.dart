@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import '../model/wallet_vo.dart';
 
 class WalletService {
   static const String DEFAULT_WALLET_FILE_NAME = "default_wallet_file_name";
+  static const String DEFAULT_WALLET_VO = "default_wallet_vo";
 
   CoinMarketApi _coinMarketApi = CoinMarketApi();
 
@@ -170,5 +172,25 @@ class WalletService {
     String defaultWalletFileName = await getDefaultWalletFileName();
     String walletFileName = wallet.keystore.fileName;
     return defaultWalletFileName == walletFileName;
+  }
+
+  Future<WalletVo> getDefaultWalletVo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String walletVoJson = await prefs.getString(DEFAULT_WALLET_VO);
+    logger.i("walletVoJson:${walletVoJson}");
+    if (walletVoJson == null) {
+      return null;
+    } else {
+      return WalletVo.fromJson(json.decode(walletVoJson));
+    }
+  }
+
+  Future saveDefaultWalletVo(WalletVo walletVo) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (walletVo == null) {
+      await prefs.remove(DEFAULT_WALLET_VO);
+    } else {
+      await prefs.setString(DEFAULT_WALLET_VO, json.encode(walletVo.toJson()));
+    }
   }
 }

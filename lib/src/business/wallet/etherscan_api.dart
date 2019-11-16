@@ -3,16 +3,15 @@ import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/business/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:web3dart/crypto.dart';
 
 class EtherscanApi {
   String host = "";
 
   EtherscanApi() {
     if (WalletConfig.isMainNet) {
-      host = "api.etherscan.io";
+      host = Config.ETHERSCAN_API_URL;
     } else {
-      host = "api-ropsten.etherscan.io";
+      host = "https://api-ropsten.etherscan.io";
     }
   }
 
@@ -25,7 +24,7 @@ class EtherscanApi {
   }
 
   Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {
-    Map result = await HttpCore.instance.get("https://$host/api", params: {
+    Map result = await HttpCore.instance.get("$host/api", params: {
       "module": "account",
       "action": "txlist",
       "address": address,
@@ -46,7 +45,7 @@ class EtherscanApi {
   }
 
   Future<List<Erc20TransferHistory>> queryErc20History(String contractAddress, String address, int page) async {
-    Map result = await HttpCore.instance.get("https://$host/api", params: {
+    Map result = await HttpCore.instance.get("$host/api", params: {
       "module": "account",
       "action": "tokentx",
       "contractaddress": contractAddress,
@@ -65,7 +64,7 @@ class EtherscanApi {
   }
 
   Future<BigInt> queryBalance(String address, [tag = 'latest']) async {
-    Map result = await HttpCore.instance.get("https://$host/api", params: {
+    Map result = await HttpCore.instance.get("$host/api", params: {
       "module": "account",
       "action": "balance",
       "apikey": Config.ETHERSCAN_APIKEY,
@@ -80,7 +79,7 @@ class EtherscanApi {
   }
 
   Future<BigInt> queryErc20TokenBalance({String address, String contractAddress, tag = 'latest'}) async {
-    Map result = await HttpCore.instance.get("https://$host/api", params: {
+    Map result = await HttpCore.instance.get("$host/api", params: {
       "module": "account",
       "action": "tokenbalance",
       "apikey": Config.ETHERSCAN_APIKEY,

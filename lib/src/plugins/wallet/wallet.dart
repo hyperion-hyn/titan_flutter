@@ -10,6 +10,7 @@ import 'package:titan/config.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
+import '../../global.dart';
 import 'wallet_util.dart';
 
 part 'wallet.g.dart';
@@ -327,7 +328,7 @@ class WalletError {
 }
 
 class WalletConfig {
-  static String get INFURA_MAIN_API => 'https://mainnet.infura.io/v3/${Config.INFURA_PRVKEY}';
+  static String get INFURA_MAIN_API => '${Config.INFURA_API_URL}/v3/${Config.INFURA_PRVKEY}';
 
   static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
 
@@ -349,12 +350,16 @@ class Wallet {
   Future<BigInt> getErc20Balance(String contractAddress) async {
     var account = getEthAccount();
     if (account != null) {
-      return await EtherscanApi().queryErc20TokenBalance(address: account.address, contractAddress: contractAddress);
-//      final contract = WalletUtil.getHynErc20Contract(contractAddress);
-//      final balanceFun = contract.function('balanceOf');
-//      final balance = await WalletUtil.getWeb3Client()
-//          .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(account.address)]);
-//      return balance.first;
+//      return await EtherscanApi().queryErc20TokenBalance(address: account.address, contractAddress: contractAddress);
+      final contract = WalletUtil.getHynErc20Contract(contractAddress);
+      final balanceFun = contract.function('balanceOf');
+      try {
+        final balance = await WalletUtil.getWeb3Client()
+            .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(account.address)]);
+        return balance.first;
+      } catch (e) {
+        logger.e(e);
+      }
     }
 
     return BigInt.from(0);
@@ -375,12 +380,12 @@ class Wallet {
     if (account != null) {
       switch (account.coinType) {
         case CoinType.ETHEREUM:
-          return await EtherscanApi().queryBalance(account.address, block);
-//          var response = await WalletUtil.postInfura(method: "eth_getBalance", params: [account.address, block]);
-//          if (response['result'] != null) {
-//            return hexToInt(response['result']);
-//          }
-//          break;
+//          return await EtherscanApi().queryBalance(account.address, block);
+          var response = await WalletUtil.postInfura(method: "eth_getBalance", params: [account.address, block]);
+          if (response['result'] != null) {
+            return hexToInt(response['result']);
+          }
+          break;
       }
     }
     return BigInt.from(0);
