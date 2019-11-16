@@ -34,7 +34,7 @@ class ShowAccountPage extends StatefulWidget {
 }
 
 class _ShowAccountPageState extends DataListState<ShowAccountPage> {
-  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
+  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.####");
 
   static NumberFormat token_format = new NumberFormat("#,###.####");
 
@@ -270,6 +270,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       amountText = "- ${token_format.format(transtionDetail.amount)} ${transtionDetail.unit}";
     }
 
+    if(transtionDetail.toAddress.toLowerCase() == "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07".toLowerCase()){
+      title = "智能合约调用";
+    }
+
+
+
     var time = dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transtionDetail.time));
     var lastTranstionTime = lastTranstionDetail != null
         ? dateFormat.format(DateTime.fromMillisecondsSinceEpoch(lastTranstionDetail.time))
@@ -367,7 +373,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       retList.add('header');
     }
 
-    var trasferList = [];
+    List<TranstionDetailVo> trasferList = [];
 
     try {
       trasferList = await _accountTransferService.getTransferList(widget.walletAccountVo, page);
