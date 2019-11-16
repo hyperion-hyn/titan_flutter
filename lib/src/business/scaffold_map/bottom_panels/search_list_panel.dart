@@ -16,9 +16,41 @@ class SearchListPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (pois == null || pois.isEmpty) {
-      return Container(
-        margin: EdgeInsets.all(16),
-        child: Text('暂无数据'),
+      return Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              margin: EdgeInsets.all(16),
+              child: Text('暂无数据'),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: InkWell(
+              onTap: () {
+                BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
+              },
+              borderRadius: BorderRadius.all(Radius.circular(32.0)),
+              highlightColor: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Ink(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xffececec),
+                  ),
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.grey,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       );
     }
 

@@ -1,0 +1,9 @@
+class Config {
+  static const String INFURA_API_URL = 'https://mainnet.infura.io';
+  static const String INFURA_PRVKEY = 'your key';
+  static const String COINMARKETCAP_API_URL = 'https://pro-api.coinmarketcap.com';
+  static const String COINMARKETCAP_PRVKEY = 'your key';
+  static const String ETHERSCAN_API_URL = 'https://api.etherscan.io';
+  static const String ETHERSCAN_APIKEY = 'your key';
+
+}

@@ -1,6 +1,10 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 
+part 'account.g.dart';
+
+@JsonSerializable()
 class Account {
   final String address;
   final String derivationPath;
@@ -17,20 +21,21 @@ class Account {
     this.erc20AssetTokens,
   });
 
-  factory Account.fromJson(Map<dynamic, dynamic> json,
-      [bool isMainNet = true]) {
+  factory Account.fromJsonWithNet(Map<dynamic, dynamic> json, [bool isMainNet = true]) {
     AssetToken token;
     var erc20Tokens = <AssetToken>[];
     if (json['coinType'] == CoinType.ETHEREUM) {
-      token = Tokens.ETHEREUM;
-      //支持的ERC20代币
+      token = SupportedTokens.ETHEREUM;
+      //active erc20 tokens
       if (isMainNet) {
-        erc20Tokens.add(Tokens.HYN);
+        erc20Tokens.add(SupportedTokens.HYN);
+//        erc20Tokens.add(SupportedTokens.USDT_ERC20);
       } else {
-        erc20Tokens.add(Tokens.HYN_ROPSTEN);
+        erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
       }
     } else {
-      //Maybe support later
+      //TODO
+      //Maybe support more later
     }
     return Account(
       address: json['address'],
@@ -40,6 +45,10 @@ class Account {
       erc20AssetTokens: erc20Tokens,
     );
   }
+
+  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AccountToJson(this);
 
   @override
   String toString() {

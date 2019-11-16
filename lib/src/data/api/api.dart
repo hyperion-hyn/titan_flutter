@@ -3,9 +3,41 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/me/api/map_rich_http.dart';
+import 'package:titan/src/domain/gaode_model.dart';
+import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/update.dart';
 
 class Api {
+
+  ///附近可以分享的位置
+  Future<GaodeModel> searchByGaode({
+    @required double lat,
+    @required double lon,
+    int type,
+    double radius = 2000,
+    int page = 1,
+    CancelToken cancelToken,
+  }) async {
+    return await HttpCore.instance.getEntity(
+      'map/around',
+      EntityFactory<GaodeModel>((json) {
+        var data = (json['data'] as List).map((map) {
+          return GaodePoi.fromJson(map);
+        }).toList();
+        var gaodeModel = GaodeModel(page: json['page'], totalPage: json['total_pages'], data: data);
+        return gaodeModel;
+      }),
+      params: {
+        "lat": lat,
+        "lon": lon,
+        "radius": radius,
+        "type": type,
+        "page": page,
+      },
+      options: RequestOptions(cancelToken: cancelToken),
+    );
+  }
+
   Future<UpdateEntity> update(String channel, String lang, String platform) async {
     var data = await MapRichHttpCore.instance
         .getEntity('apps/update', EntityFactory<UpdateEntity>((json) => UpdateEntity.fromJson(json)), params: {

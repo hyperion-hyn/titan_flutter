@@ -41,7 +41,7 @@ dependencies:
   #https://github:com/dnfield/flutter_svg:
   flutter_svg: ^0.13.0+2
   #https://pub.dev/packages/in_app_purchase#-installing-tab-
-  in_app_purchase: ^0.2.2+1
+  #  in_app_purchase: 0.2.2+2
   #https://github.com/apptreesoftware/flutter_barcode_reader
   #  barcode_scan: ^1.0.0
   #https://pub.dev/packages/path_provider#-installing-tab-
@@ -63,7 +63,7 @@ dependencies:
   #https://pub.dev/packages/flutter_statusbarcolor#-installing-tab-
   flutter_statusbarcolor: 0.2.1
   #https://github.com/dart-lang/json_serializable
-  json_annotation: ^2.4.0
+  #  json_annotation: ^2.4.0
   #https://pub.dev/packages/esys_flutter_share
   esys_flutter_share: 1.0.2
   #https://pub.dev/packages/uni_links
@@ -91,6 +91,7 @@ dependencies:
   #https://pub.dev/packages/carousel_pro
   carousel_pro: ^1.0.0
   web3dart: ^1.1.1
+  bip39: ^1.0.3
   intl: 0.15.8
   webview_flutter: ^0.3.14+1
   pull_to_refresh: ^1.5.7
@@ -182,6 +183,13 @@ flutter:
     - res/drawable/map_rich_application.png
     - res/drawable/discover_first_image.jpeg
     - res/drawable/customer_service.jpeg
+    - res/drawable/safe_lock.png
+    - res/drawable/eth_logo.png
+    - res/drawable/hyn_logo.png
+    - res/drawable/backup_wallet_main.png
+    - res/drawable/backup_notice_image.png
+    - res/drawable/check_outline.png
+    - res/drawable/hyn_wallet.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

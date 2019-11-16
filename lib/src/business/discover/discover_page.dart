@@ -160,7 +160,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                 onTap: () async {
                                   activeDMap('encryptShare');
                                   var mapboxController =
-                                      (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+                                      (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
 
                                   var lastLocation = await mapboxController?.lastKnownLocation();
                                   if (lastLocation != null) {
@@ -392,7 +392,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
 
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {
-      var mapboxController = (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+      var mapboxController = (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
       await mapboxController?.disableLocation();
 
       if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {

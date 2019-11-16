@@ -19,6 +19,7 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41DD00F668BA4794C96C93BA /* Pods_Runner.framework */; };
+		F5147211237EF6F500931008 /* ErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5147210237EF6F500931008 /* ErrorCode.swift */; };
 		F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53740FE22E83D8500ADF4FF /* EncryptionService.swift */; };
 		F537410722E84F0000ADF4FF /* Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F537410622E84F0000ADF4FF /* Mobile.framework */; };
 		F537410C22E867A000ADF4FF /* DateExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F537410B22E867A000ADF4FF /* DateExt.swift */; };
@@ -62,6 +63,7 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AD1B0CAE230E4F7F00C5395E /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		F5147210237EF6F500931008 /* ErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCode.swift; sourceTree = "<group>"; };
 		F53740FE22E83D8500ADF4FF /* EncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionService.swift; sourceTree = "<group>"; };
 		F537410622E84F0000ADF4FF /* Mobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mobile.framework; sourceTree = "<group>"; };
 		F537410B22E867A000ADF4FF /* DateExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExt.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				F5147210237EF6F500931008 /* ErrorCode.swift */,
 				F54F1E25235EEF9900633293 /* Wallet */,
 				AD1B0CAE230E4F7F00C5395E /* Runner.entitlements */,
 				F537410A22E8678100ADF4FF /* Ext */,
@@ -335,7 +338,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
-				"${PODS_ROOT}/../.symlinks/flutter/ios-release/Flutter.framework",
+				"${PODS_ROOT}/../.symlinks/flutter/ios/Flutter.framework",
 				"${BUILT_PRODUCTS_DIR}/MTBBarcodeScanner/MTBBarcodeScanner.framework",
 				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/Mapbox.framework",
 				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/Mapbox.framework.dSYM",
@@ -363,7 +366,6 @@
 				"${BUILT_PRODUCTS_DIR}/fake_cookie_manager/fake_cookie_manager.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_statusbarcolor/flutter_statusbarcolor.framework",
 				"${BUILT_PRODUCTS_DIR}/fluttertoast/fluttertoast.framework",
-				"${BUILT_PRODUCTS_DIR}/in_app_purchase/in_app_purchase.framework",
 				"${BUILT_PRODUCTS_DIR}/mapbox_gl/mapbox_gl.framework",
 				"${BUILT_PRODUCTS_DIR}/package_info/package_info.framework",
 				"${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework",
@@ -404,7 +406,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fake_cookie_manager.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_statusbarcolor.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fluttertoast.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/in_app_purchase.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/mapbox_gl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/package_info.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider.framework",
@@ -432,6 +433,7 @@
 				F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */,
 				F537410E22E8683400ADF4FF /* EthEncryptionService.swift in Sources */,
 				F537410C22E867A000ADF4FF /* DateExt.swift in Sources */,
+				F5147211237EF6F500931008 /* ErrorCode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

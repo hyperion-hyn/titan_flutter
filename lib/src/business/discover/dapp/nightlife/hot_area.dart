@@ -253,7 +253,7 @@ class HotAreaState extends BaseState<HotArea> {
   }
 
   MapboxMapController get mapboxMapController {
-    return (Keys.mapKey.currentState as MapContainerState)?.mapboxMapController;
+    return (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
   }
 
   ///推荐区域
