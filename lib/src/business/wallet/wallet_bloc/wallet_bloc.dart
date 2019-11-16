@@ -55,7 +55,9 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       yield ShowWalletState(walletVo);
       await _walletService.updateWalletVoBalace(walletVo);
       yield ShowWalletState(walletVo);
-      yield ShowWalletState(await _walletService.updateWalletVoPrice(walletVo));
+      walletVo = await _walletService.updateWalletVoPrice(walletVo);
+      yield ShowWalletState(walletVo);
+      _walletService.saveDefaultWalletVo(walletVo);
     }
   }
 

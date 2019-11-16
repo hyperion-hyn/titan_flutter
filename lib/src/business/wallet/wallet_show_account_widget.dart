@@ -292,15 +292,15 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
               )),
         InkWell(
           onTap: () {
-            var url = EtherscanApi.getTxDetailUrl(transtionDetail.hash);
-            print("txUrl:$url");
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => InfoDetailPage(
-                          url: url,
-                          title: "交易详情",
-                        )));
+//            var url = EtherscanApi.getTxDetailUrl(transtionDetail.hash);
+//            print("txUrl:$url");
+//            Navigator.push(
+//                context,
+//                MaterialPageRoute(
+//                    builder: (context) => InfoDetailPage(
+//                          url: url,
+//                          title: "交易详情",
+//                        )));
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),

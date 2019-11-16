@@ -10,7 +10,6 @@ class KeyStore {
   String name;
   bool isMnemonic;
   String identifier;
-
   String fileName;
 
   Future<dynamic> load() async {
@@ -46,7 +45,7 @@ class KeyStore {
     this.isMnemonic,
   });
 
-  KeyStore({@required String fileName});
+  KeyStore({@required this.fileName});
 
   factory KeyStore.fromDynamicMap(Map<dynamic, dynamic> json) {
     return KeyStore._(
