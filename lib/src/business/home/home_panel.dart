@@ -101,9 +101,9 @@ class HomePanelState extends UserState<HomePanel> {
             child: _search(),
           ),
           /* 模式 */
-          SliverToBoxAdapter(
-            child: _mode(context),
-          ),
+//          SliverToBoxAdapter(
+//            child: _mode(context),
+//          ),
           SliverToBoxAdapter(
             child: focusArea(context),
           ),

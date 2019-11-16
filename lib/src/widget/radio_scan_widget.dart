@@ -140,27 +140,4 @@ class _RadarScanWidget extends State with SingleTickerProviderStateMixin {
     ),);
   }
 
-  _showDialog(BuildContext context) {
-    var text = "恭喜你，打卡完成";
-//    if (checkInCount != 3) {
-//      text = "打卡未完成，半小时后再来哦";
-//    }
-
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text("好消息"),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text(text),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        });
-  }
-
 }

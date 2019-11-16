@@ -177,7 +177,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
             body = Container();
           } else {
             body = Text(
-              "没有更多数据了~",
+              "—— 这是地平线了 ——",
               style: TextStyle(color: Colors.grey),
             );
           }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/about/about_me_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
@@ -451,9 +450,9 @@ class _MeState extends UserState<MePage> with RouteAware {
     );
   }
 
-  // todo: jison edit 打卡
-  Future _checkIn() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckIn()));
+  Future _checkIn() async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckIn()));
+    _checkIn1();
   }
 
   Future _checkIn1() async {
@@ -461,7 +460,7 @@ class _MeState extends UserState<MePage> with RouteAware {
       await _userService.checkIn();
       checkInCount = await _userService.checkInCount();
       setState(() {});
-      Fluttertoast.showToast(msg: "打卡成功");
+      Fluttertoast.showToast(msg: "打卡成功，感谢你贡献数据。");
     } catch (_) {
       ExceptionProcess.process(_);
       throw _;
