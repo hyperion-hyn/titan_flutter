@@ -54,6 +54,13 @@ class _WalletSendState extends State<WalletSendPage> {
   }
 
   Future loadData() async {
+    if (widget.receiverAddress != null) {
+      _receiverAddressController.text = widget.receiverAddress;
+    }
+    if (widget.count != null) {
+      _countController.text = widget.count.toString();
+    }
+    setState(() {});
     if (widget.walletAccountVo == null) {
       WalletVo _walletVo = await _walletService.getDefaultWalletVo();
       logger.i("walletVo:$_walletVo");
@@ -72,12 +79,6 @@ class _WalletSendState extends State<WalletSendPage> {
 
     await _walletService.updateAccountBalance(widget.walletAccountVo, widget.walletAccountVo.wallet);
 
-    if (widget.receiverAddress != null) {
-      _receiverAddressController.text = widget.receiverAddress;
-    }
-    if (widget.count != null) {
-      _countController.text = widget.count.toString();
-    }
     walletAccountVo = widget.walletAccountVo;
     setState(() {});
   }
@@ -343,6 +344,10 @@ class _WalletSendState extends State<WalletSendPage> {
                   disabledTextColor: Colors.white,
                   onPressed: () {
                     if (_fromKey.currentState.validate()) {
+                      if (walletAccountVo == null) {
+                        Fluttertoast.showToast(msg: "账户为空");
+                        return;
+                      }
                       Navigator.push(
                           context,
                           MaterialPageRoute(

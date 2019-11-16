@@ -239,7 +239,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     logger.i('费率是 $ethFee eth');
     logger.i('费率是 $currencyFee usd');
 
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future _transfer() async {
@@ -263,10 +265,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         } else {
           await _transferErc20(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
         }
-        Fluttertoast.showToast(msg: "转账已提交");
+
         if (widget.backRouteName == null) {
+          Fluttertoast.showToast(msg: "转账已提交");
           Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
         } else {
+          isRechargeByTianWalletFinish = true;
           Navigator.of(context).popUntil(ModalRoute.withName(widget.backRouteName));
         }
       } catch (_) {
