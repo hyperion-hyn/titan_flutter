@@ -14,12 +14,12 @@ import '../../global.dart';
 import 'model/wallet_account_vo.dart';
 
 class WalletSendPage extends StatefulWidget {
-  WalletAccountVo walletAccountVo;
-  String receiverAddress;
-  double count;
-  String symbol;
-  String currencyUnit = "CNY";
-  String backRouteName;
+  final WalletAccountVo walletAccountVo;
+  final String receiverAddress;
+  final double count;
+  final String symbol;
+  final String currencyUnit = "CNY";
+  final String backRouteName;
 
   WalletSendPage(this.walletAccountVo, {this.receiverAddress, this.count, this.symbol = "HYN", this.backRouteName});
 
@@ -45,10 +45,13 @@ class _WalletSendState extends State<WalletSendPage> {
 
   var walletAccountVo;
 
+  var symbol;
+  var currencyUnit;
+
   @override
   void initState() {
-    widget.symbol = widget.walletAccountVo != null ? widget.walletAccountVo.symbol : widget.symbol;
-    widget.currencyUnit = widget.walletAccountVo != null ? widget.walletAccountVo.currencyUnit : widget.currencyUnit;
+    symbol = widget.walletAccountVo != null ? widget.walletAccountVo.symbol : widget.symbol;
+    currencyUnit = widget.walletAccountVo != null ? widget.walletAccountVo.currencyUnit : widget.currencyUnit;
     loadData();
     super.initState();
   }
@@ -68,7 +71,7 @@ class _WalletSendState extends State<WalletSendPage> {
       logger.i("walletVo:$_walletVo");
 
       var account = _walletVo.accountList.firstWhere((accountTemp) {
-        return accountTemp.symbol == widget.symbol;
+        return accountTemp.symbol == symbol;
       }, orElse: () {
         return null;
       });
@@ -76,12 +79,11 @@ class _WalletSendState extends State<WalletSendPage> {
         Fluttertoast.showToast(msg: "账户错误");
         return;
       }
-      widget.walletAccountVo = account;
+      walletAccountVo = account;
+    } else {
+      walletAccountVo = widget.walletAccountVo;
     }
-
-    await _walletService.updateAccountBalance(widget.walletAccountVo, widget.walletAccountVo.wallet);
-
-    walletAccountVo = widget.walletAccountVo;
+    await _walletService.updateAccountBalance(walletAccountVo, walletAccountVo.wallet);
     setState(() {});
   }
 
@@ -94,7 +96,7 @@ class _WalletSendState extends State<WalletSendPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "发送 ${widget.symbol}",
+          "发送 ${symbol}",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -109,7 +111,7 @@ class _WalletSendState extends State<WalletSendPage> {
                 child: Column(
                   children: <Widget>[
                     SizedBox(
-                      height: 24,
+                      height: 8,
                     ),
                     Row(
                       children: <Widget>[
@@ -165,7 +167,7 @@ class _WalletSendState extends State<WalletSendPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          "${widget.symbol}数量",
+                          "${symbol}数量",
                           style: TextStyle(
                             color: Color(0xFF6D6D6D),
                             fontSize: 16,
@@ -222,6 +224,12 @@ class _WalletSendState extends State<WalletSendPage> {
                           setState(() {});
                         },
                       ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ ${amount} ${currencyUnit}")),
+                      ],
                     ),
                     SizedBox(
                       height: 12,
@@ -334,7 +342,6 @@ class _WalletSendState extends State<WalletSendPage> {
                   ],
                 ),
               ),
-              Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ ${amount} ${widget.currencyUnit}")),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                 constraints: BoxConstraints.expand(height: 48),
