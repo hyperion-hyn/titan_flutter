@@ -83,9 +83,7 @@ class _WalletSendState extends State<WalletSendPage> {
     } else {
       walletAccountVo = widget.walletAccountVo;
     }
-
-    await _walletService.updateAccountBalance(widget.walletAccountVo, widget.walletAccountVo.wallet);
-
+    await _walletService.updateAccountBalance(walletAccountVo, walletAccountVo.wallet);
     setState(() {});
   }
 
@@ -344,7 +342,6 @@ class _WalletSendState extends State<WalletSendPage> {
                   ],
                 ),
               ),
-
               Container(
                 margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                 constraints: BoxConstraints.expand(height: 48),
