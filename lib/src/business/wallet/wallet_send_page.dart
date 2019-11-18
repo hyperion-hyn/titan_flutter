@@ -39,8 +39,6 @@ class _WalletSendState extends State<WalletSendPage> {
 
   static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.####");
 
-  int selected_transfer_speed = EthereumConst.FAST_SPEED;
-
   WalletService _walletService = WalletService();
 
   var walletAccountVo;
@@ -236,115 +234,9 @@ class _WalletSendState extends State<WalletSendPage> {
                     SizedBox(
                       height: 12,
                     ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          "交易速度",
-                          style: TextStyle(
-                            color: Color(0xFF6D6D6D),
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                      child: IntrinsicHeight(
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  selected_transfer_speed = EthereumConst.LOW_SPEED;
-                                  setState(() {});
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      color: selected_transfer_speed == EthereumConst.LOW_SPEED
-                                          ? Colors.blue
-                                          : Colors.grey[200],
-                                      border: Border(),
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
-                                  child: Text(
-                                    "慢",
-                                    style: TextStyle(
-                                        color: selected_transfer_speed == EthereumConst.LOW_SPEED
-                                            ? Colors.white
-                                            : Colors.black),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            VerticalDivider(
-                              width: 2,
-                              thickness: 2,
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  selected_transfer_speed = EthereumConst.FAST_SPEED;
-                                  setState(() {});
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      color: selected_transfer_speed == EthereumConst.FAST_SPEED
-                                          ? Colors.blue
-                                          : Colors.grey[200],
-                                      border: Border(),
-                                      borderRadius: BorderRadius.all(Radius.circular(0))),
-                                  child: Text(
-                                    "平均值",
-                                    style: TextStyle(
-                                        color: selected_transfer_speed == EthereumConst.FAST_SPEED
-                                            ? Colors.white
-                                            : Colors.black),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            VerticalDivider(
-                              width: 2,
-                              thickness: 2,
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  selected_transfer_speed = EthereumConst.SUPER_FAST_SPEED;
-                                  setState(() {});
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      color: selected_transfer_speed == EthereumConst.SUPER_FAST_SPEED
-                                          ? Colors.blue
-                                          : Colors.grey[200],
-                                      border: Border(),
-                                      borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
-                                  child: Text(
-                                    "快",
-                                    style: TextStyle(
-                                        color: selected_transfer_speed == EthereumConst.SUPER_FAST_SPEED
-                                            ? Colors.white
-                                            : Colors.black),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
-
               Container(
                 margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                 constraints: BoxConstraints.expand(height: 48),
@@ -389,7 +281,6 @@ class _WalletSendState extends State<WalletSendPage> {
                     walletAccountVo,
                     double.parse(_countController.text),
                     _receiverAddressController.text,
-                    selected_transfer_speed,
                     backRouteName: widget.backRouteName,
                   )));
     }

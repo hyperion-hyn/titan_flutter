@@ -20,10 +20,9 @@ class WalletSendConfirmPage extends StatefulWidget {
   WalletAccountVo walletAccountVo;
   final double count;
   final String receiverAddress;
-  final int speed;
   final String backRouteName;
 
-  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress, this.speed, {this.backRouteName});
+  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress, {this.backRouteName});
 
   @override
   State<StatefulWidget> createState() {
@@ -39,6 +38,8 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   NumberFormat token_fee_format = new NumberFormat("#,###.########");
 
   var isLoading = false;
+
+  int speed = EthereumConst.FAST_SPEED;
 
   @override
   void initState() {
@@ -168,10 +169,105 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "${ethFee} ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(currencyFee)})",
+                          "$ethFee ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(currencyFee)})",
                           style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                         ),
-                      )
+                      ),
+
+//                      Padding(
+//                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+//                        child: IntrinsicHeight(
+//                          child: Row(
+//                            children: <Widget>[
+//                              Expanded(
+//                                child: InkWell(
+//                                  onTap: () {
+//                                    speed = EthereumConst.LOW_SPEED;
+//                                    setState(() {});
+//                                  },
+//                                  child: Container(
+//                                    padding: EdgeInsets.symmetric(vertical: 12),
+//                                    alignment: Alignment.center,
+//                                    decoration: BoxDecoration(
+//                                        color: speed == EthereumConst.LOW_SPEED
+//                                            ? Colors.blue
+//                                            : Colors.grey[200],
+//                                        border: Border(),
+//                                        borderRadius: BorderRadius.only(
+//                                            topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
+//                                    child: Text(
+//                                      "慢",
+//                                      style: TextStyle(
+//                                          color: speed == EthereumConst.LOW_SPEED
+//                                              ? Colors.white
+//                                              : Colors.black),
+//                                    ),
+//                                  ),
+//                                ),
+//                              ),
+//                              VerticalDivider(
+//                                width: 2,
+//                                thickness: 2,
+//                              ),
+//                              Expanded(
+//                                child: InkWell(
+//                                  onTap: () {
+//                                    speed = EthereumConst.FAST_SPEED;
+//                                    setState(() {});
+//                                  },
+//                                  child: Container(
+//                                    padding: EdgeInsets.symmetric(vertical: 12),
+//                                    alignment: Alignment.center,
+//                                    decoration: BoxDecoration(
+//                                        color: speed == EthereumConst.FAST_SPEED
+//                                            ? Colors.blue
+//                                            : Colors.grey[200],
+//                                        border: Border(),
+//                                        borderRadius: BorderRadius.all(Radius.circular(0))),
+//                                    child: Text(
+//                                      "平均值",
+//                                      style: TextStyle(
+//                                          color: speed == EthereumConst.FAST_SPEED
+//                                              ? Colors.white
+//                                              : Colors.black),
+//                                    ),
+//                                  ),
+//                                ),
+//                              ),
+//                              VerticalDivider(
+//                                width: 2,
+//                                thickness: 2,
+//                              ),
+//                              Expanded(
+//                                child: InkWell(
+//                                  onTap: () {
+//                                    speed = EthereumConst.SUPER_FAST_SPEED;
+//                                    setState(() {});
+//                                  },
+//                                  child: Container(
+//                                    padding: EdgeInsets.symmetric(vertical: 12),
+//                                    alignment: Alignment.center,
+//                                    decoration: BoxDecoration(
+//                                        color: speed == EthereumConst.SUPER_FAST_SPEED
+//                                            ? Colors.blue
+//                                            : Colors.grey[200],
+//                                        border: Border(),
+//                                        borderRadius: BorderRadius.only(
+//                                            topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
+//                                    child: Text(
+//                                      "快",
+//                                      style: TextStyle(
+//                                          color: speed == EthereumConst.SUPER_FAST_SPEED
+//                                              ? Colors.white
+//                                              : Colors.black),
+//                                    ),
+//                                  ),
+//                                ),
+//                              ),
+//                            ],
+//                          ),
+//                        ),
+//                      )
                     ],
                   )
                 ],
@@ -229,7 +325,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     var ret = await wallet.estimateGasPrice(
       toAddress: toAddress,
       value: ConvertTokenUnit.etherToWei(etherDouble: amount),
-      gasPrice: BigInt.from(widget.speed),
+      gasPrice: BigInt.from(speed),
       data: erc20FunAbi,
     );
 
@@ -299,7 +395,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     final txHash = await wallet.sendEthTransaction(
       password: password,
       toAddress: toAddress,
-      gasPrice: BigInt.from(widget.speed),
+      gasPrice: BigInt.from(speed),
       value: amount,
     );
 
@@ -313,7 +409,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     final txHash = await wallet.sendErc20Transaction(
       contractAddress: contractAddress,
       password: password,
-      gasPrice: BigInt.from(widget.speed),
+      gasPrice: BigInt.from(speed),
       value: amount,
       toAddress: toAddress,
     );
