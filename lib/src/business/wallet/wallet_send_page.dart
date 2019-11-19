@@ -335,6 +335,9 @@ class _WalletSendState extends State<WalletSendPage> {
 
   Future onPaste() async {
     var text = await Clipboard.getData(Clipboard.kTextPlain);
+    if (text == null) {
+      return;
+    }
     _receiverAddressController.text = text.text;
     setState(() {});
   }
