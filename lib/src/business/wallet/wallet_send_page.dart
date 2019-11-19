@@ -214,7 +214,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         onChanged: (value) {
                           amount = double.parse(value) * walletAccountVo.currencyRate;
                           setState(() {});
