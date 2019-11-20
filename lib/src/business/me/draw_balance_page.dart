@@ -29,8 +29,8 @@ class DrawBalancePage extends StatefulWidget {
 class _DrawBalanceState extends State<DrawBalancePage> {
   UserService _userService = UserService();
   WithdrawalInfo withdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
-  WithdrawalInfo earningWithdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
-  WithdrawalInfo rechargeWithdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
+  WithdrawalInfo earningWithdrawalInfo;
+  WithdrawalInfo rechargeWithdrawalInfo;
 
   Quotes quotes;
 
@@ -85,8 +85,6 @@ class _DrawBalanceState extends State<DrawBalancePage> {
     _selectedWithdrawalTypeString = value;
     _updateCanGetHynAmount();
     _getWithDrawalInfo();
-
-    loadData();
   }
 
   void _updateCanGetHynAmount() {
@@ -119,7 +117,14 @@ class _DrawBalanceState extends State<DrawBalancePage> {
     } else if (_selectedWithdrawalTypeString == RECHARGE) {
       _withdrawalInfo = rechargeWithdrawalInfo;
     }
-    withdrawalInfo = _withdrawalInfo;
+
+    if (_withdrawalInfo != null) {
+      withdrawalInfo = _withdrawalInfo;
+    } else {
+      loadData();
+    }
+
+    print('_selectedWithdrawalTypeString is: $_selectedWithdrawalTypeString, withdrawalInfo is: $_withdrawalInfo');
   }
 
   @override
