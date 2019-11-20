@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.net.wifi.WifiManager
+import android.content.Context
 import androidx.core.content.FileProvider
 import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
