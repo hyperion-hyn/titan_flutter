@@ -26,6 +26,12 @@ class AssetToken {
 
 ///available tokens
 class SupportedTokens {
+  static const BTC = const AssetToken(
+    name: 'BITCOIN',
+    decimals: 8,
+    symbol: 'BTC',
+  );
+
   static const ETHEREUM = const AssetToken(
     name: 'Ethereum',
     decimals: 18,

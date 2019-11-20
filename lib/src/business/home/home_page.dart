@@ -24,6 +24,7 @@ import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 import 'package:uni_links/uni_links.dart';
 
+import '../../../env.dart';
 import '../../global.dart';
 import 'bloc/bloc.dart';
 import 'bottom_fabs_widget.dart';
@@ -79,6 +80,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    bool isDebug = env.buildType == BuildType.DEV;
     return MultiBlocListener(
       listeners: [
         BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
@@ -94,7 +96,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Updater(
           child: Scaffold(
               resizeToAvoidBottomPadding: false,
-//              drawer: DrawerScenes(),
+              drawer: isDebug ? DrawerScenes() : null,
 //          endDrawer: PurchasedMapDrawerScenes(),
               bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
                 builder: (context, state) {
