@@ -29,6 +29,9 @@ class DrawBalancePage extends StatefulWidget {
 class _DrawBalanceState extends State<DrawBalancePage> {
   UserService _userService = UserService();
   WithdrawalInfo withdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
+  WithdrawalInfo earningWithdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
+  WithdrawalInfo rechargeWithdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
+
   Quotes quotes;
 
   TextEditingController amountTEController = TextEditingController();
@@ -56,25 +59,9 @@ class _DrawBalanceState extends State<DrawBalancePage> {
     super.initState();
 
     amountTEController.addListener(() {
-      if (withdrawalInfo != null && quotes != null) {
-        double _amount = amountTEController.text.isEmpty ? 0.0 : double.parse(amountTEController.text);
-//        if (_amount > withdrawalInfo.can_withdrawal) {
-//          _amount = withdrawalInfo.can_withdrawal;
-//          amountTEController.text = '$_amount';
-//          amountTEController.selection = TextSelection.collapsed(offset: amountTEController.text.length - 1);
-//        }
-        /*else if(_amount < withdrawalInfo.min_limit) {
-          _amount = withdrawalInfo.min_limit;
-          amountTEController.text = '$_amount';
-          amountTEController.selection = TextSelection.collapsed(offset: amountTEController.text.length - 1);
-        }*/
-        print('amount is: $_amount');
-        setState(() {
-          amount = _amount;
-          fee = withdrawalInfo.free_rate * amount;
-          canGetHynAmount = (amount - fee) / quotes.avgRate;
-        });
-      }
+      setState(() {
+        _updateCanGetHynAmount();
+      });
     });
 
     loadData();
@@ -85,12 +72,54 @@ class _DrawBalanceState extends State<DrawBalancePage> {
       var _withdrawalInfo = await _userService.withdrawalInfo(_selectedWithdrawalTypeString);
       var _quotes = await _userService.quotes();
       setState(() {
+        _setWithDrawalInfo(_withdrawalInfo);
         withdrawalInfo = _withdrawalInfo;
         quotes = _quotes;
       });
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  void _setSelectedWithdrawalTypeString(String value) {
+    _selectedWithdrawalTypeString = value;
+    _updateCanGetHynAmount();
+    _getWithDrawalInfo();
+
+    loadData();
+  }
+
+  void _updateCanGetHynAmount() {
+
+    if (withdrawalInfo != null && quotes != null) {
+      double _amount = amountTEController.text.isEmpty ? 0.0 : double.parse(amountTEController.text);
+      print('amount is: $_amount');
+
+      amount = _amount;
+      fee = withdrawalInfo.free_rate * amount;
+      if (_selectedWithdrawalTypeString == RECHARGE) fee = 0;
+      canGetHynAmount = (amount - fee) / quotes.avgRate;
+      print('canGetHynAmount is: $canGetHynAmount');
+    }
+  }
+
+  void _setWithDrawalInfo(WithdrawalInfo _withdrawalInfo) {
+    if (_selectedWithdrawalTypeString == EARNING) {
+      earningWithdrawalInfo = _withdrawalInfo;
+    } else if (_selectedWithdrawalTypeString == RECHARGE) {
+      rechargeWithdrawalInfo = _withdrawalInfo;
+    }
+  }
+
+  void _getWithDrawalInfo() {
+
+    WithdrawalInfo _withdrawalInfo;
+    if (_selectedWithdrawalTypeString == EARNING) {
+       _withdrawalInfo = earningWithdrawalInfo;
+    } else if (_selectedWithdrawalTypeString == RECHARGE) {
+      _withdrawalInfo = rechargeWithdrawalInfo;
+    }
+    withdrawalInfo = _withdrawalInfo;
   }
 
   @override
@@ -142,8 +171,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                 value: EARNING,
                                 onChanged: (value) {
                                   setState(() {
-                                    _selectedWithdrawalTypeString = value;
-                                    loadData();
+                                    _setSelectedWithdrawalTypeString(value);
                                   });
                                 },
                               ),
@@ -156,8 +184,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                 value: RECHARGE,
                                 onChanged: (value) {
                                   setState(() {
-                                    _selectedWithdrawalTypeString = value;
-                                    loadData();
+                                    _setSelectedWithdrawalTypeString(value);
                                   });
                                 },
                               ),
@@ -458,8 +485,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                 value: EARNING,
                                 onChanged: (value) {
                                   setState(() {
-                                    _selectedWithdrawalTypeString = value;
-                                    loadData();
+                                    _setSelectedWithdrawalTypeString(value);
                                   });
                                 },
                               ),
@@ -472,8 +498,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                 value: RECHARGE,
                                 onChanged: (value) {
                                   setState(() {
-                                    _selectedWithdrawalTypeString = value;
-                                    loadData();
+                                    _setSelectedWithdrawalTypeString(value);
                                   });
                                 },
                               ),
