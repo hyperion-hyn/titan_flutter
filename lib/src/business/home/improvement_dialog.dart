@@ -1,18 +1,10 @@
-import 'dart:math';
-import 'package:barcode_scan/barcode_scan.dart';
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/inject/injector.dart';
-import 'package:titan/src/model/poi_interface.dart';
-import 'package:titan/src/utils/encryption.dart';
-import 'package:titan/src/widget/static_webview_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../../global.dart';
 
 class ImprovementDialog extends StatefulWidget {
   ImprovementDialog();
@@ -166,9 +158,11 @@ class ImprovementDialogDialogState extends State<ImprovementDialog> {
 //    _isNeedShowIntro();
   }
 
-  void _openUrl(String url, String title) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      return StaticWebViewPage(url, title);
-    }));
+  Future _openUrl(String url, String title) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+    }
   }
 }

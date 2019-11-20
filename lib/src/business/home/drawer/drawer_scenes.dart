@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/wallet_demo/WalletDemo.dart';
 import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
+import 'package:titan/src/business/wallet/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
@@ -139,6 +141,23 @@ class _DrawerScenesState extends State<DrawerScenes> {
                 ),
                 Container(height: 8, color: Colors.grey[100]),
                 ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
+                  },
+                  leading: Icon(Icons.account_balance_wallet),
+                  title: Text("钱包"),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                Container(height: 1, color: Colors.grey[100]),
+                ListTile(
+                  onTap: () {},
+                  leading: Icon(Icons.account_box),
+                  title: Text("我的"),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                Container(height: 1, color: Colors.grey[100]),
+                ListTile(
                   onTap: shareApp,
                   leading: Icon(Icons.share),
                   title: Text(S.of(context).nav_share_app),
@@ -152,6 +171,16 @@ class _DrawerScenesState extends State<DrawerScenes> {
                   },
                   leading: Icon(Icons.info),
                   title: Text(S.of(context).nav_about_us),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                Container(height: 1, color: Colors.grey[100]),
+                ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => WalletDemo()));
+                  },
+                  leading: Icon(Icons.monetization_on),
+                  title: Text('钱包测试'),
                   trailing: Icon(Icons.navigate_next),
                 ),
               ],

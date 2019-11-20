@@ -14,3 +14,7 @@ abstract class IPoi {
     this.remark,
   });
 }
+
+
+abstract class IDMapPoi extends IPoi {
+}

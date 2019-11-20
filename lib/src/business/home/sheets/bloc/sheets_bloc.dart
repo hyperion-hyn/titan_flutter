@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
+import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 import './bloc.dart';
@@ -23,6 +24,9 @@ class SheetsBloc extends Bloc<SheetsEvent, SheetsState> {
     } else if (event is ShowPoiEvent) {
       if (event.poi is PoiEntity) {
         yield PoiLoadedState(poiEntity: event.poi, nextSheetState: DraggableBottomSheetState.COLLAPSED);
+      }
+      if (event.poi is HeavenMapPoiInfo) {
+        yield HeavenPoiLoadedState(poi: event.poi, nextSheetState: DraggableBottomSheetState.COLLAPSED);
       }
       //TODO add heaven poi info
     } else if (event is ShowSearchItemsEvent) {

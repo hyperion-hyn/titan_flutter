@@ -39,6 +39,7 @@
             <meta-data
                 android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
                 android:value="true" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,18 +47,21 @@
 
             <intent-filter> <!--URL Scheme启动-->
                 <!--必有项-->
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
                 <!--如果希望该应用可以通过浏览器的连接启动，则添加该项-->
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.BROWSABLE" />
                 <!--表示该页面可以被隐式调用，必须加上该项-->
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
                 <!--协议部分-->
-                <data android:scheme="titan"/>
+                <data android:scheme="titan" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".business.qrcode.QRCodeScanActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.mapbox.mapboxgl.plugins.route.NavigationActivity"
             android:screenOrientation="portrait" />
 
         <meta-data
@@ -66,14 +70,14 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            tools:replace="android:authorities"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
             <meta-data
-                tools:replace="android:resource"
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths"/>
+                android:resource="@xml/filepaths"
+                tools:replace="android:resource" />
         </provider>
 
     </application>

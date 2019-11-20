@@ -54,6 +54,6 @@ class PoiListSheet extends StatelessWidget {
   }
 
   void onTapPoi(context, PoiEntity poi) {
-    BlocProvider.of<HomeBloc>(context).dispatch(ShowPoiEvent(poi: poi));
+    BlocProvider.of<HomeBloc>(context).add(ShowPoiEvent(poi: poi));
   }
 }

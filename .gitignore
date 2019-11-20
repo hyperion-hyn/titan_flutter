@@ -79,3 +79,9 @@ Podfile.lock
 ios/Podfile.lock
 pubspec.lock
 .symlinks
+pMapping.txt
+shrinklist.txt
+
+lib/config.dart
+apks
+.apk

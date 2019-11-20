@@ -35,14 +35,20 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
   void queryData() async {
     _pubKey = await TitanPlugin.getPublicKey();
     var expireTime = await TitanPlugin.getExpiredTime();
-    _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context,expireTime);
+    _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context, expireTime);
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(S.of(context).key_manager_title)),
+        appBar: AppBar(
+          title: Text(
+            S.of(context).key_manager_title,
+            style: TextStyle(color: Colors.white),
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
         body: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 48),
@@ -61,7 +67,9 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                   },
                   child: Row(children: <Widget>[
                     Flexible(child: Text(_pubKey, style: TextStyle(color: Colors.black54))),
-                    Padding(padding: const EdgeInsets.only(left: 4), child: Icon(Icons.content_copy, size: 16, color: Colors.black45))
+                    Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Icon(Icons.content_copy, size: 16, color: Colors.black45))
                   ]),
                 );
               },
@@ -83,29 +91,32 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              Text(
-                _pubKeyAutoRefreshTip,
-                style: TextStyle(color: Colors.black54),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: InkWell(
-                  onTap: () => showRefreshDialog(context),
-                  child: Text(
-                    S.of(context).manually_refresh,
-                    style: TextStyle(color: Colors.blue),
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    _pubKeyAutoRefreshTip,
+                    style: TextStyle(color: Colors.black54),
                   ),
-                ),
-              )
-            ]),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: InkWell(
+                      onTap: () => showRefreshDialog(context),
+                      child: Text(
+                        S.of(context).manually_refresh,
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  )
+                ]),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 48),
             child: Center(
               child: FlatButton(
                 padding: EdgeInsets.symmetric(vertical: 14, horizontal: 56),
-                color: Colors.black87,
+                color: Theme.of(context).primaryColor,
                 highlightColor: Colors.black,
                 splashColor: Colors.white10,
                 textColor: Colors.white,
@@ -150,7 +161,7 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
       _pubKey = key;
       return TitanPlugin.getExpiredTime();
     }).then((expireTime) {
-      var tip = getExpiredTimeShowTip(context,expireTime);
+      var tip = getExpiredTimeShowTip(context, expireTime);
       _pubKeyAutoRefreshTip = tip;
       setState(() {});
     });

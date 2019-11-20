@@ -11,8 +11,10 @@ abstract class AppState {
 class InitialAppState extends AppState {}
 
 class UpdateState extends AppState {
-  UpdateState({UpdateEntity updateEntity, bool isError, bool isChecking}) {
-    appData.updateEntity = updateEntity ?? appData.updateEntity;
+  final bool isManual;
+
+  UpdateState({UpdateEntity updateEntity, bool isError, bool isChecking, this.isManual = false}) {
+    appData.updateEntity = updateEntity;
     appData.isError = isError ?? appData.isError;
     appData.isChecking = isChecking ?? appData.isChecking;
   }

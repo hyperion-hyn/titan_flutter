@@ -1,0 +1,28 @@
+import 'package:decimal/decimal.dart';
+
+import 'wallet.dart';
+
+class ConvertTokenUnit {
+  static BigInt numToWei(double num, [int decimals = 18]) {
+    var dstr = (Decimal.parse('$num') * Decimal.fromInt(10).pow(decimals)).toString();
+    return BigInt.parse(dstr);
+  }
+
+  static Decimal weiToDecimal(BigInt wei, [int decimals = 18]) {
+    return Decimal.parse(wei.toString()) / Decimal.fromInt(10).pow(decimals);
+  }
+
+  static Decimal weiToEther({BigInt weiBigInt, int weiInt}) {
+    var wei = weiBigInt != null ? Decimal.parse(weiBigInt.toString()) : Decimal.fromInt(weiInt);
+    return wei / Decimal.fromInt(TokenUnit.ETHER);
+  }
+
+  static BigInt etherToWei({Decimal etherDecimal, double etherDouble}) {
+    if (etherDecimal != null) {
+      return BigInt.parse((etherDecimal * Decimal.fromInt(TokenUnit.ETHER)).toString());
+    } else if (etherDouble != null) {
+      return BigInt.parse((Decimal.parse('$etherDouble') * Decimal.fromInt(TokenUnit.ETHER)).toString());
+    }
+    return BigInt.from(0);
+  }
+}

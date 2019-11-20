@@ -43,8 +43,8 @@ android {
     }
 
     defaultConfig {
-        applicationId "org.hyn.titan_flutter"
-        minSdkVersion 21
+        applicationId "org.hyn.titan"
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -70,15 +70,13 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-Debug'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
 
@@ -91,6 +89,10 @@ android {
                 }
             }
         }
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     compileOptions {
@@ -138,8 +140,17 @@ dependencies {
     // If you want to use Kotlin syntax with Android Lifecycle
     implementation 'com.trello.rxlifecycle3:rxlifecycle-android-lifecycle-kotlin:3.0.0'
 
+    //trust wallet core
+    implementation ('com.trustwallet:wallet-core:0.12.24') {
+//    implementation ('com.trustwallet.walletcore:walletcore:0.10.0') {
+        exclude group: 'com.google.guava'
+    }
+    //web3j
+    implementation 'org.web3j:core:4.5.0'
+
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
+

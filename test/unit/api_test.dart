@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:matcher/matcher.dart';
@@ -10,11 +12,11 @@ import 'package:titan/src/data/db/search_history_dao.dart';
 import 'package:titan/src/data/repository/repository.dart';
 
 void main() {
-  BuildEnvironment.init(flavor: BuildFlavor.androidOfficial, buildType: BuildType.dev);
+  BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV);
 
   test('update app api', () async {
     Api api = Api();
-    var data = await api.update('official', 'zh');
+    var data = await api.update('official', 'zh', Platform.isAndroid ? "android" : "ios");
     expect(data, TypeMatcher<UpdateEntity>());
   });
 

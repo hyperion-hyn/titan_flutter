@@ -46,7 +46,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
 
-    _searchTextController.text = widget.searchText;
+    _searchTextController.text = widget.searchText ?? '';
     _searchTextController.addListener(searchTextChangeListener);
 
     _scrollController.addListener(() {
@@ -72,7 +72,7 @@ class _SearchPageState extends State<SearchPage> {
 
     if (!loaded) {
       _searchBloc = SearchBloc(searchInteractor: Injector.of(context).searchInteractor);
-      _searchBloc.dispatch(FetchSearchItemsEvent(isHistory: true));
+      _searchBloc.add(FetchSearchItemsEvent(isHistory: true));
 
       loaded = true;
     }
@@ -81,7 +81,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void dispose() {
     _subscription?.cancel();
-    _searchBloc.dispose();
+    _searchBloc.close();
     _searchTextController.dispose();
     super.dispose();
   }
@@ -104,7 +104,7 @@ class _SearchPageState extends State<SearchPage> {
       _subscription = null;
       _subscription = Observable.timer(event, Duration(milliseconds: 1000)).listen((data) {
         if (data.searchText == currentText) {
-          _searchBloc.dispatch(data);
+          _searchBloc.add(data);
         }
       });
     } else {
@@ -113,7 +113,7 @@ class _SearchPageState extends State<SearchPage> {
           _visibleCloseIcon = false;
         });
       }
-      _searchBloc.dispatch(FetchSearchItemsEvent(isHistory: true));
+      _searchBloc.add(FetchSearchItemsEvent(isHistory: true));
     }
   }
 
@@ -129,7 +129,7 @@ class _SearchPageState extends State<SearchPage> {
       //encrypt text
       try {
         var poi = await ciphertextToPoi(Injector.of(context).repository, textOrPoi);
-        _searchBloc.dispatch(AddSearchItemEvent(textOrPoi));
+        _searchBloc.add(AddSearchItemEvent(textOrPoi));
         Navigator.pop(context, poi);
       } catch(err) {
         logger.e(err);
@@ -138,7 +138,7 @@ class _SearchPageState extends State<SearchPage> {
       return;
     }
 
-    _searchBloc.dispatch(AddSearchItemEvent(textOrPoi));
+    _searchBloc.add(AddSearchItemEvent(textOrPoi));
     Navigator.pop(context, textOrPoi);
   }
 
@@ -171,7 +171,7 @@ class _SearchPageState extends State<SearchPage> {
                                       style: TextStyle(color: Colors.blue),
                                     ),
                                     onPressed: () {
-                                      _searchBloc.dispatch(ClearSearchHisotoryEvent());
+                                      _searchBloc.add(ClearSearchHisotoryEvent());
                                     },
                                   )
                                 ],
@@ -329,32 +329,28 @@ class _SearchPageState extends State<SearchPage> {
         children: <Widget>[
           Material(
             elevation: 2.0,
-            child: InkWell(
-              onTap: () {
-//                Fluttertoast.showToast(msg: 'TODO');
-              },
-              child: Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Icon(Icons.enhanced_encryption, color: Colors.grey[600]),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0, bottom: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: Text(
-                            S.of(context).decrypt_location_cipher_tips,
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Icon(Icons.enhanced_encryption, color: Colors.grey[600]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 0, bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Text(
+                          S.of(context).decrypt_location_cipher_tips,
+                          style: TextStyle(fontWeight: FontWeight.w600),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(S.of(context).decrypt_location_cipher_tips_context, style: TextStyle(color: Colors.grey, fontSize: 14),softWrap: true,),
-                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(S.of(context).decrypt_location_cipher_tips_context, style: TextStyle(color: Colors.grey, fontSize: 14),softWrap: true,),
+                      ),
 //                        Padding(
 //                          padding: const EdgeInsets.only(top: 16.0),
 //                          child: Text(
@@ -362,11 +358,10 @@ class _SearchPageState extends State<SearchPage> {
 //                            style: TextStyle(color: Colors.blue),
 //                          ),
 //                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
           Expanded(child: Container(color: Colors.transparent))

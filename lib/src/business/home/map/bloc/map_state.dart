@@ -7,7 +7,6 @@ abstract class MapState {}
 
 class InitialMapState extends MapState {}
 
-
 ///marker
 class MarkerLoadedState extends MapState {
   final IPoi poi;
@@ -18,7 +17,6 @@ class MarkerLoadedState extends MapState {
 class ClearMarkerState extends MapState {}
 
 class ResetMapState extends MapState {}
-
 
 ///marker list
 class MarkerListLoadedState extends MapState {
@@ -67,8 +65,6 @@ class RouteSceneState extends MapState {
 }
 
 class CloseRouteState extends MapState {}
-
-
 
 ///location
 //class MyLocationState extends MapState {}
