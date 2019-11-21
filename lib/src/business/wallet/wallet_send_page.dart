@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +9,6 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_send_confirm_page.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 
 import '../../global.dart';
@@ -96,7 +97,7 @@ class _WalletSendState extends State<WalletSendPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "发送 ${symbol}",
+          "发送 $symbol",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -167,7 +168,7 @@ class _WalletSendState extends State<WalletSendPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          "${symbol}数量",
+                          "$symbol数量",
                           style: TextStyle(
                             color: Color(0xFF6D6D6D),
                             fontSize: 16,
@@ -228,7 +229,7 @@ class _WalletSendState extends State<WalletSendPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ ${amount} ${currencyUnit}")),
+                        Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ $amount $currencyUnit")),
                       ],
                     ),
                     SizedBox(
@@ -287,7 +288,6 @@ class _WalletSendState extends State<WalletSendPage> {
   }
 
   Future onScan() async {
-//    print('TODO scan');
     try {
       String barcode = await BarcodeScanner.scan();
       if (barcode.contains("ethereum")) {
@@ -310,16 +310,19 @@ class _WalletSendState extends State<WalletSendPage> {
             valueMap[keyValueArray[0]] = keyValueArray[1];
           });
           var value = valueMap["value"];
+          var decimal = valueMap["decimal"];
           if (double.parse(value) > 0) {
-            _countController.text = value;
+            _countController.text = (double.parse(value) / (pow(10, int.parse(decimal)))).toString();
             amount = double.parse(_countController.text) * walletAccountVo.currencyRate;
           }
         } else {
           var address = barcode.replaceAll("ethereum:", "");
           _receiverAddressController.text = address;
+          _countController.text = "";
         }
       } else {
         _receiverAddressController.text = barcode;
+        _countController.text = "";
       }
 
       setState(() => {});
