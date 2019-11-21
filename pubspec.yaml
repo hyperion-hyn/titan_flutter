@@ -101,6 +101,12 @@ dependencies:
   #https://pub.flutter-io.cn/packages/flutter_bugly
   flutter_bugly: 0.2.7
 
+  #https://pub.dev/packages/connectivity
+  connectivity: ^0.4.5+3
+
+  #https://pub.dev/packages/wifi_configuration
+  #wifi_configuration: ^1.0.15
+
   #https://pub.dev/packages/percent_indicator
   percent_indicator: "^2.1.1"
 
@@ -191,6 +197,9 @@ flutter:
     - res/drawable/check_outline.png
     - res/drawable/hyn_wallet.png
     - res/drawable/radar_scan.png
+    - res/drawable/wifi.png
+    - res/drawable/wifi_bg.png
+    - res/drawable/wifi_close.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

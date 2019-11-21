@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.net.wifi.WifiManager
+import android.content.Context
 import androidx.core.content.FileProvider
 import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
@@ -98,6 +100,10 @@ class MainActivity : FlutterActivity() {
                             type = "text/plain"
                         }
                         startActivity(Intent.createChooser(sendIntent, title))
+                    }
+                    "requestWiFiIsOpenedSetting" -> {
+                        val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager;
+                        result.success(wifi.isWifiEnabled)
                     }
                     else -> {
                         result.notImplemented()

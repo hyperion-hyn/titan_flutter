@@ -29,6 +29,9 @@ class DrawBalancePage extends StatefulWidget {
 class _DrawBalanceState extends State<DrawBalancePage> {
   UserService _userService = UserService();
   WithdrawalInfo withdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
+  WithdrawalInfo earningWithdrawalInfo;
+  WithdrawalInfo rechargeWithdrawalInfo;
+
   Quotes quotes;
 
   TextEditingController amountTEController = TextEditingController();
@@ -56,41 +59,78 @@ class _DrawBalanceState extends State<DrawBalancePage> {
     super.initState();
 
     amountTEController.addListener(() {
-      if (withdrawalInfo != null && quotes != null) {
-        double _amount = amountTEController.text.isEmpty ? 0.0 : double.parse(amountTEController.text);
-//        if (_amount > withdrawalInfo.can_withdrawal) {
-//          _amount = withdrawalInfo.can_withdrawal;
-//          amountTEController.text = '$_amount';
-//          amountTEController.selection = TextSelection.collapsed(offset: amountTEController.text.length - 1);
-//        }
-        /*else if(_amount < withdrawalInfo.min_limit) {
-          _amount = withdrawalInfo.min_limit;
-          amountTEController.text = '$_amount';
-          amountTEController.selection = TextSelection.collapsed(offset: amountTEController.text.length - 1);
-        }*/
-        print('amount is: $_amount');
-        setState(() {
-          amount = _amount;
-          fee = withdrawalInfo.free_rate * amount;
-          canGetHynAmount = (amount - fee) / quotes.avgRate;
-        });
-      }
+      setState(() {
+        _updateCanGetHynAmount();
+      });
     });
 
-    loadData();
+    loadData(_selectedWithdrawalTypeString);
   }
 
-  void loadData() async {
+  void loadData(String _typeString) async {
     try {
-      var _withdrawalInfo = await _userService.withdrawalInfo(_selectedWithdrawalTypeString);
+      var _withdrawalInfo = await _userService.withdrawalInfo(_typeString);
       var _quotes = await _userService.quotes();
-      setState(() {
-        withdrawalInfo = _withdrawalInfo;
-        quotes = _quotes;
-      });
+
+      print('loadData，_typeString: $_typeString, _selectedTypeString: $_selectedWithdrawalTypeString');
+      if (_typeString == _selectedWithdrawalTypeString) {
+        setState(() {
+          _setWithDrawalInfo(_withdrawalInfo, _typeString);
+          withdrawalInfo = _withdrawalInfo;
+          quotes = _quotes;
+        });
+      }
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  void _setSelectedWithdrawalTypeString(String _typeString) {
+    setState(() {
+      _selectedWithdrawalTypeString = _typeString;
+      _updateCanGetHynAmount();
+      _getWithDrawalInfo();
+    });
+  }
+
+  void _updateCanGetHynAmount() {
+
+    if (withdrawalInfo != null && quotes != null) {
+      double _amount = amountTEController.text.isEmpty ? 0.0 : double.parse(amountTEController.text);
+      print('amount is: $_amount');
+
+      amount = _amount;
+      fee = withdrawalInfo.free_rate * amount;
+      if (_selectedWithdrawalTypeString == RECHARGE) fee = 0;
+      canGetHynAmount = (amount - fee) / quotes.avgRate;
+      print('canGetHynAmount is: $canGetHynAmount');
+    }
+  }
+
+  void _setWithDrawalInfo(WithdrawalInfo _withdrawalInfo, String _typeString) {
+    if (_typeString == EARNING) {
+      earningWithdrawalInfo = _withdrawalInfo;
+    } else if (_typeString == RECHARGE) {
+      rechargeWithdrawalInfo = _withdrawalInfo;
+    }
+  }
+
+  void _getWithDrawalInfo() {
+
+    WithdrawalInfo _withdrawalInfo;
+    if (_selectedWithdrawalTypeString == EARNING) {
+       _withdrawalInfo = earningWithdrawalInfo;
+    } else if (_selectedWithdrawalTypeString == RECHARGE) {
+      _withdrawalInfo = rechargeWithdrawalInfo;
+    }
+
+    if (_withdrawalInfo != null) {
+      withdrawalInfo = _withdrawalInfo;
+    } else {
+      loadData(_selectedWithdrawalTypeString);
+    }
+
+    print('_selectedWithdrawalTypeString is: $_selectedWithdrawalTypeString, withdrawalInfo is: $_withdrawalInfo');
   }
 
   @override
@@ -141,10 +181,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                 title: Text("收益余额"),
                                 value: EARNING,
                                 onChanged: (value) {
-                                  setState(() {
-                                    _selectedWithdrawalTypeString = value;
-                                    loadData();
-                                  });
+                                  _setSelectedWithdrawalTypeString(value);
                                 },
                               ),
                             ),
@@ -155,10 +192,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                 title: Text("充值余额"),
                                 value: RECHARGE,
                                 onChanged: (value) {
-                                  setState(() {
-                                    _selectedWithdrawalTypeString = value;
-                                    loadData();
-                                  });
+                                  _setSelectedWithdrawalTypeString(value);
                                 },
                               ),
                             ),
@@ -457,10 +491,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                 title: Text("收益余额"),
                                 value: EARNING,
                                 onChanged: (value) {
-                                  setState(() {
-                                    _selectedWithdrawalTypeString = value;
-                                    loadData();
-                                  });
+                                  _setSelectedWithdrawalTypeString(value);
                                 },
                               ),
                             ),
@@ -471,10 +502,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                 title: Text("充值余额"),
                                 value: RECHARGE,
                                 onChanged: (value) {
-                                  setState(() {
-                                    _selectedWithdrawalTypeString = value;
-                                    loadData();
-                                  });
+                                  _setSelectedWithdrawalTypeString(value);
                                 },
                               ),
                             ),

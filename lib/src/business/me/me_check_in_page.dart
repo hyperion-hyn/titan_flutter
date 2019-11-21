@@ -1,14 +1,17 @@
 import 'dart:math';
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'dart:async';
-
 import 'package:titan/src/global.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 
 class MeCheckIn extends StatefulWidget {
   @override
@@ -21,10 +24,6 @@ class _MeCheckIn extends State<MeCheckIn> {
   MapboxMapController mapController;
 
   ScrollController scrollController = ScrollController();
-
-//  List<String> scanItems = [];
-//  List<GaodePoi> pois;
-//  int currentPoiIdx = 0;
 
   StreamSubscription subscription;
 
@@ -39,6 +38,7 @@ class _MeCheckIn extends State<MeCheckIn> {
   @override
   void initState() {
     super.initState();
+
     //根据算力计算扫描范围
     if (LOGIN_USER_INFO.totalPower <= 1) {
       minZoom = 17;
@@ -64,21 +64,51 @@ class _MeCheckIn extends State<MeCheckIn> {
     }
 
     initPosition();
+
+    _checkDeviceType();
+  }
+
+  void _checkDeviceType() async {
+    if(Platform.isIOS){
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      if (connectivityResult == ConnectivityResult.mobile) {
+        isVisibleWiFi = false;
+        isVisibleToast = true;
+      } else if (connectivityResult == ConnectivityResult.wifi) {
+        isVisibleWiFi = true;
+        isVisibleToast = false;
+      }
+      print('_checkDevicesType, isIOS');
+    }else if(Platform.isAndroid){
+      var isEnable = await TitanPlugin.requestWiFiIsOpenedSetting();
+      if (!isEnable) {
+        isVisibleWiFi = false;
+        isVisibleToast = true;
+      } else {
+        isVisibleWiFi = true;
+        isVisibleToast = false;
+      }
+      print('_checkDevicesType, isAndroid');
+    }
+    else {
+      isVisibleWiFi = false;
+      isVisibleToast = false;
+      print('_checkDevicesType, isOther');
+    }
   }
 
   void initPosition() async {
     userPosition =
         await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
-//    if (userPosition != null) {
-//      var model = await Api().searchByGaode(lat: userPosition.latitude, lon: userPosition.longitude);
-//      pois = model.data;
-//    }
   }
 
   int lastMoveTime = 0;
   int startTime = 0;
   int duration = 30000;
   double lastZoom;
+  bool isVisibleWiFi = false;
+  bool isVisibleToast = false;
+
 
   void startScan() async {
     progressStreamController.add(0);
@@ -106,6 +136,7 @@ class _MeCheckIn extends State<MeCheckIn> {
     });
   }
 
+
   @override
   void dispose() {
     subscription?.cancel();
@@ -131,7 +162,6 @@ class _MeCheckIn extends State<MeCheckIn> {
         alignment: Alignment.center,
         children: <Widget>[
           mapView(),
-//            RadarScanWidget(),
 
           StreamBuilder<double>(
             stream: progressStreamController.stream,
@@ -141,6 +171,69 @@ class _MeCheckIn extends State<MeCheckIn> {
               }
               return Container();
             },
+          ),
+
+          Visibility(
+            visible: isVisibleToast,
+            child: Positioned(
+//              top: 238,
+//              left: 100,
+//              bottom: 284,
+//              right: 109,
+              width: 200,
+              height: 85,
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'res/drawable/wifi_bg.png',
+                    fit: BoxFit.contain,
+                  ),
+                  Positioned(
+                    child: Text(
+                        '打开WiFi扫描更精准的信号地图',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white, fontSize: 13.0, fontWeight: FontWeight.w500),
+                    ),
+                    bottom: 15,
+                  ),
+
+                  Positioned(
+                    right: -27.5,
+                    top: 7.5,
+                    child: FlatButton(
+                      child: Image.asset(
+                        'res/drawable/wifi_close.png',
+                        height: 12,
+                        width: 12,
+                        fit: BoxFit.contain,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isVisibleToast = false;
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+
+          Visibility(
+            visible: isVisibleWiFi,
+            child: Positioned(
+              top: 22,
+              right: 21,
+              child: Container(
+                child: Image.asset(
+                  'res/drawable/wifi.png',
+                  height: 44,
+                  width: 34,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
           ),
 
           Positioned(
@@ -153,13 +246,13 @@ class _MeCheckIn extends State<MeCheckIn> {
                   Container(
                     child: Text('总算力：${Utils.powerForShow(LOGIN_USER_INFO.totalPower)}', style: TextStyle(color: Colors.white),),
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                    decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(30)),
+                    decoration: BoxDecoration(color: HexColor("#0F95B0"), borderRadius: BorderRadius.circular(30)),
                   ),
                   Container(
                     child: Text('最大范围约：$maxMeter 米', style: TextStyle(color: Colors.white),),
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     margin: EdgeInsets.only(top: 8,),
-                    decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(30)),
+                    decoration: BoxDecoration(color: HexColor("#0F95B0"), borderRadius: BorderRadius.circular(30)),
                   ),
                 ],
               ),
@@ -174,6 +267,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                 builder: (ctx, snap) {
                   return LinearProgressIndicator(
                     value: snap?.data ?? 0.0,
+                    valueColor: AlwaysStoppedAnimation<Color>(HexColor("#0F95B0")),
                   );
                 },
               ),

@@ -104,6 +104,11 @@ class TitanPlugin {
     return await callChannel.invokeMethod('installApk', {'path': path});
   }
 
+  /// only android
+  static Future<bool> requestWiFiIsOpenedSetting() async {
+    return await callChannel.invokeMethod("requestWiFiIsOpenedSetting");
+  }
+
   static Future<dynamic> openMarket({String packageName}) async {
     return await callChannel.invokeMethod('openMarket', {'packageName': packageName});
   }

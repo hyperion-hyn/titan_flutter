@@ -177,7 +177,9 @@ class _MeState extends UserState<MePage> with RouteAware {
                                         ? () {
                                             _checkIn();
                                           }
-                                        : null,
+                                        : () {
+                                            Fluttertoast.showToast(msg: '今天任务已完成');
+                                          },
 //                                    onTap: _checkIn,
                                   ),
                                   Padding(
