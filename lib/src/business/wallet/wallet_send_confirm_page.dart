@@ -1,4 +1,5 @@
 import 'package:decimal/decimal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,10 +21,9 @@ class WalletSendConfirmPage extends StatefulWidget {
   WalletAccountVo walletAccountVo;
   final double count;
   final String receiverAddress;
-  final int speed;
   final String backRouteName;
 
-  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress, this.speed, {this.backRouteName});
+  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress, {this.backRouteName});
 
   @override
   State<StatefulWidget> createState() {
@@ -39,6 +39,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   NumberFormat token_fee_format = new NumberFormat("#,###.########");
 
   var isLoading = false;
+  var isLoadingGasFee = false;
+
+  int speed = EthereumConst.FAST_SPEED;
 
   @override
   void initState() {
@@ -153,26 +156,113 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Text(
-                          "网络费用",
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      "网络费用",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B)),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          height: 24,
+                          child: Text(
+                            "$ethFee ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(currencyFee)})",
+                            style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          "${ethFee} ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(currencyFee)})",
-                          style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
+                        if (isLoadingGasFee)
+                          Container(
+                            width: 24,
+                            height: 24,
+                            child: CupertinoActivityIndicator(),
+                          )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              _speedOnTap(EthereumConst.LOW_SPEED);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: speed == EthereumConst.LOW_SPEED ? Colors.blue : Colors.grey[200],
+                                  border: Border(),
+                                  borderRadius:
+                                      BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
+                              child: Text(
+                                "慢",
+                                style: TextStyle(color: speed == EthereumConst.LOW_SPEED ? Colors.white : Colors.black),
+                              ),
+                            ),
+                          ),
                         ),
-                      )
-                    ],
+                        VerticalDivider(
+                          width: 2,
+                          thickness: 2,
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              _speedOnTap(EthereumConst.FAST_SPEED);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: speed == EthereumConst.FAST_SPEED ? Colors.blue : Colors.grey[200],
+                                  border: Border(),
+                                  borderRadius: BorderRadius.all(Radius.circular(0))),
+                              child: Text(
+                                "平均值",
+                                style:
+                                    TextStyle(color: speed == EthereumConst.FAST_SPEED ? Colors.white : Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                        VerticalDivider(
+                          width: 2,
+                          thickness: 2,
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              _speedOnTap(EthereumConst.SUPER_FAST_SPEED);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: speed == EthereumConst.SUPER_FAST_SPEED ? Colors.blue : Colors.grey[200],
+                                  border: Border(),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
+                              child: Text(
+                                "快",
+                                style: TextStyle(
+                                    color: speed == EthereumConst.SUPER_FAST_SPEED ? Colors.white : Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -208,7 +298,16 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         ));
   }
 
+  void _speedOnTap(int newSpeed) {
+    speed = newSpeed;
+    setState(() {});
+    _getGasFee();
+  }
+
   Future _getGasFee() async {
+    setState(() {
+      isLoadingGasFee = true;
+    });
     var wallet = widget.walletAccountVo.wallet;
     var toAddress = widget.receiverAddress;
     var contract = widget.walletAccountVo.assetToken.erc20ContractAddress;
@@ -229,7 +328,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     var ret = await wallet.estimateGasPrice(
       toAddress: toAddress,
       value: ConvertTokenUnit.etherToWei(etherDouble: amount),
-      gasPrice: BigInt.from(widget.speed),
+      gasPrice: BigInt.from(speed),
       data: erc20FunAbi,
     );
 
@@ -239,9 +338,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     logger.i('费率是 $ethFee eth');
     logger.i('费率是 $currencyFee usd');
 
-    if (mounted) {
-      setState(() {});
-    }
+    setState(() {
+      isLoadingGasFee = false;
+    });
   }
 
   Future _transfer() async {
@@ -303,7 +402,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     final txHash = await wallet.sendEthTransaction(
       password: password,
       toAddress: toAddress,
-      gasPrice: BigInt.from(widget.speed),
+      gasPrice: BigInt.from(speed),
       value: amount,
     );
 
@@ -317,7 +416,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     final txHash = await wallet.sendErc20Transaction(
       contractAddress: contractAddress,
       password: password,
-      gasPrice: BigInt.from(widget.speed),
+      gasPrice: BigInt.from(speed),
       value: amount,
       toAddress: toAddress,
     );
