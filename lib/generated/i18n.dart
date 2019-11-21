@@ -208,7 +208,7 @@ class $zh_CN extends S {
   @override
   String get confirm => "确定";
   @override
-  String get app_name => "泰坦";
+  String get app_name => "星际掘金";
   @override
   String get waiting_for_payment_result => "等待支付结果...";
   @override
