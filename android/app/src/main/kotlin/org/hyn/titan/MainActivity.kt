@@ -1,8 +1,10 @@
 package org.hyn.titan
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -32,7 +34,7 @@ class MainActivity : FlutterActivity() {
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
-            if(!handled) {
+            if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
             }
 
@@ -98,6 +100,10 @@ class MainActivity : FlutterActivity() {
                             type = "text/plain"
                         }
                         startActivity(Intent.createChooser(sendIntent, title))
+                    }
+                    "requestWiFiIsOpenedSetting" -> {
+                        val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager;
+                        result.success(wifi.isWifiEnabled)
                     }
                     else -> {
                         result.notImplemented()
