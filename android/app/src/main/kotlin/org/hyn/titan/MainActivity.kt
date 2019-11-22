@@ -1,8 +1,10 @@
 package org.hyn.titan
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -34,7 +36,7 @@ class MainActivity : FlutterActivity() {
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
-            if(!handled) {
+            if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
             }
 
