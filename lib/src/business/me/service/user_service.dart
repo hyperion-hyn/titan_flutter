@@ -27,6 +27,7 @@ import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/domain/gaode_model.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/business/me/model/checkin_history.dart';
 
 class UserService {
   MapRichApi _mapRichApi = MapRichApi();
@@ -126,6 +127,16 @@ class UserService {
       throw new Exception("not login");
     }
     PageResponse<PowerDetail> pageResponse = await _mapRichApi.getPowerList(userToken.token, userToken.userId, page);
+    return pageResponse;
+  }
+
+
+  Future<PageResponse<CheckinHistory>> getHistoryList(int page) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    PageResponse<CheckinHistory> pageResponse = await _mapRichApi.getHistoryList(userToken.token, userToken.userId, page);
     return pageResponse;
   }
 

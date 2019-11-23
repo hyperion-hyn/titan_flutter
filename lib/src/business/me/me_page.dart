@@ -21,6 +21,7 @@ import 'me_check_in_page.dart';
 import 'contract/buy_hash_rate_page_v2.dart';
 import 'my_asset_page.dart';
 import 'my_promote_page.dart';
+import 'me_checkin_history_page.dart';
 
 class MePage extends StatefulWidget {
   @override
@@ -178,7 +179,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                             _checkIn();
                                           }
                                         : () {
-                                            Fluttertoast.showToast(msg: '今天任务已完成');
+                                      Fluttertoast.showToast(msg: '今天任务已完成');
                                           },
 //                                    onTap: _checkIn,
                                   ),
@@ -298,6 +299,12 @@ class _MeState extends UserState<MePage> with RouteAware {
               decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
               child: Column(
                 children: <Widget>[
+                  _buildMemuBar("打卡记录", ExtendsIconFont.check_in, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
+                  }),
+                  Divider(
+                    height: 2,
+                  ),
                   _buildMemuBar("邀请分享", ExtendsIconFont.mail_read, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
                   }),

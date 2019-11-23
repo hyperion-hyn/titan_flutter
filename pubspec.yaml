@@ -200,6 +200,7 @@ flutter:
     - res/drawable/wifi.png
     - res/drawable/wifi_bg.png
     - res/drawable/wifi_close.png
+    - res/drawable/checkin_history_progress.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -216,6 +217,7 @@ flutter:
     - family: iconfont
       fonts:
         - asset: res/fonts/iconfont.ttf
+
 
   #   - family: Trajan Pro
   #     fonts:

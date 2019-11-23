@@ -24,6 +24,7 @@ import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/domain/gaode_model.dart';
 import 'package:titan/src/model/gaode_poi.dart';
+import 'package:titan/src/business/me/model/checkin_history.dart';
 
 class MapRichApi {
   ///
@@ -79,6 +80,18 @@ class MapRichApi {
   Future<int> checkInCount(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity("sign_in/$userId/stats", EntityFactory((json) => json as int),
         options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  ///获取checkinhistory
+  Future<PageResponse<CheckinHistory>> getHistoryList(String token, String userId, int page) async {
+    return await MapRichHttpCore.instance.getEntity("sign_in/$userId/stats/history", EntityFactory<PageResponse<CheckinHistory>>((json) {
+      var currentPage = json["page"] as int;
+      var totalPages = json["totalPages"] as int;
+      var dataList = json["history"] as List;
+      var historyList = dataList.map((itemMap) {
+        return CheckinHistory.fromJson(itemMap);
+      }).toList();
+      return PageResponse<CheckinHistory>(currentPage, totalPages, historyList);}), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
   ///获取用户Eth address

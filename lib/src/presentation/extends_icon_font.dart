@@ -54,10 +54,11 @@ class ExtendsIconFont {
 
   static const IconData send = const IconData(0xe7e0, fontFamily: _kFontFam);
 
-
   static const IconData receiver = const IconData(0xe63b, fontFamily: _kFontFam);
 
   static const IconData add = const IconData(0xe603, fontFamily: _kFontFam);
+
+  static const IconData check_in = const IconData(0xe606, fontFamily: _kFontFam);
 
   static const IconData import = const IconData(0xe68e, fontFamily: _kFontFam);
 }
