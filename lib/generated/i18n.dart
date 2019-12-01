@@ -22,46 +22,64 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get Clean => "Clean";
+  String get Hyperion => "Hyperion";
   String get Next => "Next";
   String get about_us => "About Us";
   String get accept_share_pub_key => "p2p sharing";
   String get add_share_options => "Sharing options";
   String get app_name => "Titan";
   String get app_version => "Version";
+  String get attraction => "Attraction";
+  String get bank => "Bank";
   String get buy_more_map => "Buy More Map";
   String get cancel => "Cancel";
   String get cancel_payment => "Cancel payment";
   String get clean_search_history => "Clean History";
   String get click_to_purchase => "Click to purchase";
+  String get coming_soon => "Coming Soon";
   String get confirm => "Confirm";
   String get copyed => "Copyed";
   String get cycling => "Cycling";
+  String get data_contribute => "Data Contribute";
+  String get data_contribute_reward => "贡献地图数据获得HYN奖励";
   String get decrypt_location_cipher_tips => "How to decode positional ciphertext？";
   String get decrypt_location_cipher_tips_context => "Please paste ciphertext, click enter to decode.";
+  String get discover => "Discover";
   String get downloading_update_file => "Downloading update file";
   String get driving => "Driving";
   String get empty_map_notice_message => "You haven't purchase any maps";
   String get encrypt_error => "encrypt error";
   String get enter => "Enter";
+  String get foods => "Foods";
   String get forum => "Forum";
+  String get gas_station => "Gas Station";
   String get generating_key => "Please wait for encrypted key.…";
+  String get global_map_server_nodes => "Global Map Server Nodes";
+  String get global_nodes => "Global Nodes";
+  String get home_page => "Home";
+  String get hotel => "Hotel";
   String get improvement_plan_agree => "Participate";
   String get improvement_plan_message => "Tell us what you think about Titan product by participating in\n        our user experience plan. Check for more details.\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">Titan Privacy Policy</a>\n        </b>";
   String get improvement_plan_refuse => "Not participate";
   String get improvement_plan_title => "Titan improvement plan";
+  String get information => "Information";
   String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
   String get install_now => "Install now";
   String get installation_update_package_failed => "Installation update package failed";
+  String get internet_bar => "Internet Bar";
   String get key_manager_title => "My encrypted addr.";
   String get label => "Label";
   String get later => "Later";
   String get less_than_1_min => "Less than 1 minute";
   String get main_my_public_key => "My encrypted key(public key)";
+  String get mall => "Mall";
   String get manually_refresh => "Refresh Manually";
+  String get map3_global_nodes => "Map3 Global Nodes";
   String get map_store => "Map Store";
   String get medium => "Medium";
   String get monthly_payment => " One Month Valid";
   String get more => "More";
+  String get my_page => "My";
   String get my_position => "My position";
   String get nav_about_us => "About us";
   String get nav_my_privacy_map => "My Privacy Map";
@@ -72,12 +90,14 @@ class S implements WidgetsLocalizations {
   String get offline_map => "Offline map";
   String get open_camera => "Please enable camera permissions";
   String get ordering => "Ordering...";
+  String get paking => "Parking";
   String get pay => "Pay";
   String get payment_failed => "Payment failed";
   String get payment_successful => "Purchase successful";
   String get payment_type => "Payment Types";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 character";
+  String get project_introduction => "Project Introduction";
   String get public_key_copied => "Public key. copied";
   String get public_key_scan_fail_rescan => "public key error, please re-scan";
   String get receiver_encrypted_address => "receiver encrypted address(public key)";
@@ -90,6 +110,7 @@ class S implements WidgetsLocalizations {
   String get route => "Route";
   String get search_empty_data => "No Data";
   String get search_history => "History";
+  String get search_or_decode => "Search / Decrypt ";
   String get search_title => "Search / Decrypt";
   String get service_type => "Service type";
   String get services => "Services";
@@ -100,17 +121,20 @@ class S implements WidgetsLocalizations {
   String get share_location => "Location share";
   String get share_qrcode => "Share public key QR Code";
   String get skip => "Skip";
+  String get supermarket => "SuperMarket";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
   String get time => "Time";
   String get tips => "Tips";
+  String get toilet => "Toilet";
   String get twitterhyperion => "Twitter-Hyperion";
   String get twittertitan => "Twitter-Titan";
   String get unknown_error => "Unknown error";
   String get update_now => "Update Now";
   String get waiting_for_payment_result => "Waiting for payment result...";
   String get walking => "Walking";
+  String get wallet => "Wallet";
   String get wechat => "Wechat";
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
@@ -138,13 +162,21 @@ class $zh_CN extends S {
   @override
   String get update_now => "现在更新";
   @override
+  String get foods => "美食";
+  @override
   String get your_purchased_map => "您购买的地图";
   @override
   String get cycling => "骑行";
   @override
   String get tips => "提示";
   @override
+  String get project_introduction => "项目介绍";
+  @override
   String get decrypt_location_cipher_tips_context => "请粘贴位置密文，点击搜索即可解码密文。";
+  @override
+  String get coming_soon => "即将开放";
+  @override
+  String get bank => "银行";
   @override
   String get wechat_official_account => "服务号";
   @override
@@ -160,6 +192,8 @@ class $zh_CN extends S {
   @override
   String get improvement_plan_agree => "参与计划";
   @override
+  String get mall => "商场";
+  @override
   String get refresh_keypaire_message => "刷新公钥地址后，之前的接收的位置密文将永久解密不了！确定继续刷新吗？";
   @override
   String get nav_my_privacy_map => "我的隐私地图";
@@ -168,9 +202,15 @@ class $zh_CN extends S {
   @override
   String get share_invalid_public_key => "无效的公钥";
   @override
+  String get toilet => "厕所";
+  @override
   String get route => "路线";
   @override
+  String get Hyperion => "海伯利安";
+  @override
   String get Next => "下一页";
+  @override
+  String get data_contribute_reward => "贡献地图数据获得HYN奖励";
   @override
   String get installation_update_package_failed => "安装更新包失败";
   @override
@@ -188,19 +228,27 @@ class $zh_CN extends S {
   @override
   String get unknown_error => "Unknown error";
   @override
+  String get supermarket => "超市";
+  @override
   String get my_position => "我的位置";
   @override
   String get empty_map_notice_message => "你尚未购买任何地图";
   @override
+  String get hotel => "酒店";
+  @override
   String get share => "分享";
   @override
   String get new_update_available => "发现新版本";
+  @override
+  String get wallet => "钱包";
   @override
   String get less_than_1_min => "小于1分钟";
   @override
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override
   String get more => "更多";
+  @override
+  String get global_map_server_nodes => "全球地图服务节点";
   @override
   String get services => "服务";
   @override
@@ -215,6 +263,8 @@ class $zh_CN extends S {
   String get no_recommended_route => "暂无推荐路线";
   @override
   String get refresh_public_key_seconds_tips => "%d秒后自动刷新";
+  @override
+  String get information => "资讯";
   @override
   String get click_to_purchase => "点击前往购买";
   @override
@@ -238,6 +288,8 @@ class $zh_CN extends S {
   @override
   String get buy_more_map => "购买更多地图";
   @override
+  String get internet_bar => "网吧";
+  @override
   String get encrypt_error => "加密失败";
   @override
   String get twittertitan => "推特-泰坦";
@@ -254,6 +306,8 @@ class $zh_CN extends S {
   @override
   String get manually_refresh => "手动刷新";
   @override
+  String get discover => "发现";
+  @override
   String get search_title => "搜索 / 解码";
   @override
   String get share_location => "位置分享";
@@ -264,11 +318,15 @@ class $zh_CN extends S {
   @override
   String get pay => "支付";
   @override
+  String get paking => "停车场";
+  @override
   String get driving => "驾车";
   @override
   String get generating_key => "正在生成加密地址…";
   @override
   String get payment_type => "支付类型";
+  @override
+  String get my_page => "我的";
   @override
   String get input_search_keyworod_or_cipher => "输入搜索词 / 密文";
   @override
@@ -278,25 +336,37 @@ class $zh_CN extends S {
   @override
   String get telegram_operator => "Telegram Operator";
   @override
+  String get global_nodes => "全球节点";
+  @override
   String get remark => "备注";
   @override
   String get medium => "Medium";
   @override
   String get Clean => "清除痕迹";
   @override
+  String get map3_global_nodes => "map3全球节点";
+  @override
   String get refresh_public_key_hours_tips => "%d小时%d分后自动刷新";
   @override
+  String get home_page => "首页";
+  @override
   String get accept_share_pub_key => "点对点分享";
+  @override
+  String get data_contribute => "数据贡献";
   @override
   String get walking => "步行";
   @override
   String get refresh_public_key_days_tips => "%d天后自动刷新";
+  @override
+  String get gas_station => "加油站";
   @override
   String get payment_failed => "支付失败";
   @override
   String get wechat => "公众号";
   @override
   String get map_store => "地图商店";
+  @override
+  String get search_or_decode => "搜索 / 解码位置密文";
   @override
   String get telegram => "电报群";
   @override
@@ -307,6 +377,8 @@ class $zh_CN extends S {
   String get forum => "论坛";
   @override
   String get service_type => "服务类型";
+  @override
+  String get attraction => "景点";
   @override
   String get add_share_options => "分享选项";
   @override

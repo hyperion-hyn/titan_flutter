@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/discover_content.dart';
 import 'package:titan/src/business/home/home_panel.dart';
@@ -123,11 +124,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         },
                         currentIndex: _currentIndex,
                         items: [
-                          BottomNavigationBarItem(title: Text("首页"), icon: Icon(Icons.home)),
-                          BottomNavigationBarItem(title: Text("钱包"), icon: Icon(Icons.account_balance_wallet)),
-                          BottomNavigationBarItem(title: Text("发现"), icon: Icon(Icons.explore)),
-                          BottomNavigationBarItem(title: Text("资讯"), icon: Icon(Icons.description)),
-                          BottomNavigationBarItem(title: Text("我的"), icon: Icon(Icons.person)),
+                          BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
+                          BottomNavigationBarItem(title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
+                          BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
+                          BottomNavigationBarItem(title: Text(S.of(context).information), icon: Icon(Icons.description)),
+                          BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
                         ]),
                   );
                 },

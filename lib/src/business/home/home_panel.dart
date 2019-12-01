@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -82,7 +83,7 @@ class HomePanelState extends State<HomePanel> {
               ),
             ),
             Text(
-              '搜索 / 解码位置密文',
+              S.of(context).search_or_decode,
               style: TextStyle(
                 color: Color(0xff8193AE),
               ),
@@ -113,7 +114,7 @@ class HomePanelState extends State<HomePanel> {
                           MaterialPageRoute(
                               builder: (context) => WebViewContainer(
                                     initUrl: 'https://news.hyn.space/react-reduction/',
-                                    title: 'map3全球节点',
+                                    title: S.of(context).map3_global_nodes,
                                   )));
                     },
                     child: Container(
@@ -129,13 +130,13 @@ class HomePanelState extends State<HomePanel> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '全球节点',
+                                  S.of(context).global_nodes,
                                   style: TextStyle(fontWeight: FontWeight.w600),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: Text(
-                                    '全球地图服务节点',
+                                    S.of(context).global_map_server_nodes,
                                     style: TextStyle(color: Colors.grey, fontSize: 12),
                                   ),
                                 )
@@ -167,7 +168,7 @@ class HomePanelState extends State<HomePanel> {
                           MaterialPageRoute(
                               builder: (context) => WebViewContainer(
                                     initUrl: 'https://shimo.im/docs/GDp72cj3ATwEB7ke/read',
-                                    title: '海伯利安',
+                                    title: S.of(context).Hyperion,
                                   )));
                     },
                     child: Container(
@@ -183,13 +184,13 @@ class HomePanelState extends State<HomePanel> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
-                                  '海伯利安',
+                                  S.of(context).Hyperion,
                                   style: TextStyle(fontWeight: FontWeight.w600),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: Text(
-                                    '项目介绍',
+                                    S.of(context).project_introduction,
                                     style: TextStyle(color: Colors.grey, fontSize: 12),
                                   ),
                                 )
@@ -229,20 +230,20 @@ class HomePanelState extends State<HomePanel> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          '数据贡献',
+                          S.of(context).data_contribute,
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            '贡献地图数据获得HYN奖励',
+                            S.of(context).data_contribute_reward,
                             style: TextStyle(color: Colors.grey, fontSize: 12),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            '即将开放',
+                            S.of(context).coming_soon,
                             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Color(0xFFF82530)),
                           ),
                         ),
@@ -270,35 +271,35 @@ class HomePanelState extends State<HomePanel> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        _buildPoiItem('res/drawable/ic_food.png', '美食', onTap: () async {
+        _buildPoiItem('res/drawable/ic_food.png', S.of(context).foods, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
                 .add(SearchTextEvent(isGaodeSearch: true, type: 1, center: center, searchText: '美食'));
           }
         }),
-        _buildPoiItem('res/drawable/ic_hotel.png', '酒店', onTap: () async {
+        _buildPoiItem('res/drawable/ic_hotel.png', S.of(context).hotel, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
                 .add(SearchTextEvent(isGaodeSearch: true, type: 2, center: center, searchText: '酒店'));
           }
         }),
-        _buildPoiItem('res/drawable/ic_scenic_spotx.png', '景点', onTap: () async {
+        _buildPoiItem('res/drawable/ic_scenic_spotx.png', S.of(context).attraction, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
                 .add(SearchTextEvent(isGaodeSearch: true, type: 3, center: center, searchText: '景点'));
           }
         }),
-        _buildPoiItem('res/drawable/ic_park.png', '停车场', onTap: () async {
+        _buildPoiItem('res/drawable/ic_park.png', S.of(context).paking, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
                 .add(SearchTextEvent(isGaodeSearch: true, type: 4, center: center, searchText: '停车场'));
           }
         }),
-        _buildPoiItem('res/drawable/ic_gas_station.png', '加油站', onTap: () async {
+        _buildPoiItem('res/drawable/ic_gas_station.png', S.of(context).gas_station, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
@@ -318,35 +319,35 @@ class HomePanelState extends State<HomePanel> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        _buildPoiItem('res/drawable/ic_bank.png', '银行', onTap: () async {
+        _buildPoiItem('res/drawable/ic_bank.png', S.of(context).bank, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
                 .add(SearchTextEvent(isGaodeSearch: true, type: 6, center: center, searchText: '银行'));
           }
         }),
-        _buildPoiItem('res/drawable/ic_supermarket.png', '超市', onTap: () async {
+        _buildPoiItem('res/drawable/ic_supermarket.png', S.of(context).supermarket, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
                 .add(SearchTextEvent(isGaodeSearch: true, type: 7, center: center, searchText: '超市'));
           }
         }),
-        _buildPoiItem('res/drawable/ic_market.png', '商场', onTap: () async {
+        _buildPoiItem('res/drawable/ic_market.png', S.of(context).mall, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
                 .add(SearchTextEvent(isGaodeSearch: true, type: 8, center: center, searchText: '商场'));
           }
         }),
-        _buildPoiItem('res/drawable/ic_cybercafe.png', '网吧', onTap: () async {
+        _buildPoiItem('res/drawable/ic_cybercafe.png', S.of(context).internet_bar, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
                 .add(SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '网吧'));
           }
         }),
-        _buildPoiItem('res/drawable/ic_wc.png', '厕所', onTap: () async {
+        _buildPoiItem('res/drawable/ic_wc.png', S.of(context).toilet, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context)
