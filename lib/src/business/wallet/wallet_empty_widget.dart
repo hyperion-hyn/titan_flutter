@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 
 import 'wallet_create_new_account_page.dart';
@@ -33,13 +34,13 @@ class _EmptyWalletState extends State<EmptyWallet> {
           ),
         ),
         Text(
-          "私密和安全",
+          S.of(context).private_and_safety,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Text(
-            "账户私钥永远不会离开你的设备",
+            S.of(context).private_wallet_tips,
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.grey[400]),
           ),
         ),
@@ -58,7 +59,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                     child: Text(
-                      "创建钱包",
+                      S.of(context).create_wallet,
                       style:
                           TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                     ),
@@ -78,7 +79,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
-                        "导入钱包",
+                        S.of(context).import_wallet,
                         style:
                             TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                       ),
