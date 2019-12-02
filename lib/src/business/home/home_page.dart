@@ -57,7 +57,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     animationController = AnimationController(duration: Duration(milliseconds: 2000), vsync: this);
 
     initUniLinks();
-    print("initState");
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);

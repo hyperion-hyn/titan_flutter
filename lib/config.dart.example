@@ -6,4 +6,6 @@ class Config {
   static const String ETHERSCAN_API_URL = 'https://api.etherscan.io';
   static const String ETHERSCAN_APIKEY = 'your key';
 
+  static const String BUGLY_ANDROID_APPID = 'you bugly android app id';
+  static const String BUGLY_IOS_APPID = 'you bugly ios app id';
 }
