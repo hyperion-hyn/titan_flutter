@@ -35,6 +35,7 @@ class S implements WidgetsLocalizations {
   String get all => "ALL";
   String get app_name => "Titan";
   String get app_version => "Version";
+  String get area => "Area";
   String get attraction => "Attraction";
   String get backup_finish => "Backup Finish";
   String get backup_notice_label => "Backup Tips";
@@ -50,6 +51,7 @@ class S implements WidgetsLocalizations {
   String get cancel_payment => "Cancel payment";
   String get clean_search_history => "Clean History";
   String get click_to_purchase => "Click to purchase";
+  String get close => "Close";
   String get coming_soon => "Coming Soon";
   String get confirm => "Confirm";
   String get confirm_mnemonic => "Confirm Mnemonic";
@@ -71,9 +73,16 @@ class S implements WidgetsLocalizations {
   String get delete => "Delete";
   String get delete_wallet_fail => "Delete Fail";
   String get delete_wallet_success => "Delete Success";
+  String get department => "Department";
+  String get discount_map => "Discount Map";
   String get discover => "Discover";
+  String get dmap_document_title => "DMap Integration Document";
+  String get dmap_life => "Life Guide";
+  String get dmap_tools => "Tools";
+  String get document_optimization => "Document optimization ...";
   String get downloading_update_file => "Downloading update file";
   String get driving => "Driving";
+  String get embassy_guide => "Embassy Guide";
   String get empty_map_notice_message => "You haven't purchase any maps";
   String get encrypt_error => "encrypt error";
   String get enter => "Enter";
@@ -85,9 +94,11 @@ class S implements WidgetsLocalizations {
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "Please wait for encrypted key.…";
+  String get global_embassies => "Global embassies";
   String get global_map_server_nodes => "Global Map Server Nodes";
   String get global_nodes => "Global Nodes";
   String get home_page => "Home";
+  String get hot_area => "Hot Area";
   String get hotel => "Hotel";
   String get hyn_market => "HYN Market";
   String get hyn_price => "HYN Price";
@@ -125,10 +136,12 @@ class S implements WidgetsLocalizations {
   String get manually_refresh => "Refresh Manually";
   String get map3_global_nodes => "Map3 Global Nodes";
   String get map3_node_introduction => "Mp3 Node";
+  String get map_dmap => "Map DMap";
   String get map_store => "Map Store";
   String get medium => "Medium";
   String get monthly_payment => " One Month Valid";
   String get more => "More";
+  String get more_dmap => "More DMap applications are continuously added ~";
   String get my_page => "My";
   String get my_position => "My position";
   String get nav_about_us => "About us";
@@ -136,11 +149,17 @@ class S implements WidgetsLocalizations {
   String get nav_share_app => "Share Titan APP";
   String get new_update_available => "New Update Available";
   String get next => "continue";
+  String get nightlife_guide => "Nightlife Guide";
+  String get no_data => "No Data";
+  String get no_detail_address => "No detailed address";
+  String get no_fill_in => "No Fill In";
   String get no_recommended_route => "No recommended route yet";
+  String get not_open_yet => "Not open yet";
   String get official_website => "Official Website";
   String get offline_map => "Offline map";
   String get online_exchange => "Online Exchange";
   String get open_camera => "Please enable camera permissions";
+  String get operating_hours => "Time";
   String get ordering => "Ordering...";
   String get paking => "Parking";
   String get password_incorrect => "incorrect password";
@@ -154,9 +173,14 @@ class S implements WidgetsLocalizations {
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
   String get please_waiting => "Waiting";
+  String get police_security_station => "Police Station";
+  String get police_station_text => "Have trouble finding the police";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 character";
   String get private_and_safety => "Private and Safety";
+  String get private_service => "Private Service";
+  String get private_sharing => "Private Share";
+  String get private_sharing_text => "Share encrypted locations, never leak location information";
   String get private_wallet_tips => "Private key never leaves your device";
   String get project_introduction => "Project Introduction";
   String get public_key_copied => "Public key. copied";
@@ -166,6 +190,7 @@ class S implements WidgetsLocalizations {
   String get receiver_address => "Receiver Address";
   String get receiver_address_not_empty_hint => "Receiver address is empty";
   String get receiver_encrypted_address => "receiver encrypted address(public key)";
+  String get recommended_area => "Recommended Area";
   String get refresh_keypaire_message => "Refreshing your public key address will unable to decrypt the previous address received, still continue to refresh?";
   String get refresh_public_key_days_tips => "Automatically refresh in %d days";
   String get refresh_public_key_hours_tips => "Automatically refresh in %d hrs %d mins";
@@ -184,6 +209,9 @@ class S implements WidgetsLocalizations {
   String get search_title => "Search / Decrypt";
   String get send => "Send";
   String get sent => "Sent";
+  String get service_area => "Area";
+  String get service_description => "Description";
+  String get service_hours => "Time";
   String get service_type => "Service type";
   String get services => "Services";
   String get share => "Share";
@@ -197,6 +225,8 @@ class S implements WidgetsLocalizations {
   String get speed_fast => "Fast";
   String get speed_normal => "Normal";
   String get speed_slow => "Slow";
+  String get start_encryption => "Encryption";
+  String get stay_tuned => "Stay tuned";
   String get supermarket => "SuperMarket";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
@@ -258,9 +288,13 @@ class $zh_CN extends S {
   @override
   String get foods => "美食";
   @override
+  String get police_station_text => "有困难，找警察";
+  @override
   String get contract_call => "智能合约调用";
   @override
   String get wallet_create_success => "账户创建成功";
+  @override
+  String get no_detail_address => "暂无详细地址";
   @override
   String get project_introduction => "项目介绍";
   @override
@@ -284,6 +318,8 @@ class $zh_CN extends S {
   @override
   String get search_empty_data => "暂无数据";
   @override
+  String get dmap_document_title => "DMap地图应用接入文档";
+  @override
   String get improvement_plan_agree => "参与计划";
   @override
   String get create_wallet => "创建钱包";
@@ -300,6 +336,8 @@ class $zh_CN extends S {
   @override
   String get route => "路线";
   @override
+  String get no_fill_in => "暂无填写";
+  @override
   String get data_contribute_reward => "贡献地图数据获得HYN奖励";
   @override
   String get receiver_address_not_empty_hint => "接收地址不能位空";
@@ -314,6 +352,8 @@ class $zh_CN extends S {
   @override
   String get view_all => "查看全部";
   @override
+  String get nightlife_guide => "夜生活指南";
+  @override
   String get open_camera => "请开启相机权限";
   @override
   String get unknown_error => "Unknown error";
@@ -323,6 +363,8 @@ class $zh_CN extends S {
   String get empty_map_notice_message => "你尚未购买任何地图";
   @override
   String get hotel => "酒店";
+  @override
+  String get close => "关闭";
   @override
   String get input_wallet_name_hint => "请输入钱包名称";
   @override
@@ -339,6 +381,8 @@ class $zh_CN extends S {
   String get confirm => "确定";
   @override
   String get app_name => "泰坦";
+  @override
+  String get private_sharing => "私密分享";
   @override
   String get receiver_address => "接收者地址";
   @override
@@ -366,6 +410,8 @@ class $zh_CN extends S {
   @override
   String get please_input_wallet_name => "请输入钱包名称";
   @override
+  String get area => "区域";
+  @override
   String get search_title => "搜索 / 解码";
   @override
   String get hyn_price => "HYN指数";
@@ -374,7 +420,11 @@ class $zh_CN extends S {
   @override
   String get confirm_mnemonic => "输入恢复短语";
   @override
+  String get recommended_area => "推荐地区";
+  @override
   String get pay => "支付";
+  @override
+  String get no_data => "暂无数据";
   @override
   String get account_error => "账户错误";
   @override
@@ -388,6 +438,8 @@ class $zh_CN extends S {
   @override
   String get delete_wallet_success => "删除成功";
   @override
+  String get service_area => "区域";
+  @override
   String get backup_wallet_notice_text1 => "获得助记词等于拥有钱包资产所有权";
   @override
   String get next => "继续";
@@ -396,6 +448,8 @@ class $zh_CN extends S {
   @override
   String get import => "导 入";
   @override
+  String get dmap_tools => "工具类";
+  @override
   String get medium => "Medium";
   @override
   String get map3_global_nodes => "map3全球节点";
@@ -403,6 +457,8 @@ class $zh_CN extends S {
   String get wallet_create_success_tips => "恭喜，你的私密账户已经创建成功";
   @override
   String get paste => "粘贴";
+  @override
+  String get private_sharing_text => "分享加密位置，绝不泄露位置信息";
   @override
   String get hyn_market => "HYN行情";
   @override
@@ -415,6 +471,8 @@ class $zh_CN extends S {
   String get wallet_manage => "钱包管理";
   @override
   String get private_wallet_tips => "账户私钥永远不会离开你的设备";
+  @override
+  String get service_description => "描述";
   @override
   String get payment_failed => "支付失败";
   @override
@@ -448,7 +506,11 @@ class $zh_CN extends S {
   @override
   String get import_wallet => "导入钱包";
   @override
+  String get dmap_life => "生活指引";
+  @override
   String get your_purchased_map => "您购买的地图";
+  @override
+  String get start_encryption => "开始加密";
   @override
   String get cycling => "骑行";
   @override
@@ -476,9 +538,15 @@ class $zh_CN extends S {
   @override
   String get import_account_fail => "导入失败";
   @override
+  String get embassy_guide => "大使馆指南";
+  @override
   String get wallet_name => "钱包名称";
   @override
+  String get document_optimization => "文档优化中...";
+  @override
   String get refresh_keypaire_message => "刷新公钥地址后，之前的接收的位置密文将永久解密不了！确定继续刷新吗？";
+  @override
+  String get more_dmap => "更多DMap应用持续添加~";
   @override
   String get import_account => "导入账户";
   @override
@@ -501,6 +569,8 @@ class $zh_CN extends S {
   String get account_backup_next_step_notice => "在下一步中，您将看到12个允许您恢复账户的单词";
   @override
   String get backup_notice_label => "备份提示";
+  @override
+  String get not_open_yet => "暂未开放";
   @override
   String get postscript => "附言";
   @override
@@ -574,6 +644,10 @@ class $zh_CN extends S {
   @override
   String get share_encrypted_location => "分享加密位置";
   @override
+  String get hot_area => "热门地区";
+  @override
+  String get discount_map => "折扣地图";
+  @override
   String get wallet_name_label => "钱包名称";
   @override
   String get wechat_cs => "微信客服";
@@ -599,6 +673,8 @@ class $zh_CN extends S {
   String get public_key_scan_fail_rescan => "公钥有误，请重新扫描";
   @override
   String get save_mnemonic_safe_notice => "永远不要与任何人共享恢复短语，安全的存储它！";
+  @override
+  String get service_hours => "服务时间";
   @override
   String get sent => "已发送";
   @override
@@ -642,9 +718,21 @@ class $zh_CN extends S {
   @override
   String get refresh_public_key_days_tips => "%d天后自动刷新";
   @override
+  String get stay_tuned => "敬请期待";
+  @override
+  String get department => "部门";
+  @override
+  String get private_service => "私密服务";
+  @override
+  String get map_dmap => "地图DMap";
+  @override
   String get gas_station => "加油站";
   @override
+  String get police_security_station => "警察安全站";
+  @override
   String get backup_wallet_mnemonic_text => "使用纸和笔正确抄写助记词\n如果你的手机丢失、被盗。损坏，助记词将可以恢复你的资产";
+  @override
+  String get global_embassies => "全球大使馆";
   @override
   String get wechat => "公众号";
   @override
@@ -659,6 +747,8 @@ class $zh_CN extends S {
   String get attraction => "景点";
   @override
   String get cancel_payment => "取消支付";
+  @override
+  String get operating_hours => "工作时间";
   @override
   String get import_account_success => "账户导入成功";
   @override

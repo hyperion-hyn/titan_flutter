@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
@@ -183,7 +184,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
   Widget buildEmptyView(context) {
     return Padding(
       padding: const EdgeInsets.all(32.0),
-      child: Text('暂无数据'),
+      child: Text(S.of(context).no_data),
     );
   }
 }

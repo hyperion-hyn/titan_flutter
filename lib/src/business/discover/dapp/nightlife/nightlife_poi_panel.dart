@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
@@ -19,7 +20,6 @@ class NightLifePanel extends StatefulWidget {
 }
 
 class NightLifePanelState extends State<NightLifePanel> {
-
   @override
   void initState() {
     super.initState();
@@ -83,7 +83,7 @@ class NightLifePanelState extends State<NightLifePanel> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
-                      widget.poi.service?.replaceAll('141', 'night-life') ?? '私密服务',
+                      widget.poi.service?.replaceAll('141', 'night-life') ?? S.of(context).private_service,
                       style: TextStyle(color: Colors.purple, fontSize: 15),
                     ),
                   ),
@@ -105,7 +105,9 @@ class NightLifePanelState extends State<NightLifePanel> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
-                        (widget.poi.phone != null && widget.poi.phone.isNotEmpty) ? widget.poi.phone?.replaceAll('141', 'night-life') : '暂无填写',
+                        (widget.poi.phone != null && widget.poi.phone.isNotEmpty)
+                            ? widget.poi.phone?.replaceAll('141', 'night-life')
+                            : S.of(context).no_fill_in,
                         style: TextStyle(fontSize: 15)),
                   ),
                 )
@@ -126,7 +128,9 @@ class NightLifePanelState extends State<NightLifePanel> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
-                      (widget.poi.address != null && widget.poi.address.isNotEmpty) ? widget.poi.address : '暂无填写',
+                      (widget.poi.address != null && widget.poi.address.isNotEmpty)
+                          ? widget.poi.address
+                          : S.of(context).no_fill_in,
                       style: TextStyle(fontSize: 15),
                     ),
                   ),
@@ -140,9 +144,9 @@ class NightLifePanelState extends State<NightLifePanel> {
               height: 16,
             ),
           ),
-          buildInfoItem('服务时间', widget.poi.time, hint: '暂无填写'),
-          buildInfoItem('区域', widget.poi.area, hint: '暂无填写'),
-          buildInfoItem('描述', widget.poi.desc, hint: '暂无填写'),
+          buildInfoItem(S.of(context).service_hours, widget.poi.time, hint: S.of(context).no_fill_in),
+          buildInfoItem(S.of(context).service_area, widget.poi.area, hint: S.of(context).no_fill_in),
+          buildInfoItem(S.of(context).service_description, widget.poi.desc, hint: S.of(context).no_fill_in),
           SizedBox(
             height: 56,
           ),
@@ -169,5 +173,4 @@ class NightLifePanelState extends State<NightLifePanel> {
       ],
     );
   }
-
 }

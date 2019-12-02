@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/discover/dapp/encrypt_share/share_dialog.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
@@ -82,7 +83,7 @@ class EncryptShareState extends State<EncryptShare> {
                             child: Ink(
                               padding: const EdgeInsets.only(left: 24.0, top: 8),
                               child: Text(
-                                '关闭',
+                                S.of(context).close,
                                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -116,7 +117,7 @@ class EncryptShareState extends State<EncryptShare> {
                                     borderRadius: BorderRadius.all(Radius.circular(4))),
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                 child: Text(
-                                  '开始加密',
+                                  S.of(context).start_encryption,
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),

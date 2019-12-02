@@ -100,7 +100,7 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
                   SizedBox(
                     height: 8,
                   ),
-                  buildHeadItem(Icons.location_on, widget.poi.address, hint: '暂无详细地址'),
+                  buildHeadItem(Icons.location_on, widget.poi.address, hint: S.of(context).no_detail_address),
 //                  if (widget.poi.remark != null && widget.poi.remark.length > 0)
 //                    buildHeadItem(Icons.message, widget.poi.remark, hint: '无备注'),
                 ],
@@ -109,10 +109,10 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
             Divider(
               height: 0,
             ),
-            buildInfoItem('部门', widget.poi.department),
-            buildInfoItem('工作时间', widget.poi.remark),
+            buildInfoItem(S.of(context).department, widget.poi.department),
+            buildInfoItem(S.of(context).operating_hours, widget.poi.remark),
             buildInfoItem(S.of(context).telphone, widget.poi.telephone),
-            buildInfoItem('官方网址', widget.poi.website, textColor: Colors.blue, onTap: () {
+            buildInfoItem(S.of(context).official_website, widget.poi.website, textColor: Colors.blue, onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
