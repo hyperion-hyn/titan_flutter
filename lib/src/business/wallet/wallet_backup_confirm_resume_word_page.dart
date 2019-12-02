@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -50,14 +51,14 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    "输入恢复短语",
+                    S.of(context).confirm_mnemonic,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    "点击单词，把他们按正确的顺序放在一起",
+                    S.of(context).confirm_mnemonic_tips,
                     style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                   ),
                 ),
@@ -131,10 +132,10 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
 
                       logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
                       if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
-                        Fluttertoast.showToast(msg: "备份完成");
+                        Fluttertoast.showToast(msg: S.of(context).backup_finish);
                         Navigator.of(context).popUntil(ModalRoute.withName("/wallet_manager_page"));
                       } else {
-                        Fluttertoast.showToast(msg: "您的恢复短语不正确，请重新尝试");
+                        Fluttertoast.showToast(msg: S.of(context).confirm_mnemonic_incorrect);
                       }
                     },
                     child: Padding(
@@ -143,7 +144,7 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "完成",
+                            S.of(context).finish,
                             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],

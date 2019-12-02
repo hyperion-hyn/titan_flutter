@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/wallet_backup_show_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -34,27 +35,30 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Text(
-                          "备份提示",
-                          style: TextStyle(fontSize: 22, color: Color(0xFF252525)),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Text(
+                            S.of(context).backup_notice_label,
+                            style: TextStyle(fontSize: 22, color: Color(0xFF252525)),
+                          ),
                         ),
-                      ),
-                      Text(
-                        "获得助记词等于拥有钱包资产所有权",
-                        style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24),
-                        child: Image.asset(
-                          "res/drawable/backup_notice_image.png",
-                          height: 128,
+                        Text(
+                          S.of(context).backup_wallet_notice_text1,
+                          style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                          softWrap: true,
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          child: Image.asset(
+                            "res/drawable/backup_notice_image.png",
+                            height: 128,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -70,14 +74,14 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "备份助记次",
+                          S.of(context).backup_wallet_mnemonic_title,
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         SizedBox(
                           height: 12,
                         ),
                         Text(
-                          "使用纸和笔正确抄写助记词\n如果你的手机丢失、被盗。损坏，助记词将可以恢复你的资产",
+                          S.of(context).backup_wallet_mnemonic_text,
                           style: TextStyle(fontSize: 15, color: Color(0xFF6D6D6D)),
                         )
                       ],
@@ -100,14 +104,14 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "离线保管",
+                          S.of(context).backup_offline_save_title,
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         SizedBox(
                           height: 12,
                         ),
                         Text(
-                          "妥善保管至隔离网络的安全地方\n请勿讲助记词在联网环境下分享和存储，比如邮件、相册、社交应用等",
+                          S.of(context).backup_offline_save_text,
                           style: TextStyle(fontSize: 15, color: Color(0xFF6D6D6D)),
                         )
                       ],
@@ -150,9 +154,9 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                         _ as PlatformException;
                         logger.e(_);
                         if (_.code == WalletError.PASSWORD_WRONG) {
-                          Fluttertoast.showToast(msg: "密码错误");
+                          Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
                         } else {
-                          Fluttertoast.showToast(msg: "提取助记词失败");
+                          Fluttertoast.showToast(msg: S.of(context).extract_mnemonic_fail);
                         }
                       }
                     });
@@ -163,7 +167,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "下一步",
+                          S.of(context).next,
                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],

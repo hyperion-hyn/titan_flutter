@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
@@ -138,7 +139,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          "发送",
+                                          S.of(context).send,
                                           style: TextStyle(
                                             color: HexColor(
                                               "#FF6D6D6D",
@@ -170,7 +171,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          "接收",
+                                          S.of(context).receiver,
                                           style: TextStyle(
                                             color: HexColor(
                                               "#FF6D6D6D",
@@ -202,7 +203,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
-                                              "复制",
+                                              S.of(context).copy,
                                               style: TextStyle(
                                                 color: HexColor(
                                                   "#FF6D6D6D",
@@ -257,13 +258,13 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     var amountText = null;
     if (transtionDetail.type == TranstionType.TRANSFER_IN) {
       iconData = ExtendsIconFont.receiver;
-      title = "已收到";
+      title = S.of(context).received;
       account = "From:" + shortEthAddress(transtionDetail.fromAddress);
       amountColor = HexColor("#FF259B24");
       amountText = "+ ${token_format.format(transtionDetail.amount)} ${transtionDetail.unit}";
     } else if (transtionDetail.type == TranstionType.TRANSFER_OUT) {
       iconData = ExtendsIconFont.send;
-      title = "已发送";
+      title = S.of(context).sent;
       account = "To:" + shortEthAddress(transtionDetail.toAddress);
 
       amountColor = HexColor("#FFE51C23");
@@ -271,7 +272,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     }
 
     if(transtionDetail.toAddress.toLowerCase() == "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07".toLowerCase()){
-      title = "智能合约调用";
+      title = S.of(context).contract_call;
     }
 
 

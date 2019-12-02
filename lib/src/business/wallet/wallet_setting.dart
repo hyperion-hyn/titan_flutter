@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
@@ -44,7 +45,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "钱包设置",
+          S.of(context).wallet_setting,
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -55,7 +56,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             Row(
               children: <Widget>[
                 Text(
-                  "钱包名称",
+                  S.of(context).wallet_name,
                   style: TextStyle(
                     color: Color(0xFF6D6D6D),
                     fontSize: 16,
@@ -70,7 +71,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                   controller: _walletNameController,
                   validator: (value) {
                     if (value.isEmpty) {
-                      return "请输入钱包名称";
+                      return S.of(context).please_input_wallet_name;
                     } else {
                       return null;
                     }
@@ -87,7 +88,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             Row(
               children: <Widget>[
                 Text(
-                  "备份选项",
+                  S.of(context).backup_option,
                   style: TextStyle(
                     color: Color(0xFF6D6D6D),
                     fontSize: 16,
@@ -113,7 +114,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                       width: 12,
                     ),
                     Text(
-                      "显示恢复短语",
+                      S.of(context).show_mnemonic_label,
                       style: TextStyle(fontSize: 16),
                     ),
                     Spacer(),
@@ -127,7 +128,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             ),
             Divider(),
             Text(
-              "如果你无法访问这个设备，你的资金将无法找回，除非你备份了！",
+              S.of(context).wallet_setting_backup_notice,
               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
             ),
             SizedBox(
@@ -186,18 +187,18 @@ class _WalletSettingState extends State<WalletSettingPage> {
                           _walletService.saveDefaultWalletFileName(null);
                           currentWalletVo = null;
                         }
-                        Fluttertoast.showToast(msg: "删除成功");
+                        Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
                         eventBus.fire(ReScanWalletEvent());
                         Navigator.of(context).popUntil((r) => r.isFirst);
                       } else {
-                        Fluttertoast.showToast(msg: "删除失败");
+                        Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
                       }
                     } catch (_) {
                       logger.e(_);
                       if (_.code == WalletError.PASSWORD_WRONG) {
-                        Fluttertoast.showToast(msg: "密码错误");
+                        Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
                       } else {
-                        Fluttertoast.showToast(msg: "删除失败");
+                        Fluttertoast.showToast(msg:  S.of(context).delete_wallet_fail);
                       }
                     }
                   });
@@ -208,7 +209,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "删除",
+                        S.of(context).delete,
                         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                       ),
                     ],

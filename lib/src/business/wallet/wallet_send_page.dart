@@ -75,7 +75,7 @@ class _WalletSendState extends State<WalletSendPage> {
         return null;
       });
       if (account == null) {
-        Fluttertoast.showToast(msg: "账户错误");
+        Fluttertoast.showToast(msg: S.of(context).account_error);
         return;
       }
       walletAccountVo = account;
@@ -97,7 +97,7 @@ class _WalletSendState extends State<WalletSendPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "发送 $symbol",
+          "${S.of(context).send_symbol}",
           style: TextStyle(color: Colors.white),
         ),
       ),
