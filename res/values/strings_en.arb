@@ -247,5 +247,15 @@
   "no_detail_address": "No detailed address",
   "department": "Department",
   "area": "Area",
-  "operating_hours": "Time"
+  "operating_hours": "Time",
+  "kais_talk": "Kai's Talk",
+  "latest_news": "News",
+  "official_announcement": "Announcement",
+  "information_guide": "Guide",
+  "information_video": "Video",
+  "article": "Article",
+  "video": "Video",
+  "audio": "Audio",
+  "domestic_video": "Domestic",
+  "foreign_video": "Foreign"
 }

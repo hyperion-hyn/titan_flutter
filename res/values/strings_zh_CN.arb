@@ -247,5 +247,15 @@
   "no_detail_address": "暂无详细地址",
   "department": "部门",
   "area": "区域",
-  "operating_hours": "工作时间"
+  "operating_hours": "工作时间",
+  "kais_talk": "凯氏物语",
+  "latest_news": "最新资讯",
+  "official_announcement": "官方公告",
+  "information_guide": "教程",
+  "information_video": "视频",
+  "article": "文章",
+  "video": "视频",
+  "audio": "音频",
+  "domestic_video": "国内视频",
+  "foreign_video": "国外视频"
 }
