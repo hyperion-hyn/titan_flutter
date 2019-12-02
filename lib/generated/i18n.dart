@@ -28,8 +28,11 @@ class S implements WidgetsLocalizations {
   String get accept_share_pub_key => "p2p sharing";
   String get account_backup_next_step_notice => "In the next step you will see 12 words that allow you to recover your account";
   String get account_backup_notice => "Back up your account now";
-  String get account_error => "账户错误";
+  String get account_error => "Account Error";
+  String get account_is_empty => "Account is empty";
   String get add_share_options => "Sharing options";
+  String get address_copied => "Address copied";
+  String get all => "ALL";
   String get app_name => "Titan";
   String get app_version => "Version";
   String get attraction => "Attraction";
@@ -74,10 +77,12 @@ class S implements WidgetsLocalizations {
   String get empty_map_notice_message => "You haven't purchase any maps";
   String get encrypt_error => "encrypt error";
   String get enter => "Enter";
+  String get eth_balance_not_enough_for_gas_fee => "ETH balance is insufficient to pay network fees";
   String get extract_mnemonic_fail => "Mnemonic extraction failed";
   String get finish => "Finish";
   String get foods => "Foods";
   String get forum => "Forum";
+  String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "Please wait for encrypted key.…";
   String get global_map_server_nodes => "Global Map Server Nodes";
@@ -99,6 +104,8 @@ class S implements WidgetsLocalizations {
   String get improvement_plan_title => "Titan improvement plan";
   String get information => "Information";
   String get input_confirm_wallet_password_hint => "Please re-enter a wallet password of at least 6 characters";
+  String get input_corrent_count_hint => "Please enter the correct quantity";
+  String get input_count_over_balance => "Over balance";
   String get input_password_again_hint => "Please enter the password again";
   String get input_resume_mnemonic => "Enter backup mnemonics separated by spaces";
   String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
@@ -136,6 +143,7 @@ class S implements WidgetsLocalizations {
   String get open_camera => "Please enable camera permissions";
   String get ordering => "Ordering...";
   String get paking => "Parking";
+  String get password_incorrect => "incorrect password";
   String get password_not_equal_hint => "Inconsistent passwords";
   String get paste => "paste";
   String get pay => "Pay";
@@ -145,6 +153,7 @@ class S implements WidgetsLocalizations {
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
+  String get please_waiting => "Waiting";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 character";
   String get private_and_safety => "Private and Safety";
@@ -154,6 +163,8 @@ class S implements WidgetsLocalizations {
   String get public_key_scan_fail_rescan => "public key error, please re-scan";
   String get received => "Received";
   String get receiver => "Receive";
+  String get receiver_address => "Receiver Address";
+  String get receiver_address_not_empty_hint => "Receiver address is empty";
   String get receiver_encrypted_address => "receiver encrypted address(public key)";
   String get refresh_keypaire_message => "Refreshing your public key address will unable to decrypt the previous address received, still continue to refresh?";
   String get refresh_public_key_days_tips => "Automatically refresh in %d days";
@@ -183,6 +194,9 @@ class S implements WidgetsLocalizations {
   String get share_qrcode => "Share public key QR Code";
   String get show_mnemonic_label => "Show Mnemonic";
   String get skip => "Skip";
+  String get speed_fast => "Fast";
+  String get speed_normal => "Normal";
+  String get speed_slow => "Slow";
   String get supermarket => "SuperMarket";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
@@ -190,6 +204,8 @@ class S implements WidgetsLocalizations {
   String get time => "Time";
   String get tips => "Tips";
   String get toilet => "Toilet";
+  String get transfer_fail => "Transfer failed";
+  String get transfer_submitted => "The transfer has been submitted";
   String get twitterhyperion => "Twitter-Hyperion";
   String get twittertitan => "Twitter-Titan";
   String get unknown_error => "Unknown error";
@@ -215,11 +231,14 @@ class S implements WidgetsLocalizations {
   String get your_purchased_map => "Your purchased map";
   String distance(String distance) => "$distance m";
   String km(String km) => "$km km ";
+  String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
   String n_hour(String hour) => "$hour hour ";
   String n_minute(String minute) => "$minute minute ";
   String network_request_err(String code) => "Network request error, code: $code";
-  String send_symbol(String symbol) => "发送 $symbol";
+  String receiver_symbol(String symbol) => "Receive ${symbol}";
+  String send_count_label(String symbol) => "$symbol Quantity";
+  String send_symbol(String symbol) => "Send $symbol";
 }
 
 class $en extends S {
@@ -283,6 +302,8 @@ class $zh_CN extends S {
   @override
   String get data_contribute_reward => "贡献地图数据获得HYN奖励";
   @override
+  String get receiver_address_not_empty_hint => "接收地址不能位空";
+  @override
   String get input_wallet_password_length_hint => "请输入至少6位的密码";
   @override
   String get user_this_account => "使用该私密账户";
@@ -311,13 +332,19 @@ class $zh_CN extends S {
   @override
   String get input_password_again_hint => "请再次输入密码";
   @override
+  String get eth_balance_not_enough_for_gas_fee => "ETH余额不足支付网络费用";
+  @override
   String get services => "服务";
   @override
   String get confirm => "确定";
   @override
   String get app_name => "泰坦";
   @override
+  String get receiver_address => "接收者地址";
+  @override
   String get information => "资讯";
+  @override
+  String get input_count_over_balance => "超过余额";
   @override
   String get search_history => "历史搜索";
   @override
@@ -356,6 +383,8 @@ class $zh_CN extends S {
   String get my_page => "我的";
   @override
   String get input_search_keyworod_or_cipher => "输入搜索词 / 密文";
+  @override
+  String get account_is_empty => "账户为空";
   @override
   String get delete_wallet_success => "删除成功";
   @override
@@ -415,6 +444,8 @@ class $zh_CN extends S {
   @override
   String get time => "营业时间";
   @override
+  String get speed_fast => "快";
+  @override
   String get import_wallet => "导入钱包";
   @override
   String get your_purchased_map => "您购买的地图";
@@ -440,6 +471,8 @@ class $zh_CN extends S {
   String get enter => "进入";
   @override
   String get improvement_plan_refuse => "不参与";
+  @override
+  String get transfer_fail => "转账失败";
   @override
   String get import_account_fail => "导入失败";
   @override
@@ -479,6 +512,8 @@ class $zh_CN extends S {
   @override
   String get supermarket => "超市";
   @override
+  String get speed_slow => "慢";
+  @override
   String get share => "分享";
   @override
   String get new_update_available => "发现新版本";
@@ -492,6 +527,8 @@ class $zh_CN extends S {
   String get less_than_1_min => "小于1分钟";
   @override
   String get more => "更多";
+  @override
+  String get address_copied => "地址已复制";
   @override
   String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
   @override
@@ -519,6 +556,8 @@ class $zh_CN extends S {
   @override
   String get confirm_mnemonic_tips => "点击单词，把他们按正确的顺序放在一起";
   @override
+  String get gas_fee => "网络费用";
+  @override
   String get twitterhyperion => "推特-海伯利安";
   @override
   String get wallet_password_label => "钱包密码";
@@ -539,13 +578,19 @@ class $zh_CN extends S {
   @override
   String get wechat_cs => "微信客服";
   @override
+  String get speed_normal => "平均值";
+  @override
   String get monthly_payment => "一个月有效";
+  @override
+  String get all => "全部";
   @override
   String get manually_refresh => "手动刷新";
   @override
   String get discover => "发现";
   @override
   String get your_mnemonic => "您的恢复短语";
+  @override
+  String get password_incorrect => "密码错误";
   @override
   String get backup_offline_save_title => "离线保管";
   @override
@@ -566,6 +611,8 @@ class $zh_CN extends S {
   String get telphone => "电话";
   @override
   String get send => "发送";
+  @override
+  String get transfer_submitted => "转账已提交";
   @override
   String get telegram_operator => "Telegram Operator";
   @override
@@ -588,6 +635,10 @@ class $zh_CN extends S {
   String get accept_share_pub_key => "点对点分享";
   @override
   String get walking => "步行";
+  @override
+  String get input_corrent_count_hint => "请输入正确的数量";
+  @override
+  String get please_waiting => "请稍后";
   @override
   String get refresh_public_key_days_tips => "%d天后自动刷新";
   @override
@@ -621,15 +672,21 @@ class $zh_CN extends S {
   @override
   String n_day(String day) => "${day}天";
   @override
+  String receiver_symbol(String symbol) => "接收 ${symbol}";
+  @override
   String network_request_err(String code) => "网络请求错误,状态码: $code";
   @override
   String distance(String distance) => "${distance}米";
+  @override
+  String my_symbol_address(String symbol) => "我的${symbol}接收地址:";
   @override
   String n_minute(String minute) => "${minute}分钟";
   @override
   String km(String km) => "${km}公里";
   @override
   String send_symbol(String symbol) => "发送 $symbol";
+  @override
+  String send_count_label(String symbol) => "$symbol 数量";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {

@@ -97,7 +97,7 @@ class _WalletSendState extends State<WalletSendPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "${S.of(context).send_symbol}",
+          S.of(context).send_symbol(symbol),
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -117,7 +117,7 @@ class _WalletSendState extends State<WalletSendPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          "接收者地址",
+                          S.of(context).receiver_address,
                           style: TextStyle(
                             color: Color(0xFF6D6D6D),
                             fontSize: 16,
@@ -151,7 +151,7 @@ class _WalletSendState extends State<WalletSendPage> {
                       child: TextFormField(
                           validator: (value) {
                             if (value.isEmpty) {
-                              return "接收地址不能位空";
+                              return S.of(context).receiver_address_not_empty_hint;
                             }
                             return null;
                           },
@@ -168,7 +168,7 @@ class _WalletSendState extends State<WalletSendPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          "$symbol数量",
+                          S.of(context).send_count_label(symbol),
                           style: TextStyle(
                             color: Color(0xFF6D6D6D),
                             fontSize: 16,
@@ -184,7 +184,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                             child: Text(
-                              "全部",
+                              S.of(context).all,
                               style: TextStyle(
                                   color: Theme.of(context).primaryColor,
                                   fontSize: 16,
@@ -200,13 +200,13 @@ class _WalletSendState extends State<WalletSendPage> {
                       child: TextFormField(
                         validator: (value) {
                           if (value == "0") {
-                            return "请输入正确的数量";
+                            return S.of(context).input_corrent_count_hint;
                           }
                           if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
-                            return "请输入正确的数量";
+                            return S.of(context).input_corrent_count_hint;
                           }
                           if (double.parse(value) > walletAccountVo.balance) {
-                            return "超过余额";
+                            return S.of(context).input_count_over_balance;
                           }
                           return null;
                         },
@@ -254,7 +254,7 @@ class _WalletSendState extends State<WalletSendPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "下一步",
+                          S.of(context).next,
                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],
@@ -272,7 +272,7 @@ class _WalletSendState extends State<WalletSendPage> {
   void submit() {
     if (_fromKey.currentState.validate()) {
       if (walletAccountVo == null) {
-        Fluttertoast.showToast(msg: "账户为空");
+        Fluttertoast.showToast(msg: S.of(context).account_is_empty);
         return;
       }
       Navigator.push(

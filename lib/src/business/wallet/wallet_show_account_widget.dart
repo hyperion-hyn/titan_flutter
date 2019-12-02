@@ -16,6 +16,7 @@ import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_receive_page.dart';
 import 'package:titan/src/business/wallet/wallet_send_page.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/utils/wallet_icon_utils.dart';
@@ -188,7 +189,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                     return InkWell(
                                       onTap: () {
                                         Clipboard.setData(ClipboardData(text: widget.walletAccountVo.account.address));
-                                        Scaffold.of(context).showSnackBar(SnackBar(content: Text("地址已复制")));
+                                        Scaffold.of(context)
+                                            .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
                                       },
                                       child: Row(
                                         children: <Widget>[
@@ -271,11 +273,16 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       amountText = "- ${token_format.format(transtionDetail.amount)} ${transtionDetail.unit}";
     }
 
-    if(transtionDetail.toAddress.toLowerCase() == "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07".toLowerCase()){
+    var hynContractAddress = "";
+
+    if (WalletConfig.isMainNet) {
+      hynContractAddress = "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07";
+    } else {
+      hynContractAddress = "0xaebbada2bece10c84cbeac637c438cb63e1446c9";
+    }
+    if (transtionDetail.toAddress.toLowerCase() == hynContractAddress.toLowerCase()) {
       title = S.of(context).contract_call;
     }
-
-
 
     var time = dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transtionDetail.time));
     var lastTranstionTime = lastTranstionDetail != null
