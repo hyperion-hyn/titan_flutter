@@ -257,5 +257,10 @@
   "video": "视频",
   "audio": "音频",
   "domestic_video": "国内视频",
-  "foreign_video": "国外视频"
+  "foreign_video": "国外视频",
+  "titan_encrypted_map_ecology": "Titan 加密地图生态",
+  "share_app": "分享app",
+  "dapp_setting": "DApp设置",
+  "private_share": "私密分享",
+  "private_share_receive_address": "接收地址:${shortAddress}"
 }

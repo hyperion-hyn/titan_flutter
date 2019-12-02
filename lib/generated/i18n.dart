@@ -68,6 +68,7 @@ class S implements WidgetsLocalizations {
   String get create_wallet_password_label => "Wallet Password";
   String get create_wallet_tips => "Create a private account";
   String get cycling => "Cycling";
+  String get dapp_setting => "DApp Setting";
   String get data_contribute => "Data Contribute";
   String get data_contribute_reward => "Contribute map data to get HYN rewards";
   String get decrypt_location_cipher_tips => "How to decode positional ciphertext？";
@@ -188,6 +189,7 @@ class S implements WidgetsLocalizations {
   String get postscript_hint => "within 50 character";
   String get private_and_safety => "Private and Safety";
   String get private_service => "Private Service";
+  String get private_share => "Private Share";
   String get private_sharing => "Private Share";
   String get private_sharing_text => "Share encrypted locations, never leak location information";
   String get private_wallet_tips => "Private key never leaves your device";
@@ -224,6 +226,7 @@ class S implements WidgetsLocalizations {
   String get service_type => "Service type";
   String get services => "Services";
   String get share => "Share";
+  String get share_app => "Share App";
   String get share_encrypted_location => "Share encrypted location";
   String get share_fail => "Share Fail";
   String get share_invalid_public_key => "Invalid public key";
@@ -242,6 +245,7 @@ class S implements WidgetsLocalizations {
   String get telphone => "Phone No.";
   String get time => "Time";
   String get tips => "Tips";
+  String get titan_encrypted_map_ecology => "Titan Encrypted Map Ecology";
   String get toilet => "Toilet";
   String get transfer_fail => "Transfer failed";
   String get transfer_submitted => "The transfer has been submitted";
@@ -276,6 +280,7 @@ class S implements WidgetsLocalizations {
   String n_hour(String hour) => "$hour hour ";
   String n_minute(String minute) => "$minute minute ";
   String network_request_err(String code) => "Network request error, code: $code";
+  String private_share_receive_address(String shortAddress) => "Receive Address : ${shortAddress}";
   String receiver_symbol(String symbol) => "Receive ${symbol}";
   String send_count_label(String symbol) => "$symbol Quantity";
   String send_symbol(String symbol) => "Send $symbol";
@@ -299,6 +304,8 @@ class $zh_CN extends S {
   String get foods => "美食";
   @override
   String get police_station_text => "有困难，找警察";
+  @override
+  String get titan_encrypted_map_ecology => "Titan 加密地图生态";
   @override
   String get contract_call => "智能合约调用";
   @override
@@ -354,6 +361,8 @@ class $zh_CN extends S {
   @override
   String get input_wallet_password_length_hint => "请输入至少6位的密码";
   @override
+  String get dapp_setting => "DApp设置";
+  @override
   String get user_this_account => "使用该私密账户";
   @override
   String get ordering => "正在下单...";
@@ -397,6 +406,8 @@ class $zh_CN extends S {
   String get private_sharing => "私密分享";
   @override
   String get receiver_address => "接收者地址";
+  @override
+  String get share_app => "分享app";
   @override
   String get information => "资讯";
   @override
@@ -686,6 +697,8 @@ class $zh_CN extends S {
   @override
   String get all => "全部";
   @override
+  String get private_share => "私密分享";
+  @override
   String get manually_refresh => "手动刷新";
   @override
   String get discover => "发现";
@@ -797,6 +810,8 @@ class $zh_CN extends S {
   String network_request_err(String code) => "网络请求错误,状态码: $code";
   @override
   String distance(String distance) => "${distance}米";
+  @override
+  String private_share_receive_address(String shortAddress) => "接收地址:${shortAddress}";
   @override
   String my_symbol_address(String symbol) => "我的${symbol}接收地址:";
   @override

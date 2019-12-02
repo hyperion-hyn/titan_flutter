@@ -257,5 +257,10 @@
   "video": "Video",
   "audio": "Audio",
   "domestic_video": "Domestic",
-  "foreign_video": "Foreign"
+  "foreign_video": "Foreign",
+  "titan_encrypted_map_ecology": "Titan Encrypted Map Ecology",
+  "share_app": "Share App",
+  "dapp_setting": "DApp Setting",
+  "private_share": "Private Share",
+  "private_share_receive_address": "Receive Address : ${shortAddress}"
 }
