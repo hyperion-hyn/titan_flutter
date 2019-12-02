@@ -398,6 +398,9 @@ class _PurchaseState extends State<PurchasePage> {
   }
 
   double getBalanceByType(String type) {
+
+    if (userInfo == null) return 0.0;
+
     print('balance: ${userInfo.balance}, chargeBalance: ${userInfo.chargeBalance})');
 
     double balance = 0;
