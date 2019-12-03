@@ -20,6 +20,7 @@ import 'model/quotes.dart';
 import 'my_hash_rate_page.dart';
 import 'recharge_purchase_page.dart';
 import 'service/user_service.dart';
+import 'dart:math';
 
 class PurchasePage extends StatefulWidget {
   final ContractInfoV2 contractInfo;
@@ -397,12 +398,26 @@ class _PurchaseState extends State<PurchasePage> {
   }
 
   double getBalanceByType(String type) {
+
+    if (userInfo == null) return 0.0;
+
+    print('balance: ${userInfo.balance}, chargeBalance: ${userInfo.chargeBalance})');
+
+    double balance = 0;
     if (type == PAY_BALANCE_TYPE_INCOME) {
-      return (userInfo?.balance ?? 0) - (userInfo?.chargeBalance ?? 0);
+      balance = (userInfo?.balance ?? 0) - (userInfo?.chargeBalance ?? 0);
     } else if (type == PAY_BALANCE_TYPE_RECHARGE) {
-      return userInfo?.chargeBalance ?? 0;
+      balance = userInfo?.chargeBalance ?? 0;
     }
-    return 0;
+
+    int decimals = 2;
+    int fac = pow(10, decimals);
+    print('fac: $fac');
+    double d = balance;
+    d = (d * fac).floor()/fac;
+    print("d: $d");
+
+    return d;
   }
 
   Widget _buildHynBalancePayBox() {

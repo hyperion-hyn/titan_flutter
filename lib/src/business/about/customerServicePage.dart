@@ -11,7 +11,6 @@ class CustomerServicePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-//        backgroundColor: Colors.white,
         title: Text(
           "联系客服",
           style: TextStyle(color: Colors.white),
@@ -25,7 +24,7 @@ class CustomerServicePage extends StatelessWidget {
           alignment: Alignment.center,
           margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-          child: ListView(children: <Widget>[
+          child: Column(children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Center(

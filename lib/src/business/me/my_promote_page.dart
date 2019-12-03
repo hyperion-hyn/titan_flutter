@@ -205,6 +205,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                             ),
                           ),
                         ),
+                        /*
                         GestureDetector(
                           onTap: () {
                             shareLink(link);
@@ -218,6 +219,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                             ),
                           ),
                         ),
+                        */
                       ],
                     ),
                     SizedBox(
@@ -383,8 +385,6 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
   }
 
   String getParentEmail() {
-//    return LOGIN_USER_INFO?.parentUser["email"]??LOGIN_USER_INFO.email;
-
     if (LOGIN_USER_INFO.parentUser != null) {
       if (LOGIN_USER_INFO.parentUser.email != null) {
         return LOGIN_USER_INFO?.parentUser.email;
@@ -394,17 +394,8 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
     return LOGIN_USER_INFO.email;
   }
 
-//  Future _getFirstPromitionList() async {
-//    await _getPromotionList(0);
-//    setState(() {});
-//  }
-//
-//  Future _getPromotionList(int page) async {
-//    _pageResponse = await _userService.getPromotionList(page);
-//  }
-
   void shareLink(String link) async {
     Share.text("我的邀请链接", "我的邀请链接：" + link, "text/plain");
-//    await Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
+    //await Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
   }
 }
