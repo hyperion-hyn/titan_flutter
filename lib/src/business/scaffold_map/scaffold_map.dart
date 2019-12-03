@@ -342,8 +342,8 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       onMapLongPressHandle = state.dMapConfigModel?.onMapLongPressHandle;
 
       return Stack(
-        fit: StackFit.expand,
         children: <Widget>[
+          Container(), //need a container to expand the stack???
           MapContainer(
             key: Keys.mapContainerKey,
             heavenDataList: heavenModelList,
