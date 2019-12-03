@@ -451,7 +451,7 @@ class $ko extends S {
   @override
   String get account_error => "계정 오류";
   @override
-  String get official_announcement => "공식 발표";
+  String get official_announcement => "발표";
   @override
   String get article => "기사";
   @override
@@ -603,7 +603,7 @@ class $ko extends S {
   @override
   String get backup_notice_label => "백업 팁";
   @override
-  String get not_open_yet => "아직 열지 않았습니다";
+  String get not_open_yet => "기대하세요";
   @override
   String get postscript => "포스트 스크립트";
   @override
@@ -615,7 +615,7 @@ class $ko extends S {
   @override
   String get supermarket => "슈퍼마켓";
   @override
-  String get information_guide => "튜토리얼";
+  String get information_guide => "안내서";
   @override
   String get speed_slow => "느리게";
   @override
@@ -653,11 +653,11 @@ class $ko extends S {
   @override
   String get share_qrcode => "공개 키 QR 코드 공유";
   @override
-  String get latest_news => "최신 뉴스";
+  String get latest_news => "뉴스";
   @override
   String get receiver_encrypted_address => "수신자 암호화 주소 (공개 키)";
   @override
-  String get kais_talk => "케이시 스토리";
+  String get kais_talk => "Kai's Talk";
   @override
   String get rmb => "RMB";
   @override
