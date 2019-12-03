@@ -21,12 +21,12 @@ class S implements WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
-  String get Clean => "Clean";
+  String get Clean => "Clear history";
   String get Hyperion => "Hyperion";
   String get Next => "Next";
   String get about_us => "About Us";
   String get accept_share_pub_key => "p2p sharing";
-  String get account_backup_next_step_notice => "In the next step you will see 12 words that allow you to recover your account";
+  String get account_backup_next_step_notice => "Next, you will see 12 recovery words in an order that allow you to recover your account";
   String get account_backup_notice => "Back up your account now";
   String get account_error => "Account Error";
   String get account_is_empty => "Account is empty";
@@ -37,58 +37,54 @@ class S implements WidgetsLocalizations {
   String get app_version => "Version";
   String get area => "Area";
   String get article => "Article";
-  String get attraction => "Attraction";
+  String get attraction => "Travel";
   String get audio => "Audio";
-  String get backup_finish => "Backup Finish";
+  String get backup_finish => "Backup Finished";
   String get backup_notice_label => "Backup Tips";
-  String get backup_offline_save_text => "Safekeeping to a safe place in an isolated network\nDo not share mnemonics in a networked environment, such as emails, photo albums, social applications, etc.";
+  String get backup_offline_save_text => "Keep it in a safe place offline\nDo not share or store mnemonics online, such as emails, photo albums, social applications, etc.";
   String get backup_offline_save_title => "Offline storage";
-  String get backup_option => "Backuo Options";
-  String get backup_wallet_mnemonic_text => "Use paper and pen to copy mnemonics correctly\nIf your phone is lost or stolen. Damage, mnemonics will be able to recover your assets";
+  String get backup_option => "Backup Options";
+  String get backup_wallet_mnemonic_text => "Use paper and pen to copy mnemonics correctly\nIf your phone is lost, stolen or damaged, use mnemonics to recover your assets";
   String get backup_wallet_mnemonic_title => "Backup mnemonics";
-  String get backup_wallet_notice_text1 => "Obtaining mnemonic words equals ownership of wallet assets";
+  String get backup_wallet_notice_text1 => "Obtaining mnemonic words proves your ownership of wallet assets";
   String get bank => "Bank";
-  String get buy_more_map => "Buy More Map";
   String get cancel => "Cancel";
-  String get cancel_payment => "Cancel payment";
-  String get clean_search_history => "Clean History";
-  String get click_to_purchase => "Click to purchase";
+  String get clean_search_history => "Clear History";
   String get close => "Close";
   String get coming_soon => "Coming Soon";
   String get confirm => "Confirm";
   String get confirm_mnemonic => "Confirm Mnemonic";
   String get confirm_mnemonic_incorrect => "Your mnemonic is incorrect, please try again";
-  String get confirm_mnemonic_tips => "Click on the words to put them together in the correct order";
+  String get confirm_mnemonic_tips => "Click on the words to put them in the correct order";
   String get continue_text => "Continue";
-  String get contract_call => "Contract Call";
+  String get contract_call => "Call Smart contract";
   String get copy => "Copy";
-  String get copyed => "Copyed";
+  String get copyed => "Copied";
   String get create_wallet => "Create Wallet";
   String get create_wallet_name_label => "Wallet Name";
   String get create_wallet_password_label => "Wallet Password";
   String get create_wallet_tips => "Create a private account";
   String get cycling => "Cycling";
-  String get dapp_setting => "DApp Setting";
-  String get data_contribute => "Data Contribute";
-  String get data_contribute_reward => "Contribute map data to get HYN rewards";
-  String get decrypt_location_cipher_tips => "How to decode positional ciphertext？";
-  String get decrypt_location_cipher_tips_context => "Please paste ciphertext, click enter to decode.";
+  String get dapp_setting => "DApp Settings";
+  String get data_contribute => "Data Contribution";
+  String get data_contribute_reward => "Contribute map data to earn HYN rewards";
+  String get decrypt_location_cipher_tips => "How to decipher coded location information？";
+  String get decrypt_location_cipher_tips_context => "Please paste the location code, and click enter to decode.";
   String get delete => "Delete";
-  String get delete_wallet_fail => "Delete Fail";
-  String get delete_wallet_success => "Delete Success";
+  String get delete_wallet_fail => "Delete Failed";
+  String get delete_wallet_success => "Deleted Successfully";
   String get department => "Department";
   String get discount_map => "Discount Map";
   String get discover => "Discover";
   String get dmap_document_title => "DMap Integration Document";
-  String get dmap_life => "Life Guide";
+  String get dmap_life => "Explore nearby";
   String get dmap_tools => "Tools";
-  String get document_optimization => "Document optimization ...";
+  String get document_optimization => "optimizing document...";
   String get domestic_video => "Domestic";
   String get downloading_update_file => "Downloading update file";
   String get driving => "Driving";
   String get embassy_guide => "Embassy Guide";
-  String get empty_map_notice_message => "You haven't purchase any maps";
-  String get encrypt_error => "encrypt error";
+  String get encrypt_error => "encryption denied";
   String get enter => "Enter";
   String get eth_balance_not_enough_for_gas_fee => "ETH balance is insufficient to pay network fees";
   String get extract_mnemonic_fail => "Mnemonic extraction failed";
@@ -98,46 +94,46 @@ class S implements WidgetsLocalizations {
   String get forum => "Forum";
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
-  String get generating_key => "Please wait for encrypted key.…";
-  String get global_embassies => "Global embassies";
-  String get global_map_server_nodes => "Global Map Server Nodes";
+  String get generating_key => "generating encrypted addr.…";
+  String get global_embassies => "Global Embassies";
+  String get global_map_server_nodes => "Global Map Service Nodes";
   String get global_nodes => "Global Nodes";
   String get home_page => "Home";
-  String get hot_area => "Hot Area";
+  String get hot_area => "Hot spots";
   String get hotel => "Hotel";
   String get hyn_market => "HYN Market";
   String get hyn_price => "HYN Price";
   String get illegal_mnemonic => "illegal mnemonic";
   String get import => "Import";
   String get import_account => "Import Account";
-  String get import_account_fail => "Import Fail";
-  String get import_account_success => "Account import successful";
+  String get import_account_fail => "Import Failed";
+  String get import_account_success => "The account was successfully imported ";
   String get import_account_tips => "Congratulations, your private wallet has been successfully imported";
   String get import_wallet => "Import Wallet";
-  String get improvement_plan_agree => "Participate";
-  String get improvement_plan_message => "Tell us what you think about Titan product by participating in\n        our user experience plan. Check for more details.\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">Titan Privacy Policy</a>\n        </b>";
-  String get improvement_plan_refuse => "Not participate";
+  String get improvement_plan_agree => "Yes";
+  String get improvement_plan_message => "Tell us your suggestions about Titan by joining our user experience plan. Check for more details.\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">Titan Privacy Policy</a>\n        </b>";
+  String get improvement_plan_refuse => "No";
   String get improvement_plan_title => "Titan improvement plan";
-  String get information => "Information";
-  String get information_guide => "Guide";
+  String get information => "News";
+  String get information_guide => "Guidance";
   String get information_video => "Video";
   String get input_confirm_wallet_password_hint => "Please re-enter a wallet password of at least 6 characters";
-  String get input_corrent_count_hint => "Please enter the correct quantity";
-  String get input_count_over_balance => "Over balance";
-  String get input_password_again_hint => "Please enter the password again";
+  String get input_corrent_count_hint => "Please enter the correct amount";
+  String get input_count_over_balance => "Exceed balance limit";
+  String get input_password_again_hint => "Please re-enter the password";
   String get input_resume_mnemonic => "Enter backup mnemonics separated by spaces";
   String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
   String get input_wallet_name_hint => "Please input wallet name";
-  String get input_wallet_name_length_hint => "Please enter a name within 6 characters";
-  String get input_wallet_password_length_hint => "Please enter a wallet password of at least 6 characters";
+  String get input_wallet_name_length_hint => "Name must be within 6 characters";
+  String get input_wallet_password_length_hint => "Wallet password must be at least 6 characters";
   String get install_now => "Install now";
   String get installation_update_package_failed => "Installation update package failed";
-  String get internet_bar => "Internet Bar";
+  String get internet_bar => "Internet Cafe";
   String get kais_talk => "Kai's Talk";
   String get key_manager_title => "My encrypted addr.";
   String get label => "Label";
   String get later => "Later";
-  String get latest_news => "News";
+  String get latest_news => "Article";
   String get less_than_1_min => "Less than 1 minute";
   String get lossz_wallet_mnemonic_notice => "I understand that if I lose the recovery word, I will not be able to access my wallet";
   String get main_my_public_key => "My encrypted key(public key)";
@@ -146,56 +142,46 @@ class S implements WidgetsLocalizations {
   String get map3_global_nodes => "Map3 Global Nodes";
   String get map3_node_introduction => "Mp3 Node";
   String get map_dmap => "Map DMap";
-  String get map_store => "Map Store";
   String get medium => "Medium";
-  String get monthly_payment => " One Month Valid";
-  String get more => "More";
-  String get more_dmap => "More DMap applications are continuously added ~";
+  String get more_dmap => "Stay tuned for more DMap applications";
   String get my_location => "My Location";
   String get my_page => "My";
-  String get my_position => "My position";
   String get nav_about_us => "About us";
   String get nav_my_privacy_map => "My Privacy Map";
   String get nav_share_app => "Share Titan APP";
-  String get navigation => "Navigation";
-  String get new_update_available => "New Update Available";
+  String get navigation => "Start";
+  String get new_update_available => "Latest Update Available";
   String get next => "continue";
-  String get nightlife_guide => "Nightlife Guide";
+  String get nightlife_guide => "Nightlife Guidance";
   String get no_data => "No Data";
   String get no_detail_address => "No detailed address";
-  String get no_fill_in => "No Fill In";
+  String get no_fill_in => "Not Filled";
   String get no_recommended_route => "No recommended route yet";
-  String get not_open_yet => "Not open yet";
+  String get not_open_yet => "Coming Soon";
   String get official_announcement => "Announcement";
   String get official_website => "Official Website";
-  String get offline_map => "Offline map";
-  String get online_exchange => "Online Exchange";
-  String get open_camera => "Please enable camera permissions";
+  String get online_exchange => "Online Exchanges";
+  String get open_camera => "Please allow access to your camera";
   String get operating_hours => "Time";
-  String get ordering => "Ordering...";
   String get paking => "Parking";
   String get password_incorrect => "incorrect password";
   String get password_not_equal_hint => "Inconsistent passwords";
   String get paste => "paste";
-  String get pay => "Pay";
-  String get payment_failed => "Payment failed";
-  String get payment_successful => "Purchase successful";
-  String get payment_type => "Payment Types";
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
-  String get please_waiting => "Waiting";
+  String get please_waiting => "Please Wait";
   String get police_security_station => "Police Station";
-  String get police_station_text => "Have trouble finding the police";
+  String get police_station_text => "Check nearby police stations";
   String get postscript => "Notes";
-  String get postscript_hint => "within 50 character";
-  String get private_and_safety => "Private and Safety";
-  String get private_service => "Private Service";
-  String get private_share => "Private Share";
-  String get private_sharing => "Private Share";
-  String get private_sharing_text => "Share encrypted locations, never leak location information";
+  String get postscript_hint => "within 50 characters";
+  String get private_and_safety => "Private and Secure";
+  String get private_service => "Privacy Services";
+  String get private_share => "Private location Share";
+  String get private_sharing => "Private Location Share";
+  String get private_sharing_text => "Share encrypted location information to protect privacy";
   String get private_wallet_tips => "Private key never leaves your device";
-  String get project_introduction => "Project Introduction";
+  String get project_introduction => "Project Brief";
   String get public_key_copied => "Public key. copied";
   String get public_key_scan_fail_rescan => "public key error, please re-scan";
   String get received => "Received";
@@ -203,51 +189,50 @@ class S implements WidgetsLocalizations {
   String get receiver_address => "Receiver Address";
   String get receiver_address_not_empty_hint => "Receiver address is empty";
   String get receiver_encrypted_address => "receiver encrypted address(public key)";
-  String get recommended_area => "Recommended Area";
-  String get refresh_keypaire_message => "Refreshing your public key address will unable to decrypt the previous address received, still continue to refresh?";
+  String get recommended_area => "Recommended Areas";
+  String get refresh_keypaire_message => "Refreshing your public key address will fail to decrypt the received address, still continue to refresh?";
   String get refresh_public_key_days_tips => "Automatically refresh in %d days";
   String get refresh_public_key_hours_tips => "Automatically refresh in %d hrs %d mins";
   String get refresh_public_key_minutes_tips => "Automatically refresh in %d mins";
   String get refresh_public_key_seconds_tips => "Automatically refresh in %d secs";
   String get reinput_wallet_password_label => "Confirm Wallet Password";
-  String get remark => "Remark";
-  String get rmb => "RMB";
+  String get remark => "Notes";
+  String get rmb => "CNY";
   String get route => "Route";
   String get safety_verification => "Safety Verification";
-  String get save_mnemonic_notice => "Write down or copy these words in the correct order and keep them in a safe place.";
-  String get save_mnemonic_safe_notice => "Never share the mnemonic with anyone, store it securely!";
+  String get save_mnemonic_notice => "Write down or copy these words in the correct order and keep them safe.";
+  String get save_mnemonic_safe_notice => "Never share the mnemonic with anyone, store your backup securely!";
   String get search_empty_data => "No Data";
   String get search_history => "History";
-  String get search_or_decode => "Search / Decrypt ";
+  String get search_or_decode => "Search / Decrypt";
   String get search_title => "Search / Decrypt";
   String get send => "Send";
   String get sent => "Sent";
   String get service_area => "Area";
   String get service_description => "Description";
   String get service_hours => "Time";
-  String get service_type => "Service type";
   String get services => "Services";
   String get share => "Share";
   String get share_app => "Share App";
   String get share_encrypted_location => "Share encrypted location";
-  String get share_fail => "Share Fail";
+  String get share_fail => "Error occurred";
   String get share_invalid_public_key => "Invalid public key";
-  String get share_location => "Location share";
+  String get share_location => "Share Location";
   String get share_qrcode => "Share public key QR Code";
-  String get show_mnemonic_label => "Show Mnemonic";
+  String get show_mnemonic_label => "Show Mnemonic Phrases";
   String get skip => "Skip";
   String get speed_fast => "Fast";
   String get speed_normal => "Normal";
   String get speed_slow => "Slow";
-  String get start_encryption => "Encryption";
+  String get start_encryption => "Encrypt";
   String get stay_tuned => "Stay tuned";
-  String get supermarket => "SuperMarket";
+  String get supermarket => "Supermarket";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
-  String get time => "Time";
+  String get time => "Opening times";
   String get tips => "Tips";
-  String get titan_encrypted_map_ecology => "Titan Encrypted Map Ecology";
+  String get titan_encrypted_map_ecology => "Titan Cryptographic Map Ecology";
   String get toilet => "Toilet";
   String get transfer_fail => "Transfer failed";
   String get transfer_submitted => "The transfer has been submitted";
@@ -258,23 +243,21 @@ class S implements WidgetsLocalizations {
   String get user_this_account => "Use this private account";
   String get video => "Video";
   String get view_all => "View All";
-  String get waiting_for_payment_result => "Waiting for payment result...";
   String get walking => "Walking";
   String get wallet => "Wallet";
-  String get wallet_create_success => "Account created successfully";
+  String get wallet_create_success => "Account has been created successfully";
   String get wallet_create_success_tips => "Congratulations, your private account has been created successfully";
-  String get wallet_manage => "Wallet Manage";
+  String get wallet_manage => "Manage Wallet";
   String get wallet_name => "Wallet Name";
   String get wallet_name_label => "Wallet Name";
   String get wallet_password_error => "incorrect password";
   String get wallet_password_label => "Wallet password";
-  String get wallet_setting => "Wallet Setting";
+  String get wallet_setting => "Wallet Settings";
   String get wallet_setting_backup_notice => "If you cannot access this device, your funds will not be recovered unless you back it up!";
   String get wechat => "Wechat";
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
-  String get your_mnemonic => "Your Mnemonic";
-  String get your_purchased_map => "Your purchased map";
+  String get your_mnemonic => "Your Mnemonic phrases";
   String distance(String distance) => "$distance m";
   String km(String km) => "$km km ";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
@@ -365,8 +348,6 @@ class $ko extends S {
   @override
   String get user_this_account => "이 개인 계정을 사용하십시오";
   @override
-  String get ordering => "주문하는 중 …";
-  @override
   String get private_and_safety => "비밀과 보안";
   @override
   String get view_all => "모두 보기";
@@ -376,10 +357,6 @@ class $ko extends S {
   String get open_camera => "카메라 권한을 켜십시오";
   @override
   String get unknown_error => "Unknown error";
-  @override
-  String get my_position => "내 위치";
-  @override
-  String get empty_map_notice_message => "아직 어떤 지도도 사지 않았습니다.";
   @override
   String get hotel => "호텔";
   @override
@@ -421,10 +398,6 @@ class $ko extends S {
   @override
   String get extract_mnemonic_fail => "니모닉 실패를 추출";
   @override
-  String get payment_successful => "구매 성공";
-  @override
-  String get buy_more_map => "더 많은 지도를 구입하다";
-  @override
   String get internet_bar => "인터넷 카페";
   @override
   String get later => "아직 업데이트되지 않았습니다";
@@ -444,8 +417,6 @@ class $ko extends S {
   String get confirm_mnemonic => "복원된 텍스트를 입력하십시오";
   @override
   String get recommended_area => "추천 지역";
-  @override
-  String get pay => "지불";
   @override
   String get no_data => "데이터가 없습니다";
   @override
@@ -503,10 +474,6 @@ class $ko extends S {
   @override
   String get service_description => "설명";
   @override
-  String get payment_failed => "지불 실패";
-  @override
-  String get map_store => "맵 스토어";
-  @override
   String get search_or_decode => "검색 / 디코딩";
   @override
   String get create_wallet_password_label => "지갑 비밀번호";
@@ -536,8 +503,6 @@ class $ko extends S {
   String get import_wallet => "지갑 가져오기";
   @override
   String get dmap_life => "생활 가이드";
-  @override
-  String get your_purchased_map => "구매하신 지도";
   @override
   String get start_encryption => "암호화";
   @override
@@ -631,23 +596,17 @@ class $ko extends S {
   @override
   String get less_than_1_min => "일분 미만";
   @override
-  String get more => "더 많은";
-  @override
   String get address_copied => "주소가 복사되었습니다";
   @override
   String get improvement_plan_message => "타이탄 을 사용하는 동안 더 나은 사용자 경험을 제공하기 위해 제품 품질을 개선하는 데 도움이되는 사용자 경험 개선 프로그램에 초대되었습니다.세부 사항보기\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">계획 설명</a>\n        </b>";
   @override
   String get backup_finish => "백업 완료";
   @override
-  String get waiting_for_payment_result => "지불 결과 대기 …";
-  @override
   String get no_recommended_route => "추천 경로가 없습니다";
   @override
   String get show_mnemonic_label => "복원된 메시지 보이기";
   @override
   String get refresh_public_key_seconds_tips => "%d초 후 자동 새로 고침";
-  @override
-  String get click_to_purchase => "구매하시려면 누르십시오";
   @override
   String get delete_wallet_fail => "삭제 실패";
   @override
@@ -659,7 +618,7 @@ class $ko extends S {
   @override
   String get kais_talk => "Kai's Talk";
   @override
-  String get rmb => "RMB";
+  String get rmb => " CNY";
   @override
   String get input_confirm_wallet_password_hint => "지갑 비밀번호 최소 6자리를 다시 입력하십시오";
   @override
@@ -670,8 +629,6 @@ class $ko extends S {
   String get twitterhyperion => "지저귀다-히페리온";
   @override
   String get wallet_password_label => "지갑 비밀번호";
-  @override
-  String get offline_map => "오프라인지도";
   @override
   String get public_key_copied => "공개 키 주소가 복사되었습니다";
   @override
@@ -694,8 +651,6 @@ class $ko extends S {
   String get wechat_cs => "위챗 고객 서비스";
   @override
   String get speed_normal => "평균치";
-  @override
-  String get monthly_payment => "한 달마다 유효하다";
   @override
   String get all => "모두";
   @override
@@ -724,8 +679,6 @@ class $ko extends S {
   String get paking => "주차장";
   @override
   String get driving => "드라이브";
-  @override
-  String get payment_type => "지불 유형";
   @override
   String get telphone => "전화";
   @override
@@ -787,11 +740,7 @@ class $ko extends S {
   @override
   String get backup_offline_save_text => "격리 된 네트워크의 안전한 장소에 보관\n이메일, 사진 앨범, 소셜 애플리케이션 등과 같은 네트워크 환경에서 니모닉을 공유하지 마십시오.";
   @override
-  String get service_type => "서비스 유형";
-  @override
   String get attraction => "관광 명소";
-  @override
-  String get cancel_payment => "지불 취소";
   @override
   String get operating_hours => "근무 시간";
   @override
@@ -899,15 +848,13 @@ class $zh_CN extends S {
   @override
   String get data_contribute_reward => "贡献地图数据获得HYN奖励";
   @override
-  String get receiver_address_not_empty_hint => "接收地址不能位空";
+  String get receiver_address_not_empty_hint => "接收地址不能为空";
   @override
   String get input_wallet_password_length_hint => "请输入至少6位的密码";
   @override
   String get dapp_setting => "DApp设置";
   @override
   String get user_this_account => "使用该私密账户";
-  @override
-  String get ordering => "正在下单...";
   @override
   String get private_and_safety => "私密和安全";
   @override
@@ -918,10 +865,6 @@ class $zh_CN extends S {
   String get open_camera => "请开启相机权限";
   @override
   String get unknown_error => "Unknown error";
-  @override
-  String get my_position => "我的位置";
-  @override
-  String get empty_map_notice_message => "你尚未购买任何地图";
   @override
   String get hotel => "酒店";
   @override
@@ -963,10 +906,6 @@ class $zh_CN extends S {
   @override
   String get extract_mnemonic_fail => "提取助记词失败";
   @override
-  String get payment_successful => "购买成功";
-  @override
-  String get buy_more_map => "购买更多地图";
-  @override
   String get internet_bar => "网吧";
   @override
   String get later => "暂不更新";
@@ -986,8 +925,6 @@ class $zh_CN extends S {
   String get confirm_mnemonic => "输入恢复短语";
   @override
   String get recommended_area => "推荐地区";
-  @override
-  String get pay => "支付";
   @override
   String get no_data => "暂无数据";
   @override
@@ -1045,10 +982,6 @@ class $zh_CN extends S {
   @override
   String get service_description => "描述";
   @override
-  String get payment_failed => "支付失败";
-  @override
-  String get map_store => "地图商店";
-  @override
   String get search_or_decode => "搜索 / 解码位置密文";
   @override
   String get create_wallet_password_label => "钱包密码";
@@ -1078,8 +1011,6 @@ class $zh_CN extends S {
   String get import_wallet => "导入钱包";
   @override
   String get dmap_life => "生活指引";
-  @override
-  String get your_purchased_map => "您购买的地图";
   @override
   String get start_encryption => "开始加密";
   @override
@@ -1173,23 +1104,17 @@ class $zh_CN extends S {
   @override
   String get less_than_1_min => "小于1分钟";
   @override
-  String get more => "更多";
-  @override
   String get address_copied => "地址已复制";
   @override
   String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
   @override
   String get backup_finish => "备份完成";
   @override
-  String get waiting_for_payment_result => "等待支付结果...";
-  @override
   String get no_recommended_route => "暂无推荐路线";
   @override
   String get show_mnemonic_label => "显示恢复短语";
   @override
   String get refresh_public_key_seconds_tips => "%d秒后自动刷新";
-  @override
-  String get click_to_purchase => "点击前往购买";
   @override
   String get delete_wallet_fail => "删除失败";
   @override
@@ -1213,8 +1138,6 @@ class $zh_CN extends S {
   @override
   String get wallet_password_label => "钱包密码";
   @override
-  String get offline_map => "离线地图";
-  @override
   String get public_key_copied => "公钥地址已复制";
   @override
   String get encrypt_error => "加密失败";
@@ -1236,8 +1159,6 @@ class $zh_CN extends S {
   String get wechat_cs => "微信客服";
   @override
   String get speed_normal => "平均值";
-  @override
-  String get monthly_payment => "一个月有效";
   @override
   String get all => "全部";
   @override
@@ -1266,8 +1187,6 @@ class $zh_CN extends S {
   String get paking => "停车场";
   @override
   String get driving => "驾车";
-  @override
-  String get payment_type => "支付类型";
   @override
   String get telphone => "电话";
   @override
@@ -1327,13 +1246,9 @@ class $zh_CN extends S {
   @override
   String get illegal_mnemonic => "不是合法的助记词";
   @override
-  String get backup_offline_save_text => "妥善保管至隔离网络的安全地方\n请勿讲助记词在联网环境下分享和存储，比如邮件、相册、社交应用等";
-  @override
-  String get service_type => "服务类型";
+  String get backup_offline_save_text => "妥善保管至隔离网络的安全地方\n请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等";
   @override
   String get attraction => "景点";
-  @override
-  String get cancel_payment => "取消支付";
   @override
   String get operating_hours => "工作时间";
   @override
