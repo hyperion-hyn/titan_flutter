@@ -117,7 +117,7 @@ class _RouteBarState extends State<RouteBar> {
                 children: <Widget>[
                   buildRouteTypeItem(
                       Icons.drive_eta,
-                      '驾车',
+                      S.of(context).driving,
                       widget.profile == 'driving',
                       widget.profile == 'driving'
                           ? null
@@ -128,7 +128,7 @@ class _RouteBarState extends State<RouteBar> {
                             }),
                   buildRouteTypeItem(
                       Icons.directions_bike,
-                      '骑行',
+                      S.of(context).cycling,
                       widget.profile == 'cycling',
                       widget.profile == 'cycling'
                           ? null
@@ -139,7 +139,7 @@ class _RouteBarState extends State<RouteBar> {
                             }),
                   buildRouteTypeItem(
                       Icons.directions_walk,
-                      '步行',
+                      S.of(context).walking,
                       widget.profile == 'walking',
                       widget.profile == 'walking'
                           ? null

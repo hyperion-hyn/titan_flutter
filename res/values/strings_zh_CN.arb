@@ -262,5 +262,7 @@
   "share_app": "分享app",
   "dapp_setting": "DApp设置",
   "private_share": "私密分享",
-  "private_share_receive_address": "接收地址:${shortAddress}"
+  "private_share_receive_address": "接收地址:${shortAddress}",
+  "navigation": "导航",
+  "my_location": "我的位置"
 }

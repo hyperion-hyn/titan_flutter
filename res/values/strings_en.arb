@@ -262,5 +262,7 @@
   "share_app": "Share App",
   "dapp_setting": "DApp Setting",
   "private_share": "Private Share",
-  "private_share_receive_address": "Receive Address : ${shortAddress}"
+  "private_share_receive_address": "Receive Address : ${shortAddress}",
+  "navigation": "Navigation",
+  "my_location": "My Location"
 }

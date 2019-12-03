@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/gaode_poi_panel.dart';
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -418,7 +419,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       if (location == null) {
         Fluttertoast.showToast(msg: '获取不到你当前位置');
       } else {
-        var fromPoi = PoiEntity(latLng: location, name: '我的位置');
+        var fromPoi = PoiEntity(latLng: location, name: S.of(context).my_location);
         var toPoi = currentPoi;
         var language = Localizations.localeOf(context).languageCode;
         var profile = 'driving';
