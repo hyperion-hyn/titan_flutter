@@ -30,7 +30,7 @@ import 'search_bar.dart';
 import 'top_bar.dart';
 import 'route_bar.dart';
 
-final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
+//final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
 final kStyleEn = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
 
 typedef PanelBuilder = Widget Function(BuildContext context, ScrollController scrollController, IDMapPoi poi);
@@ -126,12 +126,12 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       //set map
       //---------------------------
       bool showCenterMarker = false;
-      String style;
-      if (languageCode == "zh") {
-        style = kStyleZh;
-      } else {
-        style = kStyleEn;
-      }
+      String style = kStyleEn;
+//      if (languageCode == "zh") {
+//        style = kStyleZh;
+//      } else {
+//        style = kStyleEn;
+//      }
       if (state.dMapConfigModel?.showCenterMarker == true) {
         showCenterMarker = true;
       }
@@ -354,6 +354,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             mapClickHandle: onMapClickHandle,
             mapLongPressHandle: onMapLongPressHandle,
             showCenterMarker: showCenterMarker,
+            languageCode: languageCode,
           ),
 //          if (showSearchBar)
 //            SearchBar(

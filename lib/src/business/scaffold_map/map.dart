@@ -37,6 +37,7 @@ class MapContainer extends StatefulWidget {
   final bool showCenterMarker;
 
   final DraggableBottomSheetController bottomPanelController;
+  final String languageCode;
 
   MapContainer({
     Key key,
@@ -49,6 +50,7 @@ class MapContainer extends StatefulWidget {
     this.mapClickHandle,
     this.mapLongPressHandle,
     this.showCenterMarker,
+    this.languageCode
   }) : super(key: key);
 
   @override
@@ -608,6 +610,7 @@ class MapContainerState extends State<MapContainer> {
                       minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
                       myLocationEnabled: true,
                       myLocationTrackingMode: locationTrackingMode,
+                      languageCode: widget.languageCode,
                       children: <Widget>[
                         ///active plugins
                         HeavenPlugin(models: widget.heavenDataList),
