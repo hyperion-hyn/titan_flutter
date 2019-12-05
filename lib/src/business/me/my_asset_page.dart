@@ -15,6 +15,7 @@ import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
+import 'me_dailybills_detail_page.dart';
 
 import "enter_recharge_count.dart";
 
@@ -25,7 +26,8 @@ class MyAssetPage extends StatefulWidget {
   }
 }
 
-class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin {
+class _MyAssetState extends UserState<MyAssetPage>
+    with TickerProviderStateMixin {
   TabController _tabController;
 
   @override
@@ -53,7 +55,8 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                           context,
                           MaterialPageRoute(
                               builder: (context) => DrawBalancePage(),
-                              settings: RouteSettings(name: "/draw_balance_page")));
+                              settings:
+                                  RouteSettings(name: "/draw_balance_page")));
                       if (isSuccess != null && isSuccess) {
                         eventBus.fire(Refresh());
                         _tabController.animateTo(1);
@@ -63,7 +66,8 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
                         "提币",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -73,7 +77,8 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                               context,
                               MaterialPageRoute(
                                   builder: (context) => RechargePurchasePage(),
-                                  settings: RouteSettings(name: "/recharge_purchase_page")))
+                                  settings: RouteSettings(
+                                      name: "/recharge_purchase_page")))
                           .then((isSuccess) async {
                         if (isSuccess != null && isSuccess) {
                           await UserService.syncUserInfo();
@@ -87,7 +92,8 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
                         "充值",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -189,13 +195,14 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
 //                padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 8),
-//                      color: Colors.black54,
                     width: 200,
                     child: TabBar(
                       indicatorColor: Theme.of(context).primaryColor,
@@ -218,8 +225,6 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                           ),
                         ),
                       ],
-
-//                        indicatorColor: Color(0xFFcb9521),
                     ),
                   ),
                   Expanded(
@@ -259,17 +264,11 @@ class BillHistory extends StatefulWidget {
 
 class _BillHistoryState extends DataListState<BillHistory> {
   UserService _userService = UserService();
-
   StreamSubscription _eventBusSubscription;
-
-//  List<BillInfo> billList = [];
-//  int currentPage = 0;
-//  LoadDataBloc loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
     super.initState();
-//    _getBillList(0);
     _listenEventBus();
   }
 
@@ -288,7 +287,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
       child: ListView.separated(
           physics: ClampingScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
-            return _buildBillDetailItem(dataList[index]);
+            return _buildItem(dataList[index]);
           },
           separatorBuilder: (BuildContext context, int index) {
             return Padding(
@@ -303,13 +302,36 @@ class _BillHistoryState extends DataListState<BillHistory> {
     );
   }
 
-  Widget _buildBillDetailItem(BillInfo billInfo) {
+  Widget _buildItem(BillInfo billInfo) {
+    if (billInfo.hasDetail) {
+      return InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MeDailyBillsDetail(billInfo)));
+        },
+        child: _buildItemDetail(billInfo),
+      );
+    } else {
+      return _buildItemDetail(billInfo);
+    }
+  }
+
+  Widget _buildItemDetail(BillInfo billInfo) {
     var amountColor = Colors.black;
     if (billInfo.amount > 0) {
       amountColor = HexColor("#6DBA1A");
     } else {
       amountColor = HexColor("#D0021B");
     }
+
+    String subTitle = billInfo.subTitle;
+    //subTitle = '抵押ID 1,10,100,1000,10000,100000,1000000,10000000';
+    if(subTitle.length > 20) {
+      subTitle = subTitle.substring(0, 20) + '...';
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -325,9 +347,16 @@ class _BillHistoryState extends DataListState<BillHistory> {
                 ),
               ),
               if (billInfo.subTitle != null)
-                Text(
-                  billInfo.subTitle,
-                  style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
+                SizedBox(child:
+                  Container(
+                    child: Text(
+                      subTitle,
+                      style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                  width: 150,
                 )
             ],
           ),
@@ -339,15 +368,30 @@ class _BillHistoryState extends DataListState<BillHistory> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   Const.DOUBLE_NUMBER_FORMAT.format(billInfo.amount),
-                  style: TextStyle(fontSize: 16, color: amountColor, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: amountColor,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               Text(
-                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(billInfo.crateAt * 1000)),
+                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(
+                    billInfo.crateAt * 1000)),
                 style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
               )
             ],
-          )
+          ),
+          Visibility(
+            visible: billInfo.hasDetail,
+            child: Container(
+              width: 15,
+              height: 15,
+              child: Icon(
+                Icons.chevron_right,
+                color: Colors.black54,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -362,7 +406,6 @@ class _BillHistoryState extends DataListState<BillHistory> {
     _eventBusSubscription = eventBus.on().listen((event) async {
       print("event:$event");
       if (event is Refresh) {
-//        _getBillList(0);
         loadDataBloc.add(RefreshingEvent());
       }
     });
@@ -506,7 +549,8 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
                 ),
               ),
               Text(
-                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(withdrawalInfo.createAt * 1000)),
+                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(
+                    withdrawalInfo.createAt * 1000)),
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               )
             ],
@@ -518,7 +562,8 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
 
   @override
   Future<List> onLoadData(int page) async {
-    PageResponse<WithdrawalInfoLog> _pageResponse = await _userService.getWithdrawalLogList(page);
+    PageResponse<WithdrawalInfoLog> _pageResponse =
+        await _userService.getWithdrawalLogList(page);
     var dataList = _pageResponse.data;
     return dataList;
   }

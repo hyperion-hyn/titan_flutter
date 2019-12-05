@@ -14,8 +14,12 @@ class BillInfo {
   double amount;
   @JsonKey(name: "created_at")
   int crateAt;
+  @JsonKey(name: "has_detail")
+  bool hasDetail;
+  @JsonKey(name: "id")
+  int id;
 
-  BillInfo(this.title, this.subTitle, this.parentId, this.amount, this.crateAt);
+  BillInfo(this.title, this.subTitle, this.parentId, this.amount, this.crateAt, this.hasDetail, this.id);
 
   factory BillInfo.fromJson(Map<String, dynamic> json) => _$BillInfoFromJson(json);
 

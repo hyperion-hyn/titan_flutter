@@ -262,7 +262,26 @@ class MapRichApi {
     }), options: RequestOptions(headers: {"Authorization": token}));
   }
 
+  ///getDailyBillDetail
+  Future<List<BillInfo>> getDailyBillDetail(String token, int id) async {
+    return await MapRichHttpCore.instance.getEntity("dailyBills/detail", EntityFactory<List<BillInfo>>((json) {
+      return (json as List).map((billJson) {
+        return BillInfo.fromJson(billJson);
+      }).toList();
+    }), params: {"id": id}, options: RequestOptions(headers: {"Authorization": token}));
+  }
+
   ///getBillList
+  // todo: jison edit_userInfo
+  Future<List<BillInfo>> getBillList(String token, int page) async {
+    return await MapRichHttpCore.instance.getEntity("dailyBills", EntityFactory<List<BillInfo>>((json) {
+      return (json as List).map((billJson) {
+        return BillInfo.fromJson(billJson);
+      }).toList();
+    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+  }
+
+  /*
   Future<List<BillInfo>> getBillList(String token, int page) async {
     return await MapRichHttpCore.instance.getEntity("bills", EntityFactory<List<BillInfo>>((json) {
       return (json as List).map((billJson) {
@@ -270,6 +289,7 @@ class MapRichApi {
       }).toList();
     }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
   }
+  */
 
   ///获取推广列表
   Future<PageResponse<NodeMortgageInfo>> getNodeMortgageList(String token, int page) async {
