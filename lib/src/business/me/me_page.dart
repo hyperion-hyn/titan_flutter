@@ -299,13 +299,13 @@ class _MeState extends UserState<MePage> with RouteAware {
               decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
               child: Column(
                 children: <Widget>[
-                  // todo: jison closed
-//                  _buildMemuBar("打卡记录", ExtendsIconFont.check_in, () {
-//                    Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
-//                  }),
-//                  Divider(
-//                    height: 2,
-//                  ),
+                  // todo: jison opened
+                  _buildMemuBar("打卡记录", ExtendsIconFont.check_in, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
+                  }),
+                  Divider(
+                    height: 2,
+                  ),
 
                   _buildMemuBar("邀请分享", ExtendsIconFont.mail_read, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
@@ -313,6 +313,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                   Divider(
                     height: 2,
                   ),
+
                   _buildMemuBar("使用教程", ExtendsIconFont.document, () {
                     Navigator.push(
                         context,
@@ -325,6 +326,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                   Divider(
                     height: 2,
                   ),
+
                   _buildMemuBar("关于我们", ExtendsIconFont.person, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
                   }),

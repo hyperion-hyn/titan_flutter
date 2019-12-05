@@ -186,6 +186,15 @@ class UserService {
     return mortgageList;
   }
 
+  Future<List<BillInfo>> getDailyBillDetail(int id) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    List<BillInfo> billList = await _mapRichApi.getDailyBillDetail(userToken.token, id);
+    return billList;
+  }
+
   Future<List<BillInfo>> getBillList(int page) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
