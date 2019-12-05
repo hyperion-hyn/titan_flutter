@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
@@ -59,10 +60,10 @@ class _NewsState extends InfoState<NewsPage> {
               height: 48,
               child: Row(
                 children: <Widget>[
-                  _buildTag("最新资讯", LAST_NEWS_TAG),
-                  _buildTag("官方公告", OFFICIAL_ANNOUNCEMENT_TAG),
-                  _buildTag("教程", TUTORIAL_TAG),
-                  _buildTag("视频", VIDEO_TAG),
+                  _buildTag(S.of(context).latest_news, LAST_NEWS_TAG),
+                  _buildTag(S.of(context).official_announcement, OFFICIAL_ANNOUNCEMENT_TAG),
+                  _buildTag(S.of(context).information_guide, TUTORIAL_TAG),
+                  _buildTag(S.of(context).information_video, VIDEO_TAG),
                 ],
               ),
             ),

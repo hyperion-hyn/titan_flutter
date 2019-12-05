@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/utils/validator_util.dart';
 
@@ -35,7 +36,7 @@ class EnterWalletPasswordState extends State<EnterWalletPasswordWidget> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      "安全验证",
+                      S.of(context).safety_verification,
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
@@ -43,7 +44,7 @@ class EnterWalletPasswordState extends State<EnterWalletPasswordWidget> {
                         onTap: () {
                           Navigator.of(context).pop();
                         },
-                        child: Container(padding: EdgeInsets.all(4), child: Text("取消")))
+                        child: Container(padding: EdgeInsets.all(4), child: Text(S.of(context).cancel)))
                   ],
                 ),
               ),
@@ -53,14 +54,14 @@ class EnterWalletPasswordState extends State<EnterWalletPasswordWidget> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  "钱包密码",
+                  S.of(context).wallet_password_label,
                   style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.bold),
                 ),
               ),
               TextFormField(
                 validator: (value) {
                   if (!ValidatorUtil.validatePassword(value)) {
-                    return "密码格式有误，请输入最少6位";
+                    return S.of(context).input_confirm_wallet_password_hint;
                   } else {
                     return null;
                   }
@@ -69,7 +70,7 @@ class EnterWalletPasswordState extends State<EnterWalletPasswordWidget> {
                 keyboardType: TextInputType.emailAddress,
                 obscureText: true,
                 decoration: InputDecoration(
-                    hintText: "请输入钱包密码", errorText: walletEditErrorMsg != null ? walletEditErrorMsg : null),
+                    hintText: S.of(context).please_input_wallet_password_hint, errorText: walletEditErrorMsg != null ? walletEditErrorMsg : null),
               ),
               Row(
                 children: <Widget>[
@@ -87,7 +88,7 @@ class EnterWalletPasswordState extends State<EnterWalletPasswordWidget> {
                           },
                           color: Theme.of(context).primaryColor,
                           child: Text(
-                            "确认",
+                            S.of(context).confirm,
                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/wallet_show_resume_word_page.dart';
 
 class CreateWalletBackupNoticePage extends StatefulWidget {
@@ -25,14 +26,14 @@ class _CreateWalletBackupNoticePageState extends State<CreateWalletBackupNoticeP
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "现在备份你的账户",
+                  S.of(context).account_backup_notice,
                   style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.normal, fontSize: 20),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "在下一步中，您将看到12个允许您恢复账户的单词",
+                  S.of(context).account_backup_next_step_notice,
                   style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 12),
                 ),
               ),
@@ -56,7 +57,7 @@ class _CreateWalletBackupNoticePageState extends State<CreateWalletBackupNoticeP
                   ),
                   Flexible(
                     child: Text(
-                      "我明白，如果我丢失了恢复单词，我将无法访问我的钱包",
+                      S.of(context).lossz_wallet_mnemonic_notice,
                       softWrap: true,
                       style: TextStyle(fontSize: 12),
                     ),
@@ -79,7 +80,7 @@ class _CreateWalletBackupNoticePageState extends State<CreateWalletBackupNoticeP
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "继续",
+                          S.of(context).continue_text,
                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],

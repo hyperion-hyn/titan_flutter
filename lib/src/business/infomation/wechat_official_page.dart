@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
@@ -62,9 +63,9 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  _buildTag("文章", PAPER_TAG),
-                  _buildTag("视频", VIDEO_TAG),
-                  _buildTag("音频", AUDIO_TAG),
+                  _buildTag(S.of(context).article, PAPER_TAG),
+                  _buildTag(S.of(context).video, VIDEO_TAG),
+                  _buildTag(S.of(context).audio, AUDIO_TAG),
                   Spacer(),
                   if (selectedTag == 34)
                     DropdownButton(
@@ -79,14 +80,14 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                       items: [
                         DropdownMenuItem(
                           child: Text(
-                            "国内视频",
+                            S.of(context).domestic_video,
                             style: TextStyle(fontSize: 15),
                           ),
                           value: DOMESTIC_VIDEO,
                         ),
                         DropdownMenuItem(
                           child: Text(
-                            "国外视频",
+                            S.of(context).foreign_video,
                             style: TextStyle(fontSize: 15),
                           ),
                           value: FOREIGN_VIDEO,

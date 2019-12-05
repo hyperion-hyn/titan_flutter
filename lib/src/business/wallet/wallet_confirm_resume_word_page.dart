@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/wallet_finish_create_page.dart';
 import 'package:titan/src/global.dart';
@@ -46,14 +47,14 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    "输入恢复短语",
+                    S.of(context).confirm_mnemonic,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    "点击单词，把他们按正确的顺序放在一起",
+                    S.of(context).confirm_mnemonic_tips,
                     style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                   ),
                 ),
@@ -130,7 +131,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "继续",
+                            S.of(context).continue_text,
                             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],
@@ -182,7 +183,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
           name: createWalletNameTemp, password: createWalletPasswordTemp, mnemonic: createWalletMnemonicTemp.trim());
       Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage(wallet)));
     } else {
-      Fluttertoast.showToast(msg: "您的恢复短语不正确，请重新尝试");
+      Fluttertoast.showToast(msg: S.of(context).confirm_mnemonic_incorrect);
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
@@ -40,7 +41,7 @@ class NightLifeState extends State<NightLife> {
                     children: <Widget>[
                       Center(
                           child: Text(
-                        '夜生活指南',
+                        S.of(context).nightlife_guide,
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       )),
                       Align(
@@ -51,7 +52,7 @@ class NightLifeState extends State<NightLife> {
                           child: Ink(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              '关闭',
+                              S.of(context).close,
                               style: TextStyle(color: Colors.blueAccent),
                             ),
                           ),

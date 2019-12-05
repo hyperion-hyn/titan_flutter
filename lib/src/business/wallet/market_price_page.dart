@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/api/market_price_api.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -34,7 +35,7 @@ class _MarketPriceState extends State<MarketPricePage> {
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "HYN行情",
+          S.of(context).hyn_price,
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,

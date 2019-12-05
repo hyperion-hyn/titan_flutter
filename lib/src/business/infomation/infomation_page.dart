@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/infomation/news_page.dart';
 import 'package:titan/src/business/infomation/wechat_official_page.dart';
@@ -42,10 +43,10 @@ class _InformationPageState extends State<InformationPage> {
                         unselectedLabelColor: Colors.grey[400],
                         tabs: [
                           Tab(
-                            text: "海伯利安",
+                            text: S.of(context).Hyperion,
                           ),
                           Tab(
-                            text: "凯氏物语",
+                            text: S.of(context).kais_talk,
                           ),
                         ],
                       ),

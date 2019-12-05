@@ -98,7 +98,7 @@ class PoliceStationPanelState extends State<PoliceStationPanel> {
                   SizedBox(
                     height: 8,
                   ),
-                  buildHeadItem(Icons.location_on, widget.poi.address, hint: '暂无详细地址'),
+                  buildHeadItem(Icons.location_on, widget.poi.address, hint: S.of(context).no_detail_address),
                   if (widget.poi.remark != null && widget.poi.remark.length > 0)
                     buildHeadItem(Icons.message, widget.poi.remark, hint: ''),
                 ],
@@ -107,8 +107,8 @@ class PoliceStationPanelState extends State<PoliceStationPanel> {
             Divider(
               height: 0,
             ),
-            buildInfoItem('部门', widget.poi.department),
-            buildInfoItem('区域', widget.poi.district),
+            buildInfoItem(S.of(context).department, widget.poi.department),
+            buildInfoItem(S.of(context).area, widget.poi.district),
             buildInfoItem(S.of(context).telphone, widget.poi.telephone),
 
           ],
