@@ -45,7 +45,7 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "打卡记录",
+          "任务记录",
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -108,8 +108,8 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
                   height: 10,
                 ),
                 Text(
-                  model.total < 3 ? "打卡${model.total}次":"打卡完成",
-                  style: TextStyle(color: HexColor('#333333'), fontSize: 14),
+                  model.total < 3 ? "已做任务${model.total}次":"当天任务已完成",
+                  style: TextStyle(color: model.total < 3 ? HexColor('#333333'):HexColor('##6DBA1A'), fontSize: 14),
                 ),
                 SizedBox(
                   height: 8,

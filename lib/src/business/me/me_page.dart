@@ -300,7 +300,7 @@ class _MeState extends UserState<MePage> with RouteAware {
               child: Column(
                 children: <Widget>[
                   // todo: jison opened
-                  _buildMemuBar("打卡记录", ExtendsIconFont.check_in, () {
+                  _buildMemuBar("任务记录", ExtendsIconFont.check_in, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
                   }),
                   Divider(
@@ -476,7 +476,7 @@ class _MeState extends UserState<MePage> with RouteAware {
       await _userService.checkIn();
       checkInCount = await _userService.checkInCount();
       setState(() {});
-      Fluttertoast.showToast(msg: "打卡成功，感谢你贡献数据。");
+      Fluttertoast.showToast(msg: "已完成一次任务，感谢你贡献数据。");
     } catch (_) {
       ExceptionProcess.process(_);
       throw _;
