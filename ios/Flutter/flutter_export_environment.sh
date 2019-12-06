@@ -1,11 +1,10 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/donghua/DevTools/android/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/donghua/DevWorkSpace/Work/Flutter/flutter_maprich2"
-export "FLUTTER_TARGET=/Users/donghua/DevWorkSpace/Work/Flutter/flutter_maprich2/lib/main_official_dev.dart"
+export "FLUTTER_ROOT=/Users/moo/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/moo/project/hyn/client/flutter_maprich2"
+export "FLUTTER_TARGET=lib/main_official_prod.dart"
 export "FLUTTER_BUILD_DIR=build"
 export "SYMROOT=${SOURCE_ROOT}/../build/ios"
-export "FLUTTER_FRAMEWORK_DIR=/Users/donghua/DevTools/android/flutter/bin/cache/artifacts/engine/ios"
-export "FLUTTER_BUILD_NAME=1.0.17"
-export "FLUTTER_BUILD_NUMBER=18"
-export "TRACK_WIDGET_CREATION=true"
+export "FLUTTER_FRAMEWORK_DIR=/Users/moo/flutter/bin/cache/artifacts/engine/ios-release"
+export "FLUTTER_BUILD_NAME=1.0.21"
+export "FLUTTER_BUILD_NUMBER=22"
