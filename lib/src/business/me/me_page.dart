@@ -174,13 +174,14 @@ class _MeState extends UserState<MePage> with RouteAware {
                                             ],
                                           ),
                                         )),
-                                    onTap: checkInCount < 3
-                                        ? () {
-                                            _checkIn();
-                                          }
-                                        : () {
-                                      Fluttertoast.showToast(msg: '今天任务已完成');
-                                          },
+                                    onTap:
+//                                    checkInCount < 3
+//                                        ? () {
+                                            _checkIn,
+//                                          }
+//                                        : () {
+//                                      Fluttertoast.showToast(msg: '今天任务已完成');
+//                                          },
 //                                    onTap: _checkIn,
                                   ),
                                   Padding(
@@ -476,10 +477,12 @@ class _MeState extends UserState<MePage> with RouteAware {
       await _userService.checkIn();
       checkInCount = await _userService.checkInCount();
       setState(() {});
-      Fluttertoast.showToast(msg: "已完成一次任务，感谢你贡献数据。");
-    } catch (_) {
-      ExceptionProcess.process(_);
-      throw _;
+      Fluttertoast.showToast(msg: "感谢你贡献数据。");
+    } catch (e) {
+      print('[me_page] --> e:$e');
+
+      ExceptionProcess.process(e);
+      throw e;
     }
   }
 
