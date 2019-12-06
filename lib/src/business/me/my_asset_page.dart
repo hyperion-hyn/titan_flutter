@@ -328,8 +328,8 @@ class _BillHistoryState extends DataListState<BillHistory> {
 
     String subTitle = billInfo.subTitle;
     //subTitle = '抵押ID 1,10,100,1000,10000,100000,1000000,10000000';
-    if(subTitle.length > 20) {
-      subTitle = subTitle.substring(0, 20) + '...';
+    if(subTitle.length > 25) {
+      subTitle = subTitle.substring(0, 25) + '...';
     }
 
     return Padding(
@@ -356,7 +356,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
                       maxLines: 1,
                     ),
                   ),
-                  width: 150,
+                  width: 180,
                 )
             ],
           ),
