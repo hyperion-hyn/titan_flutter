@@ -381,21 +381,19 @@ class _BillHistoryState extends DataListState<BillHistory> {
               )
             ],
           ),
-          Visibility(
-            visible: billInfo.hasDetail,
-            child: Container(
-              width: 15,
-              height: 15,
-              child: Icon(
-                Icons.chevron_right,
-                color: Colors.black54,
-              ),
+          Container(
+            width: 16,
+            height: 16,
+            child: Icon(
+              !billInfo.hasDetail?null:Icons.chevron_right,
+              color: Colors.black54,
             ),
           ),
         ],
       ),
     );
   }
+
 
   @override
   Future<List> onLoadData(int page) {
