@@ -1,21 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/business/me/model/page_response.dart';
 
 class MeDailyBillsDetail extends StatefulWidget {
+  final BillInfo _info;
 
-  BillInfo _info;
   MeDailyBillsDetail(this._info);
 
   @override
@@ -25,7 +21,6 @@ class MeDailyBillsDetail extends StatefulWidget {
 }
 
 class _MeDailyBillsDetail extends DataListState<MeDailyBillsDetail> {
-
   UserService _userService = UserService();
   StreamSubscription _eventBusSubscription;
 
@@ -55,28 +50,27 @@ class _MeDailyBillsDetail extends DataListState<MeDailyBillsDetail> {
         elevation: 0,
       ),
       body: LoadDataContainer(
-        bloc: loadDataBloc,
-        onLoadData: onWidgetLoadDataCallback,
-        onRefresh: onWidgetRefreshCallback,
-        onLoadingMore: onWidgetLoadingMoreCallback,
-        child: ListView.separated(
-          physics: ClampingScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return _buildItem(dataList[index], index);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Divider(
-                thickness: 0.5,
+          bloc: loadDataBloc,
+          onLoadData: onWidgetLoadDataCallback,
+          onRefresh: onWidgetRefreshCallback,
+          onLoadingMore: onWidgetLoadingMoreCallback,
+          child: ListView.separated(
+            physics: ClampingScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return _buildItem(dataList[index], index);
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Divider(
+                  thickness: 0.5,
 //                height: 0.5,
-                color: HexColor('#E9E9E9'),
-              ),
-            );
-          },
-          itemCount: dataList.length,
-        )
-      ),
+                  color: HexColor('#E9E9E9'),
+                ),
+              );
+            },
+            itemCount: dataList.length,
+          )),
     );
   }
 
@@ -131,9 +125,8 @@ class _MeDailyBillsDetail extends DataListState<MeDailyBillsDetail> {
     );
   }
 
-
   @override
-  Future<List> onLoadData(int page) async{
+  Future<List> onLoadData(int page) async {
     var dataList = await _userService.getDailyBillDetail(widget._info.id, page);
     //dataList.insert(0, widget._info);
     return dataList;
@@ -154,7 +147,6 @@ class _MeDailyBillsDetail extends DataListState<MeDailyBillsDetail> {
     loadDataBloc.close();
     super.dispose();
   }
-
 }
 
 class Refresh {}
