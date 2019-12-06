@@ -263,12 +263,12 @@ class MapRichApi {
   }
 
   ///getDailyBillDetail
-  Future<List<BillInfo>> getDailyBillDetail(String token, int id) async {
+  Future<List<BillInfo>> getDailyBillDetail(String token, int id, int page) async {
     return await MapRichHttpCore.instance.getEntity("dailyBills/detail", EntityFactory<List<BillInfo>>((json) {
       return (json as List).map((billJson) {
         return BillInfo.fromJson(billJson);
       }).toList();
-    }), params: {"id": id}, options: RequestOptions(headers: {"Authorization": token}));
+    }), params: {"id": id, "page": page}, options: RequestOptions(headers: {"Authorization": token}));
   }
 
   ///getBillList

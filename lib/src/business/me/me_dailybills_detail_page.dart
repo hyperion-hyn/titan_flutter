@@ -134,7 +134,7 @@ class _MeDailyBillsDetail extends DataListState<MeDailyBillsDetail> {
 
   @override
   Future<List> onLoadData(int page) async{
-    var dataList = await _userService.getDailyBillDetail(widget._info.id);
+    var dataList = await _userService.getDailyBillDetail(widget._info.id, page);
     //dataList.insert(0, widget._info);
     return dataList;
   }
