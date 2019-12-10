@@ -202,6 +202,7 @@ flutter:
     - res/drawable/wifi_close.png
     - res/drawable/checkin_history_progress.png
     - res/drawable/invitation_bg.png
+    - res/drawable/invitation_bg_en.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

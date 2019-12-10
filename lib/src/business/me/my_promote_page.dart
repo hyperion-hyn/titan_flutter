@@ -241,7 +241,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     child: Text(
-                      "已邀请${LOGIN_USER_INFO.totalInvitations}人",
+                      S.of(context).total_invitation_func('${LOGIN_USER_INFO.totalInvitations}'),
                       style:
                           TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                     ),
@@ -312,7 +312,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "星际数",
+                      S.of(context).star_number,
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],
@@ -327,7 +327,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "直连星际量",
+                      S.of(context).direct_star_numbers,
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],
@@ -342,7 +342,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "最大星际量",
+                      S.of(context).max_star_numbers,
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],
@@ -357,7 +357,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       ),
                     ),
                     Text(
-                      "其他星际量",
+                      S.of(context).other_star_numbers,
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                     ),
                   ],

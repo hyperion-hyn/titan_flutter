@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -30,7 +31,7 @@ class _GradeState extends State<GradePage> {
         appBar: AppBar(
 //          backgroundColor: Colors.white,
           title: Text(
-            "等级",
+            S.of(context).grade,
             style: TextStyle(color: Colors.white),
           ),
           centerTitle: true,
@@ -53,14 +54,14 @@ class _GradeState extends State<GradePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "当前等级",
+                        S.of(context).current_grade,
                         style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                       ),
                       SizedBox(
                         height: 8,
                       ),
                       Text(
-                        LOGIN_USER_INFO.level==""?"无等级":LOGIN_USER_INFO.level,
+                        LOGIN_USER_INFO.level==""?S.of(context).no_grade:LOGIN_USER_INFO.level,
                         style: TextStyle(fontSize: 16, color: Color(0xFF3C94FF)),
                       ),
                     ],
@@ -125,7 +126,7 @@ class _GradeState extends State<GradePage> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                "贡献奖励： $award",
+                S.of(context).contribute_reward_func('$award'),
                 style: TextStyle(color: Color(0xFF6D6D6D)),
               ),
             ),
@@ -133,7 +134,7 @@ class _GradeState extends State<GradePage> {
           TableRow(children: [
             Container(),
             Text(
-              "等级要求： $require",
+              S.of(context).grade_require_func('$require'),
               style: TextStyle(color: Color(0xFF6D6D6D)),
             ),
           ])

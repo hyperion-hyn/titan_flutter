@@ -427,5 +427,12 @@
   "fund_new_password": "资金新密码",
   "confirm_new_fund_password": "确认资金新密码",
   "fund_password_not_equal_confirm_fund_password": "资金密码与确认资金密码不一致",
-  "re_enter_fund_password": "请再次输入资金密码"
+  "re_enter_fund_password": "请再次输入资金密码",
+  "total_invitation_func": "已邀请${totalInvitations}人",
+  "grade": "等级",
+  "current_grade": "当前等级",
+  "no_grade": "无等级",
+  "contribute_reward_func": "贡献奖励： ${award}",
+  "grade_require_func": "等级要求： ${require}",
+  "revenue_details": "收益详情"
 }
