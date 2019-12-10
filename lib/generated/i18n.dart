@@ -146,6 +146,7 @@ class S implements WidgetsLocalizations {
   String get more_dmap => "Stay tuned for more DMap applications";
   String get my_location => "My Location";
   String get my_page => "My";
+  String get my_position => "My Location";
   String get nav_about_us => "About us";
   String get nav_my_privacy_map => "My Privacy Map";
   String get nav_share_app => "Share Titan APP";
@@ -357,6 +358,8 @@ class $ko extends S {
   String get open_camera => "카메라 권한을 켜십시오";
   @override
   String get unknown_error => "Unknown error";
+  @override
+  String get my_position => "내 위치";
   @override
   String get hotel => "호텔";
   @override
@@ -865,6 +868,8 @@ class $zh_CN extends S {
   String get open_camera => "请开启相机权限";
   @override
   String get unknown_error => "Unknown error";
+  @override
+  String get my_position => "我的位置";
   @override
   String get hotel => "酒店";
   @override
