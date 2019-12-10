@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/me/model/user_eth_address.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/recharge_by_titan_finish_page.dart';
@@ -54,7 +55,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
       });
     } catch (e) {
       logger.e(e);
-      Fluttertoast.showToast(msg: "获取用户充值地址失败");
+      Fluttertoast.showToast(msg: S.of(context).fail_get_user_recharge_address_hint);
     }
 
     //行情
@@ -78,7 +79,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "充值",
+          S.of(context).recharge,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -114,7 +115,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
             children: <Widget>[
               if (quotes != null)
                 Text(
-                  '当前 ${quotes?.to} 兑换 ${quotes?.currency} 的比例为',
+                  S.of(context).current_exchange_rate('${quotes?.to}', '${quotes?.currency}'),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.normal,
@@ -158,7 +159,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 onTap: () {
                   if (userEthAddress?.address != null) {
                     Clipboard.setData(ClipboardData(text: userEthAddress?.address));
-                    Fluttertoast.showToast(msg: "地址复制成功");
+                    Fluttertoast.showToast(msg: S.of(context).address_copy_success_hint);
                   }
                 },
                 child: Row(
@@ -166,7 +167,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "转入地址: ${shortEthAddress(userEthAddress?.address)}",
+                      "${S.of(context).transfer_address}: ${shortEthAddress(userEthAddress?.address)}",
                       style: TextStyle(fontSize: 14),
                     ),
                     Padding(
@@ -201,8 +202,8 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                           builder: (context) {
                             return Platform.isIOS
                                 ? CupertinoAlertDialog(
-                                    title: Text('提示'),
-                                    content: Text('你还没有钱包.'),
+                                    title: Text(S.of(context).Tips),
+                                    content: Text(S.of(context).no_wallet_hint),
                                     actions: <Widget>[
                                       new FlatButton(
                                         onPressed: () {
@@ -210,7 +211,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                           Navigator.push(
                                               context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                                         },
-                                        child: new Text("创建"),
+                                        child: new Text(S.of(context).create),
                                       ),
                                       new FlatButton(
                                         onPressed: () {
@@ -218,19 +219,19 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                           Navigator.push(
                                               context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                                         },
-                                        child: new Text("导入"),
+                                        child: new Text(S.of(context).import),
                                       ),
                                       new FlatButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: new Text("取消"),
+                                        child: new Text(S.of(context).cancel),
                                       ),
                                     ],
                                   )
                                 : AlertDialog(
-                                    title: new Text("提示"),
-                                    content: new Text("你还没有钱包"),
+                                    title: new Text(S.of(context).tips),
+                                    content: new Text(S.of(context).no_wallet_hint),
                                     actions: <Widget>[
                                       new FlatButton(
                                         onPressed: () {
@@ -238,7 +239,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                           Navigator.push(
                                               context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                                         },
-                                        child: new Text("创建"),
+                                        child: new Text(S.of(context).create),
                                       ),
                                       new FlatButton(
                                         onPressed: () {
@@ -246,13 +247,13 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                           Navigator.push(
                                               context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                                         },
-                                        child: new Text("导入"),
+                                        child: new Text(S.of(context).import),
                                       ),
                                       new FlatButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: new Text("取消"),
+                                        child: new Text(S.of(context).cancel),
                                       ),
                                     ],
                                   );
@@ -277,7 +278,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "使用HYN钱包转入",
+                        S.of(context).by_hyn_transfer,
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -293,14 +294,14 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     var ret = await service.confirmRechargeV2(LOGIN_USER_INFO.balance);
                     if (ret.code == 0) {
                       //支付成功
-                      Fluttertoast.showToast(msg: '充值成功');
+                      Fluttertoast.showToast(msg: S.of(context).recharge_success_hint);
 //                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
                       Navigator.pop(context, true);
                     } else {
                       if (ret.code == -1007) {
-                        Fluttertoast.showToast(msg: '已到达上限');
+                        Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
                       } else {
-                        Fluttertoast.showToast(msg: '暂未发现转入信息，请稍后再试');
+                        Fluttertoast.showToast(msg: S.of(context).no_transfer_info_hint);
                       }
                     }
                   },
@@ -309,7 +310,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "我已使用外部钱包转入",
+                        S.of(context).out_wallet_transfer_hint,
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -335,7 +336,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "勿往上述地址转入非HYN资产，否则资产将不可找回。您转入后，需要整个网络节点的确认，大约需要10-30分钟。",
+                  S.of(context).transfer_warning_hint,
                   style: TextStyle(color: Color(0xFFCE9D40), fontSize: 13),
                   softWrap: true,
                 ),

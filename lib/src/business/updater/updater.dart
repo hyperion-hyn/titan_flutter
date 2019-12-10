@@ -66,7 +66,7 @@ class _UpdaterState extends State<Updater> {
             } else {
               print('已经是最新版本');
               if (state.isManual) {
-                Fluttertoast.showToast(msg: "已经是最新版本");
+                Fluttertoast.showToast(msg: S.of(context).already_latest_version_hint);
               }
             }
           }

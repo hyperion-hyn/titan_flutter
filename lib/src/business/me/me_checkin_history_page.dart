@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -45,7 +46,7 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "任务记录",
+          S.of(context).task_record,
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -108,7 +109,7 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
                   height: 10,
                 ),
                 Text(
-                  model.total < 3 ? "已做任务${model.total}次":"当天任务已完成",
+                  model.total < 3 ? S.of(context).task_finish_func('${model.total}'):S.of(context).task_finish_day_hint,
                   style: TextStyle(color: model.total < 3 ? HexColor('#333333'):HexColor('##6DBA1A'), fontSize: 14),
                 ),
                 SizedBox(
@@ -129,7 +130,7 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
   String _getTime(List<String> list) {
     print(list);
 
-    var time = '时间：';
+    var time = S.of(context).time_f;
     for (final item in list) {
       time = time + ' ${item} ';
     }

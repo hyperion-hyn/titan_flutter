@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/me/contract/contract_bloc/bloc.dart';
 import 'package:titan/src/business/me/contract/order_contract/order_contract_state.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
@@ -51,7 +52,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
         appBar: AppBar(
           brightness: Brightness.light,
           title: Text(
-            "获得算力",
+            S.of(context).get_powers,
             style: TextStyle(color: Colors.white),
           ),
           iconTheme: IconThemeData(color: Colors.white),
@@ -84,16 +85,16 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                       return;
                     });
                   } else if (orderContractState is OrderFreeSuccessState) {
-                    Fluttertoast.showToast(msg: "领取成功");
+                    Fluttertoast.showToast(msg: S.of(context).receive_success_hint);
                     _orderContractBloc.add(ResetToInit());
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                       return;
                     });
                   } else if (orderContractState is OrderOverRangeState) {
-                    Fluttertoast.showToast(msg: "超过限制数量");
+                    Fluttertoast.showToast(msg: S.of(context).over_limit_numbers);
                   } else if (orderContractState is OrderFailState) {
-                    Fluttertoast.showToast(msg: "抵押失败");
+                    Fluttertoast.showToast(msg: S.of(context).mortgage_fail_hint);
                   }
 
                   return Stack(
@@ -178,7 +179,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                                   Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: <Widget>[
-                                                      Text('${_contractInfoTemp.timeCycle}天产出'),
+                                                      Text(S.of(context).n_days_product("${_contractInfoTemp.timeCycle}")),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
@@ -218,7 +219,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                   Row(
                                     children: <Widget>[
                                       Text(
-                                        "介绍",
+                                        S.of(context).introduce,
                                         style:
                                             TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                                       ),
@@ -260,8 +261,8 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                           children: <Widget>[
                                             Text(
                                               orderContractState is OrderingState
-                                                  ? "提交中"
-                                                  : (_selectedContractInfo.amount != 0 ? "抵押" : "免费领取"),
+                                                  ? S.of(context).commiting
+                                                  : (_selectedContractInfo.amount != 0 ? S.of(context).mortgage : S.of(context).free_receive),
                                               style: TextStyle(
                                                   color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
                                             ),
@@ -269,7 +270,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                               width: 4,
                                             ),
                                             Text(
-                                              '可抵${_selectedContractInfo.remaining ?? 0}份',
+                                              S.of(context).available_mortgage_numbers('${_selectedContractInfo.remaining??0}'),
                                               style: TextStyle(color: Colors.white70),
                                             ),
                                           ],

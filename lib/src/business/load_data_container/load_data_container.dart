@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 
 typedef OnLoadData = void Function(int page);
@@ -89,7 +90,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: Text(
-              '网络异常~',
+              S.of(context).network_exception_hint,
               style: TextStyle(color: Colors.grey),
             ),
           ),
@@ -98,7 +99,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
                 widget.bloc.add(LoadingEvent());
               },
               child: Text(
-                '点击重试',
+                S.of(context).click_retry_hint,
                 style: TextStyle(
                   color: Theme.of(context).accentColor,
                   fontSize: 16,
@@ -118,7 +119,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: Text(
-              '暂无数据~',
+              S.of(context).search_empty_data,
               style: TextStyle(color: Colors.grey),
             ),
           )
@@ -170,14 +171,14 @@ class LoadDataContainerState extends State<LoadDataContainer> {
             body = CupertinoActivityIndicator();
           } else if (mode == LoadStatus.failed) {
             body = Text(
-              '加载失败，点击重试',
+              S.of(context).load_fail_click_hint,
               style: TextStyle(color: Colors.grey),
             );
           } else if (mode == LoadStatus.canLoading) {
             body = Container();
           } else {
             body = Text(
-              "—— 这是地平线了 ——",
+              S.of(context).the_horizon_hint,
               style: TextStyle(color: Colors.grey),
             );
           }

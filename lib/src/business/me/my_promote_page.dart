@@ -4,6 +4,7 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
@@ -58,7 +59,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
       appBar: AppBar(
 //        backgroundColor: Colors.white,
         title: Text(
-          "邀请分享",
+          S.of(context).invite_share,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -84,7 +85,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                         Column(
                           children: <Widget>[
                             Text(
-                              "星际数",
+                              S.of(context).star_number,
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
@@ -99,7 +100,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                         Column(
                           children: <Widget>[
                             Text(
-                              "直连星际量",
+                              S.of(context).direct_star_numbers,
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
@@ -114,7 +115,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                         Column(
                           children: <Widget>[
                             Text(
-                              "最大星际量",
+                              S.of(context).max_star_numbers,
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
@@ -129,7 +130,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                         Column(
                           children: <Widget>[
                             Text(
-                              "其他星际量",
+                              S.of(context).other_star_numbers,
                               style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                             ),
                             SizedBox(
@@ -159,7 +160,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                         SizedBox(width: 16,),
                         Expanded(
                           child: Text(
-                            "推荐人 ${getParentEmail()}",
+                            S.of(context).by_recommend('${getParentEmail()}'),
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
                           ),
                         ),
@@ -174,14 +175,14 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "邀请链接",
+                          S.of(context).invite_link,
                           style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
                         GestureDetector(
                           onTap: () {
                             Clipboard.setData(ClipboardData(text: link));
-                            Fluttertoast.showToast(msg: "邀请链接已复制");
+                            Fluttertoast.showToast(msg: S.of(context).invite_link_copy_hint);
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -263,7 +264,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 24.0),
                         child: Text(
-                          '你还没成功邀请人~',
+                          S.of(context).no_invite_success_hint,
                           style: TextStyle(color: Colors.grey),
                         ),
                       ),

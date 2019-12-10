@@ -68,7 +68,7 @@ class _AboueMeState extends State<AboutMePage> {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  Text("星际掘金", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF252525))),
+                  Text(S.of(context).app_name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF252525))),
                   SizedBox(
                     height: 4,
                   ),
@@ -82,7 +82,7 @@ class _AboueMeState extends State<AboutMePage> {
           ),
           Divider(),
           _buildInfoContainer(
-              label: "检查更新",
+              label: S.of(context).check_update,
               onTap: () {
                 BlocProvider.of<AppBloc>(context)
                     .add(
@@ -91,9 +91,9 @@ class _AboueMeState extends State<AboutMePage> {
               }),
           Divider(),
           _buildInfoContainer(
-              label: "联系客服",
+              label: S.of(context).contact_customer_service,
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerServicePage("微信ID：titan5321")));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerServicePage(S.of(context).wx_id)));
 
 //                BlocProvider.of<AppBloc>(context)
 //                    .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));

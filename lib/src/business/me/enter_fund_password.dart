@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/fund_token.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -44,7 +45,7 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      "安全验证",
+                      S.of(context).safety_verify,
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
@@ -52,7 +53,7 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
                         onTap: () {
                           Navigator.of(context).pop();
                         },
-                        child: Container(padding: EdgeInsets.all(4), child: Text("取消")))
+                        child: Container(padding: EdgeInsets.all(4), child: Text(S.of(context).cancel)))
                   ],
                 ),
               ),
@@ -62,14 +63,14 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  "资金密码",
+                  S.of(context).fund_password,
                   style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.bold),
                 ),
               ),
               TextFormField(
                 validator: (value) {
                   if (!ValidatorUtil.validatePassword(value)) {
-                    return "密码格式有误，请输入最少6位";
+                    return S.of(context).fund_password_format_error_message;
                   } else {
                     return null;
                   }
@@ -78,7 +79,7 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
                 keyboardType: TextInputType.emailAddress,
                 obscureText: true,
                 decoration:
-                    InputDecoration(hintText: "请输入资金密码", errorText: fundEditErrorMsg != null ? fundEditErrorMsg : null),
+                    InputDecoration(hintText: S.of(context).please_input_fund_pwd_hint, errorText: fundEditErrorMsg != null ? fundEditErrorMsg : null),
               ),
               Row(
                 children: <Widget>[
@@ -110,7 +111,7 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
                           },
                           color: Theme.of(context).primaryColor,
                           child: Text(
-                            "确认",
+                            S.of(context).confirm,
                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                         ),
