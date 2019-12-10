@@ -35,7 +35,7 @@ class S implements WidgetsLocalizations {
   String get add_share_options => "Sharing options";
   String get address_copied => "Address copied";
   String get all => "ALL";
-  String get app_name => "Titan";
+  String get app_name => "Star Rich";
   String get app_version => "Version";
   String get area => "Area";
   String get article => "Article";
@@ -49,7 +49,9 @@ class S implements WidgetsLocalizations {
   String get backup_wallet_mnemonic_text => "Use paper and pen to copy mnemonics correctly\nIf your phone is lost, stolen or damaged, use mnemonics to recover your assets";
   String get backup_wallet_mnemonic_title => "Backup mnemonics";
   String get backup_wallet_notice_text1 => "Obtaining mnemonic words proves your ownership of wallet assets";
+  String get balance_with_unit => "Balance(USDT)";
   String get bank => "Bank";
+  String get bill_flow => "Bills";
   String get cancel => "Cancel";
   String get clean_search_history => "Clear History";
   String get close => "Close";
@@ -87,6 +89,7 @@ class S implements WidgetsLocalizations {
   String get domestic_video => "Domestic";
   String get downloading_update_file => "Downloading update file";
   String get driving => "Driving";
+  String get earnings_balance => "Earnings\nBalance";
   String get email_format_error_hint => "Email format is wrong, please enter the correct email";
   String get email_label => "Email";
   String get embassy_guide => "Embassy Guide";
@@ -219,6 +222,8 @@ class S implements WidgetsLocalizations {
   String get receiver_address => "Receiver Address";
   String get receiver_address_not_empty_hint => "Receiver address is empty";
   String get receiver_encrypted_address => "receiver encrypted address(public key)";
+  String get recharge => "Recharge";
+  String get recharge_balance => "Recharge\nBalance";
   String get recommended_area => "Recommended Areas";
   String get refresh_keypaire_message => "Refreshing your public key address will fail to decrypt the received address, still continue to refresh?";
   String get refresh_public_key_days_tips => "Automatically refresh in %d days";
@@ -299,6 +304,8 @@ class S implements WidgetsLocalizations {
   String get wechat => "Wechat";
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
+  String get withdrawal => "Withdrawal";
+  String get withdrawal_records => "Withdrawal";
   String get your_mnemonic => "Your Mnemonic phrases";
   String distance(String distance) => "$distance m";
   String get_verification_code_again(String countdownTime) => "Reacquire ${countdownTime}";
@@ -308,10 +315,12 @@ class S implements WidgetsLocalizations {
   String n_hour(String hour) => "$hour hour ";
   String n_minute(String minute) => "$minute minute ";
   String network_request_err(String code) => "Network request error, code: $code";
+  String poundage_with_quantity(String poundage) => "Fee：${poundage}";
   String private_share_receive_address(String shortAddress) => "Receive Address : ${shortAddress}";
   String receiver_symbol(String symbol) => "Receive ${symbol}";
   String send_count_label(String symbol) => "$symbol Quantity";
   String send_symbol(String symbol) => "Send $symbol";
+  String withdrawal_with_quantity(String count) => "Withdrawal：${count}";
 }
 
 class $ko extends S {
@@ -324,6 +333,8 @@ class $ko extends S {
   String get cancel => "취소";
   @override
   String get update_now => "지금 업데이트";
+  @override
+  String get bill_flow => "账单流水";
   @override
   String get foods => "식당";
   @override
@@ -437,6 +448,8 @@ class $ko extends S {
   @override
   String get services => "서비스";
   @override
+  String get withdrawal => "提币";
+  @override
   String get confirm => "OK";
   @override
   String get app_name => "타이탄";
@@ -480,6 +493,8 @@ class $ko extends S {
   String get search_title => "검색 / 디코딩";
   @override
   String get hyn_price => "HYN 지수";
+  @override
+  String get withdrawal_records => "提币记录";
   @override
   String get nav_share_app => "앱 공유";
   @override
@@ -546,6 +561,8 @@ class $ko extends S {
   String get data_contribute => "데이터 공헌";
   @override
   String get wallet_setting_backup_notice => "이 장치에 액세스 할 수 없으면 백업하지 않으면 자금이 복구되지 않습니다!";
+  @override
+  String get recharge_balance => "充值余额";
   @override
   String get input_wallet_name_length_hint => "6 비트 이내의 이름을 입력하십시오";
   @override
@@ -685,6 +702,8 @@ class $ko extends S {
   @override
   String get no_level => "无等级";
   @override
+  String get recharge => "充值";
+  @override
   String get speed_slow => "느리게";
   @override
   String get share => "공유";
@@ -706,6 +725,8 @@ class $ko extends S {
   String get improvement_plan_message => "타이탄 을 사용하는 동안 더 나은 사용자 경험을 제공하기 위해 제품 품질을 개선하는 데 도움이되는 사용자 경험 개선 프로그램에 초대되었습니다.세부 사항보기\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">계획 설명</a>\n        </b>";
   @override
   String get backup_finish => "백업 완료";
+  @override
+  String get balance_with_unit => "账户余额(USDT)";
   @override
   String get no_recommended_route => "추천 경로가 없습니다";
   @override
@@ -801,6 +822,8 @@ class $ko extends S {
   @override
   String get register_success => "注册成功";
   @override
+  String get earnings_balance => "收益余额";
+  @override
   String get telegram_operator => "Telegram Operator";
   @override
   String get global_nodes => "글로벌 노드";
@@ -881,6 +904,8 @@ class $ko extends S {
   @override
   String n_hour(String hour) => "${hour}시간";
   @override
+  String poundage_with_quantity(String poundage) => "手续费：${poundage}";
+  @override
   String n_day(String day) => "${day}일";
   @override
   String receiver_symbol(String symbol) => "받기 ${symbol}";
@@ -898,6 +923,8 @@ class $ko extends S {
   String n_minute(String minute) => "${minute}분";
   @override
   String km(String km) => "${km}킬로미터";
+  @override
+  String withdrawal_with_quantity(String count) => "提币：${count}";
   @override
   String send_symbol(String symbol) => "보내기 $symbol";
   @override
@@ -918,6 +945,8 @@ class $zh_CN extends S {
   String get cancel => "取消";
   @override
   String get update_now => "现在更新";
+  @override
+  String get bill_flow => "账单流水";
   @override
   String get foods => "美食";
   @override
@@ -1031,6 +1060,8 @@ class $zh_CN extends S {
   @override
   String get services => "服务";
   @override
+  String get withdrawal => "提币";
+  @override
   String get confirm => "确定";
   @override
   String get app_name => "星际掘金";
@@ -1074,6 +1105,8 @@ class $zh_CN extends S {
   String get search_title => "搜索 / 解码";
   @override
   String get hyn_price => "HYN指数";
+  @override
+  String get withdrawal_records => "提币记录";
   @override
   String get nav_share_app => "分享App";
   @override
@@ -1140,6 +1173,8 @@ class $zh_CN extends S {
   String get data_contribute => "数据贡献";
   @override
   String get wallet_setting_backup_notice => "如果你无法访问这个设备，你的资金将无法找回，除非你备份了！";
+  @override
+  String get recharge_balance => "充值余额";
   @override
   String get input_wallet_name_length_hint => "请输入6位以内的名称";
   @override
@@ -1279,6 +1314,8 @@ class $zh_CN extends S {
   @override
   String get no_level => "无等级";
   @override
+  String get recharge => "充值";
+  @override
   String get speed_slow => "慢";
   @override
   String get share => "分享";
@@ -1300,6 +1337,8 @@ class $zh_CN extends S {
   String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
   @override
   String get backup_finish => "备份完成";
+  @override
+  String get balance_with_unit => "账户余额(USDT)";
   @override
   String get no_recommended_route => "暂无推荐路线";
   @override
@@ -1395,6 +1434,8 @@ class $zh_CN extends S {
   @override
   String get register_success => "注册成功";
   @override
+  String get earnings_balance => "收益余额";
+  @override
   String get telegram_operator => "Telegram Operator";
   @override
   String get global_nodes => "全球节点";
@@ -1475,6 +1516,8 @@ class $zh_CN extends S {
   @override
   String n_hour(String hour) => "${hour}小时";
   @override
+  String poundage_with_quantity(String poundage) => "手续费：${poundage}";
+  @override
   String n_day(String day) => "${day}天";
   @override
   String receiver_symbol(String symbol) => "接收 ${symbol}";
@@ -1492,6 +1535,8 @@ class $zh_CN extends S {
   String n_minute(String minute) => "${minute}分钟";
   @override
   String km(String km) => "${km}公里";
+  @override
+  String withdrawal_with_quantity(String count) => "提币：${count}";
   @override
   String send_symbol(String symbol) => "发送 $symbol";
   @override

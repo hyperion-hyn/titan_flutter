@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
@@ -26,8 +27,7 @@ class MyAssetPage extends StatefulWidget {
   }
 }
 
-class _MyAssetState extends UserState<MyAssetPage>
-    with TickerProviderStateMixin {
+class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin {
   TabController _tabController;
 
   @override
@@ -55,8 +55,7 @@ class _MyAssetState extends UserState<MyAssetPage>
                           context,
                           MaterialPageRoute(
                               builder: (context) => DrawBalancePage(),
-                              settings:
-                                  RouteSettings(name: "/draw_balance_page")));
+                              settings: RouteSettings(name: "/draw_balance_page")));
                       if (isSuccess != null && isSuccess) {
                         eventBus.fire(Refresh());
                         _tabController.animateTo(1);
@@ -65,9 +64,8 @@ class _MyAssetState extends UserState<MyAssetPage>
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        "提币",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
+                        S.of(context).withdrawal,
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -77,8 +75,7 @@ class _MyAssetState extends UserState<MyAssetPage>
                               context,
                               MaterialPageRoute(
                                   builder: (context) => RechargePurchasePage(),
-                                  settings: RouteSettings(
-                                      name: "/recharge_purchase_page")))
+                                  settings: RouteSettings(name: "/recharge_purchase_page")))
                           .then((isSuccess) async {
                         if (isSuccess != null && isSuccess) {
                           await UserService.syncUserInfo();
@@ -91,9 +88,8 @@ class _MyAssetState extends UserState<MyAssetPage>
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        "充值",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
+                        S.of(context).recharge,
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -118,7 +114,7 @@ class _MyAssetState extends UserState<MyAssetPage>
                         Padding(
                           padding: const EdgeInsets.only(bottom: 6),
                           child: Text(
-                            "账户余额(USDT)",
+                            S.of(context).balance_with_unit,
                             style: TextStyle(
                               color: Colors.white70,
                             ),
@@ -148,7 +144,7 @@ class _MyAssetState extends UserState<MyAssetPage>
                         Padding(
                           padding: const EdgeInsets.only(bottom: 0),
                           child: Text(
-                            "收益余额",
+                            S.of(context).earnings_balance,
                             style: TextStyle(
                               color: Colors.white70,
                             ),
@@ -170,7 +166,7 @@ class _MyAssetState extends UserState<MyAssetPage>
                         Padding(
                           padding: const EdgeInsets.only(bottom: 0),
                           child: Text(
-                            "充值余额",
+                            S.of(context).recharge_balance,
                             style: TextStyle(
                               color: Colors.white70,
                             ),
@@ -195,37 +191,41 @@ class _MyAssetState extends UserState<MyAssetPage>
 //                padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16))),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    width: 200,
-                    child: TabBar(
-                      indicatorColor: Theme.of(context).primaryColor,
-                      indicatorWeight: 5,
-                      controller: _tabController,
-                      labelColor: Color(0xFF252525),
-                      unselectedLabelColor: Colors.grey,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      tabs: <Widget>[
-                        Tab(
-                          child: Text(
-                            '账单流水',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          width: 200,
+                          child: TabBar(
+                            indicatorColor: Theme.of(context).primaryColor,
+                            indicatorWeight: 5,
+                            controller: _tabController,
+                            labelColor: Color(0xFF252525),
+                            unselectedLabelColor: Colors.grey,
+                            indicatorSize: TabBarIndicatorSize.label,
+                            tabs: <Widget>[
+                              Tab(
+                                child: Text(
+                                  S.of(context).bill_flow,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  S.of(context).withdrawal_records,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Tab(
-                          child: Text(
-                            '提币记录',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   Expanded(
                     child: RefreshConfiguration.copyAncestor(
@@ -306,10 +306,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
     if (billInfo.hasDetail) {
       return InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MeDailyBillsDetail(billInfo)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MeDailyBillsDetail(billInfo)));
         },
         child: _buildItemDetail(billInfo),
       );
@@ -328,7 +325,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
 
     String subTitle = billInfo.subTitle;
     //subTitle = '抵押ID 1,10,100,1000,10000,100000,1000000,10000000';
-    if(subTitle.length > 25) {
+    if (subTitle.length > 25) {
       subTitle = subTitle.substring(0, 25) + '...';
     }
 
@@ -347,8 +344,8 @@ class _BillHistoryState extends DataListState<BillHistory> {
                 ),
               ),
               if (billInfo.subTitle != null)
-                SizedBox(child:
-                  Container(
+                SizedBox(
+                  child: Container(
                     child: Text(
                       subTitle,
                       style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
@@ -368,15 +365,11 @@ class _BillHistoryState extends DataListState<BillHistory> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   Const.DOUBLE_NUMBER_FORMAT.format(billInfo.amount),
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: amountColor,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, color: amountColor, fontWeight: FontWeight.bold),
                 ),
               ),
               Text(
-                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(
-                    billInfo.crateAt * 1000)),
+                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(billInfo.crateAt * 1000)),
                 style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
               )
             ],
@@ -385,7 +378,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
             width: 16,
             height: 16,
             child: Icon(
-              !billInfo.hasDetail?null:Icons.chevron_right,
+              !billInfo.hasDetail ? null : Icons.chevron_right,
               color: Colors.black54,
             ),
           ),
@@ -393,7 +386,6 @@ class _BillHistoryState extends DataListState<BillHistory> {
       ),
     );
   }
-
 
   @override
   Future<List> onLoadData(int page) {
@@ -525,12 +517,12 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
-                  "提币：${Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.amount)}",
+                  S.of(context).withdrawal_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.amount)),
                   style: TextStyle(fontSize: 16),
                 ),
               ),
               Text(
-                "手续费：${Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.fee)}",
+                S.of(context).poundage_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.fee)),
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               )
             ],
@@ -547,8 +539,7 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
                 ),
               ),
               Text(
-                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(
-                    withdrawalInfo.createAt * 1000)),
+                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(withdrawalInfo.createAt * 1000)),
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               )
             ],
@@ -560,8 +551,7 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
 
   @override
   Future<List> onLoadData(int page) async {
-    PageResponse<WithdrawalInfoLog> _pageResponse =
-        await _userService.getWithdrawalLogList(page);
+    PageResponse<WithdrawalInfoLog> _pageResponse = await _userService.getWithdrawalLogList(page);
     var dataList = _pageResponse.data;
     return dataList;
   }

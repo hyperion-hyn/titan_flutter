@@ -289,5 +289,14 @@
   "invite_share": "邀请分享",
   "use_guide": "使用教程",
   "dmap_setting": "DMap设置",
-  "thank_you_for_contribute_data": "感谢你贡献数据。"
+  "thank_you_for_contribute_data": "感谢你贡献数据。",
+  "withdrawal": "提币",
+  "recharge": "充值",
+  "balance_with_unit": "账户余额(USDT)",
+  "earnings_balance": "收益余额",
+  "recharge_balance": "充值余额",
+  "bill_flow": "账单流水",
+  "withdrawal_records": "提币记录",
+  "withdrawal_with_quantity": "提币：${count}",
+  "poundage_with_quantity": "手续费：${poundage}"
 }

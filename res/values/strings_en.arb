@@ -1,5 +1,5 @@
 {
-  "app_name": "Titan",
+  "app_name": "Star Rich",
   "network_request_err": "Network request error, code: $code",
   "route": "Route",
   "no_recommended_route": "No recommended route yet",
@@ -289,5 +289,14 @@
   "invite_share": "Invite and share",
   "use_guide": "Use Tutorial",
   "dmap_setting": "DMap Setting",
-  "thank_you_for_contribute_data": "Thank you for your contribution。"
+  "thank_you_for_contribute_data": "Thank you for your contribution。",
+  "withdrawal": "Withdrawal",
+  "recharge": "Recharge",
+  "balance_with_unit": "Balance(USDT)",
+  "earnings_balance": "Earnings\nBalance",
+  "recharge_balance": "Recharge\nBalance",
+  "bill_flow": "Bills",
+  "withdrawal_records": "Withdrawal",
+  "withdrawal_with_quantity": "Withdrawal：${count}",
+  "poundage_with_quantity": "Fee：${poundage}"
 }
