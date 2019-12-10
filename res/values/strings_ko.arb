@@ -277,5 +277,17 @@
   "account_password": "账户密码",
   "fundz_password": "资金安全密码",
   "fund_password_format_error_message": "密码格式有误，请输入最少6位",
-  "fund_password_length_error_message": "请输入至少6位的资金密码"
+  "fund_password_length_error_message": "请输入至少6位的资金密码",
+  "no_level": "无等级",
+  "task": "任务",
+  "my_account_with_unit": "我的账户(USDT)",
+  "my_power_with_unit": "我的算力(T)",
+  "node_mortgage_with_unit": "节点抵押(USDT)",
+  "get_power": "获取算力",
+  "node_mortgage": "节点抵押",
+  "task_record": "任务记录",
+  "invite_share": "邀请分享",
+  "use_guide": "使用教程",
+  "dmap_setting": "DMap设置",
+  "thank_you_for_contribute_data": "感谢你贡献数据。"
 }

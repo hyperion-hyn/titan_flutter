@@ -81,6 +81,7 @@ class S implements WidgetsLocalizations {
   String get discover => "Discover";
   String get dmap_document_title => "DMap Integration Document";
   String get dmap_life => "Explore nearby";
+  String get dmap_setting => "DMap Setting";
   String get dmap_tools => "Tools";
   String get document_optimization => "optimizing document...";
   String get domestic_video => "Domestic";
@@ -104,6 +105,7 @@ class S implements WidgetsLocalizations {
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
+  String get get_power => "Get Power";
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "Global Map Service Nodes";
   String get global_nodes => "Global Nodes";
@@ -139,6 +141,7 @@ class S implements WidgetsLocalizations {
   String get installation_update_package_failed => "Installation update package failed";
   String get internet_bar => "Internet Cafe";
   String get invitation_code => "invitation code";
+  String get invite_share => "Invite and share";
   String get kais_talk => "Kai's Talk";
   String get key_manager_title => "My encrypted addr.";
   String get label => "Label";
@@ -157,9 +160,11 @@ class S implements WidgetsLocalizations {
   String get medium => "Medium";
   String get modify_success => "Successfully modified";
   String get more_dmap => "Stay tuned for more DMap applications";
+  String get my_account_with_unit => "Account(USDT)";
   String get my_location => "My Location";
   String get my_page => "My";
   String get my_position => "My Location";
+  String get my_power_with_unit => "Power(T)";
   String get nav_about_us => "About us";
   String get nav_my_privacy_map => "My Privacy Map";
   String get nav_share_app => "Share Titan APP";
@@ -170,7 +175,10 @@ class S implements WidgetsLocalizations {
   String get no_data => "No Data";
   String get no_detail_address => "No detailed address";
   String get no_fill_in => "Not Filled";
+  String get no_level => "No Level";
   String get no_recommended_route => "No recommended route yet";
+  String get node_mortgage => "Node Mortgage";
+  String get node_mortgage_with_unit => "Mortgage(USDT)";
   String get not_open_yet => "Coming Soon";
   String get official_announcement => "Announcement";
   String get official_website => "Official Website";
@@ -256,9 +264,12 @@ class S implements WidgetsLocalizations {
   String get stay_tuned => "Stay tuned";
   String get submit => "submit";
   String get supermarket => "Supermarket";
+  String get task => "Task";
+  String get task_record => "Task Record";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
+  String get thank_you_for_contribute_data => "Thank you for your contribution。";
   String get time => "Opening times";
   String get tips => "Tips";
   String get titan_encrypted_map_ecology => "Titan Cryptographic Map Ecology";
@@ -269,6 +280,7 @@ class S implements WidgetsLocalizations {
   String get twittertitan => "Twitter-Titan";
   String get unknown_error => "Unknown error";
   String get update_now => "Update Now";
+  String get use_guide => "Use Tutorial";
   String get user_this_account => "Use this private account";
   String get verification_code => "Verification code";
   String get video => "Video";
@@ -319,6 +331,8 @@ class $ko extends S {
   @override
   String get titan_encrypted_map_ecology => "Titan 암호화 된지도 생태";
   @override
+  String get use_guide => "使用教程";
+  @override
   String get contract_call => "스마트 계약 전화";
   @override
   String get wallet_create_success => "계정 만들기 성공";
@@ -357,6 +371,8 @@ class $ko extends S {
   @override
   String get receiver => "받기";
   @override
+  String get my_account_with_unit => "我的账户(USDT)";
+  @override
   String get mall => "백화점";
   @override
   String get password_label => "密码";
@@ -374,6 +390,8 @@ class $ko extends S {
   String get data_contribute_reward => "기여도 데이터 HYN 장려 받음";
   @override
   String get processing => "处理中";
+  @override
+  String get my_power_with_unit => "我的算力(T)";
   @override
   String get receiver_address_not_empty_hint => "수신 주소는 비워 둘 수 없습니다";
   @override
@@ -396,6 +414,8 @@ class $ko extends S {
   String get unknown_error => "Unknown error";
   @override
   String get my_position => "내 위치";
+  @override
+  String get node_mortgage_with_unit => "节点抵押(USDT)";
   @override
   String get register_account => "注册账号";
   @override
@@ -462,6 +482,8 @@ class $ko extends S {
   String get hyn_price => "HYN 지수";
   @override
   String get nav_share_app => "앱 공유";
+  @override
+  String get invite_share => "邀请分享";
   @override
   String get confirm_mnemonic => "복원된 텍스트를 입력하십시오";
   @override
@@ -547,6 +569,8 @@ class $ko extends S {
   @override
   String get forum => "받는 사람";
   @override
+  String get get_power => "获取算力";
+  @override
   String get add_share_options => "공유 옵션";
   @override
   String get account_backup_notice => "지금 계정을 백업합니다";
@@ -558,6 +582,8 @@ class $ko extends S {
   String get time => "영업 시간";
   @override
   String get speed_fast => "빨리";
+  @override
+  String get dmap_setting => "DMap设置";
   @override
   String get import_wallet => "지갑 가져오기";
   @override
@@ -582,6 +608,8 @@ class $ko extends S {
   String get coming_soon => "곧 개방될 것이다";
   @override
   String get navigation => "탐색";
+  @override
+  String get thank_you_for_contribute_data => "感谢你贡献数据。";
   @override
   String get wechat_official_account => "서비스 번호";
   @override
@@ -649,9 +677,13 @@ class $ko extends S {
   @override
   String get login => "登录";
   @override
+  String get task_record => "任务记录";
+  @override
   String get supermarket => "슈퍼마켓";
   @override
   String get information_guide => "안내서";
+  @override
+  String get no_level => "无等级";
   @override
   String get speed_slow => "느리게";
   @override
@@ -757,6 +789,8 @@ class $ko extends S {
   @override
   String get driving => "드라이브";
   @override
+  String get task => "任务";
+  @override
   String get telphone => "전화";
   @override
   String get send => "보내기";
@@ -825,6 +859,8 @@ class $ko extends S {
   @override
   String get telegram => "전보";
   @override
+  String get node_mortgage => "节点抵押";
+  @override
   String get illegal_mnemonic => "단어들이 올바르지 않습니다.";
   @override
   String get backup_offline_save_text => "격리 된 네트워크의 안전한 장소에 보관\n이메일, 사진 앨범, 소셜 애플리케이션 등과 같은 네트워크 환경에서 니모닉을 공유하지 마십시오.";
@@ -889,6 +925,8 @@ class $zh_CN extends S {
   @override
   String get titan_encrypted_map_ecology => "Titan 加密地图生态";
   @override
+  String get use_guide => "使用教程";
+  @override
   String get contract_call => "智能合约调用";
   @override
   String get wallet_create_success => "账户创建成功";
@@ -927,6 +965,8 @@ class $zh_CN extends S {
   @override
   String get receiver => "接收";
   @override
+  String get my_account_with_unit => "我的账户(USDT)";
+  @override
   String get mall => "商场";
   @override
   String get password_label => "密码";
@@ -944,6 +984,8 @@ class $zh_CN extends S {
   String get data_contribute_reward => "贡献地图数据获得HYN奖励";
   @override
   String get processing => "处理中";
+  @override
+  String get my_power_with_unit => "我的算力(T)";
   @override
   String get receiver_address_not_empty_hint => "接收地址不能为空";
   @override
@@ -966,6 +1008,8 @@ class $zh_CN extends S {
   String get unknown_error => "Unknown error";
   @override
   String get my_position => "我的位置";
+  @override
+  String get node_mortgage_with_unit => "节点抵押(USDT)";
   @override
   String get register_account => "注册账号";
   @override
@@ -1032,6 +1076,8 @@ class $zh_CN extends S {
   String get hyn_price => "HYN指数";
   @override
   String get nav_share_app => "分享App";
+  @override
+  String get invite_share => "邀请分享";
   @override
   String get confirm_mnemonic => "输入恢复短语";
   @override
@@ -1117,6 +1163,8 @@ class $zh_CN extends S {
   @override
   String get forum => "论坛";
   @override
+  String get get_power => "获取算力";
+  @override
   String get add_share_options => "分享选项";
   @override
   String get account_backup_notice => "现在备份你的账户";
@@ -1128,6 +1176,8 @@ class $zh_CN extends S {
   String get time => "营业时间";
   @override
   String get speed_fast => "快";
+  @override
+  String get dmap_setting => "DMap设置";
   @override
   String get import_wallet => "导入钱包";
   @override
@@ -1152,6 +1202,8 @@ class $zh_CN extends S {
   String get coming_soon => "即将开放";
   @override
   String get navigation => "导航";
+  @override
+  String get thank_you_for_contribute_data => "感谢你贡献数据。";
   @override
   String get wechat_official_account => "服务号";
   @override
@@ -1219,9 +1271,13 @@ class $zh_CN extends S {
   @override
   String get login => "登录";
   @override
+  String get task_record => "任务记录";
+  @override
   String get supermarket => "超市";
   @override
   String get information_guide => "教程";
+  @override
+  String get no_level => "无等级";
   @override
   String get speed_slow => "慢";
   @override
@@ -1327,6 +1383,8 @@ class $zh_CN extends S {
   @override
   String get driving => "驾车";
   @override
+  String get task => "任务";
+  @override
   String get telphone => "电话";
   @override
   String get send => "发送";
@@ -1394,6 +1452,8 @@ class $zh_CN extends S {
   String get wechat => "公众号";
   @override
   String get telegram => "电报群";
+  @override
+  String get node_mortgage => "节点抵押";
   @override
   String get illegal_mnemonic => "不是合法的助记词";
   @override

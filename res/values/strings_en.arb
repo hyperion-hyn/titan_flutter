@@ -277,5 +277,17 @@
   "account_password": "account password",
   "fundz_password": "fund password",
   "fund_password_format_error_message": "The fund password format is incorrect. Please enter at least 6 characters",
-  "fund_password_length_error_message": "Please enter a fund password of at least 6 character"
+  "fund_password_length_error_message": "Please enter a fund password of at least 6 character",
+  "no_level": "No Level",
+  "task": "Task",
+  "my_account_with_unit": "Account(USDT)",
+  "my_power_with_unit": "Power(T)",
+  "node_mortgage_with_unit": "Mortgage(USDT)",
+  "get_power": "Get Power",
+  "node_mortgage": "Node Mortgage",
+  "task_record": "Task Record",
+  "invite_share": "Invite and share",
+  "use_guide": "Use Tutorial",
+  "dmap_setting": "DMap Setting",
+  "thank_you_for_contribute_data": "Thank you for your contribution。"
 }
