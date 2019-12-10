@@ -147,7 +147,7 @@ class HomePanelState extends UserState<HomePanel> {
 //                  print('<<<---' * 10);
                 },
                 child: Text(
-                  '城市推荐',
+                  S.of(context).city_recommendation,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ),

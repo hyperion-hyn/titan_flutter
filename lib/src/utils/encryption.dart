@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/model/poi.dart';
@@ -8,7 +9,6 @@ import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 
 import 'package:titan/src/utils/open_location_code.dart' as locationCode;
-
 import '../global.dart';
 
 Future<String> reEncryptPoi(Repository repository, IPoi poi, String remark) async {
@@ -21,7 +21,7 @@ Future<String> reEncryptPoi(Repository repository, IPoi poi, String remark) asyn
   var cm_a = await TitanPlugin.encrypt(pubKey, rand);
   var ct_a = await TitanPlugin.encrypt(pubKey, message);
   if (cm_a == null || cm_a.isEmpty || ct_a == null || ct_a.isEmpty) {
-    throw Exception('加密失败');
+    throw Exception(locale_config.SS.encrypt_error);
   }
   var expiracy = 24 * 3600; //1 day
   await api.storeCls(commitment: cm_a, ciphertext: ct_a, expiracy: expiracy, kid: kid);
@@ -36,7 +36,7 @@ Future<String> p2pEncryptPoi(String pubKey, IPoi poi, String remark) async {
   var message = _genMessage(poi, remark);
   var ciphertext = await TitanPlugin.encrypt(pubKey, message);
   if (ciphertext == null || ciphertext.isEmpty) {
-    throw Exception('不是合法的公钥');
+    throw Exception(locale_config.SS.not_valid_public_key);
   }
 //  return "${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TEXT_PREFIX}$ciphertext";
   return "${Const.CIPHER_TEXT_PREFIX}$ciphertext";
@@ -99,5 +99,6 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
     return PoiEntity(name: name, latLng: latLng, remark: word);
   }
 
-  throw Exception('密文无效或已过期');
+
+  throw Exception(locale_config.SS.ciphertext_exception_hint);
 }

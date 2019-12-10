@@ -60,7 +60,7 @@
   "label": "Label",
   "telphone": "Phone No.",
   "search_empty_data": "No Data",
-  "decrypt_location_cipher_tips": "How to decipher coded location information？",
+  "decrypt_location_cipher_tips": "How to decipher coded location information",
   "decrypt_location_cipher_tips_context": "Please paste the location code, and click enter to decode.",
   "input_search_keyworod_or_cipher": "Enter search keyword/ciphertext",
   "search_history": "History",
@@ -423,5 +423,9 @@
   "no_grade": "No rank",
   "contribute_reward_func": "Contribution Reward： ${award}",
   "grade_require_func": "Level Requirements： ${require}",
-  "revenue_details": "Revenue details"
+  "revenue_details": "Revenue details",
+  "city_recommendation": "City Recommend",
+  "search_exception": "Search Exception",
+  "ciphertext_exception_hint": "密文无效或已过期",
+  "not_valid_public_key": "不是合法的公钥"
 }

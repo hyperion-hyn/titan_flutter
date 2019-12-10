@@ -69,6 +69,8 @@ class S implements WidgetsLocalizations {
   String get by_mortgage => "Alternative mortgage";
   String get cancel => "Cancel";
   String get check_update => "Check for updates";
+  String get ciphertext_exception_hint => "密文无效或已过期";
+  String get city_recommendation => "City Recommend";
   String get clean_search_history => "Clear History";
   String get click_charge => "Click to recharge";
   String get click_retry_hint => "Click to retry";
@@ -100,7 +102,7 @@ class S implements WidgetsLocalizations {
   String get data_contribute => "Data Contribution";
   String get data_contribute_reward => "Contribute map data to earn HYN rewards";
   String get data_exception_hint => "Data is abnormal, please try again";
-  String get decrypt_location_cipher_tips => "How to decipher coded location information？";
+  String get decrypt_location_cipher_tips => "How to decipher coded location information";
   String get decrypt_location_cipher_tips_context => "Please paste the location code, and click enter to decode.";
   String get delete => "Delete";
   String get delete_wallet_fail => "Delete Failed";
@@ -246,6 +248,7 @@ class S implements WidgetsLocalizations {
   String get node_mortgage_in_out_hint => "Node mortgages, go in and out, unlimited time。";
   String get node_mortgage_with_unit => "Mortgage(USDT)";
   String get not_open_yet => "Coming Soon";
+  String get not_valid_public_key => "不是合法的公钥";
   String get official_announcement => "Notifice";
   String get official_website => "Official Website";
   String get online_exchange => "Online Exchanges";
@@ -328,6 +331,7 @@ class S implements WidgetsLocalizations {
   String get save_mnemonic_notice => "Write down or copy these words in the correct order and keep them safe.";
   String get save_mnemonic_safe_notice => "Never share the mnemonic with anyone, store your backup securely!";
   String get search_empty_data => "No Data";
+  String get search_exception => "Search Exception";
   String get search_history => "History";
   String get search_or_decode => "Search / Decrypt";
   String get search_title => "Search / Decrypt";
@@ -909,6 +913,8 @@ class $zh_CN extends S {
   @override
   String get mall => "商场";
   @override
+  String get ciphertext_exception_hint => "密文无效或已过期";
+  @override
   String get received => "已收到";
   @override
   String get recharge_success_hint => "充值成功";
@@ -1145,6 +1151,8 @@ class $zh_CN extends S {
   @override
   String get public_key_copied => "公钥地址已复制";
   @override
+  String get not_valid_public_key => "不是合法的公钥";
+  @override
   String get encrypt_error => "加密失败";
   @override
   String get twittertitan => "推特-泰坦";
@@ -1201,6 +1209,8 @@ class $zh_CN extends S {
   @override
   String get remark => "备注";
   @override
+  String get city_recommendation => "城市推荐";
+  @override
   String get refresh_public_key_hours_tips => "%d小时%d分后自动刷新";
   @override
   String get home_page => "首页";
@@ -1216,6 +1226,8 @@ class $zh_CN extends S {
   String get becharge_amount => "充值余额";
   @override
   String get stay_tuned => "敬请期待";
+  @override
+  String get search_exception => "搜索异常";
   @override
   String get gas_station => "加油站";
   @override
