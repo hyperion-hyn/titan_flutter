@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
@@ -51,7 +52,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          '抢注',
+          S.of(context).snap_up,
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -66,7 +67,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                   child: Row(
                     children: <Widget>[
                       Text(
-                        "抢注产品：${widget.mortgageInfo.name}",
+                        S.of(context).snap_up_product_fuc('${widget.mortgageInfo.name}'),
                         style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                       ),
                     ],
@@ -75,7 +76,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                 Row(
                   children: <Widget>[
                     Text(
-                      "金额：${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} USDT",
+                      "${S.of(context).amount}${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} USDT",
                       style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                     ),
                   ],
@@ -110,7 +111,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        "需转入",
+                        S.of(context).need_transfer,
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Padding(
@@ -129,7 +130,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Text(
-                        '充值余额：',
+                        '${S.of(context).becharge_amount}：',
                         style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                       ),
                       Text(
@@ -153,7 +154,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "余额不足",
+                  S.of(context).balance_lack,
                   style: TextStyle(color: Colors.red),
                 ),
                 SizedBox(
@@ -175,7 +176,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                     });
                   },
                   child: Text(
-                    "点击充值",
+                    S.of(context).click_charge,
                     style: TextStyle(color: Colors.blue),
                   ),
                 ),
@@ -188,7 +189,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
           onPressed: () async {
             if (widget.mortgageInfo != null && LOGIN_USER_INFO != null) {
               if (LOGIN_USER_INFO.chargeBalance < widget.mortgageInfo.amount) {
-                Fluttertoast.showToast(msg: '余额不足');
+                Fluttertoast.showToast(msg: S.of(context).balance_lack);
               } else {
                 showModalBottomSheet(
                     isScrollControlled: true,
@@ -201,11 +202,11 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                   }
                   try {
                     await service.mortgageSnapUp(confId: widget.mortgageInfo.id, fundToken: value);
-                    Fluttertoast.showToast(msg: '抢注成功');
+                    Fluttertoast.showToast(msg: S.of(context).snap_up_success_hint);
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                   } catch (e) {
                     logger.e(e);
-                    Fluttertoast.showToast(msg: '抢注失败');
+                    Fluttertoast.showToast(msg: S.of(context).snap_up_fail);
                   }
                 });
               }
@@ -216,7 +217,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
             height: 56,
             child: Center(
               child: Text(
-                "确认抢注",
+                S.of(context).confirm_snap_up,
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
@@ -226,7 +227,8 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
         Padding(
           padding: const EdgeInsets.only(top: 64.0),
           child: Text(
-            '提示：抢注节点只能使用充值余额进行抵押',
+            S.of(context).tip_snap_up_balance_hint,
+            textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey),
           ),
         ),

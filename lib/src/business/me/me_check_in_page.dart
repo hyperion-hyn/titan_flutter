@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -151,7 +152,7 @@ class _MeCheckIn extends State<MeCheckIn> {
         elevation: 0,
 //        backgroundColor: Colors.white,
         title: Text(
-          "地图AI校验",
+          S.of(context).map_ai_verificate,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -191,7 +192,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                   ),
                   Positioned(
                     child: Text(
-                        '打开WiFi扫描更精准的信号地图',
+                        S.of(context).turn_on_wifi_hint,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white, fontSize: 13.0, fontWeight: FontWeight.w500),
                     ),
@@ -244,12 +245,12 @@ class _MeCheckIn extends State<MeCheckIn> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Container(
-                    child: Text('总算力：${Utils.powerForShow(LOGIN_USER_INFO.totalPower)}', style: TextStyle(color: Colors.white),),
+                    child: Text(S.of(context).all_powers_func('${Utils.powerForShow(LOGIN_USER_INFO.totalPower)}'), style: TextStyle(color: Colors.white),),
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     decoration: BoxDecoration(color: HexColor("#0F95B0"), borderRadius: BorderRadius.circular(30)),
                   ),
                   Container(
-                    child: Text('最大范围约：$maxMeter 米', style: TextStyle(color: Colors.white),),
+                    child: Text(S.of(context).max_range_func('$maxMeter'), style: TextStyle(color: Colors.white),),
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     margin: EdgeInsets.only(top: 8,),
                     decoration: BoxDecoration(color: HexColor("#0F95B0"), borderRadius: BorderRadius.circular(30)),
@@ -291,7 +292,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       child: Text(
-                        (snap?.data == null || snap.data < 1.0) ? "后台扫描" : '完成',
+                        (snap?.data == null || snap.data < 1.0) ? S.of(context).background_scan : S.of(context).finish,
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
