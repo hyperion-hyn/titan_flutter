@@ -20,14 +20,14 @@ class PromoteQrCodePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "邀请二维码",
+          S.of(context).invitate_qr,
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
             IconButton(
               icon: Icon(Icons.share),
               color: Colors.white,
-              tooltip: '分享',
+              tooltip: S.of(context).share,
               onPressed: (){
                 _shareQr(context);
               },
@@ -38,13 +38,13 @@ class PromoteQrCodePage extends StatelessWidget {
       ),
       body: WidgetShot(
         controller: _shotController,
-        child: _newBody(),
+        child: _newBody(context),
       ),
     );
   }
 
 
-  Widget _oldBody() {
+  Widget _oldBody(BuildContext context) {
     return Center(
       child: Container(
         padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
@@ -60,7 +60,7 @@ class PromoteQrCodePage extends StatelessWidget {
   }
 
 
-  Widget _newBody() {
+  Widget _newBody(BuildContext context) {
     return Stack(
       children: <Widget>[
         Container(
@@ -108,7 +108,7 @@ class PromoteQrCodePage extends StatelessWidget {
                       height: 6,
                     ),
                     Text(
-                      '邀请你加入星际掘金',
+                      S.of(context).invite_join + " " + S.of(context).app_name,
                       style: TextStyle(color: HexColor('#FEFEFE'), fontSize: 12),
                     ),
                   ],

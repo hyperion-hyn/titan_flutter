@@ -230,8 +230,8 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                     ],
                                   )
                                 : AlertDialog(
-                                    title: new Text("提示"),
-                                    content: new Text("你还没有钱包"),
+                                    title: new Text(S.of(context).tips),
+                                    content: new Text(S.of(context).no_wallet_hint),
                                     actions: <Widget>[
                                       new FlatButton(
                                         onPressed: () {
