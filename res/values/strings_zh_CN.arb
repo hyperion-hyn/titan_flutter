@@ -416,5 +416,12 @@
   "redemption_success": "赎回成功",
   "redemption_fail": "赎回出错",
   "mortgage_time": "抵押时间：${time}",
-  "mortgage_id": "抵押ID：${id}"
+  "mortgage_id": "抵押ID：${id}",
+  "total_invitation_func": "已邀请${totalInvitations}人",
+  "grade": "等级",
+  "current_grade": "当前等级",
+  "no_grade": "无等级",
+  "contribute_reward_func": "贡献奖励： ${award}",
+  "grade_require_func": "等级要求： ${require}",
+  "revenue_details": "收益详情"
 }

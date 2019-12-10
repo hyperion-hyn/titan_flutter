@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -43,7 +44,7 @@ class _MeDailyBillsDetail extends DataListState<MeDailyBillsDetail> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "收益详情",
+          S.of(context).revenue_details,
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,

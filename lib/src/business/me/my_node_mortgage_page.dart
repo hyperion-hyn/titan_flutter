@@ -27,15 +27,6 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
 
   UserService _userService = UserService();
 
-//  PageResponse<NodeMortgageInfo> _nodeMortgagePage = PageResponse(0, 0, []);
-//  List nodeMortgageVoList = [];
-//  var currentPage = 0;
-
-//  @override
-//  void initState() {
-//    super.initState();
-//    _getNodeMortgageList(0);
-//  }
 
   @override
   void postFrameCallBackAfterInitState() async {
@@ -113,28 +104,6 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
                           },
                           itemCount: dataList.length),
                     ),
-//                    child: SmartPullRefresh(
-//                      onRefresh: () {
-//                        _getNodeMortgageList(0);
-//                      },
-//                      onLoading: () {
-//                        _getNodeMortgageList(currentPage + 1);
-//                      },
-//                      child: ListView.separated(
-//                          itemBuilder: (BuildContext context, int index) {
-//                            return _buildNodeMortgageItem(dataList[index]);
-//                          },
-//                          separatorBuilder: (BuildContext context, int index) {
-//                            return Padding(
-//                              padding: const EdgeInsets.symmetric(horizontal: 16),
-//                              child: Divider(
-//                                thickness: 0.5,
-//                                color: Colors.black12,
-//                              ),
-//                            );
-//                          },
-//                          itemCount: dataList.length),
-//                    ),
                   )
                 ],
               ),
@@ -278,26 +247,6 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
     }).toList();
   }
 
-//  Future _getNodeMortgageList(int page) async {
-//    _nodeMortgagePage = await _userService.getNodeMortgageList(page);
-//
-//    List<NodeMortgageVo> list = _nodeMortgagePage.data.map((nodeMortgageDetail) {
-//      return _covertNodeMortgageInfoToVo(nodeMortgageDetail);
-//    }).toList();
-//    if (list.length == 0) {
-//      return;
-//    }
-//    if (page == 0) {
-//      nodeMortgageVoList.clear();
-//      nodeMortgageVoList.addAll(list);
-//    } else {
-//      nodeMortgageVoList.addAll(list);
-//    }
-//    currentPage = page;
-//    if (mounted) {
-//      setState(() {});
-//    }
-//  }
 
   NodeMortgageVo _covertNodeMortgageInfoToVo(NodeMortgageInfo nodeMortgageInfo) {
     return NodeMortgageVo(

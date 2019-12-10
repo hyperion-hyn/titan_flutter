@@ -93,6 +93,7 @@ class S implements WidgetsLocalizations {
   String get create_wallet_name_label => "Wallet Name";
   String get create_wallet_password_label => "Wallet Password";
   String get create_wallet_tips => "Create a private account";
+  String get current_grade => "Current Level";
   String get cybersquatting => "Squat";
   String get cycling => "Cycling";
   String get dapp_setting => "DApp Settings";
@@ -145,6 +146,7 @@ class S implements WidgetsLocalizations {
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "Global Map Service Nodes";
   String get global_nodes => "Global Nodes";
+  String get grade => "Grade";
   String get home_page => "Home";
   String get hot_area => "Hot spots";
   String get hotel => "Hotel";
@@ -180,7 +182,7 @@ class S implements WidgetsLocalizations {
   String get installation_update_package_failed => "Installation update package failed";
   String get internet_bar => "Internet Cafe";
   String get introduce => "Introduce";
-  String get invitate_qr => "Invite QR";
+  String get invitate_qr => "Inviting QR Code";
   String get invitation_code => "invitation code";
   String get invite_join => "Invite you to join";
   String get invite_link => "Invitation link";
@@ -231,6 +233,7 @@ class S implements WidgetsLocalizations {
   String get no_detail_address => "No detailed address";
   String get no_eth_address => "No ethereum address ";
   String get no_fill_in => "Not Filled";
+  String get no_grade => "No rank";
   String get no_invite_success_hint => "You haven't successfully invited people~";
   String get no_level => "No Level";
   String get no_recommended_route => "No recommended route yet";
@@ -243,7 +246,7 @@ class S implements WidgetsLocalizations {
   String get node_mortgage_in_out_hint => "Node mortgages, go in and out, unlimited time。";
   String get node_mortgage_with_unit => "Mortgage(USDT)";
   String get not_open_yet => "Coming Soon";
-  String get official_announcement => "Announcement";
+  String get official_announcement => "Notifice";
   String get official_website => "Official Website";
   String get online_exchange => "Online Exchanges";
   String get open_camera => "Please allow access to your camera";
@@ -317,6 +320,7 @@ class S implements WidgetsLocalizations {
   String get reinput_wallet_password_label => "Confirm Wallet Password";
   String get remark => "Notes";
   String get reset_account_password => "Reset account password";
+  String get revenue_details => "Revenue details";
   String get rmb => "CNY";
   String get route => "Route";
   String get safety_verification => "Safety Verification";
@@ -412,10 +416,12 @@ class S implements WidgetsLocalizations {
   String available_balance_usdt(String amount) => "Available Balance ${amount} USDT";
   String available_mortgage_numbers(String number) => "mort：${number}";
   String by_recommend(String getParentEmail) => "Recommended by ${getParentEmail}";
+  String contribute_reward_func(String award) => "Contribution Reward： ${award}";
   String current_exchange_rate(String to, String currency) => "Current ${to} Exchange ${currency} Rate:";
   String current_rate_func(String currency, String quotes, String rate) => "current ${currency} exchange ${quotes} rate is: 1${rate}";
   String distance(String distance) => "$distance m";
   String get_verification_code_again(String countdownTime) => "Reacquire ${countdownTime}";
+  String grade_require_func(String require) => "Level Requirements： ${require}";
   String income_func(String incomeCycle) => "${incomeCycle} day income";
   String km(String km) => "$km km ";
   String max_range_func(String maxMeter) => "Maximum range：${maxMeter} m";
@@ -437,6 +443,7 @@ class S implements WidgetsLocalizations {
   String snap_up_product_fuc(String name) => "Snap Up Products：${name}";
   String stay_func(String snapUpStocks) => " stay ${snapUpStocks}";
   String task_finish_func(String total) => "Already done the task ${total} time";
+  String total_invitation_func(String totalInvitations) => "${totalInvitations} invited";
   String withdrawal_fee(String fee) => "Fee(${fee}%)";
   String withdrawal_with_quantity(String count) => "Withdrawal：${count}";
 }
@@ -628,6 +635,8 @@ class $zh_CN extends S {
   @override
   String get node_introduction => "节点介绍";
   @override
+  String get current_grade => "当前等级";
+  @override
   String get label => "标签";
   @override
   String get input_resume_mnemonic => "输入用空格隔开的备份助记词";
@@ -637,6 +646,8 @@ class $zh_CN extends S {
   String get create_wallet_tips => "创建一个私密账户";
   @override
   String get forum => "论坛";
+  @override
+  String get revenue_details => "收益详情";
   @override
   String get receive_success_hint => "领取成功";
   @override
@@ -717,6 +728,8 @@ class $zh_CN extends S {
   String get below_min_withdrawal => "低于最小提币额度";
   @override
   String get skip => "跳过";
+  @override
+  String get no_grade => "无等级";
   @override
   String get address_copy_success_hint => "地址复制成功";
   @override
@@ -905,6 +918,8 @@ class $zh_CN extends S {
   String get toilet => "厕所";
   @override
   String get no_fill_in => "暂无填写";
+  @override
+  String get grade => "等级";
   @override
   String get processing => "处理中";
   @override
@@ -1256,11 +1271,15 @@ class $zh_CN extends S {
   @override
   String mortgage_time(String time) => "抵押时间：${time}";
   @override
+  String total_invitation_func(String totalInvitations) => "已邀请${totalInvitations}人";
+  @override
   String income_func(String incomeCycle) => "${incomeCycle}天收益";
   @override
   String available_mortgage_numbers(String number) => "可抵${number}份";
   @override
   String mortgage_id(String id) => "抵押ID：${id}";
+  @override
+  String contribute_reward_func(String award) => "贡献奖励： ${award}";
   @override
   String n_hour(String hour) => "${hour}小时";
   @override
@@ -1275,6 +1294,8 @@ class $zh_CN extends S {
   String n_days_product(String days) => "${days}天产出";
   @override
   String distance(String distance) => "${distance}米";
+  @override
+  String grade_require_func(String require) => "等级要求： ${require}";
   @override
   String current_rate_func(String currency, String quotes, String rate) => "当前 ${currency} 兑换 ${quotes} 的汇率为: 1${rate}";
   @override

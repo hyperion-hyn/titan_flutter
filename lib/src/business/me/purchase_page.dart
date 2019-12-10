@@ -361,6 +361,7 @@ class _PurchaseState extends State<PurchasePage> {
                     child: Center(
                       child: Text(
                         S.of(context).out_wallet_transfer_hint,
+                        textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),

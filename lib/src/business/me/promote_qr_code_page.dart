@@ -61,12 +61,21 @@ class PromoteQrCodePage extends StatelessWidget {
 
 
   Widget _newBody(BuildContext context) {
+    var languageCode = Localizations.localeOf(context).languageCode;
+    var shareAppImage = "";
+
+    if (languageCode == "zh") {
+      shareAppImage = "res/drawable/invitation_bg.png";
+    } else {
+      shareAppImage = "res/drawable/invitation_bg_en.png";
+    }
+
     return Stack(
       children: <Widget>[
         Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("res/drawable/invitation_bg.png"),
+                image: AssetImage(shareAppImage),
                 fit: BoxFit.cover,
               ),
             ),

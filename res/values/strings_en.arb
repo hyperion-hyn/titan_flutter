@@ -232,7 +232,7 @@
   "operating_hours": "Time",
   "kais_talk": "Kai's Talk",
   "latest_news": "Article",
-  "official_announcement": "Announcement",
+  "official_announcement": "Notifice",
   "information_guide": "Guidance",
   "information_video": "Video",
   "article": "Article",
@@ -362,7 +362,7 @@
   "invite_link_copy_hint": "Invitation link copied",
   "invite_link": "Invitation link",
   "no_invite_success_hint": "You haven't successfully invited people~",
-  "invitate_qr": "Invite QR",
+  "invitate_qr": "Inviting QR Code",
   "invite_join": "Invite you to join",
   "check_update": "Check for updates",
   "contact_customer_service": "Contact Customer Service",
@@ -416,5 +416,12 @@
   "turn_on_wifi_hint": "Turn on WiFi to scan more accurate signal maps",
   "all_powers_func": "Total Power：${totalPower}",
   "background_scan": "Background scan",
-  "max_range_func": "Maximum range：${maxMeter} m"
+  "max_range_func": "Maximum range：${maxMeter} m",
+  "total_invitation_func": "${totalInvitations} invited",
+  "grade": "Grade",
+  "current_grade": "Current Level",
+  "no_grade": "No rank",
+  "contribute_reward_func": "Contribution Reward： ${award}",
+  "grade_require_func": "Level Requirements： ${require}",
+  "revenue_details": "Revenue details"
 }
