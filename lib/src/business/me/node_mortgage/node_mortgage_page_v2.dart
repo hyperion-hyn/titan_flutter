@@ -173,7 +173,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: <Widget>[
                                                         Text(
-                                                          "${_mortgageList[selectedIndex].incomeCycle}天收益",
+                                                          "${_mortgageList[selectedIndex].incomeCycle}天产出率",
                                                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                                                         ),
                                                         Row(
