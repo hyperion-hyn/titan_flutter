@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/utils/validator_util.dart';
@@ -26,7 +27,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           title: Text(
-            "创建钱包",
+            S.of(context).create_wallet,
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -47,14 +48,14 @@ class _CreateAccountState extends State<CreateAccountPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 64),
                     child: Text(
-                      "创建一个私密账户",
+                      S.of(context).create_wallet_tips,
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
                   Row(
                     children: <Widget>[
                       Text(
-                        "钱包名称",
+                        S.of(context).create_wallet_name_label,
                         style: TextStyle(
                           color: Color(0xFF6D6D6D),
                           fontSize: 16,
@@ -67,16 +68,16 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     child: TextFormField(
                         validator: (value) {
                           if (value.isEmpty) {
-                            return "请输入钱包名称";
+                            return S.of(context).input_wallet_name_hint;
                           } else if (value.length > 6) {
-                            return "请输入6位以内的名称";
+                            return S.of(context).input_wallet_name_length_hint;
                           } else {
                             return null;
                           }
                         },
                         controller: _walletNameController,
                         decoration: InputDecoration(
-                          hintText: "请输入6位以内的钱包名称",
+                          hintText: S.of(context).input_wallet_name_length_hint,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         ),
@@ -86,7 +87,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "钱包密码",
+                        S.of(context).create_wallet_password_label,
                         style: TextStyle(
                           color: Color(0xFF6D6D6D),
                           fontSize: 16,
@@ -99,14 +100,14 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     child: TextFormField(
                       validator: (value) {
                         if (!ValidatorUtil.validatePassword(value)) {
-                          return "请输入至少6位的密码";
+                          return S.of(context).input_wallet_password_length_hint;
                         } else {
                           return null;
                         }
                       },
                       controller: _walletPasswordController,
                       decoration: InputDecoration(
-                        hintText: "请输入至少6位数的钱包密码",
+                        hintText: S.of(context).input_wallet_password_length_hint,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
@@ -117,7 +118,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "重复输入钱包密码",
+                        S.of(context).reinput_wallet_password_label,
                         style: TextStyle(
                           color: Color(0xFF6D6D6D),
                           fontSize: 16,
@@ -130,16 +131,16 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     child: TextFormField(
                       validator: (value) {
                         if (value.isEmpty) {
-                          return "请再次输入密码";
+                          return S.of(context).input_password_again_hint;
                         } else if (value != _walletPasswordController.text) {
-                          return "密码不一致";
+                          return S.of(context).password_not_equal_hint;
                         } else {
                           return null;
                         }
                       },
                       controller: _walletConfimPasswordController,
                       decoration: InputDecoration(
-                        hintText: "请再次输入至少6位数的钱包密码",
+                        hintText: S.of(context).input_confirm_wallet_password_hint,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
@@ -173,7 +174,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              "继续",
+                              S.of(context).next,
                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                             ),
                           ],

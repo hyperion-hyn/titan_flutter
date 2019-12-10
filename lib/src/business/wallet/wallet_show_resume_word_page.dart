@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/global.dart';
@@ -48,14 +49,14 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "您的恢复短语",
+                  S.of(context).your_mnemonic,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  "按正确的顺序记下或复制这些单词，并将他们保存在安全的地方。",
+                  S.of(context).save_mnemonic_notice,
                   style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                 ),
               ),
@@ -96,7 +97,7 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                       ),
                       Flexible(
                           child: Text(
-                        "永远不要与任何人共享恢复短语，安全的存储它！",
+                        S.of(context).save_mnemonic_safe_notice,
                         style: TextStyle(color: Color(0xFFD0021B)),
                         softWrap: true,
                       ))
@@ -122,7 +123,7 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "继续",
+                          S.of(context).continue_text,
                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],

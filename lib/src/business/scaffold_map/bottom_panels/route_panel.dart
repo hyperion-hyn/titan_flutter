@@ -89,7 +89,7 @@ class RoutePanel extends StatelessWidget {
                                   width: 4,
                                 ),
                                 Text(
-                                  "导航",
+                                  S.of(context).navigation,
                                   style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
                                 )
                               ],

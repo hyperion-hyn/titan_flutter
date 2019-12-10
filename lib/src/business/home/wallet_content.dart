@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/map3/map3_node_introduction.dart';
 import 'package:titan/src/business/wallet/wallet_page.dart';
 
@@ -35,10 +36,10 @@ class _WalletContentState extends State<WalletContentWidget> {
                       unselectedLabelColor: Colors.grey[400],
                       tabs: [
                         Tab(
-                          text: "钱包",
+                          text: S.of(context).wallet,
                         ),
                         Tab(
-                          text: "map3节点",
+                          text: S.of(context).map3_node_introduction,
                         ),
                       ],
                     ),

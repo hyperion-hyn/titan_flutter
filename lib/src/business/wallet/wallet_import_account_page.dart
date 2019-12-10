@@ -2,6 +2,7 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/validator_util.dart';
@@ -34,7 +35,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
           iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           title: Text(
-            "导入账户",
+            S.of(context).import_account,
             style: TextStyle(color: Colors.white),
           ),
           actions: <Widget>[
@@ -42,7 +43,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
               onTap: () async {
                 String mnemonicWords = await BarcodeScanner.scan();
                 if (!bip39.validateMnemonic(mnemonicWords)) {
-                  Fluttertoast.showToast(msg: '不是合法的助记词');
+                  Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
                   return;
                 } else {
                   _mnemonicController.text = mnemonicWords;
@@ -67,7 +68,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   height: 36,
                 ),
                 Text(
-                  "输入用空格隔开的备份助记词",
+                  S.of(context).input_resume_mnemonic,
                   style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                 ),
                 SizedBox(
@@ -86,7 +87,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                           child: TextFormField(
                             validator: (value) {
                               if (value.isEmpty) {
-                                return "请输入助记词";
+                                return S.of(context).please_input_mnemonic;
                               } else {
                                 return null;
                               }
@@ -102,7 +103,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                           onTap: () async {
                             var mnemonicWords = (await Clipboard.getData(Clipboard.kTextPlain)).text;
                             if (!bip39.validateMnemonic(mnemonicWords)) {
-                              Fluttertoast.showToast(msg: '不是合法的助记词');
+                              Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
                               return;
                             } else {
                               _mnemonicController.text = mnemonicWords;
@@ -111,7 +112,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
-                              "粘贴",
+                              S.of(context).paste,
                               style: TextStyle(color: Theme.of(context).primaryColor),
                             ),
                           ),
@@ -126,7 +127,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                 Row(
                   children: <Widget>[
                     Text(
-                      "钱包名称",
+                      S.of(context).wallet_name_label,
                       style: TextStyle(
                         color: Color(0xFF6D6D6D),
                         fontSize: 16,
@@ -139,16 +140,16 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   child: TextFormField(
                       validator: (value) {
                         if (value.isEmpty) {
-                          return "请输入钱包名称";
+                          return S.of(context).input_wallet_name_hint;
                         } else if (value.length > 6) {
-                          return "请输入6位以内的名称";
+                          return S.of(context).input_wallet_name_length_hint;
                         } else {
                           return null;
                         }
                       },
                       controller: _walletNameController,
                       decoration: InputDecoration(
-                        hintText: "请输入6位以内的钱包名称",
+                        hintText: S.of(context).input_wallet_name_length_hint,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
@@ -161,7 +162,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                 Row(
                   children: <Widget>[
                     Text(
-                      "钱包密码",
+                      S.of(context).create_wallet_password_label,
                       style: TextStyle(
                         color: Color(0xFF6D6D6D),
                         fontSize: 16,
@@ -174,14 +175,14 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   child: TextFormField(
                     validator: (value) {
                       if (!ValidatorUtil.validatePassword(value)) {
-                        return "请输入至少6位的密码";
+                        return S.of(context).input_wallet_password_length_hint;
                       } else {
                         return null;
                       }
                     },
                     controller: _walletPasswordController,
                     decoration: InputDecoration(
-                      hintText: "请输入至少6位数的钱包密码",
+                      hintText: S.of(context).input_wallet_password_length_hint,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
@@ -195,7 +196,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                 Row(
                   children: <Widget>[
                     Text(
-                      "重复密码",
+                      S.of(context).reinput_wallet_password_label,
                       style: TextStyle(
                         color: Color(0xFF6D6D6D),
                         fontSize: 16,
@@ -208,16 +209,16 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   child: TextFormField(
                     validator: (value) {
                       if (value.isEmpty) {
-                        return "请再次输入密码";
+                        return S.of(context).input_password_again_hint;
                       } else if (value != _walletPasswordController.text) {
-                        return "密码不一致";
+                        return S.of(context).password_not_equal_hint;
                       } else {
                         return null;
                       }
                     },
                     controller: _walletConfimPasswordController,
                     decoration: InputDecoration(
-                      hintText: "请再次输入至少6位数的钱包密码",
+                      hintText: S.of(context).input_confirm_wallet_password_hint,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
@@ -245,7 +246,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                               name: walletName, password: password, mnemonic: mnemonic);
                           Navigator.push(context, MaterialPageRoute(builder: (context) => FinishImportPage(wallet)));
                         } catch (_) {
-                          Fluttertoast.showToast(msg: "导入失败");
+                          Fluttertoast.showToast(msg: S.of(context).import_account_fail);
                         }
                       }
                     },
@@ -255,7 +256,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "导 入",
+                            S.of(context).import,
                             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],

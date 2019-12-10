@@ -65,7 +65,7 @@ class _MyPageState extends State<MyPage> {
                                 ],
                               ),
                               SizedBox(height: 16),
-                              Text("Titan 加密地图生态", style: TextStyle(color: Colors.white70))
+                              Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70))
                             ],
                           ),
                         ),
@@ -79,11 +79,11 @@ class _MyPageState extends State<MyPage> {
                 color: Colors.white,
                 child: Column(
                   children: <Widget>[
-                    _buildMemuBar("分享app", Icons.share, () {
+                    _buildMemuBar(S.of(context).share_app, Icons.share, () {
                       shareApp();
                     }),
                     Divider(),
-                    _buildMemuBar("关于我们", Icons.info, () {
+                    _buildMemuBar(S.of(context).about_us, Icons.info, () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
                     }),
                   ],
@@ -94,7 +94,7 @@ class _MyPageState extends State<MyPage> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      "DApp设置",
+                      S.of(context).dapp_setting,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -107,7 +107,7 @@ class _MyPageState extends State<MyPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    _buildDappItem(Icons.location_on, "私密分享", "接收地址:${shortEthAddress(_pubKey)}", () {
+                    _buildDappItem(Icons.location_on, S.of(context).private_share, S.of(context).private_share_receive_address(shortEthAddress(_pubKey)), () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
                     }),
                   ],

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
 import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
@@ -122,10 +123,11 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: <Widget>[
-                                    Text('DMap地图应用接入文档', textAlign: TextAlign.center, style: TextStyle(fontSize: 13)),
+                                    Text(S.of(context).dmap_document_title,
+                                        textAlign: TextAlign.center, style: TextStyle(fontSize: 13)),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 4.0),
-                                      child: Text('文档优化中...',
+                                      child: Text(S.of(context).document_optimization,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(fontSize: 12, color: Colors.grey)),
                                     )
@@ -149,11 +151,11 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                             Padding(
                               padding: const EdgeInsets.only(top: 16, bottom: 24),
                               child: Text(
-                                "地图DMap",
+                                S.of(context).map_dmap,
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                               ),
                             ),
-                            Text('工具类', style: TextStyle(color: Colors.grey)),
+                            Text(S.of(context).dmap_tools, style: TextStyle(color: Colors.grey)),
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: InkWell(
@@ -178,23 +180,25 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                   child: Row(
                                     children: <Widget>[
                                       Image.asset('res/drawable/ic_dmap_location_share.png', width: 32, height: 32),
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              '私密分享',
-                                              style: TextStyle(fontWeight: FontWeight.w600),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 8.0),
-                                              child: Text(
-                                                '分享加密位置，绝不泄露位置信息',
-                                                style: TextStyle(color: Colors.grey, fontSize: 13),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                S.of(context).private_sharing,
+                                                style: TextStyle(fontWeight: FontWeight.w600),
                                               ),
-                                            ),
-                                          ],
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 8.0),
+                                                child: Text(
+                                                  S.of(context).private_sharing_text,
+                                                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -204,7 +208,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 24.0),
-                              child: Text('生活指引', style: TextStyle(color: Colors.grey)),
+                              child: Text(S.of(context).dmap_life, style: TextStyle(color: Colors.grey)),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 16),
@@ -242,7 +246,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: <Widget>[
                                                             Text(
-                                                              '大使馆指南',
+                                                              S.of(context).embassy_guide,
                                                               style: TextStyle(fontWeight: FontWeight.w600),
                                                             ),
                                                             Padding(
@@ -251,7 +255,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                                 children: <Widget>[
                                                                   Expanded(
                                                                     child: Text(
-                                                                      '全球大使馆',
+                                                                      S.of(context).global_embassies,
                                                                       style:
                                                                           TextStyle(color: Colors.grey, fontSize: 13),
                                                                     ),
@@ -277,7 +281,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                               borderRadius: BorderRadius.all(Radius.circular(4)),
                                               onTap: () {
 //                                                activeDMap('nightlife');
-                                                Fluttertoast.showToast(msg: "敬请期待");
+                                                Fluttertoast.showToast(msg: S.of(context).stay_tuned);
                                               },
                                               child: Container(
                                                 padding: const EdgeInsets.all(16),
@@ -297,13 +301,13 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: <Widget>[
                                                           Text(
-                                                            '折扣地图',
+                                                            S.of(context).discount_map,
                                                             style: TextStyle(fontWeight: FontWeight.w600),
                                                           ),
                                                           Padding(
                                                             padding: const EdgeInsets.only(top: 8.0),
                                                             child: Text(
-                                                              '暂未开放',
+                                                              S.of(context).not_open_yet,
                                                               style: TextStyle(color: Colors.grey, fontSize: 13),
                                                             ),
                                                           ),
@@ -344,14 +348,14 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                               Padding(
                                                 padding: const EdgeInsets.only(top: 16.0),
                                                 child: Text(
-                                                  '警察安全站',
+                                                  S.of(context).police_security_station,
                                                   style: TextStyle(fontWeight: FontWeight.w600),
                                                 ),
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(top: 8.0),
                                                 child: Text(
-                                                  '有困难，找警察',
+                                                  S.of(context).police_station_text,
                                                   style: TextStyle(color: Colors.grey, fontSize: 13),
                                                 ),
                                               ),
@@ -369,7 +373,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                               child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    '更多DMap应用持续添加~',
+                                    S.of(context).more_dmap,
                                     style: TextStyle(color: Colors.grey, fontSize: 13),
                                   )),
                             )

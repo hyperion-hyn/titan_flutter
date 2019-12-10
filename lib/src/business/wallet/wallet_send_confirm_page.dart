@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -57,7 +58,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
           iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           title: Text(
-            "确认",
+            S.of(context).confirm,
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -162,7 +163,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      "网络费用",
+                      S.of(context).gas_fee,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B)),
                     ),
                   ),
@@ -206,7 +207,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                                   borderRadius:
                                       BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
                               child: Text(
-                                "慢",
+                                S.of(context).speed_slow,
                                 style: TextStyle(color: speed == EthereumConst.LOW_SPEED ? Colors.white : Colors.black),
                               ),
                             ),
@@ -229,7 +230,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                                   border: Border(),
                                   borderRadius: BorderRadius.all(Radius.circular(0))),
                               child: Text(
-                                "平均值",
+                                S.of(context).speed_normal,
                                 style:
                                     TextStyle(color: speed == EthereumConst.FAST_SPEED ? Colors.white : Colors.black),
                               ),
@@ -254,7 +255,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                                   borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
                               child: Text(
-                                "快",
+                                S.of(context).speed_fast,
                                 style: TextStyle(
                                     color: speed == EthereumConst.SUPER_FAST_SPEED ? Colors.white : Colors.black),
                               ),
@@ -286,7 +287,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        isLoading ? "请稍后" : "发送",
+                        isLoading ? S.of(context).please_waiting : S.of(context).send,
                         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                       ),
                     ],
@@ -364,9 +365,8 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         } else {
           await _transferErc20(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
         }
-
+        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
         if (widget.backRouteName == null) {
-          Fluttertoast.showToast(msg: "转账已提交");
           Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
         } else {
           isRechargeByTianWalletFinish = true;
@@ -379,18 +379,18 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         });
         if (_ is PlatformException) {
           if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: "密码错误");
+            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
           } else {
-            Fluttertoast.showToast(msg: "转账失败");
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
           }
         } else if (_ is RPCError) {
           if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: "ETH余额不足支付网络费用");
+            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
           } else {
-            Fluttertoast.showToast(msg: "转账失败");
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
           }
         } else {
-          Fluttertoast.showToast(msg: "转账失败");
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
       }
     });

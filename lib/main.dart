@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:titan/config.dart';
 import 'package:titan/src/app.dart';
-import 'package:titan/src/domain/firebase.dart';
-import 'package:titan/src/utils/exception_process.dart';
 
 import 'env.dart';
 import 'src/basic/bloc/app_bloc_delegate.dart';
@@ -21,11 +20,8 @@ void main() {
     BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV);
   }
 
-  FlutterError.onError = (FlutterErrorDetails details) async {
-    Zone.current.handleUncaughtError(details.exception, details.stack);
-  };
-
   TitanPlugin.initFlutterMethodCall();
+  //init key for security share
   TitanPlugin.initKeyPair();
 
   Api api = Api();
@@ -35,15 +31,18 @@ void main() {
 
   BlocSupervisor.delegate = AppBlocDelegate();
 
-  FlutterBugly.init(androidAppId: "a1e5897dd1", iOSAppId: "0cf5dbc8d8");
+  if (env.buildType == BuildType.PROD) {
+    FlutterBugly.init(androidAppId: Config.BUGLY_ANDROID_APPID, iOSAppId: Config.BUGLY_IOS_APPID);
+  }
 
-  FlutterBugly.postCatchedException(() {
-    runApp(Injector(
-      child: FireBaseLogic(
+  FlutterBugly.postCatchedException(
+    () {
+      runApp(Injector(
         child: App(),
-      ),
-      repository: repository,
-      searchInteractor: searchInteractor,
-    ));
-  });
+        repository: repository,
+        searchInteractor: searchInteractor,
+      ));
+    },
+    debugUpload: env.buildType == BuildType.DEV,
+  );
 }
