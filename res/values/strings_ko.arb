@@ -367,5 +367,21 @@
   "bill_flow": "账单流水",
   "withdrawal_records": "提币记录",
   "withdrawal_with_quantity": "提币：${count}",
-  "poundage_with_quantity": "手续费：${poundage}"
+  "poundage_with_quantity": "手续费：${poundage}",
+  "max_withdrawal_quantity": "最多可提 ${maxWithdrawal} USDT",
+  "hyn_withdrawal_coin_address": "HYN提币地址",
+  "my_wallet_address": "我的钱包地址",
+  "please_input_hyn_address": "请输入HYN地址",
+  "no_eth_address": "非以太坊地址",
+  "quantity": "数量",
+  "please_input_withdrawal_quantity": "请输入提币数量",
+  "withdrawal_fee": "手续费(${fee}%)",
+  "amount_received": "到账数量",
+  "withdrawal_audit_message": "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早9:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。",
+  "over_max_withdrawal": "超出最大提币额度",
+  "below_min_withdrawal": "低于最小提币额度",
+  "please_input_hyn_withdrawal_address": "请输入HYN提币地址",
+  "withdrawal_apply_success": "提币申请成功",
+  "withdrawal_fail": "提币出错",
+  "without_hyn_wallet": "你还没有钱包."
 }

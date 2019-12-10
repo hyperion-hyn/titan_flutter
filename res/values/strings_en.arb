@@ -367,5 +367,21 @@
   "check_update": "Check for updates",
   "contact_customer_service": "Contact Customer Service",
   "already_latest_version_hint": "Already the latest version",
-  "wx_id": "WeChat ID：titan5321"
+  "wx_id": "WeChat ID：titan5321",
+  "max_withdrawal_quantity": "Max Withdrawal ${maxWithdrawal} USDT",
+  "hyn_withdrawal_coin_address": "HYN Address",
+  "my_wallet_address": "My Wallet Address",
+  "please_input_hyn_address": "Please input hyn address",
+  "no_eth_address": "No ethereum address ",
+  "quantity": "Quantity",
+  "please_input_withdrawal_quantity": "Please input withdrawal quantity ",
+  "withdrawal_fee": "Fee(${fee}%)",
+  "amount_received": "Amount Received",
+  "withdrawal_audit_message": "Convert the corresponding HYN to your withdrawal address. In order to ensure the safety of funds, we will carry out manual audit on the withdrawal. Withdrawal processing time: 9:00 am - 21:00 PM on the day of receipt, non-working time received orders will be received the next day.",
+  "over_max_withdrawal": "Exceed the maximum withdrawal limit",
+  "below_min_withdrawal": "Below the minimum withdrawal limit",
+  "please_input_hyn_withdrawal_address": "Please enter the HYN address",
+  "withdrawal_apply_success": "Withdrawal application successfully",
+  "withdrawal_fail": "Withdrawal error",
+  "without_hyn_wallet": "You don't have a HYN wallet yet."
 }

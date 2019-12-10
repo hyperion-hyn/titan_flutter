@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/enter_fund_password.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
@@ -94,7 +95,6 @@ class _DrawBalanceState extends State<DrawBalancePage> {
   }
 
   void _updateCanGetHynAmount() {
-
     if (withdrawalInfo != null && quotes != null) {
       double _amount = amountTEController.text.isEmpty ? 0.0 : double.parse(amountTEController.text);
       print('amount is: $_amount');
@@ -116,10 +116,9 @@ class _DrawBalanceState extends State<DrawBalancePage> {
   }
 
   void _getWithDrawalInfo() {
-
     WithdrawalInfo _withdrawalInfo;
     if (_selectedWithdrawalTypeString == EARNING) {
-       _withdrawalInfo = earningWithdrawalInfo;
+      _withdrawalInfo = earningWithdrawalInfo;
     } else if (_selectedWithdrawalTypeString == RECHARGE) {
       _withdrawalInfo = rechargeWithdrawalInfo;
     }
@@ -152,7 +151,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "提币",
+          S.of(context).withdrawal,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
         ),
       ),
@@ -177,7 +176,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                             child: RadioListTile(
                               activeColor: Theme.of(context).primaryColor,
                               groupValue: _selectedWithdrawalTypeString,
-                              title: Text("收益余额"),
+                              title: Text(S.of(context).earnings_balance),
                               value: EARNING,
                               onChanged: (value) {
                                 _setSelectedWithdrawalTypeString(value);
@@ -188,7 +187,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                             child: RadioListTile(
                               activeColor: Theme.of(context).primaryColor,
                               groupValue: _selectedWithdrawalTypeString,
-                              title: Text("充值余额"),
+                              title: Text(S.of(context).recharge_balance),
                               value: RECHARGE,
                               onChanged: (value) {
                                 _setSelectedWithdrawalTypeString(value);
@@ -202,8 +201,8 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                       ),
                       Text(
                         "$balance USDT",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
+                        style:
+                            TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 16.0, bottom: 8),
@@ -218,7 +217,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Text(
-                                '最多可提 $maxWithdrawal USDT',
+                                S.of(context).max_withdrawal_quantity(maxWithdrawal),
                                 style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 12),
                               ),
                             ),
@@ -241,7 +240,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                     child: Row(
                       children: <Widget>[
                         Text(
-                          "HYN提币地址",
+                          S.of(context).hyn_withdrawal_coin_address,
                           style: TextStyle(color: Color(0xFF6D6D6D)),
                         ),
                         Spacer(),
@@ -250,7 +249,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                             getAddressTitanWallet();
                           },
                           child: Text(
-                            "我的钱包地址",
+                            S.of(context).my_wallet_address,
                             style: TextStyle(color: Colors.blue),
                           ),
                         ),
@@ -266,7 +265,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), gapPadding: 4),
                               contentPadding: EdgeInsets.all(16),
                               hintStyle: TextStyle(fontSize: 14),
-                              hintText: "请输入HYN地址",
+                              hintText: S.of(context).please_input_hyn_address,
                               suffixIcon: Container(
                                 margin: const EdgeInsets.only(left: 16, right: 8),
                                 child: InkWell(
@@ -279,7 +278,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                     print('xxxxx $barcode');
                                     print(barcode);
                                     if (barcode.length != 40 && barcode.length != 42) {
-                                      Fluttertoast.showToast(msg: "非以太坊地址");
+                                      Fluttertoast.showToast(msg: S.of(context).no_eth_address);
                                     } else {
                                       addressTEController.text = barcode;
                                     }
@@ -305,7 +304,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Text(
-                      "数量",
+                      S.of(context).quantity,
                       style: TextStyle(color: Color(0xFF6D6D6D)),
                     ),
                   ),
@@ -323,13 +322,12 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                               ),
                               contentPadding: EdgeInsets.all(16),
                               hintStyle: TextStyle(fontSize: 14),
-                              hintText: "请输入提币数量",
+                              hintText: S.of(context).please_input_withdrawal_quantity,
                               suffixIcon: Container(
                                 margin: const EdgeInsets.only(left: 16, right: 8, top: 20),
                                 child: Text(
                                   "USDT",
-                                  style:
-                                  TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF9B9B9B)),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF9B9B9B)),
                                 ),
                               )),
                         ),
@@ -350,7 +348,9 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                       children: <Widget>[
                         Divider(),
                         Text(
-                          "手续费(${Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.free_rate * 100)}%)",
+                          S
+                              .of(context)
+                              .withdrawal_fee(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.free_rate * 100)),
                           style: TextStyle(color: Colors.black54),
                         ),
                         Padding(
@@ -359,7 +359,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                         ),
                         Divider(),
                         Text(
-                          "到账数量",
+                          S.of(context).amount_received,
                           style: TextStyle(color: Colors.black54),
                         ),
                         Padding(
@@ -384,7 +384,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                   ),
                   Expanded(
                     child: Text(
-                      "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早9:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。",
+                      S.of(context).withdrawal_audit_message,
                       style: TextStyle(color: Color(0xFFCE9D40), fontSize: 14),
                     ),
                   ),
@@ -403,11 +403,11 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                           if (withdrawalInfo != null) {
                             var address = addressTEController.text.trim();
                             if (amount > withdrawalInfo.can_withdrawal) {
-                              Fluttertoast.showToast(msg: "超出最大提币额度");
+                              Fluttertoast.showToast(msg: S.of(context).over_max_withdrawal);
                             } else if (amount < withdrawalInfo.min_limit) {
-                              Fluttertoast.showToast(msg: "低于最小提币额度");
+                              Fluttertoast.showToast(msg: S.of(context).below_min_withdrawal);
                             } else if (address.isEmpty) {
-                              Fluttertoast.showToast(msg: "请输入HYN提币地址");
+                              Fluttertoast.showToast(msg: S.of(context).please_input_hyn_withdrawal_address);
                             } else {
                               try {
                                 showModalBottomSheet(
@@ -427,12 +427,12 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                   }
                                   await _userService.withdrawalApply(
                                       amount: amount, address: address, fundToken: fundToken, type: type);
-                                  Fluttertoast.showToast(msg: "提币申请成功");
+                                  Fluttertoast.showToast(msg: S.of(context).withdrawal_apply_success);
                                   Navigator.pop(context, true);
                                 });
                               } catch (e) {
                                 logger.e(e);
-                                Fluttertoast.showToast(msg: "提币出错");
+                                Fluttertoast.showToast(msg: S.of(context).withdrawal_fail);
                               }
                             }
                           }
@@ -440,7 +440,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         color: Theme.of(context).primaryColor,
                         child: Text(
-                          "提币",
+                          S.of(context).withdrawal,
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -1088,54 +1088,54 @@ class _DrawBalanceState extends State<DrawBalancePage> {
           builder: (context) {
             return Platform.isIOS
                 ? CupertinoAlertDialog(
-                    title: Text('提示'),
-                    content: Text('你还没有钱包.'),
+                    title: Text(S.of(context).tips),
+                    content: Text(S.of(context).without_hyn_wallet),
                     actions: <Widget>[
                       new FlatButton(
                         onPressed: () {
                           createWalletPopUtilName = "/draw_balance_page";
                           Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                         },
-                        child: new Text("创建"),
+                        child: new Text(S.of(context).create),
                       ),
                       new FlatButton(
                         onPressed: () {
                           createWalletPopUtilName = "/draw_balance_page";
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                         },
-                        child: new Text("导入"),
+                        child: new Text(S.of(context).import),
                       ),
                       new FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: new Text("取消"),
+                        child: new Text(S.of(context).cancel),
                       ),
                     ],
                   )
                 : AlertDialog(
-                    title: new Text("提示"),
-                    content: new Text("你还没有钱包"),
+                    title: new Text(S.of(context).tips),
+                    content: new Text(S.of(context).without_hyn_wallet),
                     actions: <Widget>[
                       new FlatButton(
                         onPressed: () {
                           createWalletPopUtilName = "/draw_balance_page";
                           Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                         },
-                        child: new Text("创建"),
+                        child: new Text(S.of(context).create),
                       ),
                       new FlatButton(
                         onPressed: () {
                           createWalletPopUtilName = "/draw_balance_page";
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                         },
-                        child: new Text("导入"),
+                        child: new Text(S.of(context).import),
                       ),
                       new FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: new Text("取消"),
+                        child: new Text(S.of(context).cancel),
                       ),
                     ],
                   );
