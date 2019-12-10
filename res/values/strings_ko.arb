@@ -383,5 +383,14 @@
   "please_input_hyn_withdrawal_address": "请输入HYN提币地址",
   "withdrawal_apply_success": "提币申请成功",
   "withdrawal_fail": "提币出错",
-  "without_hyn_wallet": "你还没有钱包."
+  "without_hyn_wallet": "你还没有钱包.",
+  "my_total_power": "我的总算力",
+  "effective": "有效",
+  "finished": "已结束",
+  "my_node_mortgage": "我的节点抵押",
+  "redemption_mortgage": "赎回抵押",
+  "redemption_success": "赎回成功",
+  "redemption_fail": "赎回出错",
+  "mortgage_time": "抵押时间：${time}",
+  "mortgage_id": "抵押ID：${id}"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
@@ -68,7 +69,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Text(
-                    "我的总算力",
+                    S.of(context).my_total_power,
                     style: TextStyle(
                       color: Colors.white70,
                     ),
@@ -182,7 +183,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
 
   HashRateVo _convertPowerDetailToHashRateVo(PowerDetail powerDetail) {
     var iconColor = powerDetail.expire ? Color(0xFF6D6D6D) : Color(0xFF6DBA1A);
-    var validity = powerDetail.expire ? "已结束" : "有效";
+    var validity = powerDetail.expire ? S.of(context).finished : S.of(context).effective;
     var validityColor = powerDetail.expire ? Color(0xFF6D6D6D) : Color(0xFF6DBA1A);
 
     var createAt = DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(powerDetail.createdAt * 1000));

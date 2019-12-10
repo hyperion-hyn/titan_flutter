@@ -112,6 +112,7 @@ class S implements WidgetsLocalizations {
   String get downloading_update_file => "Downloading update file";
   String get driving => "Driving";
   String get earnings_balance => "Earnings\nBalance";
+  String get effective => "Effective";
   String get email_format_error_hint => "Email format is wrong, please enter the correct email";
   String get email_label => "Email";
   String get embassy_guide => "Embassy Guide";
@@ -121,6 +122,7 @@ class S implements WidgetsLocalizations {
   String get extract_mnemonic_fail => "Mnemonic extraction failed";
   String get fail_get_user_recharge_address_hint => "Failed to get user recharge address";
   String get finish => "Finish";
+  String get finished => "Finished";
   String get foods => "Foods";
   String get foreign_video => "Foreign";
   String get forget_password => "forget password";
@@ -203,9 +205,11 @@ class S implements WidgetsLocalizations {
   String get mortgage_fail_hint => "Mortgage Failure";
   String get my_account_with_unit => "Account(USDT)";
   String get my_location => "My Location";
+  String get my_node_mortgage => "My Node Mortgage";
   String get my_page => "My";
   String get my_position => "My Location";
   String get my_power_with_unit => "Power(T)";
+  String get my_total_power => "My Total Power";
   String get my_wallet_address => "My Wallet Address";
   String get nav_about_us => "About us";
   String get nav_my_privacy_map => "My Privacy Map";
@@ -287,6 +291,9 @@ class S implements WidgetsLocalizations {
   String get recharge_balance => "Recharge\nBalance";
   String get recharge_success_hint => "Recharge successful";
   String get recommended_area => "Recommended Areas";
+  String get redemption_fail => "Redemption Error";
+  String get redemption_mortgage => "Redemption Mortgage";
+  String get redemption_success => "Redemption Success";
   String get refresh_keypaire_message => "Refreshing your public key address will fail to decrypt the received address, still continue to refresh?";
   String get refresh_public_key_days_tips => "Automatically refresh in %d days";
   String get refresh_public_key_hours_tips => "Automatically refresh in %d hrs %d mins";
@@ -392,6 +399,8 @@ class S implements WidgetsLocalizations {
   String get_verification_code_again(String countdownTime) => "Reacquire ${countdownTime}";
   String km(String km) => "$km km ";
   String max_withdrawal_quantity(String maxWithdrawal) => "Max Withdrawal ${maxWithdrawal} USDT";
+  String mortgage_id(String id) => "ID：${id}";
+  String mortgage_time(String time) => "Time：${time}";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
   String n_days_product(String days) => "${days} days to produce";
@@ -502,6 +511,8 @@ class $ko extends S {
   String get search_history => "역사 검색";
   @override
   String get improvement_plan_title => "체험 프로그램 개선";
+  @override
+  String get my_total_power => "我的总算力";
   @override
   String get extract_mnemonic_fail => "니모닉 실패를 추출";
   @override
@@ -741,6 +752,8 @@ class $ko extends S {
   @override
   String get continue_text => "계속";
   @override
+  String get effective => "有效";
+  @override
   String get accept_share_pub_key => "피어 투 피어 공유";
   @override
   String get account_new_password => "账户新密码";
@@ -779,6 +792,8 @@ class $ko extends S {
   @override
   String get hyn_wallet_open_hint => "HYN钱包即将开放";
   @override
+  String get redemption_fail => "赎回出错";
+  @override
   String get confirm_mortgage => "确认抵押";
   @override
   String get bill_flow => "账单流水";
@@ -796,6 +811,8 @@ class $ko extends S {
   String get no_detail_address => "자세한 주소가 없습니다";
   @override
   String get bank => "은행";
+  @override
+  String get my_node_mortgage => "我的节点抵押";
   @override
   String get wallet_password_error => "암호 오류";
   @override
@@ -898,6 +915,8 @@ class $ko extends S {
   String get service_area => "지역";
   @override
   String get next => "계속";
+  @override
+  String get redemption_mortgage => "赎回抵押";
   @override
   String get safety_verify => "安全验证";
   @override
@@ -1079,6 +1098,8 @@ class $ko extends S {
   @override
   String get transfer_exception_hint => "转入异常";
   @override
+  String get finished => "已结束";
+  @override
   String get sent => "보냄";
   @override
   String get no_eth_address => "非以太坊地址";
@@ -1131,6 +1152,8 @@ class $ko extends S {
   @override
   String get illegal_mnemonic => "단어들이 올바르지 않습니다.";
   @override
+  String get redemption_success => "赎回成功";
+  @override
   String get operating_hours => "근무 시간";
   @override
   String get import_account_success => "계정 가져오기 성공";
@@ -1153,7 +1176,11 @@ class $ko extends S {
   @override
   String withdrawal_fee(String fee) => "手续费(${fee}%)";
   @override
+  String mortgage_time(String time) => "抵押时间：${time}";
+  @override
   String available_mortgage_numbers(String number) => "可抵${number}份";
+  @override
+  String mortgage_id(String id) => "抵押ID：${id}";
   @override
   String n_hour(String hour) => "${hour}시간";
   @override
@@ -1284,6 +1311,8 @@ class $zh_CN extends S {
   String get search_history => "历史搜索";
   @override
   String get improvement_plan_title => "改进体验计划";
+  @override
+  String get my_total_power => "我的总算力";
   @override
   String get extract_mnemonic_fail => "提取助记词失败";
   @override
@@ -1523,6 +1552,8 @@ class $zh_CN extends S {
   @override
   String get continue_text => "继续";
   @override
+  String get effective => "有效";
+  @override
   String get accept_share_pub_key => "点对点分享";
   @override
   String get account_new_password => "账户新密码";
@@ -1561,6 +1592,8 @@ class $zh_CN extends S {
   @override
   String get hyn_wallet_open_hint => "HYN钱包即将开放";
   @override
+  String get redemption_fail => "赎回出错";
+  @override
   String get confirm_mortgage => "确认抵押";
   @override
   String get bill_flow => "账单流水";
@@ -1578,6 +1611,8 @@ class $zh_CN extends S {
   String get no_detail_address => "暂无详细地址";
   @override
   String get bank => "银行";
+  @override
+  String get my_node_mortgage => "我的节点抵押";
   @override
   String get wallet_password_error => "密码错误";
   @override
@@ -1680,6 +1715,8 @@ class $zh_CN extends S {
   String get service_area => "区域";
   @override
   String get next => "继续";
+  @override
+  String get redemption_mortgage => "赎回抵押";
   @override
   String get safety_verify => "安全验证";
   @override
@@ -1861,6 +1898,8 @@ class $zh_CN extends S {
   @override
   String get transfer_exception_hint => "转入异常";
   @override
+  String get finished => "已结束";
+  @override
   String get sent => "已发送";
   @override
   String get no_eth_address => "非以太坊地址";
@@ -1913,6 +1952,8 @@ class $zh_CN extends S {
   @override
   String get illegal_mnemonic => "不是合法的助记词";
   @override
+  String get redemption_success => "赎回成功";
+  @override
   String get operating_hours => "工作时间";
   @override
   String get import_account_success => "账户导入成功";
@@ -1935,7 +1976,11 @@ class $zh_CN extends S {
   @override
   String withdrawal_fee(String fee) => "手续费(${fee}%)";
   @override
+  String mortgage_time(String time) => "抵押时间：${time}";
+  @override
   String available_mortgage_numbers(String number) => "可抵${number}份";
+  @override
+  String mortgage_id(String id) => "抵押ID：${id}";
   @override
   String n_hour(String hour) => "${hour}小时";
   @override

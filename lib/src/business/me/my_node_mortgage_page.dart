@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
@@ -69,7 +70,7 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Text(
-                    "我的节点抵押",
+                    S.of(context).my_node_mortgage,
                     style: TextStyle(
                       color: Colors.white70,
                     ),
@@ -204,7 +205,7 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
                           ExtendsIconFont.redemption,
                           color: Colors.black54,
                         ),
-                        title: Text("赎回抵押"),
+                        title: Text(S.of(context).redemption_mortgage),
                         onTap: () async {
                           try {
                             showModalBottomSheet(
@@ -218,13 +219,13 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
                               }
                               await _userService.redemption(id: nodeMortgageVo.id, fundToken: fundToken);
                               Navigator.pop(context, true);
-                              Fluttertoast.showToast(msg: "赎回成功");
+                              Fluttertoast.showToast(msg: S.of(context).redemption_success);
 
                               loadDataBloc.add(LoadingEvent());
                             });
                           } catch (e) {
                             logger.e(e);
-                            Fluttertoast.showToast(msg: '赎回出错');
+                            Fluttertoast.showToast(msg: S.of(context).redemption_fail);
                           }
                         },
                       ),
@@ -241,7 +242,7 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
                           Icons.close,
                           color: Colors.black54,
                         ),
-                        title: Text("关闭"),
+                        title: Text(S.of(context).close),
                         onTap: () {
                           //TODO 对接接口
                           Navigator.of(context).pop();
@@ -302,9 +303,10 @@ class _MyNodeMortgageState extends DataListState<MyNodeMortgagePage> {
     return NodeMortgageVo(
         iconColor: PRIMARY_COLOR,
         title: nodeMortgageInfo.name,
-        subTitle: "抵押ID：${nodeMortgageInfo.id}",
+        subTitle: S.of(context).mortgage_id(nodeMortgageInfo.id.toString()),
         count: "${Const.DOUBLE_NUMBER_FORMAT.format(nodeMortgageInfo.amount)} USDT",
-        time: "抵押时间：${Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(nodeMortgageInfo.createAt * 1000))}",
+        time: S.of(context).mortgage_time(
+            Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(nodeMortgageInfo.createAt * 1000))),
         id: nodeMortgageInfo.id);
   }
 }

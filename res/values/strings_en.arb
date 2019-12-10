@@ -383,5 +383,14 @@
   "please_input_hyn_withdrawal_address": "Please enter the HYN address",
   "withdrawal_apply_success": "Withdrawal application successfully",
   "withdrawal_fail": "Withdrawal error",
-  "without_hyn_wallet": "You don't have a HYN wallet yet."
+  "without_hyn_wallet": "You don't have a HYN wallet yet.",
+  "my_total_power": "My Total Power",
+  "effective": "Effective",
+  "finished": "Finished",
+  "my_node_mortgage": "My Node Mortgage",
+  "redemption_mortgage": "Redemption Mortgage",
+  "redemption_success": "Redemption Success",
+  "redemption_fail": "Redemption Error",
+  "mortgage_time": "Time：${time}",
+  "mortgage_id": "ID：${id}"
 }
