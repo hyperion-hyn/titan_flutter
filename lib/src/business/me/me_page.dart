@@ -134,7 +134,9 @@ class _MeState extends UserState<MePage> with RouteAware {
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                             child: Text(
-                                              LOGIN_USER_INFO.level == "" ? "无等级" : LOGIN_USER_INFO.level,
+                                              LOGIN_USER_INFO.level == ""
+                                                  ? S.of(context).no_level
+                                                  : LOGIN_USER_INFO.level,
                                               style: TextStyle(fontSize: 10, color: HexColor("#B4B4B4")),
                                             ),
                                           ),
@@ -165,7 +167,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                                 size: 14,
                                               ),
                                               Text(
-                                                checkInCount >= 3 ? '完成' : " 任务",
+                                                checkInCount >= 3 ? S.of(context).finish : S.of(context).task,
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
@@ -178,7 +180,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                     onTap:
 //                                    checkInCount < 3
 //                                        ? () {
-                                            _checkIn,
+                                        _checkIn,
 //                                          }
 //                                        : () {
 //                                      Fluttertoast.showToast(msg: '今天任务已完成');
@@ -214,7 +216,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                       style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      "我的账户(USDT)",
+                                      S.of(context).my_account_with_unit,
                                       style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
                                     ),
                                   ],
@@ -237,7 +239,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                       style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      "我的算力(T)",
+                                      S.of(context).my_power_with_unit,
                                       style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
                                     ),
                                   ],
@@ -261,7 +263,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                       style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      "节点抵押(USDT)",
+                                      S.of(context).node_mortgage_with_unit,
                                       style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
                                     ),
                                   ],
@@ -284,11 +286,11 @@ class _MeState extends UserState<MePage> with RouteAware {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      _buildCenterBigButton(S.of(context).get_powers, "res/drawable/get_power.png", () {
+                      _buildCenterBigButton(S.of(context).get_power, "res/drawable/get_power.png", () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
                       }),
                       VerticalDivider(),
-                      _buildCenterBigButton(S.of(context).node_martgage, "res/drawable/node_mortgage.png", () {
+                      _buildCenterBigButton(S.of(context).node_mortgage, "res/drawable/node_mortgage.png", () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePageV2()));
                       }),
                     ],
@@ -302,34 +304,34 @@ class _MeState extends UserState<MePage> with RouteAware {
               child: Column(
                 children: <Widget>[
                   // todo: jison opened
-                  _buildMemuBar("任务记录", ExtendsIconFont.check_in, () {
+                  _buildMemuBar(S.of(context).task_record, ExtendsIconFont.check_in, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
                   }),
                   Divider(
                     height: 2,
                   ),
 
-                  _buildMemuBar("邀请分享", ExtendsIconFont.mail_read, () {
+                  _buildMemuBar(S.of(context).invite_share, ExtendsIconFont.mail_read, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
                   }),
                   Divider(
                     height: 2,
                   ),
 
-                  _buildMemuBar("使用教程", ExtendsIconFont.document, () {
+                  _buildMemuBar(S.of(context).use_guide, ExtendsIconFont.document, () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => WebViewContainer(
                                   initUrl: "https://www.maprich.net/intro",
-                                  title: "使用教程",
+                                  title: S.of(context).use_guide,
                                 )));
                   }),
                   Divider(
                     height: 2,
                   ),
 
-                  _buildMemuBar("关于我们", ExtendsIconFont.person, () {
+                  _buildMemuBar(S.of(context).about_us, ExtendsIconFont.person, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
                   }),
                 ],
@@ -351,11 +353,12 @@ class _MeState extends UserState<MePage> with RouteAware {
                   Padding(
                     padding: const EdgeInsets.only(top: 0, bottom: 16),
                     child: Text(
-                      "DMap设置",
+                      S.of(context).dmap_setting,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  _buildDappItem(ExtendsIconFont.point, "私密分享", "接收地址:${shortEthAddress(_pubKey)}", () {
+                  _buildDappItem(ExtendsIconFont.point, S.of(context).private_sharing,
+                      S.of(context).private_share_receive_address(shortEthAddress(_pubKey)), () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
                   }),
                 ],
@@ -478,7 +481,7 @@ class _MeState extends UserState<MePage> with RouteAware {
       await _userService.checkIn();
       checkInCount = await _userService.checkInCount();
       setState(() {});
-      Fluttertoast.showToast(msg: "感谢你贡献数据。");
+      Fluttertoast.showToast(msg: S.of(context).thank_you_for_contribute_data);
     } catch (e) {
       print('[me_page] --> e:$e');
 

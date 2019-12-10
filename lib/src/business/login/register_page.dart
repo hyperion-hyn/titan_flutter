@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/login/register_bloc/bloc.dart';
 import 'package:titan/src/business/login/register_bloc/register_state.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -39,12 +40,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return BlocBuilder<RegisterBloc, RegisterState>(
         bloc: _registerBloc,
         builder: (BuildContext context, RegisterState state) {
-          var _registerButtonText = state is SubmitIngState ? "处理中" : "注册";
+          var _registerButtonText = state is SubmitIngState ? S.of(context).processing : S.of(context).register;
           Function _registerOnPress = state is SubmitIngState ? null : _submit;
           var _fieldEnable = state is SubmitIngState ? false : true;
 
           if (state is SubmitSuccessState) {
-            Fluttertoast.showToast(msg: "注册成功");
+            Fluttertoast.showToast(msg: S.of(context).register_success);
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pop(context, true);
               return;
@@ -56,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
             appBar: AppBar(
               iconTheme: IconThemeData(color: Colors.white),
               title: Text(
-                "注册",
+                S.of(context).register,
                 style: TextStyle(color: Colors.white),
               ),
               centerTitle: true,
@@ -73,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "注册邮箱",
+                              S.of(context).register_email,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -87,14 +88,14 @@ class _RegisterPageState extends State<RegisterPage> {
                             enabled: _fieldEnable,
                             validator: (value) {
                               if (!ValidatorUtil.isEmail(value)) {
-                                return "邮箱格式有误，请输入正确的邮箱";
+                                return S.of(context).email_format_error_hint;
                               } else {
                                 return null;
                               }
                             },
                             controller: emailEditingController,
                             decoration: InputDecoration(
-                              hintText: "请输入邮箱",
+                              hintText: S.of(context).please_input_email_hint,
                               errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -105,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "验证码",
+                              S.of(context).verification_code,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -122,14 +123,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                   enabled: _fieldEnable,
                                   validator: (value) {
                                     if (!ValidatorUtil.validateCode(6, value)) {
-                                      return "请输入6位验证码";
+                                      return S.of(context).please_input_verification_code;
                                     } else {
                                       return null;
                                     }
                                   },
                                   controller: verificationCodeEditingController,
                                   decoration: InputDecoration(
-                                    hintText: "请输入6位的验证码",
+                                    hintText: S.of(context).please_input_verification_code,
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                   ),
@@ -152,7 +153,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                   }
                                 },
                                 child: Text(
-                                  _countdownTime > 0 ? '重新获取 $_countdownTime' : '发送验证码',
+                                  _countdownTime > 0
+                                      ? S.of(context).get_verification_code_again(_countdownTime.toString())
+                                      : S.of(context).send_verification_code,
                                   style: TextStyle(
                                     color: _countdownTime > 0 ? Color(0xFF9B9B9B) : Theme.of(context).primaryColor,
                                   ),
@@ -164,7 +167,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "邀请码",
+                              S.of(context).invitation_code,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -178,14 +181,14 @@ class _RegisterPageState extends State<RegisterPage> {
                               enabled: _fieldEnable,
                               validator: (value) {
                                 if (!ValidatorUtil.validateCode(6, value)) {
-                                  return "请输入6位邀请码";
+                                  return S.of(context).please_input_invitation_code;
                                 } else {
                                   return null;
                                 }
                               },
                               controller: invitationCodeEditingController,
                               decoration: InputDecoration(
-                                hintText: "请输入6位邀请码",
+                                hintText: S.of(context).please_input_invitation_code,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                               ),
@@ -194,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "账户密码",
+                              S.of(context).account_password,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -208,7 +211,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             enabled: _fieldEnable,
                             validator: (value) {
                               if (!ValidatorUtil.validatePassword(value)) {
-                                return "密码格式有误，请输入最少6位";
+                                return S.of(context).password_format_error_message;
                               } else {
                                 return null;
                               }
@@ -216,7 +219,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: passwordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
-                              hintText: "请输入至少6位的密码",
+                              hintText: S.of(context).password_length_error_message,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -226,7 +229,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "资金安全密码",
+                              S.of(context).fundz_password,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -240,7 +243,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             enabled: _fieldEnable,
                             validator: (value) {
                               if (!ValidatorUtil.validatePassword(value)) {
-                                return "密码格式有误，请输入最少6位";
+                                return S.of(context).fund_password_format_error_message;
                               } else {
                                 return null;
                               }
@@ -248,7 +251,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: safetyPasswordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
-                              hintText: "请输入至少6位的资金密码",
+                              hintText: S.of(context).fund_password_length_error_message,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -318,7 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {});
       return true;
     } else {
-      validateEmailErrMsg = "请输入正确的邮箱";
+      validateEmailErrMsg = S.of(context).email_format_error_hint;
       setState(() {});
       return false;
     }

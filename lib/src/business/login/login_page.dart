@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/bloc/submit_bloc/bloc.dart';
 import 'package:titan/src/business/login/register_page.dart';
 import 'package:titan/src/business/login/reset_password_page.dart';
@@ -32,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocBuilder<LoginBloc, SubmitState>(
       bloc: _loginBloc,
       builder: (BuildContext context, SubmitState state) {
-        var loginButtonText = state is SubmitIngState ? "登录中" : "登录";
+        var loginButtonText = state is SubmitIngState ? S.of(context).logining : S.of(context).login;
         Function loginOnPress = state is SubmitIngState ? null : _submit;
         var fieldEnable = state is SubmitIngState ? false : true;
 
@@ -71,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                               width: 6,
                             ),
                             Text(
-                              "邮箱",
+                              S.of(context).email_label,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -86,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
                               if (!ValidatorUtil.isEmail(value)) {
-                                return "邮箱格式有误，请输入正确的邮箱";
+                                return S.of(context).email_format_error_hint;
                               } else {
                                 return null;
                               }
@@ -97,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius: BorderRadius.circular(30),
                                     borderSide: BorderSide(color: Color(0xFFB7B7B7))),
                                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                hintText: "请输入邮箱",
+                                hintText: S.of(context).please_input_email_hint,
                                 hintStyle: TextStyle(color: Color(0XFFD7D7D7))),
                           ),
                         ),
@@ -112,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                               width: 6,
                             ),
                             Text(
-                              "密码",
+                              S.of(context).password_label,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -127,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                             keyboardType: TextInputType.visiblePassword,
                             validator: (value) {
                               if (!ValidatorUtil.validatePassword(value)) {
-                                return "密码格式有误，请输入最少6位";
+                                return S.of(context).password_format_error_message;
                               } else {
                                 return null;
                               }
@@ -137,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              hintText: "请输入密码",
+                              hintText: S.of(context).please_input_password_hint,
                               hintStyle: TextStyle(color: Color(0XFFD7D7D7)),
                             ),
                           ),
@@ -151,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "忘记密码",
+                                  S.of(context).forget_password,
                                   style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16),
                                 ),
                               )),
@@ -204,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
-                                  "注册账号",
+                                  S.of(context).register_account,
                                   style: TextStyle(
                                       color: Theme.of(context).primaryColor, fontSize: 16, fontWeight: FontWeight.bold),
                                 )
