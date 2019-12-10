@@ -384,4 +384,13 @@
   "all_powers_func": "总算力：${totalPower}",
   "background_scan": "后台扫描",
   "max_range_func": "最大范围约：${maxMeter} 米"
+  "wx_id": "微信ID：titan5321",
+  "withdrawal": "提币",
+  "balance_with_unit": "账户余额(USDT)",
+  "earnings_balance": "收益余额",
+  "recharge_balance": "充值余额",
+  "bill_flow": "账单流水",
+  "withdrawal_records": "提币记录",
+  "withdrawal_with_quantity": "提币：${count}",
+  "poundage_with_quantity": "手续费：${poundage}"
 }
