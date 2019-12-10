@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/about/about_me_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
@@ -283,11 +284,11 @@ class _MeState extends UserState<MePage> with RouteAware {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      _buildCenterBigButton("获取算力", "res/drawable/get_power.png", () {
+                      _buildCenterBigButton(S.of(context).get_powers, "res/drawable/get_power.png", () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
                       }),
                       VerticalDivider(),
-                      _buildCenterBigButton("节点抵押", "res/drawable/node_mortgage.png", () {
+                      _buildCenterBigButton(S.of(context).node_martgage, "res/drawable/node_mortgage.png", () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePageV2()));
                       }),
                     ],

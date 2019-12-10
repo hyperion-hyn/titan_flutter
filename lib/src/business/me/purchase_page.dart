@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
@@ -70,14 +71,14 @@ class _PurchaseState extends State<PurchasePage> {
   Widget build(BuildContext context) {
     // todo: jison edit_抵押方式
     //var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
-    var payTypeName = payType == 0 ? "使用HYN" : "选择抵押方式";
+    var payTypeName = payType == 0 ? S.of(context).by_hyn : S.of(context).by_mortgage;
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "算力抵押",
+          S.of(context).power_martgage,
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
@@ -97,7 +98,7 @@ class _PurchaseState extends State<PurchasePage> {
                     child: Row(
                       children: <Widget>[
                         Text(
-                          "产品：",
+                          S.of(context).product,
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         Text(
@@ -110,7 +111,7 @@ class _PurchaseState extends State<PurchasePage> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "金额：",
+                        S.of(context).amount,
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       Text(
@@ -223,7 +224,7 @@ class _PurchaseState extends State<PurchasePage> {
                 onTap: () {
                   if (widget.payOrder?.hyn_amount != null) {
                     Clipboard.setData(ClipboardData(text: widget.payOrder?.hyn_amount));
-                    Fluttertoast.showToast(msg: "金额复制成功");
+                    Fluttertoast.showToast(msg: S.of(context).amount_copy_success_hint);
                   }
                 },
                 child: Padding(
@@ -233,7 +234,7 @@ class _PurchaseState extends State<PurchasePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "请抵押",
+                        S.of(context).please_mortgage,
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Container(
@@ -268,7 +269,7 @@ class _PurchaseState extends State<PurchasePage> {
                 height: 8,
               ),
               Text(
-                '请务必转入指定的HYN金额！',
+                S.of(context).transfer_hyn_hint,
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
               ),
               if (widget.payOrder?.qr_code != null)
@@ -287,7 +288,7 @@ class _PurchaseState extends State<PurchasePage> {
                 onTap: () {
                   if (widget.payOrder?.address != null) {
                     Clipboard.setData(ClipboardData(text: widget.payOrder?.address));
-                    Fluttertoast.showToast(msg: "地址复制成功");
+                    Fluttertoast.showToast(msg: S.of(context).address_copy_success_hint);
                   }
                 },
                 child: Row(
@@ -295,7 +296,7 @@ class _PurchaseState extends State<PurchasePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "转入地址",
+                      S.of(context).transfer_address,
                       style: TextStyle(fontSize: 14),
                     ),
                     Text('${shortEthAddress(widget.payOrder?.address)}', style: TextStyle(fontSize: 14)),
@@ -320,14 +321,14 @@ class _PurchaseState extends State<PurchasePage> {
                 child: RaisedButton(
                   color: Color(0xFFD6A734),
                   onPressed: () {
-                    Fluttertoast.showToast(msg: 'HYN钱包即将开放');
+                    Fluttertoast.showToast(msg: S.of(context).hyn_wallet_open_hint);
                   },
                   child: SizedBox(
                     height: 48,
                     width: 192,
                     child: Center(
                       child: Text(
-                        "使用HYN钱包转入",
+                        S.of(context).by_hyn_transfer,
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -344,13 +345,13 @@ class _PurchaseState extends State<PurchasePage> {
                         await service.confirmPay(orderId: widget.payOrder.order_id, payType: 'HYN', fundToken: " ");
                     if (ret.code == 0) {
                       //支付成功
-                      Fluttertoast.showToast(msg: '支付成功');
+                      Fluttertoast.showToast(msg: S.of(context).pay_success_hint);
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                     } else {
                       if (ret.code == -1007) {
-                        Fluttertoast.showToast(msg: '已到达上限');
+                        Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
                       } else {
-                        Fluttertoast.showToast(msg: '暂未发现转入信息，请稍后再试');
+                        Fluttertoast.showToast(msg: S.of(context).no_transfer_info_hint);
                       }
                     }
                   },
@@ -359,7 +360,7 @@ class _PurchaseState extends State<PurchasePage> {
                     width: 192,
                     child: Center(
                       child: Text(
-                        "我已使用外部钱包转入",
+                        S.of(context).out_wallet_transfer_hint,
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -385,7 +386,7 @@ class _PurchaseState extends State<PurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  "当前 ${quotes?.currency} 兑换 ${quotes?.to} 的汇率为: 1${quotes?.currency} = ${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}。\n禁止从交易所直接提到上述地址，请使用数字钱包转账入。勿往上述地址转入非HYN资产，否则资产将不可找回。您转账后后，需要整个网络节点的确认，大约需要20分钟。",
+                  S.of(context).current_rate_func(quotes.currency.toString(), quotes.to.toString(), '${quotes?.currency}${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}'),
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),
@@ -445,7 +446,7 @@ class _PurchaseState extends State<PurchasePage> {
                       },
                       activeColor: Theme.of(context).primaryColor,
                       value: PAY_BALANCE_TYPE_RECHARGE,
-                      title: Text('充值余额'),
+                      title: Text(S.of(context).becharge_amount),
                     ),
                   ),
                   Expanded(
@@ -458,7 +459,7 @@ class _PurchaseState extends State<PurchasePage> {
                       },
                       activeColor: Theme.of(context).primaryColor,
                       value: PAY_BALANCE_TYPE_INCOME,
-                      title: Text('收益余额'),
+                      title: Text(S.of(context).income_amount),
                     ),
                   ),
                 ],
@@ -469,7 +470,7 @@ class _PurchaseState extends State<PurchasePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      "请抵押",
+                      S.of(context).please_mortgage,
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     Padding(
@@ -493,7 +494,7 @@ class _PurchaseState extends State<PurchasePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "可用余额 ${Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))} USDT",
+                    S.of(context).available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
                     style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                   ),
                 ],
@@ -506,7 +507,7 @@ class _PurchaseState extends State<PurchasePage> {
                   onPressed: () async {
                     if (userInfo != null && widget.payOrder != null) {
                       if (getBalanceByType(payBalanceType) < widget.payOrder.amount) {
-                        Fluttertoast.showToast(msg: '余额不足');
+                        Fluttertoast.showToast(msg: S.of(context).balance_lack);
                       } else {
                         try {
                           showModalBottomSheet(
@@ -522,24 +523,24 @@ class _PurchaseState extends State<PurchasePage> {
                                 orderId: widget.payOrder.order_id, payType: payBalanceType, fundToken: fundToken);
                             if (ret.code == 0) {
                               //支付成功
-                              Fluttertoast.showToast(msg: '操作成功');
+                              Fluttertoast.showToast(msg: S.of(context).action_success_hint);
                               Navigator.pushReplacement(
                                   context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                             } else {
                               if (ret.code == -1007) {
-                                Fluttertoast.showToast(msg: '已到达上限');
+                                Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
                               } else {
-                                Fluttertoast.showToast(msg: '支付失败');
+                                Fluttertoast.showToast(msg: S.of(context).pay_fail_hint);
                               }
                             }
                           });
                         } catch (e) {
                           logger.e(e);
-                          Fluttertoast.showToast(msg: '转入异常');
+                          Fluttertoast.showToast(msg: S.of(context).transfer_exception_hint);
                         }
                       }
                     } else {
-                      Fluttertoast.showToast(msg: "数据异常，请重试");
+                      Fluttertoast.showToast(msg: S.of(context).data_exception_hint);
                     }
                   },
                   child: Padding(
@@ -549,7 +550,7 @@ class _PurchaseState extends State<PurchasePage> {
                         width: 192,
                         child: Center(
                             child: Text(
-                          "确认抵押",
+                          S.of(context).confirm_mortgage,
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ))),
                   ),
@@ -563,7 +564,7 @@ class _PurchaseState extends State<PurchasePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "余额不足",
+                        S.of(context).balance_lack,
                         style: TextStyle(color: Colors.red),
                       ),
                       SizedBox(
@@ -586,7 +587,7 @@ class _PurchaseState extends State<PurchasePage> {
                           });
                         },
                         child: Text(
-                          "点击充值",
+                          S.of(context).click_charge,
                           style: TextStyle(color: Colors.blue),
                         ),
                       ),
