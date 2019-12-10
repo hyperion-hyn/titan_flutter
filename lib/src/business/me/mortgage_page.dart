@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
@@ -55,7 +56,7 @@ class _MortgagePageState extends State<MortgagePage> {
 //        backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          '抵押',
+          S.of(context).mortgage,
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -70,7 +71,7 @@ class _MortgagePageState extends State<MortgagePage> {
                   child: Row(
                     children: <Widget>[
                       Text(
-                        "抵押产品：${widget.mortgageInfo.name}",
+                        S.of(context).mortgage_product_func('${widget.mortgageInfo.name}'),
                         style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                       ),
                     ],
@@ -79,7 +80,7 @@ class _MortgagePageState extends State<MortgagePage> {
                 Row(
                   children: <Widget>[
                     Text(
-                      "金额：${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} USDT",
+                      "${S.of(context).amount} ${Const.DOUBLE_NUMBER_FORMAT.format(widget.mortgageInfo.amount)} USDT",
                       style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                     ),
                   ],
@@ -114,7 +115,7 @@ class _MortgagePageState extends State<MortgagePage> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        "请抵押",
+                        S.of(context).mortgage,
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       Padding(
@@ -133,7 +134,7 @@ class _MortgagePageState extends State<MortgagePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Text(
-                        '收益余额：',
+                        '${S.of(context).income_amount}：',
                         style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                       ),
                       Text(
@@ -156,7 +157,7 @@ class _MortgagePageState extends State<MortgagePage> {
           onPressed: () async {
             if (widget.mortgageInfo != null && userInfo != null) {
               if (userInfo.balance - userInfo.chargeBalance < widget.mortgageInfo.amount) {
-                Fluttertoast.showToast(msg: '可用于抵押的余额不足');
+                Fluttertoast.showToast(msg: S.of(context).Insufficient_balance_hint);
               } else {
                 showModalBottomSheet(
                     isScrollControlled: true,
@@ -169,7 +170,7 @@ class _MortgagePageState extends State<MortgagePage> {
                   }
                   try {
                     await service.mortgage(confId: widget.mortgageInfo.id, fundToken: fundToken);
-                    Fluttertoast.showToast(msg: '抵押成功');
+                    Fluttertoast.showToast(msg: S.of(context).mortgage_success_hint);
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                   } catch (e) {
                     logger.e(e);
@@ -185,7 +186,7 @@ class _MortgagePageState extends State<MortgagePage> {
             height: 56,
             child: Center(
               child: Text(
-                "确认抵押",
+                S.of(context).confirm_mortgage,
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
@@ -195,7 +196,8 @@ class _MortgagePageState extends State<MortgagePage> {
         Padding(
           padding: const EdgeInsets.only(top: 64.0),
           child: Text(
-            '提示：只能使用收益余额进行节点抵押',
+            S.of(context).tip_node_mortgages_balances_hint,
+            textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey),
           ),
         ),

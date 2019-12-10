@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
+import 'package:titan/generated/i18n.dart';
 
 class CustomerServicePage extends StatelessWidget {
 
@@ -12,7 +13,7 @@ class CustomerServicePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "联系客服",
+          S.of(context).contact_customer_service,
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -31,15 +32,15 @@ class CustomerServicePage extends StatelessWidget {
                 child:
                 InkWell(
                   onTap: () {
-                    Clipboard.setData(ClipboardData(text: "titan654321"));
-                    Fluttertoast.showToast(msg: "复制微信号成功");
+                    Clipboard.setData(ClipboardData(text: S.of(context).wx_id));
+                    Fluttertoast.showToast(msg: S.of(context).copy_wx_id_success_hint);
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "微信号：titan654321",
+                        S.of(context).wx_id,
                         style: TextStyle(fontSize: 16),
                       ),
                       Padding(
@@ -67,7 +68,8 @@ class CustomerServicePage extends StatelessWidget {
               padding: const EdgeInsets.only(top: 16),
               child: Center(
                 child: Text(
-                  "扫一扫上面的二维码图案，加我微信",
+                  S.of(context).sweep_qr_hint,
+                  textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ),

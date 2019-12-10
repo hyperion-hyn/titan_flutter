@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/me/mortgage_page.dart';
 import 'package:titan/src/business/me/node_mortgage/node_bloc/bloc.dart';
 import 'package:titan/src/business/me/node_mortgage/snap_up_bloc/bloc.dart';
@@ -49,7 +50,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
         appBar: AppBar(
           brightness: Brightness.light,
           title: Text(
-            "节点抵押",
+            S.of(context).node_martgage,
             style: TextStyle(color: Colors.white),
           ),
           iconTheme: IconThemeData(color: Colors.white),
@@ -69,7 +70,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                   bloc: _snapUpBloc,
                   builder: (BuildContext context, SnapUpState snapUpState) {
                     if (snapUpState is SnapUpOverRangeState) {
-                      Fluttertoast.showToast(msg: "节点已抢注完");
+                      Fluttertoast.showToast(msg: S.of(context).node_has_squat_hint);
                     }
 
                     if (snapUpState is SnapSuccessState) {
@@ -107,7 +108,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                     Padding(
                                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                       child: Text(
-                                        "节点抵押，随进随出，不限时间。",
+                                        S.of(context).node_mortgage_in_out_hint,
                                         style: TextStyle(color: Color(0xFFCE9D40)),
                                       ),
                                     ),
@@ -173,7 +174,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: <Widget>[
                                                         Text(
-                                                          "${_mortgageList[selectedIndex].incomeCycle}天收益",
+                                                          S.of(context).income_func('${_mortgageList[selectedIndex].incomeCycle}'),
                                                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                                                         ),
                                                         Row(
@@ -210,7 +211,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                     Row(
                                       children: <Widget>[
                                         Text(
-                                          "节点介绍",
+                                          S.of(context).node_introduction,
                                           style:
                                               TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                                         )
@@ -248,7 +249,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                               child: Padding(
                                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                                 child: Text(
-                                                  "抵押",
+                                                  S.of(context).mortgage,
                                                   style: TextStyle(
                                                       color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                                                 ),
@@ -276,14 +277,14 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: <Widget>[
                                                     Text(
-                                                      "抢注",
+                                                      S.of(context).cybersquatting,
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 18,
                                                           fontWeight: FontWeight.bold),
                                                     ),
                                                     Text(
-                                                      "  剩余 ${_mortgageList[selectedIndex].snapUpStocks}",
+                                                      S.of(context).stay_func('${_mortgageList[selectedIndex].snapUpStocks}'),
                                                       style: TextStyle(
                                                           color: Color(0xFFFFC500),
                                                           fontSize: 14,
