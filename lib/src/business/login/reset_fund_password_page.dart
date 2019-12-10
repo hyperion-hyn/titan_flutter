@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/login/reset_fund_password_bloc/bloc.dart';
 import 'package:titan/src/business/login/reset_fund_password_bloc/reset_fund_password_state.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
@@ -46,12 +47,12 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
     return BlocBuilder<ResetFundPasswordBloc, ResetFundPasswordState>(
         bloc: _resetFundPasswordBloc,
         builder: (BuildContext context, ResetFundPasswordState state) {
-          var _registerButtonText = state is SubmitIngState ? "处理中" : "提交";
+          var _registerButtonText = state is SubmitIngState ? S.of(context).processing : S.of(context).submit;
           Function _registerOnPress = state is SubmitIngState ? null : _submit;
           var _fieldEnable = state is SubmitIngState ? false : true;
 
           if (state is SubmitSuccessState) {
-            Fluttertoast.showToast(msg: "修改成功");
+            Fluttertoast.showToast(msg: S.of(context).modify_success);
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pop(context, true);
               return null;
@@ -64,7 +65,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
 //        backgroundColor: Colors.white,
               iconTheme: IconThemeData(color: Colors.white),
               title: Text(
-                "重置资金密码",
+                S.of(context).reset_fund_password,
                 style: TextStyle(color: Colors.white),
               ),
               centerTitle: true,
@@ -81,7 +82,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "邮箱",
+                              S.of(context).email_label,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -112,14 +113,14 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (!ValidatorUtil.isEmail(value)) {
-                                  return "邮箱格式有误，请输入正确的邮箱";
+                                  return S.of(context).email_format_error_hint;
                                 } else {
                                   return null;
                                 }
                               },
                               controller: emailEditingController,
                               decoration: InputDecoration(
-                                hintText: "请输入邮箱",
+                                hintText: S.of(context).please_input_email_hint,
                                 errorText: validateEmailErrMsg != null ? validateEmailErrMsg : null,
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -129,7 +130,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "验证码",
+                              S.of(context).verification_code,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -146,14 +147,14 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                                   enabled: _fieldEnable,
                                   validator: (value) {
                                     if (!ValidatorUtil.validateCode(6, value)) {
-                                      return "请输入6位验证码";
+                                      return S.of(context).please_input_verification_code;
                                     } else {
                                       return null;
                                     }
                                   },
                                   controller: verificationCodeEditingController,
                                   decoration: InputDecoration(
-                                    hintText: "请输入6位的验证码",
+                                    hintText: S.of(context).please_input_verification_code,
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                   ),
@@ -176,7 +177,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                                   }
                                 },
                                 child: Text(
-                                  _countdownTime > 0 ? '重新获取 $_countdownTime' : '发送验证码',
+                                  _countdownTime > 0 ? S.of(context).get_verification_code_again(_countdownTime.toString()) : S.of(context).send_verification_code,
                                   style: TextStyle(
                                     color: _countdownTime > 0 ? Color(0xFF9B9B9B) : Theme.of(context).primaryColor,
                                   ),
@@ -188,7 +189,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "账户密码",
+                              S.of(context).account_password,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -203,7 +204,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             keyboardType: TextInputType.visiblePassword,
                             validator: (value) {
                               if (!ValidatorUtil.validatePassword(value)) {
-                                return "密码格式有误，请输入最少6位";
+                                return S.of(context).password_format_error_message;
                               } else {
                                 return null;
                               }
@@ -211,7 +212,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             controller: passwordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
-                              hintText: "请输入账户密码",
+                              hintText: S.of(context).please_input_account_password,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -220,7 +221,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "资金新密码",
+                              S.of(context).fund_new_password,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -235,7 +236,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             keyboardType: TextInputType.visiblePassword,
                             validator: (value) {
                               if (!ValidatorUtil.validatePassword(value)) {
-                                return "密码格式有误，请输入最少6位";
+                                return S.of(context).fund_password_format_error_message;
                               } else {
                                 return null;
                               }
@@ -243,7 +244,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             controller: fundPasswordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
-                              hintText: "请输入至少6位的资金密码",
+                              hintText: S.of(context).fund_password_length_error_message,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -252,7 +253,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                         Row(
                           children: <Widget>[
                             Text(
-                              "确认资金新密码",
+                              S.of(context).confirm_new_fund_password,
                               style: TextStyle(
                                 color: Color(0xFF6D6D6D),
                                 fontSize: 16,
@@ -267,10 +268,10 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             keyboardType: TextInputType.visiblePassword,
                             validator: (value) {
                               if (!ValidatorUtil.validatePassword(value)) {
-                                return "密码格式有误，请输入最少6位";
+                                return S.of(context).fund_password_format_error_message;
                               }
                               if (fundPasswordEditingController.text != value) {
-                                return "资金密码与确认资金密码不一致";
+                                return S.of(context).fund_password_not_equal_confirm_fund_password;
                               } else {
                                 return null;
                               }
@@ -278,7 +279,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
                             controller: confirmFundPasswordEditingController,
                             obscureText: true,
                             decoration: InputDecoration(
-                              hintText: "请再次输入资金密码",
+                              hintText: S.of(context).re_enter_fund_password,
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             ),
@@ -347,7 +348,7 @@ class _ResetFundPageState extends State<ResetFundPasswordPage> {
       setState(() {});
       return true;
     } else {
-      validateEmailErrMsg = "请输入正确的邮箱";
+      validateEmailErrMsg = S.of(context).email_format_error_hint;
       setState(() {});
       return false;
     }

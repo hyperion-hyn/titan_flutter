@@ -80,6 +80,7 @@ class S implements WidgetsLocalizations {
   String get confirm_mnemonic_incorrect => "Your mnemonic is incorrect, please try again";
   String get confirm_mnemonic_tips => "Click on the words to put them in the correct order";
   String get confirm_mortgage => "Confirm mortgage";
+  String get confirm_new_fund_password => "Confirm fund password";
   String get confirm_password_label => "Confirm new password";
   String get confirm_snap_up => "Confirm";
   String get contact_customer_service => "Contact Customer Service";
@@ -133,9 +134,11 @@ class S implements WidgetsLocalizations {
   String get forget_password => "forget password";
   String get forum => "Forum";
   String get free_receive => "Free Receive";
+  String get fund_new_password => "New fund password";
   String get fund_password => "Fund password";
   String get fund_password_format_error_message => "The fund password format is incorrect. Please enter at least 6 characters";
   String get fund_password_length_error_message => "Please enter a fund password of at least 6 character";
+  String get fund_password_not_equal_confirm_fund_password => "Fund password is not equal confirmed";
   String get fundz_password => "fund password";
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
@@ -194,6 +197,7 @@ class S implements WidgetsLocalizations {
   String get less_than_1_min => "Less than 1 minute";
   String get load_fail_click_hint => "Loading failed, click to retry";
   String get login => "Login";
+  String get login_out => "sign out";
   String get logining => "Logining";
   String get lossz_wallet_mnemonic_notice => "I understand that if I lose the recovery word, I will not be able to access my wallet";
   String get main_my_public_key => "My encrypted key(public key)";
@@ -205,6 +209,8 @@ class S implements WidgetsLocalizations {
   String get map_dmap => "Map DMap";
   String get max_star_numbers => "Maximum";
   String get medium => "Medium";
+  String get modify_account_password => "modify account password";
+  String get modify_fund_password => "modify fund password";
   String get modify_success => "Successfully modified";
   String get more_dmap => "Stay tuned for more DMap applications";
   String get mortgage => "Mortgage";
@@ -262,6 +268,8 @@ class S implements WidgetsLocalizations {
   String get paste => "paste";
   String get pay_fail_hint => "Payment failed";
   String get pay_success_hint => "payment successful";
+  String get personal_information => "Personal Information";
+  String get please_input_account_password => "please input account password";
   String get please_input_email_hint => "please input your email";
   String get please_input_fund_pwd_hint => "Please enter the fund password";
   String get please_input_hyn_address => "Please input hyn address";
@@ -292,6 +300,7 @@ class S implements WidgetsLocalizations {
   String get public_key_copied => "Public key. copied";
   String get public_key_scan_fail_rescan => "public key error, please re-scan";
   String get quantity => "Quantity";
+  String get re_enter_fund_password => "Re-enter fund password";
   String get receive_success_hint => "Receive Success";
   String get received => "Received";
   String get receiver => "Receive";
@@ -317,6 +326,7 @@ class S implements WidgetsLocalizations {
   String get reinput_wallet_password_label => "Confirm Wallet Password";
   String get remark => "Notes";
   String get reset_account_password => "Reset account password";
+  String get reset_fund_password => "reset fund password";
   String get rmb => "CNY";
   String get route => "Route";
   String get safety_verification => "Safety Verification";
@@ -476,6 +486,10 @@ class $zh_CN extends S {
   @override
   String get out_wallet_transfer_hint => "我已使用外部钱包转入";
   @override
+  String get re_enter_fund_password => "请再次输入资金密码";
+  @override
+  String get fund_new_password => "资金新密码";
+  @override
   String get about_us => "关于我们";
   @override
   String get please_input_wallet_password_hint => "请输入钱包密码";
@@ -610,6 +624,8 @@ class $zh_CN extends S {
   @override
   String get official_website => "官网";
   @override
+  String get please_input_account_password => "请输入账户密码";
+  @override
   String get medium => "Medium";
   @override
   String get map3_global_nodes => "map3全球节点";
@@ -637,6 +653,8 @@ class $zh_CN extends S {
   String get create_wallet_tips => "创建一个私密账户";
   @override
   String get forum => "论坛";
+  @override
+  String get login_out => "登出";
   @override
   String get receive_success_hint => "领取成功";
   @override
@@ -896,6 +914,8 @@ class $zh_CN extends S {
   @override
   String get mall => "商场";
   @override
+  String get modify_account_password => "修改账户密码";
+  @override
   String get received => "已收到";
   @override
   String get recharge_success_hint => "充值成功";
@@ -992,11 +1012,15 @@ class $zh_CN extends S {
   @override
   String get dmap_tools => "工具类";
   @override
+  String get personal_information => "个人信息";
+  @override
   String get without_hyn_wallet => "你还没有钱包.";
   @override
   String get wallet_create_success_tips => "恭喜，你的私密账户已经创建成功";
   @override
   String get video => "视频";
+  @override
+  String get modify_fund_password => "修改资金密码";
   @override
   String get private_sharing_text => "分享加密位置，绝不泄露位置信息";
   @override
@@ -1040,6 +1064,8 @@ class $zh_CN extends S {
   @override
   String get wechat_official_account => "服务号";
   @override
+  String get fund_password_not_equal_confirm_fund_password => "资金密码与确认资金密码不一致";
+  @override
   String get enter => "进入";
   @override
   String get please_input_password_hint => "请输入密码";
@@ -1059,6 +1085,8 @@ class $zh_CN extends S {
   String get Hyperion => "海伯利安";
   @override
   String get Next => "下一页";
+  @override
+  String get confirm_new_fund_password => "确认资金新密码";
   @override
   String get installation_update_package_failed => "安装更新包失败";
   @override
@@ -1167,6 +1195,8 @@ class $zh_CN extends S {
   String get please_input_hyn_address => "请输入HYN地址";
   @override
   String get transfer_exception_hint => "转入异常";
+  @override
+  String get reset_fund_password => "重置资金密码";
   @override
   String get finished => "已结束";
   @override

@@ -416,5 +416,15 @@
   "turn_on_wifi_hint": "Turn on WiFi to scan more accurate signal maps",
   "all_powers_func": "Total Power：${totalPower}",
   "background_scan": "Background scan",
-  "max_range_func": "Maximum range：${maxMeter} m"
+  "max_range_func": "Maximum range：${maxMeter} m",
+  "personal_information": "Personal Information",
+  "modify_account_password": "modify account password",
+  "modify_fund_password": "modify fund password",
+  "login_out": "sign out",
+  "reset_fund_password": "reset fund password",
+  "please_input_account_password": "please input account password",
+  "fund_new_password": "New fund password",
+  "confirm_new_fund_password": "Confirm fund password",
+  "fund_password_not_equal_confirm_fund_password": "Fund password is not equal confirmed",
+  "re_enter_fund_password": "Re-enter fund password"
 }

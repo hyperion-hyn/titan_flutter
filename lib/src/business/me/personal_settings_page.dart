@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/login/login_bus_event.dart';
 import 'package:titan/src/business/login/reset_fund_password_page.dart';
 import 'package:titan/src/business/login/reset_password_page.dart';
@@ -26,7 +27,7 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
         elevation: 0,
 //        backgroundColor: Colors.white,
         title: Text(
-          "个人信息",
+          S.of(context).personal_information,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -50,7 +51,7 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "邮箱",
+                      S.of(context).email_label,
                       style: TextStyle(color: Color(0xFF333333), fontSize: 16),
                     ),
                     SizedBox(
@@ -73,12 +74,12 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
             color: Colors.white,
             child: Column(
               children: <Widget>[
-                _buildMemuBar("修改账户密码", ExtendsIconFont.lock, () {
+                _buildMemuBar(S.of(context).modify_account_password, ExtendsIconFont.lock, () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ResetPasswordPage(email: LOGIN_USER_INFO.email)));
                 }),
                 Divider(),
-                _buildMemuBar("修改资金密码", ExtendsIconFont.lock, () {
+                _buildMemuBar(S.of(context).modify_fund_password, ExtendsIconFont.lock, () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ResetFundPasswordPage(email: LOGIN_USER_INFO.email)));
                 }),
@@ -101,7 +102,7 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
                     width: 192,
                     child: Center(
                         child: Text(
-                      "登出",
+                      S.of(context).login_out,
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ))),
               ),
