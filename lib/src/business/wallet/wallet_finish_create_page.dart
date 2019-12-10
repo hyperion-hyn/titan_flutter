@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -41,14 +42,14 @@ class _FinishCreateState extends State<FinishCreatePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  "账户创建成功",
+                  S.of(context).wallet_create_success,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "恭喜，你的私密账户已经创建成功",
+                  S.of(context).wallet_create_success_tips,
                   style: TextStyle(color: Color(0xFF9B9B9B)),
                 ),
               ),
@@ -81,7 +82,7 @@ class _FinishCreateState extends State<FinishCreatePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "使用该私密账户",
+                          S.of(context).user_this_account,
                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],

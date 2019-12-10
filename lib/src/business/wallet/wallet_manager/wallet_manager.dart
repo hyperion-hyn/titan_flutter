@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/business/wallet/wallet_setting.dart';
@@ -39,7 +40,7 @@ class _WalletManagerState extends State<WalletManagerPage> {
           iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           title: Text(
-            "钱包管理",
+            S.of(context).wallet_manage,
             style: TextStyle(color: Colors.white),
           ),
           actions: <Widget>[

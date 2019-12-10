@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 
@@ -34,7 +35,7 @@ class EmbassyState extends State<Embassy> {
                     children: <Widget>[
                       Center(
                           child: Text(
-                            '大使馆指南',
+                            S.of(context).embassy_guide,
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                           )),
                       Align(
@@ -45,7 +46,7 @@ class EmbassyState extends State<Embassy> {
                           child: Ink(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              '关闭',
+                              S.of(context).close,
                               style: TextStyle(color: Colors.blueAccent),
                             ),
                           ),

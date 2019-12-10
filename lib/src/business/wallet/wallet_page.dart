@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
@@ -106,12 +107,12 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
                 Row(
                   children: <Widget>[
                     Text(
-                      "HYN行情",
+                      S.of(context).hyn_market,
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                     Spacer(),
                     Text(
-                      "查看全部",
+                      S.of(context).view_all,
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                     Icon(
@@ -128,11 +129,11 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "${DOUBLE_NUMBER_FORMAT.format(marketPriceResponse.avgCNYPrice)}人民币",
+                            '${DOUBLE_NUMBER_FORMAT.format(marketPriceResponse.avgCNYPrice)}${S.of(context).rmb}',
                             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
-                            "HYN指数",
+                            S.of(context).hyn_price,
                             style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14),
                           ),
                         ],
@@ -145,7 +146,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
                             marketPriceResponse.total.toString(),
                             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                           ),
-                          Text("上线交易所", style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14)),
+                          Text(S.of(context).online_exchange, style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14)),
                         ],
                       )
                     ],

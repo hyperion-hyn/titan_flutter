@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/gaode_poi_panel.dart';
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -29,7 +30,7 @@ import 'search_bar.dart';
 import 'top_bar.dart';
 import 'route_bar.dart';
 
-final kStyleZh = 'https://tile.maprich.net/see-it-all-boundary-cdn-zh.json';
+//final kStyleZh = 'https://tile.maprich.net/see-it-all-boundary-cdn-zh.json';
 final kStyleEn = 'https://tile.maprich.net/see-it-all-boundary-cdn-en.json';
 
 typedef PanelBuilder = Widget Function(BuildContext context, ScrollController scrollController, IDMapPoi poi);
@@ -125,12 +126,12 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       //set map
       //---------------------------
       bool showCenterMarker = false;
-      String style;
-      if (languageCode == "zh") {
-        style = kStyleZh;
-      } else {
-        style = kStyleEn;
-      }
+      String style = kStyleEn;
+//      if (languageCode == "zh") {
+//        style = kStyleZh;
+//      } else {
+//        style = kStyleEn;
+//      }
       if (state.dMapConfigModel?.showCenterMarker == true) {
         showCenterMarker = true;
       }
@@ -350,6 +351,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             mapClickHandle: onMapClickHandle,
             mapLongPressHandle: onMapLongPressHandle,
             showCenterMarker: showCenterMarker,
+            languageCode: languageCode,
           ),
 //          if (showSearchBar)
 //            SearchBar(
@@ -415,7 +417,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       if (location == null) {
         Fluttertoast.showToast(msg: '获取不到你当前位置');
       } else {
-        var fromPoi = PoiEntity(latLng: location, name: '我的位置');
+        var fromPoi = PoiEntity(latLng: location, name: S.of(context).my_location);
         var toPoi = currentPoi;
         var language = Localizations.localeOf(context).languageCode;
         var profile = 'driving';

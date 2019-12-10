@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
@@ -81,7 +82,7 @@ class HotAreaState extends BaseState<HotArea> {
             padding: const EdgeInsets.only(left: 8, top: 4, right: 4, bottom: 4),
             child: Row(
               children: <Widget>[
-                Text('热门地区'),
+                Text(S.of(context).hot_area),
                 Icon(Icons.keyboard_arrow_right),
               ],
             ),
@@ -113,7 +114,7 @@ class HotAreaState extends BaseState<HotArea> {
               height: 24,
               child: Row(
                 children: <Widget>[
-                  Text('推荐地区'),
+                  Text(S.of(context).recommended_area),
                   Expanded(
                       child: Align(
                     child: InkWell(

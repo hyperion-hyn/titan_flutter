@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -41,14 +42,14 @@ class _FinishImportState extends State<FinishImportPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  "账户导入成功",
+                  S.of(context).import_account_success,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "恭喜，您的私密钱包已经导入成功",
+                  S.of(context).import_account_tips,
                   style: TextStyle(color: Color(0xFF9B9B9B)),
                 ),
               ),
@@ -81,7 +82,7 @@ class _FinishImportState extends State<FinishImportPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "使用该私密账户",
+                          S.of(context).user_this_account,
                           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],

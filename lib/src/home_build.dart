@@ -19,31 +19,55 @@ class HomeBuilder extends StatefulWidget {
 }
 
 class _HomeBuilderState extends State<HomeBuilder> {
+  SheetsBloc sheetsBloc;
+  MapBloc mapBloc;
+  SearchbarBloc searchBarBloc;
+  HomeBloc homeBloc;
+
+  DateTime _lastPressedAt;
+
+  @override
+  void initState() {
+    super.initState();
+    initBloc();
+  }
+
+  void initBloc() {
+    sheetsBloc = SheetsBloc();
+    mapBloc = MapBloc();
+    searchBarBloc = SearchbarBloc();
+    homeBloc = HomeBloc();
+    homeBloc.mapBloc = mapBloc;
+    homeBloc.searchBarBloc = searchBarBloc;
+    homeBloc.sheetBloc = sheetsBloc;
+
+    sheetsBloc.homeBloc = homeBloc;
+    mapBloc.homeBloc = homeBloc;
+    mapBloc.sheetsBloc = sheetsBloc;
+    searchBarBloc.homeBloc = homeBloc;
+  }
+
+  @override
+  void dispose() {
+    sheetsBloc.close();
+    mapBloc.close();
+    searchBarBloc.close();
+    homeBloc.close();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return  Builder(
+    return Builder(
       key: Keys.mainContextKey,
       builder: (context) {
-        var sheetsBloc = SheetsBloc();
-        var mapBloc = MapBloc();
-        var searchBarBloc = SearchbarBloc();
-        var homeBloc = HomeBloc();
-        homeBloc.mapBloc = mapBloc;
-        homeBloc.searchBarBloc = searchBarBloc;
-        homeBloc.sheetBloc = sheetsBloc;
-
-        sheetsBloc.homeBloc = homeBloc;
-        mapBloc.homeBloc = homeBloc;
-        mapBloc.sheetsBloc = sheetsBloc;
-        searchBarBloc.homeBloc = homeBloc;
-
-        DateTime _lastPressedAt;
-
         return MultiBlocProvider(
           child: WillPopScope(
             onWillPop: () async {
-              if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+              if (_lastPressedAt == null ||
+                  DateTime.now().difference(_lastPressedAt) >
+                      Duration(seconds: 2)) {
                 _lastPressedAt = DateTime.now();
                 Fluttertoast.showToast(msg: '再按一下退出程序');
                 return false;
@@ -53,12 +77,18 @@ class _HomeBuilderState extends State<HomeBuilder> {
             child: HomePage(),
           ),
           providers: [
-            BlocProvider<SheetsBloc>(builder: (context) => sheetsBloc..context = context),
-            BlocProvider<MapBloc>(builder: (context) => mapBloc..context = context),
-            BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
-            BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
-            BlocProvider<ScaffoldMapBloc>(builder: (context) => ScaffoldMapBloc(context)),
-            BlocProvider<DiscoverBloc>(builder: (context) => DiscoverBloc(context)),
+            BlocProvider<SheetsBloc>(
+                builder: (context) => sheetsBloc..context = context),
+            BlocProvider<MapBloc>(
+                builder: (context) => mapBloc..context = context),
+            BlocProvider<SearchbarBloc>(
+                builder: (context) => searchBarBloc..context = context),
+            BlocProvider<HomeBloc>(
+                builder: (context) => homeBloc..context = context),
+            BlocProvider<ScaffoldMapBloc>(
+                builder: (context) => ScaffoldMapBloc(context)),
+            BlocProvider<DiscoverBloc>(
+                builder: (context) => DiscoverBloc(context)),
           ],
         );
       },

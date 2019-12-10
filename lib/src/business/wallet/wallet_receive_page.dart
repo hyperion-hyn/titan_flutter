@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 
@@ -29,7 +30,7 @@ class _WalletReceiveState extends State<WalletReceivePage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "接收 ${widget.walletAccountVo.symbol}",
+          S.of(context).receiver_symbol(widget.walletAccountVo.symbol),
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -78,7 +79,7 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                       return InkWell(
                         onTap: () {
                           Clipboard.setData(ClipboardData(text: widget.walletAccountVo.account.address));
-                          Scaffold.of(context).showSnackBar(SnackBar(content: Text("地址已复制")));
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
                         },
                         child: Row(
                           children: <Widget>[
@@ -93,7 +94,7 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "复制",
+                                S.of(context).copy,
                                 style: TextStyle(
                                   color: HexColor(
                                     "#FF6D6D6D",
@@ -108,8 +109,8 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                   ),
                   InkWell(
                     onTap: () {
-                      Share.text("我的${widget.walletAccountVo.symbol}接收地址:", widget.walletAccountVo.account.address,
-                          "text/plain");
+                      Share.text(S.of(context).my_symbol_address(widget.walletAccountVo.symbol),
+                          widget.walletAccountVo.account.address, "text/plain");
                     },
                     child: Row(
                       children: <Widget>[
@@ -124,7 +125,7 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "分享",
+                            S.of(context).share,
                             style: TextStyle(
                               color: HexColor(
                                 "#FF6D6D6D",
