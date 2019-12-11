@@ -439,5 +439,6 @@
   "ciphertext_exception_hint": "암호문이 유효하지 않거나 만료됨",
   "not_valid_public_key": "합법적인 공개 키가 아닙니다.",
   "setting": "설정",
-  "language": "언어"
+  "language": "언어",
+  "task_interval_below_limit": "30 분 미만의 작업 간격 수행"
 }

@@ -439,5 +439,6 @@
   "ciphertext_exception_hint": "The ciphertext is invalid or expired",
   "not_valid_public_key": "Not a valid public key",
   "setting": "Setting",
-  "language": "Language"
+  "language": "Language",
+  "task_interval_below_limit": "Do task intervals below 30 minutes"
 }
