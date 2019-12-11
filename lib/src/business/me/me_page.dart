@@ -23,6 +23,7 @@ import 'contract/buy_hash_rate_page_v2.dart';
 import 'my_asset_page.dart';
 import 'my_promote_page.dart';
 import 'me_checkin_history_page.dart';
+import 'me_setting_page.dart';
 
 class MePage extends StatefulWidget {
   @override
@@ -327,6 +328,16 @@ class _MeState extends UserState<MePage> with RouteAware {
                                   title: S.of(context).use_guide,
                                 )));
                   }),
+
+
+                  Divider(
+                    height: 2,
+                  ),
+
+                  _buildMemuBar(S.of(context).setting, ExtendsIconFont.setting, () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage()));
+                  }),
+
                   Divider(
                     height: 2,
                   ),
@@ -334,6 +345,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                   _buildMemuBar(S.of(context).about_us, ExtendsIconFont.person, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
                   }),
+
                 ],
               ),
             ),

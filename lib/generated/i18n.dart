@@ -69,7 +69,7 @@ class S implements WidgetsLocalizations {
   String get by_mortgage => "Alternative mortgage";
   String get cancel => "Cancel";
   String get check_update => "Check for updates";
-  String get ciphertext_exception_hint => "密文无效或已过期";
+  String get ciphertext_exception_hint => "The ciphertext is invalid or expired";
   String get city_recommendation => "City Recommend";
   String get clean_search_history => "Clear History";
   String get click_charge => "Click to recharge";
@@ -193,6 +193,7 @@ class S implements WidgetsLocalizations {
   String get kais_talk => "Kai's Talk";
   String get key_manager_title => "My encrypted addr.";
   String get label => "Label";
+  String get language => "Language";
   String get later => "Later";
   String get latest_news => "Article";
   String get less_than_1_min => "Less than 1 minute";
@@ -248,7 +249,7 @@ class S implements WidgetsLocalizations {
   String get node_mortgage_in_out_hint => "Node mortgages, go in and out, unlimited time。";
   String get node_mortgage_with_unit => "Mortgage(USDT)";
   String get not_open_yet => "Coming Soon";
-  String get not_valid_public_key => "不是合法的公钥";
+  String get not_valid_public_key => "Not a valid public key";
   String get official_announcement => "Notifice";
   String get official_website => "Official Website";
   String get online_exchange => "Online Exchanges";
@@ -342,6 +343,7 @@ class S implements WidgetsLocalizations {
   String get service_description => "Description";
   String get service_hours => "Time";
   String get services => "Services";
+  String get setting => "Setting";
   String get share => "Share";
   String get share_app => "Share App";
   String get share_encrypted_location => "Share encrypted location";
@@ -350,6 +352,7 @@ class S implements WidgetsLocalizations {
   String get share_location => "Share Location";
   String get share_qrcode => "Share public key QR Code";
   String get show_mnemonic_label => "Show Mnemonic Phrases";
+  String get simple_chinese => "简体中文";
   String get skip => "Skip";
   String get snap_up => "Snap Up";
   String get snap_up_fail => "Snap up failure";
@@ -487,6 +490,8 @@ class $zh_CN extends S {
   @override
   String get out_wallet_transfer_hint => "我已使用外部钱包转入";
   @override
+  String get setting => "设置";
+  @override
   String get about_us => "关于我们";
   @override
   String get please_input_wallet_password_hint => "请输入钱包密码";
@@ -572,6 +577,8 @@ class $zh_CN extends S {
   String get extract_mnemonic_fail => "提取助记词失败";
   @override
   String get fund_password_length_error_message => "请输入至少6位的资金密码";
+  @override
+  String get language => "语言切换";
   @override
   String get internet_bar => "网吧";
   @override
@@ -1128,6 +1135,8 @@ class $zh_CN extends S {
   String get balance_with_unit => "账户余额(USDT)";
   @override
   String get no_recommended_route => "暂无推荐路线";
+  @override
+  String get simple_chinese => "简体中文";
   @override
   String get check_update => "检查更新";
   @override

@@ -426,6 +426,9 @@
   "revenue_details": "Revenue details",
   "city_recommendation": "City Recommend",
   "search_exception": "Search Exception",
-  "ciphertext_exception_hint": "密文无效或已过期",
-  "not_valid_public_key": "不是合法的公钥"
+  "ciphertext_exception_hint": "The ciphertext is invalid or expired",
+  "not_valid_public_key": "Not a valid public key",
+  "setting": "Setting",
+  "language": "Language",
+  "simple_chinese": "简体中文"
 }

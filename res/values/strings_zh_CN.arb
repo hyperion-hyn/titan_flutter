@@ -427,5 +427,8 @@
   "city_recommendation": "城市推荐",
   "search_exception": "搜索异常",
   "ciphertext_exception_hint": "密文无效或已过期",
-  "not_valid_public_key": "不是合法的公钥"
+  "not_valid_public_key": "不是合法的公钥",
+  "setting": "设置",
+  "language": "语言切换",
+  "simple_chinese": "简体中文"
 }

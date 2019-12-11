@@ -24,6 +24,7 @@ void main() {
   //init key for security share
   TitanPlugin.initKeyPair();
 
+
   Api api = Api();
   SearchHistoryDao searchDao = SearchHistoryDao();
   Repository repository = Repository(api: api, searchHistoryDao: searchDao);
