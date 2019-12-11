@@ -248,5 +248,7 @@
   "navigation": "탐색",
   "my_location": "내 위치",
   "setting": "설정",
-  "language": "언어"
+  "language": "언어",
+  "hynPriceUnit": "USD",
+  "hynPriceUnitSymbol": "\$"
 }

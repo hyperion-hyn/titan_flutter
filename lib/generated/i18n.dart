@@ -101,6 +101,7 @@ class S implements WidgetsLocalizations {
   String get home_page => "Home";
   String get hot_area => "Hot spots";
   String get hotel => "Hotel";
+  String get hynPriceUnit => "USD";
   String get hyn_market => "HYN Market";
   String get hyn_price => "HYN Price";
   String get illegal_mnemonic => "illegal mnemonic";
@@ -261,6 +262,7 @@ class S implements WidgetsLocalizations {
   String get wechat_official_account => "Wechat Official Account";
   String get your_mnemonic => "Your Mnemonic phrases";
   String distance(String distance) => "$distance m";
+  String get hynPriceUnitSymbol => "\$";
   String km(String km) => "$km km ";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
@@ -730,6 +732,8 @@ class $ko extends S {
   @override
   String get gas_station => "주유소";
   @override
+  String get hynPriceUnit => "USD";
+  @override
   String get information_video => "비디오";
   @override
   String get police_security_station => "경찰 보안 국";
@@ -757,6 +761,8 @@ class $ko extends S {
   String get main_my_public_key => "암호화 된 주소 (공개 키)";
   @override
   String get decrypt_location_cipher_tips => "위치 암호문을 해독하는 방법?";
+  @override
+  String get hynPriceUnitSymbol => "\$";
   @override
   String n_hour(String hour) => "${hour}시간";
   @override
@@ -827,6 +833,8 @@ class $zh_CN extends S {
   String get safety_verification => "安全验证";
   @override
   String get please_input_wallet_password_hint => "请输入钱包密码";
+  @override
+  String get hynPriceUnitSymbol => "¥";
   @override
   String get wallet_setting => "钱包设置";
   @override
@@ -1241,6 +1249,8 @@ class $zh_CN extends S {
   String get map_dmap => "地图DMap";
   @override
   String get gas_station => "加油站";
+  @override
+  String get hynPriceUnit => "CNY";
   @override
   String get information_video => "视频";
   @override

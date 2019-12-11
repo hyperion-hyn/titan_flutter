@@ -248,5 +248,7 @@
   "navigation": "Start",
   "my_location": "My Location",
   "setting": "Setting",
-  "language": "Language"
+  "language": "Language",
+  "hynPriceUnit": "USD",
+  "hynPriceUnitSymbol": "\$"
 }
