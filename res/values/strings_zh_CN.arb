@@ -440,5 +440,22 @@
   "not_valid_public_key": "不是合法的公钥",
   "setting": "设置",
   "language": "语言切换",
-  "task_interval_below_limit": "做任务间隔低于30分钟"
+  "task_interval_below_limit": "做任务间隔低于30分钟",
+  "today_complete_hint": "今天任务已完成，感谢你贡献数据",
+  "psw_reset_error_hint": "重置密码错误",
+  "username_pwd_not_match_hint": "用户名和密码不匹配",
+  "invite_code_error_hint": "邀请码错误",
+  "verify_code_error_hint": "验证码错误",
+  "update_user_info_fail_hint": "更新用户信息失败",
+  "account_exist_hint": "账号已存在，请直接登录账号",
+  "create_user_fail_hint": "创建用户失败",
+  "net_error_hint": "网络错误",
+  "no_content_hint": "无内容",
+  "content_conflict_hint": "内容冲突",
+  "insufficient_permission_hint": "权限不足",
+  "unauthorized": "未授权",
+  "para_error_hint": "参数错误",
+  "unknown_error_hint": "未知错误",
+  "fund_pwd_error_hint": "资金密码错误",
+  "over_limit_hint": "超过限制"
 }
