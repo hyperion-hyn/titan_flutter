@@ -187,6 +187,7 @@ flutter:
     - res/drawable/email_icon.png
     - res/drawable/map3_node_introduction.jpeg
     - res/drawable/map_rich_application.png
+    - res/drawable/map3_node_introduction_en.jpg
     - res/drawable/discover_first_image.jpeg
     - res/drawable/customer_service.jpeg
     - res/drawable/safe_lock.png
