@@ -377,6 +377,7 @@ class S implements WidgetsLocalizations {
   String get sweep_qr_hint => "Scan the QR code above to add me on WeChat";
   String get task => "Task";
   String get task_finish_day_hint => "Task completed for the day";
+  String get task_interval_below_limit => "Do task intervals below 30 minutes";
   String get task_record => "Task Record";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
@@ -1268,6 +1269,8 @@ class $ko extends S {
   String get wechat => "위챗";
   @override
   String get telegram => "전보";
+  @override
+  String get task_interval_below_limit => "30 분 미만의 작업 간격 수행";
   @override
   String get node_mortgage => "노드 모기지";
   @override
@@ -2162,6 +2165,8 @@ class $zh_CN extends S {
   String get wechat => "公众号";
   @override
   String get telegram => "电报群";
+  @override
+  String get task_interval_below_limit => "做任务间隔低于30分钟";
   @override
   String get node_mortgage => "节点抵押";
   @override
