@@ -439,6 +439,5 @@
   "ciphertext_exception_hint": "密文无效或已过期",
   "not_valid_public_key": "不是合法的公钥",
   "setting": "设置",
-  "language": "语言切换",
-  "simple_chinese": "简体中文"
+  "language": "语言切换"
 }

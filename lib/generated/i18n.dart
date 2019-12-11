@@ -362,7 +362,6 @@ class S implements WidgetsLocalizations {
   String get share_location => "Share Location";
   String get share_qrcode => "Share public key QR Code";
   String get show_mnemonic_label => "Show Mnemonic Phrases";
-  String get simple_chinese => "简体中文";
   String get skip => "Skip";
   String get snap_up => "Snap Up";
   String get snap_up_fail => "Snap up failed";
@@ -1151,8 +1150,6 @@ class $ko extends S {
   String get balance_with_unit => "계정 잔액(USDT)";
   @override
   String get no_recommended_route => "추천 경로가 없습니다";
-  @override
-  String get simple_chinese => "简体中文";
   @override
   String get check_update => "업데이트 확인";
   @override
@@ -2047,8 +2044,6 @@ class $zh_CN extends S {
   String get balance_with_unit => "账户余额(USDT)";
   @override
   String get no_recommended_route => "暂无推荐路线";
-  @override
-  String get simple_chinese => "简体中文";
   @override
   String get check_update => "检查更新";
   @override
