@@ -146,7 +146,7 @@ class S implements WidgetsLocalizations {
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
-  String get get_power => "Get Computing Power";
+  String get get_power => "Computing Power";
   String get get_powers => "Get Powers";
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "Global Map Service Nodes";

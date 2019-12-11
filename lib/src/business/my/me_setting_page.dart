@@ -13,7 +13,6 @@ class MeSettingPage extends StatefulWidget {
 }
 
 class _MeSettingState extends State<MeSettingPage> {
-  int checkInCount = 0;
 
   @override
   void initState() {
@@ -28,6 +27,7 @@ class _MeSettingState extends State<MeSettingPage> {
   @override
   Widget build(BuildContext context) {
     var languageName = Const.LANGUAGE_NAME_MAP["${appLocale.languageCode}_${appLocale.countryCode}"];
+    print('[Setting] --> languageName:$languageName, locale:$appLocale');
 
     return Scaffold(
       appBar: AppBar(
