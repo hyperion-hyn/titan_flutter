@@ -8,20 +8,23 @@ import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
 
 import '../../global.dart';
+import 'news_tag_utils.dart';
 
 class NewsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _NewsState();
+    return NewsState();
   }
 }
 
-class _NewsState extends InfoState<NewsPage> {
+class NewsState extends InfoState<NewsPage> {
   static const int LAST_NEWS_TAG = 26;
   static const int OFFICIAL_ANNOUNCEMENT_TAG = 22;
   static const int TUTORIAL_TAG = 30;
   static const int VIDEO_TAG = 48;
+
   static const String CATEGORY = "1";
+
   static const int FIRST_PAGE = 1;
 
   List<InfoItemVo> _InfoItemVoList = [];
@@ -80,7 +83,7 @@ class _NewsState extends InfoState<NewsPage> {
               bloc: loadDataBloc,
               onLoadData: () async {
                 try {
-                  await _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+                  await _getPowerList(CATEGORY, selectedTag, FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
                     loadDataBloc.add(LoadEmptyEvent());
@@ -94,7 +97,7 @@ class _NewsState extends InfoState<NewsPage> {
               },
               onRefresh: () async {
                 try {
-                  await _getPowerList(CATEGORY, selectedTag.toString(), FIRST_PAGE);
+                  await _getPowerList(CATEGORY, selectedTag, FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
                     loadDataBloc.add(LoadEmptyEvent());
@@ -109,7 +112,7 @@ class _NewsState extends InfoState<NewsPage> {
               onLoadingMore: () async {
                 try {
                   int lastSize = _InfoItemVoList.length;
-                  await _getPowerList(CATEGORY, selectedTag.toString(), currentPage + 1);
+                  await _getPowerList(CATEGORY, selectedTag, currentPage + 1);
 
                   if (_InfoItemVoList.length == lastSize) {
                     loadDataBloc.add(LoadMoreEmptyEvent());
@@ -157,8 +160,10 @@ class _NewsState extends InfoState<NewsPage> {
     loadDataBloc.add(LoadingEvent());
   }
 
-  Future _getPowerList(String categories, String tags, int page) async {
-    var newsResponseList = await _newsApi.getNewsList(categories, tags, page);
+  Future _getPowerList(String categories, int tags, int page) async {
+    var requestCatetory = NewsTagUtils.getCatetory(appLocale, categories);
+    var requestTags = NewsTagUtils.getNewsTag(appLocale, tags);
+    var newsResponseList = await _newsApi.getNewsList(requestCatetory, requestTags, page);
 
 //    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {
