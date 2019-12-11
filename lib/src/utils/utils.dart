@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 String getExpiredTimeShowTip(BuildContext context, int expireTime) {
@@ -76,11 +77,19 @@ Future launchUrl(String url) async {
   }
 }
 
-class Utils {
+String getRequestLang() {
+  if (appLocale == null) {
+    return "zh";
+  } else if (appLocale.countryCode == null || appLocale.countryCode == "") {
+    return appLocale.languageCode;
+  } else {
+    return "${appLocale.languageCode}_${appLocale.countryCode}";
+  }
+}
 
+class Utils {
   /// 后台算力单位转成UI显示单位
   static double powerForShow(int power) {
     return power / 10.0;
   }
-
 }

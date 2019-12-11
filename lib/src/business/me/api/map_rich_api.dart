@@ -23,8 +23,10 @@ import 'package:titan/src/business/me/model/user_token.dart';
 import 'package:titan/src/business/me/model/withdrawal_info.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/domain/gaode_model.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/business/me/model/checkin_history.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class MapRichApi {
   ///
@@ -73,39 +75,42 @@ class MapRichApi {
   ///checkin
   Future checkIn(String token, String userId) async {
     await MapRichHttpCore.instance.postEntity("sign_in/$userId", EntityFactory((json) => json),
-        options: RequestOptions(headers: {"Authorization": token}));
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///获取checkincount
   Future<int> checkInCount(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity("sign_in/$userId/stats", EntityFactory((json) => json as int),
-        options: RequestOptions(headers: {"Authorization": token}));
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///获取checkinhistory
   Future<PageResponse<CheckinHistory>> getHistoryList(String token, String userId, int page) async {
-    return await MapRichHttpCore.instance.getEntity("sign_in/$userId/stats/history", EntityFactory<PageResponse<CheckinHistory>>((json) {
+    return await MapRichHttpCore.instance.getEntity("sign_in/$userId/stats/history",
+        EntityFactory<PageResponse<CheckinHistory>>((json) {
       var currentPage = json["page"] as int;
       var totalPages = json["totalPages"] as int;
       var dataList = json["history"] as List;
       var historyList = dataList.map((itemMap) {
         return CheckinHistory.fromJson(itemMap);
       }).toList();
-      return PageResponse<CheckinHistory>(currentPage, totalPages, historyList);}), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+      return PageResponse<CheckinHistory>(currentPage, totalPages, historyList);
+    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///获取用户Eth address
   Future<UserEthAddress> getUserEthAddress(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity(
         "users/$userId/addr", EntityFactory((json) => UserEthAddress.fromJson(json)),
-        options: RequestOptions(headers: {"Authorization": token}));
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///getFundToken
   Future<FundToken> getFundToken(String token, String userId, String password) async {
     return await MapRichHttpCore.instance.postEntity(
         "users/$userId/fund_token", EntityFactory((json) => FundToken.fromJson(json)),
-        params: {"password": password}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"password": password},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   // todo: jison edit_userInfo
@@ -113,7 +118,7 @@ class MapRichApi {
   Future<UserInfo> getUserInfo(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity(
         "v2/users/$userId", EntityFactory<UserInfo>((json) => UserInfo.fromJson(json)),
-        options: RequestOptions(headers: {"Authorization": token}));
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   /*
@@ -134,7 +139,7 @@ class MapRichApi {
         return PowerDetail.fromJson(powerItemMap);
       }).toList();
       return PageResponse<PowerDetail>(currentPage, totalPages, powerDetailList);
-    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///获取推广列表
@@ -149,7 +154,7 @@ class MapRichApi {
         return PromotionInfo.fromJson(promotionItemMap);
       }).toList();
       return PageResponse<PromotionInfo>(currentPage, totalPages, promotionList);
-    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   /*
@@ -172,7 +177,7 @@ class MapRichApi {
       return (json as List).map((contractJson) {
         return ContractInfo.fromJson(contractJson);
       }).toList();
-    }), options: RequestOptions(headers: {"Authorization": token}));
+    }), options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///getContractList
@@ -181,28 +186,31 @@ class MapRichApi {
       return (json as List).map((contractJson) {
         return ContractInfoV2.fromJson(contractJson);
       }).toList();
-    }), options: RequestOptions(headers: {"Authorization": token}));
+    }), options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///订单创建
   Future<PayOrder> createOrder({@required int contractId, @required String token}) async {
     return await MapRichHttpCore.instance.postEntity(
         'order/create', EntityFactory<PayOrder>((json) => PayOrder.fromJson(json)),
-        params: {"contractId": contractId}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"contractId": contractId},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///订单创建
   Future<PayOrder> createFreeOrder({@required int contractId, @required String token}) async {
     return await MapRichHttpCore.instance.postEntity(
         'order/free', EntityFactory<PayOrder>((json) => PayOrder.fromJson(json)),
-        params: {"contractId": contractId}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"contractId": contractId},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///充值订单创建
   Future<RechargeOrderInfo> createRechargeOrder({@required double amount, @required String token}) async {
     return await MapRichHttpCore.instance.postEntity(
         'recharge/create', EntityFactory<RechargeOrderInfo>((json) => RechargeOrderInfo.fromJson(json)),
-        params: {"amount": amount}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"amount": amount},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///确认支付订单
@@ -210,13 +218,14 @@ class MapRichApi {
       {@required int orderId, @required String payType, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postResponseEntity('order/pay', null,
         params: {"orderId": orderId, "payType": payType},
-        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }
 
   ///确认支付订单
   Future<ResponseEntity<dynamic>> confirmRecharge({@required int orderId, @required String token}) async {
     return await MapRichHttpCore.instance.postResponseEntity('recharge/pay', null,
-        params: {"orderId": orderId}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"orderId": orderId},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///行情
@@ -229,7 +238,7 @@ class MapRichApi {
   Future<WithdrawalInfo> withdrawalInfo({@required String token, @required String type}) async {
     return await MapRichHttpCore.instance.getEntity(
         'withdrawal/info', EntityFactory<WithdrawalInfo>((json) => WithdrawalInfo.fromJson(json)),
-        params: {"type": type}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"type": type}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///提币
@@ -241,7 +250,7 @@ class MapRichApi {
       @required int type}) async {
     return await MapRichHttpCore.instance.postEntity('withdrawal/apply', null,
         params: {"amount": amount, "address": address, "type": type},
-        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }
 
   ///getMortgageList
@@ -250,7 +259,7 @@ class MapRichApi {
       return (json as List).map((mortgageJson) {
         return MortgageInfo.fromJson(mortgageJson);
       }).toList();
-    }), options: RequestOptions(headers: {"Authorization": token}));
+    }), options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///getMortgageListV2
@@ -259,7 +268,7 @@ class MapRichApi {
       return (json as List).map((mortgageJson) {
         return MortgageInfoV2.fromJson(mortgageJson);
       }).toList();
-    }), options: RequestOptions(headers: {"Authorization": token}));
+    }), options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///getDailyBillDetail
@@ -268,7 +277,9 @@ class MapRichApi {
       return (json as List).map((billJson) {
         return BillInfo.fromJson(billJson);
       }).toList();
-    }), params: {"id": id, "page": page}, options: RequestOptions(headers: {"Authorization": token}));
+    }),
+        params: {"id": id, "page": page},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///getBillList
@@ -278,7 +289,7 @@ class MapRichApi {
       return (json as List).map((billJson) {
         return BillInfo.fromJson(billJson);
       }).toList();
-    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   /*
@@ -287,7 +298,7 @@ class MapRichApi {
       return (json as List).map((billJson) {
         return BillInfo.fromJson(billJson);
       }).toList();
-    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
   */
 
@@ -301,7 +312,7 @@ class MapRichApi {
         return NodeMortgageInfo.fromJson(promotionItemMap);
       }).toList();
       return PageResponse<NodeMortgageInfo>(currentPage, totalPages, promotionList);
-    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   /// 获取用户等级
@@ -310,7 +321,7 @@ class MapRichApi {
       return (json as List).map((levelInfoJson) {
         return UserLevelInfo.fromJson(levelInfoJson);
       }).toList();
-    }));
+    }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
   }
 
   ///获取提币列表
@@ -323,27 +334,28 @@ class MapRichApi {
         return WithdrawalInfoLog.fromJson(withdrawalItemMap);
       }).toList();
       return PageResponse<WithdrawalInfoLog>(currentPage, totalPages, withdrawalList);
-    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token}));
+    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///抵押
   Future<dynamic> mortgage({@required int confId, @required token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/buy', null,
         params: {"confId": confId},
-        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }
 
   ///抵押抢注
   Future<dynamic> mortgageSnapUp({@required int confId, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/snap_up', null,
         params: {"confId": confId},
-        options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }
 
   ///赎回
   Future<dynamic> redemption({@required int id, @required token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postEntity('mortgage/redemption', null,
-        params: {"id": id}, options: RequestOptions(headers: {"Authorization": token, "Fund-Token": fundToken}));
+        params: {"id": id},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }
 
   ///cookie
@@ -354,7 +366,8 @@ class MapRichApi {
   ///确认支付订单V2
   Future<ResponseEntity<dynamic>> rechargePayV2({@required token, @required double balance}) async {
     return await MapRichHttpCore.instance.postResponseEntity('recharge/v2/pay', null,
-        params: {"balance": balance}, options: RequestOptions(headers: {"Authorization": token}));
+        params: {"balance": balance},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///附近可以分享的位置
@@ -383,7 +396,7 @@ class MapRichApi {
         "type": type,
         "page": page,
       },
-      options: RequestOptions(headers: {"Authorization": token}, cancelToken: cancelToken),
+      options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}, cancelToken: cancelToken),
     );
   }
 }
