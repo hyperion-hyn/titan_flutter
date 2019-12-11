@@ -20,8 +20,8 @@ String createWalletNameTemp = "";
 String createWalletPasswordTemp = "";
 String createWalletMnemonicTemp = "";
 
-const String QUOTE_UNIT = "CNY";
-const String QUOTE_UNIT_SYMBOL = "¥";
+String QUOTE_UNIT = appLocale.languageCode == "zh" ? "CNY" : "USD";
+String QUOTE_UNIT_SYMBOL = appLocale.languageCode == "zh" ? "¥" : "\$";
 
 WalletVo currentWalletVo;
 
