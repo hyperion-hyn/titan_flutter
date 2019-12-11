@@ -97,7 +97,7 @@ class NewsState extends InfoState<NewsPage> {
               },
               onRefresh: () async {
                 try {
-                 await  _loadNewsData(FIRST_PAGE);
+                  await _loadNewsData(FIRST_PAGE);
 
                   if (_InfoItemVoList.length == 0) {
                     loadDataBloc.add(LoadEmptyEvent());
@@ -200,7 +200,10 @@ class NewsState extends InfoState<NewsPage> {
   }
 
   Future _getOfficialNewsList(int page) async {
-    var newsResponseList = await _newsApi.getOfficialNewsList(page);
+    var requestCatetory = NewsTagUtils.getCatetory(appLocale, CATEGORY);
+    var requestTags = NewsTagUtils.getNewsTag(appLocale, NewsState.OFFICIAL_ANNOUNCEMENT_TAG);
+    var requestStarRichTags = NewsTagUtils.getStarRichNewsTag(appLocale, NewsState.OFFICIAL_ANNOUNCEMENT_TAG);
+    var newsResponseList = await _newsApi.getOfficialNewsList(page, requestCatetory, requestTags, requestStarRichTags);
 
 //    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {

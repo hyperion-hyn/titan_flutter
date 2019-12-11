@@ -58,6 +58,18 @@ class NewsTagUtils {
       }
     }
   }
+
+  static String getStarRichNewsTag(Locale locale, int tag) {
+    if (locale.languageCode == "zh") {
+      if (tag == NewsState.OFFICIAL_ANNOUNCEMENT_TAG) {
+        return NewsTagConsts.ZH_STAR_RICH_OFFICIAL_ANNOUNCEMENT_TAG.toString();
+      }
+    } else {
+      if (tag == NewsState.OFFICIAL_ANNOUNCEMENT_TAG) {
+        return NewsTagConsts.ZH_STAR_RICH_OFFICIAL_ANNOUNCEMENT_TAG.toString();
+      }
+    }
+  }
 }
 
 class NewsTagConsts {
@@ -86,6 +98,8 @@ class NewsTagConsts {
   static const int KO_OFFICIAL_ANNOUNCEMENT_TAG = 77;
   static const int KO_TUTORIAL_TAG = 69;
   static const int KO_VIDEO_TAG = 75;
+
+  static const int ZH_STAR_RICH_OFFICIAL_ANNOUNCEMENT_TAG = 57;
 
 //  static const int KO_KAI_PAPER_TAG = 42;
 //  static const int KO_KAI_VIDEO_TAG = 34;
