@@ -10,6 +10,7 @@ import 'package:titan/src/business/me/node_mortgage/node_mortgage_page_v2.dart';
 import 'package:titan/src/business/me/personal_settings_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
+import 'package:titan/src/business/my/me_setting_page.dart';
 import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -23,7 +24,6 @@ import 'contract/buy_hash_rate_page_v2.dart';
 import 'my_asset_page.dart';
 import 'my_promote_page.dart';
 import 'me_checkin_history_page.dart';
-import 'me_setting_page.dart';
 
 class MePage extends StatefulWidget {
   @override

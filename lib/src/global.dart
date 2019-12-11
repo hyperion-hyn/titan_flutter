@@ -5,7 +5,6 @@ import 'package:titan/src/business/me/model/parent_user.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 
 import 'business/wallet/model/wallet_vo.dart';
-import 'package:titan/app_locale_config.dart';
 
 /// The global [EventBus] object.
 EventBus eventBus = EventBus();
@@ -14,7 +13,6 @@ var logger = Logger();
 
 double bottomBarHeight = 65;
 
-var locale_config = AppLocaleConfig();
 
 ///some const
 const safeAreaBottomPadding = 24.0;
@@ -40,7 +38,7 @@ Locale sysLocale;
 
 var appLanguageCode = "en";
 
-BuildContext globalContext = null;
+BuildContext globalContext;
 
 String createWalletPopUtilName;
 

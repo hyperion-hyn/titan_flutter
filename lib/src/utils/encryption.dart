@@ -21,7 +21,7 @@ Future<String> reEncryptPoi(Repository repository, IPoi poi, String remark) asyn
   var cm_a = await TitanPlugin.encrypt(pubKey, rand);
   var ct_a = await TitanPlugin.encrypt(pubKey, message);
   if (cm_a == null || cm_a.isEmpty || ct_a == null || ct_a.isEmpty) {
-    throw Exception(locale_config.SS.encrypt_error);
+    throw Exception(S.of(globalContext).encrypt_error);
   }
   var expiracy = 24 * 3600; //1 day
   await api.storeCls(commitment: cm_a, ciphertext: ct_a, expiracy: expiracy, kid: kid);
@@ -36,7 +36,7 @@ Future<String> p2pEncryptPoi(String pubKey, IPoi poi, String remark) async {
   var message = _genMessage(poi, remark);
   var ciphertext = await TitanPlugin.encrypt(pubKey, message);
   if (ciphertext == null || ciphertext.isEmpty) {
-    throw Exception(locale_config.SS.not_valid_public_key);
+    throw Exception(S.of(globalContext).not_valid_public_key);
   }
 //  return "${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TEXT_PREFIX}$ciphertext";
   return "${Const.CIPHER_TEXT_PREFIX}$ciphertext";
@@ -99,6 +99,5 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
     return PoiEntity(name: name, latLng: latLng, remark: word);
   }
 
-
-  throw Exception(locale_config.SS.ciphertext_exception_hint);
+  throw Exception(S.of(globalContext).ciphertext_exception_hint);
 }

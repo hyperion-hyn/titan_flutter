@@ -34,15 +34,6 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-
-      locale_config.languageCode = Localizations.localeOf(context).languageCode;
-      print("[App] --> initState, languageCode:${locale_config.languageCode}");
-
-      return;
-    });
-
-//    FlutterBugly.init(androidAppId: "103fd7ef12", iOSAppId: "0198fbe26a");
     localeChange = (locale) {
       setState(() {
         appLocale = locale;
@@ -59,7 +50,6 @@ class _AppState extends State<App> {
       return;
     }
     localeChange(Locale(languageCode, countryCode));
-
   }
 
   @override
