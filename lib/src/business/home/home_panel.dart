@@ -122,11 +122,12 @@ class HomePanelState extends UserState<HomePanel> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 24.0, bottom: 4),
-              child: InkWell(
-                onTap: () async {
+          if (appLocale.languageCode == "zh")
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24.0, bottom: 4),
+                child: InkWell(
+                  onTap: () async {
 //                  await fake.CookieManager.clearAllCookies();
 //                  Fluttertoast.showToast(msg: '清除cookie成功');
 
@@ -145,41 +146,43 @@ class HomePanelState extends UserState<HomePanel> {
 //                    print(cookie);
 //                  }
 //                  print('<<<---' * 10);
-                },
-                child: Text(
-                  S.of(context).city_recommendation,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  },
+                  child: Text(
+                    S.of(context).city_recommendation,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
             ),
-          ),
           //hack webview， just what is's cookie...
-          SliverToBoxAdapter(
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  height: 16,
-                  color: Colors.white,
-                ),
-              ],
+          if (appLocale.languageCode == "zh")
+            SliverToBoxAdapter(
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: 16,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SliverList(
-              delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final int itemIndex = index ~/ 2;
-                    if (index.isEven) {
-                      var poi = nearPois[itemIndex];
-                      return _buildRecommendItem(context, poi);
-                    } else {
-                      //devicer
-                      return Divider(height: 0);
-                    }
-                  },
-                  childCount: _computeSemanticChildCount(nearPois.length),
-                  semanticIndexCallback: (Widget _, int index) {
-                    return index.isEven ? index ~/ 2 : null;
-                  })),
+          if (appLocale.languageCode == "zh")
+            SliverList(
+                delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final int itemIndex = index ~/ 2;
+                      if (index.isEven) {
+                        var poi = nearPois[itemIndex];
+                        return _buildRecommendItem(context, poi);
+                      } else {
+                        //devicer
+                        return Divider(height: 0);
+                      }
+                    },
+                    childCount: _computeSemanticChildCount(nearPois.length),
+                    semanticIndexCallback: (Widget _, int index) {
+                      return index.isEven ? index ~/ 2 : null;
+                    })),
         ],
       ),
     );
@@ -531,7 +534,8 @@ class HomePanelState extends UserState<HomePanel> {
   }
 
   get mapCenter async {
-    var center = await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.getCameraPosition();
+    var center =
+        await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.getCameraPosition();
     return center?.target;
   }
 
