@@ -37,90 +37,110 @@ class EnterFundPasswordState extends State<EnterFundPasswordWidget> {
       child: Form(
         key: _formKey,
         child: Container(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: MediaQuery.of(context).viewInsets.bottom),
-            child:
-                Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 16),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).safety_verify,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    Spacer(),
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(padding: EdgeInsets.all(4), child: Text(S.of(context).cancel)))
-                  ],
-                ),
-              ),
-              Divider(
-                height: 1,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Text(
-                  S.of(context).fund_password,
-                  style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextFormField(
-                validator: (value) {
-                  if (!ValidatorUtil.validatePassword(value)) {
-                    return S.of(context).fund_password_format_error_message;
-                  } else {
-                    return null;
-                  }
-                },
-                controller: fundPasswordEditingController,
-                keyboardType: TextInputType.emailAddress,
-                obscureText: true,
-                decoration:
-                    InputDecoration(hintText: S.of(context).please_input_fund_pwd_hint, errorText: fundEditErrorMsg != null ? fundEditErrorMsg : null),
-              ),
-              Row(
+            padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: SizedBox(
-                        height: 42,
-                        child: RaisedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState.validate()) {
-                              String fundPassword = fundPasswordEditingController.text;
-                              fundEditErrorMsg = null;
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 16),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          S.of(context).safety_verify,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(4),
+                                child: Text(S.of(context).cancel)))
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 1,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text(
+                      S.of(context).fund_password,
+                      style: TextStyle(
+                          color: HexColor("#093956"),
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  TextFormField(
+                    validator: (value) {
+                      if (!ValidatorUtil.validatePassword(value)) {
+                        return S.of(context).fund_password_format_error_message;
+                      } else {
+                        return null;
+                      }
+                    },
+                    maxLines: 1,
+                    controller: fundPasswordEditingController,
+                    keyboardType: TextInputType.emailAddress,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        hintText: S.of(context).please_input_fund_pwd_hint,
+                        errorText:
+                            fundEditErrorMsg != null ? fundEditErrorMsg : null),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 16),
+                          child: SizedBox(
+                            height: 42,
+                            child: RaisedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState.validate()) {
+                                  String fundPassword =
+                                      fundPasswordEditingController.text;
+                                  fundEditErrorMsg = null;
 
-                              try {
-                                FundToken fundToken =
-                                    await _userService.getFundToken(Md5Util.generateMd5(fundPassword));
-                                Navigator.pop(context, fundToken.token);
-                              } on HttpResponseCodeNotSuccess catch (_) {
-                                if (_.code == ERROR_FUND_PASSWORD.code) {
-                                  fundEditErrorMsg = ERROR_FUND_PASSWORD.message;
-                                  setState(() {});
-                                  return;
-                                } else {
-                                  throw _;
+                                  try {
+                                    FundToken fundToken =
+                                        await _userService.getFundToken(
+                                            Md5Util.generateMd5(fundPassword));
+                                    Navigator.pop(context, fundToken.token);
+                                  } on HttpResponseCodeNotSuccess catch (_) {
+                                    if (_.code == ERROR_FUND_PASSWORD.code) {
+                                      fundEditErrorMsg =
+                                          ERROR_FUND_PASSWORD.message;
+                                      setState(() {});
+                                      return;
+                                    } else {
+                                      throw _;
+                                    }
+                                  }
                                 }
-                              }
-                            }
-                          },
-                          color: Theme.of(context).primaryColor,
-                          child: Text(
-                            S.of(context).confirm,
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              },
+                              color: Theme.of(context).primaryColor,
+                              child: Text(
+                                S.of(context).confirm,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              )
-            ])),
+                    ],
+                  )
+                ])),
       ),
     );
   }
