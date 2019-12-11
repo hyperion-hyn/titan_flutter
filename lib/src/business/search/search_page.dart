@@ -335,22 +335,23 @@ class _SearchPageState extends State<SearchPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Icon(Icons.enhanced_encryption, color: Colors.grey[600]),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 0, bottom: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Text(
-                          S.of(context).decrypt_location_cipher_tips,
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 0, bottom: 16,right: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Text(
+                            S.of(context).decrypt_location_cipher_tips,
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(S.of(context).decrypt_location_cipher_tips_context, style: TextStyle(color: Colors.grey, fontSize: 14),softWrap: true,),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(S.of(context).decrypt_location_cipher_tips_context, style: TextStyle(color: Colors.grey, fontSize: 14),softWrap: true,),
+                        ),
 //                        Padding(
 //                          padding: const EdgeInsets.only(top: 16.0),
 //                          child: Text(
@@ -358,7 +359,8 @@ class _SearchPageState extends State<SearchPage> {
 //                            style: TextStyle(color: Colors.blue),
 //                          ),
 //                        )
-                    ],
+                      ],
+                    ),
                   ),
                 )
               ],
