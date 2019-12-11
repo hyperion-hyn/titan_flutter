@@ -31,6 +31,7 @@ class S implements WidgetsLocalizations {
   String get account_backup_next_step_notice => "Next, you will see 12 recovery words in an order that allow you to recover your account";
   String get account_backup_notice => "Back up your account now";
   String get account_error => "Account Error";
+  String get account_exist_hint => "The account already exists, please log in the account directly";
   String get account_is_empty => "Account is empty";
   String get account_new_password => "New password";
   String get account_password => "account password";
@@ -86,12 +87,14 @@ class S implements WidgetsLocalizations {
   String get confirm_password_label => "Confirm new password";
   String get confirm_snap_up => "Confirm";
   String get contact_customer_service => "Contact Customer Service";
+  String get content_conflict_hint => "Content of the conflict";
   String get continue_text => "Continue";
   String get contract_call => "Call Smart contract";
   String get copy => "Copy";
   String get copy_wx_id_success_hint => "WeChat ID copied successfully";
   String get copyed => "Copied";
   String get create => "Create";
+  String get create_user_fail_hint => "Failed to create user";
   String get create_wallet => "Create Wallet";
   String get create_wallet_name_label => "Wallet Name";
   String get create_wallet_password_label => "Wallet Password";
@@ -139,14 +142,15 @@ class S implements WidgetsLocalizations {
   String get free_receive => "Free Receive";
   String get fund_new_password => "New fund password";
   String get fund_password => "Fund password";
-  String get fund_password_format_error_message => "Incorrect fund password format. Please enter at least 6 characters";
-  String get fund_password_length_error_message => "Please enter a fund password (6 characters minimum)";
+  String get fund_password_format_error_message => "Incorrect fund password format. Please enter at least 6 chars";
+  String get fund_password_length_error_message => "Enter a fund password (6 chars minimum)";
   String get fund_password_not_equal_confirm_fund_password => "The two passwords don't match";
+  String get fund_pwd_error_hint => "Fund password error";
   String get fundz_password => "fund security password";
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
-  String get get_power => "Get Computing Power";
+  String get get_power => "Get Power";
   String get get_powers => "Get Powers";
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "Global Map Service Nodes";
@@ -174,21 +178,23 @@ class S implements WidgetsLocalizations {
   String get information => "News";
   String get information_guide => "Guidance";
   String get information_video => "Video";
-  String get input_confirm_wallet_password_hint => "Please re-enter a wallet password of at least 6 characters";
+  String get input_confirm_wallet_password_hint => "re-enter a wallet password of at least 6 chars";
   String get input_corrent_count_hint => "Please enter the correct amount";
   String get input_count_over_balance => "Exceed balance limit";
-  String get input_password_again_hint => "Please re-enter the password";
+  String get input_password_again_hint => "Re-enter the password";
   String get input_resume_mnemonic => "Enter backup mnemonics separated by spaces";
   String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
-  String get input_wallet_name_hint => "Please input wallet name";
-  String get input_wallet_name_length_hint => "Name must be within 6 characters";
-  String get input_wallet_password_length_hint => "Wallet password must be at least 6 characters";
+  String get input_wallet_name_hint => "Input wallet name";
+  String get input_wallet_name_length_hint => "Name must be within 6 chars";
+  String get input_wallet_password_length_hint => "Wallet password must be at least 6 chars";
   String get install_now => "Install now";
   String get installation_update_package_failed => "Installation update package failed";
+  String get insufficient_permission_hint => "Insufficient permissions";
   String get internet_bar => "Internet Cafe";
   String get introduce => "Introduce";
   String get invitate_qr => "Invitation QR Code";
   String get invitation_code => "invitation code";
+  String get invite_code_error_hint => "Invitation code error";
   String get invite_join => "You are invited";
   String get invite_link => "Invitation link";
   String get invite_link_copy_hint => "Invitation link copied";
@@ -221,12 +227,12 @@ class S implements WidgetsLocalizations {
   String get mortgage => "Mortgage";
   String get mortgage_fail_hint => "Mortgage Failure";
   String get mortgage_success_hint => "Staked successfully";
-  String get my_account_with_unit => "My account(USDT)";
+  String get my_account_with_unit => "Account(USDT)";
   String get my_location => "My Location";
   String get my_node_mortgage => "My Node Staking";
   String get my_page => "My";
   String get my_position => "My Location";
-  String get my_power_with_unit => "My Computing Power(T)";
+  String get my_power_with_unit => "Power(T)";
   String get my_total_power => "My Total Computing Power";
   String get my_wallet_address => "My Wallet Address";
   String get nav_about_us => "About us";
@@ -234,10 +240,12 @@ class S implements WidgetsLocalizations {
   String get nav_share_app => "Share Titan APP";
   String get navigation => "Start";
   String get need_transfer => "Need Transfer";
+  String get net_error_hint => "Network error";
   String get network_exception_hint => "Network failed~";
   String get new_update_available => "Latest Update Available";
   String get next => "continue";
   String get nightlife_guide => "Nightlife Guidance";
+  String get no_content_hint => "There is no content";
   String get no_data => "No Data";
   String get no_detail_address => "No detailed address";
   String get no_eth_address => "Not ETH address ";
@@ -253,7 +261,7 @@ class S implements WidgetsLocalizations {
   String get node_martgage => "Node Martgage";
   String get node_mortgage => "Node Staking";
   String get node_mortgage_in_out_hint => "Join or cancel staking at anytime。";
-  String get node_mortgage_with_unit => "Node Staking(USDT)";
+  String get node_mortgage_with_unit => "Node(USDT)";
   String get not_open_yet => "Coming Soon";
   String get not_valid_public_key => "Not a valid public key";
   String get official_announcement => "Announcement";
@@ -264,28 +272,30 @@ class S implements WidgetsLocalizations {
   String get other_star_numbers => "Other";
   String get out_wallet_transfer_hint => "I have transferred using an external wallet";
   String get over_limit_amount_hint => "Reached the limit";
+  String get over_limit_hint => "More than limit";
   String get over_limit_numbers => "Excess Quantity";
   String get over_max_withdrawal => "Exceeded the maximum withdrawal limit";
   String get paking => "Parking";
-  String get password_format_error_message => "Incorrect password format. Please enter at least 6 characters";
+  String get para_error_hint => "Parameter error";
+  String get password_format_error_message => "Incorrect password format. Please enter at least 6 chars";
   String get password_incorrect => "incorrect password";
   String get password_label => "Password";
-  String get password_length_error_message => "Please enter a password (6 characters minimum)";
+  String get password_length_error_message => "Enter a password (6 chars mini)";
   String get password_not_equal_hint => "Inconsistent passwords";
   String get paste => "paste";
   String get pay_fail_hint => "Payment failed";
   String get pay_success_hint => "payment successful";
   String get personal_information => "Personal Information";
-  String get please_input_account_password => "please input account password";
+  String get please_input_account_password => "Input account password";
   String get please_input_email_hint => "please input your email";
   String get please_input_fund_pwd_hint => "Please enter the fund password";
   String get please_input_hyn_address => "Please input HYN address";
   String get please_input_hyn_withdrawal_address => "Please enter the HYN address";
-  String get please_input_invitation_code => "Please enter the invitation code (6 characters minimum)";
+  String get please_input_invitation_code => "Please enter the invitation code (6 chars minimum)";
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_password_hint => "Please enter the password";
-  String get please_input_verification_code => "Please enter 6-digit verification code";
-  String get please_input_wallet_name => "Please input wallet name";
+  String get please_input_verification_code => "Enter 6-digit valid code";
+  String get please_input_wallet_name => "Input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
   String get please_input_withdrawal_quantity => "Please input withdrawal amount ";
   String get please_mortgage => "Please stake";
@@ -304,6 +314,7 @@ class S implements WidgetsLocalizations {
   String get processing => "processing";
   String get product => "Product：";
   String get project_introduction => "Project Brief";
+  String get psw_reset_error_hint => "Password reset error";
   String get public_key_copied => "Public key. copied";
   String get public_key_scan_fail_rescan => "public key error, please re-scan";
   String get quantity => "Quantity";
@@ -390,6 +401,7 @@ class S implements WidgetsLocalizations {
   String get tip_snap_up_balance_hint => "Tip: Snap up node can only stake with top-up balance";
   String get tips => "Tips";
   String get titan_encrypted_map_ecology => "Titan Cryptographic Map Ecology";
+  String get today_complete_hint => "Today's task is completed. Thank you for your data";
   String get toilet => "Toilet";
   String get transfer_address => "Transfer address";
   String get transfer_exception_hint => "Transfer Error";
@@ -400,11 +412,16 @@ class S implements WidgetsLocalizations {
   String get turn_on_wifi_hint => "Turn on WiFi to scan more accurate signal maps";
   String get twitterhyperion => "Twitter-Hyperion";
   String get twittertitan => "Twitter-Titan";
+  String get unauthorized => "unauthorized";
   String get unknown_error => "Unknown error";
+  String get unknown_error_hint => "An unknown error";
   String get update_now => "Update Now";
+  String get update_user_info_fail_hint => "Failed to update user information";
   String get use_guide => "Read Tutorial";
   String get user_this_account => "Use this private account";
+  String get username_pwd_not_match_hint => "The username and password do not match";
   String get verification_code => "Verification code";
+  String get verify_code_error_hint => "Verification code error";
   String get video => "Video";
   String get view_all => "View All";
   String get walking => "Walking";
@@ -458,7 +475,7 @@ class S implements WidgetsLocalizations {
   String send_count_label(String symbol) => "$symbol Quantity";
   String send_symbol(String symbol) => "Send $symbol";
   String snap_up_product_fuc(String name) => "Snap Up Products：${name}";
-  String stay_func(String snapUpStocks) => " remaining ${snapUpStocks}";
+  String stay_func(String snapUpStocks) => " left ${snapUpStocks}";
   String task_finish_func(String total) => "Already completed ${total} tasks";
   String total_invitation_func(String totalInvitations) => "${totalInvitations} invited";
   String withdrawal_fee(String fee) => "Fee(${fee}%)";
@@ -486,6 +503,8 @@ class $ko extends S {
   @override
   String get please_input_fund_pwd_hint => "펀드 비밀번호를 입력하십시오";
   @override
+  String get verify_code_error_hint => "인증 코드 오류";
+  @override
   String get out_wallet_transfer_hint => "외부 지갑을 사용하여 이체했습니다";
   @override
   String get re_enter_fund_password => "비밀번호를 다시 입력하십시오";
@@ -493,6 +512,8 @@ class $ko extends S {
   String get setting => "설정";
   @override
   String get fund_new_password => "자금에 대한 새로운 비밀번호";
+  @override
+  String get para_error_hint => "파라미터 에러";
   @override
   String get about_us => "우리에 대해";
   @override
@@ -674,6 +695,8 @@ class $ko extends S {
   @override
   String get reinput_wallet_password_label => "암호 확인";
   @override
+  String get create_user_fail_hint => "사용자 생성 실패";
+  @override
   String get speed_fast => "빨리";
   @override
   String get dmap_setting => "DMap설정";
@@ -703,6 +726,8 @@ class $ko extends S {
   String get thank_you_for_contribute_data => "당신의 기여에 감사드립니다.";
   @override
   String get node_has_squat_hint => "노드가 쿼트되었습니다";
+  @override
+  String get over_limit_hint => "한도 초과";
   @override
   String get import_account_tips => "축하합니다. 비밀 지갑을 성공적으로 가져왔습니다";
   @override
@@ -756,6 +781,8 @@ class $ko extends S {
   @override
   String get recharge => "재충전";
   @override
+  String get today_complete_hint => "오늘 과제가 완료되었습니다. 기여해 주셔서 감사합니다.";
+  @override
   String get share => "공유";
   @override
   String get new_update_available => "새 버전 발견";
@@ -795,6 +822,8 @@ class $ko extends S {
   String get domestic_video => "국내";
   @override
   String get fundz_password => "자금 보안 비밀번호";
+  @override
+  String get account_exist_hint => "계정이 이미 존재합니다. 직접 로그인하십시오";
   @override
   String get all => "모두";
   @override
@@ -864,11 +893,17 @@ class $ko extends S {
   @override
   String get snap_up_fail => "분대 실패";
   @override
+  String get insufficient_permission_hint => "권한 부족";
+  @override
   String get node_martgage => "노드 모기지";
   @override
   String get backup_offline_save_text => "격리 된 네트워크의 안전한 장소에 보관\n이메일, 사진 앨범, 소셜 애플리케이션 등과 같은 네트워크 환경에서 니모닉을 공유하지 마십시오.";
   @override
+  String get update_user_info_fail_hint => "사용자 정보 업데이트 실패";
+  @override
   String get attraction => "관광 명소";
+  @override
+  String get unauthorized => "무단";
   @override
   String get register_email => "등록 된 이메일";
   @override
@@ -1116,6 +1151,8 @@ class $ko extends S {
   @override
   String get clean_search_history => "기록 지우기";
   @override
+  String get invite_code_error_hint => "잘못된 초대 코드";
+  @override
   String get task_record => "작업 로그";
   @override
   String get supermarket => "슈퍼마켓";
@@ -1141,6 +1178,8 @@ class $ko extends S {
   String get wallet => "지갑";
   @override
   String get less_than_1_min => "일분 미만";
+  @override
+  String get content_conflict_hint => "콘텐츠 충돌";
   @override
   String get address_copied => "주소가 복사되었습니다";
   @override
@@ -1182,6 +1221,8 @@ class $ko extends S {
   @override
   String get task_finish_day_hint => "당일 과제 완료";
   @override
+  String get username_pwd_not_match_hint => "사용자 이름과 비밀번호가 일치하지 않습니다";
+  @override
   String get hot_area => "인기 지역";
   @override
   String get create => "작성";
@@ -1191,6 +1232,8 @@ class $ko extends S {
   String get fund_password => "자금 비밀번호";
   @override
   String get snap_up => "사재기";
+  @override
+  String get net_error_hint => "네트워크 오류";
   @override
   String get wechat_cs => "위챗 고객 서비스";
   @override
@@ -1222,6 +1265,8 @@ class $ko extends S {
   @override
   String get no_eth_address => "이더 리움 주소";
   @override
+  String get psw_reset_error_hint => "비밀번호 재설정 오류";
+  @override
   String get free_receive => "무료 픽업";
   @override
   String get send => "보내기";
@@ -1252,6 +1297,8 @@ class $ko extends S {
   @override
   String get stay_tuned => "계속 지켜봐 주시기 바랍니다";
   @override
+  String get unknown_error_hint => "알 수없는 오류";
+  @override
   String get search_exception => "이상 검색";
   @override
   String get gas_station => "주유소";
@@ -1270,6 +1317,8 @@ class $ko extends S {
   @override
   String get telegram => "전보";
   @override
+  String get no_content_hint => "내용이 없습니다";
+  @override
   String get task_interval_below_limit => "30 분 미만의 작업 간격 수행";
   @override
   String get node_mortgage => "노드 모기지";
@@ -1285,6 +1334,8 @@ class $ko extends S {
   String get import_account_success => "계정 가져오기 성공";
   @override
   String get main_my_public_key => "암호화 된 주소 (공개 키)";
+  @override
+  String get fund_pwd_error_hint => "자금 조달 비밀번호 오류";
   @override
   String get power_martgage => "해시";
   @override
@@ -1382,6 +1433,8 @@ class $zh_CN extends S {
   @override
   String get please_input_fund_pwd_hint => "请输入资金密码";
   @override
+  String get verify_code_error_hint => "验证码错误";
+  @override
   String get out_wallet_transfer_hint => "我已使用外部钱包转入";
   @override
   String get re_enter_fund_password => "请再次输入资金密码";
@@ -1389,6 +1442,8 @@ class $zh_CN extends S {
   String get setting => "设置";
   @override
   String get fund_new_password => "资金新密码";
+  @override
+  String get para_error_hint => "参数错误";
   @override
   String get about_us => "关于我们";
   @override
@@ -1570,6 +1625,8 @@ class $zh_CN extends S {
   @override
   String get reinput_wallet_password_label => "确认密码";
   @override
+  String get create_user_fail_hint => "创建用户失败";
+  @override
   String get speed_fast => "快";
   @override
   String get dmap_setting => "DMap设置";
@@ -1599,6 +1656,8 @@ class $zh_CN extends S {
   String get thank_you_for_contribute_data => "感谢你贡献数据。";
   @override
   String get node_has_squat_hint => "节点已抢注完";
+  @override
+  String get over_limit_hint => "超过限制";
   @override
   String get import_account_tips => "恭喜，您的私密钱包已经导入成功";
   @override
@@ -1652,6 +1711,8 @@ class $zh_CN extends S {
   @override
   String get recharge => "充值";
   @override
+  String get today_complete_hint => "今天任务已完成，感谢你贡献数据";
+  @override
   String get share => "分享";
   @override
   String get new_update_available => "发现新版本";
@@ -1691,6 +1752,8 @@ class $zh_CN extends S {
   String get domestic_video => "国内视频";
   @override
   String get fundz_password => "资金安全密码";
+  @override
+  String get account_exist_hint => "账号已存在，请直接登录账号";
   @override
   String get all => "全部";
   @override
@@ -1760,11 +1823,17 @@ class $zh_CN extends S {
   @override
   String get snap_up_fail => "抢注失败";
   @override
+  String get insufficient_permission_hint => "权限不足";
+  @override
   String get node_martgage => "节点抵押";
   @override
   String get backup_offline_save_text => "妥善保管至隔离网络的安全地方\n请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等";
   @override
+  String get update_user_info_fail_hint => "更新用户信息失败";
+  @override
   String get attraction => "景点";
+  @override
+  String get unauthorized => "未授权";
   @override
   String get register_email => "注册邮箱";
   @override
@@ -2012,6 +2081,8 @@ class $zh_CN extends S {
   @override
   String get clean_search_history => "清除记录";
   @override
+  String get invite_code_error_hint => "邀请码错误";
+  @override
   String get task_record => "任务记录";
   @override
   String get supermarket => "超市";
@@ -2037,6 +2108,8 @@ class $zh_CN extends S {
   String get wallet => "钱包";
   @override
   String get less_than_1_min => "小于1分钟";
+  @override
+  String get content_conflict_hint => "内容冲突";
   @override
   String get address_copied => "地址已复制";
   @override
@@ -2078,6 +2151,8 @@ class $zh_CN extends S {
   @override
   String get task_finish_day_hint => "当天任务已完成";
   @override
+  String get username_pwd_not_match_hint => "用户名和密码不匹配";
+  @override
   String get hot_area => "热门地区";
   @override
   String get create => "创建";
@@ -2087,6 +2162,8 @@ class $zh_CN extends S {
   String get fund_password => "资金密码";
   @override
   String get snap_up => "抢注";
+  @override
+  String get net_error_hint => "网络错误";
   @override
   String get wechat_cs => "微信客服";
   @override
@@ -2118,6 +2195,8 @@ class $zh_CN extends S {
   @override
   String get no_eth_address => "非以太坊地址";
   @override
+  String get psw_reset_error_hint => "重置密码错误";
+  @override
   String get free_receive => "免费领取";
   @override
   String get send => "发送";
@@ -2148,6 +2227,8 @@ class $zh_CN extends S {
   @override
   String get stay_tuned => "敬请期待";
   @override
+  String get unknown_error_hint => "未知错误";
+  @override
   String get search_exception => "搜索异常";
   @override
   String get gas_station => "加油站";
@@ -2166,6 +2247,8 @@ class $zh_CN extends S {
   @override
   String get telegram => "电报群";
   @override
+  String get no_content_hint => "无内容";
+  @override
   String get task_interval_below_limit => "做任务间隔低于30分钟";
   @override
   String get node_mortgage => "节点抵押";
@@ -2181,6 +2264,8 @@ class $zh_CN extends S {
   String get import_account_success => "账户导入成功";
   @override
   String get main_my_public_key => "我的加密地址(公钥)";
+  @override
+  String get fund_pwd_error_hint => "资金密码错误";
   @override
   String get power_martgage => "算力抵押";
   @override

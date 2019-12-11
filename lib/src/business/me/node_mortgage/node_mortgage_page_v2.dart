@@ -287,7 +287,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                       S.of(context).stay_func('${_mortgageList[selectedIndex].snapUpStocks}'),
                                                       style: TextStyle(
                                                           color: Color(0xFFFFC500),
-                                                          fontSize: 14,
+                                                          fontSize: 12,
                                                           fontWeight: FontWeight.normal),
                                                     ),
                                                   ],

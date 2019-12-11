@@ -32,7 +32,6 @@ class HttpResponseCodeNotSuccess implements Exception {
 //var CONTENT_CONFLICT = HttpResponseCodeNotSuccess(-1004, "Content conflict");
 //var NO_CONTENT = HttpResponseCodeNotSuccess(-1005, "Not content");
 //var NETWORK_ERROR = HttpResponseCodeNotSuccess(-1006, "network error");
-var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, "超过限制");
 //final HttpResponseCodeNotSuccess ERROR_USER_CREATED = HttpResponseCodeNotSuccess(-20001, "create user error"); //用户创建失败
 //var ERROR_USER_EXIST = HttpResponseCodeNotSuccess(-20002, "user already exist"); //用户已存在
 //var ERROR_USER_UPATED = HttpResponseCodeNotSuccess(-20004, "update user error"); //用户更新失败
@@ -42,25 +41,28 @@ var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, "超过限制");
 //var ERROR_RESET_PASSWORD = HttpResponseCodeNotSuccess(-20008, "fail to reset password"); //重置密码错误
 //var ERROR_CHECK_IN_LIMIT = HttpResponseCodeNotSuccess(-20009, "check-in reach the upper limit"); //签到达到上限
 //var ERROR_CHECK_IN_INTERVAL = HttpResponseCodeNotSuccess(-20010, "check-in interval is 30 minutes."); //签到时间间隔var
-var ERROR_FUND_PASSWORD = HttpResponseCodeNotSuccess(-20011, "资金密码错误"); //签到时间间隔var
+
+var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, S.of(globalContext).over_limit_hint);
+
+var ERROR_FUND_PASSWORD = HttpResponseCodeNotSuccess(-20011, S.of(globalContext).fund_pwd_error_hint); //签到时间间隔var
 
 List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
-  HttpResponseCodeNotSuccess(-10000, "未知错误"),
-  HttpResponseCodeNotSuccess(-10001, "参数错误"),
-  HttpResponseCodeNotSuccess(-10002, "未授权"),
-  HttpResponseCodeNotSuccess(-1003, "权限不足"),
-  HttpResponseCodeNotSuccess(-1004, "内容冲突"),
-  HttpResponseCodeNotSuccess(-1005, "无内容"),
-  HttpResponseCodeNotSuccess(-1006, "网络错误"),
+  HttpResponseCodeNotSuccess(-10000, S.of(globalContext).unknown_error_hint),
+  HttpResponseCodeNotSuccess(-10001, S.of(globalContext).para_error_hint),
+  HttpResponseCodeNotSuccess(-10002, S.of(globalContext).unauthorized),
+  HttpResponseCodeNotSuccess(-1003, S.of(globalContext).insufficient_permission_hint),
+  HttpResponseCodeNotSuccess(-1004, S.of(globalContext).content_conflict_hint),
+  HttpResponseCodeNotSuccess(-1005, S.of(globalContext).no_content_hint),
+  HttpResponseCodeNotSuccess(-1006, S.of(globalContext).net_error_hint),
   ERROR_OUT_OF_RANGE,
-  HttpResponseCodeNotSuccess(-20001, "创建用户失败"),
-  HttpResponseCodeNotSuccess(-20002, "账号已存在，请直接登录账号"),
-  HttpResponseCodeNotSuccess(-20004, "更新用户信息失败"),
-  HttpResponseCodeNotSuccess(-20005, "验证码错误"),
-  HttpResponseCodeNotSuccess(-20006, "邀请码错误"),
-  HttpResponseCodeNotSuccess(-20007, "用户名和密码不匹配"),
-  HttpResponseCodeNotSuccess(-20008, "重置密码错误"),
-  HttpResponseCodeNotSuccess(-20009, "今天任务已完成，感谢你贡献数据"),
+  HttpResponseCodeNotSuccess(-20001, S.of(globalContext).create_user_fail_hint),
+  HttpResponseCodeNotSuccess(-20002, S.of(globalContext).account_exist_hint),
+  HttpResponseCodeNotSuccess(-20004, S.of(globalContext).update_user_info_fail_hint),
+  HttpResponseCodeNotSuccess(-20005, S.of(globalContext).verify_code_error_hint),
+  HttpResponseCodeNotSuccess(-20006, S.of(globalContext).invite_code_error_hint),
+  HttpResponseCodeNotSuccess(-20007, S.of(globalContext).username_pwd_not_match_hint),
+  HttpResponseCodeNotSuccess(-20008, S.of(globalContext).psw_reset_error_hint),
+  HttpResponseCodeNotSuccess(-20009, S.of(globalContext).today_complete_hint),
   HttpResponseCodeNotSuccess(-20010, S.of(globalContext).task_interval_below_limit),
   ERROR_FUND_PASSWORD
 ];
