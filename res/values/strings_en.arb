@@ -246,5 +246,7 @@
   "private_share": "Private location Share",
   "private_share_receive_address": "Receive Address : ${shortAddress}",
   "navigation": "Start",
-  "my_location": "My Location"
+  "my_location": "My Location",
+  "setting": "Setting",
+  "language": "Language"
 }

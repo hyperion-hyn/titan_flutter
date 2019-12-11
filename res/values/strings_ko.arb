@@ -246,5 +246,7 @@
   "private_share": "개인 공유",
   "private_share_receive_address": "수신 주소:${shortAddress}",
   "navigation": "탐색",
-  "my_location": "내 위치"
+  "my_location": "내 위치",
+  "setting": "설정",
+  "language": "언어"
 }

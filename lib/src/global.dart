@@ -1,7 +1,6 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-
 import 'business/wallet/model/wallet_vo.dart';
 
 /// The global [EventBus] object.
@@ -25,3 +24,10 @@ const String QUOTE_UNIT = "CNY";
 const String QUOTE_UNIT_SYMBOL = "¥";
 
 WalletVo currentWalletVo;
+
+Locale appLocale;
+Locale sysLocale;
+
+var appLanguageCode = "en";
+
+BuildContext globalContext = null;

@@ -31,7 +31,10 @@ import 'top_bar.dart';
 import 'route_bar.dart';
 
 //final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
-final kStyleEn = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+
+final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+
+final kStyleEn = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
 
 typedef PanelBuilder = Widget Function(BuildContext context, ScrollController scrollController, IDMapPoi poi);
 
@@ -127,11 +130,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       //---------------------------
       bool showCenterMarker = false;
       String style = kStyleEn;
-//      if (languageCode == "zh") {
-//        style = kStyleZh;
-//      } else {
-//        style = kStyleEn;
-//      }
+      if (languageCode == "zh") {
+        style = kStyleZh;
+      } else {
+        style = kStyleEn;
+      }
       if (state.dMapConfigModel?.showCenterMarker == true) {
         showCenterMarker = true;
       }

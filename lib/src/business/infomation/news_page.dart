@@ -56,17 +56,21 @@ class _NewsState extends InfoState<NewsPage> {
         children: <Widget>[
           Container(
             padding: EdgeInsets.symmetric(vertical: 16),
-            child: Container(
-              height: 48,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: <Widget>[
-                    _buildTag(S.of(context).latest_news, LAST_NEWS_TAG),
-                    _buildTag(S.of(context).official_announcement, OFFICIAL_ANNOUNCEMENT_TAG),
-                    _buildTag(S.of(context).information_guide, TUTORIAL_TAG),
-                    _buildTag(S.of(context).information_video, VIDEO_TAG),
-                  ],
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                height: 48,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      _buildTag(S.of(context).latest_news, LAST_NEWS_TAG),
+                      _buildTag(S.of(context).official_announcement, OFFICIAL_ANNOUNCEMENT_TAG),
+                      _buildTag(S.of(context).information_guide, TUTORIAL_TAG),
+                      _buildTag(S.of(context).information_video, VIDEO_TAG),
+                    ],
+                  ),
                 ),
               ),
             ),

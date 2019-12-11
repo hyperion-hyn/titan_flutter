@@ -132,6 +132,7 @@ class S implements WidgetsLocalizations {
   String get kais_talk => "Kai's Talk";
   String get key_manager_title => "My encrypted addr.";
   String get label => "Label";
+  String get language => "Language";
   String get later => "Later";
   String get latest_news => "Article";
   String get less_than_1_min => "Less than 1 minute";
@@ -212,6 +213,7 @@ class S implements WidgetsLocalizations {
   String get service_description => "Description";
   String get service_hours => "Time";
   String get services => "Services";
+  String get setting => "Setting";
   String get share => "Share";
   String get share_app => "Share App";
   String get share_encrypted_location => "Share encrypted location";
@@ -295,6 +297,8 @@ class $ko extends S {
   String get no_detail_address => "자세한 주소가 없습니다";
   @override
   String get project_introduction => "프로젝트 소개";
+  @override
+  String get setting => "설정";
   @override
   String get bank => "은행";
   @override
@@ -397,6 +401,8 @@ class $ko extends S {
   String get app_version => "버전";
   @override
   String get extract_mnemonic_fail => "니모닉 실패를 추출";
+  @override
+  String get language => "언어";
   @override
   String get internet_bar => "인터넷 카페";
   @override
@@ -804,6 +810,8 @@ class $zh_CN extends S {
   @override
   String get project_introduction => "项目介绍";
   @override
+  String get setting => "设置";
+  @override
   String get bank => "银行";
   @override
   String get about_us => "关于我们";
@@ -905,6 +913,8 @@ class $zh_CN extends S {
   String get app_version => "版本";
   @override
   String get extract_mnemonic_fail => "提取助记词失败";
+  @override
+  String get language => "语言";
   @override
   String get internet_bar => "网吧";
   @override
