@@ -858,7 +858,7 @@ class $ko extends S {
   @override
   String get information_video => "비디오";
   @override
-  String get cybersquatting => "사이버 스쿼팅";
+  String get cybersquatting => "사재기";
   @override
   String get please_input_verification_code => "인증 코드를 입력하십시오";
   @override
@@ -1190,7 +1190,7 @@ class $ko extends S {
   @override
   String get fund_password => "자금 비밀번호";
   @override
-  String get snap_up => "사이버 스쿼팅";
+  String get snap_up => "사재기";
   @override
   String get wechat_cs => "위챗 고객 서비스";
   @override
@@ -1314,7 +1314,7 @@ class $ko extends S {
   @override
   String income_func(String incomeCycle) => "${incomeCycle}일 출력";
   @override
-  String available_mortgage_numbers(String number) => "${number}이용 가능한 사본";
+  String available_mortgage_numbers(String number) => "저당 ${number} 부";
   @override
   String mortgage_id(String id) => "모기지ID：${id}";
   @override
