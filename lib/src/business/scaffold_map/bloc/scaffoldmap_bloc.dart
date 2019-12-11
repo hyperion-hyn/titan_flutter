@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/data/api/api.dart';
@@ -114,7 +115,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
         }
       } catch (e) {
         logger.e(e);
-        yield SearchPoiByTextFailState(message: '搜索异常');
+        yield SearchPoiByTextFailState(message: S.of(context).search_exception);
       }
     }
     //--------------

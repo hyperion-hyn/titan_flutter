@@ -61,4 +61,7 @@ class ExtendsIconFont {
   static const IconData check_in = const IconData(0xe606, fontFamily: _kFontFam);
 
   static const IconData import = const IconData(0xe68e, fontFamily: _kFontFam);
+
+  static const IconData setting = const IconData(0xe608, fontFamily: _kFontFam);
+
 }
