@@ -59,7 +59,7 @@
   "encrypt_error": "加密失败",
   "label": "标签",
   "telphone": "电话",
-  "search_empty_data": "暂无数据~",
+  "search_empty_data": "暂无数据",
   "decrypt_location_cipher_tips": "怎么解码位置密文？",
   "decrypt_location_cipher_tips_context": "请粘贴位置密文，点击搜索即可解码密文。",
   "input_search_keyworod_or_cipher": "输入搜索词 / 密文",

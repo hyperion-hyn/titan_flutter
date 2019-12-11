@@ -580,7 +580,7 @@ class $ko extends S {
   @override
   String get fund_password_length_error_message => "최소 비밀번호를 입력하십시오";
   @override
-  String get language => "언어 전환";
+  String get language => "언어";
   @override
   String get internet_bar => "인터넷 카페";
   @override
@@ -1396,7 +1396,7 @@ class $zh_CN extends S {
   @override
   String get wallet_setting => "钱包设置";
   @override
-  String get search_empty_data => "暂无数据~";
+  String get search_empty_data => "暂无数据";
   @override
   String get dmap_document_title => "DMap地图应用接入文档";
   @override

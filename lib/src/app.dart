@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/theme.dart';
@@ -20,6 +21,8 @@ import 'business/updater/bloc/bloc.dart';
 import 'global.dart';
 import 'guide.dart';
 
+ValueChanged<Locale> localeChange;
+
 class App extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -31,7 +34,6 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
       locale_config.languageCode = Localizations.localeOf(context).languageCode;
@@ -41,6 +43,23 @@ class _AppState extends State<App> {
     });
 
 //    FlutterBugly.init(androidAppId: "103fd7ef12", iOSAppId: "0198fbe26a");
+    localeChange = (locale) {
+      setState(() {
+        appLocale = locale;
+      });
+    };
+    getLocale();
+  }
+
+  Future getLocale() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var languageCode = prefs.getString(PrefsKey.appLanguageCode);
+    var countryCode = prefs.getString(PrefsKey.appCountryCode);
+    if (languageCode == null) {
+      return;
+    }
+    localeChange(Locale(languageCode, countryCode));
+
   }
 
   @override
@@ -60,6 +79,7 @@ class _AppState extends State<App> {
         hideFooterWhenNotFull: true,
         enableBallisticLoad: true,
         child: MaterialApp(
+          locale: appLocale == null ? null : appLocale,
           debugShowCheckedModeBanner: false,
           key: Keys.materialAppKey,
           title: 'Titan',

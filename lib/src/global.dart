@@ -35,6 +35,13 @@ const String QUOTE_UNIT_SYMBOL = "¥";
 
 WalletVo currentWalletVo;
 
+Locale appLocale;
+Locale sysLocale;
+
+var appLanguageCode = "en";
+
+BuildContext globalContext = null;
+
 String createWalletPopUtilName;
 
 bool isRechargeByTianWalletFinish = false;
