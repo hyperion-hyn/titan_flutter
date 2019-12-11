@@ -146,7 +146,7 @@ class S implements WidgetsLocalizations {
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
-  String get get_power => "Computing Power";
+  String get get_power => "Get Power";
   String get get_powers => "Get Powers";
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "Global Map Service Nodes";
@@ -221,12 +221,12 @@ class S implements WidgetsLocalizations {
   String get mortgage => "Mortgage";
   String get mortgage_fail_hint => "Mortgage Failure";
   String get mortgage_success_hint => "Staked successfully";
-  String get my_account_with_unit => "My account(USDT)";
+  String get my_account_with_unit => "Account(USDT)";
   String get my_location => "My Location";
   String get my_node_mortgage => "My Node Staking";
   String get my_page => "My";
   String get my_position => "My Location";
-  String get my_power_with_unit => "My Computing Power(T)";
+  String get my_power_with_unit => "Power(T)";
   String get my_total_power => "My Total Computing Power";
   String get my_wallet_address => "My Wallet Address";
   String get nav_about_us => "About us";
@@ -253,7 +253,7 @@ class S implements WidgetsLocalizations {
   String get node_martgage => "Node Martgage";
   String get node_mortgage => "Node Staking";
   String get node_mortgage_in_out_hint => "Join or cancel staking at anytime。";
-  String get node_mortgage_with_unit => "Node Staking(USDT)";
+  String get node_mortgage_with_unit => "Node(USDT)";
   String get not_open_yet => "Coming Soon";
   String get not_valid_public_key => "Not a valid public key";
   String get official_announcement => "Announcement";
