@@ -434,11 +434,11 @@
   "contribute_reward_func": "기부금 보상： ${award}",
   "grade_require_func": "레벨 요구 사항： ${require}",
   "revenue_details": "수익 세부 사항",
-  "city_recommendation": "城市推荐",
-  "search_exception": "搜索异常",
-  "ciphertext_exception_hint": "密文无效或已过期",
-  "not_valid_public_key": "不是合法的公钥",
-  "setting": "设置",
-  "language": "语言切换",
+  "city_recommendation": "도시 추천",
+  "search_exception": "이상 검색",
+  "ciphertext_exception_hint": "암호문이 유효하지 않거나 만료됨",
+  "not_valid_public_key": "합법적인 공개 키가 아닙니다.",
+  "setting": "설정",
+  "language": "언어 전환",
   "simple_chinese": "简体中文"
 }
