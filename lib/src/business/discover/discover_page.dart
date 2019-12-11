@@ -94,9 +94,9 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => WebViewContainer(
-                                            initUrl: focusImage.link,
-                                            title: "",
-                                          )));
+                                        initUrl: focusImage.link,
+                                        title: "",
+                                      )));
                             },
                             dotVerticalPadding: 16,
                             dotBgColor: Colors.transparent,
@@ -188,13 +188,13 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                             children: <Widget>[
                                               Text(
                                                 S.of(context).private_sharing,
-                                                style: TextStyle(fontWeight: FontWeight.w600),
+                                                style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(top: 8.0),
                                                 child: Text(
                                                   S.of(context).private_sharing_text,
-                                                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                  style: TextStyle(color: Colors.grey, fontSize: 12),
                                                 ),
                                               ),
                                             ],
@@ -247,7 +247,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                           children: <Widget>[
                                                             Text(
                                                               S.of(context).embassy_guide,
-                                                              style: TextStyle(fontWeight: FontWeight.w600),
+                                                              style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
                                                             ),
                                                             Padding(
                                                               padding: const EdgeInsets.only(top: 8.0),
@@ -257,7 +257,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                                     child: Text(
                                                                       S.of(context).global_embassies,
                                                                       style:
-                                                                          TextStyle(color: Colors.grey, fontSize: 13),
+                                                                      TextStyle(color: Colors.grey, fontSize: 12),
                                                                     ),
                                                                   ),
                                                                 ],
@@ -302,13 +302,13 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                         children: <Widget>[
                                                           Text(
                                                             S.of(context).discount_map,
-                                                            style: TextStyle(fontWeight: FontWeight.w600),
+                                                            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
                                                           ),
                                                           Padding(
                                                             padding: const EdgeInsets.only(top: 8.0),
                                                             child: Text(
                                                               S.of(context).not_open_yet,
-                                                              style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                              style: TextStyle(color: Colors.grey, fontSize: 12),
                                                             ),
                                                           ),
                                                         ],
@@ -349,14 +349,14 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                 padding: const EdgeInsets.only(top: 16.0),
                                                 child: Text(
                                                   S.of(context).police_security_station,
-                                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                                  style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
                                                 ),
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(top: 8.0),
                                                 child: Text(
                                                   S.of(context).police_station_text,
-                                                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                                                  style: TextStyle(color: Colors.grey, fontSize: 12),
                                                 ),
                                               ),
                                             ],

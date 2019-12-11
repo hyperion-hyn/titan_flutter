@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/poi.dart';
@@ -22,7 +23,7 @@ class SearchListPanel extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: Container(
               margin: EdgeInsets.all(16),
-              child: Text('暂无数据'),
+              child: Text(S.of(context).search_empty_data),
             ),
           ),
           Align(
