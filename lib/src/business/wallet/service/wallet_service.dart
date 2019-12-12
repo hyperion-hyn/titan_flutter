@@ -113,6 +113,7 @@ class WalletService {
       accountVo.currencyRate = price;
       accountVo.ethCurrencyRate = priceMap["ETH"];
       accountVo.currencyUnit = QUOTE_UNIT;
+      accountVo.currencyUnitSymbol = QUOTE_UNIT_SYMBOL;
       accountVo.amount = price * accountVo.balance;
     }
   }
@@ -128,6 +129,7 @@ class WalletService {
     accountVo.currencyRate = price;
     accountVo.ethCurrencyRate = priceMap["ETH"];
     accountVo.currencyUnit = QUOTE_UNIT;
+    accountVo.currencyUnitSymbol = QUOTE_UNIT_SYMBOL;
     accountVo.amount = price * accountVo.balance;
     return accountVo;
   }

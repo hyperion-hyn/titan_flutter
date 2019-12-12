@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/theme.dart';
 
@@ -22,6 +23,7 @@ import 'global.dart';
 import 'guide.dart';
 
 ValueChanged<Locale> localeChange;
+ValueChanged<AppArea> appAreaChange;
 
 class App extends StatefulWidget {
   @override
@@ -35,8 +37,15 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     localeChange = (locale) {
+      saveLocale(locale);
       setState(() {
         appLocale = locale;
+      });
+    };
+    appAreaChange = (appArea) {
+      saveAppArea(appArea);
+      setState(() {
+        currentAppArea = appArea;
       });
     };
     getLocale();
@@ -87,5 +96,16 @@ class _AppState extends State<App> {
         ),
       ),
     );
+  }
+
+  Future saveAppArea(AppArea appArea) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(PrefsKey.appArea, appArea.key);
+  }
+
+  Future saveLocale(Locale locale) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(PrefsKey.appLanguageCode, locale.languageCode);
+    prefs.setString(PrefsKey.appCountryCode, locale.countryCode);
   }
 }

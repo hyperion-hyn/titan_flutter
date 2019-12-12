@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/inject/injector.dart';
@@ -109,8 +110,16 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
         } else {
           //gaode search
           var _api = Api();
-          var gaodeModel =
-              await _api.searchByGaode(lat: event.center.latitude, lon: event.center.longitude, type: event.type);
+          var gaodeModel;
+
+          if (currentAppArea.key==AppArea.MAINLAND_CHINA_AREA.key) {
+            gaodeModel =
+                await _api.searchByGaode(lat: event.center.latitude, lon: event.center.longitude, type: event.type);
+          } else {
+            gaodeModel = await _api.searchNearByHyn(
+                lat: event.center.latitude, lon: event.center.longitude, type: event.stringType);
+          }
+
           yield SearchPoiByTextSuccessState(list: gaodeModel.data);
         }
       } catch (e) {

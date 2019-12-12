@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/gaode_poi_panel.dart';
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -130,7 +131,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       //---------------------------
       bool showCenterMarker = false;
       String style = kStyleEn;
-      if (languageCode == "zh") {
+      if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
         style = kStyleZh;
       } else {
         style = kStyleEn;

@@ -37,8 +37,9 @@ class SearchTextEvent extends ScaffoldMapEvent {
   //is gaode search
   bool isGaodeSearch;
   int type;
+  String stringType;
 
-  SearchTextEvent({this.searchText, this.center, this.type, this.isGaodeSearch});
+  SearchTextEvent({this.searchText, this.center, this.type, this.isGaodeSearch,this.stringType});
 }
 
 //---------------------

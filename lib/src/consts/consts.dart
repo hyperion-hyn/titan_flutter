@@ -57,4 +57,5 @@ class Keys {
 class PrefsKey {
   static final appLanguageCode = "app_languageCode";
   static final appCountryCode = "app_countryCode";
+  static final appArea = "app_area";
 }

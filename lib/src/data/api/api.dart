@@ -8,7 +8,6 @@ import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/update.dart';
 
 class Api {
-
   ///附近可以分享的位置
   Future<GaodeModel> searchByGaode({
     @required double lat,
@@ -36,6 +35,33 @@ class Api {
       },
       options: RequestOptions(cancelToken: cancelToken),
     );
+  }
+
+  ///附近可以分享的位置
+  Future<GaodeModel> searchNearByHyn({
+    @required double lat,
+    @required double lon,
+    String type,
+    double radius = 2000,
+    int page = 1,
+    CancelToken cancelToken,
+  }) async {
+    var json = await HttpCore.instance.get(
+      'titan-map/api/place/nearbysearch/json',
+      params: {
+        "location": "$lat,$lon",
+        "radius": radius,
+        "type": type
+      },
+      options: RequestOptions(cancelToken: cancelToken),
+    );
+
+    var data = (json['results'] as List).map((map) {
+      return GaodePoi.fromGJson(map);
+    }).toList();
+
+    var gaodeModel = GaodeModel(page: 1, totalPage: 1, data: data);
+    return gaodeModel;
   }
 
   Future<UpdateEntity> update(String channel, String lang, String platform) async {

@@ -44,6 +44,7 @@ class S implements WidgetsLocalizations {
   String get amount => "Amount：";
   String get amount_copy_success_hint => "Amount copied successfully";
   String get amount_received => "Amount Received";
+  String get app_area_setting => "Area";
   String get app_name => "Star Rich";
   String get app_version => "Version";
   String get area => "Area";
@@ -68,6 +69,7 @@ class S implements WidgetsLocalizations {
   String get by_hyn => "Use HYN";
   String get by_hyn_transfer => "Transfer using HYN wallet";
   String get by_mortgage => "Alternative staking measures";
+  String get cafe => "Cafe";
   String get cancel => "Cancel";
   String get check_update => "Check for updates";
   String get ciphertext_exception_hint => "The ciphertext is invalid or expired";
@@ -157,8 +159,10 @@ class S implements WidgetsLocalizations {
   String get global_nodes => "Global Nodes";
   String get grade => "Level";
   String get home_page => "Home";
+  String get hospital => "Hospital";
   String get hot_area => "Hot spots";
   String get hotel => "Hotel";
+  String get hynPriceUnit => "USD";
   String get hyn_market => "HYN Market";
   String get hyn_price => "HYN Price";
   String get hyn_wallet_open_hint => "HYN wallet is about to open";
@@ -212,6 +216,7 @@ class S implements WidgetsLocalizations {
   String get logining => "Logging-in";
   String get lossz_wallet_mnemonic_notice => "I understand that if I lose the recovery word, I will not be able to access my wallet";
   String get main_my_public_key => "My encrypted key(public key)";
+  String get mainland_china => "Mainland China";
   String get mall => "Mall";
   String get manually_refresh => "Refresh Manually";
   String get map3_global_nodes => "Map3 Global Nodes";
@@ -269,6 +274,7 @@ class S implements WidgetsLocalizations {
   String get online_exchange => "Online Exchanges";
   String get open_camera => "Please allow access to your camera";
   String get operating_hours => "Time";
+  String get other_area => "Others";
   String get other_star_numbers => "Other";
   String get out_wallet_transfer_hint => "I have transferred using an external wallet";
   String get over_limit_amount_hint => "Reached the limit";
@@ -299,6 +305,7 @@ class S implements WidgetsLocalizations {
   String get please_input_wallet_password_hint => "Please enter wallet password";
   String get please_input_withdrawal_quantity => "Please input withdrawal amount ";
   String get please_mortgage => "Please stake";
+  String get please_selecte_app_area => "Please set the region of the map";
   String get please_waiting => "Please Wait";
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
@@ -456,6 +463,7 @@ class S implements WidgetsLocalizations {
   String distance(String distance) => "$distance m";
   String get_verification_code_again(String countdownTime) => "Resend ${countdownTime}";
   String grade_require_func(String require) => "Level Requirements： ${require}";
+  String get hynPriceUnitSymbol => "\$";
   String income_func(String incomeCycle) => "${incomeCycle} day income";
   String km(String km) => "$km km ";
   String max_range_func(String maxMeter) => "Maximum range：${maxMeter} m";
@@ -514,6 +522,8 @@ class $ko extends S {
   String get fund_new_password => "자금에 대한 새로운 비밀번호";
   @override
   String get para_error_hint => "파라미터 에러";
+  @override
+  String get app_area_setting => "구역";
   @override
   String get about_us => "우리에 대해";
   @override
@@ -765,6 +775,8 @@ class $ko extends S {
   @override
   String get not_open_yet => "기대하세요";
   @override
+  String get other_area => "기타 지역";
+  @override
   String get postscript_hint => "첨자를 입력하십시오 (50 단어 이내).";
   @override
   String get below_min_withdrawal => "최소 인출 금액 미만";
@@ -841,6 +853,8 @@ class $ko extends S {
   @override
   String get task => "과제";
   @override
+  String get cafe => "커피숍";
+  @override
   String get telphone => "전화";
   @override
   String get max_star_numbers => "성간 최대량";
@@ -884,6 +898,8 @@ class $ko extends S {
   String get private_service => "개인 서비스";
   @override
   String get map_dmap => "그림 DMap";
+  @override
+  String get hynPriceUnit => "USD";
   @override
   String get information_video => "비디오";
   @override
@@ -1093,6 +1109,8 @@ class $ko extends S {
   @override
   String get please_input_hyn_withdrawal_address => "인출HYN주소를 입력하십시오";
   @override
+  String get mainland_china => "중국 대륙";
+  @override
   String get get_power => "컴퓨팅 파워 확보";
   @override
   String get add_share_options => "공유 옵션";
@@ -1269,6 +1287,8 @@ class $ko extends S {
   @override
   String get free_receive => "무료 픽업";
   @override
+  String get please_selecte_app_area => "지도 사용 구역을 설정하십시오";
+  @override
   String get send => "보내기";
   @override
   String get earnings_balance => "수입 잔액";
@@ -1296,6 +1316,8 @@ class $ko extends S {
   String get becharge_amount => "충전 잔액";
   @override
   String get stay_tuned => "계속 지켜봐 주시기 바랍니다";
+  @override
+  String get hospital => "병원";
   @override
   String get unknown_error_hint => "알 수없는 오류";
   @override
@@ -1338,6 +1360,8 @@ class $ko extends S {
   String get fund_pwd_error_hint => "자금 조달 비밀번호 오류";
   @override
   String get power_martgage => "해시";
+  @override
+  String get hynPriceUnitSymbol => "\$";
   @override
   String available_balance_usdt(String amount) => "사용 가능한 잔액 ${amount} USDT";
   @override
@@ -1445,9 +1469,13 @@ class $zh_CN extends S {
   @override
   String get para_error_hint => "参数错误";
   @override
+  String get app_area_setting => "区域";
+  @override
   String get about_us => "关于我们";
   @override
   String get please_input_wallet_password_hint => "请输入钱包密码";
+  @override
+  String get hynPriceUnitSymbol => "¥";
   @override
   String get wallet_setting => "钱包设置";
   @override
@@ -1531,7 +1559,7 @@ class $zh_CN extends S {
   @override
   String get fund_password_length_error_message => "请输入至少6位的资金密码";
   @override
-  String get language => "语言切换";
+  String get language => "语言";
   @override
   String get internet_bar => "网吧";
   @override
@@ -1695,6 +1723,8 @@ class $zh_CN extends S {
   @override
   String get not_open_yet => "暂未开放";
   @override
+  String get other_area => "其他地区";
+  @override
   String get postscript_hint => "输入附言（50字内）";
   @override
   String get below_min_withdrawal => "低于最小提币额度";
@@ -1771,6 +1801,8 @@ class $zh_CN extends S {
   @override
   String get task => "任务";
   @override
+  String get cafe => "咖啡馆";
+  @override
   String get telphone => "电话";
   @override
   String get max_star_numbers => "最大星际量";
@@ -1814,6 +1846,8 @@ class $zh_CN extends S {
   String get private_service => "私密服务";
   @override
   String get map_dmap => "地图DMap";
+  @override
+  String get hynPriceUnit => "CNY";
   @override
   String get information_video => "视频";
   @override
@@ -2023,6 +2057,8 @@ class $zh_CN extends S {
   @override
   String get please_input_hyn_withdrawal_address => "请输入HYN提币地址";
   @override
+  String get mainland_china => "中国大陆";
+  @override
   String get get_power => "获取算力";
   @override
   String get add_share_options => "分享选项";
@@ -2199,6 +2235,8 @@ class $zh_CN extends S {
   @override
   String get free_receive => "免费领取";
   @override
+  String get please_selecte_app_area => "请设置地图使用区域";
+  @override
   String get send => "发送";
   @override
   String get earnings_balance => "收益余额";
@@ -2226,6 +2264,8 @@ class $zh_CN extends S {
   String get becharge_amount => "充值余额";
   @override
   String get stay_tuned => "敬请期待";
+  @override
+  String get hospital => "医院";
   @override
   String get unknown_error_hint => "未知错误";
   @override
