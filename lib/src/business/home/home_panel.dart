@@ -123,7 +123,7 @@ class HomePanelState extends UserState<HomePanel> {
               ),
             ),
           ),
-          if (appLocale.languageCode == "zh")
+          if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(top: 24.0, bottom: 4),
@@ -156,7 +156,7 @@ class HomePanelState extends UserState<HomePanel> {
               ),
             ),
           //hack webview， just what is's cookie...
-          if (appLocale.languageCode == "zh")
+          if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
             SliverToBoxAdapter(
               child: Stack(
                 children: <Widget>[
@@ -167,7 +167,7 @@ class HomePanelState extends UserState<HomePanel> {
                 ],
               ),
             ),
-          if (appLocale.languageCode == "zh")
+          if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
             SliverList(
                 delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -565,7 +565,7 @@ class HomePanelState extends UserState<HomePanel> {
                 isGaodeSearch: true, type: 8, center: center, searchText: '商场', stringType: "shopping_mall"));
           }
         }),
-        if (currentAppArea.key==AppArea.MAINLAND_CHINA_AREA.key)
+        if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
           _buildPoiItem('res/drawable/ic_cybercafe.png', S.of(context).internet_bar, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -573,7 +573,7 @@ class HomePanelState extends UserState<HomePanel> {
                   SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '网吧', stringType: "cafe"));
             }
           }),
-        if (currentAppArea.key==AppArea.MAINLAND_CHINA_AREA.key)
+        if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
           _buildPoiItem('res/drawable/ic_wc.png', S.of(context).toilet, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -581,7 +581,7 @@ class HomePanelState extends UserState<HomePanel> {
                   isGaodeSearch: true, type: 10, center: center, searchText: '厕所', stringType: "night_club"));
             }
           }),
-        if (currentAppArea.key!=AppArea.MAINLAND_CHINA_AREA.key)
+        if (currentAppArea.key != AppArea.MAINLAND_CHINA_AREA.key)
           _buildPoiItem('res/drawable/ic_cafe.png', S.of(context).cafe, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -589,7 +589,7 @@ class HomePanelState extends UserState<HomePanel> {
                   SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '咖啡馆', stringType: "cafe"));
             }
           }),
-        if (currentAppArea.key!=AppArea.MAINLAND_CHINA_AREA.key)
+        if (currentAppArea.key != AppArea.MAINLAND_CHINA_AREA.key)
           _buildPoiItem('res/drawable/ic_hospital.png', S.of(context).hospital, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
