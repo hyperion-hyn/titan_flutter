@@ -5,7 +5,7 @@
   Created by moo on 2019/7/29.
   Copyright © 2019 The Chromium Authors. All rights reserved.
 */
-CFBundleDisplayName = "星际掘金";
+CFBundleDisplayName = "Star Rich";
 NSLocationAlwaysAndWhenInUseUsageDescription = "Displays your current location and navigation";
 NSLocationWhenInUseUsageDescription = "Displays your current location and navigation";
 NSLocationAlwaysUsageDescription = "Displays your current location and navigation";

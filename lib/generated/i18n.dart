@@ -200,8 +200,8 @@ class S implements WidgetsLocalizations {
   String get invitation_code => "invitation code";
   String get invite_code_error_hint => "Invitation code error";
   String get invite_join => "Welcome to";
-  String get invite_link => "Invitation link";
-  String get invite_link_copy_hint => "Invitation link copied";
+  String get invite_link => "Share ink";
+  String get invite_link_copy_hint => "Share link copied";
   String get invite_share => "Invite and share";
   String get kais_talk => "Kai's Talk";
   String get key_manager_title => "My encrypted addr.";
@@ -275,7 +275,7 @@ class S implements WidgetsLocalizations {
   String get open_camera => "Please allow access to your camera";
   String get operating_hours => "Time";
   String get other_area => "Others";
-  String get other_star_numbers => "Other";
+  String get other_star_numbers => "Others";
   String get out_wallet_transfer_hint => "I have transferred using an external wallet";
   String get over_limit_amount_hint => "Reached the limit";
   String get over_limit_hint => "exceed the limit";
@@ -371,7 +371,7 @@ class S implements WidgetsLocalizations {
   String get service_description => "Description";
   String get service_hours => "Time";
   String get services => "Services";
-  String get setting => "Setting";
+  String get setting => "Settings";
   String get share => "Share";
   String get share_app => "Share App";
   String get share_encrypted_location => "Share encrypted location";
@@ -483,9 +483,9 @@ class S implements WidgetsLocalizations {
   String send_count_label(String symbol) => "$symbol Quantity";
   String send_symbol(String symbol) => "Send $symbol";
   String snap_up_product_fuc(String name) => "Snap Up Products：${name}";
-  String stay_func(String snapUpStocks) => " left ${snapUpStocks}";
+  String stay_func(String snapUpStocks) => "${snapUpStocks} left";
   String task_finish_func(String total) => "Already completed ${total} tasks";
-  String total_invitation_func(String totalInvitations) => "${totalInvitations} invited";
+  String total_invitation_func(String totalInvitations) => "${totalInvitations} invitee";
   String withdrawal_fee(String fee) => "Fee(${fee}%)";
   String withdrawal_with_quantity(String count) => "Withdraw：${count}";
 }
