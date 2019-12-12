@@ -146,6 +146,8 @@ flutter:
     - res/drawable/ic_scenic_spotx.png
     - res/drawable/ic_supermarket.png
     - res/drawable/ic_wc.png
+    - res/drawable/ic_hospital.png
+    - res/drawable/ic_cafe.png
     - res/drawable/data.png
     - res/drawable/global.png
     - res/drawable/hyperion.png

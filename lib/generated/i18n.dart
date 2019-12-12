@@ -33,6 +33,7 @@ class S implements WidgetsLocalizations {
   String get add_share_options => "Sharing options";
   String get address_copied => "Address copied";
   String get all => "ALL";
+  String get app_area_setting => "Area";
   String get app_name => "Titan";
   String get app_version => "Version";
   String get area => "Area";
@@ -48,6 +49,7 @@ class S implements WidgetsLocalizations {
   String get backup_wallet_mnemonic_title => "Backup mnemonics";
   String get backup_wallet_notice_text1 => "Obtaining mnemonic words proves your ownership of wallet assets";
   String get bank => "Bank";
+  String get cafe => "Cafe";
   String get cancel => "Cancel";
   String get clean_search_history => "Clear History";
   String get close => "Close";
@@ -99,6 +101,7 @@ class S implements WidgetsLocalizations {
   String get global_map_server_nodes => "Global Map Service Nodes";
   String get global_nodes => "Global Nodes";
   String get home_page => "Home";
+  String get hospital => "Hospital";
   String get hot_area => "Hot spots";
   String get hotel => "Hotel";
   String get hyn_market => "HYN Market";
@@ -138,6 +141,7 @@ class S implements WidgetsLocalizations {
   String get less_than_1_min => "Less than 1 minute";
   String get lossz_wallet_mnemonic_notice => "I understand that if I lose the recovery word, I will not be able to access my wallet";
   String get main_my_public_key => "My encrypted key(public key)";
+  String get mainland_china => "Mainland China";
   String get mall => "Mall";
   String get manually_refresh => "Refresh Manually";
   String get map3_global_nodes => "Map3 Global Nodes";
@@ -164,6 +168,7 @@ class S implements WidgetsLocalizations {
   String get online_exchange => "Online Exchanges";
   String get open_camera => "Please allow access to your camera";
   String get operating_hours => "Time";
+  String get other_area => "Others";
   String get paking => "Parking";
   String get password_incorrect => "incorrect password";
   String get password_not_equal_hint => "Inconsistent passwords";
@@ -171,6 +176,7 @@ class S implements WidgetsLocalizations {
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
+  String get please_selecte_app_area => "Please set the region of the map";
   String get please_waiting => "Please Wait";
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
@@ -301,6 +307,8 @@ class $ko extends S {
   String get setting => "설정";
   @override
   String get bank => "은행";
+  @override
+  String get app_area_setting => "구역";
   @override
   String get about_us => "우리에 대해";
   @override
@@ -488,6 +496,8 @@ class $ko extends S {
   @override
   String get input_resume_mnemonic => "백업 단어를 공백으로 구분하여 입력하십시오";
   @override
+  String get mainland_china => "중국 대륙";
+  @override
   String get nav_about_us => "우리에 대해";
   @override
   String get create_wallet_tips => "비밀 계정 만들기";
@@ -577,6 +587,8 @@ class $ko extends S {
   String get not_open_yet => "기대하세요";
   @override
   String get postscript => "포스트 스크립트";
+  @override
+  String get other_area => "기타 지역";
   @override
   String get postscript_hint => "첨자를 입력하십시오 (50 단어 이내).";
   @override
@@ -686,7 +698,11 @@ class $ko extends S {
   @override
   String get driving => "드라이브";
   @override
+  String get cafe => "커피숍";
+  @override
   String get telphone => "전화";
+  @override
+  String get please_selecte_app_area => "지도 사용 구역을 설정하십시오";
   @override
   String get send => "보내기";
   @override
@@ -723,6 +739,8 @@ class $ko extends S {
   String get stay_tuned => "계속 지켜봐 주시기 바랍니다";
   @override
   String get department => "학과";
+  @override
+  String get hospital => "병원";
   @override
   String get private_service => "개인 서비스";
   @override
@@ -813,6 +831,8 @@ class $zh_CN extends S {
   String get setting => "设置";
   @override
   String get bank => "银行";
+  @override
+  String get app_area_setting => "区域";
   @override
   String get about_us => "关于我们";
   @override
@@ -1000,6 +1020,8 @@ class $zh_CN extends S {
   @override
   String get input_resume_mnemonic => "输入用空格隔开的备份助记词";
   @override
+  String get mainland_china => "中国大陆";
+  @override
   String get nav_about_us => "关于我们";
   @override
   String get create_wallet_tips => "创建一个私密账户";
@@ -1089,6 +1111,8 @@ class $zh_CN extends S {
   String get not_open_yet => "暂未开放";
   @override
   String get postscript => "附言";
+  @override
+  String get other_area => "其他地区";
   @override
   String get postscript_hint => "输入附言（50字内）";
   @override
@@ -1198,7 +1222,11 @@ class $zh_CN extends S {
   @override
   String get driving => "驾车";
   @override
+  String get cafe => "咖啡馆";
+  @override
   String get telphone => "电话";
+  @override
+  String get please_selecte_app_area => "请设置地图使用区域";
   @override
   String get send => "发送";
   @override
@@ -1235,6 +1263,8 @@ class $zh_CN extends S {
   String get stay_tuned => "敬请期待";
   @override
   String get department => "部门";
+  @override
+  String get hospital => "医院";
   @override
   String get private_service => "私密服务";
   @override

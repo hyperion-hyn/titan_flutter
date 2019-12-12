@@ -248,5 +248,11 @@
   "navigation": "Start",
   "my_location": "My Location",
   "setting": "Setting",
-  "language": "Language"
+  "language": "Language",
+  "cafe": "Cafe",
+  "hospital": "Hospital",
+  "mainland_china": "Mainland China",
+  "other_area": "Others",
+  "app_area_setting": "Area",
+  "please_selecte_app_area": "Please set the region of the map"
 }
