@@ -46,7 +46,7 @@ class _LanguageState extends State<MeLanguagePage> {
               alignment: Alignment.centerRight,
               child: Text(
                 "确定",
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16,color: Colors.white),
               ),
             ),
           )
