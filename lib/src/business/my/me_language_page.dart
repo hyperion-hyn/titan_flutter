@@ -45,8 +45,8 @@ class _LanguageState extends State<MeLanguagePage> {
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               alignment: Alignment.centerRight,
               child: Text(
-                "确定",
-                style: TextStyle(fontSize: 16,color: Colors.white),
+                S.of(context).confirm,
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
           )

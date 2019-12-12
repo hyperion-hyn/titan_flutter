@@ -47,7 +47,7 @@ class _MeAreaState extends State<MeAreaPage> {
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               alignment: Alignment.centerRight,
               child: Text(
-                "确定",
+                S.of(context).confirm,
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
