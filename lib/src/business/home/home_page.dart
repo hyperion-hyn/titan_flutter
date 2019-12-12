@@ -6,16 +6,20 @@ import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/app.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/discover_content.dart';
 import 'package:titan/src/business/home/home_panel.dart';
 import 'package:titan/src/business/home/information_content.dart';
 import 'package:titan/src/business/home/my_content.dart';
 import 'package:titan/src/business/home/wallet_content.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/business/updater/updater.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -23,6 +27,7 @@ import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
+import 'package:titan/src/widget/selecte_app_area_dialog.dart';
 import 'package:uni_links/uni_links.dart';
 
 import '../../../env.dart';
@@ -46,10 +51,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ScrollController _homeBottomSheetChildrenScrollController = ScrollController();
 
   StreamSubscription _appLinkSubscription;
+  var selectedAppArea = AppArea.MAINLAND_CHINA_AREA.key;
 
   var _currentIndex = 0;
 
   AnimationController animationController;
+
+  var isLoadAppArea = false;
+  var isShowSetAppAreaDialog = false;
 
   @override
   void initState() {
@@ -58,13 +67,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     initUniLinks();
 
+//    _loadAppArea();
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
       bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
+      if (isShowSetAppAreaDialog == false) {
+        _loadAppArea();
+      }
     });
 
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
       eventBus.fire(ToMyLocationEvent());
     });
+  }
+
+  void _showSetAreaAppDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: SelecteAppAreaDialog(),
+          );
+        },
+        barrierDismissible: false);
+  }
+
+  void _loadAppArea() async {
+    isShowSetAppAreaDialog = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String appAreaKey = prefs.getString(PrefsKey.appArea);
+    isLoadAppArea = true;
+    if (appAreaKey == null) {
+      _showSetAreaAppDialog();
+    } else {
+      appAreaChange(AppArea.APP_AREA_MAP[appAreaKey]);
+    }
   }
 
   @override
@@ -124,9 +161,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         currentIndex: _currentIndex,
                         items: [
                           BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
-                          BottomNavigationBarItem(title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
+                          BottomNavigationBarItem(
+                              title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
                           BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
-                          BottomNavigationBarItem(title: Text(S.of(context).information), icon: Icon(Icons.description)),
+                          BottomNavigationBarItem(
+                              title: Text(S.of(context).information), icon: Icon(Icons.description)),
                           BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
                         ]),
                   );

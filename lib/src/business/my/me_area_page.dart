@@ -1,27 +1,29 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 
-class MeLanguagePage extends StatefulWidget {
+class MeAreaPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _LanguageState();
+    return _MeAreaState();
   }
 }
 
-class _LanguageState extends State<MeLanguagePage> {
+class _MeAreaState extends State<MeAreaPage> {
   @override
   void initState() {
     super.initState();
   }
 
-  var selectedLocale = appLocale;
+  var selectedAppArea = currentAppArea;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class _LanguageState extends State<MeLanguagePage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          S.of(context).language,
+          S.of(context).app_area_setting,
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -38,16 +40,13 @@ class _LanguageState extends State<MeLanguagePage> {
         actions: <Widget>[
           InkWell(
             onTap: () {
-              switchLanguage(selectedLocale);
+              switchAppArea(selectedAppArea);
               Navigator.pop(context);
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               alignment: Alignment.centerRight,
-              child: Text(
-                "确定",
-                style: TextStyle(fontSize: 16),
-              ),
+              child: Text("确定"),
             ),
           )
         ],
@@ -56,11 +55,9 @@ class _LanguageState extends State<MeLanguagePage> {
         SizedBox(
           height: 4,
         ),
-        _buildInfoContainer(label: '简体中文', locale: Locale("zh", "CN")),
+        _buildInfoContainer(label: S.of(context).mainland_china, appArea: AppArea.MAINLAND_CHINA_AREA),
         _divider(),
-        _buildInfoContainer(label: '한국어', locale: Locale("ko")),
-        _divider(),
-        _buildInfoContainer(label: 'English', locale: Locale("en")),
+        _buildInfoContainer(label: S.of(context).other_area, appArea: AppArea.OTHER_AREA),
         _divider(),
       ]),
     );
@@ -76,11 +73,11 @@ class _LanguageState extends State<MeLanguagePage> {
     );
   }
 
-  Widget _buildInfoContainer({String label, Locale locale}) {
+  Widget _buildInfoContainer({String label, AppArea appArea}) {
     return InkWell(
       onTap: () {
         setState(() {
-          selectedLocale = locale;
+          selectedAppArea = appArea;
         });
       },
       child: Container(
@@ -97,7 +94,7 @@ class _LanguageState extends State<MeLanguagePage> {
             ),
             Spacer(),
             Visibility(
-              visible: selectedLocale.languageCode == locale.languageCode,
+              visible: selectedAppArea.key == appArea.key,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                 child: Icon(
@@ -112,7 +109,8 @@ class _LanguageState extends State<MeLanguagePage> {
     );
   }
 
-  void switchLanguage(Locale locale) {
-    localeChange(locale);
+  void switchAppArea(AppArea appArea) {
+    appAreaChange(appArea);
+    setState(() {});
   }
 }
