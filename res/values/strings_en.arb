@@ -325,7 +325,7 @@
   "node_mortgage": "Node Staking",
   "task_record": "Task Record",
   "invite_share": "Invite and share",
-  "use_guide": "Read Tutorial",
+  "use_guide": "Tutorial",
   "dmap_setting": "DMap Settings",
   "thank_you_for_contribute_data": "Thank you for your data contribution。",
   "withdrawal": "Withdraw",
@@ -363,7 +363,7 @@
   "invite_link": "Invitation link",
   "no_invite_success_hint": "You haven't invited anyone yet~",
   "invitate_qr": "Invitation QR Code",
-  "invite_join": "You are invited",
+  "invite_join": "Welcome to",
   "check_update": "Check for updates",
   "contact_customer_service": "Contact Customer Service",
   "already_latest_version_hint": "latest version already installed",
@@ -455,7 +455,7 @@
   "invite_code_error_hint": "Invitation code error",
   "verify_code_error_hint": "Verification code error",
   "update_user_info_fail_hint": "Failed to update user information",
-  "account_exist_hint": "The account already exists, please log in the account directly",
+  "account_exist_hint": "The account already exists, please login the account directly",
   "create_user_fail_hint": "Failed to create user",
   "net_error_hint": "Network error",
   "no_content_hint": "There is no content",
@@ -465,5 +465,5 @@
   "para_error_hint": "Parameter error",
   "unknown_error_hint": "An unknown error",
   "fund_pwd_error_hint": "Fund password error",
-  "over_limit_hint": "More than limit"
+  "over_limit_hint": "exceed the limit"
 }

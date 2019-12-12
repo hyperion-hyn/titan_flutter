@@ -31,7 +31,7 @@ class S implements WidgetsLocalizations {
   String get account_backup_next_step_notice => "Next, you will see 12 recovery words in an order that allow you to recover your account";
   String get account_backup_notice => "Back up your account now";
   String get account_error => "Account Error";
-  String get account_exist_hint => "The account already exists, please log in the account directly";
+  String get account_exist_hint => "The account already exists, please login the account directly";
   String get account_is_empty => "Account is empty";
   String get account_new_password => "New password";
   String get account_password => "account password";
@@ -199,7 +199,7 @@ class S implements WidgetsLocalizations {
   String get invitate_qr => "Invitation QR Code";
   String get invitation_code => "invitation code";
   String get invite_code_error_hint => "Invitation code error";
-  String get invite_join => "You are invited";
+  String get invite_join => "Welcome to";
   String get invite_link => "Invitation link";
   String get invite_link_copy_hint => "Invitation link copied";
   String get invite_share => "Invite and share";
@@ -278,7 +278,7 @@ class S implements WidgetsLocalizations {
   String get other_star_numbers => "Other";
   String get out_wallet_transfer_hint => "I have transferred using an external wallet";
   String get over_limit_amount_hint => "Reached the limit";
-  String get over_limit_hint => "More than limit";
+  String get over_limit_hint => "exceed the limit";
   String get over_limit_numbers => "Excess Quantity";
   String get over_max_withdrawal => "Exceeded the maximum withdrawal limit";
   String get paking => "Parking";
@@ -424,7 +424,7 @@ class S implements WidgetsLocalizations {
   String get unknown_error_hint => "An unknown error";
   String get update_now => "Update Now";
   String get update_user_info_fail_hint => "Failed to update user information";
-  String get use_guide => "Read Tutorial";
+  String get use_guide => "Tutorial";
   String get user_this_account => "Use this private account";
   String get username_pwd_not_match_hint => "The username and password do not match";
   String get verification_code => "Verification code";
