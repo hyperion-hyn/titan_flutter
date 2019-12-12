@@ -202,7 +202,7 @@ class S implements WidgetsLocalizations {
   String get invite_join => "Welcome to";
   String get invite_link => "Share ink";
   String get invite_link_copy_hint => "Share link copied";
-  String get invite_share => "Invite and share";
+  String get invite_share => "Share";
   String get kais_talk => "Kai's Talk";
   String get key_manager_title => "My encrypted addr.";
   String get label => "Label";
@@ -396,7 +396,7 @@ class S implements WidgetsLocalizations {
   String get task => "Task";
   String get task_finish_day_hint => "Task completed for the day";
   String get task_interval_below_limit => "Do task intervals below 30 minutes";
-  String get task_record => "Task Record";
+  String get task_record => "Tasks";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
@@ -424,7 +424,7 @@ class S implements WidgetsLocalizations {
   String get unknown_error_hint => "An unknown error";
   String get update_now => "Update Now";
   String get update_user_info_fail_hint => "Failed to update user information";
-  String get use_guide => "Tutorial";
+  String get use_guide => "Tutorials";
   String get user_this_account => "Use this private account";
   String get username_pwd_not_match_hint => "The username and password do not match";
   String get verification_code => "Verification code";
@@ -473,7 +473,7 @@ class S implements WidgetsLocalizations {
   String mortgage_time(String time) => "Time：${time}";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
-  String n_days_product(String days) => "${days} days to produce";
+  String n_days_product(String days) => "${days} day produce";
   String n_hour(String hour) => "$hour hour ";
   String n_minute(String minute) => "$minute minute ";
   String network_request_err(String code) => "Network request error, code: $code";

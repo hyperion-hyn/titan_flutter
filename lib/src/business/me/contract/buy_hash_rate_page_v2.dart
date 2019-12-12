@@ -154,7 +154,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                                     children: <Widget>[
                                                       Text(
                                                         _contractInfoTemp.name,
-                                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                                                       ),
                                                       Row(
                                                         children: <Widget>[
