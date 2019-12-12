@@ -333,29 +333,31 @@ class _BillHistoryState extends DataListState<BillHistory> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  billInfo.title,
-                  style: TextStyle(fontSize: 16, color: HexColor("#252525")),
-                ),
-              ),
-              if (billInfo.subTitle != null)
-                SizedBox(
-                  child: Container(
-                    child: Text(
-                      subTitle,
-                      style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    billInfo.title,
+                    style: TextStyle(fontSize: 16, color: HexColor("#252525")),
                   ),
-                  width: 180,
-                )
-            ],
+                ),
+                if (billInfo.subTitle != null)
+                  SizedBox(
+                    child: Container(
+                      child: Text(
+                        subTitle,
+                        style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                    width: 180,
+                  )
+              ],
+            ),
           ),
           Spacer(),
           Column(
