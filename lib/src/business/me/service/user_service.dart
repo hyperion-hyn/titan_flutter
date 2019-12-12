@@ -298,6 +298,17 @@ class UserService {
         address: address, amount: amount, token: userToken.token, fundToken: fundToken, type: type);
   }
 
+  Future<dynamic> withdrawalApplyV2(
+      {@required double amount, @required String address, @required String fundToken, @required int type}) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+
+    return await _mapRichApi.withdrawalApplyV2(
+        address: address, amount: amount, token: userToken.token, fundToken: fundToken, type: type);
+  }
+
   Future<UserToken> getUserTokenFromSharedpref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String data = prefs.getString(SHARED_PREF_USER_TOKEN_KEY);
