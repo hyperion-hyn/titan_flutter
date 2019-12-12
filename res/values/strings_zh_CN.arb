@@ -465,5 +465,6 @@
   "para_error_hint": "参数错误",
   "unknown_error_hint": "未知错误",
   "fund_pwd_error_hint": "资金密码错误",
-  "over_limit_hint": "超过限制"
+  "over_limit_hint": "超过限制",
+  "check_in_completed": "完成"
 }

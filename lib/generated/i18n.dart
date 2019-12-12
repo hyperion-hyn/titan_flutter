@@ -71,6 +71,7 @@ class S implements WidgetsLocalizations {
   String get by_mortgage => "Alternative staking measures";
   String get cafe => "Cafe";
   String get cancel => "Cancel";
+  String get check_in_completed => "Done";
   String get check_update => "Check for updates";
   String get ciphertext_exception_hint => "The ciphertext is invalid or expired";
   String get city_recommendation => "City Recommend";
@@ -222,7 +223,7 @@ class S implements WidgetsLocalizations {
   String get map3_global_nodes => "Map3 Global Nodes";
   String get map3_node_introduction => "Mp3 Node";
   String get map_ai_verificate => "Map AI verification";
-  String get map_dmap => "Map DMap";
+  String get map_dmap => "DMap";
   String get max_star_numbers => "Maximum";
   String get medium => "Medium";
   String get modify_account_password => "modify account password";
@@ -435,7 +436,7 @@ class S implements WidgetsLocalizations {
   String get wallet => "Wallet";
   String get wallet_create_success => "Account has been created successfully";
   String get wallet_create_success_tips => "Congratulations, your private account has been created successfully";
-  String get wallet_manage => "Manage Wallet";
+  String get wallet_manage => "Wallet Management";
   String get wallet_name => "Wallet Name";
   String get wallet_name_label => "Wallet Name";
   String get wallet_password_error => "incorrect password";
@@ -1014,6 +1015,8 @@ class $ko extends S {
   String get audio => "오디오";
   @override
   String get action_success_hint => "작업 성공";
+  @override
+  String get check_in_completed => "종료";
   @override
   String get refresh_public_key_minutes_tips => "%d분 후 자동 새로 고침";
   @override
@@ -1962,6 +1965,8 @@ class $zh_CN extends S {
   String get audio => "音频";
   @override
   String get action_success_hint => "操作成功";
+  @override
+  String get check_in_completed => "完成";
   @override
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override

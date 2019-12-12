@@ -465,5 +465,6 @@
   "para_error_hint": "파라미터 에러",
   "unknown_error_hint": "알 수없는 오류",
   "fund_pwd_error_hint": "자금 조달 비밀번호 오류",
-  "over_limit_hint": "한도 초과"
+  "over_limit_hint": "한도 초과",
+  "check_in_completed": "종료"
 }

@@ -168,7 +168,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                                 size: 14,
                                               ),
                                               Text(
-                                                checkInCount >= 3 ? S.of(context).finish : S.of(context).task,
+                                                checkInCount >= 3 ? S.of(context).check_in_completed : S.of(context).task,
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,

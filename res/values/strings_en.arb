@@ -150,7 +150,7 @@
   "import": "Import",
   "import_account_success": "The account was successfully imported ",
   "import_account_tips": "Congratulations, your private wallet has been successfully imported",
-  "wallet_manage": "Manage Wallet",
+  "wallet_manage": "Wallet Management",
   "wallet_setting": "Wallet Settings",
   "wallet_name": "Wallet Name",
   "please_input_wallet_name": "Input wallet name",
@@ -202,7 +202,7 @@
   "my_symbol_address": "My ${symbol} Address:",
   "dmap_document_title": "DMap Integration Document",
   "document_optimization": "optimizing document...",
-  "map_dmap": "Map DMap",
+  "map_dmap": "DMap",
   "dmap_tools": "Tools",
   "private_sharing": "Private Location Share",
   "private_sharing_text": "Share encrypted location information to protect privacy",
@@ -465,5 +465,6 @@
   "para_error_hint": "Parameter error",
   "unknown_error_hint": "An unknown error",
   "fund_pwd_error_hint": "Fund password error",
-  "over_limit_hint": "exceed the limit"
+  "over_limit_hint": "exceed the limit",
+  "check_in_completed": "Done"
 }
