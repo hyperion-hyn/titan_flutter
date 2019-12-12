@@ -253,6 +253,17 @@ class MapRichApi {
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }
 
+  Future<dynamic> withdrawalApplyV2(
+      {@required double amount,
+        @required String address,
+        @required String token,
+        @required String fundToken,
+        @required int type}) async {
+    return await MapRichHttpCore.instance.postEntity('withdrawal/v2/apply', null,
+        params: {"amount": amount, "address": address, "type": type},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
+  }
+
   ///getMortgageList
   Future<List<MortgageInfo>> getMortgageList(String token) async {
     return await MapRichHttpCore.instance.getEntity("mortgage/list", EntityFactory<List<MortgageInfo>>((json) {
