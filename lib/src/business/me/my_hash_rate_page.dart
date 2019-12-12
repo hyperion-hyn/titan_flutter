@@ -193,7 +193,8 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
     return HashRateVo(
         iconData: ExtendsIconFont.engine,
         iconColor: iconColor,
-        title: "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(powerDetail.power))} T 算力",
+        title:
+            "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(powerDetail.power))} T ${S.of(context).hashrate}",
         subTitle: "",
         validity: validity,
         validityColor: validityColor,

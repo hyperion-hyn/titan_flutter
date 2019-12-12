@@ -153,12 +153,13 @@ class S implements WidgetsLocalizations {
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
-  String get get_power => "Get Power";
-  String get get_powers => "Get Powers";
+  String get get_power => "Get HashRate";
+  String get get_powers => "Get HashRate";
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "Global Map Service Nodes";
   String get global_nodes => "Global Nodes";
   String get grade => "Level";
+  String get hashrate => "HashRate";
   String get home_page => "Home";
   String get hospital => "Hospital";
   String get hot_area => "Hot spots";
@@ -238,8 +239,8 @@ class S implements WidgetsLocalizations {
   String get my_node_mortgage => "My Node Staking";
   String get my_page => "My";
   String get my_position => "My Location";
-  String get my_power_with_unit => "Power(T)";
-  String get my_total_power => "My Total Computing Power";
+  String get my_power_with_unit => "HashRate(T)";
+  String get my_total_power => "My Total HashRate";
   String get my_wallet_address => "My Wallet Address";
   String get nav_about_us => "About us";
   String get nav_my_privacy_map => "My Privacy Map";
@@ -312,7 +313,7 @@ class S implements WidgetsLocalizations {
   String get police_station_text => "Check nearby police stations";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 characters";
-  String get power_martgage => "Powers Martgage";
+  String get power_martgage => "Get HashRate";
   String get private_and_safety => "Private and Secure";
   String get private_service => "Privacy Services";
   String get private_share => "Private location Share";
@@ -454,7 +455,7 @@ class S implements WidgetsLocalizations {
   String get without_hyn_wallet => "You don't have a HYN wallet yet.";
   String get wx_id => "WeChat ID：titan654321";
   String get your_mnemonic => "Your Mnemonic phrases";
-  String all_powers_func(String totalPower) => "Total Computing Power：${totalPower}";
+  String all_powers_func(String totalPower) => "Total HashRate：${totalPower}";
   String available_balance_usdt(String amount) => "Available Balance ${amount} USDT";
   String available_mortgage_numbers(String number) => "mort：${number}";
   String by_recommend(String getParentEmail) => "Recommended by ${getParentEmail}";
@@ -949,6 +950,8 @@ class $ko extends S {
   String get no_invite_success_hint => "당신은 사람들을 성공적으로 초대하지 않았습니다 ~";
   @override
   String get wallet_create_success => "계정 만들기 성공";
+  @override
+  String get hashrate => "계산 력";
   @override
   String get no_detail_address => "자세한 주소가 없습니다";
   @override
@@ -1899,6 +1902,8 @@ class $zh_CN extends S {
   String get no_invite_success_hint => "你还没成功邀请人~";
   @override
   String get wallet_create_success => "账户创建成功";
+  @override
+  String get hashrate => "算力";
   @override
   String get no_detail_address => "暂无详细地址";
   @override
