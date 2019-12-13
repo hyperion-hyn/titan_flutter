@@ -107,6 +107,7 @@ class S implements WidgetsLocalizations {
   String get hynPriceUnit => "USD";
   String get hyn_market => "HYN Market";
   String get hyn_price => "HYN Price";
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
   String get illegal_mnemonic => "illegal mnemonic";
   String get import => "Import";
   String get import_account => "Import Account";
@@ -704,6 +705,8 @@ class $ko extends S {
   @override
   String get telphone => "전화";
   @override
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
+  @override
   String get please_selecte_app_area => "지도 사용 구역을 설정하십시오";
   @override
   String get send => "보내기";
@@ -1233,6 +1236,8 @@ class $zh_CN extends S {
   String get cafe => "咖啡馆";
   @override
   String get telphone => "电话";
+  @override
+  String get hyperion_project_intro_url => "https://shimo.im/docs/GDp72cj3ATwEB7ke/read";
   @override
   String get please_selecte_app_area => "请设置地图使用区域";
   @override

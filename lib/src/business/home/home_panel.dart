@@ -168,7 +168,7 @@ class HomePanelState extends State<HomePanel> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => WebViewContainer(
-                                    initUrl: 'https://shimo.im/docs/GDp72cj3ATwEB7ke/read',
+                                    initUrl: S.of(context).hyperion_project_intro_url,
                                     title: S.of(context).Hyperion,
                                   )));
                     },
