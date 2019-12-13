@@ -448,6 +448,7 @@
   "other_area": "Others",
   "app_area_setting": "Area",
   "please_selecte_app_area": "Please set the region of the map",
+  "hyperion_project_intro_url": "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412",
   "task_interval_below_limit": "Do task intervals below 30 minutes",
   "today_complete_hint": "Today's task is completed. Thank you for your data",
   "psw_reset_error_hint": "Password reset error",

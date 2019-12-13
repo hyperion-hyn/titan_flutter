@@ -70,6 +70,14 @@ class NewsTagUtils {
       }
     }
   }
+
+  static String getFocusCatetory(Locale locale) {
+    if (locale.languageCode == "zh") {
+      return NewsCategoryConsts.ZH_FOCUS_CATEGORY;
+    } else {
+      return NewsCategoryConsts.EN_FOCUS_CATEGORY;
+    }
+  }
 }
 
 class NewsTagConsts {
@@ -113,4 +121,7 @@ class NewsCategoryConsts {
 
   static const String EN_HYPERION_CATEGORY = "9";
   static const String EN_KAI_CATEGORY = "12";
+
+  static const String ZH_FOCUS_CATEGORY = "18";
+  static const String EN_FOCUS_CATEGORY = "20";
 }

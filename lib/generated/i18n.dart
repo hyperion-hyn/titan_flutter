@@ -169,6 +169,7 @@ class S implements WidgetsLocalizations {
   String get hyn_price => "HYN Price";
   String get hyn_wallet_open_hint => "HYN wallet is about to open";
   String get hyn_withdrawal_coin_address => "HYN withdrawal Address";
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
   String get illegal_mnemonic => "illegal mnemonic";
   String get import => "Import";
   String get import_account => "Import Account";
@@ -1291,6 +1292,8 @@ class $ko extends S {
   @override
   String get psw_reset_error_hint => "비밀번호 재설정 오류";
   @override
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
+  @override
   String get free_receive => "무료 픽업";
   @override
   String get please_selecte_app_area => "지도 사용 구역을 설정하십시오";
@@ -2242,6 +2245,8 @@ class $zh_CN extends S {
   String get no_eth_address => "非以太坊地址";
   @override
   String get psw_reset_error_hint => "重置密码错误";
+  @override
+  String get hyperion_project_intro_url => "https://shimo.im/docs/GDp72cj3ATwEB7ke/read";
   @override
   String get free_receive => "免费领取";
   @override

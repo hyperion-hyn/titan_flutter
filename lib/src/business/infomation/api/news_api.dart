@@ -31,11 +31,11 @@ class NewsApi {
     return NewsDetail.fromJson(data);
   }
 
-  Future<List<FocusImage>> getFocusList() async {
+  Future<List<FocusImage>> getFocusList(String category) async {
     List dataList = await NewsHttpCore.instance.get(
       "wp-json/wp/v2/posts",
       params: {
-        "categories": 18,
+        "categories": category,
       },
     ) as List;
 

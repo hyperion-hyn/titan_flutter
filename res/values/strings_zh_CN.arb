@@ -448,6 +448,7 @@
   "other_area": "其他地区",
   "app_area_setting": "区域",
   "please_selecte_app_area": "请设置地图使用区域",
+  "hyperion_project_intro_url": "https://shimo.im/docs/GDp72cj3ATwEB7ke/read",
   "task_interval_below_limit": "做任务间隔低于30分钟",
   "today_complete_hint": "今天任务已完成，感谢你贡献数据",
   "psw_reset_error_hint": "重置密码错误",
