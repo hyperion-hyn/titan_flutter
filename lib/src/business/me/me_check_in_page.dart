@@ -70,7 +70,7 @@ class _MeCheckIn extends State<MeCheckIn> {
   }
 
   void _checkDeviceType() async {
-    if(Platform.isIOS){
+    if (Platform.isIOS) {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.mobile) {
         isVisibleWiFi = false;
@@ -80,7 +80,7 @@ class _MeCheckIn extends State<MeCheckIn> {
         isVisibleToast = false;
       }
       print('_checkDevicesType, isIOS');
-    }else if(Platform.isAndroid){
+    } else if (Platform.isAndroid) {
       var isEnable = await TitanPlugin.requestWiFiIsOpenedSetting();
       if (!isEnable) {
         isVisibleWiFi = false;
@@ -90,8 +90,7 @@ class _MeCheckIn extends State<MeCheckIn> {
         isVisibleToast = false;
       }
       print('_checkDevicesType, isAndroid');
-    }
-    else {
+    } else {
       isVisibleWiFi = false;
       isVisibleToast = false;
       print('_checkDevicesType, isOther');
@@ -109,7 +108,6 @@ class _MeCheckIn extends State<MeCheckIn> {
   double lastZoom;
   bool isVisibleWiFi = false;
   bool isVisibleToast = false;
-
 
   void startScan() async {
     progressStreamController.add(0);
@@ -137,7 +135,6 @@ class _MeCheckIn extends State<MeCheckIn> {
     });
   }
 
-
   @override
   void dispose() {
     subscription?.cancel();
@@ -163,7 +160,6 @@ class _MeCheckIn extends State<MeCheckIn> {
         alignment: Alignment.center,
         children: <Widget>[
           mapView(),
-
           StreamBuilder<double>(
             stream: progressStreamController.stream,
             builder: (ctx, snap) {
@@ -173,7 +169,6 @@ class _MeCheckIn extends State<MeCheckIn> {
               return Container();
             },
           ),
-
           Visibility(
             visible: isVisibleToast,
             child: Positioned(
@@ -192,13 +187,12 @@ class _MeCheckIn extends State<MeCheckIn> {
                   ),
                   Positioned(
                     child: Text(
-                        S.of(context).turn_on_wifi_hint,
+                      S.of(context).turn_on_wifi_hint,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white, fontSize: 13.0, fontWeight: FontWeight.w500),
                     ),
                     bottom: 15,
                   ),
-
                   Positioned(
                     right: -27.5,
                     top: 7.5,
@@ -220,7 +214,6 @@ class _MeCheckIn extends State<MeCheckIn> {
               ),
             ),
           ),
-
           Visibility(
             visible: isVisibleWiFi,
             child: Positioned(
@@ -236,7 +229,6 @@ class _MeCheckIn extends State<MeCheckIn> {
               ),
             ),
           ),
-
           Positioned(
             top: 32,
             left: 16,
@@ -245,21 +237,28 @@ class _MeCheckIn extends State<MeCheckIn> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Container(
-                    child: Text(S.of(context).all_powers_func('${Utils.powerForShow(LOGIN_USER_INFO.totalPower)}'), style: TextStyle(color: Colors.white),),
+                    child: Text(
+                      S.of(context).all_powers_func('${Utils.powerForShow(LOGIN_USER_INFO.totalPower)}'),
+                      style: TextStyle(color: Colors.white),
+                    ),
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     decoration: BoxDecoration(color: HexColor("#0F95B0"), borderRadius: BorderRadius.circular(30)),
                   ),
                   Container(
-                    child: Text(S.of(context).max_range_func('$maxMeter'), style: TextStyle(color: Colors.white),),
+                    child: Text(
+                      S.of(context).max_range_func('$maxMeter'),
+                      style: TextStyle(color: Colors.white),
+                    ),
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                    margin: EdgeInsets.only(top: 8,),
+                    margin: EdgeInsets.only(
+                      top: 8,
+                    ),
                     decoration: BoxDecoration(color: HexColor("#0F95B0"), borderRadius: BorderRadius.circular(30)),
                   ),
                 ],
               ),
             ),
           ),
-
           Positioned(
             child: SizedBox(
               height: 3,
@@ -277,7 +276,6 @@ class _MeCheckIn extends State<MeCheckIn> {
             left: 0,
             right: 0,
           ),
-
           Positioned(
             bottom: 48,
             child: StreamBuilder<double>(
@@ -311,7 +309,7 @@ class _MeCheckIn extends State<MeCheckIn> {
         target: userPosition ?? LatLng(23.12076, 113.322058),
         zoom: defaultZoom,
       ),
-      styleString: 'https://static.hyn.space/maptiles/see-it-all.json',
+      styleString: S.of(context).scan_wifi_map_style_url,
       onStyleLoaded: (mapboxController) {
         mapController = mapboxController;
         Future.delayed(Duration(milliseconds: 1000)).then((v) {
@@ -326,6 +324,7 @@ class _MeCheckIn extends State<MeCheckIn> {
 //      compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
       minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
       myLocationEnabled: false,
+      languageCode: Localizations.localeOf(context).languageCode,
     );
   }
 }

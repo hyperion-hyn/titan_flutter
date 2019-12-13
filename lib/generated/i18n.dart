@@ -362,6 +362,7 @@ class S implements WidgetsLocalizations {
   String get safety_verify => "Safety verification";
   String get save_mnemonic_notice => "Write down or copy these words in the correct order and keep them safe.";
   String get save_mnemonic_safe_notice => "Never share the mnemonic with anyone, store your backup securely!";
+  String get scan_wifi_map_style_url => "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
   String get search_empty_data => "No Data";
   String get search_exception => "Search Exception";
   String get search_history => "History";
@@ -1065,6 +1066,8 @@ class $ko extends S {
   String get generating_key => "암호화 된 주소 생성 ...";
   @override
   String get password_length_error_message => "하나 이상의 비밀번호를 입력하십시오";
+  @override
+  String get scan_wifi_map_style_url => "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
   @override
   String get no_wallet_hint => "아직 지갑이 없습니다.";
   @override
@@ -2019,6 +2022,8 @@ class $zh_CN extends S {
   String get generating_key => "正在生成加密地址…";
   @override
   String get password_length_error_message => "请输入至少6位的密码";
+  @override
+  String get scan_wifi_map_style_url => "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
   @override
   String get no_wallet_hint => "你还没有钱包.";
   @override

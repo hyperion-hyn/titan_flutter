@@ -468,5 +468,6 @@
   "fund_pwd_error_hint": "资金密码错误",
   "over_limit_hint": "超过限制",
   "check_in_completed": "完成",
-  "hashrate": "算力"
+  "hashrate": "算力",
+  "scan_wifi_map_style_url": "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json"
 }

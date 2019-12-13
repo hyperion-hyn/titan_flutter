@@ -468,5 +468,6 @@
   "fund_pwd_error_hint": "Fund password error",
   "over_limit_hint": "exceed the limit",
   "check_in_completed": "Done",
-  "hashrate": "HashRate"
+  "hashrate": "HashRate",
+  "scan_wifi_map_style_url": "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json"
 }
