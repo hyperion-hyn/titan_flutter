@@ -4,6 +4,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/api/market_price_api.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 
 class MarketPricePage extends StatefulWidget {
@@ -85,7 +86,7 @@ class _MarketPriceState extends State<MarketPricePage> {
             ),
             Spacer(),
             Text(
-              "\¥ ${DOUBLE_NUMBER_FORMAT.format(marketPriceVo.price)}",
+              "${S.of(context).hynPriceUnitSymbol} ${DOUBLE_NUMBER_FORMAT.format(marketPriceVo.price)}",
               style: TextStyle(fontSize: 16),
             )
           ],
@@ -99,7 +100,10 @@ class _MarketPriceState extends State<MarketPricePage> {
     isLoading = false;
     marketPriceList = marketPriceResponse.markets.map((_priceTemp) {
       return MarketPriceVo(
-          iconUrl: _priceTemp.icon, marketName: _priceTemp.source, price: _priceTemp.cnyPrice, marketUrl: _priceTemp.url);
+          iconUrl: _priceTemp.icon,
+          marketName: _priceTemp.source,
+          price: appLocale.languageCode == "zh" ? _priceTemp.cnyPrice : _priceTemp.price,
+          marketUrl: _priceTemp.url);
     }).toList();
 
     setState(() {});

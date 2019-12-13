@@ -246,5 +246,16 @@
   "private_share": "私密分享",
   "private_share_receive_address": "接收地址:${shortAddress}",
   "navigation": "导航",
-  "my_location": "我的位置"
+  "my_location": "我的位置",
+  "setting": "设置",
+  "language": "语言",
+  "hynPriceUnit": "CNY",
+  "hynPriceUnitSymbol": "¥",
+  "cafe": "咖啡馆",
+  "hospital": "医院",
+  "mainland_china": "中国大陆",
+  "other_area": "其他地区",
+  "app_area_setting": "区域",
+  "please_selecte_app_area": "请设置地图使用区域",
+  "hyperion_project_intro_url": "https://shimo.im/docs/GDp72cj3ATwEB7ke/read"
 }

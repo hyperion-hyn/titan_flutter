@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -75,11 +76,22 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
 
     try {
       cancelToken = CancelToken();
-      var gaodeModel = await _api.searchByGaode(
-        lat: _lastPosition.latitude,
-        lon: _lastPosition.longitude,
-        cancelToken: cancelToken,
-      );
+      var gaodeModel;
+
+      if (currentAppArea.key==AppArea.MAINLAND_CHINA_AREA.key) {
+        gaodeModel = await _api.searchByGaode(
+          lat: _lastPosition.latitude,
+          lon: _lastPosition.longitude,
+          cancelToken: cancelToken,
+        );
+      } else {
+        gaodeModel = await _api.searchNearByHyn(
+          lat: _lastPosition.latitude,
+          lon: _lastPosition.longitude,
+          cancelToken: cancelToken,
+        );
+      }
+
       List<GaodePoi> pois = gaodeModel.data;
       setState(() {
         nearPois = pois;

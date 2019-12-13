@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/global.dart';
 
 import 'business/home/bloc/bloc.dart';
 import 'business/home/home_page.dart';
@@ -32,6 +33,9 @@ class _HomeBuilderState extends State<HomeBuilder> {
     initBloc();
   }
 
+
+
+
   void initBloc() {
     sheetsBloc = SheetsBloc();
     mapBloc = MapBloc();
@@ -59,6 +63,8 @@ class _HomeBuilderState extends State<HomeBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    globalContext = context;
+    appLocale = Localizations.localeOf(context);
     return Builder(
       key: Keys.mainContextKey,
       builder: (context) {

@@ -17,6 +17,12 @@ class Const {
   static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
+
+  static const Map LANGUAGE_NAME_MAP = {
+    "zh_CN": "简体中文",
+    "ko_": "한글",
+    "en_": "English",
+  };
 }
 
 class Keys {
@@ -24,4 +30,10 @@ class Keys {
   static final mainContextKey = GlobalKey(debugLabel: '__main_context__');
   static final mapContainerKey = GlobalKey(debugLabel: '__map__');
   static final mapParentKey = GlobalKey(debugLabel: '__map_parent__');
+}
+
+class PrefsKey {
+  static final appLanguageCode = "app_languageCode";
+  static final appCountryCode = "app_countryCode";
+  static final appArea = "app_area";
 }

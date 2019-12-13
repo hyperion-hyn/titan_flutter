@@ -8,15 +8,16 @@ import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
 
 import '../../global.dart';
+import 'news_tag_utils.dart';
 
 class WechatOfficialPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _WechatOfficialState();
+    return WechatOfficialState();
   }
 }
 
-class _WechatOfficialState extends InfoState<WechatOfficialPage> {
+class WechatOfficialState extends InfoState<WechatOfficialPage> {
   static const String CATEGORY = "3";
 
   static const int FIRST_PAGE = 1;
@@ -67,7 +68,7 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
                   _buildTag(S.of(context).video, VIDEO_TAG),
                   _buildTag(S.of(context).audio, AUDIO_TAG),
                   Spacer(),
-                  if (selectedTag == 34)
+                  if (selectedTag == VIDEO_TAG && appLocale.languageCode == "zh")
                     DropdownButton(
                       icon: Icon(
                         Icons.keyboard_arrow_down,
@@ -217,18 +218,21 @@ class _WechatOfficialState extends InfoState<WechatOfficialPage> {
   }
 
   Future _getPowerListByPage(int page) {
-    var tags = "";
-    if (selectedTag == VIDEO_TAG) {
-      tags = selectedVideoTag.toString();
+    var tags;
+    if (selectedTag == VIDEO_TAG && appLocale.languageCode == "zh") {
+      tags = selectedVideoTag;
     } else {
-      tags = selectedTag.toString();
+      tags = selectedTag;
     }
 
     return _getPowerList(CATEGORY, tags, page);
   }
 
-  Future _getPowerList(String categories, String tags, int page) async {
-    var newsResponseList = await _newsApi.getNewsList(categories, tags, page);
+  Future _getPowerList(String categories, int tags, int page) async {
+    var requestCatetory = NewsTagUtils.getCatetory(appLocale, categories);
+    var requestTags = NewsTagUtils.getNewsTag(appLocale, tags);
+
+    var newsResponseList = await _newsApi.getNewsList(requestCatetory, requestTags, page);
 //    isLoading = false;
     var newsVoList = newsResponseList.map((newsResponse) {
       return InfoItemVo(

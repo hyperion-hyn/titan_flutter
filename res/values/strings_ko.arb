@@ -246,5 +246,16 @@
   "private_share": "개인 공유",
   "private_share_receive_address": "수신 주소:${shortAddress}",
   "navigation": "탐색",
-  "my_location": "내 위치"
+  "my_location": "내 위치",
+  "setting": "설정",
+  "language": "언어",
+  "hynPriceUnit": "USD",
+  "hynPriceUnitSymbol": "\$",
+  "cafe": "커피숍",
+  "hospital": "병원",
+  "mainland_china": "중국 대륙",
+  "other_area": "기타 지역",
+  "app_area_setting": "구역",
+  "please_selecte_app_area": "지도 사용 구역을 설정하십시오",
+  "hyperion_project_intro_url": "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412"
 }

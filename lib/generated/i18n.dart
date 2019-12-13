@@ -33,6 +33,7 @@ class S implements WidgetsLocalizations {
   String get add_share_options => "Sharing options";
   String get address_copied => "Address copied";
   String get all => "ALL";
+  String get app_area_setting => "Area";
   String get app_name => "Titan";
   String get app_version => "Version";
   String get area => "Area";
@@ -48,6 +49,7 @@ class S implements WidgetsLocalizations {
   String get backup_wallet_mnemonic_title => "Backup mnemonics";
   String get backup_wallet_notice_text1 => "Obtaining mnemonic words proves your ownership of wallet assets";
   String get bank => "Bank";
+  String get cafe => "Cafe";
   String get cancel => "Cancel";
   String get clean_search_history => "Clear History";
   String get close => "Close";
@@ -99,10 +101,13 @@ class S implements WidgetsLocalizations {
   String get global_map_server_nodes => "Global Map Service Nodes";
   String get global_nodes => "Global Nodes";
   String get home_page => "Home";
+  String get hospital => "Hospital";
   String get hot_area => "Hot spots";
   String get hotel => "Hotel";
+  String get hynPriceUnit => "USD";
   String get hyn_market => "HYN Market";
   String get hyn_price => "HYN Price";
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
   String get illegal_mnemonic => "illegal mnemonic";
   String get import => "Import";
   String get import_account => "Import Account";
@@ -132,11 +137,13 @@ class S implements WidgetsLocalizations {
   String get kais_talk => "Kai's Talk";
   String get key_manager_title => "My encrypted addr.";
   String get label => "Label";
+  String get language => "Language";
   String get later => "Later";
   String get latest_news => "Article";
   String get less_than_1_min => "Less than 1 minute";
   String get lossz_wallet_mnemonic_notice => "I understand that if I lose the recovery word, I will not be able to access my wallet";
   String get main_my_public_key => "My encrypted key(public key)";
+  String get mainland_china => "Mainland China";
   String get mall => "Mall";
   String get manually_refresh => "Refresh Manually";
   String get map3_global_nodes => "Map3 Global Nodes";
@@ -163,6 +170,7 @@ class S implements WidgetsLocalizations {
   String get online_exchange => "Online Exchanges";
   String get open_camera => "Please allow access to your camera";
   String get operating_hours => "Time";
+  String get other_area => "Others";
   String get paking => "Parking";
   String get password_incorrect => "incorrect password";
   String get password_not_equal_hint => "Inconsistent passwords";
@@ -170,6 +178,7 @@ class S implements WidgetsLocalizations {
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
+  String get please_selecte_app_area => "Please set the region of the map";
   String get please_waiting => "Please Wait";
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
@@ -212,6 +221,7 @@ class S implements WidgetsLocalizations {
   String get service_description => "Description";
   String get service_hours => "Time";
   String get services => "Services";
+  String get setting => "Setting";
   String get share => "Share";
   String get share_app => "Share App";
   String get share_encrypted_location => "Share encrypted location";
@@ -259,6 +269,7 @@ class S implements WidgetsLocalizations {
   String get wechat_official_account => "Wechat Official Account";
   String get your_mnemonic => "Your Mnemonic phrases";
   String distance(String distance) => "$distance m";
+  String get hynPriceUnitSymbol => "\$";
   String km(String km) => "$km km ";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
@@ -296,7 +307,11 @@ class $ko extends S {
   @override
   String get project_introduction => "프로젝트 소개";
   @override
+  String get setting => "설정";
+  @override
   String get bank => "은행";
+  @override
+  String get app_area_setting => "구역";
   @override
   String get about_us => "우리에 대해";
   @override
@@ -398,6 +413,8 @@ class $ko extends S {
   @override
   String get extract_mnemonic_fail => "니모닉 실패를 추출";
   @override
+  String get language => "언어";
+  @override
   String get internet_bar => "인터넷 카페";
   @override
   String get later => "아직 업데이트되지 않았습니다";
@@ -481,6 +498,8 @@ class $ko extends S {
   String get label => "태그";
   @override
   String get input_resume_mnemonic => "백업 단어를 공백으로 구분하여 입력하십시오";
+  @override
+  String get mainland_china => "중국 대륙";
   @override
   String get nav_about_us => "우리에 대해";
   @override
@@ -571,6 +590,8 @@ class $ko extends S {
   String get not_open_yet => "기대하세요";
   @override
   String get postscript => "포스트 스크립트";
+  @override
+  String get other_area => "기타 지역";
   @override
   String get postscript_hint => "첨자를 입력하십시오 (50 단어 이내).";
   @override
@@ -680,7 +701,13 @@ class $ko extends S {
   @override
   String get driving => "드라이브";
   @override
+  String get cafe => "커피숍";
+  @override
   String get telphone => "전화";
+  @override
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
+  @override
+  String get please_selecte_app_area => "지도 사용 구역을 설정하십시오";
   @override
   String get send => "보내기";
   @override
@@ -718,11 +745,15 @@ class $ko extends S {
   @override
   String get department => "학과";
   @override
+  String get hospital => "병원";
+  @override
   String get private_service => "개인 서비스";
   @override
   String get map_dmap => "그림 DMap";
   @override
   String get gas_station => "주유소";
+  @override
+  String get hynPriceUnit => "USD";
   @override
   String get information_video => "비디오";
   @override
@@ -751,6 +782,8 @@ class $ko extends S {
   String get main_my_public_key => "암호화 된 주소 (공개 키)";
   @override
   String get decrypt_location_cipher_tips => "위치 암호문을 해독하는 방법?";
+  @override
+  String get hynPriceUnitSymbol => "\$";
   @override
   String n_hour(String hour) => "${hour}시간";
   @override
@@ -804,7 +837,11 @@ class $zh_CN extends S {
   @override
   String get project_introduction => "项目介绍";
   @override
+  String get setting => "设置";
+  @override
   String get bank => "银行";
+  @override
+  String get app_area_setting => "区域";
   @override
   String get about_us => "关于我们";
   @override
@@ -819,6 +856,8 @@ class $zh_CN extends S {
   String get safety_verification => "安全验证";
   @override
   String get please_input_wallet_password_hint => "请输入钱包密码";
+  @override
+  String get hynPriceUnitSymbol => "¥";
   @override
   String get wallet_setting => "钱包设置";
   @override
@@ -906,6 +945,8 @@ class $zh_CN extends S {
   @override
   String get extract_mnemonic_fail => "提取助记词失败";
   @override
+  String get language => "语言";
+  @override
   String get internet_bar => "网吧";
   @override
   String get later => "暂不更新";
@@ -989,6 +1030,8 @@ class $zh_CN extends S {
   String get label => "标签";
   @override
   String get input_resume_mnemonic => "输入用空格隔开的备份助记词";
+  @override
+  String get mainland_china => "中国大陆";
   @override
   String get nav_about_us => "关于我们";
   @override
@@ -1079,6 +1122,8 @@ class $zh_CN extends S {
   String get not_open_yet => "暂未开放";
   @override
   String get postscript => "附言";
+  @override
+  String get other_area => "其他地区";
   @override
   String get postscript_hint => "输入附言（50字内）";
   @override
@@ -1188,7 +1233,13 @@ class $zh_CN extends S {
   @override
   String get driving => "驾车";
   @override
+  String get cafe => "咖啡馆";
+  @override
   String get telphone => "电话";
+  @override
+  String get hyperion_project_intro_url => "https://shimo.im/docs/GDp72cj3ATwEB7ke/read";
+  @override
+  String get please_selecte_app_area => "请设置地图使用区域";
   @override
   String get send => "发送";
   @override
@@ -1226,11 +1277,15 @@ class $zh_CN extends S {
   @override
   String get department => "部门";
   @override
+  String get hospital => "医院";
+  @override
   String get private_service => "私密服务";
   @override
   String get map_dmap => "地图DMap";
   @override
   String get gas_station => "加油站";
+  @override
+  String get hynPriceUnit => "CNY";
   @override
   String get information_video => "视频";
   @override

@@ -129,7 +129,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '${DOUBLE_NUMBER_FORMAT.format(marketPriceResponse.avgCNYPrice)}${S.of(context).rmb}',
+                            '${DOUBLE_NUMBER_FORMAT.format(appLocale.languageCode == "zh" ? marketPriceResponse.avgCNYPrice : marketPriceResponse.avgPrice)} ${S.of(context).hynPriceUnit}',
                             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
