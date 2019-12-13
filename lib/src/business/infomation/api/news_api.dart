@@ -17,7 +17,7 @@ class NewsApi {
   Future<List<NewsResponse>> getOfficialNewsList(
       int page, String categories, String titanTag, String starRichTag) async {
     List dataList = await NewsHttpCore.instance.get(
-      "wp-json/wp/v2/posts?page=$page&categories=1&tags[]=$titanTag&tags[]=$starRichTag",
+      "wp-json/wp/v2/posts?page=$page&categories=$categories&tags[]=$titanTag&tags[]=$starRichTag",
     ) as List;
 
     return dataList.map((json) => NewsResponse.fromJson(json)).toList();
