@@ -4,6 +4,7 @@ import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/me/api/map_rich_http.dart';
 import 'package:titan/src/domain/gaode_model.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/update.dart';
 
@@ -48,11 +49,7 @@ class Api {
   }) async {
     var json = await HttpCore.instance.get(
       'titan-map/api/place/nearbysearch/json',
-      params: {
-        "location": "$lat,$lon",
-        "radius": radius,
-        "type": type
-      },
+      params: {"location": "$lat,$lon", "radius": radius, "type": type, "language": appLocale.languageCode},
       options: RequestOptions(cancelToken: cancelToken),
     );
 
