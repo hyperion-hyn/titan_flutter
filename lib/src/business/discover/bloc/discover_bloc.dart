@@ -6,7 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/model/focus_response.dart' as focus;
+import 'package:titan/src/business/infomation/news_tag_utils.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart' as map;
+import 'package:titan/src/global.dart';
 import '../dmap_define.dart';
 import './bloc.dart';
 
@@ -37,8 +39,8 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
         ));
       }
     } else if (event is LoadFocusImageEvent) {
-      List<focus.FocusImage> focusList = await _newsApi.getFocusList();
-
+      var requestCategory = NewsTagUtils.getFocusCatetory(appLocale);
+      List<focus.FocusImage> focusList = await _newsApi.getFocusList(requestCategory);
       //save to cache
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var json = jsonEncode(focusList);
