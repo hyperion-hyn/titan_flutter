@@ -23,14 +23,25 @@ class GpsSensor(val context: Context, val onSensorValueChangeListener: OnSensorV
                 return
             }
 
+            val lat = location.latitude
+            val lon = location.longitude
+            val altitude = location.altitude
+            val accuracy = location.accuracy
+            val bearing = location.bearing
+            val speed = location.speed
+            val time = location.time
 
-            var lat = location.latitude
-            var lon = location.longitude
-            var altitude = location.altitude
-            var accuracy = location.accuracy
-            var bearing = location.bearing
-            var speed = location.speed
-            var time = location.time
+            val values = mutableMapOf<String, Any>()
+
+            values.put("lat", lat)
+            values.put("lon", lon)
+            values.put("altitude", altitude)
+            values.put("accuracy", accuracy)
+            values.put("bearing", bearing)
+            values.put("speed", speed)
+            values.put("time", time)
+
+            onSensorValueChangeListener.onSensorChange(SENSOR_TYPE, values)
 
 
         }
@@ -44,21 +55,6 @@ class GpsSensor(val context: Context, val onSensorValueChangeListener: OnSensorV
         }
 
         override fun onProviderDisabled(p0: String?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-    }
-
-    var gnssStatusCallback = @TargetApi(Build.VERSION_CODES.N) object : GnssStatus.Callback() {
-
-        override fun onSatelliteStatusChanged(status: GnssStatus?) {
-            super.onSatelliteStatusChanged(status)
-        }
-    }
-
-
-    var gpsStatusCallBack = object:GpsStatus.Listener{
-        override fun onGpsStatusChanged(action: Int) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
