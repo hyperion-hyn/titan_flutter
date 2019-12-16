@@ -53,10 +53,10 @@
 	<string>Please allow obtain location permission</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Please allow obtain motion permission</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Please allow obtain speech recognition permission</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Please allow obtain motion permission</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Please allow obtain speech recognition permission</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
