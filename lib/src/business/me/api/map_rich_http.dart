@@ -12,7 +12,11 @@ class MapRichHttpCore extends BaseHttpCore {
 
   MapRichHttpCore._internal() : super(_dio);
 
-  static MapRichHttpCore get instance => _getInstance();
+  static MapRichHttpCore get instance {
+    _dio.options.baseUrl = Const.MAP_RICH_DOMAIN;
+    return _getInstance();
+  }
+
   static MapRichHttpCore _instance;
 
   static MapRichHttpCore _getInstance() {
@@ -26,7 +30,6 @@ class MapRichHttpCore extends BaseHttpCore {
   }
 
   static var _dio = new Dio(BaseOptions(
-    baseUrl: Const.MAP_RICH_DOMAIN,
     connectTimeout: 5000,
     receiveTimeout: 10000,
 //    headers: {"user-agent": "dio", "api": "1.0.0"},
