@@ -226,6 +226,7 @@ class S implements WidgetsLocalizations {
   String get map3_node_introduction => "Mp3 Node";
   String get map_ai_verificate => "Map AI verification";
   String get map_dmap => "DMap";
+  String get maprich_intro_url => "https://www.maprich.net/intro?lang=en";
   String get max_star_numbers => "Maximum";
   String get medium => "Medium";
   String get modify_account_password => "modify account password";
@@ -1166,6 +1167,8 @@ class $ko extends S {
   String get Next => "다음 페이지";
   @override
   String get confirm_new_fund_password => "새 펀드 비밀번호 확인";
+  @override
+  String get maprich_intro_url => "https://www.maprich.net/intro?lang=ko";
   @override
   String get installation_update_package_failed => "업데이트 패키지 설치 실패";
   @override
@@ -2122,6 +2125,8 @@ class $zh_CN extends S {
   String get Next => "下一页";
   @override
   String get confirm_new_fund_password => "确认资金新密码";
+  @override
+  String get maprich_intro_url => "https://www.maprich.net/intro?lang=zh_CN";
   @override
   String get installation_update_package_failed => "安装更新包失败";
   @override

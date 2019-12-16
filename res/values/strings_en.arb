@@ -469,5 +469,6 @@
   "over_limit_hint": "exceed the limit",
   "check_in_completed": "Done",
   "hashrate": "HashRate",
-  "scan_wifi_map_style_url": "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json"
+  "scan_wifi_map_style_url": "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json",
+  "maprich_intro_url": "https://www.maprich.net/intro?lang=en"
 }

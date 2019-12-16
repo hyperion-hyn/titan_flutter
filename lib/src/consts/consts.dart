@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/global.dart';
 
 import '../../env.dart';
 
@@ -24,7 +26,13 @@ class Const {
   static const String MAP_RICH_DOMAIN_DEV = "http://api-test.maprich.net/";
 
 //  static const String MAP_RICH_DOMAIN_DEV = "http://10.10.1.100:3000/";
-  static const String MAP_RICH_DOMAIN_PROD = "https://mainnet.maprich.net/";
+  static String get MAP_RICH_DOMAIN_PROD {
+    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+      return "https://mainnet.maprich.net/";
+    } else {
+      return "https://api.starrich.io/";
+    }
+  }
 
   static String get MAP_RICH_DOMAIN {
     return env.buildType == BuildType.DEV ? MAP_RICH_DOMAIN_DEV : MAP_RICH_DOMAIN_PROD;

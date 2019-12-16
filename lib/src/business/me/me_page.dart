@@ -324,7 +324,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                         context,
                         MaterialPageRoute(
                             builder: (context) => WebViewContainer(
-                                  initUrl: "https://www.maprich.net/intro",
+                                  initUrl: S.of(context).maprich_intro_url,
                                   title: S.of(context).use_guide,
                                 )));
                   }),
