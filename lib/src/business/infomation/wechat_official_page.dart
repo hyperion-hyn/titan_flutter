@@ -65,8 +65,8 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   _buildTag(S.of(context).article, PAPER_TAG),
-                  _buildTag(S.of(context).video, VIDEO_TAG),
-                  _buildTag(S.of(context).audio, AUDIO_TAG),
+                  if (appLocale.languageCode == "zh") _buildTag(S.of(context).video, VIDEO_TAG),
+                  if (appLocale.languageCode == "zh") _buildTag(S.of(context).audio, AUDIO_TAG),
                   Spacer(),
                   if (selectedTag == VIDEO_TAG && appLocale.languageCode == "zh")
                     DropdownButton(

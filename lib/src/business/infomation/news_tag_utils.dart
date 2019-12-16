@@ -86,7 +86,7 @@ class NewsTagConsts {
   static const int EN_TUTORIAL_TAG = 32;
   static const int EN_VIDEO_TAG = 50;
 
-  static const int EN_KAI_PAPER_TAG = 42;
+  static const int EN_KAI_PAPER_TAG = 41;
   static const int EN_KAI_VIDEO_TAG = 34;
   static const int EN_KAI_AUDIO_TAG = 54;
 
@@ -105,7 +105,7 @@ class NewsCategoryConsts {
   static const String ZH_KAI_CATEGORY = "3";
 
   static const String EN_HYPERION_CATEGORY = "9";
-  static const String EN_KAI_CATEGORY = "12";
+  static const String EN_KAI_CATEGORY = "13";
 
   static const String ZH_FOCUS_CATEGORY = "18";
   static const String EN_FOCUS_CATEGORY = "20";
