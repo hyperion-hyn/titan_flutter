@@ -8,6 +8,7 @@ import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/widget/drag_tick.dart';
 
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
@@ -36,11 +37,32 @@ class HomePanelState extends State<HomePanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+    return Container(
+      padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
       child: CustomScrollView(
         controller: widget.scrollController,
         slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 12),
+                  child: DragTick(),
+                ),
+              ],
+            ),
+          ),
           /* 搜索 */
           SliverToBoxAdapter(
             child: _search(),
@@ -70,10 +92,10 @@ class HomePanelState extends State<HomePanel> {
   Widget _search() {
     return InkWell(
       onTap: onSearch,
-      borderRadius: BorderRadius.all(Radius.circular(31)),
-      child: Ink(
-        height: 44,
-        decoration: BoxDecoration(color: Color(0xfffff4f4fa), borderRadius: BorderRadius.all(Radius.circular(31))),
+      borderRadius: BorderRadius.all(Radius.circular(32)),
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(color: Color(0xfff4f4fa), borderRadius: BorderRadius.all(Radius.circular(32))),
         child: Row(
           children: <Widget>[
             Padding(
@@ -97,7 +119,7 @@ class HomePanelState extends State<HomePanel> {
 
   Widget focusArea(context) {
     return Container(
-      margin: EdgeInsets.only(top: 32),
+      margin: EdgeInsets.only(top: 16),
       height: 180,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -342,7 +364,7 @@ class HomePanelState extends State<HomePanel> {
                 isGaodeSearch: true, type: 8, center: center, searchText: '商场', stringType: "shopping_mall"));
           }
         }),
-        if (currentAppArea.key==AppArea.MAINLAND_CHINA_AREA.key)
+        if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
           _buildPoiItem('res/drawable/ic_cybercafe.png', S.of(context).internet_bar, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -350,7 +372,7 @@ class HomePanelState extends State<HomePanel> {
                   SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '网吧', stringType: "cafe"));
             }
           }),
-        if (currentAppArea.key==AppArea.MAINLAND_CHINA_AREA.key)
+        if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
           _buildPoiItem('res/drawable/ic_wc.png', S.of(context).toilet, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -358,7 +380,7 @@ class HomePanelState extends State<HomePanel> {
                   isGaodeSearch: true, type: 10, center: center, searchText: '厕所', stringType: "night_club"));
             }
           }),
-        if (currentAppArea.key!=AppArea.MAINLAND_CHINA_AREA.key)
+        if (currentAppArea.key != AppArea.MAINLAND_CHINA_AREA.key)
           _buildPoiItem('res/drawable/ic_cafe.png', S.of(context).cafe, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -366,7 +388,7 @@ class HomePanelState extends State<HomePanel> {
                   SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '咖啡馆', stringType: "cafe"));
             }
           }),
-        if (currentAppArea.key!=AppArea.MAINLAND_CHINA_AREA.key)
+        if (currentAppArea.key != AppArea.MAINLAND_CHINA_AREA.key)
           _buildPoiItem('res/drawable/ic_hospital.png', S.of(context).hospital, onTap: () async {
             var center = await mapCenter;
             if (center != null) {

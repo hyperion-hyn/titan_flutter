@@ -25,11 +25,10 @@ import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 import 'package:titan/src/widget/selecte_app_area_dialog.dart';
 import 'package:uni_links/uni_links.dart';
 
+import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 import '../../../env.dart';
 import '../../global.dart';
 import 'bloc/bloc.dart';
@@ -45,10 +44,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey fabsContainerKey = GlobalKey(debugLabel: 'fabsContainerKey');
 
-  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
-  DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController(collapsedHeight: 110);
-  DraggableBottomSheetController _activeBottomSheetController;
-  ScrollController _homeBottomSheetChildrenScrollController = ScrollController();
+//  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
 
   StreamSubscription _appLinkSubscription;
   var selectedAppArea = AppArea.MAINLAND_CHINA_AREA.key;
@@ -131,106 +127,66 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       ],
       child: Updater(
-          child: Scaffold(
-              resizeToAvoidBottomPadding: false,
-              drawer: isDebug ? DrawerScenes() : null,
+        child: Scaffold(
+          resizeToAvoidBottomPadding: false,
+          drawer: isDebug ? DrawerScenes() : null,
 //          endDrawer: PurchasedMapDrawerScenes(),
-              bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
-                builder: (context, state) {
-                  double height;
-                  if (state is home.MapOperatingState) {
-                    height = 0;
-                  }
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 500),
-                    height: height,
+          bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
+            builder: (context, state) {
+              double height;
+              if (state is home.MapOperatingState) {
+                height = 0;
+              }
+              return Container(
+                height: height,
 //                  curve: Curves.fastOutSlowIn,
-                    child: BottomNavigationBar(
-                        key: _bottomBarKey,
-                        selectedItemColor: Theme.of(context).primaryColor,
-                        unselectedItemColor: Colors.black38,
-                        showUnselectedLabels: true,
-                        selectedFontSize: 12,
-                        unselectedFontSize: 12,
-                        type: BottomNavigationBarType.fixed,
-                        onTap: (index) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
-                        },
-                        currentIndex: _currentIndex,
-                        items: [
-                          BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
-                          BottomNavigationBarItem(
-                              title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
-                          BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
-                          BottomNavigationBarItem(
-                              title: Text(S.of(context).information), icon: Icon(Icons.description)),
-                          BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
-                        ]),
-                  );
-                },
-              ),
-              body: BlocBuilder<home.HomeBloc, home.HomeState>(
-                bloc: BlocProvider.of<home.HomeBloc>(context),
-                builder: (context, state) {
-                  if (state is InitialHomeState) {
-                    if (_activeBottomSheetController != null) {
-                      _activeBottomSheetController.removeListener(onBottomSheetChange);
-                    }
+                child: BottomNavigationBar(
+                    key: _bottomBarKey,
+                    selectedItemColor: Theme.of(context).primaryColor,
+                    unselectedItemColor: Colors.black38,
+                    showUnselectedLabels: true,
+                    selectedFontSize: 12,
+                    unselectedFontSize: 12,
+                    type: BottomNavigationBarType.fixed,
+                    onTap: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    currentIndex: _currentIndex,
+                    items: [
+                      BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
+                      BottomNavigationBarItem(
+                          title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
+                      BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
+                      BottomNavigationBarItem(title: Text(S.of(context).information), icon: Icon(Icons.description)),
+                      BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
+                    ]),
+              );
+            },
+          ),
+          body: Stack(
+            children: <Widget>[
+              //the map
+              ScaffoldMap(),
 
-                    var state = _homeBottomSheetController.getSheetState();
-                    if (state == DraggableBottomSheetState.HIDDEN || state == null) {
-                      _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
-                    }
-                    _activeBottomSheetController = _homeBottomSheetController;
-                  } else if (state is home.MapOperatingState) {
-                    _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
-                    _activeBottomSheetController = _poiBottomSheetController;
-                  }
-                  _activeBottomSheetController.addListener(onBottomSheetChange);
-                  return Stack(
-                    children: <Widget>[
-                      //地图
-                      ScaffoldMap(
-                        poiBottomSheetController: _poiBottomSheetController,
-                      ),
+              //location
+              BlocBuilder<home.HomeBloc, home.HomeState>(builder: (context, state) {
+                return BottomFabsWidget(
+                  key: fabsContainerKey,
+                  showBurnBtn: state is InitialHomeState,
+                );
+              }),
 
-                      //位置按钮
-                      BottomFabsWidget(
-                        key: fabsContainerKey,
-                        showBurnBtn: state is InitialHomeState,
-                      ),
+              buildMainSheetPanel(),
 
-                      //首页bottom sheet
-                      DraggableBottomSheet(
-                        draggable: true,
-                        controller: _homeBottomSheetController,
-                        childScrollController: _homeBottomSheetChildrenScrollController,
-                        topPadding: (MediaQuery.of(context).padding.top),
-                        topRadius: 16,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          child: HomePanel(
-                            scrollController: _homeBottomSheetChildrenScrollController,
-                          ),
-                        ),
-                      ),
-                      //tabs
-                      _getContent(_currentIndex),
-                    ],
-                  );
-                },
-              ))),
+              //tab views
+              _getContent(_currentIndex),
+            ],
+          ),
+        ),
+      ),
     );
-  }
-
-  void onBottomSheetChange() {
-    var bottom = _activeBottomSheetController?.bottom;
-    if (bottom != null) {
-      var state = fabsContainerKey.currentState as BottomFasScenesState;
-      state.updateBottomPadding(bottom, _activeBottomSheetController.anchorHeight);
-    }
   }
 
   @override
@@ -241,19 +197,72 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _getContent(int index) {
-    switch (index) {
-      case 0:
-        return Container();
-      case 1:
-        return WalletContentWidget();
-      case 2:
-        return DiscoverContentWidget();
-      case 3:
-        return InformationContentWidget();
-      case 4:
-        return MyContentWidget();
-    }
-    return Container();
+    return IndexedStack(
+      index: index,
+      children: <Widget>[
+        Container(),
+        WalletContentWidget(),
+        DiscoverContentWidget(),
+        InformationContentWidget(),
+        MyContentWidget(),
+      ],
+    );
+  }
+
+  Widget buildMainSheetPanel() {
+    return myWidget.DraggableScrollableActuator(
+      child: Builder(
+        builder: (BuildContext context) {
+          return BlocListener<home.HomeBloc, home.HomeState>(
+            bloc: BlocProvider.of<home.HomeBloc>(context),
+            listener: (context, state) {
+              if (state is InitialHomeState) {
+                myWidget.DraggableScrollableActuator.setMin(context);
+              } else if (state is home.MapOperatingState) {
+                myWidget.DraggableScrollableActuator.setHide(context);
+              }
+            },
+            child: SizedBox.expand(
+              child: LayoutBuilder(
+                builder: (ctx, BoxConstraints boxConstraints) {
+                  double anchorSize = 0.5;
+                  double minChildSize = 88.0 / boxConstraints.maxHeight;
+                  double initSize = 280.0 / boxConstraints.maxHeight;
+                  double maxChildSize =
+                      (boxConstraints.maxHeight - MediaQuery.of(ctx).padding.top) / boxConstraints.maxHeight;
+                  return NotificationListener<myWidget.DraggableScrollableNotification>(
+                    onNotification: (notification) {
+                      updateFabsPosition(
+                          notification.extent * boxConstraints.maxHeight, anchorSize * boxConstraints.maxHeight);
+                      return true;
+                    },
+                    child: myWidget.DraggableScrollableSheet(
+                      maxChildSize: maxChildSize,
+                      expand: false,
+                      minChildSize: minChildSize,
+                      anchorSize: anchorSize,
+                      initialChildSize: initSize,
+                      draggable: true,
+                      builder: (BuildContext ctx, ScrollController scrollController) {
+                        return HomePanel(scrollController: scrollController);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void updateFabsPosition(double bottom, double anchorHeight) {
+    var state = (fabsContainerKey.currentState is BottomFasScenesState)
+        ? fabsContainerKey.currentState as BottomFasScenesState
+        : null;
+    WidgetsBinding.instance.addPostFrameCallback((_) => state?.updateBottomPadding(bottom, anchorHeight));
+//    state?.updateBottomPadding(bottom, anchorHeight);
   }
 
   Future<Null> initUniLinks() async {

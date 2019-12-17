@@ -109,7 +109,7 @@ final embassyDMapConfigModel = DMapConfigModel(
       return true;
     },
     panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
-      print('xxx $poi');
+//      print('xxx $poi');
       return EmbassyPoiPanel(poi: poi, scrollController: scrollController);
     },
     panelPaddingTop: (context) => MediaQuery.of(context).padding.top + 56 - 12 //减去drag的高度

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/draggable_bottom_sheet.dart';
 
 import '../../../global.dart';
@@ -48,68 +49,90 @@ class _PoiPanelState extends State<PoiPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: widget.scrollController,
-      child: WillPopScope(
-        onWillPop: () async {
-          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-          return false;
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            //header
-            Container(
-//          color: Colors.blue,
-              padding: EdgeInsets.all(16),
-              child: Column(
-                key: _poiHeaderKey,
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        controller: widget.scrollController,
+        child: WillPopScope(
+          onWillPop: () async {
+            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+            return false;
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              //tick
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          widget.selectedPoiEntity.name,
-                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                        },
-                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                        highlightColor: Colors.transparent,
-                        child: Ink(
-                          padding: EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xffececec),
-                          ),
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.grey,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 8),
+                    child: DragTick(),
                   ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  buildHeadItem(Icons.location_on, widget.selectedPoiEntity.address, hint: '暂无详细地址'),
-                  if (widget.selectedPoiEntity.remark != null && widget.selectedPoiEntity.remark.length > 0)
-                    buildHeadItem(Icons.message, widget.selectedPoiEntity.remark, hint: '无备注'),
                 ],
               ),
-            ),
-            Divider(
-              height: 0,
-            ),
-            buildInfoItem(S.of(context).label, widget.selectedPoiEntity.tags),
-            buildInfoItem(S.of(context).telphone, widget.selectedPoiEntity.phone),
-          ],
+              //header
+              Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  key: _poiHeaderKey,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            widget.selectedPoiEntity.name,
+                            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+                          },
+                          borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                          highlightColor: Colors.transparent,
+                          child: Ink(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xffececec),
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.grey,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    buildHeadItem(Icons.location_on, widget.selectedPoiEntity.address, hint: '暂无详细地址'),
+                    if (widget.selectedPoiEntity.remark != null && widget.selectedPoiEntity.remark.length > 0)
+                      buildHeadItem(Icons.message, widget.selectedPoiEntity.remark, hint: '无备注'),
+                  ],
+                ),
+              ),
+              Divider(
+                height: 0,
+              ),
+              buildInfoItem(S.of(context).label, widget.selectedPoiEntity.tags),
+              buildInfoItem(S.of(context).telphone, widget.selectedPoiEntity.phone),
+            ],
+          ),
         ),
       ),
     );

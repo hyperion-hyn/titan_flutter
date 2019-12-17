@@ -13,8 +13,9 @@ import '../../../global.dart';
 class RoutePanel extends StatelessWidget {
   final RouteDataModel routeDataModel;
   final String profile;
+  final ScrollController scrollController;
 
-  RoutePanel({this.routeDataModel, this.profile});
+  RoutePanel({this.routeDataModel, this.profile, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -29,82 +30,85 @@ class RoutePanel extends StatelessWidget {
           directionsResponse: routeDataModel.directionsResponse,
           profile: profile);
 
-      return Row(
-        children: <Widget>[
-          Expanded(
-            child: Material(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
+      return SingleChildScrollView(
+        controller: scrollController,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Material(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      timeString(context, duration),
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      distanceString(context, distance),
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black87,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          height: 28,
-                          child: MaterialButton(
-                            elevation: 0,
-                            highlightElevation: 0,
-                            minWidth: 60,
-                            onPressed: () {
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        timeString(context, duration),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        distanceString(context, distance),
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black87,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            height: 28,
+                            child: MaterialButton(
+                              elevation: 0,
+                              highlightElevation: 0,
+                              minWidth: 60,
+                              onPressed: () {
 //                              if (Platform.isAndroid) {
-                                Navigation.navigation(Keys.mapParentKey.currentContext, navigationDataModel);
+                                  Navigation.navigation(Keys.mapParentKey.currentContext, navigationDataModel);
 //                              } else {
 //                                Fluttertoast.showToast(msg: "敬请期待");
 //                              }
-                            },
-                            padding: EdgeInsets.symmetric(horizontal: 8),
-                            textColor: Color(0xddffffff),
-                            highlightColor: Colors.black,
-                            splashColor: Colors.white10,
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.navigation,
-                                  color: Color(0xddffffff),
-                                  size: 15,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  S.of(context).navigation,
-                                  style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
-                                )
-                              ],
+                              },
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              textColor: Color(0xddffffff),
+                              highlightColor: Colors.black,
+                              splashColor: Colors.white10,
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.navigation,
+                                    color: Color(0xddffffff),
+                                    size: 15,
+                                  ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  Text(
+                                    S.of(context).navigation,
+                                    style: TextStyle(fontSize: 14, color: Color(0xddffffff)),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                  ],
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       );
     } catch (err) {
       logger.e(err);
