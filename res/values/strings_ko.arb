@@ -470,5 +470,5 @@
   "check_in_completed": "종료",
   "hashrate": "계산 력",
   "scan_wifi_map_style_url": "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json",
-  "maprich_intro_url": "https://www.maprich.net/intro?lang=ko"
+  "maprich_intro_url": "${rich_domain}intro?lang=ko"
 }

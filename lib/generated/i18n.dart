@@ -226,7 +226,6 @@ class S implements WidgetsLocalizations {
   String get map3_node_introduction => "Mp3 Node";
   String get map_ai_verificate => "Map AI verification";
   String get map_dmap => "DMap";
-  String get maprich_intro_url => "https://www.maprich.net/intro?lang=en";
   String get max_star_numbers => "Maximum";
   String get medium => "Medium";
   String get modify_account_password => "modify account password";
@@ -471,6 +470,7 @@ class S implements WidgetsLocalizations {
   String get hynPriceUnitSymbol => "\$";
   String income_func(String incomeCycle) => "${incomeCycle} day income";
   String km(String km) => "$km km ";
+  String maprich_intro_url(String rich_domain) => "${rich_domain}intro?lang=en";
   String max_range_func(String maxMeter) => "Maximum range：${maxMeter} m";
   String max_withdrawal_quantity(String maxWithdrawal) => "Max. Withdrawal ${maxWithdrawal} USDT";
   String mortgage_id(String id) => "ID：${id}";
@@ -1168,8 +1168,6 @@ class $ko extends S {
   @override
   String get confirm_new_fund_password => "새 펀드 비밀번호 확인";
   @override
-  String get maprich_intro_url => "https://www.maprich.net/intro?lang=ko";
-  @override
   String get installation_update_package_failed => "업데이트 패키지 설치 실패";
   @override
   String get save_mnemonic_notice => "이 단어들을 정확한 순서에 따라 기록하거나 복사한 후 안전한 곳에 보관하세요.";
@@ -1437,6 +1435,8 @@ class $ko extends S {
   String snap_up_product_fuc(String name) => "사이버 스쿼팅 제품：${name}";
   @override
   String n_minute(String minute) => "${minute}분";
+  @override
+  String maprich_intro_url(String rich_domain) => "${rich_domain}intro?lang=ko";
   @override
   String max_withdrawal_quantity(String maxWithdrawal) => "최대 ${maxWithdrawal} USDT";
   @override
@@ -2126,8 +2126,6 @@ class $zh_CN extends S {
   @override
   String get confirm_new_fund_password => "确认资金新密码";
   @override
-  String get maprich_intro_url => "https://www.maprich.net/intro?lang=zh_CN";
-  @override
   String get installation_update_package_failed => "安装更新包失败";
   @override
   String get save_mnemonic_notice => "按正确的顺序记下或复制这些单词，并将他们保存在安全的地方。";
@@ -2393,6 +2391,8 @@ class $zh_CN extends S {
   String snap_up_product_fuc(String name) => "抢注产品：${name}";
   @override
   String n_minute(String minute) => "${minute}分钟";
+  @override
+  String maprich_intro_url(String rich_domain) => "${rich_domain}intro?lang=zh_CN";
   @override
   String max_withdrawal_quantity(String maxWithdrawal) => "最多可提 ${maxWithdrawal} USDT";
   @override
