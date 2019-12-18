@@ -85,3 +85,7 @@ shrinklist.txt
 lib/config.dart
 apks
 .apk
+ios/Flutter/flutter_export_environment.sh
+*.sh
+*.sh
+ios/Flutter/flutter_export_environment.sh

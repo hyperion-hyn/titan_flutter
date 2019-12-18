@@ -8,7 +8,7 @@ import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
-
+import 'me_check_in_page.dart';
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
 
@@ -222,44 +222,54 @@ class HomePanelState extends State<HomePanel> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(4.0)),
                   border: Border.all(color: Color(0xFFE9E9E9), width: 1)),
-              child: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0, left: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          S.of(context).data_contribute,
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            S.of(context).data_contribute_reward,
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
+              child: GestureDetector(
+                onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MeCheckIn(),
+                      ),
+                    );
+                  },
+                child: Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0, left: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            S.of(context).data_contribute,
+                            style: TextStyle(fontWeight: FontWeight.w600),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            S.of(context).coming_soon,
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Color(0xFFF82530)),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              S.of(context).data_contribute_reward,
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
                           ),
-                        ),
-                      ],
+//                          Padding(
+//                            padding: const EdgeInsets.only(top: 8.0),
+//                            child: Text(
+//                              '即将开放',
+//                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Color(0xFFF82530)),
+//                            ),
+//                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Positioned(
-                      top: 36,
-                      right: 16,
-                      child: Image.asset(
-                        'res/drawable/data.png',
-                        width: 32,
-                        height: 32,
-                      )),
-                ],
+                    Positioned(
+                        top: 36,
+                        right: 16,
+                        child: Image.asset(
+                          'res/drawable/data.png',
+                          width: 32,
+                          height: 32,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),

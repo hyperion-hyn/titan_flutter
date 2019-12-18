@@ -175,6 +175,19 @@ flutter:
     - res/drawable/backup_notice_image.png
     - res/drawable/check_outline.png
     - res/drawable/hyn_wallet.png
+    - res/drawable/wifi_scan.png
+    - res/drawable/tile_scan.png
+    - res/drawable/magnetic_scan.png
+    - res/drawable/gps_scan.png
+    - res/drawable/bluetooth_scan.png
+    - res/drawable/basestation_scan.png
+    - res/drawable/wifi_status_scan.png
+    - res/drawable/tile_status_scan.png
+    - res/drawable/magnetic_status_scan.png
+    - res/drawable/gps_status_scan.png
+    - res/drawable/bluetooth_status_scan.png
+    - res/drawable/basestation_status_scan.png
+    - res/drawable/radar_scan.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
