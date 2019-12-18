@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.telephony.*
+import timber.log.Timber
 
 class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSensorValueChangeListener) : Sensor {
 
@@ -28,6 +29,9 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
 
         val allCellInfos = mTelephonyManager.allCellInfo;
 
+
+        Timber.i("allCellInfos count:${allCellInfos.size}")
+
         for (cellIofo in allCellInfos) {
             val values = mutableMapOf<String, Any>();
 
@@ -39,19 +43,16 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
                 val cid = cellIdentityGsm.cid
                 val lac = cellIdentityGsm.lac
 
-                var mcc: String
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    mcc = cellIdentityGsm.mccString
+                val mcc = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    cellIdentityGsm.mccString
                 } else {
-                    mcc = cellIdentityGsm.mcc.toString()
+                    cellIdentityGsm.mcc.toString()
                 }
 
-                var mnc: String
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    mnc = cellIdentityGsm.mncString
+                val mnc = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    cellIdentityGsm.mncString
                 } else {
-                    mnc = cellIdentityGsm.mnc.toString()
+                    cellIdentityGsm.mnc.toString()
                 }
 
                 val asu = cellSignalStrengthGsm.asuLevel
@@ -59,14 +60,14 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
                 val level = cellSignalStrengthGsm.level
 
 
-                values.put("type", "GSM")
-                values.put("cid", cid)
-                values.put("lac", lac)
-                values.put("mcc", mcc)
-                values.put("mnc", mnc)
-                values.put("asu", asu)
-                values.put("dbm", dbm)
-                values.put("level", level)
+                Utils.addIfNonNull(values, "type", "GSM")
+                Utils.addIfNonNull(values, "cid", cid)
+                Utils.addIfNonNull(values, "lac", lac)
+                Utils.addIfNonNull(values, "mcc", mcc)
+                Utils.addIfNonNull(values, "mnc", mnc)
+                Utils.addIfNonNull(values, "asu", asu)
+                Utils.addIfNonNull(values, "dbm", dbm)
+                Utils.addIfNonNull(values, "level", level)
 
 
                 onSensorValueChangeListener.onSensorChange(SENSOR_TYPE, values)
@@ -100,22 +101,22 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
                 val level = cellSignalStrengthCdma.level
 
 
-                values.put("type", "CDMA")
-                values.put("basestationId", basestationId)
-                values.put("latitude", latitude)
-                values.put("longitude", longitude)
-                values.put("networkId", networkId)
-                values.put("systemId", systemId)
-                values.put("asu", asu)
-                values.put("cdmaDbm", cdmaDbm)
-                values.put("cdmaEcio", cdmaEcio)
-                values.put("cdmaLevel", cdmaLevel)
-                values.put("dbm", dbm)
-                values.put("evdoDbm", evdoDbm)
-                values.put("evdoEcio", evdoEcio)
-                values.put("evdoLevel", evdoLevel)
-                values.put("evdoSnr", evdoSnr)
-                values.put("level", level)
+                Utils.addIfNonNull(values, "type", "CDMA")
+                Utils.addIfNonNull(values, "basestationId", basestationId)
+                Utils.addIfNonNull(values, "latitude", latitude)
+                Utils.addIfNonNull(values, "longitude", longitude)
+                Utils.addIfNonNull(values, "networkId", networkId)
+                Utils.addIfNonNull(values, "systemId", systemId)
+                Utils.addIfNonNull(values, "asu", asu)
+                Utils.addIfNonNull(values, "cdmaDbm", cdmaDbm)
+                Utils.addIfNonNull(values, "cdmaEcio", cdmaEcio)
+                Utils.addIfNonNull(values, "cdmaLevel", cdmaLevel)
+                Utils.addIfNonNull(values, "dbm", dbm)
+                Utils.addIfNonNull(values, "evdoDbm", evdoDbm)
+                Utils.addIfNonNull(values, "evdoEcio", evdoEcio)
+                Utils.addIfNonNull(values, "evdoLevel", evdoLevel)
+                Utils.addIfNonNull(values, "evdoSnr", evdoSnr)
+                Utils.addIfNonNull(values, "level", level)
 
                 onSensorValueChangeListener.onSensorChange(SENSOR_TYPE, values)
 
@@ -151,15 +152,15 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
                 val level = cellSignalStrengthWcdma.level
 
 
-                values.put("type", "WCDMA")
-                values.put("cid", cid)
-                values.put("lac", lac)
-                values.put("mcc", mcc)
-                values.put("mnc", mnc)
-                values.put("psc", psc)
-                values.put("asu", asu)
-                values.put("dbm", dbm)
-                values.put("level", level)
+                Utils.addIfNonNull(values, "type", "WCDMA")
+                Utils.addIfNonNull(values, "cid", cid)
+                Utils.addIfNonNull(values, "lac", lac)
+                Utils.addIfNonNull(values, "mcc", mcc)
+                Utils.addIfNonNull(values, "mnc", mnc)
+                Utils.addIfNonNull(values, "psc", psc)
+                Utils.addIfNonNull(values, "asu", asu)
+                Utils.addIfNonNull(values, "dbm", dbm)
+                Utils.addIfNonNull(values, "level", level)
 
 
                 onSensorValueChangeListener.onSensorChange(SENSOR_TYPE, values)
@@ -192,20 +193,20 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
                 val level = cellSignalStrengthLte.level
                 val timingAdvance = cellSignalStrengthLte.timingAdvance
 
-                values.put("type", "LTE")
-                values.put("ci", ci)
-                values.put("mcc", mcc)
-                values.put("mnc", mnc)
-                values.put("pci", pci)
-                values.put("tac", tac)
-                values.put("asu", asu)
-                values.put("dbm", dbm)
-                values.put("level", level)
-                values.put("timingAdvance", timingAdvance)
+                Utils.addIfNonNull(values, "type", "LTE")
+                Utils.addIfNonNull(values, "ci", ci)
+                Utils.addIfNonNull(values, "mcc", mcc)
+                Utils.addIfNonNull(values, "mnc", mnc)
+                Utils.addIfNonNull(values, "pci", pci)
+                Utils.addIfNonNull(values, "tac", tac)
+                Utils.addIfNonNull(values, "asu", asu)
+                Utils.addIfNonNull(values, "dbm", dbm)
+                Utils.addIfNonNull(values, "level", level)
+                Utils.addIfNonNull(values, "timingAdvance", timingAdvance)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     val earfcn = cellIdentityLte.earfcn
-                    values.put("earfcn", earfcn)
+                    Utils.addIfNonNull(values, "earfcn", earfcn)
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -214,16 +215,16 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
                     val rsrq = cellSignalStrengthLte.rsrq
                     val rssnr = cellSignalStrengthLte.rssnr
 
-                    values.put("cqi", cqi)
-                    values.put("rsrp", rsrp)
-                    values.put("rsrq", rsrq)
-                    values.put("rssnr", rssnr)
+                    Utils.addIfNonNull(values, "cqi", cqi)
+                    Utils.addIfNonNull(values, "rsrp", rsrp)
+                    Utils.addIfNonNull(values, "rsrq", rsrq)
+                    Utils.addIfNonNull(values, "rssnr", rssnr)
 
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val rssi = cellSignalStrengthLte.rssi
-                    values.put("rssi", rssi)
+                    Utils.addIfNonNull(values, "rssi", rssi)
 
                 }
 
@@ -252,17 +253,17 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
                     val level = cellSignalStrengthTdscdma.level
                     val rscp = cellSignalStrengthTdscdma.rscp
 
-                    values.put("type", "TDSCDMA")
-                    values.put("cid", cid)
-                    values.put("cpid", cpid)
-                    values.put("lac", lac)
-                    values.put("mcc", mcc)
-                    values.put("mnc", mnc)
-                    values.put("uarfcn", uarfcn)
-                    values.put("asu", asu)
-                    values.put("dbm", dbm)
-                    values.put("level", level)
-                    values.put("rscp", rscp)
+                    Utils.addIfNonNull(values, "type", "TDSCDMA")
+                    Utils.addIfNonNull(values, "cid", cid)
+                    Utils.addIfNonNull(values, "cpid", cpid)
+                    Utils.addIfNonNull(values, "lac", lac)
+                    Utils.addIfNonNull(values, "mcc", mcc)
+                    Utils.addIfNonNull(values, "mnc", mnc)
+                    Utils.addIfNonNull(values, "uarfcn", uarfcn)
+                    Utils.addIfNonNull(values, "asu", asu)
+                    Utils.addIfNonNull(values, "dbm", dbm)
+                    Utils.addIfNonNull(values, "level", level)
+                    Utils.addIfNonNull(values, "rscp", rscp)
 
                     onSensorValueChangeListener.onSensorChange(SENSOR_TYPE, values)
 
@@ -292,23 +293,23 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
 
 
 
-                    values.put("type", "NR")
-                    values.put("mcc", mcc ?: "")
-                    values.put("mnc", mnc ?: "")
-                    values.put("nci", nci)
-                    values.put("nrarfcn", nrarfcn)
-                    values.put("pci", pci)
-                    values.put("nci", nci)
-                    values.put("tac", tac)
-                    values.put("asu", asu)
-                    values.put("csiRsrp", csiRsrp)
-                    values.put("csiRsrq", csiRsrq)
-                    values.put("csiSinr", csiSinr)
-                    values.put("dbm", dbm)
-                    values.put("level", level)
-                    values.put("ssRsrp", ssRsrp)
-                    values.put("ssRsrq", ssRsrq)
-                    values.put("ssSinr", ssSinr)
+                    Utils.addIfNonNull(values, "type", "NR")
+                    Utils.addIfNonNull(values, "mcc", mcc ?: "")
+                    Utils.addIfNonNull(values, "mnc", mnc ?: "")
+                    Utils.addIfNonNull(values, "nci", nci)
+                    Utils.addIfNonNull(values, "nrarfcn", nrarfcn)
+                    Utils.addIfNonNull(values, "pci", pci)
+                    Utils.addIfNonNull(values, "nci", nci)
+                    Utils.addIfNonNull(values, "tac", tac)
+                    Utils.addIfNonNull(values, "asu", asu)
+                    Utils.addIfNonNull(values, "csiRsrp", csiRsrp)
+                    Utils.addIfNonNull(values, "csiRsrq", csiRsrq)
+                    Utils.addIfNonNull(values, "csiSinr", csiSinr)
+                    Utils.addIfNonNull(values, "dbm", dbm)
+                    Utils.addIfNonNull(values, "level", level)
+                    Utils.addIfNonNull(values, "ssRsrp", ssRsrp)
+                    Utils.addIfNonNull(values, "ssRsrq", ssRsrq)
+                    Utils.addIfNonNull(values, "ssSinr", ssSinr)
 
                     onSensorValueChangeListener.onSensorChange(SENSOR_TYPE, values)
 

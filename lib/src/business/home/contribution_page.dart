@@ -7,20 +7,21 @@ import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/plugins/sensor_plugin.dart';
 
 //import 'dart:io';
 //import 'package:titan/src/global.dart';
 //import 'package:titan/src/utils/utils.dart';
 //import 'package:titan/src/plugins/titan_plugin.dart';
 
-class MeCheckIn extends StatefulWidget {
+class ContributionPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _MeCheckIn();
+    return _ContributionState();
   }
 }
 
-class _MeCheckIn extends State<MeCheckIn> {
+class _ContributionState extends State<ContributionPage> {
   MapboxMapController mapController;
 
   ScrollController scrollController = ScrollController();
@@ -30,15 +31,17 @@ class _MeCheckIn extends State<MeCheckIn> {
   LatLng userPosition;
   double defaultZoom = 18;
 
-  StreamController<double> progressStreamController =
-      StreamController.broadcast();
+  StreamController<double> progressStreamController = StreamController.broadcast();
 
   double minZoom = 13;
   int maxMeter = 5000;
 
+  SensorPlugin sensorPlugin;
+
   @override
   void initState() {
     super.initState();
+    sensorPlugin = SensorPlugin();
 
     /*
     //根据算力计算扫描范围
@@ -71,9 +74,8 @@ class _MeCheckIn extends State<MeCheckIn> {
 
   void initPosition() async {
     userPosition =
-        await (Keys.mapContainerKey.currentState as MapContainerState)
-            .mapboxMapController
-            ?.lastKnownLocation();
+        await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
+    await sensorPlugin.init();
   }
 
   int lastMoveTime = 0;
@@ -84,6 +86,7 @@ class _MeCheckIn extends State<MeCheckIn> {
   bool isVisibleToast = false;
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
+
 //  var _themeColor = Theme.of(context).primaryColor;
   var _currentScanType = "WiFi";
 
@@ -91,8 +94,7 @@ class _MeCheckIn extends State<MeCheckIn> {
     progressStreamController.add(0);
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
     var timeStep = duration / (defaultZoom - minZoom + 1);
-    var timerObservable =
-        Observable.periodic(Duration(milliseconds: 500), (x) => x);
+    var timerObservable = Observable.periodic(Duration(milliseconds: 500), (x) => x);
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
     if (userPosition != null) {
@@ -105,14 +107,14 @@ class _MeCheckIn extends State<MeCheckIn> {
       if (timeGap < duration) {
         //scan 30s
         if (nowTime - lastMoveTime > timeStep) {
-          mapController.animateCameraWithTime(
-              CameraUpdate.zoomTo(lastZoom--), 1000);
+          mapController.animateCameraWithTime(CameraUpdate.zoomTo(lastZoom--), 1000);
           lastMoveTime = DateTime.now().millisecondsSinceEpoch;
         }
       } else {
         subscription?.cancel();
       }
     });
+    sensorPlugin.startScan();
   }
 
   @override
@@ -120,13 +122,13 @@ class _MeCheckIn extends State<MeCheckIn> {
     subscription?.cancel();
     progressStreamController.close();
     super.dispose();
+    sensorPlugin.destory();
   }
 
   String _getImageName() {
     var _imageName = "wifi";
 
     switch (_currentScanType) {
-
       case "WiFi":
         _imageName = "wifi";
         break;
@@ -157,32 +159,24 @@ class _MeCheckIn extends State<MeCheckIn> {
   }
 
   void _setCurrentScanType(double currentValue) {
-
     var value = currentValue ?? 0.001;
     if (value > 0 && value < 0.2) {
       _currentScanType = "WiFi";
-    }
-    else if (value >= 0.2 && value < 0.4) {
+    } else if (value >= 0.2 && value < 0.4) {
       _currentScanType = "基站";
-    }
-    else if (value >= 0.4 && value < 0.6) {
+    } else if (value >= 0.4 && value < 0.6) {
       _currentScanType = "蓝牙";
-    }
-    else if (value >= 0.6 && value < 0.8) {
+    } else if (value >= 0.6 && value < 0.8) {
       _currentScanType = "GPS";
-    }
-    else if (value >= 0.8 && value < 0.9) {
+    } else if (value >= 0.8 && value < 0.9) {
       _currentScanType = "磁场";
-    }
-    else if (value >= 0.9 && value < 1.0) {
+    } else if (value >= 0.9 && value < 1.0) {
       _currentScanType = "瓦片";
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -222,6 +216,10 @@ class _MeCheckIn extends State<MeCheckIn> {
                 var signalValue = "信号源:${value}";
                 String signalName = '正在$_currentScanType信号扫描';
 
+                if (value > 1.0) {
+                  sensorPlugin.stopScan();
+                }
+
                 return Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,8 +228,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                         child: Text(
                           status,
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 14),
+                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
                         ),
                         margin: EdgeInsets.only(
                           bottom: 6,
@@ -241,8 +238,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                         child: Text(
                           signalName,
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 14),
+                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
                         ),
                         margin: EdgeInsets.only(
                           bottom: 6,
@@ -252,8 +248,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                         child: Text(
                           signalValue,
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 11),
+                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
                         ),
                         margin: EdgeInsets.only(
                           bottom: 6,
@@ -263,8 +258,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                         child: Text(
                           '强度：$angleValue',
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 11),
+                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
                         ),
                         margin: EdgeInsets.only(
                           bottom: 6,
@@ -274,8 +268,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                         child: Text(
                           '角度：$angleValue',
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 11),
+                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
                         ),
                         margin: EdgeInsets.only(
                           bottom: 6,
@@ -285,8 +278,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                         child: Text(
                           '距离：$angleValue',
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 11),
+                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
                         ),
                         margin: EdgeInsets.only(
                           bottom: 6,
@@ -309,16 +301,13 @@ class _MeCheckIn extends State<MeCheckIn> {
                     child: Text(
                       '最大范围约：$maxMeter 米',
                       textAlign: TextAlign.center,
-                      style:
-                          TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
+                      style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
                     margin: EdgeInsets.only(
                       top: 8,
                     ),
-                    decoration: BoxDecoration(
-                        color: _themeColor,
-                        borderRadius: BorderRadius.circular(30)),
+                    decoration: BoxDecoration(color: _themeColor, borderRadius: BorderRadius.circular(30)),
                   ),
                 ],
               ),
@@ -333,8 +322,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                   return LinearProgressIndicator(
                     backgroundColor: _themeColor,
                     value: snap?.data ?? 0.0,
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                    valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
                   );
                 },
               ),
@@ -343,7 +331,7 @@ class _MeCheckIn extends State<MeCheckIn> {
             left: 0,
             right: 0,
           ),
-          StreamBuilder<double> (
+          StreamBuilder<double>(
             stream: progressStreamController.stream,
             builder: (ctx, snap) {
               // todo: 模拟数据
@@ -446,17 +434,13 @@ class _MeCheckIn extends State<MeCheckIn> {
 //                    color: Theme.of(context).primaryColor,
                       color: HexColor("#CC941E"),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 48, vertical: 13),
+                        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
                         child: Text(
 //                          (snap?.data == null || snap.data < 1.0)
 //                              ? "后台扫描"
 //                              : '确认上传',
                           '确认上传',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
+                          style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                         ),
                       ),
                     ),
@@ -477,8 +461,7 @@ class _MeCheckIn extends State<MeCheckIn> {
                             ),
                             Text(
                               "信号上传协议",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 11),
+                              style: TextStyle(color: Colors.white, fontSize: 11),
                             ),
                           ],
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -528,8 +511,7 @@ class RadarScan extends StatefulWidget {
   }
 }
 
-class RadarScanState extends State<RadarScan>
-    with SingleTickerProviderStateMixin {
+class RadarScanState extends State<RadarScan> with SingleTickerProviderStateMixin {
   AnimationController animationController;
 
   @override

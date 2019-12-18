@@ -37,11 +37,11 @@ class WifiSensor(val context: Context, val onSensorValueChangeListener: OnSensor
             val level = result.level
             val timestamp = result.timestamp
 
-            values.put("bssid", bssid)
-            values.put("ssid", ssid)
-            values.put("capabilities", capabilities)
-            values.put("level", level)
-            values.put("timestamp", timestamp)
+            Utils.addIfNonNull(values, "bssid", bssid)
+            Utils.addIfNonNull(values, "ssid", ssid)
+            Utils.addIfNonNull(values, "capabilities", capabilities)
+            Utils.addIfNonNull(values, "level", level)
+            Utils.addIfNonNull(values, "timestamp", timestamp)
             onSensorValueChangeListener?.onSensorChange(SENSOR_TYPE, values)
         }
 
@@ -60,11 +60,11 @@ class WifiSensor(val context: Context, val onSensorValueChangeListener: OnSensor
             val capabilities = result.capabilities
             val level = result.level
             val timestamp = result.timestamp
-            values.put("bssid", bssid)
-            values.put("ssid", ssid)
-            values.put("capabilities", capabilities)
-            values.put("level", level)
-            values.put("timestamp", timestamp)
+            Utils.addIfNonNull(values, "bssid", bssid)
+            Utils.addIfNonNull(values, "ssid", ssid)
+            Utils.addIfNonNull(values, "capabilities", capabilities)
+            Utils.addIfNonNull(values, "level", level)
+            Utils.addIfNonNull(values, "timestamp", timestamp)
             onSensorValueChangeListener?.onSensorChange(SENSOR_TYPE, values)
         }
 
@@ -73,7 +73,7 @@ class WifiSensor(val context: Context, val onSensorValueChangeListener: OnSensor
 
     override fun init() {
 
-        wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        wifiManager = context.getApplicationContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         context.registerReceiver(wifiScanReceiver, intentFilter)

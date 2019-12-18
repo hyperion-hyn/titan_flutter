@@ -4,11 +4,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
-import 'me_check_in_page.dart';
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
 
@@ -227,7 +227,7 @@ class HomePanelState extends State<HomePanel> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MeCheckIn(),
+                        builder: (context) => ContributionPage(),
                       ),
                     );
                   },

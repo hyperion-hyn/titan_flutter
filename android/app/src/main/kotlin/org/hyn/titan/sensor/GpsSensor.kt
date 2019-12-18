@@ -33,13 +33,13 @@ class GpsSensor(val context: Context, val onSensorValueChangeListener: OnSensorV
 
             val values = mutableMapOf<String, Any>()
 
-            values.put("lat", lat)
-            values.put("lon", lon)
-            values.put("altitude", altitude)
-            values.put("accuracy", accuracy)
-            values.put("bearing", bearing)
-            values.put("speed", speed)
-            values.put("time", time)
+            Utils.addIfNonNull(values, "lat", lat)
+            Utils.addIfNonNull(values, "lon", lon)
+            Utils.addIfNonNull(values, "altitude", altitude)
+            Utils.addIfNonNull(values, "accuracy", accuracy)
+            Utils.addIfNonNull(values, "bearing", bearing)
+            Utils.addIfNonNull(values, "speed", speed)
+            Utils.addIfNonNull(values, "time", time)
 
             onSensorValueChangeListener.onSensorChange(SENSOR_TYPE, values)
 

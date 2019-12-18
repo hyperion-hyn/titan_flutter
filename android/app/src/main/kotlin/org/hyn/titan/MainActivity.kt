@@ -32,17 +32,13 @@ class MainActivity : FlutterActivity() {
 
         val encryptionPluginInterface = EncryptionPluginInterface(this, flutterView)
         val walletPluginInterface = WalletPluginInterface(this, flutterView)
-        val sensorPluginInterface = SensorPluginInterface(this, flutterView, callChannel)
+        val sensorPluginInterface = SensorPluginInterface(this, flutterView)
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
             if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
             }
-            if (!handled) {
-                handled = sensorPluginInterface.setMethodCallHandler(call, result)
-            }
-
             if (!handled) {
                 when (call.method) {
                     "nativeGreet" -> {  // this is a test call

@@ -30,7 +30,7 @@ class GnssSensor(val context: Context, val onSensorValueChangeListener: OnSensor
 
             val satelliteCount = status.satelliteCount;
 
-            for (index in 1..satelliteCount) {
+            for (index in 0..satelliteCount - 1) {
                 val azimuth = status.getAzimuthDegrees(index)
                 val frequency = status.getCarrierFrequencyHz(index)
                 val noise = status.getCn0DbHz(index)
@@ -40,12 +40,12 @@ class GnssSensor(val context: Context, val onSensorValueChangeListener: OnSensor
 
                 val values = mutableMapOf<String, Any>()
 
-                values.put("azimuth", azimuth);
-                values.put("frequency", frequency);
-                values.put("noise", noise);
-                values.put("constellation", constellation);
-                values.put("elevation", elevation);
-                values.put("svid", svid);
+                Utils.addIfNonNull(values, "azimuth", azimuth);
+                Utils.addIfNonNull(values, "frequency", frequency);
+                Utils.addIfNonNull(values, "noise", noise);
+                Utils.addIfNonNull(values, "constellation", constellation);
+                Utils.addIfNonNull(values, "elevation", elevation);
+                Utils.addIfNonNull(values, "svid", svid);
                 onSensorValueChangeListener.onSensorChange(SENSOR_TYPE, values)
 
             }

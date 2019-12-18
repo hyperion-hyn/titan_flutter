@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import timber.log.Timber
 
 class BluetoothSensor(val context: Context, val onSensorValueChangeListener: OnSensorValueChangeListener) : Sensor {
 
@@ -20,6 +21,9 @@ class BluetoothSensor(val context: Context, val onSensorValueChangeListener: OnS
 
         override fun onReceive(context: Context, intent: Intent) {
             val action: String = intent.action ?: return
+
+            Timber.i("action:$action")
+
             when (action) {
                 BluetoothDevice.ACTION_FOUND -> {
                     // Discovery has found a device. Get the BluetoothDevice
@@ -31,9 +35,9 @@ class BluetoothSensor(val context: Context, val onSensorValueChangeListener: OnS
                     val deviceType = device.type
                     val values = mutableMapOf<String, Any>()
 
-                    values.put("name", deviceName)
-                    values.put("mac", deviceHardwareAddress)
-                    values.put("type", deviceType)
+                    Utils.addIfNonNull(values, "name", deviceName)
+                    Utils.addIfNonNull(values, "mac", deviceHardwareAddress)
+                    Utils.addIfNonNull(values, "type", deviceType)
 
                     onSensorValueChangeListener?.onSensorChange(SENSOR_TYPE, values)
 
@@ -50,11 +54,11 @@ class BluetoothSensor(val context: Context, val onSensorValueChangeListener: OnS
     }
 
     override fun startScan() {
-        bluetoothAdapter?.startDiscovery();
+        bluetoothAdapter.startDiscovery();
     }
 
     override fun stopScan() {
-        bluetoothAdapter?.cancelDiscovery();
+        bluetoothAdapter.cancelDiscovery();
         context.unregisterReceiver(receiver);
     }
 
