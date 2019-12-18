@@ -323,8 +323,8 @@ class _MeState extends UserState<MePage> with RouteAware {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => InAppWebViewContainer(
-                                  initUrl: S.of(context).maprich_intro_url,
+                            builder: (context) => WebViewContainer(
+                                  initUrl: S.of(context).maprich_intro_url(Const.MAP_RICH_DOMAIN_WEBSITE),
                                   title: S.of(context).use_guide,
                                 )));
                   }),

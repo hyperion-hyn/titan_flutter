@@ -38,7 +38,13 @@ class Const {
     return env.buildType == BuildType.DEV ? MAP_RICH_DOMAIN_DEV : MAP_RICH_DOMAIN_PROD;
   }
 
-  static const String MAP_RICH_DOMAIN_WEBSITE = "https://www.maprich.net/";
+  static String get MAP_RICH_DOMAIN_WEBSITE {
+    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+      return "https://www.maprich.net/";
+    } else {
+      return "https://www.starrich.io/";
+    }
+  }
 
   static const String NEWS_DOMAIN = "https://news.hyn.space/";
 

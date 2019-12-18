@@ -157,7 +157,9 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
                             backgroundImage: AssetImage("res/drawable/default_avator.png"),
                           ),
                         ),
-                        SizedBox(width: 16,),
+                        SizedBox(
+                          width: 16,
+                        ),
                         Expanded(
                           child: Text(
                             S.of(context).by_recommend('${getParentEmail()}'),
@@ -303,7 +305,7 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
               children: <Widget>[
                 // todo: jison edit_团队注册量
                 Column(
-                children: <Widget>[
+                  children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
