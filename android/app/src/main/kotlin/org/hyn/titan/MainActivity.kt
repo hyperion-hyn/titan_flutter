@@ -13,6 +13,7 @@ import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
 import org.hyn.titan.encryption.EncryptionPluginInterface
+import org.hyn.titan.sensor.SensorPluginInterface
 import org.hyn.titan.wallet.WalletPluginInterface
 import java.io.File
 
@@ -31,11 +32,15 @@ class MainActivity : FlutterActivity() {
 
         val encryptionPluginInterface = EncryptionPluginInterface(this, flutterView)
         val walletPluginInterface = WalletPluginInterface(this, flutterView)
+        val sensorPluginInterface = SensorPluginInterface(this, flutterView, callChannel)
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
             if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
+            }
+            if (!handled) {
+                handled = sensorPluginInterface.setMethodCallHandler(call, result)
             }
 
             if (!handled) {

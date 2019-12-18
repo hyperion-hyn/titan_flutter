@@ -10,7 +10,7 @@ import android.os.Bundle
 class GpsSensor(val context: Context, val onSensorValueChangeListener: OnSensorValueChangeListener) : Sensor {
 
     companion object {
-        const val SENSOR_TYPE = -3
+        const val SENSOR_TYPE = SensorType.GPS
     }
 
     lateinit var mLocationManager: LocationManager;

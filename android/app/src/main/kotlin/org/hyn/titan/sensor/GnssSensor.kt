@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi
 class GnssSensor(val context: Context, val onSensorValueChangeListener: OnSensorValueChangeListener) : Sensor {
 
     companion object {
-        const val SENSOR_TYPE = -4
+        const val SENSOR_TYPE = SensorType.GNSS
     }
 
     lateinit var mLocationManager: LocationManager;

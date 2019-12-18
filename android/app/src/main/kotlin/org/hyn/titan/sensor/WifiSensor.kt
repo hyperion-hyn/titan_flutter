@@ -9,7 +9,7 @@ import android.net.wifi.WifiManager
 class WifiSensor(val context: Context, val onSensorValueChangeListener: OnSensorValueChangeListener) : Sensor {
 
     companion object {
-        const val SENSOR_TYPE = -1
+        const val SENSOR_TYPE = SensorType.WIFI
     }
 
 

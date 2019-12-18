@@ -7,11 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 
-class BlueToothSensor(val context: Context, val onSensorValueChangeListener: OnSensorValueChangeListener) : Sensor {
+class BluetoothSensor(val context: Context, val onSensorValueChangeListener: OnSensorValueChangeListener) : Sensor {
 
 
     companion object {
-        const val SENSOR_TYPE = -2
+        const val SENSOR_TYPE = SensorType.BLUETOOTH
     }
 
     lateinit var bluetoothAdapter: BluetoothAdapter;
@@ -19,7 +19,7 @@ class BlueToothSensor(val context: Context, val onSensorValueChangeListener: OnS
     private val receiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            val action: String = intent.action
+            val action: String = intent.action ?: return
             when (action) {
                 BluetoothDevice.ACTION_FOUND -> {
                     // Discovery has found a device. Get the BluetoothDevice
