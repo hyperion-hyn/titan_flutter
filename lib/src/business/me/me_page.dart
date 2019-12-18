@@ -12,7 +12,7 @@ import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/business/my/me_setting_page.dart';
 import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
-import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/business/webview/inappwebview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -323,7 +323,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => WebViewContainer(
+                            builder: (context) => InAppWebViewContainer(
                                   initUrl: S.of(context).maprich_intro_url,
                                   title: S.of(context).use_guide,
                                 )));

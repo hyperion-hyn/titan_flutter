@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../me/widget_shot.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 
-class WebViewContainer extends StatefulWidget {
+class InAppWebViewContainer extends StatefulWidget {
   final String initUrl;
   final String title;
 
-  WebViewContainer({this.initUrl, this.title = ''});
+  InAppWebViewContainer({this.initUrl, this.title = ''});
 
   @override
   State<StatefulWidget> createState() {
-    return WebViewContainerState();
+    return InAppWebViewContainerState();
   }
 }
 
-
-class WebViewContainerState extends State<WebViewContainer> {
-  WebViewController webViewController;
+class InAppWebViewContainerState extends State<InAppWebViewContainer> {
   final ShotController _shotController = new ShotController();
 
-  String title;
+  InAppWebViewController webView;
+  String url = "";
+  double progress = 0;
 
+  String title;
   bool isLoading = true;
 
   Function onBackPress;
@@ -32,12 +33,19 @@ class WebViewContainerState extends State<WebViewContainer> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (webViewController != null) {
-          if (await webViewController.canGoBack()) {
-            webViewController.goBack();
+        print('[webview]  -->11111');
+        if (webView != null) {
+          print('[webview]  -->3333');
+
+          if (await webView.canGoBack()) {
+            print('[webview]  -->4444');
+
+            webView.goBack();
             return false;
           }
         }
+        print('[webview]  -->2222');
+
         return true;
       },
       child: Scaffold(
@@ -57,7 +65,7 @@ class WebViewContainerState extends State<WebViewContainer> {
               icon: Icon(Icons.share),
               color: Colors.white,
               tooltip: S.of(context).share,
-              onPressed: (){
+              onPressed: () {
                 _shareQr(context);
               },
             ),
@@ -74,11 +82,10 @@ class WebViewContainerState extends State<WebViewContainer> {
             children: <Widget>[
               if (isLoading)
                 SizedBox(
-                  height: 2,
-                  child: LinearProgressIndicator(
-//                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                  ),
-                ),
+                    height: 2,
+                    child: progress < 1.0
+                        ? LinearProgressIndicator(value: progress)
+                        : Container()),
               Expanded(
                 child: _body(),
               ),
@@ -119,82 +126,76 @@ class WebViewContainerState extends State<WebViewContainer> {
 
   Widget _body() {
 
-    return WebView(
+    print('[inapp] --> webView, url:${widget.initUrl}');
+
+    return InAppWebView(
       initialUrl: widget.initUrl,
-      onWebViewCreated: (WebViewController controller) {
-        webViewController = controller;
+      initialHeaders: {},
+      initialOptions: InAppWebViewWidgetOptions(
+          inAppWebViewOptions: InAppWebViewOptions(
+        debuggingEnabled: true,
+      )),
+      onWebViewCreated: (InAppWebViewController controller) {
+        webView = controller;
       },
-      onPageFinished: (String url) async {
-        String _title = await webViewController?.getTitle();
-        if (_title?.isNotEmpty == true) {
-          setState(() {
-            title = _title;
-          });
-        }
+      onLoadStart: (InAppWebViewController controller, String url) {
+        print("onLoadStart $url");
         setState(() {
-          isLoading = false;
+          this.url = url;
+        });
+      },
+      onLoadStop: (InAppWebViewController controller, String url) async {
+        print("onLoadStop $url");
+        setState(() {
+          this.url = url;
         });
 
         updateBackOrForward();
-
-        print('page loaded $title $url}');
       },
-      javascriptMode: JavascriptMode.unrestricted,
-      navigationDelegate: (NavigationRequest request) {
-        bool prevent = false;
-
-//                    if(request.url.contains('verify.meituan.com')) {
-//                      prevent = true;
-//                    }
-
-        //非http/https协议
-        if (!request.url.startsWith(RegExp('^https?://'))) {
-          prevent = true;
-        }
-        var strs = request.url.split('/');
-        var route = strs[strs.length - 1];
-        //下载apk
-        if (route.contains('.apk')) {
-          prevent = true;
-        }
-        if (prevent) {
-          print(('block ${request.url}'));
-          return NavigationDecision.prevent;
-        }
+      onProgressChanged: (InAppWebViewController controller, int progress) {
+        print("onProgressChanged $url");
 
         setState(() {
-          isLoading = true;
+          this.progress = progress / 100;
+          print('[inapp] --> webView, progress:${progress}');
         });
-
-        print('allow ${request.url}');
-        return NavigationDecision.navigate;
       },
     );
   }
 
   void updateBackOrForward() async {
-    if (await webViewController?.canGoBack() == true) {
+    if (await webView?.canGoBack() == true) {
       onBackPress = () {
-        webViewController.goBack();
+        webView.goBack();
       };
     } else {
       onBackPress = null;
     }
 
-    if (await webViewController?.canGoForward() == true) {
+    if (await webView?.canGoForward() == true) {
       onForwardPress = () {
-        webViewController.goForward();
+        webView.goForward();
       };
     } else {
       onForwardPress = null;
     }
-    setState(() {});
+
+    setState(() {
+
+    });
   }
+
 
   void _shareQr(BuildContext context) async {
-    if (widget.initUrl != null && widget.initUrl.isNotEmpty) {
-      Share.text(S.of(context).share, widget.initUrl, 'text/plain');
+
+    if (webView != null) {
+      webView.takeScreenshot().then((imageByte) async {
+        var len = imageByte.lengthInBytes;
+        debugPrint("screenshot taken bytes $len");
+
+        await Share.file(
+            S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+      });
     }
   }
-
 }

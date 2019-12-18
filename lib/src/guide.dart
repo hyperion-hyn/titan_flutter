@@ -28,7 +28,12 @@ class _GuildState extends State<GuidePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("LOGIN_STATUS:$LOGIN_STATUS");
+    print("LOGIN_STATUS:$LOGIN_STATUS, context:$context");
+
+    globalContext = context;
+    appLocale = Localizations.localeOf(context);
+    print('[guide] --> build, context:$context, appLocale:$appLocale');
+
     if (LOGIN_STATUS == 1) {
       return LoginPage();
     } else if (LOGIN_STATUS == 2) {
