@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 
 class WebViewContainer extends StatefulWidget {
   final String initUrl;
@@ -12,6 +14,7 @@ class WebViewContainer extends StatefulWidget {
     return WebViewContainerState();
   }
 }
+
 
 class WebViewContainerState extends State<WebViewContainer> {
   WebViewController webViewController;
@@ -47,6 +50,16 @@ class WebViewContainerState extends State<WebViewContainer> {
               );
             },
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.share),
+              color: Colors.white,
+              tooltip: S.of(context).share,
+              onPressed: (){
+                _shareQr(context);
+              },
+            ),
+          ],
           iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           title: Text(
@@ -62,60 +75,10 @@ class WebViewContainerState extends State<WebViewContainer> {
                   height: 2,
                   child: LinearProgressIndicator(
 //                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                      ),
+                  ),
                 ),
               Expanded(
-                child: WebView(
-                  initialUrl: widget.initUrl,
-                  onWebViewCreated: (WebViewController controller) {
-                    webViewController = controller;
-                  },
-                  onPageFinished: (String url) async {
-                    String _title = await webViewController?.getTitle();
-                    if (_title?.isNotEmpty == true) {
-                      setState(() {
-                        title = _title;
-                      });
-                    }
-                    setState(() {
-                      isLoading = false;
-                    });
-
-                    updateBackOrForward();
-
-                    print('page loaded $title $url}');
-                  },
-                  javascriptMode: JavascriptMode.unrestricted,
-                  navigationDelegate: (NavigationRequest request) {
-                    bool prevent = false;
-
-//                    if(request.url.contains('verify.meituan.com')) {
-//                      prevent = true;
-//                    }
-
-                    //非http/https协议
-                    if (!request.url.startsWith(RegExp('^https?://'))) {
-                      prevent = true;
-                    }
-                    var strs = request.url.split('/');
-                    var route = strs[strs.length - 1];
-                    //下载apk
-                    if (route.contains('.apk')) {
-                      prevent = true;
-                    }
-                    if (prevent) {
-                      print(('block ${request.url}'));
-                      return NavigationDecision.prevent;
-                    }
-
-                    setState(() {
-                      isLoading = true;
-                    });
-
-                    print('allow ${request.url}');
-                    return NavigationDecision.navigate;
-                  },
-                ),
+                child: _body(),
               ),
               Column(
                 children: <Widget>[
@@ -152,6 +115,61 @@ class WebViewContainerState extends State<WebViewContainer> {
     );
   }
 
+  Widget _body() {
+
+    return WebView(
+      initialUrl: widget.initUrl,
+      onWebViewCreated: (WebViewController controller) {
+        webViewController = controller;
+      },
+      onPageFinished: (String url) async {
+        String _title = await webViewController?.getTitle();
+        if (_title?.isNotEmpty == true) {
+          setState(() {
+            title = _title;
+          });
+        }
+        setState(() {
+          isLoading = false;
+        });
+
+        updateBackOrForward();
+
+        print('page loaded $title $url}');
+      },
+      javascriptMode: JavascriptMode.unrestricted,
+      navigationDelegate: (NavigationRequest request) {
+        bool prevent = false;
+
+//                    if(request.url.contains('verify.meituan.com')) {
+//                      prevent = true;
+//                    }
+
+        //非http/https协议
+        if (!request.url.startsWith(RegExp('^https?://'))) {
+          prevent = true;
+        }
+        var strs = request.url.split('/');
+        var route = strs[strs.length - 1];
+        //下载apk
+        if (route.contains('.apk')) {
+          prevent = true;
+        }
+        if (prevent) {
+          print(('block ${request.url}'));
+          return NavigationDecision.prevent;
+        }
+
+        setState(() {
+          isLoading = true;
+        });
+
+        print('allow ${request.url}');
+        return NavigationDecision.navigate;
+      },
+    );
+  }
+
   void updateBackOrForward() async {
     if (await webViewController?.canGoBack() == true) {
       onBackPress = () {
@@ -170,4 +188,11 @@ class WebViewContainerState extends State<WebViewContainer> {
     }
     setState(() {});
   }
+
+  void _shareQr(BuildContext context) async {
+    if (widget.initUrl != null && widget.initUrl.isNotEmpty) {
+      Share.text(S.of(context).share, widget.initUrl, 'text/plain');
+    }
+  }
+
 }
