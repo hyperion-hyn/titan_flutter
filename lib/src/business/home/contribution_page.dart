@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 
+//import 'dart:ffi';
 //import 'dart:io';
 //import 'package:titan/src/global.dart';
 //import 'package:titan/src/utils/utils.dart';
@@ -216,6 +216,7 @@ class _ContributionState extends State<ContributionPage> {
                 var signalValue = "信号源:${value}";
                 String signalName = '正在$_currentScanType信号扫描';
 
+                // todo: test
                 if (value > 1.0) {
                   sensorPlugin.stopScan();
                 }
@@ -346,73 +347,18 @@ class _ContributionState extends State<ContributionPage> {
 
           // todo: 测试
           //..............begin//
-          Positioned(
-            bottom: 188,
-            child: StreamBuilder<double>(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                return Image.asset(
-                  'res/drawable/${_getImageName()}_status_scan.png',
-                  scale: 2,
-                );
-              },
-            ),
-          ),
-
-          /*
-          Positioned(
-            left: 88,
-            child: StreamBuilder<double>(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                return Image.asset(
-                  'res/drawable/${_getImageName()}_status_scan.png',
-                  scale: 2,
-                );
-              },
-            ),
-          ),
-
-          Positioned(
-            right: 88,
-            child: StreamBuilder<double>(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                return Image.asset(
-                  'res/drawable/${_getImageName()}_status_scan.png',
-                  scale: 2,
-                );
-              },
-            ),
-          ),
-
-          Positioned(
-            top: 200,
-            child: StreamBuilder<double>(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                return Image.asset(
-                  'res/drawable/${_getImageName()}_status_scan.png',
-                  scale: 2,
-                );
-              },
-            ),
-          ),
-
-          Positioned(
-            bottom: 250,
-            child: StreamBuilder<double>(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                return Image.asset(
-                  'res/drawable/${_getImageName()}_status_scan.png',
-                  scale: 2,
-                );
-              },
-            ),
-          ),
-          */
-
+//          Positioned(
+//            bottom: 188,
+//            child: StreamBuilder<double>(
+//              stream: progressStreamController.stream,
+//              builder: (ctx, snap) {
+//                return Image.asset(
+//                  'res/drawable/${_getImageName()}_status_scan.png',
+//                  scale: 2,
+//                );
+//              },
+//            ),
+//          ),
           //..............end//
 
           Positioned(

@@ -188,6 +188,10 @@ flutter:
     - res/drawable/bluetooth_status_scan.png
     - res/drawable/basestation_status_scan.png
     - res/drawable/radar_scan.png
+    - res/drawable/data_contribution_wallet.png
+    - res/drawable/data_contribution_position.png
+    - res/drawable/data_contribution_signal.png
+    - res/drawable/data_contribution_check.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

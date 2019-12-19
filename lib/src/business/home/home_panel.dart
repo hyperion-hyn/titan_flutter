@@ -4,13 +4,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
+import 'data_contribution_page.dart';
 
 class HomePanel extends StatefulWidget {
   final ScrollController scrollController;
@@ -218,19 +218,20 @@ class HomePanelState extends State<HomePanel> {
             width: 12,
           ),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                  border: Border.all(color: Color(0xFFE9E9E9), width: 1)),
-              child: GestureDetector(
-                onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ContributionPage(),
-                      ),
-                    );
-                  },
+            child: InkWell(
+              borderRadius: BorderRadius.all(Radius.circular(4.0)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DataContributionPage(),
+                  ),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                    border: Border.all(color: Color(0xFFE9E9E9), width: 1)),
                 child: Stack(
                   children: <Widget>[
                     Padding(
@@ -250,13 +251,6 @@ class HomePanelState extends State<HomePanel> {
                               style: TextStyle(color: Colors.grey, fontSize: 12),
                             ),
                           ),
-//                          Padding(
-//                            padding: const EdgeInsets.only(top: 8.0),
-//                            child: Text(
-//                              '即将开放',
-//                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Color(0xFFF82530)),
-//                            ),
-//                          ),
                         ],
                       ),
                     ),
