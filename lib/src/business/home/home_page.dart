@@ -128,7 +128,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
         BlocListener<home.HomeBloc, home.HomeState>(
           listener: (context, state) {
-            print('xxx state $state');
             //while listener trigger before build, the panelKey is not set, so call after build
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (state is InitialHomeState) {

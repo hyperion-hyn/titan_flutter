@@ -124,7 +124,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
     //logic:  use prop to update each scene. scene use bloc to update data/state.
     return LayoutBuilder(builder: (ctx, BoxConstraints boxConstraints) {
       return BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(builder: (context, state) {
-        print('xxx build $state');
         var languageCode = Localizations.localeOf(context).languageCode;
 
         //---------------------------
@@ -206,7 +205,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         bool draggable = false;
         SheetPanelBuilder panelBuilder;
         double collapsedHeight = 120;
-        double anchorHeight = 400;
+        double anchorHeight = boxConstraints.biggest.height * 0.55;
         double initHeight = 0;
 
         if (state is InitialScaffoldMapState) {
@@ -219,12 +218,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           draggable = true;
           //dMap poi panel (by config)
           if (state.dMapConfigModel?.panelBuilder != null && state.getCurrentPoi() is IDMapPoi) {
-            if (state.dMapConfigModel?.panelPaddingTop != null) {
+            panelBuilder =
+                (context, controller) => state.dMapConfigModel.panelBuilder(context, controller, state.getCurrentPoi());
+
+            if (state.dMapConfigModel.panelPaddingTop != null) {
               topPadding = state.dMapConfigModel?.panelPaddingTop(context);
-            }
-            if (state.dMapConfigModel != null) {
-              panelBuilder = (context, controller) =>
-                  state.dMapConfigModel.panelBuilder(context, controller, state.getCurrentPoi());
             }
           }
 
@@ -312,10 +310,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           draggable = true;
         }
         if (state.dMapConfigModel?.panelAnchorHeight != null) {
-          anchorHeight = state.dMapConfigModel?.panelAnchorHeight;
+          anchorHeight = state.dMapConfigModel?.panelAnchorHeight(context);
         }
         if (state.dMapConfigModel?.panelCollapsedHeight != null) {
-          collapsedHeight = state.dMapConfigModel?.panelCollapsedHeight;
+          collapsedHeight = state.dMapConfigModel?.panelCollapsedHeight(context);
+          initHeight = collapsedHeight;
         }
 
         double maxHeight = boxConstraints.biggest.height;
@@ -326,7 +325,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
         });
-        print('xxx panelMax $panelMax, panelMin $panelMin, panelAnchor $panelAnchor, panelInitSize $panelInitSize');
+//        print('xxx panelMax $panelMax, panelMin $panelMin, panelAnchor $panelAnchor, panelInitSize $panelInitSize');
 
         //---------------------------
         //set opt bar
@@ -396,9 +395,12 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                 },
                 child: NotificationListener<myWidget.DraggableScrollableNotification>(
                   onNotification: (notification) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      (Keys.mapContainerKey.currentState as MapContainerState).onDragPanelYChange(notification.extent);
-                    });
+                    if (notification.extent <= notification.anchorExtent) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        (Keys.mapContainerKey.currentState as MapContainerState)
+                            .onDragPanelYChange(notification.extent);
+                      });
+                    }
                     return false;
                   },
                   child: myWidget.DraggableScrollableSheet(

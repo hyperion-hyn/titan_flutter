@@ -336,7 +336,7 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> wit
     _scrollController = _DraggableScrollableSheetScrollController(extent: _extent);
 
     animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
     )..addListener(() {
         _extent.currentExtent = animationController.value;
@@ -415,7 +415,7 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> wit
           child: NotificationListener<ScrollEndNotification>(
               onNotification: (scrollEndNotification) {
 //                WidgetsBinding.instance.addPostFrameCallback((_) => adjustPosition());
-                adjustPosition();
+                adjustPosition(scrollEndNotification.dragDetails?.velocity);
                 return false;
               },
               child: widget.builder(context, _scrollController)),
@@ -426,13 +426,16 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> wit
     );
   }
 
-  void adjustPosition() {
-    if (_extent.isInMaxArea) {
-      DraggableScrollableActuator.setMax(context);
-    } else if (_extent.isInAnchorArea) {
-      DraggableScrollableActuator.setAnchor(context);
-    } else if (_extent.isInMinArea) {
-      DraggableScrollableActuator.setMin(context);
+  void adjustPosition(Velocity velocity) {
+    //when no velocity dy
+    if(velocity?.pixelsPerSecond?.dy == null || velocity?.pixelsPerSecond?.dy == 0.0) {
+      if (_extent.isInMaxArea) {
+        DraggableScrollableActuator.setMax(context);
+      } else if (_extent.isInAnchorArea) {
+        DraggableScrollableActuator.setAnchor(context);
+      } else if (_extent.isInMinArea) {
+        DraggableScrollableActuator.setMin(context);
+      }
     }
   }
 
@@ -540,7 +543,8 @@ class _DraggableScrollableSheetScrollPosition extends ScrollPositionWithSingleCo
 
   @override
   void applyUserOffset(double delta) {
-    if (extent.draggable == true && !listShouldScroll &&
+    if (extent.draggable == true &&
+        !listShouldScroll &&
         (!(/*extent.isAtMin ||*/ extent.isAtMax) || (extent.isAtMin && delta < 0) || (extent.isAtMax && delta > 0))) {
       extent.addPixelDelta(-delta, context.notificationContext);
     } else {
@@ -561,6 +565,7 @@ class _DraggableScrollableSheetScrollPosition extends ScrollPositionWithSingleCo
     _dragCancelCallback?.call();
     _dragCancelCallback = null;
 
+
     if (velocity > 0) {
       //up
       if (extent.currentExtent > extent.anchorExtent) {
@@ -574,11 +579,11 @@ class _DraggableScrollableSheetScrollPosition extends ScrollPositionWithSingleCo
       //down
       if (extent.currentExtent > extent.anchorExtent) {
         DraggableScrollableActuator.setAnchor(context.notificationContext);
-      } else /*if (extent.currentExtent > extent.minExtent)*/ {
+      } else
+      /*if (extent.currentExtent > extent.minExtent)*/ {
         DraggableScrollableActuator.setMin(context.notificationContext);
       }
     }
-    return;
 
 //    // The iOS bouncing simulation just isn't right here - once we delegate
 //    // the ballistic back to the ScrollView, it will use the right simulation.
@@ -652,7 +657,7 @@ class DraggableScrollableActuator extends StatelessWidget {
   /// otherwise.
   static bool reset(BuildContext context) {
     final _InheritedUpdatePositionStateNotifier notifier =
-        context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+        context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (notifier == null) {
       return false;
     }
@@ -661,7 +666,7 @@ class DraggableScrollableActuator extends StatelessWidget {
 
   static bool setMax(BuildContext context) {
     final _InheritedUpdatePositionStateNotifier notifier =
-        context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+        context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (notifier == null) {
       return false;
     }
@@ -670,7 +675,7 @@ class DraggableScrollableActuator extends StatelessWidget {
 
   static bool setMin(BuildContext context) {
     final _InheritedUpdatePositionStateNotifier notifier =
-        context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+        context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (notifier == null) {
       return false;
     }
@@ -679,7 +684,7 @@ class DraggableScrollableActuator extends StatelessWidget {
 
   static bool setAnchor(BuildContext context) {
     final _InheritedUpdatePositionStateNotifier notifier =
-        context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+        context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (notifier == null) {
       return false;
     }
@@ -688,7 +693,7 @@ class DraggableScrollableActuator extends StatelessWidget {
 
   static bool setHide(BuildContext context) {
     final _InheritedUpdatePositionStateNotifier notifier =
-        context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+        context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (notifier == null) {
       return false;
     }

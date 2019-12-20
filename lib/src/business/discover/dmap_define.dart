@@ -167,9 +167,9 @@ final encryptShareDMapConfigModel = DMapConfigModel(
   panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
     return SharePoisPanel(scrollController: scrollController);
   },
-  panelPaddingTop: (context) => 360,
-  panelAnchorHeight: 120,
-  panelCollapsedHeight: 120,
+  panelPaddingTop: (context) => MediaQuery.of(context).size.height * 0.45,
+  panelAnchorHeight: (context) => MediaQuery.of(context).size.height * 0.55,
+  panelCollapsedHeight: (context) => 220,
 );
 
 Future<Map<String, dynamic>> _getFeature(Point<double> point, LatLng coordinates, String layerId) async {

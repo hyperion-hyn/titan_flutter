@@ -20,6 +20,7 @@ void main() {
     BuildEnvironment.init(channel: BuildChannel.OFFICIAL, buildType: BuildType.DEV);
   }
 
+  WidgetsFlutterBinding.ensureInitialized();
   TitanPlugin.initFlutterMethodCall();
   //init key for security share
   TitanPlugin.initKeyPair();
