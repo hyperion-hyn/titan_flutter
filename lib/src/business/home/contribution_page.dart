@@ -145,13 +145,13 @@ class _ContributionState extends State<ContributionPage> {
         _imageName = "gps";
         break;
 
-      case "磁场":
-        _imageName = "magnetic";
-        break;
+//      case "磁场":
+//        _imageName = "magnetic";
+//        break;
 
-      case "瓦片":
-        _imageName = "tile";
-        break;
+//      case "瓦片":
+//        _imageName = "tile";
+//        break;
     }
 
     print('[me] --> _imageName:$_imageName');
@@ -160,19 +160,20 @@ class _ContributionState extends State<ContributionPage> {
 
   void _setCurrentScanType(double currentValue) {
     var value = currentValue ?? 0.001;
-    if (value > 0 && value < 0.2) {
+    if (value > 0 && value < 0.25) {
       _currentScanType = "WiFi";
-    } else if (value >= 0.2 && value < 0.4) {
+    } else if (value >= 0.25 && value < 0.5) {
       _currentScanType = "基站";
-    } else if (value >= 0.4 && value < 0.6) {
+    } else if (value >= 0.5 && value < 0.75) {
       _currentScanType = "蓝牙";
-    } else if (value >= 0.6 && value < 0.8) {
+    } else if (value >= 0.75 && value < 1.0) {
       _currentScanType = "GPS";
-    } else if (value >= 0.8 && value < 0.9) {
+    }
+    /*else if (value >= 0.8 && value < 0.9) {
       _currentScanType = "磁场";
     } else if (value >= 0.9 && value < 1.0) {
       _currentScanType = "瓦片";
-    }
+    }*/
   }
 
   @override
@@ -369,7 +370,6 @@ class _ContributionState extends State<ContributionPage> {
                 if (snap.data < 1.0) {
                   return Container();
                 }
-
                 return Column(
                   children: <Widget>[
                     RaisedButton(
@@ -429,16 +429,13 @@ class _ContributionState extends State<ContributionPage> {
         target: userPosition ?? LatLng(23.12076, 113.322058),
         zoom: defaultZoom,
       ),
-//      styleString: 'https://static.hyn.space/maptiles/see-it-all.json',
       styleString: 'https://cn.tile.map3.network/fiord-color.json',
-
       onStyleLoaded: (mapboxController) {
         mapController = mapboxController;
         Future.delayed(Duration(milliseconds: 1000)).then((v) {
           startScan();
         });
       },
-
       myLocationTrackingMode: MyLocationTrackingMode.None,
       rotateGesturesEnabled: false,
       tiltGesturesEnabled: false,

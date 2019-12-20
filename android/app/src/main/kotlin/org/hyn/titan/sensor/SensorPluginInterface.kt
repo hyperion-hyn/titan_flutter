@@ -55,8 +55,6 @@ class SensorPluginInterface(private val context: Context, private val binaryMess
     private val sensorValueChangeListener = object : OnSensorValueChangeListener {
         override fun onSensorChange(sensorType: Int, values: Map<String, Any>) {
             Timber.i("sensorType:$sensorType,values:$values")
-
-
             methodChannel.invokeMethod("sensor#valueChange", values)
         }
     }

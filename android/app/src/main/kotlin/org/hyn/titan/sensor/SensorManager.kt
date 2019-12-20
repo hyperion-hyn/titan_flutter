@@ -25,20 +25,18 @@ class SensorManager(val context: Context, private val sensorValueChangeListener:
         val gpsSensor = GpsSensor(context, sensorValueChangeListener);
         registerSensorList.add(gpsSensor)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val gnssSensor = GnssSensor(context, sensorValueChangeListener);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            val gnssSensor = GnssSensor(context, sensorValueChangeListener);
 //            registerSensorList.add(gnssSensor)
-        }
+//        }
 
         val cellularSensor = CellularSensor(context, sensorValueChangeListener);
-
         registerSensorList.add(cellularSensor)
 
 
         for (sensor in registerSensorList) {
             sensor.init();
         }
-
     }
 
 

@@ -44,8 +44,6 @@ class WifiSensor(val context: Context, val onSensorValueChangeListener: OnSensor
             Utils.addIfNonNull(values, "timestamp", timestamp)
             onSensorValueChangeListener?.onSensorChange(SENSOR_TYPE, values)
         }
-
-
     }
 
     private fun scanFailure() {
@@ -80,8 +78,6 @@ class WifiSensor(val context: Context, val onSensorValueChangeListener: OnSensor
     }
 
     override fun startScan() {
-
-
         val success = wifiManager.startScan()
         if (!success) {
             // scan failure handling
@@ -95,7 +91,6 @@ class WifiSensor(val context: Context, val onSensorValueChangeListener: OnSensor
     }
 
     override fun destory() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }

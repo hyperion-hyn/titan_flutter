@@ -148,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				F5147210237EF6F500931008 /* ErrorCode.swift */,
+				9A86DB6123AC6DF40032B410 /* Sensor */,
 				F54F1E25235EEF9900633293 /* Wallet */,
 				AD1B0CAE230E4F7F00C5395E /* Runner.entitlements */,
 				F537410A22E8678100ADF4FF /* Ext */,
@@ -171,6 +172,13 @@
 			children = (
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9A86DB6123AC6DF40032B410 /* Sensor */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Sensor;
 			sourceTree = "<group>";
 		};
 		F53740FD22E83D2A00ADF4FF /* Encryption */ = {
