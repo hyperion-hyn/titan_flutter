@@ -470,5 +470,6 @@
   "check_in_completed": "Done",
   "hashrate": "HashRate",
   "scan_wifi_map_style_url": "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json",
-  "maprich_intro_url": "${rich_domain}intro?lang=en"
+  "maprich_intro_url": "${rich_domain}intro?lang=en",
+  "actual_amount_received":"(Actual amount received shall prevail)"
 }

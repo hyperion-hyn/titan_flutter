@@ -358,9 +358,20 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                           child: Text("${Const.DOUBLE_NUMBER_FORMAT.format(fee)} USDT"),
                         ),
                         Divider(),
-                        Text(
-                          S.of(context).amount_received,
-                          style: TextStyle(color: Colors.black54),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              S.of(context).amount_received,
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                S.of(context).actual_amount_received,
+                                style: TextStyle(color: Colors.black54, fontSize: 12),
+                              ),
+                            ),
+                          ],
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),

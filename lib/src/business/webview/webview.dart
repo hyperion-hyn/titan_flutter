@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import '../me/widget_shot.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 
 class WebViewContainer extends StatefulWidget {
@@ -19,7 +18,6 @@ class WebViewContainer extends StatefulWidget {
 
 class WebViewContainerState extends State<WebViewContainer> {
   WebViewController webViewController;
-  final ShotController _shotController = new ShotController();
 
   String title;
 

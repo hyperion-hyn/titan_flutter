@@ -87,3 +87,7 @@ lib/config.dart
 flutter_export_environment.sh
 _mode.md
 .apk
+.flutter-plugins-dependencies
+ios/Flutter/Flutter.podspec
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/flutter_export_environment.sh

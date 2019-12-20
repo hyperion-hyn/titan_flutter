@@ -36,6 +36,7 @@ class S implements WidgetsLocalizations {
   String get account_new_password => "New password";
   String get account_password => "account password";
   String get action_success_hint => "Operated successfully";
+  String get actual_amount_received => "(Actual amount received shall prevail)";
   String get add_share_options => "Sharing options";
   String get address_copied => "Address copied";
   String get address_copy_success_hint => "Address copied successfully";
@@ -1016,6 +1017,8 @@ class $ko extends S {
   @override
   String get open_camera => "카메라 권한을 켜십시오";
   @override
+  String get actual_amount_received => "(수령 한 실제 금액을 기준으로)";
+  @override
   String get node_mortgage_with_unit => "노드 모기지(USDT)";
   @override
   String get audio => "오디오";
@@ -1973,6 +1976,8 @@ class $zh_CN extends S {
   String get nightlife_guide => "夜生活指南";
   @override
   String get open_camera => "请开启相机权限";
+  @override
+  String get actual_amount_received => "(以实际到账数量为准)";
   @override
   String get node_mortgage_with_unit => "节点抵押(USDT)";
   @override
