@@ -17,46 +17,71 @@ class SearchListPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (pois == null || pois.isEmpty) {
-      return Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              margin: EdgeInsets.all(16),
-              child: Text(S.of(context).search_empty_data),
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 20.0,
             ),
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: InkWell(
-              onTap: () {
-                BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
-              },
-              borderRadius: BorderRadius.all(Radius.circular(32.0)),
-              highlightColor: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Ink(
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xffececec),
-                  ),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.grey,
-                    size: 18,
+          ],
+        ),
+        child: SingleChildScrollView(
+          controller: scrollController,
+          physics: NeverScrollableScrollPhysics(),
+          child: Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  margin: EdgeInsets.only(top: 32),
+                  child: Text(S.of(context).search_empty_data),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: InkWell(
+                  onTap: () {
+                    BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
+                  },
+                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  highlightColor: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Ink(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xffececec),
+                      ),
+                      child: Icon(
+                        Icons.cancel,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       );
     }
 
     return Container(
       height: listHeight,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
       child: Stack(
         children: <Widget>[
           ListView.separated(
@@ -82,7 +107,7 @@ class SearchListPanel extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(32.0)),
               highlightColor: Colors.transparent,
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(8),
                 child: Ink(
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
@@ -90,9 +115,8 @@ class SearchListPanel extends StatelessWidget {
                     color: Color(0xffececec),
                   ),
                   child: Icon(
-                    Icons.close,
+                    Icons.cancel,
                     color: Colors.grey,
-                    size: 18,
                   ),
                 ),
               ),

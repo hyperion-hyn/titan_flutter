@@ -16,15 +16,12 @@ import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/presentation/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import '../../global.dart';
 import 'bloc/bloc.dart';
 
-typedef Future<bool> OnMapClickHandle(
-    BuildContext context, Point<double> point, LatLng coordinates);
-typedef Future<bool> OnMapLongPressHandle(
-    BuildContext context, Point<double> point, LatLng coordinates);
+typedef Future<bool> OnMapClickHandle(BuildContext context, Point<double> point, LatLng coordinates);
+typedef Future<bool> OnMapLongPressHandle(BuildContext context, Point<double> point, LatLng coordinates);
 
 class MapContainer extends StatefulWidget {
   final List<HeavenDataModel> heavenDataList;
@@ -36,22 +33,22 @@ class MapContainer extends StatefulWidget {
   final OnMapLongPressHandle mapLongPressHandle;
   final bool showCenterMarker;
 
-  final DraggableBottomSheetController bottomPanelController;
+//  final DraggableBottomSheetController bottomPanelController;
   final String languageCode;
 
-  MapContainer({
-    Key key,
-    this.heavenDataList,
-    this.routeDataModel,
-    this.style,
-    this.defaultZoom = 9.0,
-    this.defaultCenter = const LatLng(23.122592, 113.327356),
-    this.bottomPanelController,
-    this.mapClickHandle,
-    this.mapLongPressHandle,
-    this.showCenterMarker,
-    this.languageCode
-  }) : super(key: key);
+  MapContainer(
+      {Key key,
+      this.heavenDataList,
+      this.routeDataModel,
+      this.style,
+      this.defaultZoom = 9.0,
+      this.defaultCenter = const LatLng(23.122592, 113.327356),
+//    this.bottomPanelController,
+      this.mapClickHandle,
+      this.mapLongPressHandle,
+      this.showCenterMarker,
+      this.languageCode})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -59,7 +56,7 @@ class MapContainer extends StatefulWidget {
   }
 }
 
-class MapContainerState extends State<MapContainer> {
+class MapContainerState extends State<MapContainer> with SingleTickerProviderStateMixin {
   final MAX_POI_DIFF_DISTANCE = 10000;
 
   MapboxMapController mapboxMapController;
@@ -68,6 +65,9 @@ class MapContainerState extends State<MapContainer> {
 
   StreamSubscription _locationClickSubscription;
   StreamSubscription _eventBusSubscription;
+
+  AnimationController _mapPositionAnimationController;
+  final PublishSubject<double> _updateMapPositionSubject = PublishSubject<double>();
 
   Symbol showingSymbol;
   IPoi currentPoi;
@@ -78,27 +78,23 @@ class MapContainerState extends State<MapContainer> {
   @override
   void initState() {
     super.initState();
-    widget.bottomPanelController?.addListener(onDragPanelYChange);
+    _mapPositionAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      value: 1.0,
+      vsync: this,
+    );
+
+    _updateMapPositionSubject.debounceTime(Duration(milliseconds: 100)).listen((lastValue) {
+      _mapPositionAnimationController.animateTo(lastValue, curve: Curves.linearToEaseOut);
+//      _mapPositionAnimationController.value = lastValue;
+    });
+
     _listenEventBus();
   }
 
-  double _mapTop = 0;
-
-  void onDragPanelYChange() {
-//    print('ch ${widget.bottomPanelController.collapsedHeight} bottom: ${widget.bottomPanelController.bottom}');
-//    if (widget.bottomPanelController.bottom <= widget.bottomPanelController.anchorHeight) {
-    if (widget.bottomPanelController.bottom <= 400) {
-      setState(() {
-        _mapTop = -widget.bottomPanelController.bottom * 0.5;
-      });
-//      if(widget.bottomPanelController.bottom > widget.bottomPanelController.collapsedHeight) {
-//        setState(() {
-//          _mapTop = -widget.bottomPanelController.bottom * 0.5;
-//        });
-//      } else if(_mapTop != 0) {
-//
-//      }
-    }
+  void onDragPanelYChange(double value) {
+    _mapPositionAnimationController.value = value;
+//    _updateMapPositionSubject.add(value);
   }
 
   void _onMapClick(Point<double> point, LatLng coordinates) async {
@@ -109,8 +105,7 @@ class MapContainerState extends State<MapContainer> {
     }
 
     var range = 10;
-    Rect rect = Rect.fromLTRB(
-        point.x - range, point.y - range, point.x + range, point.y + range);
+    Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
     if (await _clickOnMarkerLayer(rect)) {
       await mapboxMapController?.disableLocation();
       return;
@@ -137,8 +132,7 @@ class MapContainerState extends State<MapContainer> {
     }
 
     var range = 10;
-    Rect rect = Rect.fromLTRB(
-        point.x - range, point.y - range, point.x + range, point.y + range);
+    Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
 
     if (await _clickOnMarkerLayer(rect)) {
       return;
@@ -188,8 +182,7 @@ class MapContainerState extends State<MapContainer> {
 //      var ne = LatLng(poi.latLng.latitude + offset, poi.latLng.longitude + offset);
 //      mapboxMapController?.animateCamera(
 //          CameraUpdate.newLatLngBounds2(LatLngBounds(southwest: sw, northeast: ne), 10, top + 42, 10, 10));
-      mapboxMapController
-          ?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+      mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
 
       currentPoi = poi;
     }
@@ -237,8 +230,7 @@ class MapContainerState extends State<MapContainer> {
     //针对过滤后的结果，看选择不同的移动方式
 
     if (distanceFilterList.length == 1) {
-      mapboxMapController
-          .animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0));
+      mapboxMapController.animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0));
     } else {
       var latlngList = List<LatLng>();
       for (var poi in distanceFilterList) {
@@ -248,8 +240,8 @@ class MapContainerState extends State<MapContainer> {
       var padding = 50.0;
       var latlngBound = LatLngBounds.fromLatLngs(latlngList);
 //      var screenHeight = MediaQuery.of(context).size.height;
-      mapboxMapController.moveCamera(CameraUpdate.newLatLngBounds2(
-          latlngBound, padding, padding * 1.2, padding, padding * 1.2));
+      mapboxMapController
+          .moveCamera(CameraUpdate.newLatLngBounds2(latlngBound, padding, padding * 1.2, padding, padding * 1.2));
     }
   }
 
@@ -270,8 +262,8 @@ class MapContainerState extends State<MapContainer> {
       symbolMarkerLayerId = "mapbox-android-symbol-layer";
     }
 
-    List symbolMarkerFeatures = await mapboxMapController
-        ?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
+    List symbolMarkerFeatures =
+        await mapboxMapController?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
     if (symbolMarkerFeatures != null && symbolMarkerFeatures.isNotEmpty) {
       print("symbolMarkerFeatures：" + symbolMarkerFeatures[0]);
 
@@ -300,8 +292,7 @@ class MapContainerState extends State<MapContainer> {
     if (heavenMapLayers.isEmpty) {
       return false;
     }
-    List symbolFeatures = await mapboxMapController
-        ?.queryRenderedFeaturesInRect(rect, heavenMapLayers, null);
+    List symbolFeatures = await mapboxMapController?.queryRenderedFeaturesInRect(rect, heavenMapLayers, null);
     if (symbolFeatures != null && symbolFeatures.isNotEmpty) {
       var firstFeature = json.decode(symbolFeatures[0]);
       print("firstFeature :$firstFeature");
@@ -321,8 +312,7 @@ class MapContainerState extends State<MapContainer> {
     if (Platform.isIOS) {
       filter = "name != NIL";
     }
-    List features = await mapboxMapController?.queryRenderedFeaturesInRect(
-        rect, [], filter);
+    List features = await mapboxMapController?.queryRenderedFeaturesInRect(rect, [], filter);
 
     print("query features :$features");
     var filterFeatureList = features.where((featureString) {
@@ -368,12 +358,10 @@ class MapContainerState extends State<MapContainer> {
     }
   }
 
-  HeavenMapPoiInfo _convertHeavenMapPoiInfoFromFeature(
-      Map<String, dynamic> feature) {
+  HeavenMapPoiInfo _convertHeavenMapPoiInfoFromFeature(Map<String, dynamic> feature) {
     HeavenMapPoiInfo heavenMapPoiInfo = HeavenMapPoiInfo();
 
-    heavenMapPoiInfo.id =
-        feature["id"] is int ? feature["id"].toString() : feature["id"];
+    heavenMapPoiInfo.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
     var lat = double.parse(feature["properties"]["lat"]);
     var lon = double.parse(feature["properties"]["lon"]);
     heavenMapPoiInfo.latLng = LatLng(lat, lon);
@@ -434,20 +422,17 @@ class MapContainerState extends State<MapContainer> {
     _locationClickSubscription?.cancel();
 
     _clickTimes++;
-    _locationClickSubscription =
-        Observable.timer('', Duration(milliseconds: 300)).listen((value) async {
+    _locationClickSubscription = Observable.timer('', Duration(milliseconds: 300)).listen((value) async {
       var latLng = await mapboxMapController?.lastKnownLocation();
       if (_clickTimes > 1) {
         // double click
         double doubleClickZoom = 17;
         if (latLng != null) {
-          mapboxMapController?.animateCamera(
-              CameraUpdate.newLatLngZoom(latLng, doubleClickZoom));
+          mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom));
 
           eventBus.fire(OnMapMovedEvent(latLng: latLng));
         } else {
-          mapboxMapController
-              ?.animateCamera(CameraUpdate.zoomTo(doubleClickZoom));
+          mapboxMapController?.animateCamera(CameraUpdate.zoomTo(doubleClickZoom));
         }
       } else {
         //single click
@@ -467,16 +452,13 @@ class MapContainerState extends State<MapContainer> {
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
       if (event is ToMyLocationEvent) {
-        PermissionStatus permission = await PermissionHandler()
-            .checkPermissionStatus(PermissionGroup.location);
+        PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
         } else {
           Map<PermissionGroup, PermissionStatus> permissions =
-              await PermissionHandler()
-                  .requestPermissions([PermissionGroup.location]);
-          if (permissions[PermissionGroup.location] ==
-              PermissionStatus.granted) {
+              await PermissionHandler().requestPermissions([PermissionGroup.location]);
+          if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
             _toMyLocation();
             Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
               _toMyLocation(); //hack, location not auto move
@@ -538,6 +520,8 @@ class MapContainerState extends State<MapContainer> {
 
   @override
   void dispose() {
+    _updateMapPositionSubject.close();
+    _mapPositionAnimationController.dispose();
     mapboxMapController?.removeListener(mapMoveListener);
     _locationClickSubscription?.cancel();
     _eventBusSubscription?.cancel();
@@ -555,88 +539,94 @@ class MapContainerState extends State<MapContainer> {
             addMarkers(state.getSearchPoiList());
           }
         } else if (state is InitialScaffoldMapState || state is InitDMapState) {
-//          removeMarker();
           clearAllMarkers();
-          setState(() {
-            _mapTop = 0;
-          });
+          _mapPositionAnimationController.value = 0.0;
         } else {
           removeMarker();
         }
       },
-      child: Positioned(
-        top: _mapTop,
-        child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
-          builder: (context, state) {
-            return Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Stack(
-                children: <Widget>[
-                  MapboxMapParent(
-                    key: Keys.mapParentKey,
-                    controller: mapboxMapController,
-                    child: MapboxMap(
-                      compassEnabled: false,
-                      onMapClick: (point, coordinates) {
-                        if (state is RoutingState ||
-                            state is RouteSuccessState ||
-                            state is RouteFailState) {
-                          return;
-                        }
-                        _onMapClick(point, coordinates);
-                      },
-                      onMapLongPress: (point, coordinates) {
-                        if (state is RoutingState ||
-                            state is RouteSuccessState ||
-                            state is RouteFailState) {
-                          return;
-                        }
-                        _onMapLongPress(point, coordinates);
-                      },
-                      trackCameraPosition: true,
-                      styleString: widget.style,
-                      onStyleLoaded: onStyleLoaded,
-                      initialCameraPosition: CameraPosition(
-                        target: widget.defaultCenter,
-                        zoom: widget.defaultZoom,
-                      ),
-                      rotateGesturesEnabled: false,
-                      tiltGesturesEnabled: false,
-                      enableLogo: false,
-                      enableAttribution: false,
-                      compassMargins: CompassMargins(
-                          left: 0, top: 88, right: 16, bottom: 0),
-                      minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-                      myLocationEnabled: true,
-                      myLocationTrackingMode: locationTrackingMode,
-                      languageCode: widget.languageCode,
-                      children: <Widget>[
-                        ///active plugins
-                        HeavenPlugin(models: widget.heavenDataList),
-                        RoutePlugin(model: widget.routeDataModel),
-                      ],
-                    ),
-                  ),
-                  if (widget.showCenterMarker)
-                    Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            ExtendsIconFont.position_marker,
-                            size: 64,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          SizedBox(height: 68)
-                        ],
-                      ),
-                    )
-                ],
+      child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
+        builder: (context, state) {
+          return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            double minSize = 0.45 * constraints.biggest.height;
+            var expandedRelative = RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
+            var topRelative = RelativeRect.fromLTRB(0.0, -minSize, 0.0, minSize);
+            final Animation<RelativeRect> panelAnimation = _mapPositionAnimationController.drive(
+              RelativeRectTween(
+                begin: expandedRelative,
+                end: topRelative,
               ),
             );
-          },
-        ),
+
+            return Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                PositionedTransition(
+                  rect: panelAnimation,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      MapboxMapParent(
+                        key: Keys.mapParentKey,
+                        controller: mapboxMapController,
+                        child: MapboxMap(
+                          compassEnabled: false,
+                          onMapClick: (point, coordinates) {
+                            if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                              return;
+                            }
+                            _onMapClick(point, coordinates);
+                          },
+                          onMapLongPress: (point, coordinates) {
+                            if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                              return;
+                            }
+                            _onMapLongPress(point, coordinates);
+                          },
+                          trackCameraPosition: true,
+                          styleString: widget.style,
+                          onStyleLoaded: onStyleLoaded,
+                          initialCameraPosition: CameraPosition(
+                            target: widget.defaultCenter,
+                            zoom: widget.defaultZoom,
+                          ),
+                          rotateGesturesEnabled: false,
+                          tiltGesturesEnabled: false,
+                          enableLogo: false,
+                          enableAttribution: false,
+                          compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
+                          minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+                          myLocationEnabled: true,
+                          myLocationTrackingMode: locationTrackingMode,
+                          languageCode: widget.languageCode,
+                          children: <Widget>[
+                            ///active plugins
+                            HeavenPlugin(models: widget.heavenDataList),
+                            RoutePlugin(model: widget.routeDataModel),
+                          ],
+                        ),
+                      ),
+                      if (widget.showCenterMarker)
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(
+                                ExtendsIconFont.position_marker,
+                                size: 64,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              SizedBox(height: 68)
+                            ],
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          });
+        },
       ),
     );
   }
