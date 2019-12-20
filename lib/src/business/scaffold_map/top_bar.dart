@@ -3,10 +3,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 class TopBar extends StatefulWidget {
-  final DraggableBottomSheetController bottomPanelController;
+//  final DraggableBottomSheetController bottomPanelController;
   final HeightCallBack heightCallBack;
   final String title;
   VoidCallback onBack;
@@ -14,7 +13,7 @@ class TopBar extends StatefulWidget {
 
   TopBar({
     Key key,
-    this.bottomPanelController,
+//    this.bottomPanelController,
     this.heightCallBack,
     this.title,
     this.onClose,
@@ -45,37 +44,37 @@ class _TopBarState extends State<TopBar> {
         _selfTop = -selfHeight;
       });
     });
-    widget.bottomPanelController?.addListener(onDragUpdate);
+//    widget.bottomPanelController?.addListener(onDragUpdate);
   }
 
-  void onDragUpdate() {
-    if (selfHeight > 0) {
-      var sheetY = widget.bottomPanelController.sheetY;
-      if (sheetY < 2 * selfHeight) {
-        //触发移动
-        double max = 0;
-        double min = -selfHeight;
-        double top = selfHeight - sheetY;
-        if (top >= min && top <= max) {
-          setState(() {
-            _selfTop = top;
-          });
-        } else if (_selfTop != 0) {
-          setState(() {
-            _selfTop = 0;
-          });
-        }
-      } else if (_selfTop != -selfHeight) {
-        setState(() {
-          _selfTop = -selfHeight;
-        });
-      }
-    }
-  }
+//  void onDragUpdate() {
+//    if (selfHeight > 0) {
+//      var sheetY = widget.bottomPanelController.sheetY;
+//      if (sheetY < 2 * selfHeight) {
+//        //触发移动
+//        double max = 0;
+//        double min = -selfHeight;
+//        double top = selfHeight - sheetY;
+//        if (top >= min && top <= max) {
+//          setState(() {
+//            _selfTop = top;
+//          });
+//        } else if (_selfTop != 0) {
+//          setState(() {
+//            _selfTop = 0;
+//          });
+//        }
+//      } else if (_selfTop != -selfHeight) {
+//        setState(() {
+//          _selfTop = -selfHeight;
+//        });
+//      }
+//    }
+//  }
 
   @override
   void dispose() {
-    widget.bottomPanelController.removeListener(onDragUpdate);
+//    widget.bottomPanelController.removeListener(onDragUpdate);
     super.dispose();
   }
 

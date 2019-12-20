@@ -17,9 +17,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
-import 'package:titan/src/widget/draggable_scrollable_sheet.dart';
+import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 import 'bloc/bloc.dart';
@@ -29,8 +27,6 @@ import 'bottom_panels/route_panel.dart';
 import 'bottom_panels/search_list_panel.dart';
 import 'map.dart';
 import 'opt_bar.dart';
-import 'search_bar.dart';
-import 'top_bar.dart';
 import 'route_bar.dart';
 
 //final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
@@ -128,7 +124,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
     //logic:  use prop to update each scene. scene use bloc to update data/state.
     return LayoutBuilder(builder: (ctx, BoxConstraints boxConstraints) {
       return BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(builder: (context, state) {
-        print('bloc builder: $state');
+        print('xxx build $state');
         var languageCode = Localizations.localeOf(context).languageCode;
 
         //---------------------------
@@ -208,23 +204,17 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         //---------------------------
         double topPadding = MediaQuery.of(context).padding.top;
         bool draggable = false;
-//        Widget sheetPanel;
         SheetPanelBuilder panelBuilder;
-        double collapsedHeight = 112;
+        double collapsedHeight = 120;
         double anchorHeight = 400;
         double initHeight = 0;
-
-//        DraggableScrollableSheetState dragState = DraggableScrollableSheetState.HIDDEN;
 
         if (state is InitialScaffoldMapState) {
           //nothing
         } else if (state is SearchingPoiState) {
-          //search POI
-          panelBuilder = (context, controller) => LoadingPanel(
-                scrollController: controller,
-              );
+          //search POI detail
+          panelBuilder = (context, controller) => LoadingPanel(scrollController: controller);
           initHeight = collapsedHeight;
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
         } else if (state is ShowPoiState) {
           draggable = true;
           //dMap poi panel (by config)
@@ -251,9 +241,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                   );
             }
           }
-
-//          collapsedHeight = widget.poiBottomSheetController.collapsedHeight;
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
           initHeight = collapsedHeight;
         } else if (state is SearchPoiFailState) {
           //search poi fail
@@ -262,24 +249,18 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                 showCloseBtn: true,
                 scrollController: controller,
               );
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
           initHeight = collapsedHeight;
         } else if (state is SearchingPoiByTextState) {
-          //search POI
-          panelBuilder = (context, controller) => LoadingPanel(
-                scrollController: controller,
-              );
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
+          //search POI by text.
+          panelBuilder = (context, controller) => LoadingPanel(scrollController: controller);
           initHeight = collapsedHeight;
         } else if (state is SearchPoiByTextSuccessState) {
           //search success
           draggable = true;
-          topPadding = topBarHeight - 12; //minus "drag" height 12
+          topPadding = topBarHeight + 12; //minus "drag" height 12
           if (state.getSearchPoiList() != null && state.getSearchPoiList().length > 0) {
-//            dragState = DraggableScrollableSheetState.ANCHOR_POINT;
             initHeight = anchorHeight;
           } else {
-//            dragState = DraggableScrollableSheetState.COLLAPSED;
             initHeight = collapsedHeight;
           }
 
@@ -292,14 +273,12 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                 showCloseBtn: true,
                 scrollController: controller,
               );
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
           initHeight = collapsedHeight;
         } else if (state is RoutingState) {
           //route on progress
           panelBuilder = (context, controller) => LoadingPanel(
                 scrollController: controller,
               );
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
           initHeight = collapsedHeight;
         } else if (state is RouteSuccessState) {
           //route success
@@ -308,7 +287,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                 profile: profile,
                 scrollController: controller,
               );
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
           initHeight = collapsedHeight;
         } else if (state is RouteFailState) {
           //route fail
@@ -317,7 +295,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                 showCloseBtn: false,
                 scrollController: controller,
               );
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
           initHeight = collapsedHeight;
         }
 
@@ -326,11 +303,9 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             state.dMapConfigModel?.alwaysShowPanel == true &&
             state.dMapConfigModel?.panelBuilder != null) {
           panelBuilder = (context, controller) => state.dMapConfigModel.panelBuilder(context, controller, null);
-//          sheetPanel = state.dMapConfigModel?.panelBuilder(context, _bottomChildScrollController, null);
           if (state.dMapConfigModel?.panelPaddingTop != null) {
             topPadding = state.dMapConfigModel?.panelPaddingTop(context);
           }
-//          dragState = DraggableScrollableSheetState.COLLAPSED;
           initHeight = collapsedHeight;
         }
         if (state.dMapConfigModel?.panelDraggable == true) {
@@ -343,18 +318,15 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           collapsedHeight = state.dMapConfigModel?.panelCollapsedHeight;
         }
 
-        double panelMax = (boxConstraints.maxHeight - topPadding) / boxConstraints.maxHeight;
-        double panelMin = collapsedHeight / boxConstraints.maxHeight;
-        double panelAnchor = anchorHeight / boxConstraints.maxHeight;
-        double panelInitSize = initHeight / boxConstraints.maxHeight;
-//        if (panelInitSize < panelMin) {
-//          panelInitSize = panelMin;
-//          //call next frame
-//          WidgetsBinding.instance.addPostFrameCallback((_) {
-//            myWidget.DraggableScrollableActuator.setMin(poiDraggablePanelKey.currentContext);
-//          });
-//        }
-        print('xxx panelMin:$panelMin, panelAnchor:$panelAnchor, panelMax:$panelMax, panelInitSize: $panelInitSize, draggable $draggable');
+        double maxHeight = boxConstraints.biggest.height;
+        double panelMax = (maxHeight - topPadding) / maxHeight;
+        double panelMin = collapsedHeight / maxHeight;
+        double panelAnchor = anchorHeight / maxHeight;
+        double panelInitSize = initHeight / maxHeight;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
+        });
+        print('xxx panelMax $panelMax, panelMin $panelMin, panelAnchor $panelAnchor, panelInitSize $panelInitSize');
 
         //---------------------------
         //set opt bar
@@ -413,40 +385,49 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
             /* bottom sheet */
             myWidget.DraggableScrollableActuator(
-              child: myWidget.DraggableScrollableSheet(
-                key: poiDraggablePanelKey,
-                maxChildSize: panelMax,
-                anchorSize: panelAnchor,
-                minChildSize: panelMin,
-                initialChildSize: panelInitSize,
-//                draggable: draggable,
-                expand: true,
-                builder: (BuildContext ctx, ScrollController scrollController) {
-                  var panel;
-                  if (panelBuilder != null) {
-                    panel = panelBuilder(ctx, scrollController) ??
-                        SingleChildScrollView(
-                          controller: scrollController,
-                          child: Container(),
-                        );
-                  }
-                  return panel ??
-                      SingleChildScrollView(
-                        controller: scrollController,
-                        child: Container(),
-                      );
+              child: NotificationListener<HeaderHeightNotification>(
+                onNotification: (notification) {
+                  //hack, not elegant
+                  var draggableSheet = poiDraggablePanelKey.currentWidget as myWidget.DraggableScrollableSheet;
+                  draggableSheet.initialChildSize = notification.height / maxHeight;
+                  draggableSheet.minChildSize = notification.height / maxHeight;
+                  myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
+                  return true;
                 },
+                child: NotificationListener<myWidget.DraggableScrollableNotification>(
+                  onNotification: (notification) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      (Keys.mapContainerKey.currentState as MapContainerState).onDragPanelYChange(notification.extent);
+                    });
+                    return false;
+                  },
+                  child: myWidget.DraggableScrollableSheet(
+                    key: poiDraggablePanelKey,
+                    maxChildSize: panelMax,
+                    anchorSize: panelAnchor,
+                    minChildSize: panelMin,
+                    initialChildSize: panelInitSize,
+                    draggable: draggable,
+                    expand: true,
+                    builder: (BuildContext ctx, ScrollController scrollController) {
+                      var panel;
+                      if (panelBuilder != null) {
+                        panel = panelBuilder(ctx, scrollController) ??
+                            SingleChildScrollView(
+                              controller: scrollController,
+                              child: Container(),
+                            );
+                      }
+                      return panel ??
+                          SingleChildScrollView(
+                            controller: scrollController,
+                            child: Container(),
+                          );
+                    },
+                  ),
+                ),
               ),
             ),
-
-//            DraggableBottomSheet(
-//              draggable: draggable,
-//              topPadding: topPadding,
-//              topRadius: topRadius,
-//              controller: widget.poiBottomSheetController,
-//              childScrollController: _bottomChildScrollController,
-//              child: sheetPanel ?? Container(),
-//            ),
 
 //          if (showTopBar)
 //            TopBar(

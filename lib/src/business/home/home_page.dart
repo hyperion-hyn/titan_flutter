@@ -43,6 +43,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey fabsContainerKey = GlobalKey(debugLabel: 'fabsContainerKey');
+  final GlobalKey panelKey = GlobalKey(debugLabel: 'panelKey');
 
 //  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
 
@@ -125,65 +126,86 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             }
           },
         ),
+        BlocListener<home.HomeBloc, home.HomeState>(
+          listener: (context, state) {
+            print('xxx state $state');
+            //while listener trigger before build, the panelKey is not set, so call after build
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (state is InitialHomeState) {
+                myWidget.DraggableScrollableActuator.setMin(panelKey.currentContext);
+              } else if (state is home.MapOperatingState) {
+                myWidget.DraggableScrollableActuator.setHide(panelKey.currentContext);
+              }
+            });
+          },
+        ),
       ],
       child: Updater(
-        child: Scaffold(
-          resizeToAvoidBottomPadding: false,
-          drawer: isDebug ? DrawerScenes() : null,
-//          endDrawer: PurchasedMapDrawerScenes(),
-          bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
-            builder: (context, state) {
-              double height;
-              if (state is home.MapOperatingState) {
-                height = 0;
-              }
-              return Container(
-                height: height,
-//                  curve: Curves.fastOutSlowIn,
-                child: BottomNavigationBar(
-                    key: _bottomBarKey,
-                    selectedItemColor: Theme.of(context).primaryColor,
-                    unselectedItemColor: Colors.black38,
-                    showUnselectedLabels: true,
-                    selectedFontSize: 12,
-                    unselectedFontSize: 12,
-                    type: BottomNavigationBarType.fixed,
-                    onTap: (index) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
+        child: BlocBuilder<home.HomeBloc, home.HomeState>(
+          builder: (context, state) {
+            return Scaffold(
+              resizeToAvoidBottomPadding: false,
+              drawer: isDebug ? DrawerScenes() : null,
+              bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
+                builder: (context, state) {
+                  return Container(
+                    height: state is home.MapOperatingState ? 0 : null,
+                    child: BottomNavigationBar(
+                        key: _bottomBarKey,
+                        selectedItemColor: Theme.of(context).primaryColor,
+                        unselectedItemColor: Colors.black38,
+                        showUnselectedLabels: true,
+                        selectedFontSize: 12,
+                        unselectedFontSize: 12,
+                        type: BottomNavigationBarType.fixed,
+                        onTap: (index) {
+                          setState(() => _currentIndex = index);
+                        },
+                        currentIndex: _currentIndex,
+                        items: [
+                          BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
+                          BottomNavigationBarItem(
+                              title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
+                          BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
+                          BottomNavigationBarItem(
+                              title: Text(S.of(context).information), icon: Icon(Icons.description)),
+                          BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
+                        ]),
+                  );
+                },
+              ),
+              body: Stack(
+                children: <Widget>[
+                  //the map
+                  LayoutBuilder(
+                    builder: (ctx, BoxConstraints boxConstraints) {
+                      return NotificationListener<myWidget.DraggableScrollableNotification>(
+                          onNotification: (notification) {
+                            if (state is home.MapOperatingState) {
+                              var maxHeight = boxConstraints.biggest.height;
+                              updateFabsPosition(
+                                  notification.extent * maxHeight, notification.anchorExtent * maxHeight);
+                            }
+                            return true;
+                          },
+                          child: ScaffoldMap());
                     },
-                    currentIndex: _currentIndex,
-                    items: [
-                      BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
-                      BottomNavigationBarItem(
-                          title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
-                      BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
-                      BottomNavigationBarItem(title: Text(S.of(context).information), icon: Icon(Icons.description)),
-                      BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
-                    ]),
-              );
-            },
-          ),
-          body: Stack(
-            children: <Widget>[
-              //the map
-              ScaffoldMap(),
+                  ),
 
-              //location
-              BlocBuilder<home.HomeBloc, home.HomeState>(builder: (context, state) {
-                return BottomFabsWidget(
-                  key: fabsContainerKey,
-                  showBurnBtn: state is InitialHomeState,
-                );
-              }),
+                  //location
+                  BottomFabsWidget(
+                    key: fabsContainerKey,
+                    showBurnBtn: state is InitialHomeState,
+                  ),
 
-              buildMainSheetPanel(),
+                  buildMainSheetPanel(state),
 
-              //tab views
-              _getContent(_currentIndex),
-            ],
-          ),
+                  //tab views
+                  _getContent(_currentIndex),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -209,47 +231,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget buildMainSheetPanel() {
+  Widget buildMainSheetPanel(home.HomeState state) {
     return myWidget.DraggableScrollableActuator(
       child: Builder(
         builder: (BuildContext context) {
-          return BlocListener<home.HomeBloc, home.HomeState>(
-            bloc: BlocProvider.of<home.HomeBloc>(context),
-            listener: (context, state) {
-              if (state is InitialHomeState) {
-                myWidget.DraggableScrollableActuator.setMin(context);
-              } else if (state is home.MapOperatingState) {
-                myWidget.DraggableScrollableActuator.setHide(context);
-              }
-            },
-            child: SizedBox.expand(
-              child: LayoutBuilder(
-                builder: (ctx, BoxConstraints boxConstraints) {
-                  double anchorSize = 0.5;
-                  double minChildSize = 88.0 / boxConstraints.maxHeight;
-                  double initSize = 280.0 / boxConstraints.maxHeight;
-                  double maxChildSize =
-                      (boxConstraints.maxHeight - MediaQuery.of(ctx).padding.top) / boxConstraints.maxHeight;
-                  return NotificationListener<myWidget.DraggableScrollableNotification>(
-                    onNotification: (notification) {
-                      updateFabsPosition(
-                          notification.extent * boxConstraints.maxHeight, anchorSize * boxConstraints.maxHeight);
-                      return true;
+          return SizedBox.expand(
+            child: LayoutBuilder(
+              builder: (ctx, BoxConstraints boxConstraints) {
+                var maxHeight = boxConstraints.biggest.height;
+                double anchorSize = 0.5;
+                double minChildSize = 88.0 / maxHeight;
+                double initSize = 280.0 / maxHeight;
+                double maxChildSize = (maxHeight - MediaQuery.of(ctx).padding.top) / maxHeight;
+                return NotificationListener<myWidget.DraggableScrollableNotification>(
+                  onNotification: (notification) {
+                    if (state is home.InitialHomeState) {
+                      updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
+                    }
+                    return true;
+                  },
+                  child: myWidget.DraggableScrollableSheet(
+                    key: panelKey,
+                    maxChildSize: maxChildSize,
+                    expand: false,
+                    minChildSize: minChildSize,
+                    anchorSize: anchorSize,
+                    initialChildSize: initSize,
+                    draggable: true,
+                    builder: (BuildContext ctx, ScrollController scrollController) {
+                      return HomePanel(scrollController: scrollController);
                     },
-                    child: myWidget.DraggableScrollableSheet(
-                      maxChildSize: maxChildSize,
-                      expand: false,
-                      minChildSize: minChildSize,
-                      anchorSize: anchorSize,
-                      initialChildSize: initSize,
-                      draggable: true,
-                      builder: (BuildContext ctx, ScrollController scrollController) {
-                        return HomePanel(scrollController: scrollController);
-                      },
-                    ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           );
         },
@@ -262,7 +276,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ? fabsContainerKey.currentState as BottomFasScenesState
         : null;
     WidgetsBinding.instance.addPostFrameCallback((_) => state?.updateBottomPadding(bottom, anchorHeight));
-//    state?.updateBottomPadding(bottom, anchorHeight);
   }
 
   Future<Null> initUniLinks() async {

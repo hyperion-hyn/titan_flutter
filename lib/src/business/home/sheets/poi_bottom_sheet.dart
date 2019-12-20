@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/model/poi.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
+import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../../global.dart';
 
@@ -38,7 +38,6 @@ class _PoiBottomSheetState extends State<PoiBottomSheet> {
   void initState() {
     super.initState();
 
-    //动态设置收缩高度
     SchedulerBinding.instance.addPostFrameCallback((_) {
       HeaderHeightNotification(height: getHeaderHeight()).dispatch(context);
     });

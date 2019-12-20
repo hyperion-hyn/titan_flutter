@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/gaode_poi.dart';
-import 'package:titan/src/model/poi.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
+import 'package:titan/src/widget/drag_tick.dart';
+import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../../global.dart';
 
@@ -32,7 +32,7 @@ class _GaodePoiPanelState extends State<GaodePoiPanel> {
       if (MediaQuery.of(context).padding.bottom > 0) {
         h += safeAreaBottomPadding;
       }
-      return h + 76; //76 is hack options height;
+      return h + 48; //48 is hack options height;
     }
     return 0;
   }
@@ -49,78 +49,108 @@ class _GaodePoiPanelState extends State<GaodePoiPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: widget.scrollController,
-      child: WillPopScope(
-        onWillPop: () async {
-          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-          return false;
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            //header
-            Container(
-//          color: Colors.blue,
-              padding: EdgeInsets.all(16),
-              child: Column(
-                key: _poiHeaderKey,
+    return Container(
+      padding: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        controller: widget.scrollController,
+        child: WillPopScope(
+          onWillPop: () async {
+            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+            return false;
+          },
+          child: Stack(
+            children: <Widget>[
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          widget.poi.name,
-                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                  //header
+                  Container(
+                    padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 4),
+                    key: _poiHeaderKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        //tick
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8, bottom: 8),
+                              child: DragTick(),
+                            ),
+                          ],
                         ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                        },
-                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                        highlightColor: Colors.transparent,
-                        child: Ink(
-                          padding: EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xffececec),
-                          ),
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.grey,
-                            size: 18,
-                          ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                widget.poi.name,
+                                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: 8,
+                        ),
+                        buildHeadItem(Icons.location_on, widget.poi.address, hint: '暂无详细地址'),
+                        if (widget.poi.remark != null && widget.poi.remark.length > 0)
+                          buildHeadItem(Icons.message, widget.poi.remark, hint: '无备注'),
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    height: 8,
+                  Divider(
+                    height: 0,
                   ),
-                  buildHeadItem(Icons.location_on, widget.poi.address, hint: '暂无详细地址'),
-                  if (widget.poi.remark != null && widget.poi.remark.length > 0)
-                    buildHeadItem(Icons.message, widget.poi.remark, hint: '无备注'),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: FadeInImage.assetNetwork(
+                      image: widget.poi.photo,
+                      placeholder: 'res/drawable/img_placeholder.jpg',
+                      width: 160,
+                      height: 120,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  buildInfoItem(S.of(context).label, ''),
+                  buildInfoItem(S.of(context).telphone, ''),
                 ],
               ),
-            ),
-            Divider(
-              height: 0,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: FadeInImage.assetNetwork(
-                image: widget.poi.photo,
-                placeholder: 'res/drawable/img_placeholder.jpg',
-                width: 160,
-                height: 120,
-                fit: BoxFit.cover,
-              ),
-            ),
-            buildInfoItem(S.of(context).label, ''),
-            buildInfoItem(S.of(context).telphone, ''),
-          ],
+              Positioned(
+                top: 4,
+                right: 8,
+                child: InkWell(
+                  onTap: () {
+                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+                  },
+                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  highlightColor: Colors.transparent,
+                  child: Ink(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xffececec),
+                    ),
+                    child: Icon(
+                      Icons.cancel,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -56,7 +56,7 @@ class MapContainer extends StatefulWidget {
   }
 }
 
-class MapContainerState extends State<MapContainer> {
+class MapContainerState extends State<MapContainer> with SingleTickerProviderStateMixin {
   final MAX_POI_DIFF_DISTANCE = 10000;
 
   MapboxMapController mapboxMapController;
@@ -65,6 +65,8 @@ class MapContainerState extends State<MapContainer> {
 
   StreamSubscription _locationClickSubscription;
   StreamSubscription _eventBusSubscription;
+
+  AnimationController _mapPositionAnimationController;
 
   Symbol showingSymbol;
   IPoi currentPoi;
@@ -75,19 +77,19 @@ class MapContainerState extends State<MapContainer> {
   @override
   void initState() {
     super.initState();
-//    widget.bottomPanelController?.addListener(onDragPanelYChange);
+    _mapPositionAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      value: 1.0,
+      vsync: this,
+    );
+
     _listenEventBus();
   }
 
-  double _mapTop = 0;
-
-//  void onDragPanelYChange() {
-//    if (widget.bottomPanelController.bottom <= 400) {
-//      setState(() {
-//        _mapTop = -widget.bottomPanelController.bottom * 0.5;
-//      });
-//    }
-//  }
+  void onDragPanelYChange(double value) {
+    _mapPositionAnimationController.value = value;
+//    debounce(() => _mapPositionAnimationController.animateTo(value, curve: Curves.linearToEaseOut))();
+  }
 
   void _onMapClick(Point<double> point, LatLng coordinates) async {
     if (widget.mapClickHandle != null) {
@@ -512,6 +514,7 @@ class MapContainerState extends State<MapContainer> {
 
   @override
   void dispose() {
+    _mapPositionAnimationController.dispose();
     mapboxMapController?.removeListener(mapMoveListener);
     _locationClickSubscription?.cancel();
     _eventBusSubscription?.cancel();
@@ -529,83 +532,95 @@ class MapContainerState extends State<MapContainer> {
             addMarkers(state.getSearchPoiList());
           }
         } else if (state is InitialScaffoldMapState || state is InitDMapState) {
-//          removeMarker();
           clearAllMarkers();
-          setState(() {
-            _mapTop = 0;
-          });
+          _mapPositionAnimationController.value = 0.0;
         } else {
           removeMarker();
         }
       },
-      child: Positioned(
-        top: _mapTop,
-        child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
-          builder: (context, state) {
-            return Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Stack(
+      child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
+        builder: (context, state) {
+          return Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+              var expandedRelative = RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
+              var topRelative = RelativeRect.fromLTRB(0.0, -300, 0.0, 300);
+              final Animation<RelativeRect> panelAnimation = _mapPositionAnimationController.drive(
+                RelativeRectTween(
+                  begin: expandedRelative,
+                  end: topRelative,
+                ),
+              );
+
+              return Stack(
                 children: <Widget>[
-                  MapboxMapParent(
-                    key: Keys.mapParentKey,
-                    controller: mapboxMapController,
-                    child: MapboxMap(
-                      compassEnabled: false,
-                      onMapClick: (point, coordinates) {
-                        if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
-                          return;
-                        }
-                        _onMapClick(point, coordinates);
-                      },
-                      onMapLongPress: (point, coordinates) {
-                        if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
-                          return;
-                        }
-                        _onMapLongPress(point, coordinates);
-                      },
-                      trackCameraPosition: true,
-                      styleString: widget.style,
-                      onStyleLoaded: onStyleLoaded,
-                      initialCameraPosition: CameraPosition(
-                        target: widget.defaultCenter,
-                        zoom: widget.defaultZoom,
-                      ),
-                      rotateGesturesEnabled: false,
-                      tiltGesturesEnabled: false,
-                      enableLogo: false,
-                      enableAttribution: false,
-                      compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
-                      minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-                      myLocationEnabled: true,
-                      myLocationTrackingMode: locationTrackingMode,
-                      languageCode: widget.languageCode,
+                  PositionedTransition(
+                    rect: panelAnimation,
+                    child: Stack(
                       children: <Widget>[
-                        ///active plugins
-                        HeavenPlugin(models: widget.heavenDataList),
-                        RoutePlugin(model: widget.routeDataModel),
+                        MapboxMapParent(
+                          key: Keys.mapParentKey,
+                          controller: mapboxMapController,
+                          child: MapboxMap(
+                            compassEnabled: false,
+                            onMapClick: (point, coordinates) {
+                              if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                                return;
+                              }
+                              _onMapClick(point, coordinates);
+                            },
+                            onMapLongPress: (point, coordinates) {
+                              if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                                return;
+                              }
+                              _onMapLongPress(point, coordinates);
+                            },
+                            trackCameraPosition: true,
+                            styleString: widget.style,
+                            onStyleLoaded: onStyleLoaded,
+                            initialCameraPosition: CameraPosition(
+                              target: widget.defaultCenter,
+                              zoom: widget.defaultZoom,
+                            ),
+                            rotateGesturesEnabled: false,
+                            tiltGesturesEnabled: false,
+                            enableLogo: false,
+                            enableAttribution: false,
+                            compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
+                            minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+                            myLocationEnabled: true,
+                            myLocationTrackingMode: locationTrackingMode,
+                            languageCode: widget.languageCode,
+                            children: <Widget>[
+                              ///active plugins
+                              HeavenPlugin(models: widget.heavenDataList),
+                              RoutePlugin(model: widget.routeDataModel),
+                            ],
+                          ),
+                        ),
+                        if (widget.showCenterMarker)
+                          Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Icon(
+                                  ExtendsIconFont.position_marker,
+                                  size: 64,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                SizedBox(height: 68)
+                              ],
+                            ),
+                          )
                       ],
                     ),
                   ),
-                  if (widget.showCenterMarker)
-                    Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            ExtendsIconFont.position_marker,
-                            size: 64,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          SizedBox(height: 68)
-                        ],
-                      ),
-                    )
                 ],
-              ),
-            );
-          },
-        ),
+              );
+            }),
+          );
+        },
       ),
     );
   }

@@ -2,15 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../../global.dart';
 
-class RoutePanel extends StatelessWidget {
+class RoutePanel extends StatefulWidget {
   final RouteDataModel routeDataModel;
   final String profile;
   final ScrollController scrollController;
@@ -18,28 +19,70 @@ class RoutePanel extends StatelessWidget {
   RoutePanel({this.routeDataModel, this.profile, this.scrollController});
 
   @override
+  State<StatefulWidget> createState() {
+    return RoutePanelState();
+  }
+}
+
+class RoutePanelState extends State<RoutePanel> {
+  final GlobalKey headerKey = GlobalKey(debugLabel: 'poiHeaderKey');
+
+  double getHeaderHeight() {
+    RenderBox renderBox = headerKey.currentContext?.findRenderObject();
+    var h = renderBox?.size?.height ?? 0;
+    if (h > 0) {
+      if (MediaQuery.of(context).padding.bottom > 0) {
+        h += safeAreaBottomPadding;
+      }
+      return h;
+    }
+    return h;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      var panelInitHeight = getHeaderHeight();
+      if(panelInitHeight > 0) {
+        HeaderHeightNotification(height: panelInitHeight).dispatch(context);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     try {
-      var routes = json.decode(routeDataModel.directionsResponse);
+      var routes = json.decode(widget.routeDataModel.directionsResponse);
       double duration = (routes['routes'][0]['duration'] as num).toDouble();
       double distance = (routes['routes'][0]['distance'] as num).toDouble();
 
       var navigationDataModel = NavigationDataModel(
-          startLatLng: routeDataModel.startLatLng,
-          endLatLng: routeDataModel.endLatLng,
-          directionsResponse: routeDataModel.directionsResponse,
-          profile: profile);
+          startLatLng: widget.routeDataModel.startLatLng,
+          endLatLng: widget.routeDataModel.endLatLng,
+          directionsResponse: widget.routeDataModel.directionsResponse,
+          profile: widget.profile);
 
-      return SingleChildScrollView(
-        controller: scrollController,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Material(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
-                ),
+      return Container(
+//        padding: const EdgeInsets.only(top: 4),
+        decoration: BoxDecoration(
+//          borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 20.0,
+            ),
+          ],
+        ),
+        child: SingleChildScrollView(
+          controller: widget.scrollController,
+          physics: NeverScrollableScrollPhysics(),
+          child: Row(
+            key: headerKey,
+            children: <Widget>[
+              Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -71,11 +114,7 @@ class RoutePanel extends StatelessWidget {
                               highlightElevation: 0,
                               minWidth: 60,
                               onPressed: () {
-//                              if (Platform.isAndroid) {
-                                  Navigation.navigation(Keys.mapParentKey.currentContext, navigationDataModel);
-//                              } else {
-//                                Fluttertoast.showToast(msg: "敬请期待");
-//                              }
+                                Navigation.navigation(Keys.mapParentKey.currentContext, navigationDataModel);
                               },
                               padding: EdgeInsets.symmetric(horizontal: 8),
                               textColor: Color(0xddffffff),
@@ -101,13 +140,12 @@ class RoutePanel extends StatelessWidget {
                           )
                         ],
                       ),
-                      SizedBox(height: 8),
                     ],
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       );
     } catch (err) {
@@ -117,26 +155,37 @@ class RoutePanel extends StatelessWidget {
   }
 
   Widget buildError(context) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Material(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(40),
-                  child: Text(S.of(context).no_recommended_route),
-                ),
-              ],
-            ),
+    return Container(
+      //        padding: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+//          borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
           ),
-        )
-      ],
+        ],
+      ),
+      child: SingleChildScrollView(
+        controller: widget.scrollController,
+        physics: NeverScrollableScrollPhysics(),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.all(40),
+                    child: Text(S.of(context).no_recommended_route),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -187,4 +236,5 @@ class RoutePanel extends StatelessWidget {
     distanceStr += S.of(context).distance('${distance.toInt()}');
     return distanceStr;
   }
+
 }

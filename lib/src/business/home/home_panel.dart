@@ -94,7 +94,7 @@ class HomePanelState extends State<HomePanel> {
       onTap: onSearch,
       borderRadius: BorderRadius.all(Radius.circular(32)),
       child: Container(
-        height: 48,
+        height: 46,
         decoration: BoxDecoration(color: Color(0xfff4f4fa), borderRadius: BorderRadius.all(Radius.circular(32))),
         child: Row(
           children: <Widget>[

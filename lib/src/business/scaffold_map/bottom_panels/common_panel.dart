@@ -10,21 +10,35 @@ class LoadingPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: scrollController,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32),
-            child: SizedBox(
-              height: 32,
-              width: 32,
-              child: CircularProgressIndicator(
-                strokeWidth: 3,
-              ),
-            ),
+    return Container(
+      padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
+      decoration: BoxDecoration(
+//        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
           ),
         ],
+      ),
+      child: SingleChildScrollView(
+        controller: scrollController,
+        physics: NeverScrollableScrollPhysics(),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: SizedBox(
+                height: 32,
+                width: 32,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -39,43 +53,56 @@ class FailPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: scrollController,
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Text(message ?? 'search fault'),
-            ),
+    return Container(
+      padding: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+//        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
           ),
-          if (showCloseBtn == true)
-            Positioned(
-              right: 16,
-              top: 16,
-              child: InkWell(
-                onTap: () {
-                  BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                },
-                borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                highlightColor: Colors.transparent,
-                child: Ink(
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xffececec),
-                  ),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.grey,
-                    size: 18,
+        ],
+      ),
+      child: SingleChildScrollView(
+        controller: scrollController,
+        physics: NeverScrollableScrollPhysics(),
+        child: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Text(message ?? 'search fault'),
+              ),
+            ),
+            if (showCloseBtn == true)
+              Positioned(
+                right: 8,
+                top: 4,
+                child: InkWell(
+                  onTap: () {
+                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+                  },
+                  borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  highlightColor: Colors.transparent,
+                  child: Ink(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xffececec),
+                    ),
+                    child: Icon(
+                      Icons.cancel,
+                      color: Colors.grey,
+                      size: 24,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

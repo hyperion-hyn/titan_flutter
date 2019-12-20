@@ -3,8 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
-import 'package:titan/src/model/poi.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
+import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../../global.dart';
 

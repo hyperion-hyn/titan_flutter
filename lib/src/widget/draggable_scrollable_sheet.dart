@@ -85,7 +85,7 @@ class DraggableScrollableSheet extends StatefulWidget {
   ///
   /// The [builder], [initialChildSize], [minChildSize], [maxChildSize] and
   /// [expand] parameters must not be null.
-  const DraggableScrollableSheet({
+  DraggableScrollableSheet({
     Key key,
     this.initialChildSize = 0.5,
     this.minChildSize = 0.20,
@@ -109,21 +109,21 @@ class DraggableScrollableSheet extends StatefulWidget {
   /// displaying the widget.
   ///
   /// The default value is `0.5`.
-  final double initialChildSize;
+  double initialChildSize;
 
   /// The minimum fractional value of the parent container's height to use when
   /// displaying the widget.
   ///
   /// The default value is `0.25`.
-  final double minChildSize;
+  double minChildSize;
 
-  final double anchorSize;
+  double anchorSize;
 
   /// The maximum fractional value of the parent container's height to use when
   /// displaying the widget.
   ///
   /// The default value is `1.0`.
-  final double maxChildSize;
+  double maxChildSize;
 
   /// Whether the widget should expand to fill the available space in its parent
   /// or not.
@@ -133,9 +133,9 @@ class DraggableScrollableSheet extends StatefulWidget {
   /// [Center]), this should be set to false.
   ///
   /// The default value is true.
-  final bool expand;
+  bool expand;
 
-  final bool draggable;
+  bool draggable;
 
   /// The builder that creates a child to display in this widget, which will
   /// use the provided [ScrollController] to enable dragging and scrolling
@@ -250,14 +250,15 @@ class _DraggableSheetExtent {
         _currentExtent = ValueNotifier<double>(initialExtent)..addListener(listener),
         availablePixels = double.infinity;
 
-  final double minExtent;
-  final double anchorExtent;
-  final double maxExtent;
-  final double initialExtent;
+  double minExtent;
+  double anchorExtent;
+  double maxExtent;
+  double initialExtent;
+  bool draggable;
+
   final ValueNotifier<double> _currentExtent;
   double availablePixels;
   final BuildContext context;
-  final bool draggable;
 
   bool get isAtMin => minExtent >= _currentExtent.value;
 
@@ -278,7 +279,7 @@ class _DraggableSheetExtent {
 
   set currentExtent(double value) {
     assert(value != null);
-    _currentExtent.value = value.clamp(/*minExtent*/0.0, maxExtent);
+    _currentExtent.value = value.clamp(/*minExtent*/ 0.0, maxExtent);
 
     DraggableScrollableNotification(
       minExtent: minExtent,
@@ -323,7 +324,6 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> wit
   @override
   void initState() {
     super.initState();
-    print('xxx init ${widget.draggable}');
     _extent = _DraggableSheetExtent(
       minExtent: widget.minChildSize,
       maxExtent: widget.maxChildSize,
@@ -343,12 +343,28 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> wit
       });
 
     //dispatch init position
-//    _extent.currentExtent = widget.initialChildSize;
+    _extent.currentExtent = widget.initialChildSize;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_extent.initialExtent != widget.initialChildSize) {
+      _extent.initialExtent = widget.initialChildSize;
+    }
+    if (_extent.minExtent != widget.minChildSize) {
+      _extent.minExtent = widget.minChildSize;
+    }
+    if (_extent.maxExtent != widget.maxChildSize) {
+      _extent.maxExtent = widget.maxChildSize;
+    }
+    if (_extent.anchorExtent != widget.anchorSize) {
+      _extent.anchorExtent = widget.anchorSize;
+    }
+    if (_extent.draggable != widget.draggable) {
+      _extent.draggable = widget.draggable;
+    }
+
     if (_InheritedUpdatePositionStateNotifier.shouldReset(context)) {
       // jumpTo can result in trying to replace semantics during build.
       // Just animate really fast.
@@ -524,9 +540,8 @@ class _DraggableScrollableSheetScrollPosition extends ScrollPositionWithSingleCo
 
   @override
   void applyUserOffset(double delta) {
-    if (extent.draggable == true &&
-        !listShouldScroll &&
-        (!(/*extent.isAtMin ||*/ extent.isAtMax) || /*(extent.isAtMin && delta < 0)*/ (extent.currentExtent > 0 && delta < 0) || (extent.isAtMax && delta > 0))) {
+    if (extent.draggable == true && !listShouldScroll &&
+        (!(/*extent.isAtMin ||*/ extent.isAtMax) || (extent.isAtMin && delta < 0) || (extent.isAtMax && delta > 0))) {
       extent.addPixelDelta(-delta, context.notificationContext);
     } else {
       super.applyUserOffset(delta);
@@ -552,12 +567,14 @@ class _DraggableScrollableSheetScrollPosition extends ScrollPositionWithSingleCo
         DraggableScrollableActuator.setMax(context.notificationContext);
       } else if (extent.currentExtent > extent.minExtent) {
         DraggableScrollableActuator.setAnchor(context.notificationContext);
+      } else {
+        DraggableScrollableActuator.setMin(context.notificationContext);
       }
     } else if (velocity < 0) {
       //down
       if (extent.currentExtent > extent.anchorExtent) {
         DraggableScrollableActuator.setAnchor(context.notificationContext);
-      } else if (extent.currentExtent > extent.minExtent) {
+      } else /*if (extent.currentExtent > extent.minExtent)*/ {
         DraggableScrollableActuator.setMin(context.notificationContext);
       }
     }
@@ -705,7 +722,6 @@ class _UpdatePositionStateNotifier extends ChangeNotifier {
   ///
   /// This flag should be reset after checking it.
   bool _resetWasCalled = false;
-
   bool _maxWasCalled = false;
   bool _minWasCalled = false;
   bool _anchorWasCalled = false;
@@ -718,6 +734,7 @@ class _UpdatePositionStateNotifier extends ChangeNotifier {
     if (!hasListeners) {
       return false;
     }
+    setAllFalse();
     _resetWasCalled = true;
     notifyListeners();
     return true;
@@ -727,6 +744,7 @@ class _UpdatePositionStateNotifier extends ChangeNotifier {
     if (!hasListeners) {
       return false;
     }
+    setAllFalse();
     _maxWasCalled = true;
     notifyListeners();
     return true;
@@ -736,6 +754,7 @@ class _UpdatePositionStateNotifier extends ChangeNotifier {
     if (!hasListeners) {
       return false;
     }
+    setAllFalse();
     _minWasCalled = true;
     notifyListeners();
     return true;
@@ -745,6 +764,7 @@ class _UpdatePositionStateNotifier extends ChangeNotifier {
     if (!hasListeners) {
       return false;
     }
+    setAllFalse();
     _anchorWasCalled = true;
     notifyListeners();
     return true;
@@ -754,9 +774,18 @@ class _UpdatePositionStateNotifier extends ChangeNotifier {
     if (!hasListeners) {
       return false;
     }
+    setAllFalse();
     _hideWasCalled = true;
     notifyListeners();
     return true;
+  }
+
+  void setAllFalse() {
+    _minWasCalled = false;
+    _hideWasCalled = false;
+    _anchorWasCalled = false;
+    _maxWasCalled = false;
+    _resetWasCalled = false;
   }
 }
 
