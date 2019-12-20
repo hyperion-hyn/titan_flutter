@@ -41,7 +41,6 @@ class _GaodePoiPanelState extends State<GaodePoiPanel> {
   void initState() {
     super.initState();
 
-    //动态设置收缩高度
     SchedulerBinding.instance.addPostFrameCallback((_) {
       HeaderHeightNotification(height: getHeaderHeight()).dispatch(context);
     });

@@ -287,8 +287,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           return;
         }
         IPoi poi = await ciphertextToPoi(Injector.of(context).repository, initialLink.toString());
-        BlocProvider.of<home.HomeBloc>(context)
-            .add(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
+        BlocProvider.of<ScaffoldMapBloc>(context)
+            .add(SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {
         logger.e(err);
       }
@@ -305,8 +305,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       try {
         IPoi poi = await ciphertextToPoi(Injector.of(context).repository, link.toString());
-        BlocProvider.of<home.HomeBloc>(context)
-            .add(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
+        BlocProvider.of<ScaffoldMapBloc>(context)
+            .add(SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {
         logger.e(err);
       }

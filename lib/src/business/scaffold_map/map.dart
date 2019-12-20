@@ -93,8 +93,8 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   }
 
   void onDragPanelYChange(double value) {
-//    _mapPositionAnimationController.value = value;
-    _updateMapPositionSubject.add(value);
+    _mapPositionAnimationController.value = value;
+//    _updateMapPositionSubject.add(value);
   }
 
   void _onMapClick(Point<double> point, LatLng coordinates) async {

@@ -204,7 +204,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         double topPadding = MediaQuery.of(context).padding.top;
         bool draggable = false;
         SheetPanelBuilder panelBuilder;
-        double collapsedHeight = 120;
+        double collapsedHeight = 140;
         double anchorHeight = boxConstraints.biggest.height * 0.55;
         double initHeight = 0;
 

@@ -7,9 +7,7 @@ import 'package:titan/src/global.dart';
 
 import 'business/home/bloc/bloc.dart';
 import 'business/home/home_page.dart';
-import 'business/home/map/bloc/bloc.dart';
 import 'business/home/searchbar/bloc/bloc.dart';
-import 'business/home/sheets/bloc/bloc.dart';
 import 'consts/consts.dart';
 
 class HomeBuilder extends StatefulWidget {
@@ -20,8 +18,6 @@ class HomeBuilder extends StatefulWidget {
 }
 
 class _HomeBuilderState extends State<HomeBuilder> {
-  SheetsBloc sheetsBloc;
-  MapBloc mapBloc;
   SearchbarBloc searchBarBloc;
   HomeBloc homeBloc;
 
@@ -33,28 +29,14 @@ class _HomeBuilderState extends State<HomeBuilder> {
     initBloc();
   }
 
-
-
-
   void initBloc() {
-    sheetsBloc = SheetsBloc();
-    mapBloc = MapBloc();
     searchBarBloc = SearchbarBloc();
     homeBloc = HomeBloc();
-    homeBloc.mapBloc = mapBloc;
-    homeBloc.searchBarBloc = searchBarBloc;
-    homeBloc.sheetBloc = sheetsBloc;
-
-    sheetsBloc.homeBloc = homeBloc;
-    mapBloc.homeBloc = homeBloc;
-    mapBloc.sheetsBloc = sheetsBloc;
     searchBarBloc.homeBloc = homeBloc;
   }
 
   @override
   void dispose() {
-    sheetsBloc.close();
-    mapBloc.close();
     searchBarBloc.close();
     homeBloc.close();
 
@@ -71,9 +53,7 @@ class _HomeBuilderState extends State<HomeBuilder> {
         return MultiBlocProvider(
           child: WillPopScope(
             onWillPop: () async {
-              if (_lastPressedAt == null ||
-                  DateTime.now().difference(_lastPressedAt) >
-                      Duration(seconds: 2)) {
+              if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
                 _lastPressedAt = DateTime.now();
                 Fluttertoast.showToast(msg: '再按一下退出程序');
                 return false;
@@ -83,18 +63,10 @@ class _HomeBuilderState extends State<HomeBuilder> {
             child: HomePage(),
           ),
           providers: [
-            BlocProvider<SheetsBloc>(
-                builder: (context) => sheetsBloc..context = context),
-            BlocProvider<MapBloc>(
-                builder: (context) => mapBloc..context = context),
-            BlocProvider<SearchbarBloc>(
-                builder: (context) => searchBarBloc..context = context),
-            BlocProvider<HomeBloc>(
-                builder: (context) => homeBloc..context = context),
-            BlocProvider<ScaffoldMapBloc>(
-                builder: (context) => ScaffoldMapBloc(context)),
-            BlocProvider<DiscoverBloc>(
-                builder: (context) => DiscoverBloc(context)),
+            BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
+            BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
+            BlocProvider<ScaffoldMapBloc>(builder: (context) => ScaffoldMapBloc(context)),
+            BlocProvider<DiscoverBloc>(builder: (context) => DiscoverBloc(context)),
           ],
         );
       },
