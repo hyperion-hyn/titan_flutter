@@ -15,7 +15,7 @@ class PromoteQrCodePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //print('[QR] ---> build');
+    print('[QR] ---> build, url:$url, id:${LOGIN_USER_INFO.id}');
 
     return Scaffold(
       appBar: AppBar(
@@ -24,43 +24,29 @@ class PromoteQrCodePage extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.share),
-              color: Colors.white,
-              tooltip: S.of(context).share,
-              onPressed: (){
-                _shareQr(context);
-              },
-            ),
+          IconButton(
+            icon: Icon(Icons.share),
+            color: Colors.white,
+            tooltip: S.of(context).share,
+            onPressed: () {
+              _shareQr(context);
+            },
+          ),
         ],
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: WidgetShot(
         controller: _shotController,
-        child: _newBody(context),
+        child: _body(context),
       ),
     );
   }
 
 
-  Widget _oldBody(BuildContext context) {
-    return Center(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
-        child: QrImage(
-          data: url,
-          backgroundColor: Colors.white,
-          version: 4,
-          size: 240,
-        ),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
+  Widget _body(BuildContext context) {
+    print('[QR] ---> _body, url:$url, id:${LOGIN_USER_INFO.id}');
 
-
-  Widget _newBody(BuildContext context) {
     var languageCode = Localizations.localeOf(context).languageCode;
     var shareAppImage = "";
 
@@ -73,14 +59,13 @@ class PromoteQrCodePage extends StatelessWidget {
     return Stack(
       children: <Widget>[
         Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(shareAppImage),
-                fit: BoxFit.cover,
-              ),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(shareAppImage),
+              fit: BoxFit.cover,
             ),
+          ),
         ),
-
         Positioned(
           left: 0,
           right: 0,
@@ -91,34 +76,35 @@ class PromoteQrCodePage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
-
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(top: 18, bottom: 18, left: 30, right: 8),
+                  margin:
+                      EdgeInsets.only(top: 18, bottom: 18, left: 30, right: 8),
                   child: QrImage(
                     data: url,
-                    padding: EdgeInsets.all(.0),
+                    padding: EdgeInsets.all(0.0),
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
-                    version: 3,
+                    version: 4,
                     size: 60,
                   ),
                 ),
-
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
                       LOGIN_USER_INFO.id,
-                      style: TextStyle(color: HexColor('#FEFEFE'), fontSize: 16),
+                      style:
+                          TextStyle(color: HexColor('#FEFEFE'), fontSize: 16),
                     ),
                     SizedBox(
                       height: 6,
                     ),
                     Text(
                       S.of(context).invite_join + " " + S.of(context).app_name,
-                      style: TextStyle(color: HexColor('#FEFEFE'), fontSize: 12),
+                      style:
+                          TextStyle(color: HexColor('#FEFEFE'), fontSize: 12),
                     ),
                   ],
                 ),
@@ -131,13 +117,11 @@ class PromoteQrCodePage extends StatelessWidget {
   }
 
   void _shareQr(BuildContext context) async {
-
 //    print('_shareQr --> action, _shotController: ${_shotController.hashCode}');
 //    print('_shareQr --> action, globalKey:${_shotController.globalKey.currentContext}, context:${context}');
 
     Uint8List imageByte = await _shotController.makeImageUint8List();
-    await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+    await Share.file(
+        S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
   }
-
 }
-
