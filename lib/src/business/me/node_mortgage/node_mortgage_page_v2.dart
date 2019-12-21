@@ -251,7 +251,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                 child: Text(
                                                   S.of(context).mortgage,
                                                   style: TextStyle(
-                                                      color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                                      color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                                                 ),
                                               ),
                                             ),
@@ -280,7 +280,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                       S.of(context).cybersquatting,
                                                       style: TextStyle(
                                                           color: Colors.white,
-                                                          fontSize: 18,
+                                                          fontSize: 14,
                                                           fontWeight: FontWeight.bold),
                                                     ),
                                                     Text(

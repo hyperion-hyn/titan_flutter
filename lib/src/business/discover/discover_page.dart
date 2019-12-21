@@ -306,9 +306,12 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                           ),
                                                           Padding(
                                                             padding: const EdgeInsets.only(top: 8.0),
-                                                            child: Text(
-                                                              S.of(context).not_open_yet,
-                                                              style: TextStyle(color: Colors.grey, fontSize: 11),
+                                                            child: SizedBox(
+                                                              width: 100,
+                                                              child: Text(
+                                                                S.of(context).not_open_yet,
+                                                                style: TextStyle(color: Colors.grey, fontSize: 11),
+                                                              ),
                                                             ),
                                                           ),
                                                         ],
