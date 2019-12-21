@@ -11,7 +11,9 @@ import Flutter
 import TrustWalletCore
 
 class WalletPluginInterface {
+    
 //    private lazy var keyStoreDir: URL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("keystore")
+    
     private lazy var keyStoreDir: URL = {
        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
        let cachesDir = paths[0]
@@ -34,6 +36,7 @@ class WalletPluginInterface {
        
        return URL(fileURLWithPath: keyStore)
     }()
+    
     private lazy var keyStore: KeyStore = try! KeyStore(keyDirectory: keyStoreDir)
     
     func setMethodCallHandler(methodCall: FlutterMethodCall, result: FlutterResult) -> Bool {
