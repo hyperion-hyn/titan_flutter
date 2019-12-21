@@ -1,6 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
+import '../wallet/wallet_create_new_account_page.dart';
+import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
+import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
+import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
+import 'package:titan/src/global.dart';
+import '../wallet/wallet_manager/wallet_manager.dart';
+
 
 class DataContributionPage extends StatefulWidget {
   @override
@@ -10,6 +22,23 @@ class DataContributionPage extends StatefulWidget {
 }
 
 class _DataContributionState extends State<DataContributionPage> {
+  WalletBloc _walletBloc;
+
+  StreamSubscription _eventbusSubcription;
+
+  @override
+  void initState() {
+    _walletBloc = WalletBloc();
+    _walletBloc.add(ScanWalletEvent());
+
+    _eventbusSubcription = eventBus.on().listen((event) {
+      if (event is ScanWalletEvent) {
+        _walletBloc.add(ScanWalletEvent());
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,99 +51,197 @@ class _DataContributionState extends State<DataContributionPage> {
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
-      body: ListView(
-        children: <Widget>[
-          _wallet(),
-          _divider(),
-          _buildItem('signal', '扫描附近信号数据', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ContributionPage(),
-              ),
-            );
-          }, isOpen: true),
-          _divider(),
-          _buildItem('position', '添加地理位置信息', () {}),
-          _divider(),
-          _buildItem('check', '校验地理位置信息', () {}),
-          _divider(),
-        ],
+      body: _buildView(context),
+    );
+  }
+
+  Widget _buildView(BuildContext context) {
+    return BlocBuilder<WalletBloc, WalletState>(
+      bloc: _walletBloc,
+      builder: (BuildContext context, WalletState state) {
+        if (state is WalletEmptyState) {
+          return _walletTipsView();
+        } else if (state is ShowWalletState) {
+          currentWalletVo = state.wallet;
+          return _listView();
+        } else if (state is ScanWalletLoadingState) {
+          return _buildLoading(context);
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
+  Widget _buildLoading(context) {
+    return Center(
+      child: SizedBox(
+        height: 40,
+        width: 40,
+        child: CircularProgressIndicator(
+          strokeWidth: 3,
+        ),
       ),
+    );
+  }
+
+  Widget _walletTipsView() {
+    return Center(
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 39, 0, 26),
+              child: Image.asset(
+                'res/drawable/data_contribution_wallet_check.png',
+                width: 110,
+                height: 108,
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 34),
+              width: 194,
+              child: Text(
+                '数据贡献需要有HYN地址，请先创建 或导入HYN钱包。',
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: HexColor('#333333'),
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+              child: SizedBox(
+                height: 40,
+                width: 150,
+                child: RaisedButton(
+                  onPressed: () {
+                    print('创建钱包');
+
+                    createWalletPopUtilName = '/data_contribution_page';
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateAccountPage()));
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  color: HexColor('#CC941E'),
+                  child: Text(
+                    S.of(context).create_wallet,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 40,
+              width: 150,
+              child: RaisedButton(
+                onPressed: () {
+                  print('导入钱包');
+
+                  createWalletPopUtilName = '/data_contribution_page';
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ImportAccountPage()));
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+                color: HexColor('#259D25'),
+                child: Text(
+                  S.of(context).import_wallet,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _listView() {
+    return ListView(
+      children: <Widget>[
+        _wallet(),
+        _divider(),
+        _buildItem('signal', '扫描附近信号数据', () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ContributionPage(),
+            ),
+          );
+        }, isOpen: true),
+        _divider(),
+        _buildItem('position', '添加地理位置信息', () {}),
+        _divider(),
+        _buildItem('check', '校验地理位置信息', () {}),
+        _divider(),
+      ],
     );
   }
 
   Widget _wallet() {
     return Container(
-      height: 80,
+      height: 50,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-              padding: const EdgeInsets.fromLTRB(15, 4, 10, 0),
-              child: Image.asset(
-                'res/drawable/data_contribution_wallet.png',
-                width: 40,
-                height: 40,
-              )),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 14, 10, 12),
-                child: GestureDetector(
-                  onTap: () {
-                    print('[data] --> 导入钱包');
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        '创建/导入钱包',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, color: HexColor('#333333')),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18),
-                        child: Text(
-                          '即将开放',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: Color(0xFFF82530)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Row(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              '将以“钱包”HYN地址身份贡献数据',
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: HexColor('#333333'),
+                  fontSize: 12),
+            ),
+          ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: GestureDetector(
+              onTap: () {
+                print('[data] --> 切换主钱包');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WalletManagerPage(),
+                        settings: RouteSettings(name: "/wallet_manager_page")));
+              },
+              child: Row(
                 children: <Widget>[
-                  Text(
-                    '将以“钱包”HYN地址身份贡献数据',
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: HexColor('#333333'),
-                        fontSize: 12),
+                  Icon(
+                    Icons.cached,
+                    color: HexColor('#CC941E'),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: GestureDetector(
-                      onTap: () {
-                        print('[data] --> 切换主钱包');
-                      },
-                      child: Text(
-                        '切换主钱包',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: HexColor('#333333')),
-                      ),
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
+                      '切换主钱包',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: HexColor('#CC941E'),
+                          fontSize: 14),
                     ),
                   ),
                 ],
-              )
-            ],
-          )
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -142,30 +269,34 @@ class _DataContributionState extends State<DataContributionPage> {
                 fontSize: 14,
                 color: HexColor('#333333')),
           ),
-          Visibility(
-            visible: !isOpen,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: Text(
-                '即将开放',
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    color: Color(0xFFF82530)),
-              ),
-            ),
-          ),
           Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Icon(
-              Icons.chevron_right,
-              color: HexColor('#E9E9E9'),
-            ),
-          )
+          _end(isOpen: isOpen),
         ],
       ),
     );
+  }
+
+  Widget _end({bool isOpen = false}) {
+    if (isOpen) {
+      return Padding(
+        padding: const EdgeInsets.all(14),
+        child: Icon(
+          Icons.chevron_right,
+          color: HexColor('#E9E9E9'),
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        child: Text(
+          '即将开放',
+          style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 12,
+              color: HexColor('#AAAAAA')),
+        ),
+      );
+    }
   }
 
   Widget _divider() {
@@ -176,5 +307,11 @@ class _DataContributionState extends State<DataContributionPage> {
         color: HexColor('#E9E9E9'),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _eventbusSubcription?.cancel();
+    super.dispose();
   }
 }

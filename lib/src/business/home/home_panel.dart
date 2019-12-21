@@ -224,6 +224,7 @@ class HomePanelState extends State<HomePanel> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
+                    settings: RouteSettings(name: '/data_contribution_page'),
                     builder: (context) => DataContributionPage(),
                   ),
                 );
