@@ -471,5 +471,10 @@
   "hashrate": "HashRate",
   "scan_wifi_map_style_url": "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json",
   "maprich_intro_url": "${rich_domain}intro?lang=en",
-  "actual_amount_received":"(Actual amount received shall prevail)"
+  "actual_amount_received":"(Actual amount received shall prevail)",
+  "get_current_position_fail_tips": "Could not get your current location",
+  "open_location_service": "Please enable location service",
+  "apply_location_service": "Application for location authorization",
+  "allow_location_service": "Please authorize the location function.",
+  "again_click_exit_app": "Click again to exit the program"
 }

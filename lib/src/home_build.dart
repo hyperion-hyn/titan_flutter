@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/global.dart';
-
+import 'package:titan/generated/i18n.dart';
 import 'business/home/bloc/bloc.dart';
 import 'business/home/home_page.dart';
 import 'business/home/map/bloc/bloc.dart';
@@ -75,7 +75,7 @@ class _HomeBuilderState extends State<HomeBuilder> {
                   DateTime.now().difference(_lastPressedAt) >
                       Duration(seconds: 2)) {
                 _lastPressedAt = DateTime.now();
-                Fluttertoast.showToast(msg: '再按一下退出程序');
+                Fluttertoast.showToast(msg: S.of(globalContext).again_click_exit_app);
                 return false;
               }
               return true;

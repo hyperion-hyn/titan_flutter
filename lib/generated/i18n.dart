@@ -40,7 +40,9 @@ class S implements WidgetsLocalizations {
   String get add_share_options => "Sharing options";
   String get address_copied => "Address copied";
   String get address_copy_success_hint => "Address copied successfully";
+  String get again_click_exit_app => "Click again to exit the program";
   String get all => "ALL";
+  String get allow_location_service => "Please authorize the location function.";
   String get already_latest_version_hint => "latest version already installed";
   String get amount => "Amount：";
   String get amount_copy_success_hint => "Amount copied successfully";
@@ -48,6 +50,7 @@ class S implements WidgetsLocalizations {
   String get app_area_setting => "Area";
   String get app_name => "Star Rich";
   String get app_version => "Version";
+  String get apply_location_service => "Application for location authorization";
   String get area => "Area";
   String get article => "Article";
   String get attraction => "Travel";
@@ -154,6 +157,7 @@ class S implements WidgetsLocalizations {
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
+  String get get_current_position_fail_tips => "Could not get your current location";
   String get get_power => "Get HashRate";
   String get get_powers => "Get HashRate";
   String get global_embassies => "Global Embassies";
@@ -277,6 +281,7 @@ class S implements WidgetsLocalizations {
   String get official_website => "Official Website";
   String get online_exchange => "Online Exchanges";
   String get open_camera => "Please allow access to your camera";
+  String get open_location_service => "Please enable location service";
   String get operating_hours => "Time";
   String get other_area => "Others";
   String get other_star_numbers => "Others";
@@ -505,809 +510,819 @@ class $ko extends S {
   @override
   String get cancel => "취소";
   @override
-  String get update_now => "지금 업데이트";
+  String get update_now => "업데이트중입니다.";
   @override
-  String get titan_encrypted_map_ecology => "Titan 암호화 된지도 생태";
+  String get titan_encrypted_map_ecology => "Titan 암호화지도생태학";
   @override
-  String get contract_call => "스마트 계약 전화";
+  String get contract_call => "스마트 콘트랙트 호출";
   @override
-  String get contact_customer_service => "고객 서비스에 문의";
+  String get open_location_service => "위치 서비스를 켜십시오";
+  @override
+  String get contact_customer_service => "고객센터연락";
   @override
   String get project_introduction => "프로젝트 소개";
   @override
-  String get please_input_fund_pwd_hint => "펀드 비밀번호를 입력하십시오";
+  String get please_input_fund_pwd_hint => "자금비밀번호를입력해주십시오.";
   @override
-  String get verify_code_error_hint => "인증 코드 오류";
+  String get verify_code_error_hint => "인증번호오류";
   @override
-  String get out_wallet_transfer_hint => "외부 지갑을 사용하여 이체했습니다";
+  String get out_wallet_transfer_hint => "외부지갑을사용하여이미전입하였습니다.";
   @override
-  String get re_enter_fund_password => "비밀번호를 다시 입력하십시오";
+  String get re_enter_fund_password => "자금비밀번호를다시입력해주십시오.";
   @override
   String get setting => "설정";
   @override
-  String get fund_new_password => "자금에 대한 새로운 비밀번호";
+  String get fund_new_password => "새로운자금비밀번호";
   @override
-  String get para_error_hint => "파라미터 에러";
+  String get para_error_hint => "파라미터오류";
   @override
-  String get app_area_setting => "구역";
+  String get app_area_setting => "지역";
   @override
-  String get about_us => "우리에 대해";
+  String get about_us => "우리에 대해서";
   @override
-  String get please_input_wallet_password_hint => "지갑 비밀번호를 입력하십시오";
+  String get please_input_wallet_password_hint => "지갑 비밀번호를 입력해주십시오.";
   @override
   String get wallet_setting => "지갑 설정";
   @override
-  String get search_empty_data => "데이터가 없습니다";
+  String get search_empty_data => "데이터가 없습니다.";
   @override
-  String get dmap_document_title => "DMap지도 응용 프로그램 액세스 문서";
+  String get dmap_document_title => "DMap 지도를문서에바인딩합니다.";
   @override
-  String get create_wallet => "지갑 만들기";
+  String get create_wallet => "지갑 새로 만들기";
   @override
   String get password_label => "비밀번호";
   @override
-  String get sweep_qr_hint => "위의 QR 코드 패턴을 스윕하고 WeChat에 나를 추가하십시오.";
+  String get sweep_qr_hint => "화면의QR코드를스캔하여위챗을추가하십시오.";
   @override
-  String get nav_my_privacy_map => "내 프라이버시 맵";
+  String get nav_my_privacy_map => "나의 개인정보 지도";
   @override
-  String get click_retry_hint => "다시 시도하려면 클릭";
+  String get click_retry_hint => "다시시도하려면클릭해주세요.";
   @override
-  String get route => "노선";
+  String get route => "루트";
   @override
-  String get data_contribute_reward => "기여도 데이터 HYN 장려 받음";
+  String get data_contribute_reward => "지도 데이터 기여로 HYN 인센티브 획득";
   @override
-  String get my_power_with_unit => "내 해시(T)";
+  String get my_power_with_unit => "나의계산력(T)";
   @override
-  String get receiver_address_not_empty_hint => "수신 주소는 비워 둘 수 없습니다";
+  String get receiver_address_not_empty_hint => "접수주소가비어서는안됩니다.";
   @override
-  String get user_this_account => "이 개인 계정을 사용하십시오";
+  String get user_this_account => "비밀 계정 사용";
   @override
-  String get private_and_safety => "비밀과 보안";
+  String get private_and_safety => "프라이버시와 안전";
   @override
   String get confirm_snap_up => "사이버 스쿼팅 확인";
   @override
-  String get hyn_withdrawal_coin_address => "HYN인출 주소";
+  String get hyn_withdrawal_coin_address => "HYN인출주소";
   @override
   String get unknown_error => "Unknown error";
   @override
-  String get other_star_numbers => "다른 성간 수량";
+  String get other_star_numbers => "기타성간량";
   @override
-  String get my_position => "내 위치";
+  String get my_position => "나의위치";
   @override
-  String get commiting => "제출";
+  String get commiting => "제출중입니다.";
   @override
-  String get register_account => "계정 등록";
+  String get register_account => "등록계정";
   @override
   String get hotel => "호텔";
   @override
-  String get snap_up_success_hint => "사이버 스쿼팅 성공";
+  String get snap_up_success_hint => "사이버스쿼팅성공";
   @override
   String get close => "닫기";
   @override
-  String get amount_copy_success_hint => "금액이 성공적으로 복사되었습니다";
+  String get amount_copy_success_hint => "금액복사성공";
   @override
-  String get input_wallet_name_hint => "지갑 이름을 입력하십시오";
+  String get input_wallet_name_hint => "지갑 명칭을 입력해주십시오.";
   @override
-  String get get_powers => "컴퓨팅 파워 확보";
+  String get get_powers => "계산력불러오기";
   @override
-  String get mortgage_success_hint => "모기지 성공";
+  String get apply_location_service => "포지셔닝 승인 신청";
   @override
-  String get app_name => "타이탄";
+  String get mortgage_success_hint => "저당성공";
   @override
-  String get private_sharing => "개인 공유";
+  String get app_name => "성간굴금";
   @override
-  String get forget_password => "비밀번호를 잊어 버렸습니다";
+  String get private_sharing => "프라이버시공유";
   @override
-  String get receiver_address => "받는 사람 주소";
+  String get forget_password => "비밀번호분실";
   @override
-  String get share_app => "앱 공유";
+  String get receiver_address => "수신자주소";
   @override
-  String get information => "정보";
+  String get share_app => "app공유";
   @override
-  String get input_count_over_balance => "균형 초과";
+  String get information => "뉴스";
   @override
-  String get register => "가입";
+  String get input_count_over_balance => "잔액한도를초과하였습니다.";
   @override
-  String get search_history => "역사 검색";
+  String get register => "등록";
+  @override
+  String get search_history => "검색 내역";
   @override
   String get improvement_plan_title => "체험 프로그램 개선";
   @override
-  String get my_total_power => "내 총 컴퓨팅 능력";
+  String get my_total_power => "나의총계산력";
   @override
-  String get extract_mnemonic_fail => "니모닉 실패를 추출";
+  String get extract_mnemonic_fail => "도움말 불러오기 실패";
   @override
-  String get fund_password_length_error_message => "최소 비밀번호를 입력하십시오";
+  String get fund_password_length_error_message => "6자리수 이상의 자금 비밀번호를 입력해 주십시오.";
   @override
   String get language => "언어";
   @override
-  String get internet_bar => "인터넷 카페";
+  String get internet_bar => "PC방";
   @override
-  String get mortgage_fail_hint => "모기지 실패";
+  String get mortgage_fail_hint => "저당 실패";
   @override
-  String get later => "아직 업데이트되지 않았습니다";
+  String get later => "업데이트를 하지 않습니다.";
   @override
-  String get time_f => "시간 :";
+  String get time_f => "시간";
   @override
-  String get finish => "완료";
+  String get finish => "완성";
   @override
-  String get please_input_wallet_name => "지갑 이름을 입력하십시오";
+  String get please_input_wallet_name => "지갑 명칭을 입력해주십시오.";
   @override
   String get area => "지역";
   @override
-  String get my_wallet_address => "내 지갑 주소";
+  String get my_wallet_address => "나의지갑주소";
   @override
   String get hyn_price => "HYN 지수";
   @override
-  String get withdrawal_records => "출금 기록";
+  String get withdrawal_records => "인출기록";
   @override
-  String get nav_share_app => "앱 공유";
+  String get nav_share_app => "App 공유";
   @override
   String get recommended_area => "추천 지역";
   @override
   String get background_scan => "백그라운드 스캔";
   @override
-  String get official_announcement => "발표";
+  String get official_announcement => "공식 발표";
   @override
-  String get article => "기사";
+  String get article => "문장";
   @override
-  String get my_page => "나의";
+  String get my_page => "나의 것";
   @override
-  String get email_format_error_hint => "이메일 형식이 잘못되었습니다. 올바른 이메일을 입력하십시오";
+  String get email_format_error_hint => "메일주소 양식이 잘못되였습니다.정확한 메일주소를 입력해 주십시오.";
   @override
-  String get account_is_empty => "계정이 비어 있음";
+  String get account_is_empty => "계정이비어있습니다.";
   @override
-  String get no_transfer_info_hint => "전송 정보가 없습니다. 나중에 다시 시도하십시오";
+  String get no_transfer_info_hint => "전입 정보를 발견하지 못했습니다.잠시후 재시도해주십시오.";
   @override
-  String get please_input_invitation_code => "초대 코드를 입력하십시오";
+  String get please_input_invitation_code => "6자리수의초대코드번호를입력해주십시오.";
   @override
-  String get delete_wallet_success => "제거 성공";
+  String get delete_wallet_success => "삭제 성공";
   @override
-  String get email_label => "우편함";
+  String get email_label => "메일주소";
   @override
-  String get backup_wallet_notice_text1 => "니모닉 단어를 얻는 것은 지갑 자산의 소유권과 같습니다";
+  String get backup_wallet_notice_text1 => "도움말을 얻는것은 지갑 자산 소유권을 갖는것과 같습니다.";
   @override
-  String get official_website => "공식 웹 사이트";
+  String get official_website => "공식 홈페이지";
   @override
-  String get please_input_account_password => "계정 비밀번호를 입력하십시오";
+  String get please_input_account_password => "계정비밀번호를입력하십시오.";
   @override
-  String get medium => "Medium";
+  String get medium => "중간";
   @override
-  String get map3_global_nodes => "map3 글로벌 노드";
+  String get map3_global_nodes => "map3글로벌 노드";
   @override
-  String get paste => "붙여 넣기";
+  String get paste => "붙히기";
+  @override
+  String get again_click_exit_app => "프로그램을 종료하려면 다시 클릭하십시오";
   @override
   String get hyn_market => "HYN 시세";
   @override
-  String get data_contribute => "데이터 공헌";
+  String get data_contribute => "데이터 기여";
   @override
-  String get recharge_balance => "충전 잔액";
+  String get recharge_balance => "충전잔액";
   @override
-  String get turn_on_wifi_hint => "보다WIFI정확한 신호 맵을 위해 스캔을 켭니다";
+  String get turn_on_wifi_hint => "보다 정확한 신호 맵을 스캔하려면 WiFi를 켜십시오.";
   @override
-  String get private_wallet_tips => "계정 비밀 키는 장치를 떠나지 않습니다";
+  String get private_wallet_tips => "계좌 비밀키는 영원히 설비와 갈라놓을수 없습니다.";
   @override
-  String get node_introduction => "노드 소개";
+  String get node_introduction => "노드소개";
   @override
-  String get current_grade => "현재 레벨";
+  String get current_grade => "현재등급";
   @override
-  String get label => "태그";
+  String get label => "라벨";
   @override
-  String get input_resume_mnemonic => "백업 단어를 공백으로 구분하여 입력하십시오";
+  String get input_resume_mnemonic => "뛰여쓰기로 구분된 백업 도움말을 입력해주십시오.";
   @override
-  String get nav_about_us => "우리에 대해";
+  String get nav_about_us => "우리에 대해서";
   @override
-  String get create_wallet_tips => "비밀 계정 만들기";
+  String get create_wallet_tips => "프라이버시 계좌 새로 만들기";
   @override
-  String get forum => "받는 사람";
+  String get forum => "포럼";
   @override
-  String get revenue_details => "수익 세부 사항";
+  String get revenue_details => "수익상세내역";
   @override
-  String get login_out => "로그 아웃";
+  String get login_out => "로그아웃";
   @override
-  String get receive_success_hint => "클레임 성공";
+  String get receive_success_hint => "수령성공";
   @override
-  String get by_mortgage => "모기지 방법 선택";
+  String get by_mortgage => "저당방식선택";
   @override
-  String get account_backup_notice => "지금 계정을 백업합니다";
+  String get account_backup_notice => "당신의 계좌를 백업중입니다.";
   @override
-  String get reinput_wallet_password_label => "암호 확인";
+  String get reinput_wallet_password_label => "비밀번호 확인";
   @override
-  String get create_user_fail_hint => "사용자 생성 실패";
+  String get create_user_fail_hint => "새로운계정만들기실패";
   @override
-  String get speed_fast => "빨리";
+  String get speed_fast => "빠르다";
   @override
   String get dmap_setting => "DMap설정";
   @override
   String get import_wallet => "지갑 가져오기";
   @override
-  String get dmap_life => "생활 가이드";
+  String get dmap_life => "생활가이드";
   @override
-  String get reset_account_password => "계정 비밀번호 재설정";
+  String get reset_account_password => "계정비밀번호재설정";
   @override
-  String get start_encryption => "암호화";
+  String get start_encryption => "암호화시작";
   @override
-  String get cycling => "타기";
+  String get cycling => "라이딩";
   @override
-  String get transfer_address => "전송 주소";
+  String get transfer_address => "전입 주소";
   @override
-  String get password_not_equal_hint => "암호가 일치하지 않습니다.";
+  String get password_not_equal_hint => "비밀번호가 불일치합니다.";
   @override
-  String get please_input_mnemonic => "복원된 단어를 입력하십시오";
+  String get please_input_mnemonic => "도움말을 입력해주십시오.";
   @override
-  String get backup_wallet_mnemonic_title => "백업 니모닉";
+  String get backup_wallet_mnemonic_title => "도움말 백업하기";
   @override
-  String get decrypt_location_cipher_tips_context => "암호문을 붙여넣고 검색을 클릭하여 암호문을 해독하십시오.";
+  String get decrypt_location_cipher_tips_context => "암호화 위치문서를 붙히기 하신후 검색을 클릭하시면 암호화 문서를 바로 해제할수 있습니다.";
   @override
-  String get navigation => "탐색";
+  String get navigation => "네비게이션";
   @override
-  String get thank_you_for_contribute_data => "당신의 기여에 감사드립니다.";
+  String get thank_you_for_contribute_data => "데이터 기여에 감사드립니다.";
   @override
-  String get node_has_squat_hint => "노드가 쿼트되었습니다";
+  String get node_has_squat_hint => "노드사이버스쿼팅완료";
   @override
-  String get over_limit_hint => "한도 초과";
+  String get over_limit_hint => "제한초과";
   @override
-  String get import_account_tips => "축하합니다. 비밀 지갑을 성공적으로 가져왔습니다";
+  String get import_account_tips => "축하드립니다.당신의 비밀 지갑 가져오기에 성공하였습니다.";
   @override
-  String get improvement_plan_refuse => "참여하지 않음";
+  String get improvement_plan_refuse => "참여 안함";
   @override
-  String get transfer_fail => "전송 실패";
+  String get transfer_fail => "계좌 이체실패";
   @override
-  String get transfer_hyn_hint => "지정된 금액을 양도하십시오!";
+  String get transfer_hyn_hint => "반드시지정된HYN금액으로전입하여주십시오!";
   @override
   String get import_account_fail => "가져오기 실패";
   @override
-  String get foreign_video => "해외";
+  String get foreign_video => "국외동영상";
   @override
-  String get document_optimization => "문서 최적화...";
+  String get document_optimization => "문서최적화중입니다.";
   @override
-  String get invite_link => "초대 링크";
+  String get invite_link => "초대링크";
   @override
-  String get refresh_keypaire_message => "공개 키 주소를 새로 고친 후에는 이전에 수신 한 위치 암호문이 절대 해독되지 않습니다! 계속 새로 고침 하시겠습니까?";
+  String get refresh_keypaire_message => "공유키 주소를 새로 고치기하면 이전에 받았던 위치의 암호화 문서는 영구적으로 복구할수 없습니다.새로 고치기를 계속하시겠습니까?";
   @override
-  String get more_dmap => "더 많은 DMap 애플리케이션이 계속 추가되고 있습니다";
+  String get more_dmap => "더많은 DMap 애플리케이션들이지속적으로추가됩니다 ~";
   @override
-  String get modify_success => "성공적으로 수정되었습니다";
+  String get modify_success => "수정성공";
   @override
-  String get key_manager_title => "암호화 된 주소";
+  String get key_manager_title => "나의 암호화 주소";
   @override
-  String get create_wallet_name_label => "지갑 이름";
+  String get create_wallet_name_label => "지갑 명칭";
   @override
-  String get share_invalid_public_key => "잘못된 공개 키";
+  String get share_invalid_public_key => "무효한 공유키";
   @override
-  String get account_password => "계정 비밀번호";
+  String get account_password => "계정비밀번호";
   @override
-  String get account_backup_next_step_notice => "다음 단계에서 계정을 복구하는 데 사용할 단어 12개를 볼 수 있습니다";
+  String get account_backup_next_step_notice => "다음 단계에서 당신은 당신의 계좌를 복원하도록 허용하는 12개의 단어를 보게 될것입니다.";
   @override
-  String get backup_notice_label => "백업 팁";
+  String get backup_notice_label => "백업 제시";
   @override
-  String get not_open_yet => "기대하세요";
+  String get not_open_yet => "아직개방하지않았습니다.";
   @override
-  String get other_area => "기타 지역";
+  String get other_area => "기타지역";
   @override
-  String get postscript_hint => "첨자를 입력하십시오 (50 단어 이내).";
+  String get postscript_hint => "부언 입력(50자이내로)";
   @override
-  String get below_min_withdrawal => "최소 인출 금액 미만";
+  String get below_min_withdrawal => "최소인출금액한도이하입니다.";
   @override
-  String get skip => "건너 뛰기";
+  String get skip => "건너뛰기";
   @override
-  String get no_grade => "순위 없음";
+  String get no_grade => "무등급";
   @override
-  String get address_copy_success_hint => "주소가 성공적으로 복사되었습니다";
+  String get address_copy_success_hint => "주소 복사 성공";
   @override
   String get login => "로그인";
   @override
-  String get no_level => "순위 없음";
+  String get no_level => "무등급";
   @override
-  String get recharge => "재충전";
+  String get recharge => "충전";
   @override
-  String get today_complete_hint => "오늘 과제가 완료되었습니다. 기여해 주셔서 감사합니다.";
+  String get today_complete_hint => "오늘임무는완료하였습니다.데이터를 기여해주셔서 감사합니다.";
   @override
   String get share => "공유";
   @override
-  String get new_update_available => "새 버전 발견";
+  String get new_update_available => "새로운 버전을 발견하였습니다.";
   @override
-  String get product => "제품：";
+  String get product => "제품";
   @override
-  String get data_exception_hint => "데이터가 비정상입니다. 다시 시도하십시오";
+  String get data_exception_hint => "데이터오류가발생하였습니다.재시도해주십시오.";
   @override
-  String get show_mnemonic_label => "복원된 메시지 보이기";
+  String get get_current_position_fail_tips => "현재 위치를 얻을 수 없습니다";
   @override
-  String get refresh_public_key_seconds_tips => "%d초 후 자동 새로 고침";
+  String get show_mnemonic_label => "복원 단어 보여주기";
+  @override
+  String get refresh_public_key_seconds_tips => "%d초후 자동으로 새로 고침합니다.";
   @override
   String get delete_wallet_fail => "삭제 실패";
   @override
-  String get latest_news => "뉴스";
+  String get latest_news => "최신 뉴스";
   @override
-  String get receiver_encrypted_address => "수신자 암호화 주소 (공개 키)";
+  String get receiver_encrypted_address => "수신자 암호화 주소(공유키)";
   @override
-  String get invitation_code => "초대 코드";
+  String get invitation_code => "초대코드번호";
   @override
-  String get kais_talk => "Kai's Talk";
+  String get kais_talk => "케이시 스토리";
   @override
-  String get rmb => " CNY";
+  String get rmb => "인민페";
   @override
-  String get input_confirm_wallet_password_hint => "지갑 비밀번호 최소 6자리를 다시 입력하십시오";
+  String get input_confirm_wallet_password_hint => "최소 6자리수이상의 지갑 비밀번호를 다시 한번 입력해 주십시오.";
   @override
-  String get gas_fee => "네트워크 요금";
+  String get gas_fee => "네트워크비용";
   @override
-  String get over_limit_numbers => "한도 초과";
+  String get over_limit_numbers => "제한수량을초과하였습니다.";
   @override
-  String get copyed => "복사";
+  String get copyed => "복사 완료";
   @override
-  String get share_encrypted_location => "암호화 된 위치 공유";
+  String get share_encrypted_location => "암호화 위치 공유";
   @override
   String get discount_map => "할인지도";
   @override
-  String get domestic_video => "국내";
+  String get domestic_video => "국내동영상";
   @override
-  String get fundz_password => "자금 보안 비밀번호";
+  String get fundz_password => "자금안전비밀번호";
   @override
-  String get account_exist_hint => "계정이 이미 존재합니다. 직접 로그인하십시오";
+  String get account_exist_hint => "사용중인계정이므로직접로그인하세요.";
   @override
-  String get all => "모두";
+  String get all => "전부";
   @override
-  String get over_max_withdrawal => "최대 인출 한도 초과";
+  String get over_max_withdrawal => "최대 인출금액 한도를 초과하였습니다.";
   @override
-  String get backup_offline_save_title => "오프라인 저장소";
+  String get backup_offline_save_title => "오프라인 보관";
   @override
-  String get save_mnemonic_safe_notice => "복구된 메시지를 아무에게도 공유하지 말고 안전하게 저장하세요!";
+  String get save_mnemonic_safe_notice => "복원 단어를 그 누구와도 공유하지 말고 안전하게 저장하십시오!";
   @override
-  String get service_hours => "서비스 시간";
+  String get service_hours => "서비스시간";
   @override
   String get paking => "주차장";
   @override
-  String get driving => "드라이브";
+  String get driving => "차량 운전";
   @override
-  String get task => "과제";
+  String get task => "임무";
   @override
   String get cafe => "커피숍";
   @override
   String get telphone => "전화";
   @override
-  String get max_star_numbers => "성간 최대량";
+  String get max_star_numbers => "최대성간량";
   @override
-  String get verification_code => "인증 코드";
+  String get verification_code => "인증번호";
   @override
-  String get transfer_submitted => "송금이 제출되었습니다";
+  String get transfer_submitted => "계좌이체신청제출완료";
   @override
-  String get register_success => "성공적으로 등록";
+  String get register_success => "등록성공";
   @override
-  String get invite_link_copy_hint => "초대장 링크 복사";
+  String get invite_link_copy_hint => "초대링크복사완료";
   @override
-  String get Clean => "명확한 흔적";
+  String get Clean => "흔적 지우기";
   @override
-  String get fund_password_format_error_message => "비밀번호 형식이 잘못되었습니다. 최소 자릿수를 입력하십시오";
+  String get allow_location_service => "포지셔닝 사용을 승인하십시오.";
+  @override
+  String get fund_password_format_error_message => "비밀번호양식이잘못되였습니다.최소 6자리이상의비밀번호를입력해주십시오.";
   @override
   String get delete => "삭제";
   @override
-  String get map3_node_introduction => "map3 노드";
+  String get map3_node_introduction => "map3노드";
   @override
   String get continue_text => "계속";
   @override
-  String get effective => "효과적";
+  String get effective => "유효";
   @override
-  String get accept_share_pub_key => "피어 투 피어 공유";
+  String get accept_share_pub_key => "P2P 공유";
   @override
-  String get map_ai_verificate => "지도AI확인";
+  String get map_ai_verificate => "지도 AI 체크";
   @override
-  String get account_new_password => "새 계정 비밀번호";
+  String get account_new_password => "계정새비밀번호";
   @override
-  String get star_number => "성간 수";
+  String get star_number => "성간수";
   @override
-  String get tip_snap_up_balance_hint => "팁 : 사이버 스쿼팅 노드는 담보에 대해서만 재충전 잔액을 사용할 수 있습니다";
+  String get tip_snap_up_balance_hint => "제시:사이버 스쿼팅 노드는충전잔액을사용해만이저당잡힐수있습니다.";
   @override
-  String get please_waiting => "기다려주세요";
+  String get please_waiting => "잠시만기다려주십시오.";
   @override
-  String get refresh_public_key_days_tips => "%d일 후 자동 새로 고침";
+  String get refresh_public_key_days_tips => "%d일후 자동으로 새로 고침합니다.";
   @override
-  String get department => "학과";
+  String get department => "부서";
   @override
-  String get private_service => "개인 서비스";
+  String get private_service => "프라이버시서비스";
   @override
-  String get map_dmap => "그림 DMap";
+  String get map_dmap => "지도DMap";
   @override
-  String get hynPriceUnit => "USD";
+  String get hynPriceUnit => "CNY";
   @override
-  String get information_video => "비디오";
+  String get information_video => "동영상";
   @override
-  String get cybersquatting => "사재기";
+  String get cybersquatting => "사이버스쿼팅";
   @override
-  String get please_input_verification_code => "인증 코드를 입력하십시오";
+  String get please_input_verification_code => "6자리의인증번호를입력해주십시오.";
   @override
-  String get snap_up_fail => "분대 실패";
+  String get snap_up_fail => "사이버스쿼팅실패";
   @override
-  String get insufficient_permission_hint => "권한 부족";
+  String get insufficient_permission_hint => "권한부족";
   @override
-  String get node_martgage => "노드 모기지";
+  String get node_martgage => "노드저당";
   @override
-  String get backup_offline_save_text => "격리 된 네트워크의 안전한 장소에 보관\n이메일, 사진 앨범, 소셜 애플리케이션 등과 같은 네트워크 환경에서 니모닉을 공유하지 마십시오.";
+  String get backup_offline_save_text => "네트워크와 분리된 안전한 곳에 잘 보관하십시오.\n이메일, 포토 앨범, 소셜 어플리케이션 등 네트워크 환경에서 도움말을 공유하거나 저장하지 마십시오.";
   @override
-  String get update_user_info_fail_hint => "사용자 정보 업데이트 실패";
+  String get update_user_info_fail_hint => "사용자정보업데이트에실패하였습니다.";
   @override
-  String get attraction => "관광 명소";
+  String get attraction => "관광지";
   @override
-  String get unauthorized => "무단";
+  String get unauthorized => "미권한";
   @override
-  String get register_email => "등록 된 이메일";
+  String get register_email => "등록메일주소";
   @override
-  String get install_now => "지금 설치";
+  String get install_now => "바로 설치합니다.";
   @override
-  String get decrypt_location_cipher_tips => "위치 암호문을 해독하는 방법?";
+  String get decrypt_location_cipher_tips => "암호화 위치 문서를 어떻게 해제합니까?";
   @override
-  String get already_latest_version_hint => "이미 최신 버전";
+  String get already_latest_version_hint => "최신버전입니다.";
   @override
-  String get wx_id => "Wechat ID：titan654321";
+  String get wx_id => "윗챗ID：titan654321";
   @override
-  String get hyn_wallet_open_hint => "HYN월렛이 열려고합니다";
+  String get hyn_wallet_open_hint => "HYN지갑이곧오픈됩니다.";
   @override
-  String get redemption_fail => "상환 오류";
+  String get redemption_fail => "환매오류";
   @override
-  String get confirm_mortgage => "담보 대출 확인";
+  String get confirm_mortgage => "저당 확인";
   @override
-  String get bill_flow => "청구서 흐름";
+  String get bill_flow => "판매액명세서";
   @override
-  String get foods => "식당";
+  String get foods => "미식";
   @override
-  String get police_station_text => "경찰을 찾는 데 어려움이있다";
+  String get police_station_text => "어려움이있으면경찰을찾아주십시오.";
   @override
-  String get use_guide => "튜토리얼 사용";
+  String get use_guide => "사용교과 과정";
   @override
-  String get no_invite_success_hint => "당신은 사람들을 성공적으로 초대하지 않았습니다 ~";
+  String get no_invite_success_hint => "당신은아직사람들을성공적으로초대하지못했습니다.";
   @override
-  String get wallet_create_success => "계정 만들기 성공";
+  String get wallet_create_success => "계정 새로 만들기 성공";
   @override
-  String get hashrate => "계산 력";
+  String get hashrate => "계산력";
   @override
-  String get no_detail_address => "자세한 주소가 없습니다";
+  String get no_detail_address => "자세한주소가없습니다.";
   @override
   String get bank => "은행";
   @override
-  String get my_node_mortgage => "내 노드 모기지";
+  String get my_node_mortgage => "나의노드저당";
   @override
-  String get wallet_password_error => "암호 오류";
+  String get wallet_password_error => "잘못된 비밀번호입니다.";
   @override
-  String get lossz_wallet_mnemonic_notice => "복구 단어를 잃어 버리면 지갑에 액세스 할 수 없다는 것을 이해합니다";
+  String get lossz_wallet_mnemonic_notice => "알겠습니다.만약 제가 복원 단어를 잃어버리면 돈을 액세스할수 없다는것을 알고있습니다.";
   @override
-  String get confirm_mnemonic_incorrect => "텍스트가 올바르지 않습니다. 다시 시도하십시오";
+  String get confirm_mnemonic_incorrect => "복원 단어가 정확하지 않습니다.다시 시도하십시오.";
   @override
-  String get share_fail => "오류 공유";
+  String get share_fail => "공유 오류가 발생했습니다.";
   @override
-  String get safety_verification => "보안 검증";
+  String get safety_verification => "보안 인증";
   @override
-  String get node_mortgage_in_out_hint => "노드는 언제든지 모기지로 들어오고 나갑니다.";
+  String get node_mortgage_in_out_hint => "노드 저당은 반입이 병행되며 시간제한이 없습니다.";
   @override
-  String get my_location => "내 위치";
+  String get my_location => "나의위치";
   @override
-  String get improvement_plan_agree => "참여 계획";
+  String get improvement_plan_agree => "프로그램 참여";
   @override
-  String get receiver => "받기";
+  String get receiver => "접수";
   @override
-  String get my_account_with_unit => "내 계정(USDT)";
+  String get my_account_with_unit => "나의계정(USDT)";
   @override
-  String get mall => "백화점";
+  String get mall => "쇼핑몰";
   @override
-  String get modify_account_password => "계정 비밀번호 변경";
+  String get modify_account_password => "계정비밀번호수정";
   @override
-  String get ciphertext_exception_hint => "암호문이 유효하지 않거나 만료됨";
+  String get ciphertext_exception_hint => "암호문이유효하지않거나만료되였습니다.";
   @override
-  String get received => "받았습니다";
+  String get received => "접수하였습니다.";
   @override
-  String get recharge_success_hint => "충전 성공";
+  String get recharge_success_hint => "충전성공";
   @override
-  String get copy_wx_id_success_hint => "위챗 성공 복사";
+  String get copy_wx_id_success_hint => "위챗번호복사성공";
   @override
   String get toilet => "화장실";
   @override
-  String get no_fill_in => "채우지 않음";
+  String get no_fill_in => "기록이없습니다.";
   @override
-  String get grade => "순위";
+  String get grade => "등급";
   @override
-  String get processing => "가공";
+  String get processing => "처리중";
   @override
-  String get input_wallet_password_length_hint => "최소 6 비트 비밀번호를 입력하십시오.";
+  String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
   @override
-  String get tip_node_mortgages_balances_hint => "팁 : 노드 담보는 출력 밸런스에만 사용할 수 있습니다";
+  String get tip_node_mortgages_balances_hint => "제시:수익잔액을사용해만이노드를저당잡힐수있습니다.";
   @override
-  String get dapp_setting => "DApp 설정";
+  String get dapp_setting => "DApp설정";
   @override
-  String get send_verification_code => "인증 코드 보내기";
+  String get send_verification_code => "인증번호 발송";
   @override
-  String get view_all => "모두 보기";
+  String get view_all => "전체 보기";
   @override
-  String get nightlife_guide => "나이트 라이프 가이드";
+  String get nightlife_guide => "나이트라이프가이드";
   @override
-  String get open_camera => "카메라 권한을 켜십시오";
+  String get open_camera => "카메라 권한을 열어주십시오.";
   @override
   String get actual_amount_received => "(수령 한 실제 금액을 기준으로)";
   @override
-  String get node_mortgage_with_unit => "노드 모기지(USDT)";
+  String get node_mortgage_with_unit => "노드저당(USDT)";
   @override
   String get audio => "오디오";
   @override
-  String get action_success_hint => "작업 성공";
+  String get action_success_hint => "작업성공";
   @override
-  String get check_in_completed => "종료";
+  String get check_in_completed => "완성";
   @override
-  String get refresh_public_key_minutes_tips => "%d분 후 자동 새로 고침";
+  String get refresh_public_key_minutes_tips => "%d분후 자동으로 새로 고침합니다.";
   @override
-  String get global_map_server_nodes => "글로벌 맵 서비스 노드";
+  String get global_map_server_nodes => "글로벌 지도 서비스 노드";
   @override
-  String get input_password_again_hint => "비밀번호를 다시 입력하십시오";
+  String get input_password_again_hint => "비밀번호를 다시 한번 입력해주십시오.";
   @override
-  String get eth_balance_not_enough_for_gas_fee => "ETH 잔액이 네트워크 요금을 지불하기에 충분하지 않습니다";
+  String get eth_balance_not_enough_for_gas_fee => "ETH잔액부족으로네트워크비용을지불할수없습니다.";
   @override
-  String get invitate_qr => "초대 QR 코드";
+  String get invitate_qr => "초대QR코드";
   @override
-  String get direct_star_numbers => "직접 성간";
+  String get direct_star_numbers => "직연성간량";
   @override
   String get services => "서비스";
   @override
   String get withdrawal => "인출";
   @override
-  String get confirm => "OK";
+  String get confirm => "확정";
   @override
-  String get please_input_email_hint => "이메일을 입력 해주세요";
+  String get please_input_email_hint => "메일주소를 입력해 주십시오.";
   @override
   String get app_version => "버전";
   @override
-  String get pay_fail_hint => "결제 실패";
+  String get pay_fail_hint => "지불실패";
   @override
-  String get over_limit_amount_hint => "한도에 도달";
+  String get over_limit_amount_hint => "한도에도달하였습니다.";
   @override
-  String get withdrawal_audit_message => "귀하의 인출 주소에 해당하는 것으로 변환됩니다. 자금의 안전을 보장하기 위해 인출을 수동으로 검토합니다. 출금 처리 시간 : 오전 : 포인트-밤 : 포인트는 당일에 도착하며, 휴무 시간 동안 접수 된 주문은 다음 날에 도착합니다.";
+  String get withdrawal_audit_message => "해당 HYN으로 환산하여 당신의 인출 주소에 표시합니다.자금의 안전을 보장하기 위해 우리는 화폐 인출에 대하여 인공적인 심사를 진행합니다.인출 처리시간:오전9:00-오후21:00 당일 입금합니다.비근무시간에 접수한 주문서는 다음날 바로 입금됩니다.";
   @override
-  String get search_title => "검색 / 디코딩";
+  String get search_title => "검색/디코딩";
   @override
-  String get invite_share => "공유하도록 초대";
+  String get invite_share => "초대공유";
   @override
-  String get confirm_mnemonic => "복원된 텍스트를 입력하십시오";
+  String get confirm_mnemonic => "복원 단어를 입력해주십시오.";
   @override
-  String get amount_received => "받은 금액";
+  String get amount_received => "입금수량";
   @override
-  String get no_data => "데이터가 없습니다";
+  String get no_data => "데이터가없습니다.";
   @override
-  String get account_error => "계정 오류";
+  String get account_error => "계정오류";
   @override
-  String get generating_key => "암호화 된 주소 생성 ...";
+  String get generating_key => "암호화 주소 생성중입니다.";
   @override
-  String get password_length_error_message => "하나 이상의 비밀번호를 입력하십시오";
+  String get password_length_error_message => "최소로 6자리이상의비밀번호를입력해주십시오.";
   @override
-  String get scan_wifi_map_style_url => "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+  String get scan_wifi_map_style_url => "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
   @override
-  String get no_wallet_hint => "아직 지갑이 없습니다.";
+  String get no_wallet_hint => "지갑이없습니다.";
   @override
-  String get input_search_keyworod_or_cipher => "검색어 / 암호문 입력";
+  String get input_search_keyworod_or_cipher => "검색 키워드/암호화 문서를 입력해주세요.";
   @override
-  String get fail_get_user_recharge_address_hint => "사용자 재충전 주소를 가져 오지 못했습니다.";
+  String get fail_get_user_recharge_address_hint => "사용자충전주소불러오기에실패하였습니다.";
   @override
   String get service_area => "지역";
   @override
   String get next => "계속";
   @override
-  String get redemption_mortgage => "상환 모기지";
+  String get redemption_mortgage => "환매저당";
   @override
-  String get safety_verify => "보안 검증";
+  String get safety_verify => "안전인증확인";
   @override
   String get import => "가져오기";
   @override
   String get submit => "제출";
   @override
-  String get dmap_tools => "도구";
+  String get dmap_tools => "공구류";
   @override
-  String get personal_information => "개인 정보";
+  String get personal_information => "개인정보";
   @override
-  String get without_hyn_wallet => "아직 지갑이 없습니다.";
+  String get without_hyn_wallet => "지갑이없습니다.";
   @override
-  String get wallet_create_success_tips => "축하합니다. 귀하의 개인 계정이 성공적으로 생성되었습니다";
+  String get wallet_create_success_tips => "축하드립니다.당신의 비밀 계정이 성공적으로 만들어졌습니다.";
   @override
-  String get video => "비디오";
+  String get video => "동영상";
   @override
-  String get modify_fund_password => "자금 비밀번호 변경";
+  String get modify_fund_password => "자금비밀번호수정";
   @override
-  String get private_sharing_text => "암호화 된 위치 공유, 위치 정보 유출 방지";
+  String get private_sharing_text => "암호화위치를공유하시면절대로위치정보를누설하지않습니다.";
   @override
-  String get wallet_setting_backup_notice => "이 장치에 액세스 할 수 없으면 백업하지 않으면 자금이 복구되지 않습니다!";
+  String get wallet_setting_backup_notice => "이 장비에 액세스할수 없다면 백업할때까지 자금 회수가 불가능합니다!";
   @override
-  String get input_wallet_name_length_hint => "6 비트 이내의 이름을 입력하십시오";
+  String get input_wallet_name_length_hint => "6자리이내의 명칭을 입력해 주십시오.";
   @override
   String get wallet_manage => "지갑 관리";
   @override
-  String get load_fail_click_hint => "로드하지 못했습니다. 다시 시도하려면 클릭";
+  String get load_fail_click_hint => "불러오기를실패하였습니다.재시도하여주십시오.";
   @override
   String get service_description => "설명";
   @override
   String get introduce => "소개";
   @override
-  String get search_or_decode => "검색 / 디코딩";
+  String get search_or_decode => "암호화 문서 검색/해제";
   @override
   String get create_wallet_password_label => "지갑 비밀번호";
   @override
-  String get please_input_hyn_withdrawal_address => "인출HYN주소를 입력하십시오";
+  String get please_input_hyn_withdrawal_address => "HYN인출주소를입력해주세요.";
   @override
-  String get mainland_china => "중국 대륙";
+  String get mainland_china => "중국대륙";
   @override
-  String get get_power => "컴퓨팅 파워 확보";
+  String get get_power => "계산력가져오기";
   @override
-  String get add_share_options => "공유 옵션";
+  String get add_share_options => "선택사항 공유";
   @override
-  String get downloading_update_file => "업데이트 파일 다운로드";
+  String get downloading_update_file => "업데이트 파일 다운로드중입니다.";
   @override
   String get time => "영업 시간";
   @override
-  String get invite_join => "가입하도록 초대";
+  String get invite_join => "가입할수있도록당신을초대합니다.";
   @override
-  String get pay_success_hint => "결제 성공";
+  String get pay_success_hint => "지불성공";
   @override
-  String get the_horizon_hint => "—— 이것은 수평선입니다 ——";
+  String get the_horizon_hint => "—— 지평선입니다. ——";
   @override
-  String get balance_lack => "잔액 부족";
+  String get balance_lack => "잔액이부족합니다.";
   @override
-  String get tips => "힌트";
+  String get tips => "제시";
   @override
-  String get coming_soon => "곧 개방될 것이다";
+  String get coming_soon => "곧 오픈합니다.";
   @override
   String get wechat_official_account => "서비스 번호";
   @override
-  String get fund_password_not_equal_confirm_fund_password => "자금 비밀번호는 확인 된 자금 비밀번호와 다릅니다";
+  String get fund_password_not_equal_confirm_fund_password => "자금비밀번호와확인자금비빌번호가불일치합니다.";
   @override
-  String get enter => "입력";
+  String get enter => "들어가기";
   @override
-  String get please_input_password_hint => "비밀번호를 입력하십시오";
+  String get please_input_password_hint => "비밀번호를입력해주십시오.";
   @override
-  String get embassy_guide => "대사관 안내";
+  String get embassy_guide => "대사관가이드";
   @override
-  String get wallet_name => "지갑 이름";
+  String get wallet_name => "지갑 명칭";
   @override
-  String get please_mortgage => "담보 대출";
+  String get please_mortgage => "저당하여주십시오.";
   @override
-  String get import_account => "계정 가져 오기";
+  String get import_account => "계정 가져오기";
   @override
-  String get income_amount => "수입 잔액";
+  String get income_amount => "수익 잔액";
   @override
-  String get backup_option => "백업 옵션";
+  String get backup_option => "백업 선택사항";
   @override
-  String get Hyperion => "하이보리안";
+  String get Hyperion => "헤버리안";
   @override
   String get Next => "다음 페이지";
   @override
-  String get confirm_new_fund_password => "새 펀드 비밀번호 확인";
+  String get confirm_new_fund_password => "새로운자금비밀번호를확인해주세요.";
   @override
-  String get installation_update_package_failed => "업데이트 패키지 설치 실패";
+  String get installation_update_package_failed => "업데이트 패키지를 설치하지 못했습니다.";
   @override
-  String get save_mnemonic_notice => "이 단어들을 정확한 순서에 따라 기록하거나 복사한 후 안전한 곳에 보관하세요.";
+  String get save_mnemonic_notice => "올바른 순서로 이 단어를 기록하거나 복사하여 안전한 곳에 보관하십시오.";
   @override
-  String get postscript => "포스트 스크립트";
+  String get postscript => "부언";
   @override
-  String get network_exception_hint => "네트워크 이상 ~";
+  String get network_exception_hint => "네트워크이상";
   @override
-  String get logining => "로그인";
+  String get logining => "로그인중입니다.";
   @override
-  String get clean_search_history => "기록 지우기";
+  String get clean_search_history => "기록 삭제";
   @override
-  String get invite_code_error_hint => "잘못된 초대 코드";
+  String get invite_code_error_hint => "요청코드번호오류";
   @override
-  String get task_record => "작업 로그";
+  String get task_record => "임무기록";
   @override
   String get supermarket => "슈퍼마켓";
   @override
-  String get information_guide => "안내서";
+  String get information_guide => "교과과정";
   @override
-  String get mortgage => "모기지";
+  String get mortgage => "저당";
   @override
-  String get speed_slow => "느리게";
+  String get speed_slow => "느리다";
   @override
-  String get by_hyn_transfer => "지갑을 사용하여 전송";
+  String get by_hyn_transfer => "HYN지갑을 사용하여 전입";
   @override
   String get copy => "복사";
   @override
-  String get confirm_password_label => "새 비밀번호 확인";
+  String get confirm_password_label => "새로운비밀번화확인";
   @override
   String get online_exchange => "온라인 거래소";
   @override
-  String get click_charge => "충전하려면 클릭";
+  String get click_charge => "충전하시려면클릭해주십시오.";
   @override
-  String get withdrawal_apply_success => "탈퇴 신청";
+  String get withdrawal_apply_success => "인출신청성공";
   @override
   String get wallet => "지갑";
   @override
-  String get less_than_1_min => "일분 미만";
+  String get less_than_1_min => "1분이내";
   @override
-  String get content_conflict_hint => "콘텐츠 충돌";
+  String get content_conflict_hint => "내용충돌";
   @override
-  String get address_copied => "주소가 복사되었습니다";
+  String get address_copied => "주소복사완료";
   @override
-  String get improvement_plan_message => "타이탄 을 사용하는 동안 더 나은 사용자 경험을 제공하기 위해 제품 품질을 개선하는 데 도움이되는 사용자 경험 개선 프로그램에 초대되었습니다.세부 사항보기\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">계획 설명</a>\n        </b>";
+  String get improvement_plan_message => "Titan 사용 과정에서 고객님들께 더 나은 사용 환경을 제공하기 위하여 당신을 제품 품질 향상을 위한 개선된 사용자 경험 프로그램에 초대합니다상세한 내용은\n<b>\n<a href=\"https://www.hyn.space/titan/privacy_policy/\">프로그램 설명서를 참조하시기 바랍니다.</a>\n</b>";
   @override
-  String get backup_finish => "백업 완료";
+  String get backup_finish => "백업완료";
   @override
-  String get balance_with_unit => "계정 잔액(USDT)";
+  String get balance_with_unit => "계정잔액(USDT)";
   @override
-  String get no_recommended_route => "추천 경로가 없습니다";
+  String get no_recommended_route => "추천 루트가 없습니다.";
   @override
-  String get check_update => "업데이트 확인";
+  String get check_update => "업데이트검사";
   @override
-  String get share_qrcode => "공개 키 QR 코드 공유";
+  String get share_qrcode => "공유키 QR코드 공유";
   @override
-  String get withdrawal_fail => "출금 오류";
+  String get withdrawal_fail => "인출오류";
   @override
-  String get Tips => "힌트";
+  String get Tips => "제시";
   @override
-  String get need_transfer => "양도 필요";
+  String get need_transfer => "전입필요";
   @override
-  String get please_input_withdrawal_quantity => "인출 금액을 입력하십시오";
+  String get please_input_withdrawal_quantity => "인출수량을입력해주세요.";
   @override
-  String get by_hyn => "사용하려면HYN";
+  String get by_hyn => "HYN 사용";
   @override
-  String get confirm_mnemonic_tips => "단어를 클릭해서 올바른 순서에 따라";
+  String get confirm_mnemonic_tips => "단어를 클릭하여 정확한 순서로 맞추세요.";
   @override
-  String get twitterhyperion => "지저귀다-히페리온";
+  String get twitterhyperion => "트위터-헤버리안";
   @override
   String get wallet_password_label => "지갑 비밀번호";
   @override
-  String get public_key_copied => "공개 키 주소가 복사되었습니다";
+  String get public_key_copied => "공유키 주소를 복사완료하였습니다.";
   @override
-  String get not_valid_public_key => "합법적인 공개 키가 아닙니다.";
+  String get not_valid_public_key => "합법적인공유키가아닙니다.";
   @override
   String get encrypt_error => "암호화 실패";
   @override
-  String get twittertitan => "지저귀다-타이탄";
+  String get twittertitan => "트위터-타이탄";
   @override
-  String get task_finish_day_hint => "당일 과제 완료";
+  String get task_finish_day_hint => "당일 임무를 완성하였습니다.";
   @override
-  String get username_pwd_not_match_hint => "사용자 이름과 비밀번호가 일치하지 않습니다";
+  String get username_pwd_not_match_hint => "사용자명과비밀번호가불일치합니다.";
   @override
   String get hot_area => "인기 지역";
   @override
-  String get create => "작성";
+  String get create => "새로만들기";
   @override
-  String get wallet_name_label => "지갑 이름";
+  String get wallet_name_label => "지갑 명칭";
   @override
-  String get fund_password => "자금 비밀번호";
+  String get fund_password => "자금비밀번호";
   @override
-  String get snap_up => "사재기";
+  String get snap_up => "사이버스쿼팅";
   @override
-  String get net_error_hint => "네트워크 오류";
+  String get net_error_hint => "네트워크오류";
   @override
-  String get wechat_cs => "위챗 고객 서비스";
+  String get wechat_cs => "위챗 고객센타";
   @override
   String get speed_normal => "평균치";
   @override
-  String get private_share => "개인 공유";
+  String get private_share => "프리이버시공유";
   @override
-  String get manually_refresh => "수동 새로 고침";
+  String get manually_refresh => "수동으로 새로 고침";
   @override
   String get discover => "발견";
   @override
-  String get your_mnemonic => "복원된 메시지";
+  String get your_mnemonic => "당신의 복원 단어";
   @override
-  String get password_incorrect => "잘못된 비밀번호";
+  String get password_incorrect => "잘못된비밀번호입니다.";
   @override
   String get share_location => "위치 공유";
   @override
-  String get public_key_scan_fail_rescan => "잘못된 공개 키입니다. 다시 스캔하십시오";
+  String get public_key_scan_fail_rescan => "공유키 오류가 발생했습니다.다시 스캔해 주십시오";
   @override
-  String get please_input_hyn_address => "주소를HYN입력하십시오";
+  String get please_input_hyn_address => "HYN주소를입력해주세요.";
   @override
-  String get transfer_exception_hint => "예외로 바꾸다";
+  String get transfer_exception_hint => "전입이상";
   @override
-  String get reset_fund_password => "자금 비밀번호 재설정";
+  String get reset_fund_password => "자금비밀번호재설정";
   @override
   String get finished => "종료";
   @override
-  String get sent => "보냄";
+  String get sent => "발송하였습니다.";
   @override
-  String get no_eth_address => "이더 리움 주소";
+  String get no_eth_address => "이더리움주소가아닙니다.";
   @override
-  String get psw_reset_error_hint => "비밀번호 재설정 오류";
+  String get psw_reset_error_hint => "비밀번호재설정오류";
   @override
-  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
+  String get hyperion_project_intro_url => "https://shimo.im/docs/GDp72cj3ATwEB7ke/read";
   @override
-  String get free_receive => "무료 픽업";
+  String get free_receive => "무료수령";
   @override
-  String get please_selecte_app_area => "지도 사용 구역을 설정하십시오";
+  String get please_selecte_app_area => "지도사용영역을설정하십시오.";
   @override
-  String get send => "보내기";
+  String get send => "발송";
   @override
-  String get earnings_balance => "수입 잔액";
+  String get earnings_balance => "수익잔액";
   @override
   String get telegram_operator => "Telegram Operator";
   @override
@@ -1315,139 +1330,139 @@ class $ko extends S {
   @override
   String get remark => "비고";
   @override
-  String get city_recommendation => "도시 추천";
+  String get city_recommendation => "도시추천";
   @override
-  String get refresh_public_key_hours_tips => "%d시간 %d분 후 자동 새로 고침";
+  String get refresh_public_key_hours_tips => "%d시간%d분후 자동으로 새로 고침합니다.";
   @override
-  String get home_page => "홈";
+  String get home_page => "메인 페이지";
   @override
-  String get transfer_warning_hint => "비 자산을 위의 주소로 이전하지 마십시오. 그렇지 않으면 자산이 복구되지 않습니다. 전송 한 후 전체 네트워크 노드를 확인해야하며 약-분이 걸립니다.";
+  String get transfer_warning_hint => "상기 주소로 비 HYN 자산을 전입하면 자산을 되찾을수 없으므로 절대로 전입해서는 안됩니다.";
   @override
-  String get password_format_error_message => "비밀번호 형식이 잘못되었습니다. 최소 자릿수를 입력하십시오";
+  String get password_format_error_message => "비밀번호양식이잘못되였습니다.최소로 6자리이상의비밀번호를입력해주십시오.";
   @override
-  String get walking => "걷기";
+  String get walking => "보행";
   @override
-  String get input_corrent_count_hint => "정확한 수량을 입력하십시오";
+  String get input_corrent_count_hint => "정확한수량을입력해주십시오.";
   @override
   String get becharge_amount => "충전 잔액";
   @override
-  String get stay_tuned => "계속 지켜봐 주시기 바랍니다";
+  String get stay_tuned => "기대해주십시오.";
   @override
   String get hospital => "병원";
   @override
-  String get unknown_error_hint => "알 수없는 오류";
+  String get unknown_error_hint => "알수없는오류";
   @override
-  String get search_exception => "이상 검색";
+  String get search_exception => "검색오류";
   @override
   String get gas_station => "주유소";
   @override
-  String get amount => "금액：";
+  String get amount => "금액";
   @override
-  String get police_security_station => "경찰 보안 국";
+  String get police_security_station => "경찰안전소";
   @override
   String get quantity => "수량";
   @override
-  String get backup_wallet_mnemonic_text => "니모닉을 올바르게 복사하려면 종이와 펜을 사용하십시오.\n휴대 전화를 분실했거나 도난당한 경우 손상, 니모닉으로 자산을 복구 할 수 있습니다";
+  String get backup_wallet_mnemonic_text => "종이와 펜을 사용하여 도움말을 정확하게 기록하세요.\n 만일 휴대폰을 분실하거나 도난당하거나 혹은 파손됐을 경우 도움말을 통해 당신의 자산을 회복할수 있습니다.";
   @override
-  String get global_embassies => "글로벌 대사관";
+  String get global_embassies => "글로벌대사관";
   @override
-  String get wechat => "위챗";
+  String get wechat => "공공번호";
   @override
-  String get telegram => "전보";
+  String get telegram => "전보군";
   @override
-  String get no_content_hint => "내용이 없습니다";
+  String get no_content_hint => "내용이없습니다.";
   @override
-  String get task_interval_below_limit => "30 분 미만의 작업 간격 수행";
+  String get task_interval_below_limit => "임무수행간격이 30분미만입니다.";
   @override
-  String get node_mortgage => "노드 모기지";
+  String get node_mortgage => "노드저당";
   @override
-  String get illegal_mnemonic => "단어들이 올바르지 않습니다.";
+  String get illegal_mnemonic => "합법적인 도움말이 아닙니다.";
   @override
-  String get Insufficient_balance_hint => "담보를위한 잔액 부족";
+  String get Insufficient_balance_hint => "저당에필요한잔액이부족합니다.";
   @override
-  String get redemption_success => "구속 성공";
+  String get redemption_success => "환매성공";
   @override
-  String get operating_hours => "근무 시간";
+  String get operating_hours => "업무시간";
   @override
   String get import_account_success => "계정 가져오기 성공";
   @override
-  String get main_my_public_key => "암호화 된 주소 (공개 키)";
+  String get main_my_public_key => "나의 암호화 주소(공유키)";
   @override
-  String get fund_pwd_error_hint => "자금 조달 비밀번호 오류";
+  String get fund_pwd_error_hint => "자금비밀번호오류";
   @override
-  String get power_martgage => "해시";
+  String get power_martgage => "계산력저당";
   @override
   String get hynPriceUnitSymbol => "\$";
   @override
-  String available_balance_usdt(String amount) => "사용 가능한 잔액 ${amount} USDT";
+  String available_balance_usdt(String amount) => "사용가능한잔액 ${amount} USDT";
   @override
-  String current_exchange_rate(String to, String currency) => "현재 ${to} 전환율 ${currency} 은";
+  String current_exchange_rate(String to, String currency) => "${to} 를 ${currency}으로환산하는현재비율은";
   @override
-  String network_request_err(String code) => "네트워크 요청 오류, 상태 코드: $code";
+  String network_request_err(String code) => "네트워크 요청 오류가 있습니다,상태 코드번호: $code";
   @override
-  String get_verification_code_again(String countdownTime) => "재 취득 ${countdownTime}";
+  String get_verification_code_again(String countdownTime) => "${countdownTime}다시 받기";
   @override
-  String all_powers_func(String totalPower) => "총 컴퓨팅 능력：${totalPower}";
+  String all_powers_func(String totalPower) => "총계산력：${totalPower}";
   @override
-  String max_range_func(String maxMeter) => "최대 범위 ：${maxMeter} 미터";
+  String max_range_func(String maxMeter) => "최대범위는약：${maxMeter} 미터";
   @override
   String km(String km) => "${km}킬로미터";
   @override
-  String mortgage_product_func(String name) => "모기지 제품：${name}";
+  String mortgage_product_func(String name) => "저당제품：${name}";
   @override
   String withdrawal_with_quantity(String count) => "인출：${count}";
   @override
-  String withdrawal_fee(String fee) => "취급 수수료(${fee}%)";
+  String withdrawal_fee(String fee) => "수수료(${fee}%)";
   @override
-  String mortgage_time(String time) => "모기지 시간：${time}";
+  String mortgage_time(String time) => "저당시간：${time}";
   @override
-  String total_invitation_func(String totalInvitations) => "${totalInvitations}명이 초대했습니다";
+  String total_invitation_func(String totalInvitations) => "이미 ${totalInvitations}명을 초대했습니다.";
   @override
-  String income_func(String incomeCycle) => "${incomeCycle}일 출력";
+  String income_func(String incomeCycle) => "${incomeCycle}일수익";
   @override
-  String available_mortgage_numbers(String number) => "저당 ${number} 부";
+  String available_mortgage_numbers(String number) => "${number}부저당가능";
   @override
-  String mortgage_id(String id) => "모기지ID：${id}";
+  String mortgage_id(String id) => "저당ID：${id}";
   @override
-  String contribute_reward_func(String award) => "기부금 보상： ${award}";
+  String contribute_reward_func(String award) => "공헌장려${award}";
   @override
   String n_hour(String hour) => "${hour}시간";
   @override
-  String poundage_with_quantity(String poundage) => "취급 수수료：${poundage}";
+  String poundage_with_quantity(String poundage) => "수수료：${poundage}";
   @override
   String n_day(String day) => "${day}일";
   @override
-  String by_recommend(String getParentEmail) => "추천 ${getParentEmail}";
+  String by_recommend(String getParentEmail) => "추천인 ${getParentEmail}";
   @override
-  String receiver_symbol(String symbol) => "받기 ${symbol}";
+  String receiver_symbol(String symbol) => "접수 ${symbol}";
   @override
-  String n_days_product(String days) => "${days}일 출력";
+  String n_days_product(String days) => "${days}일산출";
   @override
-  String distance(String distance) => "${distance}남";
+  String distance(String distance) => "${distance}미터";
   @override
-  String grade_require_func(String require) => "레벨 요구 사항： ${require}";
+  String grade_require_func(String require) => "등급요구 ${require}";
   @override
-  String current_rate_func(String currency, String quotes, String rate) => "현재 ${currency} 환율 ${quotes} 은: 1${rate}";
+  String current_rate_func(String to, String currency, String rate) => "${to} 를 ${currency}으로환산하는현재비율은: 1${rate}";
   @override
-  String private_share_receive_address(String shortAddress) => "수신 주소:${shortAddress}";
+  String private_share_receive_address(String shortAddress) => "접수주소:${shortAddress}";
   @override
-  String stay_func(String snapUpStocks) => "남은 ${snapUpStocks}";
+  String stay_func(String snapUpStocks) => "나머지 ${snapUpStocks}";
   @override
-  String my_symbol_address(String symbol) => "광산${symbol}수신 주소:";
+  String my_symbol_address(String symbol) => "나의${symbol}접수주소:";
   @override
-  String snap_up_product_fuc(String name) => "사이버 스쿼팅 제품：${name}";
+  String snap_up_product_fuc(String name) => "사이버스쿼팅제품：${name}";
   @override
   String n_minute(String minute) => "${minute}분";
   @override
   String maprich_intro_url(String rich_domain) => "${rich_domain}intro?lang=ko";
   @override
-  String max_withdrawal_quantity(String maxWithdrawal) => "최대 ${maxWithdrawal} USDT";
+  String max_withdrawal_quantity(String maxWithdrawal) => "최대로${maxWithdrawal} USDT인출가능";
   @override
-  String send_symbol(String symbol) => "보내기 $symbol";
+  String send_symbol(String symbol) => "발송 $symbol";
   @override
   String send_count_label(String symbol) => "$symbol 수량";
   @override
-  String task_finish_func(String total) => "완료된 작업${total}";
+  String task_finish_func(String total) => "임무를${total}회완성하였습니다.";
 }
 
 class $en extends S {
@@ -1468,6 +1483,8 @@ class $zh_CN extends S {
   String get titan_encrypted_map_ecology => "Titan 加密地图生态";
   @override
   String get contract_call => "智能合约调用";
+  @override
+  String get open_location_service => "请开启定位服务";
   @override
   String get contact_customer_service => "联系客服";
   @override
@@ -1548,6 +1565,8 @@ class $zh_CN extends S {
   String get input_wallet_name_hint => "请输入钱包名称";
   @override
   String get get_powers => "获取算力";
+  @override
+  String get apply_location_service => "申请定位授权";
   @override
   String get mortgage_success_hint => "抵押成功";
   @override
@@ -1634,6 +1653,8 @@ class $zh_CN extends S {
   String get map3_global_nodes => "map3全球节点";
   @override
   String get paste => "粘贴";
+  @override
+  String get again_click_exit_app => "再按一下退出程序";
   @override
   String get hyn_market => "HYN行情";
   @override
@@ -1769,6 +1790,8 @@ class $zh_CN extends S {
   @override
   String get data_exception_hint => "数据异常，请重试";
   @override
+  String get get_current_position_fail_tips => "获取不到你当前位置";
+  @override
   String get show_mnemonic_label => "显示恢复短语";
   @override
   String get refresh_public_key_seconds_tips => "%d秒后自动刷新";
@@ -1834,6 +1857,8 @@ class $zh_CN extends S {
   String get invite_link_copy_hint => "邀请链接已复制";
   @override
   String get Clean => "清除痕迹";
+  @override
+  String get allow_location_service => "请你授权使用定位功能.";
   @override
   String get fund_password_format_error_message => "密码格式有误，请输入最少6位";
   @override

@@ -179,14 +179,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                           ),
                                         )),
                                     onTap:
-//                                    checkInCount < 3
-//                                        ? () {
                                         _checkIn,
-//                                          }
-//                                        : () {
-//                                      Fluttertoast.showToast(msg: '今天任务已完成');
-//                                          },
-//                                    onTap: _checkIn,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 4),

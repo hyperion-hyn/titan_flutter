@@ -284,7 +284,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                 Fluttertoast.showToast(msg: S.of(context).stay_tuned);
                                               },
                                               child: Container(
-                                                padding: const EdgeInsets.all(16),
+                                                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                                                 decoration: BoxDecoration(
                                                     border: Border.all(color: Color(0xFFE9E9E9)),
                                                     borderRadius: BorderRadius.all(Radius.circular(4))),
@@ -308,7 +308,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                             padding: const EdgeInsets.only(top: 8.0),
                                                             child: Text(
                                                               S.of(context).not_open_yet,
-                                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                              style: TextStyle(color: Colors.grey, fontSize: 11),
                                                             ),
                                                           ),
                                                         ],

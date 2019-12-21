@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
+import 'package:titan/generated/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -473,7 +473,7 @@ class MapContainerState extends State<MapContainer> {
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
         } else if (permission == PermissionStatus.disabled) {
-          Fluttertoast.showToast(msg: "请开启系统定位服务");
+          Fluttertoast.showToast(msg: S.of(context).open_location_service);
         } else {
           Map<PermissionGroup, PermissionStatus> permissions =
               await PermissionHandler()
@@ -498,15 +498,15 @@ class MapContainerState extends State<MapContainer> {
         builder: (BuildContext context) {
           return Platform.isIOS
               ? CupertinoAlertDialog(
-                  title: Text('申请定位授权'),
-                  content: Text('请你授权使用定位功能.'),
+                  title: Text(S.of(context).apply_location_service),
+                  content: Text(S.of(context).allow_location_service),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);
@@ -515,15 +515,15 @@ class MapContainerState extends State<MapContainer> {
                   ],
                 )
               : AlertDialog(
-                  title: Text('申请定位授权'),
-                  content: Text('请你授权使用定位功能.'),
+                  title: Text(S.of(context).apply_location_service),
+                  content: Text(S.of(context).allow_location_service),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);

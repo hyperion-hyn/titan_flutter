@@ -430,7 +430,7 @@ class MapScenesState extends State<MapScenes> {
         if (toPoi != null && mapboxMapController != null) {
           LatLng start = await mapboxMapController.lastKnownLocation();
           if (start == null) {
-            Fluttertoast.showToast(msg: '获取不到你当前位置');
+            Fluttertoast.showToast(msg: S.of(context).get_current_position_fail_tips);
             return;
           }
 
@@ -464,7 +464,6 @@ class MapScenesState extends State<MapScenes> {
               _toMyLocation(); //hack, location not auto move
             });
           } else {
-//              Fluttertoast.showToast(msg: "Failed to get location permissions");
             _showGoToOpenAppSettingsDialog();
           }
         }

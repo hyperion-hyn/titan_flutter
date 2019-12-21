@@ -419,7 +419,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
     var location = await getMapState?.mapboxMapController?.lastKnownLocation();
     if (currentPoi != null) {
       if (location == null) {
-        Fluttertoast.showToast(msg: '获取不到你当前位置');
+        Fluttertoast.showToast(msg: S.of(context).get_current_position_fail_tips);
       } else {
         var fromPoi = PoiEntity(latLng: location, name: S.of(context).my_location);
         var toPoi = currentPoi;

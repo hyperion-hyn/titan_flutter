@@ -175,7 +175,6 @@ class _MortgagePageState extends State<MortgagePage> {
                   } catch (e) {
                     logger.e(e);
                     ExceptionProcess.process(e);
-//                    Fluttertoast.showToast(msg: '抵押异常');
                   }
                 });
               }
