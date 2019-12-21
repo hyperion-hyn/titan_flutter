@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-class BluetoothSensor: Sensor {
+class BluetoothSensor: NSObject, Sensor {
     
     var _bluetoothManager: CBCentralManager!
 

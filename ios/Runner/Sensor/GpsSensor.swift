@@ -9,7 +9,7 @@
 import Foundation
 import CoreLocation
 
-class GpsSensor: Sensor {
+class GpsSensor: NSObject, Sensor {
     
     var _locationManager: CLLocationManager!
 

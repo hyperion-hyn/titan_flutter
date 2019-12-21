@@ -9,7 +9,7 @@
 import Foundation
 import CoreTelephony
 
-class CellularSensor: Sensor {
+class CellularSensor: NSObject, Sensor {
     
  
     var type = SensorType.CELLULAR
@@ -17,18 +17,25 @@ class CellularSensor: Sensor {
     func initialize() {
         // 获取运营商信息
         let info = CTTelephonyNetworkInfo()
-        let carrier = info.serviceSubscriberCellularProviders
-        
-        print("dataServiceIdentifier: \(info.dataServiceIdentifier), carried: \(carrier)")
-        
-        // 如果运营商变化将更新运营商输出
-        info.serviceSubscriberCellularProvidersDidUpdateNotifier = {(update: String) in
-            print("update: \(update)")
+        if #available(iOS 12.0, *) {
+            let carrier = info.serviceSubscriberCellularProviders
+            if #available(iOS 13.0, *) {
+                print("dataServiceIdentifier: \(info.dataServiceIdentifier), carried: \(carrier)")
+            } else {
+                // Fallback on earlier versions
+            }
+            
+            // 如果运营商变化将更新运营商输出
+            info.serviceSubscriberCellularProvidersDidUpdateNotifier = {(update: String) in
+                print("update: \(update)")
+            }
+            
+            // 输出手机的数据业务信息
+            let currentInfo = info.serviceCurrentRadioAccessTechnology
+            print("currentInfo: \(currentInfo)")
+        } else {
+            // Fallback on earlier versions
         }
-        
-        // 输出手机的数据业务信息
-        let currentInfo = info.serviceCurrentRadioAccessTechnology
-        print("currentInfo: \(currentInfo)")
     }
     
     func startScan() {
