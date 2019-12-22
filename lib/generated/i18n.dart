@@ -600,7 +600,7 @@ class $ko extends S {
   @override
   String get mortgage_success_hint => "저당성공";
   @override
-  String get app_name => "성간굴금";
+  String get app_name => "어플이름";
   @override
   String get private_sharing => "프라이버시공유";
   @override
@@ -658,7 +658,7 @@ class $ko extends S {
   @override
   String get article => "문장";
   @override
-  String get my_page => "나의 것";
+  String get my_page => "내페이지";
   @override
   String get email_format_error_hint => "메일주소 양식이 잘못되였습니다.정확한 메일주소를 입력해 주십시오.";
   @override
@@ -694,7 +694,7 @@ class $ko extends S {
   @override
   String get turn_on_wifi_hint => "보다 정확한 신호 맵을 스캔하려면 WiFi를 켜십시오.";
   @override
-  String get private_wallet_tips => "계좌 비밀키는 영원히 설비와 갈라놓을수 없습니다.";
+  String get private_wallet_tips => "프라이빗 계좌.";
   @override
   String get node_introduction => "노드소개";
   @override
@@ -706,7 +706,7 @@ class $ko extends S {
   @override
   String get nav_about_us => "우리에 대해서";
   @override
-  String get create_wallet_tips => "프라이버시 계좌 새로 만들기";
+  String get create_wallet_tips => "프라이빗 계좌 새로반들기";
   @override
   String get forum => "포럼";
   @override
@@ -724,7 +724,7 @@ class $ko extends S {
   @override
   String get create_user_fail_hint => "새로운계정만들기실패";
   @override
-  String get speed_fast => "빠르다";
+  String get speed_fast => "빠른속도";
   @override
   String get dmap_setting => "DMap설정";
   @override
@@ -736,7 +736,7 @@ class $ko extends S {
   @override
   String get start_encryption => "암호화시작";
   @override
-  String get cycling => "라이딩";
+  String get cycling => "사이클링";
   @override
   String get transfer_address => "전입 주소";
   @override
@@ -830,7 +830,7 @@ class $ko extends S {
   @override
   String get latest_news => "최신 뉴스";
   @override
-  String get receiver_encrypted_address => "수신자 암호화 주소(공유키)";
+  String get receiver_encrypted_address => "공유키";
   @override
   String get invitation_code => "초대코드번호";
   @override
@@ -908,7 +908,7 @@ class $ko extends S {
   @override
   String get star_number => "성간수";
   @override
-  String get tip_snap_up_balance_hint => "제시:사이버 스쿼팅 노드는충전잔액을사용해만이저당잡힐수있습니다.";
+  String get tip_snap_up_balance_hint => "~저당을 설정할 수 있습니다.";
   @override
   String get please_waiting => "잠시만기다려주십시오.";
   @override
@@ -940,7 +940,7 @@ class $ko extends S {
   @override
   String get attraction => "관광지";
   @override
-  String get unauthorized => "미권한";
+  String get unauthorized => "권한없슴";
   @override
   String get register_email => "등록메일주소";
   @override
@@ -1020,7 +1020,7 @@ class $ko extends S {
   @override
   String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
   @override
-  String get tip_node_mortgages_balances_hint => "제시:수익잔액을사용해만이노드를저당잡힐수있습니다.";
+  String get tip_node_mortgages_balances_hint => "수익잔액을 사용해야만 이 노드를 저당설정할 수 있습니다.";
   @override
   String get dapp_setting => "DApp설정";
   @override
@@ -1028,7 +1028,7 @@ class $ko extends S {
   @override
   String get view_all => "전체 보기";
   @override
-  String get nightlife_guide => "나이트라이프가이드";
+  String get nightlife_guide => "야간활동안내";
   @override
   String get open_camera => "카메라 권한을 열어주십시오.";
   @override
@@ -1062,7 +1062,7 @@ class $ko extends S {
   @override
   String get please_input_email_hint => "메일주소를 입력해 주십시오.";
   @override
-  String get app_version => "버전";
+  String get app_version => "어플버전";
   @override
   String get pay_fail_hint => "지불실패";
   @override
@@ -1106,7 +1106,7 @@ class $ko extends S {
   @override
   String get submit => "제출";
   @override
-  String get dmap_tools => "공구류";
+  String get dmap_tools => "DMAP 도구";
   @override
   String get personal_information => "개인정보";
   @override
@@ -1160,7 +1160,7 @@ class $ko extends S {
   @override
   String get coming_soon => "곧 오픈합니다.";
   @override
-  String get wechat_official_account => "서비스 번호";
+  String get wechat_official_account => "위쳇 서비스번호";
   @override
   String get fund_password_not_equal_confirm_fund_password => "자금비밀번호와확인자금비빌번호가불일치합니다.";
   @override
@@ -1172,7 +1172,7 @@ class $ko extends S {
   @override
   String get wallet_name => "지갑 명칭";
   @override
-  String get please_mortgage => "저당하여주십시오.";
+  String get please_mortgage => "저당을 설정하여 주십시요";
   @override
   String get import_account => "계정 가져오기";
   @override
@@ -1180,9 +1180,9 @@ class $ko extends S {
   @override
   String get backup_option => "백업 선택사항";
   @override
-  String get Hyperion => "헤버리안";
+  String get Hyperion => "하이페리온";
   @override
-  String get Next => "다음 페이지";
+  String get Next => "다음";
   @override
   String get confirm_new_fund_password => "새로운자금비밀번호를확인해주세요.";
   @override
@@ -1204,11 +1204,11 @@ class $ko extends S {
   @override
   String get supermarket => "슈퍼마켓";
   @override
-  String get information_guide => "교과과정";
+  String get information_guide => "설명 및 안내";
   @override
   String get mortgage => "저당";
   @override
-  String get speed_slow => "느리다";
+  String get speed_slow => "느린속도";
   @override
   String get by_hyn_transfer => "HYN지갑을 사용하여 전입";
   @override
@@ -1254,13 +1254,13 @@ class $ko extends S {
   @override
   String get confirm_mnemonic_tips => "단어를 클릭하여 정확한 순서로 맞추세요.";
   @override
-  String get twitterhyperion => "트위터-헤버리안";
+  String get twitterhyperion => "트위트 하이페리온";
   @override
   String get wallet_password_label => "지갑 비밀번호";
   @override
   String get public_key_copied => "공유키 주소를 복사완료하였습니다.";
   @override
-  String get not_valid_public_key => "합법적인공유키가아닙니다.";
+  String get not_valid_public_key => "정상적인 공유키가 아닙니다.";
   @override
   String get encrypt_error => "암호화 실패";
   @override
@@ -1284,7 +1284,7 @@ class $ko extends S {
   @override
   String get wechat_cs => "위챗 고객센타";
   @override
-  String get speed_normal => "평균치";
+  String get speed_normal => "정상속도";
   @override
   String get private_share => "프리이버시공유";
   @override
@@ -1324,7 +1324,7 @@ class $ko extends S {
   @override
   String get earnings_balance => "수익잔액";
   @override
-  String get telegram_operator => "Telegram Operator";
+  String get telegram_operator => "텔레그람 운영자";
   @override
   String get global_nodes => "글로벌 노드";
   @override
@@ -1366,9 +1366,9 @@ class $ko extends S {
   @override
   String get global_embassies => "글로벌대사관";
   @override
-  String get wechat => "공공번호";
+  String get wechat => "위쳇";
   @override
-  String get telegram => "전보군";
+  String get telegram => "텔레그램";
   @override
   String get no_content_hint => "내용이없습니다.";
   @override
@@ -1376,7 +1376,7 @@ class $ko extends S {
   @override
   String get node_mortgage => "노드저당";
   @override
-  String get illegal_mnemonic => "합법적인 도움말이 아닙니다.";
+  String get illegal_mnemonic => "정상적인 기호가 아닙니다.";
   @override
   String get Insufficient_balance_hint => "저당에필요한잔액이부족합니다.";
   @override
@@ -1420,7 +1420,7 @@ class $ko extends S {
   @override
   String income_func(String incomeCycle) => "${incomeCycle}일수익";
   @override
-  String available_mortgage_numbers(String number) => "${number}부저당가능";
+  String available_mortgage_numbers(String number) => "${number}저당가능수";
   @override
   String mortgage_id(String id) => "저당ID：${id}";
   @override
