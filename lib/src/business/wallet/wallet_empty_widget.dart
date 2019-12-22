@@ -50,45 +50,53 @@ class _EmptyWalletState extends State<EmptyWallet> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
-                onPressed: () {
-                  createWalletPopUtilName = null;
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
-                },
-                child: Container(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
-                    child: Text(
-                      S.of(context).create_wallet,
-                      style:
-                          TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                color: Colors.white,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
+              SizedBox(
+                width: 200,
+                height: 45,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
                     createWalletPopUtilName = null;
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                   },
                   child: Container(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
-                        S.of(context).import_wallet,
+                        S.of(context).create_wallet,
                         style:
                             TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                   color: Colors.white,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: SizedBox(
+                  width: 200,
+                  height: 45,
+                  child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
+                    onPressed: () {
+                      createWalletPopUtilName = null;
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                    },
+                    child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                        child: Text(
+                          S.of(context).import_wallet,
+                          style:
+                              TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    color: Colors.white,
+                  ),
                 ),
               )
             ],
