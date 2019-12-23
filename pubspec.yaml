@@ -101,6 +101,7 @@ dependencies:
   #https://pub.flutter-io.cn/packages/flutter_bugly
   flutter_bugly: 0.2.7
   android_intent: 0.3.4+8
+  app_settings: 3.0.0+1
 
 
 dev_dependencies:

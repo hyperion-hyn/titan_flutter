@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 import '../wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
@@ -348,7 +350,30 @@ class _DataContributionState extends State<DataContributionPage> {
       Map<PermissionGroup, PermissionStatus> permissions =
           await PermissionHandler().requestPermissions([PermissionGroup.phone]);
       if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
-        _showGoToOpenCommonAppSettingsDialog("申请权限", "采集信号数据，需要获取电话权限");
+        _showGoToOpenCommonAppSettingsDialog("申请权限", "采集信号数据，需要获取电话权限", () {
+          PermissionHandler().openAppSettings();
+        });
+        return false;
+      }
+    }
+
+    //2. 检查蓝牙权限
+
+    bool blueAvaiable = await TitanPlugin.bluetoothEnable();
+    if (!blueAvaiable) {
+      _showGoToOpenCommonAppSettingsDialog("开启蓝牙", "请开启蓝牙", () {
+        AppSettings.openBluetoothSettings();
+      });
+      return false;
+    }
+
+    //3. 安卓增加判断wifi
+    if (Platform.isAndroid) {
+      bool wifiAvaiable = await TitanPlugin.wifiEnable();
+      if (!wifiAvaiable) {
+        _showGoToOpenCommonAppSettingsDialog("开启WIFI", "请开启WIFI", () {
+          AppSettings.openWIFISettings();
+        });
         return false;
       }
     }
@@ -356,7 +381,7 @@ class _DataContributionState extends State<DataContributionPage> {
     return true;
   }
 
-  void _showGoToOpenCommonAppSettingsDialog(String title, String message) {
+  void _showGoToOpenCommonAppSettingsDialog(String title, String message, Function goToSetting) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -372,7 +397,7 @@ class _DataContributionState extends State<DataContributionPage> {
                     FlatButton(
                       child: Text('设置'),
                       onPressed: () {
-                        PermissionHandler().openAppSettings();
+                        goToSetting();
                         Navigator.pop(context);
                       },
                     ),
@@ -389,7 +414,7 @@ class _DataContributionState extends State<DataContributionPage> {
                     FlatButton(
                       child: Text('设置'),
                       onPressed: () {
-                        PermissionHandler().openAppSettings();
+                        goToSetting();
                         Navigator.pop(context);
                       },
                     ),

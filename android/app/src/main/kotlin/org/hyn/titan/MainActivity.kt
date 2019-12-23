@@ -1,6 +1,7 @@
 package org.hyn.titan
 
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -105,6 +106,14 @@ class MainActivity : FlutterActivity() {
                     "requestWiFiIsOpenedSetting" -> {
                         val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager;
                         result.success(wifi.isWifiEnabled)
+                    }
+                    "wifiEnable" -> {
+                        val wifiManager: WifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                        result.success(wifiManager.isWifiEnabled)
+                    }
+                    "bluetoothEnable" -> {
+                        val blueadapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+                        result.success(blueadapter.isEnabled)
                     }
                     else -> {
                         result.notImplemented()
