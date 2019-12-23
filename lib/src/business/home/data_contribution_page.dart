@@ -64,6 +64,7 @@ class _DataContributionState extends State<DataContributionPage> {
           return _walletTipsView();
         } else if (state is ShowWalletState) {
           currentWalletVo = state.wallet;
+//          return _walletTipsView();
           return _listView();
         } else if (state is ScanWalletLoadingState) {
           return _buildLoading(context);
@@ -116,58 +117,57 @@ class _DataContributionState extends State<DataContributionPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
-                height: 40,
-                width: 150,
-                child: RaisedButton(
-                  onPressed: () {
-                    print('创建钱包');
-
-                    createWalletPopUtilName = '/data_contribution_page';
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CreateAccountPage()));
-                  },
+//                height: 38,
+//                width: 152,
+                child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                  color: HexColor('#CC941E'),
-                  child: Text(
-                    S.of(context).create_wallet,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14),
+                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
+                  onPressed: () {
+                    createWalletPopUtilName = '/data_contribution_page';
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                  },
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                      child: Text(
+                        S.of(context).create_wallet,
+                        style:
+                        TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                      ),
+                    ),
                   ),
+                  color: Colors.white,
                 ),
               ),
             ),
-            SizedBox(
-              height: 40,
-              width: 150,
-              child: RaisedButton(
-                onPressed: () {
-                  print('导入钱包');
-
-                  createWalletPopUtilName = '/data_contribution_page';
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ImportAccountPage()));
-                },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4)),
-                color: HexColor('#259D25'),
-                child: Text(
-                  S.of(context).import_wallet,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+              child: SizedBox(
+//                height: 38,
+//                width: 152,
+                child: FlatButton(
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
+                  onPressed: () {
+                    createWalletPopUtilName = '/data_contribution_page';
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                  },
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                      child: Text(
+                        S.of(context).import_wallet,
+                        style:
+                        TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                  color: Colors.white,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

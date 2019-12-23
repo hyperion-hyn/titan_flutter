@@ -93,7 +93,6 @@ class _ContributionState extends State<ContributionPage> {
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
 
-//  var _themeColor = Theme.of(context).primaryColor;
   var _currentScanType = "WiFi";
 
   void startScan() async {
@@ -219,16 +218,6 @@ class _ContributionState extends State<ContributionPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container(
-                        child: Text(
-                          status,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
                       Container(
                         child: Text(
                           signalName,
