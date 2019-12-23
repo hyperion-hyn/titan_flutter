@@ -9,7 +9,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_send_confirm_page.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 
 import '../../global.dart';
 import 'model/wallet_account_vo.dart';

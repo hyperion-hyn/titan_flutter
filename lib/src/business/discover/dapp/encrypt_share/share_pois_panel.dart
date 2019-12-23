@@ -56,8 +56,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
           }
         }
         _lastPosition = position;
-        debounce(() {
-          print('位置更新了, $_lastPosition');
+          debounce(() {
           loadPois(position.latitude, position.longitude);
         }, 500)();
       }
@@ -78,7 +77,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
       cancelToken = CancelToken();
       var gaodeModel;
 
-      if (currentAppArea.key==AppArea.MAINLAND_CHINA_AREA.key) {
+      if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
         gaodeModel = await _api.searchByGaode(
           lat: _lastPosition.latitude,
           lon: _lastPosition.longitude,
@@ -125,78 +124,116 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return LoadingPanel();
+      return LoadingPanel(scrollController: widget.scrollController);
     }
 
     if (nearPois == null || nearPois.isEmpty) {
-      return buildEmptyView(context);
+      return buildEmptyView(context, widget.scrollController);
     }
 
-    return ListView.separated(
-        controller: widget.scrollController,
-        itemBuilder: (context, index) {
-          IPoi poi = nearPois[index];
-          return InkWell(
-            onTap: () {
-              setState(() {
-                selectedId = index;
-                activeSelectPoiCallback();
-              });
-              mapController?.disableLocation();
-              mapController?.moveCamera(CameraUpdate.newLatLng(poi.latLng));
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          poi.name,
-                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                  child: Text(
-                                poi.address,
-                                style: TextStyle(color: Colors.grey, fontSize: 13),
-                              )),
-                            ],
+    return Container(
+      padding: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
+      child: ListView.separated(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          controller: widget.scrollController,
+          itemBuilder: (context, index) {
+            IPoi poi = nearPois[index];
+            return InkWell(
+              onTap: () {
+                setState(() {
+                  selectedId = index;
+                  activeSelectPoiCallback();
+                });
+                mapController?.disableLocation();
+                mapController?.moveCamera(CameraUpdate.newLatLng(poi.latLng));
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            poi.name,
+                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: Text(
+                                  poi.address,
+                                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                                )),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                      width: 60,
-                      child: Visibility(
-                          visible: index == selectedId,
-                          child: Icon(
-                            Icons.check,
-                            color: Theme.of(context).primaryColor,
-                          )))
-                ],
+                    SizedBox(
+                        width: 60,
+                        child: Visibility(
+                            visible: index == selectedId,
+                            child: Icon(
+                              Icons.check,
+                              color: Theme.of(context).primaryColor,
+                            )))
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Divider(
-            height: 24,
-          );
-        },
-        itemCount: nearPois.length);
+            );
+          },
+          separatorBuilder: (context, index) {
+            return Divider(
+              height: 24,
+            );
+          },
+          itemCount: nearPois.length),
+    );
   }
 
-  Widget buildEmptyView(context) {
-    return Padding(
-      padding: const EdgeInsets.all(32.0),
-      child: Text(S.of(context).no_data),
+  Widget buildEmptyView(context, ScrollController controller) {
+    return Container(
+//      padding: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+//        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        controller: controller,
+        physics: NeverScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(S.of(context).no_data),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

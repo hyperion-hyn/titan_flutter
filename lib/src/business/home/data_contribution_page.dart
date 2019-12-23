@@ -180,8 +180,15 @@ class _DataContributionState extends State<DataContributionPage> {
   Widget _listView() {
     return ListView(
       children: <Widget>[
+        Container(
+          height: 8,
+          color: Colors.grey[200],
+        ),
         _wallet(),
-        _divider(),
+        Container(
+          height: 8,
+          color: Colors.grey[200],
+        ),
         _buildItem('signal', '扫描附近信号数据', () async {
           bool status = await checkSignalPermission();
           if (status) {
@@ -310,7 +317,7 @@ class _DataContributionState extends State<DataContributionPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Divider(
-        height: 0.5,
+        height: 8,
         color: HexColor('#E9E9E9'),
       ),
     );

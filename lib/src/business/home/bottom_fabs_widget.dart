@@ -99,7 +99,7 @@ class BottomFasScenesState extends State<BottomFabsWidget> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: <Widget>[
-                if (widget.showBurnBtn)
+                if (widget.showBurnBtn == true)
                   FloatingActionButton(
                     onPressed: () => _showFireModalBottomSheet(context),
                     mini: true,
