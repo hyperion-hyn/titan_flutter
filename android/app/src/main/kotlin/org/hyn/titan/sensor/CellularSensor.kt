@@ -130,19 +130,18 @@ class CellularSensor(val context: Context, val onSensorValueChangeListener: OnSe
                 val cid = cellIdentityWcdma.cid
                 val lac = cellIdentityWcdma.lac
 
-                var mcc: String
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    mcc = cellIdentityWcdma.mccString
+                val mcc= if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    cellIdentityWcdma.mccString
                 } else {
-                    mcc = cellIdentityWcdma.mcc.toString()
+                    cellIdentityWcdma.mcc.toString()
                 }
 
-                var mnc: String
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    mnc = cellIdentityWcdma.mncString
+
+                val mnc = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    cellIdentityWcdma.mncString
                 } else {
-                    mnc = cellIdentityWcdma.mnc.toString()
+                    cellIdentityWcdma.mnc.toString()
                 }
 
                 val psc = cellIdentityWcdma.psc
