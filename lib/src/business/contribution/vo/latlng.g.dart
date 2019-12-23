@@ -9,11 +9,11 @@ part of 'latlng.dart';
 LatLng _$LatLngFromJson(Map<String, dynamic> json) {
   return LatLng(
     (json['lat'] as num)?.toDouble(),
-    (json['lng'] as num)?.toDouble(),
+    (json['lon'] as num)?.toDouble(),
   );
 }
 
 Map<String, dynamic> _$LatLngToJson(LatLng instance) => <String, dynamic>{
       'lat': instance.lat,
-      'lng': instance.lon,
+      'lon': instance.lon,
     };

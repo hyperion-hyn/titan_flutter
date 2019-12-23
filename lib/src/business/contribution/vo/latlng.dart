@@ -6,7 +6,7 @@ part 'latlng.g.dart';
 class LatLng {
   @JsonKey(name: "lat")
   double lat;
-  @JsonKey(name: "lng")
+  @JsonKey(name: "lon")
   double lon;
 
   LatLng(this.lat, this.lon);
