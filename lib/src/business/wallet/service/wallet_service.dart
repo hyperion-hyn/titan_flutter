@@ -61,11 +61,13 @@ class WalletService {
     if (accountVo.assetToken.erc20ContractAddress == null) {
       var balance = await wallet.getBalance(accountVo.account);
       accountVo.balance =
-          (Decimal.parse(balance.toString()) / Decimal.fromInt(pow(10, accountVo.assetToken.decimals))).toDouble();
+          (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, accountVo.assetToken.decimals).toString()))
+              .toDouble();
     } else {
       var balance = await wallet.getErc20Balance(accountVo.assetToken.erc20ContractAddress);
       accountVo.balance =
-          (Decimal.parse(balance.toString()) / Decimal.fromInt(pow(10, accountVo.assetToken.decimals))).toDouble();
+          (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, accountVo.assetToken.decimals).toString()))
+              .toDouble();
     }
   }
 
