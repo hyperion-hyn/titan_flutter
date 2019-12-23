@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/add_poi/select_poi_location.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
@@ -135,10 +136,10 @@ class HomePanelState extends State<HomePanel> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => WebViewContainer(
+                              builder: (context) => /*WebViewContainer(
                                     initUrl: 'https://news.hyn.space/react-reduction/',
                                     title: S.of(context).map3_global_nodes,
-                                  )));
+                                  )*/ SelectPoiLocationScene() ));
                     },
                     child: Container(
                       decoration: BoxDecoration(
