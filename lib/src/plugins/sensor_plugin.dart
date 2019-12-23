@@ -1,15 +1,17 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
-import '../business/home/sensor/bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+typedef SensorChangeCallBack = void Function(Map values);
 
 class SensorPlugin {
-  final SensorBloc bloc;
-
-  final MethodChannel callChannel =
-      MethodChannel('org.hyn.titan/sensor_call_channel');
-
-  SensorPlugin(this.bloc) {
+  SensorPlugin() {
     initFlutterMethodCall();
   }
+
+  SensorChangeCallBack sensorChangeCallBack;
+
+  final MethodChannel callChannel = MethodChannel('org.hyn.titan/sensor_call_channel');
 
   void initFlutterMethodCall() {
     callChannel.setMethodCallHandler(_platformCallHandler);
@@ -18,13 +20,15 @@ class SensorPlugin {
   Future<dynamic> _platformCallHandler(MethodCall call) async {
     switch (call.method) {
       case "sensor#valueChange":
+        String result = "";
         Map<dynamic, dynamic> params = call.arguments;
-        //print('params: $params');
-        bloc.add(ValueChangeListenerEvent(params));
 
-        return true;
+        if (sensorChangeCallBack != null) {
+          sensorChangeCallBack(params);
+        }
+        print(params);
+        return null;
     }
-    return false;
   }
 
   Future<String> init() async {
