@@ -12,19 +12,10 @@ class SensorBloc extends Bloc<SensorEvent, SensorState> {
   ) async* {
 
     if(event is ValueChangeListenerEvent) {
-      print('[SensorBloc] --> mapEventToState');
+      //print('[SensorBloc] --> mapEventToState');
 
       yield ValueChangeListenerState(event.values);
     }
-  }
-
-  @override
-  Stream<SensorState> transformEvents(Stream<SensorEvent> events, Stream<SensorState> Function(SensorEvent event) next) {
-    // TODO: implement transformEvents
-    print('[SensorBloc] --> transformEvents');
-
-    return super.transformEvents(events, next);
-//    return events.expand([next(1)]);
   }
 
 }

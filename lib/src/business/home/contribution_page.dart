@@ -20,8 +20,7 @@ import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import '../webview/webview.dart';
 import 'package:titan/src/business/contribution/vo/signal_collector.dart';
-import 'package:titan/src/business/contribution/vo/latlng.dart'
-    as contributionLatlng;
+import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
 
 class ContributionPage extends StatefulWidget {
   @override
@@ -33,7 +32,7 @@ class ContributionPage extends StatefulWidget {
 class _ContributionState extends State<ContributionPage> {
   MapboxMapController mapController;
 
-  ScrollController scrollController = ScrollController();
+//  ScrollController scrollController = ScrollController();
 
   Api _api = Api();
 
@@ -44,8 +43,7 @@ class _ContributionState extends State<ContributionPage> {
   LatLng userPosition;
   double defaultZoom = 18;
 
-  StreamController<double> progressStreamController =
-      StreamController.broadcast();
+  StreamController<double> progressStreamController = StreamController.broadcast();
 
   double minZoom = 13;
   int maxMeter = 5000;
@@ -97,9 +95,7 @@ class _ContributionState extends State<ContributionPage> {
 
   void initPosition() async {
     userPosition =
-        await (Keys.mapContainerKey.currentState as MapContainerState)
-            .mapboxMapController
-            ?.lastKnownLocation();
+        await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
     await sensorPlugin.init();
   }
 
@@ -118,8 +114,7 @@ class _ContributionState extends State<ContributionPage> {
     progressStreamController.add(0);
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
     var timeStep = duration / (defaultZoom - minZoom + 1);
-    var timerObservable =
-        Observable.periodic(Duration(milliseconds: 500), (x) => x);
+    var timerObservable = Observable.periodic(Duration(milliseconds: 500), (x) => x);
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
     if (userPosition != null) {
@@ -132,8 +127,7 @@ class _ContributionState extends State<ContributionPage> {
       if (timeGap < duration) {
         //scan 30s
         if (nowTime - lastMoveTime > timeStep) {
-          mapController.animateCameraWithTime(
-              CameraUpdate.zoomTo(lastZoom--), 1000);
+          mapController.animateCameraWithTime(CameraUpdate.zoomTo(lastZoom--), 1000);
           lastMoveTime = DateTime.now().millisecondsSinceEpoch;
         }
       } else {
@@ -274,8 +268,7 @@ class _ContributionState extends State<ContributionPage> {
                   return LinearProgressIndicator(
                     backgroundColor: _themeColor,
                     value: snap?.data ?? 0.0,
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                    valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
                   );
                 },
               ),
@@ -315,14 +308,10 @@ class _ContributionState extends State<ContributionPage> {
 //                    color: Theme.of(context).primaryColor,
                       color: HexColor("#CC941E"),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 48, vertical: 13),
+                        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
                         child: Text(
                           '确认上传',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
+                          style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                         ),
                       ),
                     ),
@@ -332,8 +321,7 @@ class _ContributionState extends State<ContributionPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WebViewContainer(
-                                      initUrl:
-                                          'https://api.hyn.space/map-collector/upload/privacy-policy',
+                                      initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
                                       title: "信号上传协议",
                                     )));
                       },
@@ -353,8 +341,7 @@ class _ContributionState extends State<ContributionPage> {
                               ),
                               Text(
                                 "信号上传协议",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 11),
+                                style: TextStyle(color: Colors.white, fontSize: 11),
                               ),
                             ],
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -372,7 +359,7 @@ class _ContributionState extends State<ContributionPage> {
 
   Widget _buildFirstItem(String value) {
     print('[contribution] --> _buildFirstItem:${value}');
-    
+
     return Container(
       child: Text(
         value,
@@ -412,9 +399,7 @@ class _ContributionState extends State<ContributionPage> {
         physics: new NeverScrollableScrollPhysics(),
         padding: EdgeInsets.only(top: 0, bottom: 0),
         itemBuilder: (context, index) {
-          return index == 0
-              ? _buildFirstItem(list.first)
-              : _buildItem(list[index]);
+          return index == 0 ? _buildFirstItem(list.first) : _buildItem(list[index]);
         },
         separatorBuilder: (context, index) {
           return Container(
@@ -426,9 +411,7 @@ class _ContributionState extends State<ContributionPage> {
     );
   }
 
-  Widget _blocBuild(
-      BuildContext context, AsyncSnapshot snap, SensorState state) {
-
+  Widget _blocBuild(BuildContext context, AsyncSnapshot snap, SensorState state) {
     if (snap.data == null) {
       return Container(width: 0.0, height: 0.0);
     }
@@ -439,7 +422,6 @@ class _ContributionState extends State<ContributionPage> {
 
     var newDataList = List();
     newDataList.add(signalName);
-
 
     if (state is ValueChangeListenerState) {
       var values = state.values;
@@ -461,9 +443,9 @@ class _ContributionState extends State<ContributionPage> {
         case SensorType.WIFI:
           {
             print('[contribution] -->_blocBuild___wifi');
-            _wifiList.add(values);
 
             if (TargetPlatform.iOS == TargetPlatform.values) {
+
             } else {
               print('[contribution] -->_blocBuild___wifi__android');
 
@@ -478,6 +460,19 @@ class _ContributionState extends State<ContributionPage> {
               var level = values["level"].toString() ?? "0";
               level = "level：${level}";
               newDataList.add(level);
+
+              var _isExist = false;
+              for (var item in _wifiList) {
+                var _oldBssid = values["bssid"] ?? "";
+                _oldBssid = "bssid：${_oldBssid}";
+                if (_oldBssid == bssid) {
+                  _isExist = true;
+                  break;
+                }
+              }
+              if (!_isExist) {
+                _wifiList.add(values);
+              }
             }
             break;
           }
@@ -516,12 +511,10 @@ class _ContributionState extends State<ContributionPage> {
             newDataList.add(speed);
 
             if (TargetPlatform.iOS == TargetPlatform.values) {
-              var horizontalAccuracy =
-                  values["horizontalAccuracy"].toString() ?? "0";
+              var horizontalAccuracy = values["horizontalAccuracy"].toString() ?? "0";
               newDataList.add(horizontalAccuracy);
 
-              var verticalAccuracy =
-                  values["verticalAccuracy"].toString() ?? "0";
+              var verticalAccuracy = values["verticalAccuracy"].toString() ?? "0";
               newDataList.add(verticalAccuracy);
 
               var course = values["course"].toString() ?? "0";
@@ -614,7 +607,7 @@ class _ContributionState extends State<ContributionPage> {
 
                   break;
 
-                case "":
+                case "LTE":
 //                  Utils.addIfNonNull(values, "type", "LTE")
 //                  Utils.addIfNonNull(values, "ci", ci)
 //                  Utils.addIfNonNull(values, "mcc", mcc)
@@ -627,8 +620,6 @@ class _ContributionState extends State<ContributionPage> {
 //                  Utils.addIfNonNull(values, "timingAdvance", timingAdvance)
                   break;
               }
-
-
             }
             break;
           }
@@ -638,7 +629,6 @@ class _ContributionState extends State<ContributionPage> {
           }
       }
     }
-
 
     print('[contribution] -->_blocBuild___4, count:${newDataList.length}');
 
@@ -671,8 +661,7 @@ class _ContributionState extends State<ContributionPage> {
 
   Future<void> uploadCollectData() async {
     var uploadPosition = userPosition ?? LatLng(23.12076, 113.322058);
-    contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(
-        uploadPosition.latitude, uploadPosition.longitude);
+    contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(uploadPosition.latitude, uploadPosition.longitude);
     SignalCollector _signalCollector = SignalCollector(_latlng, collectData);
     WalletVo _walletVo = await _walletService.getDefaultWalletVo();
     if (_walletVo == null) {
@@ -694,8 +683,7 @@ class RadarScan extends StatefulWidget {
   }
 }
 
-class RadarScanState extends State<RadarScan>
-    with SingleTickerProviderStateMixin {
+class RadarScanState extends State<RadarScan> with SingleTickerProviderStateMixin {
   AnimationController animationController;
 
   @override
