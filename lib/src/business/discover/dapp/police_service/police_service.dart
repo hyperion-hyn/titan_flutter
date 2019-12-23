@@ -27,7 +27,7 @@ class PoliceServiceState extends State<PoliceService> {
               Material(
                 elevation: 2,
                 child: Container(
-                  color: Colors.white,
+                  color: Theme.of(context).primaryColor,
                   padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).padding.top + 56,
@@ -36,7 +36,7 @@ class PoliceServiceState extends State<PoliceService> {
                       Center(
                           child: Text(
                         S.of(context).police_security_station,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
                       )),
                       Align(
                         child: InkWell(
@@ -47,7 +47,7 @@ class PoliceServiceState extends State<PoliceService> {
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
                               S.of(context).close,
-                              style: TextStyle(color: Colors.blueAccent),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ),

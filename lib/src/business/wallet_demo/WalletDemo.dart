@@ -472,7 +472,6 @@ class _WalletDemoState extends State<WalletDemo> {
                   gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
                   data: erc20FunAbi,
                 );
-                print('xxx $ret, ${ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.fromInt(192)}');
               } else {
                 print('无钱包');
               }

@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
+import 'package:titan/src/widget/header_height_notification.dart';
 
 class NightLifePanel extends StatefulWidget {
   final HeavenMapPoiInfo poi;
@@ -24,7 +24,6 @@ class NightLifePanelState extends State<NightLifePanel> {
   void initState() {
     super.initState();
 
-    //动态设置sheet 收起高度
     SchedulerBinding.instance.addPostFrameCallback((_) {
       HeaderHeightNotification(height: 180).dispatch(context);
     });

@@ -4,10 +4,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/home/sensor/bloc.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
@@ -18,7 +20,8 @@ import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import '../webview/webview.dart';
 import 'package:titan/src/business/contribution/vo/signal_collector.dart';
-import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
+import 'package:titan/src/business/contribution/vo/latlng.dart'
+    as contributionLatlng;
 
 class ContributionPage extends StatefulWidget {
   @override
@@ -41,7 +44,8 @@ class _ContributionState extends State<ContributionPage> {
   LatLng userPosition;
   double defaultZoom = 18;
 
-  StreamController<double> progressStreamController = StreamController.broadcast();
+  StreamController<double> progressStreamController =
+      StreamController.broadcast();
 
   double minZoom = 13;
   int maxMeter = 5000;
@@ -50,37 +54,52 @@ class _ContributionState extends State<ContributionPage> {
 
   Map<String, List> collectData = new Map();
 
-  SensorChangeCallBack _sensorChangeCallBack;
+  //SensorChangeCallBack _sensorChangeCallBack;
+  SensorBloc _bloc;
+
+  List<Map<dynamic, dynamic>> _wifiList;
 
   @override
   void initState() {
     super.initState();
-    sensorPlugin = SensorPlugin();
-    initSensorChangeCallBack();
 
+    _bloc = SensorBloc();
+    sensorPlugin = SensorPlugin(_bloc);
+    //initSensorChangeCallBack();
+
+    _wifiList = List();
     initPosition();
   }
 
+  /*
   void initSensorChangeCallBack() {
     _sensorChangeCallBack = (Map values) {
-      var type = values["sensorType"] as int;
-
-      var typeString = SensorType.getTypeString(type);
-
-      var dataList = collectData[typeString];
-      if (dataList == null) {
-        dataList = List();
-        collectData[typeString] = dataList;
-      }
-      dataList.add(values);
+      _saveData(values);
     };
 
     sensorPlugin.sensorChangeCallBack = _sensorChangeCallBack;
   }
 
+
+  void _saveData(Map values) {
+    var type = values["sensorType"] as int;
+
+    var typeString = SensorType.getTypeString(type);
+
+    var dataList = collectData[typeString];
+    if (dataList == null) {
+      dataList = List();
+      collectData[typeString] = dataList;
+    }
+    dataList.add(values);
+  }
+ */
+
   void initPosition() async {
     userPosition =
-        await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
+        await (Keys.mapContainerKey.currentState as MapContainerState)
+            .mapboxMapController
+            ?.lastKnownLocation();
     await sensorPlugin.init();
   }
 
@@ -99,7 +118,8 @@ class _ContributionState extends State<ContributionPage> {
     progressStreamController.add(0);
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
     var timeStep = duration / (defaultZoom - minZoom + 1);
-    var timerObservable = Observable.periodic(Duration(milliseconds: 500), (x) => x);
+    var timerObservable =
+        Observable.periodic(Duration(milliseconds: 500), (x) => x);
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
     if (userPosition != null) {
@@ -112,7 +132,8 @@ class _ContributionState extends State<ContributionPage> {
       if (timeGap < duration) {
         //scan 30s
         if (nowTime - lastMoveTime > timeStep) {
-          mapController.animateCameraWithTime(CameraUpdate.zoomTo(lastZoom--), 1000);
+          mapController.animateCameraWithTime(
+              CameraUpdate.zoomTo(lastZoom--), 1000);
           lastMoveTime = DateTime.now().millisecondsSinceEpoch;
         }
       } else {
@@ -191,7 +212,7 @@ class _ContributionState extends State<ContributionPage> {
               if (snap?.data != null && snap.data >= 0) {
                 return RadarScan();
               }
-              return Container();
+              return Container(width: 0.0, height: 0.0);
             },
           ),
           Positioned(
@@ -203,103 +224,47 @@ class _ContributionState extends State<ContributionPage> {
 //                print('[scan] --> value: ${snap.data}');
 
                 var value = snap.data ?? 0.001;
-                // todo: 模拟数据
-                var angleValue = 360 * value;
-                String status = value > 1.0 ? "扫描完成" : "正在扫描中...";
-                var signalValue = "信号源:${value}";
-                String signalName = '正在$_currentScanType信号扫描';
-
-                // todo: test
                 if (value > 1.0) {
                   sensorPlugin.stopScan();
                 }
 
-                return Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          signalName,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          signalValue,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          '强度：$angleValue',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          '角度：$angleValue',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          '距离：$angleValue',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                    ],
-                  ),
+                return BlocBuilder(
+                  bloc: _bloc,
+                  builder: (context, state) {
+                    return _blocBuild(context, snap, state);
+                  },
                 );
               },
             ),
           ),
-//          Positioned(
-//            top: 21,
-//            right: 15,
-//            child: Container(
-//              child: Column(
-//                crossAxisAlignment: CrossAxisAlignment.end,
-//                children: <Widget>[
-//                  Container(
-//                    child: Text(
-//                      '最大范围约：$maxMeter 米',
-//                      textAlign: TextAlign.center,
-//                      style:
-//                          TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-//                    ),
-//                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
-//                    margin: EdgeInsets.only(
-//                      top: 8,
-//                    ),
-//                    decoration: BoxDecoration(
-//                        color: _themeColor,
-//                        borderRadius: BorderRadius.circular(30)),
-//                  ),
-//                ],
-//              ),
-//            ),
-//          ),
+          /*
+          Positioned(
+            top: 21,
+            right: 15,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      '最大范围约：$maxMeter 米',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
+                    margin: EdgeInsets.only(
+                      top: 8,
+                    ),
+                    decoration: BoxDecoration(
+                        color: _themeColor,
+                        borderRadius: BorderRadius.circular(30)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          */
           Positioned(
             child: SizedBox(
               height: 3,
@@ -309,7 +274,8 @@ class _ContributionState extends State<ContributionPage> {
                   return LinearProgressIndicator(
                     backgroundColor: _themeColor,
                     value: snap?.data ?? 0.0,
-                    valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
                   );
                 },
               ),
@@ -336,7 +302,7 @@ class _ContributionState extends State<ContributionPage> {
               stream: progressStreamController.stream,
               builder: (ctx, snap) {
                 if (snap.data == 1.0) {
-                  return Container();
+                  return Container(width: 0.0, height: 0.0);
                 }
                 return Column(
                   children: <Widget>[
@@ -349,10 +315,14 @@ class _ContributionState extends State<ContributionPage> {
 //                    color: Theme.of(context).primaryColor,
                       color: HexColor("#CC941E"),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 48, vertical: 13),
                         child: Text(
                           '确认上传',
-                          style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
                     ),
@@ -362,7 +332,8 @@ class _ContributionState extends State<ContributionPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WebViewContainer(
-                                      initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                                      initUrl:
+                                          'https://api.hyn.space/map-collector/upload/privacy-policy',
                                       title: "信号上传协议",
                                     )));
                       },
@@ -382,7 +353,8 @@ class _ContributionState extends State<ContributionPage> {
                               ),
                               Text(
                                 "信号上传协议",
-                                style: TextStyle(color: Colors.white, fontSize: 11),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 11),
                               ),
                             ],
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -396,6 +368,281 @@ class _ContributionState extends State<ContributionPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildFirstItem(String value) {
+    print('[contribution] --> _buildFirstItem:${value}');
+    
+    return Container(
+      child: Text(
+        value,
+        textAlign: TextAlign.left,
+        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
+      ),
+      margin: EdgeInsets.only(
+        bottom: 6,
+      ),
+    );
+  }
+
+  Widget _buildItem(String value) {
+    print('[contribution] --> _buildItem:${value}');
+
+    return Container(
+      child: Text(
+        value,
+        textAlign: TextAlign.left,
+        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
+      ),
+      margin: EdgeInsets.only(
+        bottom: 6,
+      ),
+    );
+  }
+
+  Widget _buildListView(List list) {
+    if (list.length == 0) {
+      return Container(width: 0.0, height: 0.0);
+    }
+
+    return Container(
+      height: 300,
+      width: 250,
+      child: ListView.separated(
+        physics: new NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.only(top: 0, bottom: 0),
+        itemBuilder: (context, index) {
+          return index == 0
+              ? _buildFirstItem(list.first)
+              : _buildItem(list[index]);
+        },
+        separatorBuilder: (context, index) {
+          return Container(
+            height: 6,
+          );
+        },
+        itemCount: list.length,
+      ),
+    );
+  }
+
+  Widget _blocBuild(
+      BuildContext context, AsyncSnapshot snap, SensorState state) {
+
+    if (snap.data == null) {
+      return Container(width: 0.0, height: 0.0);
+    }
+
+    //print('[contribution] -->_blocBuild___1, value: ${snap.data}');
+
+    String signalName = '正在$_currentScanType信号扫描';
+
+    var newDataList = List();
+    newDataList.add(signalName);
+
+
+    if (state is ValueChangeListenerState) {
+      var values = state.values;
+      var sensorType = values["sensorType"] as int;
+      print('[contribution] -->_blocBuild___2, sensorType: ${sensorType}, values: ${values}');
+
+      // 1.sava data
+      var typeString = SensorType.getTypeString(sensorType);
+      var dataList = collectData[typeString];
+      if (dataList == null) {
+        dataList = List();
+        collectData[typeString] = dataList;
+      }
+      dataList.add(values);
+      print('[contribution] -->_blocBuild___3');
+
+      // 2.update ui
+      switch (sensorType) {
+        case SensorType.WIFI:
+          {
+            print('[contribution] -->_blocBuild___wifi');
+            _wifiList.add(values);
+
+            if (TargetPlatform.iOS == TargetPlatform.values) {
+            } else {
+              print('[contribution] -->_blocBuild___wifi__android');
+
+              var ssid = values["ssid"] ?? "";
+              ssid = "ssid：${ssid}";
+              newDataList.add(ssid);
+
+              var bssid = values["bssid"] ?? "";
+              bssid = "bssid：${bssid}";
+              newDataList.add(bssid);
+
+              var level = values["level"].toString() ?? "0";
+              level = "level：${level}";
+              newDataList.add(level);
+            }
+            break;
+          }
+        case SensorType.BLUETOOTH:
+          {
+            if (TargetPlatform.iOS == TargetPlatform.values) {
+              var name = values["name"] ?? "";
+              newDataList.add(name);
+
+              var identifier = values["identifier"] ?? "";
+              newDataList.add(identifier);
+
+              var rssi = values["rssi"].toString() ?? "";
+              newDataList.add(rssi);
+            } else {
+              var mac = values["mac"] ?? "";
+              newDataList.add(mac);
+
+              var name = values["name"] ?? "";
+              newDataList.add(name);
+            }
+            break;
+          }
+        case SensorType.GPS:
+          {
+            var lat = values["lat"].toString() ?? "0";
+            newDataList.add(lat);
+
+            var lon = values["lon"].toString() ?? "0";
+            newDataList.add(lon);
+
+            var altitude = values["altitude"].toString() ?? "0";
+            newDataList.add(altitude);
+
+            var speed = values["speed"].toString() ?? "0";
+            newDataList.add(speed);
+
+            if (TargetPlatform.iOS == TargetPlatform.values) {
+              var horizontalAccuracy =
+                  values["horizontalAccuracy"].toString() ?? "0";
+              newDataList.add(horizontalAccuracy);
+
+              var verticalAccuracy =
+                  values["verticalAccuracy"].toString() ?? "0";
+              newDataList.add(verticalAccuracy);
+
+              var course = values["course"].toString() ?? "0";
+              newDataList.add(course);
+            } else {
+              var accuracy = values["accuracy"].toString() ?? "0";
+              newDataList.add(accuracy);
+
+              var bearing = values["bearing"].toString() ?? "0";
+              newDataList.add(bearing);
+            }
+            break;
+          }
+        case SensorType.GNSS:
+          {
+            break;
+          }
+        case SensorType.CELLULAR:
+          {
+            if (TargetPlatform.iOS == TargetPlatform.values) {
+//              var horizontalAccuracy =
+//                  values["horizontalAccuracy"].toString() ?? "0";
+//              newDataList.add(horizontalAccuracy);
+
+            } else {
+              var mobileType = values["type"].toString() ?? "";
+              mobileType = "type：${mobileType}";
+              newDataList.add(mobileType);
+
+              switch (mobileType) {
+                case "GSM":
+//                  Utils.addIfNonNull(values, "type", "GSM")
+//                  Utils.addIfNonNull(values, "cid", cid)
+//                  Utils.addIfNonNull(values, "lac", lac)
+//                  Utils.addIfNonNull(values, "mcc", mcc)
+//                  Utils.addIfNonNull(values, "mnc", mnc)
+//                  Utils.addIfNonNull(values, "asu", asu)
+//                  Utils.addIfNonNull(values, "dbm", dbm)
+//                  Utils.addIfNonNull(values, "level", level)
+                  break;
+
+                case "WCDMA":
+//                  Utils.addIfNonNull(values, "type", "WCDMA")
+
+                  var cid = values["cid"].toString() ?? "";
+                  cid = "cid：${cid}";
+                  newDataList.add(cid);
+//                  Utils.addIfNonNull(values, "cid", cid)
+
+//                  Utils.addIfNonNull(values, "lac", lac)
+
+                  var mcc = values["mcc"].toString() ?? "";
+                  mcc = "mcc：${mcc}";
+                  newDataList.add(mcc);
+//                  Utils.addIfNonNull(values, "mcc", mcc)
+
+                  var mnc = values["mnc"].toString() ?? "";
+                  mnc = "mnc：${mnc}";
+                  newDataList.add(mnc);
+//                  Utils.addIfNonNull(values, "mnc", mnc)
+
+//                  Utils.addIfNonNull(values, "psc", psc)
+//                  Utils.addIfNonNull(values, "asu", asu)
+//                  Utils.addIfNonNull(values, "dbm", dbm)
+
+                  var level = values["level"].toString() ?? "";
+                  level = "level：${level}";
+                  newDataList.add(level);
+//                  Utils.addIfNonNull(values, "level", level)
+
+                  break;
+
+                case "CDMA":
+//                  Utils.addIfNonNull(values, "type", "CDMA")
+//                  Utils.addIfNonNull(values, "basestationId", basestationId)
+//                  Utils.addIfNonNull(values, "latitude", latitude)
+//                  Utils.addIfNonNull(values, "longitude", longitude)
+//                  Utils.addIfNonNull(values, "networkId", networkId)
+//                  Utils.addIfNonNull(values, "systemId", systemId)
+//                  Utils.addIfNonNull(values, "asu", asu)
+//                  Utils.addIfNonNull(values, "cdmaDbm", cdmaDbm)
+//                  Utils.addIfNonNull(values, "cdmaEcio", cdmaEcio)
+//                  Utils.addIfNonNull(values, "cdmaLevel", cdmaLevel)
+//                  Utils.addIfNonNull(values, "dbm", dbm)
+//                  Utils.addIfNonNull(values, "evdoDbm", evdoDbm)
+//                  Utils.addIfNonNull(values, "evdoEcio", evdoEcio)
+//                  Utils.addIfNonNull(values, "evdoLevel", evdoLevel)
+//                  Utils.addIfNonNull(values, "evdoSnr", evdoSnr)
+//                  Utils.addIfNonNull(values, "level", level)
+
+                  break;
+
+                case "":
+//                  Utils.addIfNonNull(values, "type", "LTE")
+//                  Utils.addIfNonNull(values, "ci", ci)
+//                  Utils.addIfNonNull(values, "mcc", mcc)
+//                  Utils.addIfNonNull(values, "mnc", mnc)
+//                  Utils.addIfNonNull(values, "pci", pci)
+//                  Utils.addIfNonNull(values, "tac", tac)
+//                  Utils.addIfNonNull(values, "asu", asu)
+//                  Utils.addIfNonNull(values, "dbm", dbm)
+//                  Utils.addIfNonNull(values, "level", level)
+//                  Utils.addIfNonNull(values, "timingAdvance", timingAdvance)
+                  break;
+              }
+
+
+            }
+            break;
+          }
+        default:
+          {
+            break;
+          }
+      }
+    }
+
+
+    print('[contribution] -->_blocBuild___4, count:${newDataList.length}');
+
+    return _buildListView(newDataList);
   }
 
   Widget mapView() {
@@ -424,7 +671,8 @@ class _ContributionState extends State<ContributionPage> {
 
   Future<void> uploadCollectData() async {
     var uploadPosition = userPosition ?? LatLng(23.12076, 113.322058);
-    contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(uploadPosition.latitude, uploadPosition.longitude);
+    contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(
+        uploadPosition.latitude, uploadPosition.longitude);
     SignalCollector _signalCollector = SignalCollector(_latlng, collectData);
     WalletVo _walletVo = await _walletService.getDefaultWalletVo();
     if (_walletVo == null) {
@@ -446,7 +694,8 @@ class RadarScan extends StatefulWidget {
   }
 }
 
-class RadarScanState extends State<RadarScan> with SingleTickerProviderStateMixin {
+class RadarScanState extends State<RadarScan>
+    with SingleTickerProviderStateMixin {
   AnimationController animationController;
 
   @override
