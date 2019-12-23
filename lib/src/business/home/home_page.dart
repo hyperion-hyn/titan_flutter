@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart' show PlatformException;
+import 'package:flutter/services.dart' show PlatformException, SystemChrome, SystemUiOverlayStyle;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
@@ -104,12 +105,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
     if (ModalRoute.of(context).isCurrent) {
+      _updateStatusBar();
+    } else {
+      //other route set status text to white color
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
+    }
+  }
+
+  void _updateStatusBar() {
+    if ([0, 1, 3].indexOf(_currentIndex) > -1) {
+      //status text black color
       FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     } else {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
     }
-    print("didChangeDependencies");
   }
 
   @override
@@ -158,7 +170,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         unselectedFontSize: 12,
                         type: BottomNavigationBarType.fixed,
                         onTap: (index) {
-                          setState(() => _currentIndex = index);
+                          setState(() {
+                            _currentIndex = index;
+                            _updateStatusBar();
+                          });
                         },
                         currentIndex: _currentIndex,
                         items: [
@@ -218,16 +233,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _getContent(int index) {
-    return IndexedStack(
-      index: index,
-      children: <Widget>[
-        Container(),
-        WalletContentWidget(),
-        DiscoverContentWidget(),
-        InformationContentWidget(),
-        MyContentWidget(),
-      ],
-    );
+    switch (index) {
+      case 1:
+        return WalletContentWidget();
+      case 2:
+        return DiscoverContentWidget();
+      case 3:
+        return InformationContentWidget();
+      case 4:
+        return MyContentWidget();
+    }
+    return HomeScene();
   }
 
   Widget buildMainSheetPanel(home.HomeState state) {
@@ -313,5 +329,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }, onError: (err) {
       print(err);
     });
+  }
+}
+
+class HomeScene extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+//    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    return Container();
   }
 }
