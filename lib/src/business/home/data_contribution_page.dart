@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:android_intent/android_intent.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
@@ -13,7 +17,6 @@ import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
 import 'package:titan/src/global.dart';
 import '../wallet/wallet_manager/wallet_manager.dart';
-
 
 class DataContributionPage extends StatefulWidget {
   @override
@@ -134,7 +137,7 @@ class _DataContributionState extends State<DataContributionPage> {
                       child: Text(
                         S.of(context).create_wallet,
                         style:
-                        TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -160,7 +163,7 @@ class _DataContributionState extends State<DataContributionPage> {
                       child: Text(
                         S.of(context).import_wallet,
                         style:
-                        TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -179,13 +182,16 @@ class _DataContributionState extends State<DataContributionPage> {
       children: <Widget>[
         _wallet(),
         _divider(),
-        _buildItem('signal', '扫描附近信号数据', () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ContributionPage(),
-            ),
-          );
+        _buildItem('signal', '扫描附近信号数据', () async {
+          bool status = await checkSignalPermission();
+          if (status) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ContributionPage(),
+              ),
+            );
+          }
         }, isOpen: true),
         _divider(),
         _buildItem('position', '添加地理位置信息', () {}),
@@ -198,12 +204,11 @@ class _DataContributionState extends State<DataContributionPage> {
 
   Widget _wallet() {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => WalletManagerPage(),
-                settings: RouteSettings(name: "/wallet_manager_page")));
+                builder: (context) => WalletManagerPage(), settings: RouteSettings(name: "/wallet_manager_page")));
       },
       child: SizedBox(
         height: 64,
@@ -224,19 +229,16 @@ class _DataContributionState extends State<DataContributionPage> {
                 Text(
                   currentWalletVo.wallet.keystore.name,
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: HexColor('#333333')),
+                  style: TextStyle(fontWeight: FontWeight.w500, color: HexColor('#333333')),
                 ),
-                SizedBox(height: 8,),
+                SizedBox(
+                  height: 8,
+                ),
                 SizedBox(
                   width: 150,
                   child: Text(
                     shortEthAddress(currentWalletVo.wallet.getEthAccount().address),
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: Color(0xFF9B9B9B),
-                        fontSize: 12),
+                    style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )
               ],
@@ -247,8 +249,8 @@ class _DataContributionState extends State<DataContributionPage> {
               child: Text(
                 '切换地址',
                 style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: HexColor('#333333'),
+                  fontWeight: FontWeight.w500,
+                  color: HexColor('#333333'),
                   fontSize: 12,
                 ),
               ),
@@ -259,8 +261,7 @@ class _DataContributionState extends State<DataContributionPage> {
     );
   }
 
-  Widget _buildItem(String iconName, String title, Function ontap,
-      {bool isOpen = false}) {
+  Widget _buildItem(String iconName, String title, Function ontap, {bool isOpen = false}) {
     return InkWell(
       onTap: ontap,
       child: Row(
@@ -276,10 +277,7 @@ class _DataContributionState extends State<DataContributionPage> {
               )),
           Text(
             title,
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                fontSize: 14,
-                color: HexColor('#333333')),
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: HexColor('#333333')),
           ),
           Spacer(),
           _end(isOpen: isOpen),
@@ -302,10 +300,7 @@ class _DataContributionState extends State<DataContributionPage> {
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Text(
           '即将开放',
-          style: TextStyle(
-              fontWeight: FontWeight.normal,
-              fontSize: 12,
-              color: HexColor('#AAAAAA')),
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#AAAAAA')),
         ),
       );
     }
@@ -325,5 +320,168 @@ class _DataContributionState extends State<DataContributionPage> {
   void dispose() {
     _eventbusSubcription?.cancel();
     super.dispose();
+  }
+
+  Future<bool> checkSignalPermission() async {
+    //1、检查定位的权限
+
+    //check location service
+
+    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+
+    if (serviceStatus == ServiceStatus.disabled) {
+      _showGoToOpenLocationServceDialog();
+      return false;
+    }
+    PermissionStatus locationPermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+    if (locationPermission != PermissionStatus.granted) {
+      Map<PermissionGroup, PermissionStatus> permissions =
+          await PermissionHandler().requestPermissions([PermissionGroup.location]);
+      if (permissions[PermissionGroup.location] != PermissionStatus.granted) {
+        _showGoToOpenAppSettingsDialog();
+        return false;
+      }
+    }
+
+    PermissionStatus phonePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
+    if (phonePermission != PermissionStatus.granted) {
+      Map<PermissionGroup, PermissionStatus> permissions =
+          await PermissionHandler().requestPermissions([PermissionGroup.phone]);
+      if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
+        _showGoToOpenCommonAppSettingsDialog("申请权限", "采集信号数据，需要获取电话权限");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  void _showGoToOpenCommonAppSettingsDialog(String title, String message) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text(title),
+                  content: Text(message),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text(title),
+                  content: Text(message),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+        });
+  }
+
+  void _showGoToOpenAppSettingsDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('申请定位授权'),
+                  content: Text('请你授权使用定位功能.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('申请定位授权'),
+                  content: Text('请你授权使用定位功能.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+        });
+  }
+
+  void _showGoToOpenLocationServceDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('打开定位服务'),
+                  content: Text('定位服务已关闭，请开启'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('打开定位服务'),
+                  content: Text('定位服务已关闭，请开启'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        AndroidIntent intent = new AndroidIntent(
+                          action: 'action_location_source_settings',
+                        );
+                        intent.launch();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+        });
   }
 }
