@@ -20,10 +20,12 @@ class SensorManager(val context: Context, private val sensorValueChangeListener:
         registerSensorList.clear()
         val wifiSensor = WifiSensor(context, sensorValueChangeListener);
         registerSensorList.add(wifiSensor)
+
         val blueToothSensor = BluetoothSensor(context, sensorValueChangeListener);
-        registerSensorList.add(blueToothSensor)
+//        registerSensorList.add(blueToothSensor)
+
         val gpsSensor = GpsSensor(context, sensorValueChangeListener);
-        registerSensorList.add(gpsSensor)
+//        registerSensorList.add(gpsSensor)
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            val gnssSensor = GnssSensor(context, sensorValueChangeListener);
@@ -31,7 +33,7 @@ class SensorManager(val context: Context, private val sensorValueChangeListener:
 //        }
 
         val cellularSensor = CellularSensor(context, sensorValueChangeListener);
-        registerSensorList.add(cellularSensor)
+//        registerSensorList.add(cellularSensor)
 
 
         for (sensor in registerSensorList) {
