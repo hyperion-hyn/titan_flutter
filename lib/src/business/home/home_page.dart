@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart' show PlatformException;
+import 'package:flutter/services.dart' show PlatformException, SystemChrome, SystemUiOverlayStyle;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
@@ -25,11 +26,10 @@ import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 import 'package:titan/src/widget/selecte_app_area_dialog.dart';
 import 'package:uni_links/uni_links.dart';
 
+import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 import '../../../env.dart';
 import '../../global.dart';
 import 'bloc/bloc.dart';
@@ -44,11 +44,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey fabsContainerKey = GlobalKey(debugLabel: 'fabsContainerKey');
+  final GlobalKey panelKey = GlobalKey(debugLabel: 'panelKey');
 
-  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
-  DraggableBottomSheetController _homeBottomSheetController = DraggableBottomSheetController(collapsedHeight: 110);
-  DraggableBottomSheetController _activeBottomSheetController;
-  ScrollController _homeBottomSheetChildrenScrollController = ScrollController();
+//  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
 
   StreamSubscription _appLinkSubscription;
   var selectedAppArea = AppArea.MAINLAND_CHINA_AREA.key;
@@ -107,12 +105,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
     if (ModalRoute.of(context).isCurrent) {
+      _updateStatusBar();
+    } else {
+      //other route set status text to white color
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
+    }
+  }
+
+  void _updateStatusBar() {
+    if ([0, 1, 3].indexOf(_currentIndex) > -1) {
+      //status text black color
       FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     } else {
       FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
     }
-    print("didChangeDependencies");
   }
 
   @override
@@ -129,22 +138,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             }
           },
         ),
+        BlocListener<home.HomeBloc, home.HomeState>(
+          listener: (context, state) {
+            //while listener trigger before build, the panelKey is not set, so call after build
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (state is InitialHomeState) {
+                myWidget.DraggableScrollableActuator.setMin(panelKey.currentContext);
+              } else if (state is home.MapOperatingState) {
+                myWidget.DraggableScrollableActuator.setHide(panelKey.currentContext);
+              }
+            });
+          },
+        ),
       ],
       child: Updater(
-          child: Scaffold(
+        child: BlocBuilder<home.HomeBloc, home.HomeState>(
+          builder: (context, state) {
+            return Scaffold(
               resizeToAvoidBottomPadding: false,
               drawer: isDebug ? DrawerScenes() : null,
-//          endDrawer: PurchasedMapDrawerScenes(),
               bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
                 builder: (context, state) {
-                  double height;
-                  if (state is home.MapOperatingState) {
-                    height = 0;
-                  }
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 500),
-                    height: height,
-//                  curve: Curves.fastOutSlowIn,
+                  return Container(
+                    height: state is home.MapOperatingState ? 0 : null,
                     child: BottomNavigationBar(
                         key: _bottomBarKey,
                         selectedItemColor: Theme.of(context).primaryColor,
@@ -156,6 +172,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         onTap: (index) {
                           setState(() {
                             _currentIndex = index;
+                            _updateStatusBar();
                           });
                         },
                         currentIndex: _currentIndex,
@@ -171,66 +188,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   );
                 },
               ),
-              body: BlocBuilder<home.HomeBloc, home.HomeState>(
-                bloc: BlocProvider.of<home.HomeBloc>(context),
-                builder: (context, state) {
-                  if (state is InitialHomeState) {
-                    if (_activeBottomSheetController != null) {
-                      _activeBottomSheetController.removeListener(onBottomSheetChange);
-                    }
+              body: Stack(
+                children: <Widget>[
+                  //the map
+                  LayoutBuilder(
+                    builder: (ctx, BoxConstraints boxConstraints) {
+                      return NotificationListener<myWidget.DraggableScrollableNotification>(
+                          onNotification: (notification) {
+                            if (state is home.MapOperatingState) {
+                              var maxHeight = boxConstraints.biggest.height;
+                              updateFabsPosition(
+                                  notification.extent * maxHeight, notification.anchorExtent * maxHeight);
+                            }
+                            return true;
+                          },
+                          child: ScaffoldMap());
+                    },
+                  ),
 
-                    var state = _homeBottomSheetController.getSheetState();
-                    if (state == DraggableBottomSheetState.HIDDEN || state == null) {
-                      _homeBottomSheetController.setSheetState(DraggableBottomSheetState.COLLAPSED);
-                    }
-                    _activeBottomSheetController = _homeBottomSheetController;
-                  } else if (state is home.MapOperatingState) {
-                    _homeBottomSheetController.setSheetState(DraggableBottomSheetState.HIDDEN);
-                    _activeBottomSheetController = _poiBottomSheetController;
-                  }
-                  _activeBottomSheetController.addListener(onBottomSheetChange);
-                  return Stack(
-                    children: <Widget>[
-                      //地图
-                      ScaffoldMap(
-                        poiBottomSheetController: _poiBottomSheetController,
-                      ),
+                  //location
+                  BottomFabsWidget(
+                    key: fabsContainerKey,
+                    showBurnBtn: state is InitialHomeState,
+                  ),
 
-                      //位置按钮
-                      BottomFabsWidget(
-                        key: fabsContainerKey,
-                        showBurnBtn: state is InitialHomeState,
-                      ),
+                  buildMainSheetPanel(state),
 
-                      //首页bottom sheet
-                      DraggableBottomSheet(
-                        draggable: true,
-                        controller: _homeBottomSheetController,
-                        childScrollController: _homeBottomSheetChildrenScrollController,
-                        topPadding: (MediaQuery.of(context).padding.top),
-                        topRadius: 16,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          child: HomePanel(
-                            scrollController: _homeBottomSheetChildrenScrollController,
-                          ),
-                        ),
-                      ),
-                      //tabs
-                      _getContent(_currentIndex),
-                    ],
-                  );
-                },
-              ))),
+                  //tab views
+                  _getContent(_currentIndex),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
     );
-  }
-
-  void onBottomSheetChange() {
-    var bottom = _activeBottomSheetController?.bottom;
-    if (bottom != null) {
-      var state = fabsContainerKey.currentState as BottomFasScenesState;
-      state.updateBottomPadding(bottom, _activeBottomSheetController.anchorHeight);
-    }
   }
 
   @override
@@ -242,8 +234,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget _getContent(int index) {
     switch (index) {
-      case 0:
-        return Container();
       case 1:
         return WalletContentWidget();
       case 2:
@@ -253,7 +243,54 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       case 4:
         return MyContentWidget();
     }
-    return Container();
+    return HomeScene();
+  }
+
+  Widget buildMainSheetPanel(home.HomeState state) {
+    return myWidget.DraggableScrollableActuator(
+      child: Builder(
+        builder: (BuildContext context) {
+          return SizedBox.expand(
+            child: LayoutBuilder(
+              builder: (ctx, BoxConstraints boxConstraints) {
+                var maxHeight = boxConstraints.biggest.height;
+                double anchorSize = 0.5;
+                double minChildSize = 88.0 / maxHeight;
+                double initSize = 280.0 / maxHeight;
+                double maxChildSize = (maxHeight - MediaQuery.of(ctx).padding.top) / maxHeight;
+                return NotificationListener<myWidget.DraggableScrollableNotification>(
+                  onNotification: (notification) {
+                    if (state is home.InitialHomeState) {
+                      updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
+                    }
+                    return true;
+                  },
+                  child: myWidget.DraggableScrollableSheet(
+                    key: panelKey,
+                    maxChildSize: maxChildSize,
+                    expand: false,
+                    minChildSize: minChildSize,
+                    anchorSize: anchorSize,
+                    initialChildSize: initSize,
+                    draggable: true,
+                    builder: (BuildContext ctx, ScrollController scrollController) {
+                      return HomePanel(scrollController: scrollController);
+                    },
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void updateFabsPosition(double bottom, double anchorHeight) {
+    var state = (fabsContainerKey.currentState is BottomFasScenesState)
+        ? fabsContainerKey.currentState as BottomFasScenesState
+        : null;
+    WidgetsBinding.instance.addPostFrameCallback((_) => state?.updateBottomPadding(bottom, anchorHeight));
   }
 
   Future<Null> initUniLinks() async {
@@ -266,8 +303,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           return;
         }
         IPoi poi = await ciphertextToPoi(Injector.of(context).repository, initialLink.toString());
-        BlocProvider.of<home.HomeBloc>(context)
-            .add(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
+        BlocProvider.of<ScaffoldMapBloc>(context)
+            .add(SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {
         logger.e(err);
       }
@@ -284,13 +321,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       try {
         IPoi poi = await ciphertextToPoi(Injector.of(context).repository, link.toString());
-        BlocProvider.of<home.HomeBloc>(context)
-            .add(home.SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
+        BlocProvider.of<ScaffoldMapBloc>(context)
+            .add(SearchPoiEvent(poi: PoiEntity(latLng: poi.latLng, name: poi.name)));
       } catch (err) {
         logger.e(err);
       }
     }, onError: (err) {
       print(err);
     });
+  }
+}
+
+class HomeScene extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+//    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    return Container();
   }
 }

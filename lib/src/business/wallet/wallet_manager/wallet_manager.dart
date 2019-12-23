@@ -7,7 +7,7 @@ import 'package:titan/src/business/wallet/wallet_setting.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../wallet_import_account_page.dart';

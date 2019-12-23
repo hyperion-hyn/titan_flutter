@@ -11,6 +11,6 @@ class MyContentWidget extends StatefulWidget {
 class _MyContentState extends State<MyContentWidget> {
   @override
   Widget build(BuildContext context) {
-    return  MyPage();
+    return MyPage();
   }
 }
