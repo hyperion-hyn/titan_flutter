@@ -112,7 +112,11 @@ class TitanPlugin {
     return await callChannel.invokeMethod('fileMd5', {'path': path});
   }
 
+  static Future<bool> wifiEnable() async {
+    return await callChannel.invokeMethod('wifiEnable');
+  }
 
-
-
+  static Future<bool> bluetoothEnable() async {
+    return await callChannel.invokeMethod('bluetoothEnable');
+  }
 }
