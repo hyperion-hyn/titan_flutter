@@ -14,7 +14,7 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';

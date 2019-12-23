@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 
 import 'model/wallet_account_vo.dart';
 
