@@ -11,16 +11,24 @@ import CoreLocation
 
 class GpsSensor: NSObject, Sensor {
     
+    var onSensorChange: OnSensorValueChangeListener!
+        
     var _locationManager: CLLocationManager!
 
     var type = SensorType.GPS
     
     func initialize() {
+        
+        _locationManager = CLLocationManager()
         _locationManager.delegate = self
         _locationManager.requestWhenInUseAuthorization()
     }
     
     func startScan() {
+        
+        guard _locationManager != nil else {
+            return
+        }
         if CLLocationManager.locationServicesEnabled() {
             print("【定位】定位可用，✅")
 
@@ -57,7 +65,20 @@ extension GpsSensor: CLLocationManagerDelegate {
 //    【定位】获取定位成功，✅， location:[<+23.12097590,+113.32206639> +/- 65.00m (speed -1.00 mps / course -1.00) @ 2019/12/2, 5:14:24 PM China Standard Time]
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("【定位】获取定位成功，✅， location:\(locations)")
+        //print("【定位】获取定位成功，✅， location:\(locations)")
+        
+        guard let location = locations.first else { return }
+        let values: [String : Any] = [
+            "lat": location.coordinate.latitude,
+            "lon": location.coordinate.longitude,
+            "altitude": location.altitude,
+            "horizontalAccuracy": location.horizontalAccuracy,
+            "verticalAccuracy": location.verticalAccuracy,
+            "course": location.course,
+            "speed": location.speed,
+            "time": location.timestamp.milliStamp
+        ]
+        onSensorChange(type, values)
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

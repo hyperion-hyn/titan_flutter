@@ -11,17 +11,21 @@ import Foundation
 class SensorManager {
     
     var registerSensorList = Array<Sensor>()
+    var onSensorChange: OnSensorValueChangeListener!
 
     func initialize() {
         registerSensorList.removeAll()
 
-        var blueToothSensor = BluetoothSensor();
+        let blueToothSensor = BluetoothSensor();
+        blueToothSensor.onSensorChange = onSensorChange
         registerSensorList.append(blueToothSensor)
         
-        var gpsSensor = GpsSensor()
+        let gpsSensor = GpsSensor()
+        gpsSensor.onSensorChange = onSensorChange
         registerSensorList.append(gpsSensor)
         
-        var cellularSensor = CellularSensor()
+        let cellularSensor = CellularSensor()
+        cellularSensor.onSensorChange = onSensorChange
         registerSensorList.append(cellularSensor)
 
         for sensor in registerSensorList {

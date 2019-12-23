@@ -11,6 +11,7 @@ import 'business/home/map/bloc/bloc.dart';
 import 'business/home/searchbar/bloc/bloc.dart';
 import 'business/home/sheets/bloc/bloc.dart';
 import 'consts/consts.dart';
+import 'business/home/sensor/bloc.dart';
 
 class HomeBuilder extends StatefulWidget {
   @override
@@ -94,7 +95,7 @@ class _HomeBuilderState extends State<HomeBuilder> {
             BlocProvider<ScaffoldMapBloc>(
                 builder: (context) => ScaffoldMapBloc(context)),
             BlocProvider<DiscoverBloc>(
-                builder: (context) => DiscoverBloc(context)),
+                builder: (context) => DiscoverBloc(context))
           ],
         );
       },

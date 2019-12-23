@@ -18,7 +18,11 @@ import RxSwift
     
     private lazy var walletPlugin: WalletPluginInterface = WalletPluginInterface()
     
-    private lazy var sensorPlugin: SensorPluginInterface = SensorPluginInterface()
+    private lazy var sensorPlugin: SensorPluginInterface = {
+        let plugin = SensorPluginInterface()
+        plugin.sensorChannel = sensorChannel
+        return plugin
+    }()
 
     private lazy var encrytionPlugin: EncrytionPluginInterface = EncrytionPluginInterface()
 

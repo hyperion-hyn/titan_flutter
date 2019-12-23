@@ -1,12 +1,16 @@
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/src/business/home/sensor/bloc.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
+import '../webview/webview.dart';
+import 'sensor/bloc.dart';
 
 class ContributionPage extends StatefulWidget {
   @override
@@ -36,8 +40,8 @@ class _ContributionState extends State<ContributionPage> {
   @override
   void initState() {
     super.initState();
-    sensorPlugin = SensorPlugin();
-
+    _bloc = SensorBloc();
+    sensorPlugin = SensorPlugin(_bloc);
     initPosition();
   }
 
@@ -58,8 +62,13 @@ class _ContributionState extends State<ContributionPage> {
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
 
-//  var _themeColor = Theme.of(context).primaryColor;
   var _currentScanType = "WiFi";
+  SensorBloc _bloc;
+  Map<dynamic, dynamic> _wifiValues;
+  Map<dynamic, dynamic> _bluetoothValues;
+  Map<dynamic, dynamic> _gpsValues;
+  Map<dynamic, dynamic> _cellularValues;
+
 
   void startScan() async {
     progressStreamController.add(0);
@@ -182,108 +191,142 @@ class _ContributionState extends State<ContributionPage> {
                   sensorPlugin.stopScan();
                 }
 
-                return Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          status,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 14),
+                return BlocBuilder<SensorBloc, SensorState>(
+                  bloc: _bloc,
+                  builder: (context,state) {
+
+                    if (state is ValueChangeListenerState) {
+                      //print('[contribution] -->build, values:${state.values}');
+
+                      var values = state.values;
+                      int sensorType = values["sensorType"];
+                      switch (sensorType) {
+                        case -1:
+                          print('[sensor] --> WIFI');
+                          _wifiValues = values;
+                          break;
+
+                        case -2:
+                          print('[sensor] --> BLUETOOTH');
+                          _bluetoothValues = values;
+                          break;
+
+                        case -3:
+                          print('[sensor] --> GPS');
+                          _gpsValues = values;
+                          break;
+
+                        case -5:
+                          print('[sensor] --> CELLULAR');
+                          _cellularValues = values;
+                          break;
+                      }
+                      return Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              child: Text(
+                                status,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: HexColor("#FEFEFE"), fontSize: 14),
+                              ),
+                              margin: EdgeInsets.only(
+                                bottom: 6,
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                signalName,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: HexColor("#FEFEFE"), fontSize: 14),
+                              ),
+                              margin: EdgeInsets.only(
+                                bottom: 6,
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                signalValue,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: HexColor("#FEFEFE"), fontSize: 11),
+                              ),
+                              margin: EdgeInsets.only(
+                                bottom: 6,
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                '强度：$angleValue',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: HexColor("#FEFEFE"), fontSize: 11),
+                              ),
+                              margin: EdgeInsets.only(
+                                bottom: 6,
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                '角度：$angleValue',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: HexColor("#FEFEFE"), fontSize: 11),
+                              ),
+                              margin: EdgeInsets.only(
+                                bottom: 6,
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                '距离：$angleValue',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: HexColor("#FEFEFE"), fontSize: 11),
+                              ),
+                              margin: EdgeInsets.only(
+                                bottom: 6,
+                              ),
+                            ),
+                          ],
                         ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          signalName,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 14),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          signalValue,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          '强度：$angleValue',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          '角度：$angleValue',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          '距离：$angleValue',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 6,
-                        ),
-                      ),
-                    ],
-                  ),
+                      );
+                    }
+                    return Container();
+                  }
                 );
               },
             ),
           ),
-          Positioned(
-            top: 21,
-            right: 15,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    child: Text(
-                      '最大范围约：$maxMeter 米',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
-                    margin: EdgeInsets.only(
-                      top: 8,
-                    ),
-                    decoration: BoxDecoration(
-                        color: _themeColor,
-                        borderRadius: BorderRadius.circular(30)),
-                  ),
-                ],
-              ),
-            ),
-          ),
+//          Positioned(
+//            top: 21,
+//            right: 15,
+//            child: Container(
+//              child: Column(
+//                crossAxisAlignment: CrossAxisAlignment.end,
+//                children: <Widget>[
+//                  Container(
+//                    child: Text(
+//                      '最大范围约：$maxMeter 米',
+//                      textAlign: TextAlign.center,
+//                      style:
+//                          TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
+//                    ),
+//                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
+//                    margin: EdgeInsets.only(
+//                      top: 8,
+//                    ),
+//                    decoration: BoxDecoration(
+//                        color: _themeColor,
+//                        borderRadius: BorderRadius.circular(30)),
+//                  ),
+//                ],
+//              ),
+//            ),
+//          ),
           Positioned(
             child: SizedBox(
               height: 3,
@@ -344,29 +387,39 @@ class _ContributionState extends State<ContributionPage> {
                         ),
                       ),
                     ),
-                    Container(
-//                  color: Colors.red,
-                        width: 200,
-                        height: 40,
-                        child: Row(
-                          children: <Widget>[
-                            Checkbox(
-                              value: _isAcceptSignalProtocol,
-                              activeColor: _themeColor, //选中时的颜色
-                              onChanged: (value) {
-                                setState(() {
-                                  _isAcceptSignalProtocol = value;
-                                });
-                              },
-                            ),
-                            Text(
-                              "信号上传协议",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 11),
-                            ),
-                          ],
-                          mainAxisAlignment: MainAxisAlignment.center,
-                        )),
+                    InkWell(
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WebViewContainer(
+                                  initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                                  title: "信号上传协议",
+                                )));
+                      },
+                      child: SizedBox(
+                          width: 200,
+                          height: 40,
+                          child: Row(
+                            children: <Widget>[
+                              Checkbox(
+                                value: _isAcceptSignalProtocol,
+                                activeColor: _themeColor, //选中时的颜色
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isAcceptSignalProtocol = value;
+                                  });
+                                },
+                              ),
+                              Text(
+                                "信号上传协议",
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 11),
+                              ),
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                          )),
+                    ),
                   ],
                 );
               },

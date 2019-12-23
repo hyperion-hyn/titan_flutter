@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
+import 'package:titan/src/utils/utils.dart';
 import '../wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -196,53 +197,64 @@ class _DataContributionState extends State<DataContributionPage> {
   }
 
   Widget _wallet() {
-    return Container(
-      height: 50,
-      child: Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              '将以“钱包”HYN地址身份贡献数据',
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: HexColor('#333333'),
-                  fontSize: 12),
+    return InkWell(
+      onTap: (){
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => WalletManagerPage(),
+                settings: RouteSettings(name: "/wallet_manager_page")));
+      },
+      child: SizedBox(
+        height: 64,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+                padding: const EdgeInsets.fromLTRB(15, 4, 10, 0),
+                child: Image.asset(
+                  'res/drawable/data_contribution_wallet.png',
+                  width: 40,
+                  height: 40,
+                )),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  currentWalletVo.wallet.keystore.name,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: HexColor('#333333')),
+                ),
+                SizedBox(height: 8,),
+                SizedBox(
+                  width: 150,
+                  child: Text(
+                    shortEthAddress(currentWalletVo.wallet.getEthAccount().address),
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: Color(0xFF9B9B9B),
+                        fontSize: 12),
+                  ),
+                )
+              ],
             ),
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: GestureDetector(
-              onTap: () {
-                print('[data] --> 切换主钱包');
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WalletManagerPage(),
-                        settings: RouteSettings(name: "/wallet_manager_page")));
-              },
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.cached,
-                    color: HexColor('#CC941E'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: Text(
-                      '切换主钱包',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: HexColor('#CC941E'),
-                          fontSize: 14),
-                    ),
-                  ),
-                ],
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                '切换地址',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: HexColor('#333333'),
+                  fontSize: 12,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

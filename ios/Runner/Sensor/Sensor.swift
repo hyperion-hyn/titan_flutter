@@ -10,6 +10,8 @@ import Foundation
 
 protocol Sensor: NSObjectProtocol {
     
+    var onSensorChange: OnSensorValueChangeListener! { get set }
+
     func initialize()
     func startScan()
     func stopScan()

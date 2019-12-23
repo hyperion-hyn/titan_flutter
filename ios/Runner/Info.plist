@@ -55,9 +55,12 @@
 	<string>Please allow obtain motion permission</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Please allow obtain speech recognition permission</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Please allow obtain bluetooth permission</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>bluetooth-central</string>
 		<string>fetch</string>
 		<string>location</string>
 		<string>remote-notification</string>

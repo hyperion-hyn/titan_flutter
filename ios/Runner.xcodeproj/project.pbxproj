@@ -25,6 +25,7 @@
 		9A86DB6B23ACA1990032B410 /* BluetoothSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6A23ACA1990032B410 /* BluetoothSensor.swift */; };
 		9A86DB6D23ACA3290032B410 /* CellularSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6C23ACA3290032B410 /* CellularSensor.swift */; };
 		9A86DB6F23ACA4290032B410 /* GpsSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6E23ACA4290032B410 /* GpsSensor.swift */; };
+		9A86DB7123AF4D3D0032B410 /* OnSensorValueChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */; };
 		B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41DD00F668BA4794C96C93BA /* Pods_Runner.framework */; };
 		F5147211237EF6F500931008 /* ErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5147210237EF6F500931008 /* ErrorCode.swift */; };
 		F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53740FE22E83D8500ADF4FF /* EncryptionService.swift */; };
@@ -76,6 +77,7 @@
 		9A86DB6A23ACA1990032B410 /* BluetoothSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothSensor.swift; sourceTree = "<group>"; };
 		9A86DB6C23ACA3290032B410 /* CellularSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellularSensor.swift; sourceTree = "<group>"; };
 		9A86DB6E23ACA4290032B410 /* GpsSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpsSensor.swift; sourceTree = "<group>"; };
+		9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnSensorValueChangeListener.swift; sourceTree = "<group>"; };
 		AD1B0CAE230E4F7F00C5395E /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		F5147210237EF6F500931008 /* ErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCode.swift; sourceTree = "<group>"; };
 		F53740FE22E83D8500ADF4FF /* EncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionService.swift; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 				9A86DB6A23ACA1990032B410 /* BluetoothSensor.swift */,
 				9A86DB6C23ACA3290032B410 /* CellularSensor.swift */,
 				9A86DB6E23ACA4290032B410 /* GpsSensor.swift */,
+				9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */,
 			);
 			path = Sensor;
 			sourceTree = "<group>";
@@ -467,6 +470,7 @@
 				F537410E22E8683400ADF4FF /* EthEncryptionService.swift in Sources */,
 				F537410C22E867A000ADF4FF /* DateExt.swift in Sources */,
 				9A86DB6523AC722F0032B410 /* SensorManager.swift in Sources */,
+				9A86DB7123AF4D3D0032B410 /* OnSensorValueChangeListener.swift in Sources */,
 				F5147211237EF6F500931008 /* ErrorCode.swift in Sources */,
 				9A86DB6F23ACA4290032B410 /* GpsSensor.swift in Sources */,
 				9A86DB6D23ACA3290032B410 /* CellularSensor.swift in Sources */,

@@ -12,14 +12,22 @@ import Flutter
 class SensorPluginInterface {
     
     var sensorManager: SensorManager!
+     
+    var sensorChannel: FlutterMethodChannel?
     
     func setMethodCallHandler(methodCall: FlutterMethodCall, result: FlutterResult) -> Bool {
-        
+                
         switch(methodCall.method) {
         
             case "sensor#init":
                 
                 sensorManager = SensorManager()
+                sensorManager.onSensorChange = { (sensorType, values) in
+                    guard let channel = self.sensorChannel else { return }
+                    var arguments = values
+                    arguments["sensorType"] = sensorType
+                    channel.invokeMethod("sensor#valueChange", arguments: arguments)
+                }
                 sensorManager.initialize()
                 print("sensor#init")
                 return true
@@ -48,3 +56,4 @@ class SensorPluginInterface {
         }
     }
 }
+ 

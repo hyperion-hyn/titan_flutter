@@ -11,6 +11,8 @@ import CoreBluetooth
 
 class BluetoothSensor: NSObject, Sensor {
     
+    var onSensorChange: OnSensorValueChangeListener!
+    
     var _bluetoothManager: CBCentralManager!
 
     var type = SensorType.BLUETOOTH
@@ -25,11 +27,25 @@ class BluetoothSensor: NSObject, Sensor {
     }
     
     func startScan() {
+        guard _bluetoothManager.state == .poweredOn else {
+            return
+        }
         
+        guard !_bluetoothManager.isScanning else {
+            return
+        }
+        let options: [String: Any] = [
+            CBCentralManagerOptionShowPowerAlertKey: true,
+            CBCentralManagerScanOptionAllowDuplicatesKey: false,
+        ]
+        _bluetoothManager.scanForPeripherals(withServices: nil, options: options)
     }
     
     func stopScan() {
-        
+        guard _bluetoothManager.state == .poweredOn else {
+            return
+        }
+        _bluetoothManager.stopScan()
     }
     
     func destory() {
@@ -45,11 +61,7 @@ extension BluetoothSensor: CBCentralManagerDelegate {
         if central.state == .poweredOn {
             print("【蓝牙】蓝牙设备开着，✅")
             
-            let options: [String: Any] = [
-                CBCentralManagerOptionShowPowerAlertKey: true,
-                CBCentralManagerScanOptionAllowDuplicatesKey: false,
-            ]
-            central.scanForPeripherals(withServices: nil, options: options)
+            startScan()
         } else {
             print("【蓝牙】蓝牙设备关闭，❌")
         }
@@ -62,9 +74,34 @@ extension BluetoothSensor: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
   
-        print("\n【蓝牙】didDiscover，name: \(peripheral)，advertisementData: \(advertisementData) ，rssi: \(RSSI), \n")
+        //print("\n【蓝牙】didDiscover，name: \(peripheral)，advertisementData: \(advertisementData) ，rssi: \(RSSI), \n")
+        
+        // Todo: jison_1222
+        let values: [String : Any] = [
+            "name": peripheral.name ?? "",
+            "identifier": peripheral.identifier.uuidString,
+            "rssi": RSSI,
+            //"advertisementData": advertisementData
+        ]
+        onSensorChange(type, values)
     }
 }
+
+//Utils.addIfNonNull(values, "name", deviceName)
+//Utils.addIfNonNull(values, "mac", deviceHardwareAddress)
+//Utils.addIfNonNull(values, "type", deviceType)
+
+/*
+【蓝牙】didDiscover，
+name: <CBPeripheral: 0x281675400,
+identifier = 8B4D4011-EC16-51B8-B31E-FC4D006390A5,
+name = 宝宝的BeatsX, state = disconnected>，
+
+advertisementData: ["kCBAdvDataTimestamp": 596968823.778265, "kCBAdvDataIsConnectable": 0] ，
+
+rssi: -38,
+*/
+
 
 /*
 let CBAdvertisementDataLocalNameKey: String
