@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 import '../wallet/wallet_create_new_account_page.dart';
@@ -27,14 +28,52 @@ class DataContributionPage extends StatefulWidget {
   }
 }
 
-class _DataContributionState extends State<DataContributionPage> {
-  WalletBloc _walletBloc;
+class _DataContributionState extends State<DataContributionPage> with RouteAware {
+  WalletBloc _walletBloc = WalletBloc();
 
   StreamSubscription _eventbusSubcription;
+  WalletService _walletService = WalletService();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void didPopNext() {
+    print("didPopNext");
+    doDidPopNext();
+  }
+
+  Future doDidPopNext() async {
+    if (currentWalletVo != null) {
+      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
+      logger.i("defaultWalletFileName:$defaultWalletFileName");
+      String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
+      logger.i("updateWalletFileName:$updateWalletFileName");
+      if (defaultWalletFileName == updateWalletFileName) {
+        logger.i("do UpdateWalletEvent");
+        _walletBloc.add(UpdateWalletEvent(currentWalletVo));
+      } else {
+        currentWalletVo = null;
+        logger.i("do ScanWalletEvent");
+        _walletBloc.add(ScanWalletEvent());
+      }
+    } else {
+      _walletBloc.add(ScanWalletEvent());
+    }
+  }
+
+  @override
+  void dispose() {
+    _eventbusSubcription?.cancel();
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
 
   @override
   void initState() {
-    _walletBloc = WalletBloc();
     _walletBloc.add(ScanWalletEvent());
 
     _eventbusSubcription = eventBus.on().listen((event) {
@@ -65,10 +104,9 @@ class _DataContributionState extends State<DataContributionPage> {
     return BlocBuilder<WalletBloc, WalletState>(
       bloc: _walletBloc,
       builder: (BuildContext context, WalletState state) {
-
         if (state is WalletEmptyState) {
-//          return _walletTipsView();
-          return _listView();
+          return _walletTipsView();
+//          return _listView();
         } else if (state is ShowWalletState) {
           currentWalletVo = state.wallet;
 //          return _walletTipsView();
@@ -76,7 +114,10 @@ class _DataContributionState extends State<DataContributionPage> {
         } else if (state is ScanWalletLoadingState) {
           return _buildLoading(context);
         } else {
-          return Container(width: 0.0, height: 0.0,);
+          return Container(
+            width: 0.0,
+            height: 0.0,
+          );
         }
       },
     );
@@ -332,12 +373,6 @@ class _DataContributionState extends State<DataContributionPage> {
     );
   }
 
-  @override
-  void dispose() {
-    _eventbusSubcription?.cancel();
-    super.dispose();
-  }
-
   Future<bool> checkSignalPermission() async {
     //1、检查定位的权限
 
@@ -349,6 +384,7 @@ class _DataContributionState extends State<DataContributionPage> {
       _showGoToOpenLocationServceDialog();
       return false;
     }
+
     PermissionStatus locationPermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
     if (locationPermission != PermissionStatus.granted) {
       Map<PermissionGroup, PermissionStatus> permissions =
@@ -361,11 +397,11 @@ class _DataContributionState extends State<DataContributionPage> {
 
     //2. 检查电话权限
 
-    PermissionStatus phonePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
-    if (phonePermission != PermissionStatus.granted) {
-      if (Platform.isAndroid) {
+    if (Platform.isAndroid) {
+      PermissionStatus phonePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
+      if (phonePermission != PermissionStatus.granted) {
         Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.phone]);
+            await PermissionHandler().requestPermissions([PermissionGroup.phone]);
         if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
           _showGoToOpenCommonAppSettingsDialog("申请权限", "采集信号数据，需要获取电话权限", () {
             PermissionHandler().openAppSettings();
@@ -373,14 +409,16 @@ class _DataContributionState extends State<DataContributionPage> {
           return false;
         }
       }
-      else {
-        return true;
-      }
     }
 
     //3. 检查蓝牙权限
 
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
+    if (Platform.isIOS) {
+      print('[Contribution] --> ios_blue:${blueAvaiable}');
+    }
+    print('----------------ddddd');
+
     if (!blueAvaiable) {
       _showGoToOpenCommonAppSettingsDialog("开启蓝牙", "请开启蓝牙", () {
         AppSettings.openBluetoothSettings();

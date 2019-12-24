@@ -2,6 +2,7 @@ import UIKit
 import Flutter
 import Mobile
 import RxSwift
+import CoreBluetooth
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -42,6 +43,18 @@ import RxSwift
             let wallet = self.walletPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
             let encrytion = self.encrytionPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
             if(!wallet && !encrytion) {
+                switch methodCall.method {
+//                case "wifiEnable":
+//                    result(true)
+//                    break
+                    
+                case "bluetoothEnable":
+                    result(CBCentralManager().state == .poweredOn)
+                    break
+                    
+                default:
+                    result(FlutterMethodNotImplemented)
+                }
                 result(FlutterMethodNotImplemented)
             }
         }

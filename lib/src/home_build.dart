@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/business/wallet/wallet_account_bloc/wallet_account_bloc.dart';
 import 'package:titan/src/global.dart';
 
 import 'business/home/bloc/bloc.dart';

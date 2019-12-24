@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/wallet/model/wallet_vo.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/business/wallet/wallet_setting.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -21,6 +24,7 @@ class WalletManagerPage extends StatefulWidget {
 
 class _WalletManagerState extends State<WalletManagerPage> {
   WalletManagerBloc _walletManagerBloc = WalletManagerBloc();
+  WalletService _walletService = WalletService();
 
   @override
   void initState() {
@@ -90,6 +94,10 @@ class _WalletManagerState extends State<WalletManagerPage> {
         ));
   }
 
+  void _updateCurrentWallet(Wallet wallet) async {
+    currentWalletVo = await _walletService.buildWalletVo(wallet);
+  }
+
   Widget _buildWallet(Wallet wallet, String defaultWalletFileName) {
     Wallet trustWallet = wallet;
     KeyStore walletKeyStore = trustWallet.keystore;
@@ -110,11 +118,18 @@ class _WalletManagerState extends State<WalletManagerPage> {
                   onTap: () {
                     if (!isSelected) {
                       _walletManagerBloc.add(SwitchWalletEvent(wallet));
+                      _updateCurrentWallet(wallet);
                     }
                   },
                   child: Stack(
                     children: <Widget>[
-                      Align(alignment: Alignment.center, child: Image.asset("res/drawable/hyn_wallet.png",width: 24,height: 24,)),
+                      Align(
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            "res/drawable/hyn_wallet.png",
+                            width: 24,
+                            height: 24,
+                          )),
                       if (isSelected)
                         Align(
                           alignment: Alignment.bottomRight,
