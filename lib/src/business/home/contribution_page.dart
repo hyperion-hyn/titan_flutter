@@ -772,10 +772,10 @@ class _ContributionState extends State<ContributionPage> {
       return;
     }
 
-    var uuid = _walletVo.accountList[0].account.address;
+    var address = _walletVo.accountList[0].account.address;
     var platform = Platform.isIOS ? "iOS" : "android";
 
-    await _api.signalCollector(platform, uuid, _signalCollector);
+    await _api.signalCollector(platform, address, _signalCollector);
   }
 
   void _showCloseDialog() {
