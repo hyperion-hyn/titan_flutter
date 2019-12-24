@@ -345,96 +345,68 @@ class _ContributionState extends State<ContributionPage> {
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
-      body: Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.center,
-        children: <Widget>[
-          mapView(),
-          StreamBuilder<double>(
-            stream: progressStreamController.stream,
-            builder: (ctx, snap) {
-              if (snap?.data != null && snap.data >= 0) {
-                return RadarScan();
-              }
-              return Container(width: 0.0, height: 0.0);
-            },
-          ),
-          Positioned(
-            top: 21,
-            left: 14,
-            child: StreamBuilder(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                return _blocBuild(ctx, snap);
-              },
-            ),
-          ),
-          /*
-          Positioned(
-            top: 21,
-            right: 15,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    child: Text(
-                      '最大范围约：$maxMeter 米',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
-                    margin: EdgeInsets.only(
-                      top: 8,
-                    ),
-                    decoration: BoxDecoration(
-                        color: _themeColor,
-                        borderRadius: BorderRadius.circular(30)),
+      body: StreamBuilder<double>(
+        stream: progressStreamController.stream,
+        builder: (context, snapshot) {
+          return Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.center,
+            children: <Widget>[
+              mapView(),
+              RadarScan(),
+              Positioned(
+                top: 21,
+                left: 14,
+                child: _blocBuild(context, snapshot),
+              ),
+              /*
+              Positioned(
+                top: 21,
+                right: 15,
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          '最大范围约：$maxMeter 米',
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
+                        margin: EdgeInsets.only(
+                          top: 8,
+                        ),
+                        decoration: BoxDecoration(
+                            color: _themeColor,
+                            borderRadius: BorderRadius.circular(30)),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          */
-          Positioned(
-            child: SizedBox(
-              height: 3,
-              child: StreamBuilder<double>(
-                stream: progressStreamController.stream,
-                builder: (ctx, snap) {
-                  return LinearProgressIndicator(
+              */
+              Positioned(
+                child: SizedBox(
+                  height: 3,
+                  child: LinearProgressIndicator(
                     backgroundColor: _themeColor,
-                    value: snap?.data ?? 0.0,
+                    value: snapshot?.data ?? 0.0,
                     valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
-                  );
-                },
+                  ),
+                ),
+                top: 0,
+                left: 0,
+                right: 0,
               ),
-            ),
-            top: 0,
-            left: 0,
-            right: 0,
-          ),
-          StreamBuilder<double>(
-            stream: progressStreamController.stream,
-            builder: (ctx, snap) {
-              return Image.asset(
+              Image.asset(
                 'res/drawable/${_getImageName()}_scan.png',
                 scale: 2,
-              );
-            },
-          ),
-          Positioned(
-            bottom: 20,
-            child: StreamBuilder<double>(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                var snapValue = snap.data ?? 0.0001;
-
-                if (snapValue < 1.0) {
-                  return Container(width: 0.0, height: 0.0);
-                }
-                return Column(
+              ),
+              Positioned(
+                bottom: 20,
+                child: Column(
                   children: <Widget>[
                     RaisedButton(
                       shape: StadiumBorder(),
@@ -458,9 +430,9 @@ class _ContributionState extends State<ContributionPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WebViewContainer(
-                                      initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
-                                      title: S.of(context).scan_signal_upload_protocol,
-                                    )));
+                                  initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                                  title: S.of(context).scan_signal_upload_protocol,
+                                )));
                       },
                       child: SizedBox(
                           width: 200,
@@ -493,11 +465,11 @@ class _ContributionState extends State<ContributionPage> {
                           )),
                     ),
                   ],
-                );
-              },
-            ),
-          ),
-        ],
+                ),
+              ),
+            ],
+          );
+        }
       ),
     );
   }
