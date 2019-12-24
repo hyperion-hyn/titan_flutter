@@ -47,7 +47,6 @@ class _HomeBuilderState extends State<HomeBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    globalContext = context;
     appLocale = Localizations.localeOf(context);
     return Builder(
       key: Keys.mainContextKey,

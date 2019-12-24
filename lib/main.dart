@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
@@ -33,17 +31,18 @@ void main() {
   BlocSupervisor.delegate = AppBlocDelegate();
 
   if (env.buildType == BuildType.PROD) {
-    FlutterBugly.init(androidAppId: Config.BUGLY_ANDROID_APPID, iOSAppId: Config.BUGLY_IOS_APPID);
+    FlutterBugly.init(
+      androidAppId: Config.BUGLY_ANDROID_APPID,
+      iOSAppId: Config.BUGLY_IOS_APPID,
+    );
   }
 
   FlutterBugly.postCatchedException(
-    () {
-      runApp(Injector(
-        child: App(),
-        repository: repository,
-        searchInteractor: searchInteractor,
-      ));
-    },
+    () => runApp(Injector(
+      child: App(),
+      repository: repository,
+      searchInteractor: searchInteractor,
+    )),
     debugUpload: env.buildType == BuildType.DEV,
   );
 }

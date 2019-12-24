@@ -10,8 +10,8 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
 
 import 'business/updater/bloc/bloc.dart';
+import 'components/root_page_control_component/root_page_control_component.dart';
 import 'global.dart';
-import 'home_build.dart';
 
 ValueChanged<Locale> localeChange;
 ValueChanged<AppArea> appAreaChange;
@@ -57,6 +57,7 @@ class _AppState extends State<App> {
     return BlocProvider(
       builder: (context) => AppBloc(),
       child: RefreshConfiguration(
+        //pull to refresh config
         dragSpeedRatio: 0.91,
         headerTriggerDistance: 80,
         footerTriggerDistance: 80,
@@ -82,7 +83,8 @@ class _AppState extends State<App> {
             RefreshLocalizations.delegate,
           ],
           supportedLocales: S.delegate.supportedLocales,
-          home: HomeBuilder(),
+//          home: HomeBuilder(),
+          home: RootPageControlComponent(),
           navigatorObservers: [routeObserver],
         ),
       ),
