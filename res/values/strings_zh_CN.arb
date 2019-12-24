@@ -273,7 +273,7 @@
   "require_location": "申请定位授权",
   "require_location_message": "请你授权使用定位功能.",
   "open_location_service": "打开定位服务",
-  "open_location_service_message": "定位服务已关闭，请开启"
+  "open_location_service_message": "定位服务已关闭，请开启",
   "scan_name_wifi": "WiFi",
   "scan_name_cellular": "基站",
   "scan_name_bluetooth": "蓝牙",

@@ -273,7 +273,7 @@
   "require_location": "Apply for positioning permission",
   "require_location_message": "Please authorize the use of positioning permissions",
   "open_location_service": "Turn on location services",
-  "open_location_service_message": "Location services are off, please turn on"
+  "open_location_service_message": "Location services are off, please turn on",
   "scan_name_wifi": "WiFi",
   "scan_name_cellular": "Base station",
   "scan_name_bluetooth": "Bluetooth",

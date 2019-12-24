@@ -273,7 +273,7 @@
   "require_location": "위치 라이센스 신청",
   "require_location_message": "위치 확인 기능을 사용할 수 있는 권한을 부여해 주십시오.",
   "open_location_service": "위치추적 서비스 열기",
-  "open_location_service_message": "위치정보 서비스가 닫혔습니다. 켜주세요"
+  "open_location_service_message": "위치정보 서비스가 닫혔습니다. 켜주세요",
   "scan_name_wifi": "WiFi",
   "scan_name_cellular": "基站",
   "scan_name_bluetooth": "기지국",
