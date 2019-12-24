@@ -274,4 +274,16 @@
   "require_location_message": "Please authorize the use of positioning permissions",
   "open_location_service": "Turn on location services",
   "open_location_service_message": "Location services are off, please turn on"
+  "scan_name_wifi": "WiFi",
+  "scan_name_cellular": "Base station",
+  "scan_name_bluetooth": "Bluetooth",
+  "scan_name_gps": "GPS",
+  "scan_name_start" : "Start",
+  "scan_name_title" : "Signal scan",
+  "scan_confirm_upload" : "Confirm upload",
+  "scan_signal_upload_protocol" : "Signal upload protocol",
+  "scan_exit_tips" : "Scanning, confirm exit?",
+  "scan_hyn_is_empty" : "HYN wallet is empty",
+  "scan_finish" : "Scan completed",
+  "scan_ing_func": "Scanning for ${scanName}"
 }

@@ -192,7 +192,12 @@ class _ContributionState extends State<ContributionPage> {
     subscription = timerObservable.listen((t) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       var timeGap = nowTime - startTime;
-      progressStreamController.add(timeGap / duration.toDouble());
+      var progress = timeGap / duration.toDouble();
+      progressStreamController.add(progress);
+      //print("[contribution] --> progress:$progress");
+
+      _setCurrentScanType(progress);
+
       if (timeGap < duration) {
         //scan 30s
         if (nowTime - lastMoveTime > timeStep) {
@@ -240,28 +245,29 @@ class _ContributionState extends State<ContributionPage> {
     return _imageName;
   }
 
+
   String _getScanName() {
     var name = "WiFi";
 
     switch (_currentScanType) {
       case SensorType.WIFI:
-        name = "WiFi";
+        name = S.of(context).scan_name_wifi;
         break;
 
       case SensorType.CELLULAR:
-        name = "基站";
+        name = S.of(context).scan_name_cellular;
         break;
 
       case SensorType.BLUETOOTH:
-        name = "蓝牙";
+        name = S.of(context).scan_name_bluetooth;
         break;
 
       case SensorType.GPS:
-        name = "GPS";
+        name = S.of(context).scan_name_gps;
         break;
 
       case SensorType.GNSS:
-        name = "开始";
+        name = S.of(context).scan_name_start;
         break;
     }
 
@@ -333,7 +339,7 @@ class _ContributionState extends State<ContributionPage> {
         ),
         elevation: 0,
         title: Text(
-          "信号扫描",
+          S.of(context).scan_name_title,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -412,8 +418,6 @@ class _ContributionState extends State<ContributionPage> {
           StreamBuilder<double>(
             stream: progressStreamController.stream,
             builder: (ctx, snap) {
-              _setCurrentScanType(snap.data);
-
               return Image.asset(
                 'res/drawable/${_getImageName()}_scan.png',
                 scale: 2,
@@ -443,7 +447,7 @@ class _ContributionState extends State<ContributionPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
                         child: Text(
-                          '确认上传',
+                          S.of(context).scan_confirm_upload,
                           style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -455,7 +459,7 @@ class _ContributionState extends State<ContributionPage> {
                             MaterialPageRoute(
                                 builder: (context) => WebViewContainer(
                                       initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
-                                      title: "信号上传协议",
+                                      title: S.of(context).scan_signal_upload_protocol,
                                     )));
                       },
                       child: SizedBox(
@@ -473,7 +477,7 @@ class _ContributionState extends State<ContributionPage> {
                                 },
                               ),
                               Text(
-                                "信号上传协议",
+                                S.of(context).scan_signal_upload_protocol,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 11,
@@ -554,12 +558,12 @@ class _ContributionState extends State<ContributionPage> {
 
   Widget _blocBuild(BuildContext context, AsyncSnapshot snap) {
     var newDataList = List();
-    String signalName = '正在${_getScanName()}信号扫描';
+    String signalName = S.of(context).scan_ing_func(_getScanName());
 
     var snapValue = snap.data ?? 0.0001;
     //print('[Contribution] -->_blocBuild, snapValue:${snapValue}');
     if (snapValue > 1.0) {
-      signalName = "扫描已完成";
+      signalName = S.of(context).scan_finish;
     }
     newDataList.add(signalName);
 
@@ -768,7 +772,7 @@ class _ContributionState extends State<ContributionPage> {
     SignalCollector _signalCollector = SignalCollector(_latlng, collectData);
     WalletVo _walletVo = await _walletService.getDefaultWalletVo();
     if (_walletVo == null) {
-      Fluttertoast.showToast(msg: "HYN wallet 为空");
+      Fluttertoast.showToast(msg: S.of(context).scan_hyn_is_empty);
       return;
     }
 
@@ -789,7 +793,7 @@ class _ContributionState extends State<ContributionPage> {
         builder: (BuildContext context) {
           return Platform.isIOS
               ? CupertinoAlertDialog(
-                  content: Text('正在扫描中，确认退出吗?'),
+                  content: Text(S.of(context).scan_exit_tips),
                   actions: <Widget>[
                     FlatButton(
                       child: Text(S.of(context).cancel),
@@ -805,7 +809,7 @@ class _ContributionState extends State<ContributionPage> {
                   ],
                 )
               : AlertDialog(
-                  content: Text('正在扫描中，确认退出吗?'),
+                  content: Text(S.of(context).scan_exit_tips),
                   actions: <Widget>[
                     FlatButton(
                       child: Text(S.of(context).cancel),

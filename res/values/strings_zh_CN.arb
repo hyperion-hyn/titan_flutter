@@ -274,4 +274,16 @@
   "require_location_message": "请你授权使用定位功能.",
   "open_location_service": "打开定位服务",
   "open_location_service_message": "定位服务已关闭，请开启"
+  "scan_name_wifi": "WiFi",
+  "scan_name_cellular": "基站",
+  "scan_name_bluetooth": "蓝牙",
+  "scan_name_gps": "GPS",
+  "scan_name_start" : "开始",
+  "scan_name_title" : "信号扫描",
+  "scan_confirm_upload" : "确认上传",
+  "scan_signal_upload_protocol" : "信号上传协议",
+  "scan_exit_tips" : "正在扫描中，确认退出吗?",
+  "scan_hyn_is_empty" : "HYN wallet 为空",
+  "scan_finish" : "扫描已完成",
+  "scan_ing_func": "正在${scanName}信号扫描"
 }
