@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/sensor/bloc.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
@@ -31,8 +33,6 @@ class ContributionPage extends StatefulWidget {
 
 class _ContributionState extends State<ContributionPage> {
   MapboxMapController mapController;
-
-//  ScrollController scrollController = ScrollController();
 
   Api _api = Api();
 
@@ -59,6 +59,7 @@ class _ContributionState extends State<ContributionPage> {
   List<Map<dynamic, dynamic>> gpsList = List();
   List<Map<dynamic, dynamic>> cellularList = List();
   var _currentIndex = -1;
+  var _isFinishScan = false;
 
   @override
   void initState() {
@@ -176,7 +177,6 @@ class _ContributionState extends State<ContributionPage> {
   bool isVisibleToast = false;
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
-  bool _isFinishScan = false;
   var _currentScanType = SensorType.GNSS;
 
   void startScan() async {
@@ -201,6 +201,8 @@ class _ContributionState extends State<ContributionPage> {
         }
       } else {
         subscription?.cancel();
+        _isFinishScan = true;
+        sensorPlugin.stopScan();
       }
     });
     sensorPlugin.startScan();
@@ -321,9 +323,17 @@ class _ContributionState extends State<ContributionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: _showCloseDialog,
+            );
+          },
+        ),
         elevation: 0,
         title: Text(
-          "地图AI校验",
+          "信号扫描",
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -464,7 +474,15 @@ class _ContributionState extends State<ContributionPage> {
                               ),
                               Text(
                                 "信号上传协议",
-                                style: TextStyle(color: Colors.white, fontSize: 11),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  decoration: TextDecoration.combine([
+                                    TextDecoration.underline, // 下划线
+                                  ]),
+                                  decorationStyle: TextDecorationStyle.solid, // 装饰样式
+                                  decorationColor: Colors.white,
+                                ),
                               ),
                             ],
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -487,7 +505,7 @@ class _ContributionState extends State<ContributionPage> {
       child: Text(
         value,
         textAlign: TextAlign.left,
-        style: TextStyle(color: _isFinishScan ? Theme.of(context).primaryColor : HexColor("#FEFEFE"), fontSize: 14),
+        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
       ),
       margin: EdgeInsets.only(
         bottom: 6,
@@ -541,9 +559,7 @@ class _ContributionState extends State<ContributionPage> {
     var snapValue = snap.data ?? 0.0001;
     //print('[Contribution] -->_blocBuild, snapValue:${snapValue}');
     if (snapValue > 1.0) {
-      signalName = "扫描任务已完成";
-      sensorPlugin.stopScan();
-      _isFinishScan = true;
+      signalName = "扫描已完成";
     }
     newDataList.add(signalName);
 
@@ -558,7 +574,7 @@ class _ContributionState extends State<ContributionPage> {
     }
     var values = list[_currentIndex];
     var sensorType = values["sensorType"] as int;
-    //print('[contribution] --> scanType: ${_currentScanType}, count:${list.length}, values: ${values}');
+    print('[contribution] --> scanType: ${_getScanName()}, count:${list.length}, values: ${values}');
 
     switch (sensorType) {
       case SensorType.WIFI:
@@ -760,6 +776,51 @@ class _ContributionState extends State<ContributionPage> {
     var platform = Platform.isIOS ? "iOS" : "android";
 
     await _api.signalCollector(platform, uuid, _signalCollector);
+  }
+
+  void _showCloseDialog() {
+    if (_isFinishScan) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  content: Text('正在扫描中，确认退出吗?'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(S.of(context).cancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text(S.of(context).confirm),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  content: Text('正在扫描中，确认退出吗?'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(S.of(context).cancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text(S.of(context).confirm),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+        });
   }
 }
 

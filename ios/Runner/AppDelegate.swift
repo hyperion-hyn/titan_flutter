@@ -27,6 +27,8 @@ import CoreBluetooth
 
     private lazy var encrytionPlugin: EncrytionPluginInterface = EncrytionPluginInterface()
 
+    let blueSensor = BluetoothSensor()
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -49,7 +51,10 @@ import CoreBluetooth
 //                    break
                     
                 case "bluetoothEnable":
-                    result(CBCentralManager().state == .poweredOn)
+                    self.blueSensor.initialize()
+                    //self.blueSensor.startScan()
+                    let isEnable = self.blueSensor.isEnable
+                    result(isEnable)
                     break
                     
                 default:
@@ -65,6 +70,8 @@ import CoreBluetooth
                 result(FlutterMethodNotImplemented)
             }
         }
+        
+//        blueSensor.initialize()
     }
     
     
