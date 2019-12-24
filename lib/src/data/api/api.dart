@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -6,6 +8,7 @@ import 'package:titan/src/domain/gaode_model.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/update.dart';
+import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 
 class Api {
   ///附近可以分享的位置
@@ -103,5 +106,12 @@ class Api {
       'kid': kid,
     });
     return data;
+  }
+
+  ///collect signal
+  Future signalCollector(String platform, String uuid, SignalCollector signalCollector) async {
+    await HttpCore.instance.post("map-collector/signal/collector",
+        params: signalCollector.toJson(),
+        options: RequestOptions(headers: {"platform": platform, "UUID": uuid}, contentType: "application/json"));
   }
 }

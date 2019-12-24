@@ -257,5 +257,6 @@
   "other_area": "其他地区",
   "app_area_setting": "区域",
   "please_selecte_app_area": "请设置地图使用区域",
-  "hyperion_project_intro_url": "https://shimo.im/docs/GDp72cj3ATwEB7ke/read"
+  "hyperion_project_intro_url": "https://shimo.im/docs/GDp72cj3ATwEB7ke/read",
+  "click_again_to_exist_app": "再按一下退出程序"
 }

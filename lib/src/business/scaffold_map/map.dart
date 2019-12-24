@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:android_intent/android_intent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,7 +15,7 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
@@ -452,6 +453,15 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
       if (event is ToMyLocationEvent) {
+        //check location service
+
+        ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+
+        if (serviceStatus == ServiceStatus.disabled) {
+          _showGoToOpenLocationServceDialog();
+          return;
+        }
+
         PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
@@ -505,6 +515,51 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                       child: Text('设置'),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                );
+        });
+  }
+
+  void _showGoToOpenLocationServceDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('打开定位服务'),
+                  content: Text('定位服务已关闭，请开启'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        PermissionHandler().openAppSettings();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('打开定位服务'),
+                  content: Text('定位服务已关闭，请开启'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text('设置'),
+                      onPressed: () {
+                        AndroidIntent intent = new AndroidIntent(
+                          action: 'action_location_source_settings',
+                        );
+                        intent.launch();
                         Navigator.pop(context);
                       },
                     ),

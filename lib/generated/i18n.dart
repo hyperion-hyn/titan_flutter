@@ -52,6 +52,7 @@ class S implements WidgetsLocalizations {
   String get cafe => "Cafe";
   String get cancel => "Cancel";
   String get clean_search_history => "Clear History";
+  String get click_again_to_exist_app => "press again to exit app";
   String get close => "Close";
   String get coming_soon => "Coming Soon";
   String get confirm => "Confirm";
@@ -599,6 +600,8 @@ class $ko extends S {
   @override
   String get skip => "건너 뛰기";
   @override
+  String get click_again_to_exist_app => "다시 누르면 앱이 종료됩니다";
+  @override
   String get supermarket => "슈퍼마켓";
   @override
   String get information_guide => "안내서";
@@ -1130,6 +1133,8 @@ class $zh_CN extends S {
   String get clean_search_history => "清除记录";
   @override
   String get skip => "跳过";
+  @override
+  String get click_again_to_exist_app => "再按一下退出程序";
   @override
   String get supermarket => "超市";
   @override

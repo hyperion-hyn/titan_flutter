@@ -49,7 +49,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
   }
 
   @override
-  Future didPopNext() {
+  void didPopNext() {
     print("didPopNext");
     doDidPopNext();
   }

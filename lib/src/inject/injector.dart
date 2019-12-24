@@ -15,7 +15,7 @@ class Injector extends InheritedWidget {
     @required this.repository,
   }) : super(key: key, child: child);
 
-  static Injector of(BuildContext context) => context.inheritFromWidgetOfExactType(Injector);
+  static Injector of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<Injector>();
 
   @override
   bool updateShouldNotify(Injector oldWidget) {

@@ -257,5 +257,6 @@
   "other_area": "기타 지역",
   "app_area_setting": "구역",
   "please_selecte_app_area": "지도 사용 구역을 설정하십시오",
-  "hyperion_project_intro_url": "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412"
+  "hyperion_project_intro_url": "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412",
+  "click_again_to_exist_app": "다시 누르면 앱이 종료됩니다"
 }

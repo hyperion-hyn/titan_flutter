@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:decimal/decimal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -59,10 +60,14 @@ class WalletService {
   Future updateAccountBalance(WalletAccountVo accountVo, Wallet wallet) async {
     if (accountVo.assetToken.erc20ContractAddress == null) {
       var balance = await wallet.getBalance(accountVo.account);
-      accountVo.balance = balance / BigInt.from(pow(10, accountVo.assetToken.decimals));
+      accountVo.balance =
+          (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, accountVo.assetToken.decimals).toString()))
+              .toDouble();
     } else {
       var balance = await wallet.getErc20Balance(accountVo.assetToken.erc20ContractAddress);
-      accountVo.balance = balance / BigInt.from(pow(10, accountVo.assetToken.decimals));
+      accountVo.balance =
+          (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, accountVo.assetToken.decimals).toString()))
+              .toDouble();
     }
   }
 

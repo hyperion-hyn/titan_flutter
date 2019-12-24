@@ -13,6 +13,7 @@ import 'package:titan/src/widget/drag_tick.dart';
 
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
+import 'data_contribution_page.dart';
 
 class HomePanel extends StatefulWidget {
   final ScrollController scrollController;
@@ -241,48 +242,53 @@ class HomePanelState extends State<HomePanel> {
             width: 12,
           ),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                  border: Border.all(color: Color(0xFFE9E9E9), width: 1)),
-              child: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0, left: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          S.of(context).data_contribute,
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            S.of(context).data_contribute_reward,
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            S.of(context).coming_soon,
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Color(0xFFF82530)),
-                          ),
-                        ),
-                      ],
-                    ),
+            child: InkWell(
+              borderRadius: BorderRadius.all(Radius.circular(4.0)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    settings: RouteSettings(name: '/data_contribution_page'),
+                    builder: (context) => DataContributionPage(),
                   ),
-                  Positioned(
-                      top: 36,
-                      right: 16,
-                      child: Image.asset(
-                        'res/drawable/data.png',
-                        width: 32,
-                        height: 32,
-                      )),
-                ],
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                    border: Border.all(color: Color(0xFFE9E9E9), width: 1)),
+                child: Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0, left: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            S.of(context).data_contribute,
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              S.of(context).data_contribute_reward,
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                        top: 36,
+                        right: 16,
+                        child: Image.asset(
+                          'res/drawable/data.png',
+                          width: 32,
+                          height: 32,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),

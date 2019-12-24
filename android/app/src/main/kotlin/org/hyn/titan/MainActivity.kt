@@ -1,6 +1,7 @@
 package org.hyn.titan
 
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -13,6 +14,7 @@ import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
 import org.hyn.titan.encryption.EncryptionPluginInterface
+import org.hyn.titan.sensor.SensorPluginInterface
 import org.hyn.titan.wallet.WalletPluginInterface
 import java.io.File
 
@@ -31,13 +33,13 @@ class MainActivity : FlutterActivity() {
 
         val encryptionPluginInterface = EncryptionPluginInterface(this, flutterView)
         val walletPluginInterface = WalletPluginInterface(this, flutterView)
+        val sensorPluginInterface = SensorPluginInterface(this, flutterView)
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
             if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
             }
-
             if (!handled) {
                 when (call.method) {
                     "nativeGreet" -> {  // this is a test call
@@ -104,6 +106,14 @@ class MainActivity : FlutterActivity() {
                     "requestWiFiIsOpenedSetting" -> {
                         val wifi = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager;
                         result.success(wifi.isWifiEnabled)
+                    }
+                    "wifiEnable" -> {
+                        val wifiManager: WifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                        result.success(wifiManager.isWifiEnabled)
+                    }
+                    "bluetoothEnable" -> {
+                        val blueadapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+                        result.success(blueadapter.isEnabled)
                     }
                     else -> {
                         result.notImplemented()
