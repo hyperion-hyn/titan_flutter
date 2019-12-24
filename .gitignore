@@ -84,7 +84,6 @@ shrinklist.txt
 
 lib/config.dart
 apks
-.apk
+*.apk
 ios/Flutter/flutter_export_environment.sh
-*.sh
 .flutter-plugins-dependencies
