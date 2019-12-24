@@ -258,5 +258,17 @@
   "app_area_setting": "Area",
   "please_selecte_app_area": "Please set the region of the map",
   "hyperion_project_intro_url": "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412",
-  "click_again_to_exist_app": "press again to exit app"
+  "click_again_to_exist_app": "press again to exit app",
+  "scan_name_wifi": "WiFi",
+  "scan_name_cellular": "Base station",
+  "scan_name_bluetooth": "Bluetooth",
+  "scan_name_gps": "GPS",
+  "scan_name_start" : "Start",
+  "scan_name_title" : "Signal scan",
+  "scan_confirm_upload" : "Confirm upload",
+  "scan_signal_upload_protocol" : "Signal upload protocol",
+  "scan_exit_tips" : "Scanning, confirm exit?",
+  "scan_hyn_is_empty" : "HYN wallet is empty",
+  "scan_finish" : "Scan completed",
+  "scan_ing_func": "Scanning for ${scanName}"
 }

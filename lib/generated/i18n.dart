@@ -212,6 +212,17 @@ class S implements WidgetsLocalizations {
   String get safety_verification => "Safety Verification";
   String get save_mnemonic_notice => "Write down or copy these words in the correct order and keep them safe.";
   String get save_mnemonic_safe_notice => "Never share the mnemonic with anyone, store your backup securely!";
+  String get scan_confirm_upload => "Confirm upload";
+  String get scan_exit_tips => "Scanning, confirm exit?";
+  String get scan_finish => "Scan completed";
+  String get scan_hyn_is_empty => "HYN wallet is empty";
+  String get scan_name_bluetooth => "Bluetooth";
+  String get scan_name_cellular => "Base station";
+  String get scan_name_gps => "GPS";
+  String get scan_name_start => "Start";
+  String get scan_name_title => "Signal scan";
+  String get scan_name_wifi => "WiFi";
+  String get scan_signal_upload_protocol => "Signal upload protocol";
   String get search_empty_data => "No Data";
   String get search_history => "History";
   String get search_or_decode => "Search / Decrypt";
@@ -279,6 +290,7 @@ class S implements WidgetsLocalizations {
   String network_request_err(String code) => "Network request error, code: $code";
   String private_share_receive_address(String shortAddress) => "Receive Address : ${shortAddress}";
   String receiver_symbol(String symbol) => "Receive ${symbol}";
+  String scan_ing_func(String scanName) => "Scanning for ${scanName}";
   String send_count_label(String symbol) => "$symbol Quantity";
   String send_symbol(String symbol) => "Send $symbol";
 }
@@ -345,6 +357,8 @@ class $ko extends S {
   String get mall => "백화점";
   @override
   String get received => "받았습니다";
+  @override
+  String get scan_name_bluetooth => "기지국";
   @override
   String get nav_my_privacy_map => "내 프라이버시 맵";
   @override
@@ -417,6 +431,8 @@ class $ko extends S {
   String get language => "언어";
   @override
   String get internet_bar => "인터넷 카페";
+  @override
+  String get scan_name_cellular => "基站";
   @override
   String get later => "아직 업데이트되지 않았습니다";
   @override
@@ -506,6 +522,8 @@ class $ko extends S {
   @override
   String get create_wallet_tips => "비밀 계정 만들기";
   @override
+  String get scan_signal_upload_protocol => "신호 업로드 프로토콜";
+  @override
   String get forum => "받는 사람";
   @override
   String get add_share_options => "공유 옵션";
@@ -521,6 +539,8 @@ class $ko extends S {
   String get speed_fast => "빨리";
   @override
   String get import_wallet => "지갑 가져오기";
+  @override
+  String get scan_confirm_upload => "업로드 확인";
   @override
   String get dmap_life => "생활 가이드";
   @override
@@ -608,6 +628,8 @@ class $ko extends S {
   @override
   String get speed_slow => "느리게";
   @override
+  String get scan_hyn_is_empty => "HYN 지갑이 비어 있습니다";
+  @override
   String get share => "공유";
   @override
   String get new_update_available => "새 버전 발견";
@@ -672,6 +694,8 @@ class $ko extends S {
   @override
   String get wallet_name_label => "지갑 이름";
   @override
+  String get scan_name_gps => "GPS";
+  @override
   String get wechat_cs => "위챗 고객 서비스";
   @override
   String get speed_normal => "평균치";
@@ -694,6 +718,8 @@ class $ko extends S {
   @override
   String get public_key_scan_fail_rescan => "잘못된 공개 키입니다. 다시 스캔하십시오";
   @override
+  String get scan_name_wifi => "WiFi";
+  @override
   String get save_mnemonic_safe_notice => "복구된 메시지를 아무에게도 공유하지 말고 안전하게 저장하세요!";
   @override
   String get service_hours => "서비스 시간";
@@ -707,6 +733,10 @@ class $ko extends S {
   String get cafe => "커피숍";
   @override
   String get telphone => "전화";
+  @override
+  String get scan_name_start => "시작";
+  @override
+  String get scan_name_title => "신호 스윕";
   @override
   String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
   @override
@@ -754,6 +784,8 @@ class $ko extends S {
   @override
   String get map_dmap => "그림 DMap";
   @override
+  String get scan_finish => "스캔 완료";
+  @override
   String get gas_station => "주유소";
   @override
   String get hynPriceUnit => "USD";
@@ -778,6 +810,8 @@ class $ko extends S {
   @override
   String get operating_hours => "근무 시간";
   @override
+  String get scan_exit_tips => "스캔 진행 중, 종료 확인?";
+  @override
   String get import_account_success => "계정 가져오기 성공";
   @override
   String get install_now => "지금 설치";
@@ -801,6 +835,8 @@ class $ko extends S {
   String private_share_receive_address(String shortAddress) => "수신 주소:${shortAddress}";
   @override
   String my_symbol_address(String symbol) => "광산${symbol}수신 주소:";
+  @override
+  String scan_ing_func(String scanName) => "${scanName} 스캔 중";
   @override
   String n_minute(String minute) => "${minute}분";
   @override
@@ -880,6 +916,8 @@ class $zh_CN extends S {
   @override
   String get received => "已收到";
   @override
+  String get scan_name_bluetooth => "蓝牙";
+  @override
   String get nav_my_privacy_map => "我的隐私地图";
   @override
   String get toilet => "厕所";
@@ -951,6 +989,8 @@ class $zh_CN extends S {
   String get language => "语言";
   @override
   String get internet_bar => "网吧";
+  @override
+  String get scan_name_cellular => "基站";
   @override
   String get later => "暂不更新";
   @override
@@ -1040,6 +1080,8 @@ class $zh_CN extends S {
   @override
   String get create_wallet_tips => "创建一个私密账户";
   @override
+  String get scan_signal_upload_protocol => "信号上传协议";
+  @override
   String get forum => "论坛";
   @override
   String get add_share_options => "分享选项";
@@ -1055,6 +1097,8 @@ class $zh_CN extends S {
   String get speed_fast => "快";
   @override
   String get import_wallet => "导入钱包";
+  @override
+  String get scan_confirm_upload => "确认上传";
   @override
   String get dmap_life => "生活指引";
   @override
@@ -1142,6 +1186,8 @@ class $zh_CN extends S {
   @override
   String get speed_slow => "慢";
   @override
+  String get scan_hyn_is_empty => "HYN wallet 为空";
+  @override
   String get share => "分享";
   @override
   String get new_update_available => "发现新版本";
@@ -1206,6 +1252,8 @@ class $zh_CN extends S {
   @override
   String get wallet_name_label => "钱包名称";
   @override
+  String get scan_name_gps => "GPS";
+  @override
   String get wechat_cs => "微信客服";
   @override
   String get speed_normal => "平均值";
@@ -1228,6 +1276,8 @@ class $zh_CN extends S {
   @override
   String get public_key_scan_fail_rescan => "公钥有误，请重新扫描";
   @override
+  String get scan_name_wifi => "WiFi";
+  @override
   String get save_mnemonic_safe_notice => "永远不要与任何人共享恢复短语，安全的存储它！";
   @override
   String get service_hours => "服务时间";
@@ -1241,6 +1291,10 @@ class $zh_CN extends S {
   String get cafe => "咖啡馆";
   @override
   String get telphone => "电话";
+  @override
+  String get scan_name_start => "开始";
+  @override
+  String get scan_name_title => "信号扫描";
   @override
   String get hyperion_project_intro_url => "https://shimo.im/docs/GDp72cj3ATwEB7ke/read";
   @override
@@ -1288,6 +1342,8 @@ class $zh_CN extends S {
   @override
   String get map_dmap => "地图DMap";
   @override
+  String get scan_finish => "扫描已完成";
+  @override
   String get gas_station => "加油站";
   @override
   String get hynPriceUnit => "CNY";
@@ -1312,6 +1368,8 @@ class $zh_CN extends S {
   @override
   String get operating_hours => "工作时间";
   @override
+  String get scan_exit_tips => "正在扫描中，确认退出吗?";
+  @override
   String get import_account_success => "账户导入成功";
   @override
   String get install_now => "马上安装";
@@ -1333,6 +1391,8 @@ class $zh_CN extends S {
   String private_share_receive_address(String shortAddress) => "接收地址:${shortAddress}";
   @override
   String my_symbol_address(String symbol) => "我的${symbol}接收地址:";
+  @override
+  String scan_ing_func(String scanName) => "正在${scanName}信号扫描";
   @override
   String n_minute(String minute) => "${minute}分钟";
   @override

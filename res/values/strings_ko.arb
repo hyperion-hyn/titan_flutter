@@ -258,5 +258,17 @@
   "app_area_setting": "구역",
   "please_selecte_app_area": "지도 사용 구역을 설정하십시오",
   "hyperion_project_intro_url": "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412",
-  "click_again_to_exist_app": "다시 누르면 앱이 종료됩니다"
+  "click_again_to_exist_app": "다시 누르면 앱이 종료됩니다",
+  "scan_name_wifi": "WiFi",
+  "scan_name_cellular": "基站",
+  "scan_name_bluetooth": "기지국",
+  "scan_name_gps": "GPS",
+  "scan_name_start" : "시작",
+  "scan_name_title" : "신호 스윕",
+  "scan_confirm_upload" : "업로드 확인",
+  "scan_signal_upload_protocol" : "신호 업로드 프로토콜",
+  "scan_exit_tips" : "스캔 진행 중, 종료 확인?",
+  "scan_hyn_is_empty" : "HYN 지갑이 비어 있습니다",
+  "scan_finish" : "스캔 완료",
+  "scan_ing_func": "${scanName} 스캔 중"
 }
