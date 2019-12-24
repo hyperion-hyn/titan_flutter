@@ -74,7 +74,7 @@ class S implements WidgetsLocalizations {
   String get dapp_setting => "DApp Settings";
   String get data_contrebution_with_hyn_wallet_tips => "Data contribution requires a HYN wallet address. Please create or import a HYN wallet first.";
   String get data_contribute => "Data Contribution";
-  String get data_contribute_reward => "Contribute map data to earn HYN rewards";
+  String get data_contribute_reward => "Contribute your map data";
   String get decrypt_location_cipher_tips => "How to decipher coded location information？";
   String get decrypt_location_cipher_tips_context => "Please paste the location code, and click enter to decode.";
   String get delete => "Delete";
@@ -385,7 +385,7 @@ class $ko extends S {
   @override
   String get no_fill_in => "채우지 않음";
   @override
-  String get data_contribute_reward => "기여도 데이터 HYN 장려 받음";
+  String get data_contribute_reward => "지도 데이터 제공";
   @override
   String get receiver_address_not_empty_hint => "수신 주소는 비워 둘 수 없습니다";
   @override
@@ -973,7 +973,7 @@ class $zh_CN extends S {
   @override
   String get no_fill_in => "暂无填写";
   @override
-  String get data_contribute_reward => "贡献地图数据获得HYN奖励";
+  String get data_contribute_reward => "已开放地图数据贡献";
   @override
   String get receiver_address_not_empty_hint => "接收地址不能为空";
   @override
