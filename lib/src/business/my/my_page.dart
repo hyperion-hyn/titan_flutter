@@ -2,9 +2,9 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/about/about_me_page.dart';
+import 'package:titan/src/business/my/about_me_page.dart';
 import 'package:titan/src/business/my/me_setting_page.dart';
-import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
+import 'package:titan/src/business/my/my_encrypted_addr_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 

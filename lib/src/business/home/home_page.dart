@@ -21,7 +21,7 @@ import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/business/updater/updater.dart';
 import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/inject/injector.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';

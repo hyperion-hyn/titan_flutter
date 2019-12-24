@@ -12,7 +12,7 @@ import 'src/data/api/api.dart';
 import 'src/data/db/search_history_dao.dart';
 import 'src/data/repository/repository.dart';
 import 'src/domain/domain.dart';
-import 'src/inject/injector.dart';
+import 'src/components/inject/injector.dart';
 import 'src/plugins/titan_plugin.dart';
 
 void main() {

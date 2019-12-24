@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/burning_dialog/burning_dialog.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/inject/injector.dart';
+import 'package:titan/src/components/inject/injector.dart';
 
 import '../../global.dart';
 

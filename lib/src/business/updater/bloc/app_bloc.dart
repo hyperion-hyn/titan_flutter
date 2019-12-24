@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/inject/injector.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import './bloc.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {

@@ -9,7 +9,7 @@ import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/data/api/api.dart';
-import 'package:titan/src/inject/injector.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 

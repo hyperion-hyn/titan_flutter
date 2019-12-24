@@ -8,13 +8,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet_demo/WalletDemo.dart';
-import 'package:titan/src/business/my_encrypted_addr/my_encrypted_addr_page.dart';
+import 'package:titan/src/business/my/my_encrypted_addr_page.dart';
 import 'package:titan/src/business/wallet/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
 
-import 'package:titan/src/business/about/about_me_page.dart';
+import 'package:titan/src/business/my/about_me_page.dart';
 
 class DrawerScenes extends StatefulWidget {
   @override

@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/style/theme.dart';
+import 'package:titan/src/components/style/theme.dart';
 
 import 'business/updater/bloc/bloc.dart';
 import 'global.dart';

@@ -2,12 +2,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
-import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 
 class MeAreaPage extends StatefulWidget {

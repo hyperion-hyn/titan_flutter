@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/domain/gaode_model.dart';
+import 'package:titan/src/model/gaode_model.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/update.dart';
