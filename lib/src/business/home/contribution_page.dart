@@ -109,13 +109,13 @@ class _ContributionState extends State<ContributionPage> {
     var sensorType = values["sensorType"] as int;
 
     // 1.for upload
-//    var typeString = SensorType.getTypeString(sensorType);
-//    var dataList = collectData[typeString];
-//    if (dataList == null) {
-//      dataList = List();
-//      collectData[typeString] = dataList;
-//    }
-//    dataList.add(values);
+    var typeString = SensorType.getTypeString(sensorType);
+    var dataList = collectData[typeString];
+    if (dataList == null) {
+      dataList = List();
+      collectData[typeString] = dataList;
+    }
+    dataList.add(values);
 
     // 2.for ui
     switch (sensorType) {
@@ -176,8 +176,8 @@ class _ContributionState extends State<ContributionPage> {
   bool isVisibleToast = false;
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
-
-  var _currentScanType = "WiFi";
+  bool _isFinishScan = false;
+  var _currentScanType = SensorType.GNSS;
 
   void startScan() async {
     progressStreamController.add(0);
@@ -218,19 +218,19 @@ class _ContributionState extends State<ContributionPage> {
     var _imageName = "wifi";
 
     switch (_currentScanType) {
-      case "WiFi":
+      case SensorType.WIFI:
         _imageName = "wifi";
         break;
 
-      case "基站":
+      case SensorType.CELLULAR:
         _imageName = "basestation";
         break;
 
-      case "蓝牙":
+      case SensorType.BLUETOOTH:
         _imageName = "bluetooth";
         break;
 
-      case "GPS":
+      case SensorType.GPS:
         _imageName = "gps";
         break;
     }
@@ -238,21 +238,49 @@ class _ContributionState extends State<ContributionPage> {
     return _imageName;
   }
 
+  String _getScanName() {
+    var name = "WiFi";
+
+    switch (_currentScanType) {
+      case SensorType.WIFI:
+        name = "WiFi";
+        break;
+
+      case SensorType.CELLULAR:
+        name = "基站";
+        break;
+
+      case SensorType.BLUETOOTH:
+        name = "蓝牙";
+        break;
+
+      case SensorType.GPS:
+        name = "GPS";
+        break;
+
+      case SensorType.GNSS:
+        name = "开始";
+        break;
+    }
+
+    return name;
+  }
+
   List _getList() {
     switch (_currentScanType) {
-      case "WiFi":
+      case SensorType.WIFI:
         return wifiList;
         break;
 
-      case "基站":
+      case SensorType.CELLULAR:
         return cellularList;
         break;
 
-      case "蓝牙":
+      case SensorType.BLUETOOTH:
         return bluetoothList;
         break;
 
-      case "GPS":
+      case SensorType.GPS:
         return gpsList;
         break;
     }
@@ -262,14 +290,30 @@ class _ContributionState extends State<ContributionPage> {
 
   void _setCurrentScanType(double currentValue) {
     var value = currentValue ?? 0.001;
-    if (value > 0 && value < 0.25) {
-      _currentScanType = "WiFi";
-    } else if (value >= 0.25 && value < 0.5) {
-      _currentScanType = "基站";
-    } else if (value >= 0.5 && value < 0.75) {
-      _currentScanType = "蓝牙";
-    } else if (value >= 0.75 && value < 1.0) {
-      _currentScanType = "GPS";
+
+    var item = 1.0 / 4.0;
+    if (Platform.isIOS) {
+      item = 1.0 / 3.0;
+
+      if (value > 0 && value < 1.0 * item) {
+        _currentScanType = SensorType.CELLULAR;
+      } else if (value >= 1.0 * item && value < 2.0 * item) {
+        _currentScanType = SensorType.BLUETOOTH;
+      } else if (value >= 2.0 * item && value < 1.0) {
+        _currentScanType = SensorType.GPS;
+      }
+    } else {
+      item = 1.0 / 4.0;
+
+      if (value > 0 && value < 1.0 * item) {
+        _currentScanType = SensorType.WIFI;
+      } else if (value >= 1.0 * item && value < 2.0 * item) {
+        _currentScanType = SensorType.CELLULAR;
+      } else if (value >= 2.0 * item && value < 3.0 * item) {
+        _currentScanType = SensorType.BLUETOOTH;
+      } else if (value >= 3.0 * item && value < 1.0) {
+        _currentScanType = SensorType.GPS;
+      }
     }
   }
 
@@ -305,13 +349,6 @@ class _ContributionState extends State<ContributionPage> {
             child: StreamBuilder(
               stream: progressStreamController.stream,
               builder: (ctx, snap) {
-//                print('[scan] --> value: ${snap.data}');
-
-                var value = snap.data ?? 0.001;
-                if (value > 1.0) {
-                  sensorPlugin.stopScan();
-                }
-
                 return _blocBuild(ctx, snap);
               },
             ),
@@ -365,7 +402,6 @@ class _ContributionState extends State<ContributionPage> {
           StreamBuilder<double>(
             stream: progressStreamController.stream,
             builder: (ctx, snap) {
-              // todo: 模拟数据
               _setCurrentScanType(snap.data);
 
               return Image.asset(
@@ -375,11 +411,13 @@ class _ContributionState extends State<ContributionPage> {
             },
           ),
           Positioned(
-            bottom: 48,
+            bottom: 20,
             child: StreamBuilder<double>(
               stream: progressStreamController.stream,
               builder: (ctx, snap) {
-                if (snap.data == 1.0) {
+                var snapValue = snap.data ?? 0.0001;
+
+                if (snapValue < 1.0) {
                   return Container(width: 0.0, height: 0.0);
                 }
                 return Column(
@@ -443,13 +481,13 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   Widget _buildFirstItem(String value) {
-    print('[contribution] --> _buildFirstItem:${value}');
+    //print('[contribution] --> _buildFirstItem:${value}');
 
     return Container(
       child: Text(
         value,
         textAlign: TextAlign.left,
-        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
+        style: TextStyle(color: _isFinishScan ? Theme.of(context).primaryColor : HexColor("#FEFEFE"), fontSize: 14),
       ),
       margin: EdgeInsets.only(
         bottom: 6,
@@ -497,13 +535,20 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   Widget _blocBuild(BuildContext context, AsyncSnapshot snap) {
-
     var newDataList = List();
-    String signalName = '正在$_currentScanType信号扫描';
+    String signalName = '正在${_getScanName()}信号扫描';
+
+    var snapValue = snap.data ?? 0.0001;
+    //print('[Contribution] -->_blocBuild, snapValue:${snapValue}');
+    if (snapValue > 1.0) {
+      signalName = "扫描任务已完成";
+      sensorPlugin.stopScan();
+      _isFinishScan = true;
+    }
     newDataList.add(signalName);
 
     var list = _getList();
-    if (list.isEmpty) {
+    if (list.isEmpty || snapValue > 1.0) {
       return _buildListView(newDataList);
     }
 
@@ -513,7 +558,7 @@ class _ContributionState extends State<ContributionPage> {
     }
     var values = list[_currentIndex];
     var sensorType = values["sensorType"] as int;
-    print('[contribution] -->_blocBuild___2, sensorType: ${sensorType}, values: ${values}');
+    //print('[contribution] --> scanType: ${_currentScanType}, count:${list.length}, values: ${values}');
 
     switch (sensorType) {
       case SensorType.WIFI:
@@ -527,25 +572,22 @@ class _ContributionState extends State<ContributionPage> {
             appendValue(values, newDataList, "bssid");
 
             appendValue(values, newDataList, "level");
-
           }
           break;
         }
       case SensorType.BLUETOOTH:
         {
           if (Platform.isIOS) {
-
-            appendValue(values, newDataList, "name");
-
             appendValue(values, newDataList, "identifier");
 
             appendValue(values, newDataList, "rssi");
+
+            //appendValue(values, newDataList, "name");
 
           } else {
             appendValue(values, newDataList, "mac");
 
             appendValue(values, newDataList, "name");
-
           }
           break;
         }
@@ -579,16 +621,22 @@ class _ContributionState extends State<ContributionPage> {
       case SensorType.CELLULAR:
         {
           if (Platform.isIOS) {
-//              var horizontalAccuracy =
-//                  values["horizontalAccuracy"].toString() ?? "0";
-//              newDataList.add(horizontalAccuracy);
-
+            appendValue(values, newDataList, "type");
+            appendValue(values, newDataList, "carrierName");
+            appendValue(values, newDataList, "mcc");
+            appendValue(values, newDataList, "mnc");
+            appendValue(values, newDataList, "icc");
           } else {
             var mobileType = values["type"].toString() ?? "";
             appendValue(values, newDataList, "type");
 
             switch (mobileType) {
               case "GSM":
+                appendValue(values, newDataList, "lac");
+                appendValue(values, newDataList, "mcc");
+                appendValue(values, newDataList, "mnc");
+                appendValue(values, newDataList, "level");
+
 //                  Utils.addIfNonNull(values, "type", "GSM")
 //                  Utils.addIfNonNull(values, "cid", cid)
 //                  Utils.addIfNonNull(values, "lac", lac)
@@ -600,33 +648,29 @@ class _ContributionState extends State<ContributionPage> {
                 break;
 
               case "WCDMA":
-//                  Utils.addIfNonNull(values, "type", "WCDMA")
-
-                appendValue(values, newDataList, "cid");
-
-//                  Utils.addIfNonNull(values, "cid", cid)
-
-//                  Utils.addIfNonNull(values, "lac", lac)
-
+                appendValue(values, newDataList, "lac");
                 appendValue(values, newDataList, "mcc");
-
-//                  Utils.addIfNonNull(values, "mcc", mcc)
-
                 appendValue(values, newDataList, "mnc");
+                appendValue(values, newDataList, "level");
 
+//                  Utils.addIfNonNull(values, "type", "WCDMA")
+//                  Utils.addIfNonNull(values, "cid", cid)
+//                  Utils.addIfNonNull(values, "lac", lac)
+//                  Utils.addIfNonNull(values, "mcc", mcc)
 //                  Utils.addIfNonNull(values, "mnc", mnc)
-
 //                  Utils.addIfNonNull(values, "psc", psc)
 //                  Utils.addIfNonNull(values, "asu", asu)
 //                  Utils.addIfNonNull(values, "dbm", dbm)
-
-                appendValue(values, newDataList, "level");
-
 //                  Utils.addIfNonNull(values, "level", level)
 
                 break;
 
               case "CDMA":
+                appendValue(values, newDataList, "basestationId");
+                appendValue(values, newDataList, "cdmaDbm");
+                appendValue(values, newDataList, "cdmaLevel");
+                appendValue(values, newDataList, "level");
+
 //                  Utils.addIfNonNull(values, "type", "CDMA")
 //                  Utils.addIfNonNull(values, "basestationId", basestationId)
 //                  Utils.addIfNonNull(values, "latitude", latitude)
@@ -647,6 +691,11 @@ class _ContributionState extends State<ContributionPage> {
                 break;
 
               case "LTE":
+                appendValue(values, newDataList, "ci");
+                appendValue(values, newDataList, "mcc");
+                appendValue(values, newDataList, "mnc");
+                appendValue(values, newDataList, "level");
+
 //                  Utils.addIfNonNull(values, "type", "LTE")
 //                  Utils.addIfNonNull(values, "ci", ci)
 //                  Utils.addIfNonNull(values, "mcc", mcc)
@@ -668,7 +717,7 @@ class _ContributionState extends State<ContributionPage> {
         }
     }
 
-    print('[contribution] -->_blocBuild___4, count:${newDataList.length}');
+    //print('[contribution] -->_blocBuild___4, count:${newDataList.length}');
 
     return _buildListView(newDataList);
   }

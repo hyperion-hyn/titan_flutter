@@ -32,7 +32,7 @@ class CellularSensor: NSObject, Sensor {
                     "mnc": carrier.mobileNetworkCode ?? "",
                     "icc": carrier.isoCountryCode ?? "",
                     "allowsVOIP": carrier.allowsVOIP,
-                    "type": info.currentRadioAccessTechnology ?? ""
+                    "type": getMobileType(rat: info.currentRadioAccessTechnology)
                 ]
                 onSensorChange(type, values)
             } else {
@@ -62,6 +62,32 @@ class CellularSensor: NSObject, Sensor {
     
     func destory() {
         
+    }
+    
+    func getMobileType(rat: String? = "") -> String {
+        guard let rat = rat else { return "2G"};
+        
+        switch rat {
+        case CTRadioAccessTechnologyEdge,
+             CTRadioAccessTechnologyGPRS,
+             CTRadioAccessTechnologyCDMA1x:
+            return "2G"
+            
+        case CTRadioAccessTechnologyHSDPA,
+            CTRadioAccessTechnologyWCDMA,
+            CTRadioAccessTechnologyHSUPA,
+            CTRadioAccessTechnologyCDMAEVDORev0,
+            CTRadioAccessTechnologyCDMAEVDORevA,
+            CTRadioAccessTechnologyCDMAEVDORevB,
+            CTRadioAccessTechnologyeHRPD:
+            return "3G"
+            
+        case CTRadioAccessTechnologyLTE:
+            return "4G"
+
+        default:
+            return rat
+        }
     }
     
 }
