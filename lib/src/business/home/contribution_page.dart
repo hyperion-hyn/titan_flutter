@@ -123,7 +123,7 @@ class _ContributionState extends State<ContributionPage> {
         {
           //print('[contribution] -->_blocBuild___wifi');
 
-          if (TargetPlatform.iOS == TargetPlatform.values) {
+          if (Platform.isIOS) {
           } else {
             addValuesToList(values, wifiList, "bssid");
           }
@@ -131,7 +131,7 @@ class _ContributionState extends State<ContributionPage> {
         }
       case SensorType.BLUETOOTH:
         {
-          if (TargetPlatform.iOS == TargetPlatform.values) {
+          if (Platform.isIOS) {
             addValuesToList(values, bluetoothList, "identifier");
           } else {
             addValuesToList(values, bluetoothList, "mac");
@@ -520,7 +520,7 @@ class _ContributionState extends State<ContributionPage> {
         {
           //print('[contribution] -->_blocBuild___wifi');
 
-          if (TargetPlatform.iOS == TargetPlatform.values) {
+          if (Platform.isIOS) {
           } else {
             appendValue(values, newDataList, "ssid");
 
@@ -533,7 +533,7 @@ class _ContributionState extends State<ContributionPage> {
         }
       case SensorType.BLUETOOTH:
         {
-          if (TargetPlatform.iOS == TargetPlatform.values) {
+          if (Platform.isIOS) {
 
             appendValue(values, newDataList, "name");
 
@@ -559,7 +559,7 @@ class _ContributionState extends State<ContributionPage> {
 
           appendValue(values, newDataList, "speed");
 
-          if (TargetPlatform.iOS == TargetPlatform.values) {
+          if (Platform.isIOS) {
             appendValue(values, newDataList, "horizontalAccuracy");
 
             appendValue(values, newDataList, "verticalAccuracy");
@@ -578,7 +578,7 @@ class _ContributionState extends State<ContributionPage> {
         }
       case SensorType.CELLULAR:
         {
-          if (TargetPlatform.iOS == TargetPlatform.values) {
+          if (Platform.isIOS) {
 //              var horizontalAccuracy =
 //                  values["horizontalAccuracy"].toString() ?? "0";
 //              newDataList.add(horizontalAccuracy);

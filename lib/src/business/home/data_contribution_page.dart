@@ -65,8 +65,10 @@ class _DataContributionState extends State<DataContributionPage> {
     return BlocBuilder<WalletBloc, WalletState>(
       bloc: _walletBloc,
       builder: (BuildContext context, WalletState state) {
+
         if (state is WalletEmptyState) {
-          return _walletTipsView();
+//          return _walletTipsView();
+          return _listView();
         } else if (state is ShowWalletState) {
           currentWalletVo = state.wallet;
 //          return _walletTipsView();
@@ -74,7 +76,7 @@ class _DataContributionState extends State<DataContributionPage> {
         } else if (state is ScanWalletLoadingState) {
           return _buildLoading(context);
         } else {
-          return Container();
+          return Container(width: 0.0, height: 0.0,);
         }
       },
     );
@@ -214,6 +216,9 @@ class _DataContributionState extends State<DataContributionPage> {
   }
 
   Widget _wallet() {
+    if (currentWalletVo == null) {
+      return Container();
+    }
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -238,7 +243,7 @@ class _DataContributionState extends State<DataContributionPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  currentWalletVo.wallet.keystore.name,
+                  currentWalletVo.wallet.keystore.name ?? "",
                   textAlign: TextAlign.left,
                   style: TextStyle(fontWeight: FontWeight.w500, color: HexColor('#333333')),
                 ),
@@ -248,7 +253,7 @@ class _DataContributionState extends State<DataContributionPage> {
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortEthAddress(currentWalletVo.wallet.getEthAccount().address),
+                    shortEthAddress(currentWalletVo.wallet.getEthAccount().address) ?? "",
                     style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )
@@ -358,13 +363,18 @@ class _DataContributionState extends State<DataContributionPage> {
 
     PermissionStatus phonePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
     if (phonePermission != PermissionStatus.granted) {
-      Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler().requestPermissions([PermissionGroup.phone]);
-      if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
-        _showGoToOpenCommonAppSettingsDialog("申请权限", "采集信号数据，需要获取电话权限", () {
-          PermissionHandler().openAppSettings();
-        });
-        return false;
+      if (Platform.isAndroid) {
+        Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.phone]);
+        if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
+          _showGoToOpenCommonAppSettingsDialog("申请权限", "采集信号数据，需要获取电话权限", () {
+            PermissionHandler().openAppSettings();
+          });
+          return false;
+        }
+      }
+      else {
+        return true;
       }
     }
 
