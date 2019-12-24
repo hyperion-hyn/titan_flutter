@@ -1,23 +1,19 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/home/sensor/bloc.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/data/api/api.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import '../webview/webview.dart';
@@ -404,74 +400,84 @@ class _ContributionState extends State<ContributionPage> {
                 'res/drawable/${_getImageName()}_scan.png',
                 scale: 2,
               ),
-              Positioned(
-                bottom: 20,
-                child: Column(
-                  children: <Widget>[
-                    RaisedButton(
-                      shape: StadiumBorder(),
-                      onPressed: () {
-                        uploadCollectData();
-                        Navigator.pop(context);
-                      },
-//                    color: Theme.of(context).primaryColor,
-                      color: HexColor("#CC941E"),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
-                        child: Text(
-                          S.of(context).scan_confirm_upload,
-                          style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WebViewContainer(
-                                  initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
-                                  title: S.of(context).scan_signal_upload_protocol,
-                                )));
-                      },
-                      child: SizedBox(
-                          width: 200,
-                          height: 40,
-                          child: Row(
-                            children: <Widget>[
-                              Checkbox(
-                                value: _isAcceptSignalProtocol,
-                                activeColor: _themeColor, //选中时的颜色
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isAcceptSignalProtocol = value;
-                                  });
-                                },
-                              ),
-                              Text(
-                                S.of(context).scan_signal_upload_protocol,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  decoration: TextDecoration.combine([
-                                    TextDecoration.underline, // 下划线
-                                  ]),
-                                  decorationStyle: TextDecorationStyle.solid, // 装饰样式
-                                  decorationColor: Colors.white,
-                                ),
-                              ),
-                            ],
-                            mainAxisAlignment: MainAxisAlignment.center,
-                          )),
-                    ),
-                  ],
-                ),
-              ),
+              confirmView(snapshot.data ?? 0.0001) ,
             ],
           );
         }
       ),
     );
+  }
+
+  Widget confirmView(double value) {
+
+
+    if (value > 1.0) {
+      return Positioned(
+        bottom: 20,
+        child: Column(
+          children: <Widget>[
+            RaisedButton(
+              shape: StadiumBorder(),
+              onPressed: () {
+                uploadCollectData();
+                Navigator.pop(context);
+              },
+//                    color: Theme.of(context).primaryColor,
+              color: HexColor("#CC941E"),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
+                child: Text(
+                  S.of(context).scan_confirm_upload,
+                  style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WebViewContainer(
+                          initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                          title: S.of(context).scan_signal_upload_protocol,
+                        )));
+              },
+              child: SizedBox(
+                  width: 200,
+                  height: 40,
+                  child: Row(
+                    children: <Widget>[
+                      Checkbox(
+                        value: _isAcceptSignalProtocol,
+                        activeColor: _themeColor, //选中时的颜色
+                        onChanged: (value) {
+                          setState(() {
+                            _isAcceptSignalProtocol = value;
+                          });
+                        },
+                      ),
+                      Text(
+                        S.of(context).scan_signal_upload_protocol,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          decoration: TextDecoration.combine([
+                            TextDecoration.underline, // 下划线
+                          ]),
+                          decorationStyle: TextDecorationStyle.solid, // 装饰样式
+                          decorationColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  )),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildFirstItem(String value) {
@@ -550,7 +556,7 @@ class _ContributionState extends State<ContributionPage> {
     }
     var values = list[_currentIndex];
     var sensorType = values["sensorType"] as int;
-    print('[contribution] --> scanType: ${_getScanName()}, count:${list.length}, values: ${values}');
+    //print('[contribution] --> scanType: ${_getScanName()}, count:${list.length}, values: ${values}');
 
     switch (sensorType) {
       case SensorType.WIFI:
@@ -774,6 +780,7 @@ class _ContributionState extends State<ContributionPage> {
                     FlatButton(
                       child: Text(S.of(context).confirm),
                       onPressed: () {
+                        sensorPlugin.stopScan();
                         Navigator.pop(context);
                         Navigator.of(context).pop();
                       },
@@ -790,6 +797,7 @@ class _ContributionState extends State<ContributionPage> {
                     FlatButton(
                       child: Text(S.of(context).confirm),
                       onPressed: () {
+                        sensorPlugin.stopScan();
                         Navigator.pop(context);
                         Navigator.of(context).pop();
                       },
