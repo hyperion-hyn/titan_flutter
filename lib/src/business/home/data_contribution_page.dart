@@ -354,6 +354,8 @@ class _DataContributionState extends State<DataContributionPage> {
       }
     }
 
+    //2. 检查电话权限
+
     PermissionStatus phonePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
     if (phonePermission != PermissionStatus.granted) {
       Map<PermissionGroup, PermissionStatus> permissions =
@@ -366,7 +368,7 @@ class _DataContributionState extends State<DataContributionPage> {
       }
     }
 
-    //2. 检查蓝牙权限
+    //3. 检查蓝牙权限
 
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
     if (!blueAvaiable) {
@@ -376,7 +378,7 @@ class _DataContributionState extends State<DataContributionPage> {
       return false;
     }
 
-    //3. 安卓增加判断wifi
+    //4. 安卓增加判断wifi
     if (Platform.isAndroid) {
       bool wifiAvaiable = await TitanPlugin.wifiEnable();
       if (!wifiAvaiable) {
