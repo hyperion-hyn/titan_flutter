@@ -193,6 +193,8 @@ class _DataContributionState extends State<DataContributionPage> {
         ),
         _buildItem('signal', '扫描附近信号数据', () async {
           bool status = await checkSignalPermission();
+          print('[Permission] -->status:$status');
+
           if (status) {
             Navigator.push(
               context,

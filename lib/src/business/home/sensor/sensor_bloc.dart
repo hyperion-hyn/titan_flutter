@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import './bloc.dart';
+import 'package:titan/src/plugins/sensor_type.dart';
 
 class SensorBloc extends Bloc<SensorEvent, SensorState> {
   @override
@@ -14,7 +16,8 @@ class SensorBloc extends Bloc<SensorEvent, SensorState> {
     if(event is ValueChangeListenerEvent) {
       //print('[SensorBloc] --> mapEventToState');
 
-      yield ValueChangeListenerState(event.values);
+      var values = event.values;
+      yield ValueChangeListenerState(values);
     }
   }
 

@@ -52,24 +52,24 @@ class _ContributionState extends State<ContributionPage> {
 
   Map<String, List> collectData = new Map();
 
-  //SensorChangeCallBack _sensorChangeCallBack;
-  SensorBloc _bloc;
+  SensorChangeCallBack _sensorChangeCallBack;
 
-  List<Map<dynamic, dynamic>> _wifiList;
+  List<Map<dynamic, dynamic>> wifiList = List();
+  List<Map<dynamic, dynamic>> bluetoothList = List();
+  List<Map<dynamic, dynamic>> gpsList = List();
+  List<Map<dynamic, dynamic>> cellularList = List();
+  var _currentIndex = -1;
 
   @override
   void initState() {
     super.initState();
 
-    _bloc = SensorBloc();
-    sensorPlugin = SensorPlugin(_bloc);
-    //initSensorChangeCallBack();
+    sensorPlugin = SensorPlugin();
+    initSensorChangeCallBack();
 
-    _wifiList = List();
     initPosition();
   }
 
-  /*
   void initSensorChangeCallBack() {
     _sensorChangeCallBack = (Map values) {
       _saveData(values);
@@ -78,20 +78,89 @@ class _ContributionState extends State<ContributionPage> {
     sensorPlugin.sensorChangeCallBack = _sensorChangeCallBack;
   }
 
+  // tools
+  void addValuesToList(Map values, List list, String key) {
+    if (list.isEmpty) {
+      list.add(values);
+      return;
+    }
+
+    var _isExist = false;
+    var _value = values[key] ?? "";
+    for (var item in list) {
+      var _oldValue = item[key] ?? "";
+      if (_oldValue == _value && _value.length > 0 && _oldValue.length > 0) {
+        _isExist = true;
+        break;
+      }
+    }
+    if (!_isExist) {
+      list.add(values);
+    }
+  }
+
+  void appendValue(Map values, List list, String key) {
+    var value = values[key] ?? "";
+    value = "${key.toUpperCase()}：${value}";
+    list.add(value);
+  }
 
   void _saveData(Map values) {
-    var type = values["sensorType"] as int;
+    var sensorType = values["sensorType"] as int;
 
-    var typeString = SensorType.getTypeString(type);
+    // 1.for upload
+//    var typeString = SensorType.getTypeString(sensorType);
+//    var dataList = collectData[typeString];
+//    if (dataList == null) {
+//      dataList = List();
+//      collectData[typeString] = dataList;
+//    }
+//    dataList.add(values);
 
-    var dataList = collectData[typeString];
-    if (dataList == null) {
-      dataList = List();
-      collectData[typeString] = dataList;
+    // 2.for ui
+    switch (sensorType) {
+      case SensorType.WIFI:
+        {
+          //print('[contribution] -->_blocBuild___wifi');
+
+          if (TargetPlatform.iOS == TargetPlatform.values) {
+          } else {
+            addValuesToList(values, wifiList, "bssid");
+          }
+          break;
+        }
+      case SensorType.BLUETOOTH:
+        {
+          if (TargetPlatform.iOS == TargetPlatform.values) {
+            addValuesToList(values, bluetoothList, "identifier");
+          } else {
+            addValuesToList(values, bluetoothList, "mac");
+          }
+
+          break;
+        }
+      case SensorType.GPS:
+        {
+          gpsList.add(values);
+
+          break;
+        }
+      case SensorType.GNSS:
+        {
+          break;
+        }
+      case SensorType.CELLULAR:
+        {
+          cellularList.add(values);
+
+          break;
+        }
+      default:
+        {
+          break;
+        }
     }
-    dataList.add(values);
   }
- */
 
   void initPosition() async {
     userPosition =
@@ -166,8 +235,29 @@ class _ContributionState extends State<ContributionPage> {
         break;
     }
 
-//    print('[me] --> _imageName:$_imageName');
     return _imageName;
+  }
+
+  List _getList() {
+    switch (_currentScanType) {
+      case "WiFi":
+        return wifiList;
+        break;
+
+      case "基站":
+        return cellularList;
+        break;
+
+      case "蓝牙":
+        return bluetoothList;
+        break;
+
+      case "GPS":
+        return gpsList;
+        break;
+    }
+
+    return List();
   }
 
   void _setCurrentScanType(double currentValue) {
@@ -222,12 +312,7 @@ class _ContributionState extends State<ContributionPage> {
                   sensorPlugin.stopScan();
                 }
 
-                return BlocBuilder(
-                  bloc: _bloc,
-                  builder: (context, state) {
-                    return _blocBuild(context, snap, state);
-                  },
-                );
+                return _blocBuild(ctx, snap);
               },
             ),
           ),
@@ -373,7 +458,7 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   Widget _buildItem(String value) {
-    print('[contribution] --> _buildItem:${value}');
+    //print('[contribution] --> _buildItem:${value}');
 
     return Container(
       child: Text(
@@ -411,141 +496,99 @@ class _ContributionState extends State<ContributionPage> {
     );
   }
 
-  Widget _blocBuild(BuildContext context, AsyncSnapshot snap, SensorState state) {
-    if (snap.data == null) {
-      return Container(width: 0.0, height: 0.0);
-    }
-
-    //print('[contribution] -->_blocBuild___1, value: ${snap.data}');
-
-    String signalName = '正在$_currentScanType信号扫描';
+  Widget _blocBuild(BuildContext context, AsyncSnapshot snap) {
 
     var newDataList = List();
+    String signalName = '正在$_currentScanType信号扫描';
     newDataList.add(signalName);
 
-    if (state is ValueChangeListenerState) {
-      var values = state.values;
-      var sensorType = values["sensorType"] as int;
-      print('[contribution] -->_blocBuild___2, sensorType: ${sensorType}, values: ${values}');
+    var list = _getList();
+    if (list.isEmpty) {
+      return _buildListView(newDataList);
+    }
 
-      // 1.sava data
-      var typeString = SensorType.getTypeString(sensorType);
-      var dataList = collectData[typeString];
-      if (dataList == null) {
-        dataList = List();
-        collectData[typeString] = dataList;
-      }
-      dataList.add(values);
-      print('[contribution] -->_blocBuild___3');
+    _currentIndex += 1;
+    if (_currentIndex >= list.length || _currentIndex <= -1) {
+      _currentIndex = 0;
+    }
+    var values = list[_currentIndex];
+    var sensorType = values["sensorType"] as int;
+    print('[contribution] -->_blocBuild___2, sensorType: ${sensorType}, values: ${values}');
 
-      // 2.update ui
-      switch (sensorType) {
-        case SensorType.WIFI:
-          {
-            print('[contribution] -->_blocBuild___wifi');
+    switch (sensorType) {
+      case SensorType.WIFI:
+        {
+          //print('[contribution] -->_blocBuild___wifi');
 
-            if (TargetPlatform.iOS == TargetPlatform.values) {
+          if (TargetPlatform.iOS == TargetPlatform.values) {
+          } else {
+            appendValue(values, newDataList, "ssid");
 
-            } else {
-              print('[contribution] -->_blocBuild___wifi__android');
+            appendValue(values, newDataList, "bssid");
 
-              var ssid = values["ssid"] ?? "";
-              ssid = "ssid：${ssid}";
-              newDataList.add(ssid);
+            appendValue(values, newDataList, "level");
 
-              var bssid = values["bssid"] ?? "";
-              bssid = "bssid：${bssid}";
-              newDataList.add(bssid);
-
-              var level = values["level"].toString() ?? "0";
-              level = "level：${level}";
-              newDataList.add(level);
-
-              var _isExist = false;
-              for (var item in _wifiList) {
-                var _oldBssid = values["bssid"] ?? "";
-                _oldBssid = "bssid：${_oldBssid}";
-                if (_oldBssid == bssid) {
-                  _isExist = true;
-                  break;
-                }
-              }
-              if (!_isExist) {
-                _wifiList.add(values);
-              }
-            }
-            break;
           }
-        case SensorType.BLUETOOTH:
-          {
-            if (TargetPlatform.iOS == TargetPlatform.values) {
-              var name = values["name"] ?? "";
-              newDataList.add(name);
+          break;
+        }
+      case SensorType.BLUETOOTH:
+        {
+          if (TargetPlatform.iOS == TargetPlatform.values) {
 
-              var identifier = values["identifier"] ?? "";
-              newDataList.add(identifier);
+            appendValue(values, newDataList, "name");
 
-              var rssi = values["rssi"].toString() ?? "";
-              newDataList.add(rssi);
-            } else {
-              var mac = values["mac"] ?? "";
-              newDataList.add(mac);
+            appendValue(values, newDataList, "identifier");
 
-              var name = values["name"] ?? "";
-              newDataList.add(name);
-            }
-            break;
+            appendValue(values, newDataList, "rssi");
+
+          } else {
+            appendValue(values, newDataList, "mac");
+
+            appendValue(values, newDataList, "name");
+
           }
-        case SensorType.GPS:
-          {
-            var lat = values["lat"].toString() ?? "0";
-            newDataList.add(lat);
+          break;
+        }
+      case SensorType.GPS:
+        {
+          appendValue(values, newDataList, "lat");
 
-            var lon = values["lon"].toString() ?? "0";
-            newDataList.add(lon);
+          appendValue(values, newDataList, "lon");
 
-            var altitude = values["altitude"].toString() ?? "0";
-            newDataList.add(altitude);
+          appendValue(values, newDataList, "altitude");
 
-            var speed = values["speed"].toString() ?? "0";
-            newDataList.add(speed);
+          appendValue(values, newDataList, "speed");
 
-            if (TargetPlatform.iOS == TargetPlatform.values) {
-              var horizontalAccuracy = values["horizontalAccuracy"].toString() ?? "0";
-              newDataList.add(horizontalAccuracy);
+          if (TargetPlatform.iOS == TargetPlatform.values) {
+            appendValue(values, newDataList, "horizontalAccuracy");
 
-              var verticalAccuracy = values["verticalAccuracy"].toString() ?? "0";
-              newDataList.add(verticalAccuracy);
+            appendValue(values, newDataList, "verticalAccuracy");
 
-              var course = values["course"].toString() ?? "0";
-              newDataList.add(course);
-            } else {
-              var accuracy = values["accuracy"].toString() ?? "0";
-              newDataList.add(accuracy);
+            appendValue(values, newDataList, "course");
+          } else {
+            appendValue(values, newDataList, "accuracy");
 
-              var bearing = values["bearing"].toString() ?? "0";
-              newDataList.add(bearing);
-            }
-            break;
+            appendValue(values, newDataList, "bearing");
           }
-        case SensorType.GNSS:
-          {
-            break;
-          }
-        case SensorType.CELLULAR:
-          {
-            if (TargetPlatform.iOS == TargetPlatform.values) {
+          break;
+        }
+      case SensorType.GNSS:
+        {
+          break;
+        }
+      case SensorType.CELLULAR:
+        {
+          if (TargetPlatform.iOS == TargetPlatform.values) {
 //              var horizontalAccuracy =
 //                  values["horizontalAccuracy"].toString() ?? "0";
 //              newDataList.add(horizontalAccuracy);
 
-            } else {
-              var mobileType = values["type"].toString() ?? "";
-              mobileType = "type：${mobileType}";
-              newDataList.add(mobileType);
+          } else {
+            var mobileType = values["type"].toString() ?? "";
+            appendValue(values, newDataList, "type");
 
-              switch (mobileType) {
-                case "GSM":
+            switch (mobileType) {
+              case "GSM":
 //                  Utils.addIfNonNull(values, "type", "GSM")
 //                  Utils.addIfNonNull(values, "cid", cid)
 //                  Utils.addIfNonNull(values, "lac", lac)
@@ -554,40 +597,36 @@ class _ContributionState extends State<ContributionPage> {
 //                  Utils.addIfNonNull(values, "asu", asu)
 //                  Utils.addIfNonNull(values, "dbm", dbm)
 //                  Utils.addIfNonNull(values, "level", level)
-                  break;
+                break;
 
-                case "WCDMA":
+              case "WCDMA":
 //                  Utils.addIfNonNull(values, "type", "WCDMA")
 
-                  var cid = values["cid"].toString() ?? "";
-                  cid = "cid：${cid}";
-                  newDataList.add(cid);
+                appendValue(values, newDataList, "cid");
+
 //                  Utils.addIfNonNull(values, "cid", cid)
 
 //                  Utils.addIfNonNull(values, "lac", lac)
 
-                  var mcc = values["mcc"].toString() ?? "";
-                  mcc = "mcc：${mcc}";
-                  newDataList.add(mcc);
+                appendValue(values, newDataList, "mcc");
+
 //                  Utils.addIfNonNull(values, "mcc", mcc)
 
-                  var mnc = values["mnc"].toString() ?? "";
-                  mnc = "mnc：${mnc}";
-                  newDataList.add(mnc);
+                appendValue(values, newDataList, "mnc");
+
 //                  Utils.addIfNonNull(values, "mnc", mnc)
 
 //                  Utils.addIfNonNull(values, "psc", psc)
 //                  Utils.addIfNonNull(values, "asu", asu)
 //                  Utils.addIfNonNull(values, "dbm", dbm)
 
-                  var level = values["level"].toString() ?? "";
-                  level = "level：${level}";
-                  newDataList.add(level);
+                appendValue(values, newDataList, "level");
+
 //                  Utils.addIfNonNull(values, "level", level)
 
-                  break;
+                break;
 
-                case "CDMA":
+              case "CDMA":
 //                  Utils.addIfNonNull(values, "type", "CDMA")
 //                  Utils.addIfNonNull(values, "basestationId", basestationId)
 //                  Utils.addIfNonNull(values, "latitude", latitude)
@@ -605,9 +644,9 @@ class _ContributionState extends State<ContributionPage> {
 //                  Utils.addIfNonNull(values, "evdoSnr", evdoSnr)
 //                  Utils.addIfNonNull(values, "level", level)
 
-                  break;
+                break;
 
-                case "LTE":
+              case "LTE":
 //                  Utils.addIfNonNull(values, "type", "LTE")
 //                  Utils.addIfNonNull(values, "ci", ci)
 //                  Utils.addIfNonNull(values, "mcc", mcc)
@@ -618,16 +657,15 @@ class _ContributionState extends State<ContributionPage> {
 //                  Utils.addIfNonNull(values, "dbm", dbm)
 //                  Utils.addIfNonNull(values, "level", level)
 //                  Utils.addIfNonNull(values, "timingAdvance", timingAdvance)
-                  break;
-              }
+                break;
             }
-            break;
           }
-        default:
-          {
-            break;
-          }
-      }
+          break;
+        }
+      default:
+        {
+          break;
+        }
     }
 
     print('[contribution] -->_blocBuild___4, count:${newDataList.length}');

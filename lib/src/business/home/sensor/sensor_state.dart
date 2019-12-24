@@ -13,5 +13,4 @@ class ValueChangeListenerState extends SensorState {
   Map<dynamic, dynamic> values;
 
   ValueChangeListenerState(this.values);
-
 }

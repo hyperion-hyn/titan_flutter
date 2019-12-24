@@ -8,8 +8,4 @@
 
 import Foundation
 
-//protocol OnSensorValueChangeListener {
-//    func onSensorChange(sensorType: Int, values: Dictionary<String, Any>)
-//}
-
 typealias OnSensorValueChangeListener = (_ sensorType: Int, _ values: Dictionary<String, Any>) -> ()

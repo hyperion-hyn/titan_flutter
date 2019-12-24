@@ -6,12 +6,11 @@ import 'package:titan/src/business/home/sensor/bloc.dart';
 typedef SensorChangeCallBack = void Function(Map values);
 
 class SensorPlugin {
-  SensorPlugin(this._bloc) {
+  SensorPlugin() {
     initFlutterMethodCall();
   }
 
-  SensorBloc _bloc;
-  //SensorChangeCallBack sensorChangeCallBack;
+  SensorChangeCallBack sensorChangeCallBack;
 
   final MethodChannel callChannel = MethodChannel('org.hyn.titan/sensor_call_channel');
 
@@ -22,14 +21,11 @@ class SensorPlugin {
   Future<dynamic> _platformCallHandler(MethodCall call) async {
     switch (call.method) {
       case "sensor#valueChange":
-        String result = "";
         Map<dynamic, dynamic> params = call.arguments;
-
-        _bloc.add(ValueChangeListenerEvent(params));
-//        if (sensorChangeCallBack != null) {
-//          sensorChangeCallBack(params);
-//        }
-        print(params);
+        if (sensorChangeCallBack != null) {
+          sensorChangeCallBack(params);
+        }
+//        print("[Sensor] --> params:${params}");
         return null;
     }
   }
