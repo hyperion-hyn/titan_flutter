@@ -920,7 +920,7 @@ class $ko extends S {
   @override
   String get map_dmap => "지도DMap";
   @override
-  String get hynPriceUnit => "CNY";
+  String get hynPriceUnit => "USD";
   @override
   String get information_video => "동영상";
   @override
@@ -1086,7 +1086,7 @@ class $ko extends S {
   @override
   String get password_length_error_message => "최소로 6자리이상의비밀번호를입력해주십시오.";
   @override
-  String get scan_wifi_map_style_url => "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
+  String get scan_wifi_map_style_url => "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
   @override
   String get no_wallet_hint => "지갑이없습니다.";
   @override
@@ -1314,7 +1314,7 @@ class $ko extends S {
   @override
   String get psw_reset_error_hint => "비밀번호재설정오류";
   @override
-  String get hyperion_project_intro_url => "https://shimo.im/docs/GDp72cj3ATwEB7ke/read";
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
   @override
   String get free_receive => "무료수령";
   @override
