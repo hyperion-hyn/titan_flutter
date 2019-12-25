@@ -148,6 +148,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                 'res/drawable/data_contribution_wallet_check.png',
                 width: 110,
                 height: 108,
+                color: Theme.of(context).primaryColor,
               ),
             ),
             Container(
