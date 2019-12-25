@@ -521,7 +521,7 @@ class S implements WidgetsLocalizations {
   String private_share_receive_address(String shortAddress) => "Receive Address : ${shortAddress}";
   String receiver_symbol(String symbol) => "Receive ${symbol}";
   String scan_collect_signal_func(String Num) => "${Num} signals collected";
-  String scan_ing_func(String scanName) => "Scanning for ${scanName}";
+  String scan_ing_func(String scanName) => "Scanning ${scanName}";
   String send_count_label(String symbol) => "$symbol Quantity";
   String send_symbol(String symbol) => "Send $symbol";
   String snap_up_product_fuc(String name) => "Snap Up Products：${name}";
@@ -1495,7 +1495,7 @@ class $ko extends S {
   @override
   String all_powers_func(String totalPower) => "총계산력：${totalPower}";
   @override
-  String scan_ing_func(String scanName) => "${scanName} 스캔 중";
+  String scan_ing_func(String scanName) => "스캐닝 ${scanName}";
   @override
   String max_range_func(String maxMeter) => "최대범위는약：${maxMeter} 미터";
   @override
@@ -2525,7 +2525,7 @@ class $zh_CN extends S {
   @override
   String all_powers_func(String totalPower) => "总算力：${totalPower}";
   @override
-  String scan_ing_func(String scanName) => "正在${scanName}信号扫描";
+  String scan_ing_func(String scanName) => "正在扫描${scanName}信号";
   @override
   String max_range_func(String maxMeter) => "最大范围约：${maxMeter} 米";
   @override

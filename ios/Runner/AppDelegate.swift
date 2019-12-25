@@ -47,22 +47,16 @@ import CoreBluetooth
 
                 case "bluetoothEnable":
                     BluetoothSensor.share.initialize()
-                    result(BluetoothSensor.share.isEnable)
-
-                    /*
-                    if self.blueSensor.isEnable {
+                    
+                    var isEnable = BluetoothSensor.share.isEnable
+                    if !isEnable {
+                        Thread.sleep(forTimeInterval: 0.667)
+                        isEnable = BluetoothSensor.share.isEnable
+                        result(isEnable)
+                    } else {
                         result(true)
                     }
-                    else {
-                        DispatchQueue.main.async {
-                            self.blueSensor.initialize { (isEnable) in
-                                print("isEnable --> \(isEnable)")
-                                
-                                result(isEnable)
-                            }
-                        }
-                    }
-                    */
+
                     break
                     
                 default:
