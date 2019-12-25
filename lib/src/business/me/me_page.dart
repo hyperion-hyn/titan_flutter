@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/about/about_me_page.dart';
+import 'package:titan/src/business/home/data_contribution_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
@@ -168,7 +169,9 @@ class _MeState extends UserState<MePage> with RouteAware {
                                                 size: 14,
                                               ),
                                               Text(
-                                                checkInCount >= 3 ? S.of(context).check_in_completed : S.of(context).task,
+                                                checkInCount >= 3
+                                                    ? S.of(context).check_in_completed
+                                                    : S.of(context).task,
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
@@ -178,8 +181,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                             ],
                                           ),
                                         )),
-                                    onTap:
-                                        _checkIn,
+                                    onTap: _checkIn,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 4),
@@ -322,7 +324,6 @@ class _MeState extends UserState<MePage> with RouteAware {
                                 )));
                   }),
 
-
                   Divider(
                     height: 2,
                   ),
@@ -338,7 +339,6 @@ class _MeState extends UserState<MePage> with RouteAware {
                   _buildMemuBar(S.of(context).about_us, ExtendsIconFont.person, () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
                   }),
-
                 ],
               ),
             ),
@@ -477,11 +477,11 @@ class _MeState extends UserState<MePage> with RouteAware {
   }
 
   Future _checkIn() async {
-    await Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckIn()));
-    _checkIn1();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => DataContributionPage()));
+//    _finishCheckIn();
   }
 
-  Future _checkIn1() async {
+  Future _finishCheckIn() async {
     try {
       await _userService.checkIn();
       checkInCount = await _userService.checkInCount();
