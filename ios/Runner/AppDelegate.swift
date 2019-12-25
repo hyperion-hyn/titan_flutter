@@ -27,8 +27,6 @@ import CoreBluetooth
 
     private lazy var encrytionPlugin: EncrytionPluginInterface = EncrytionPluginInterface()
 
-    let blueSensor = BluetoothSensor()
-
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -48,6 +46,10 @@ import CoreBluetooth
                 switch methodCall.method {
 
                 case "bluetoothEnable":
+                    BluetoothSensor.share.initialize()
+                    result(BluetoothSensor.share.isEnable)
+
+                    /*
                     if self.blueSensor.isEnable {
                         result(true)
                     }
@@ -60,7 +62,7 @@ import CoreBluetooth
                             }
                         }
                     }
-                    
+                    */
                     break
                     
                 default:

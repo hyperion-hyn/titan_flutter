@@ -11,7 +11,8 @@ import CoreBluetooth
 
 class BluetoothSensor: NSObject, Sensor {
     
-//    static var share
+    static let share = BluetoothSensor()
+    
     var onSensorChange: OnSensorValueChangeListener!
     
     var bluetoothManager: CBCentralManager!
@@ -20,13 +21,6 @@ class BluetoothSensor: NSObject, Sensor {
     
     var isEnable: Bool = false
 
-    var callBack: BluetoothSensorBlock? = nil
-    
-    func initialize(callBack: BluetoothSensorBlock?=nil) {
-        self.callBack = callBack
-        self.initialize()
-    }
-    
     func initialize() {
         let queue = DispatchQueue(label: "centralQueue")
         let options: [String: Any] = [
@@ -34,7 +28,7 @@ class BluetoothSensor: NSObject, Sensor {
             CBCentralManagerOptionRestoreIdentifierKey: "unique identifier",
         ]
         bluetoothManager = CBCentralManager(delegate: self, queue: queue, options: options)
-        print("[BluetoothSensor] -->\(self), onSensorChange: \(onSensorChange)")
+        //print("[BluetoothSensor] -->\(self), onSensorChange: \(onSensorChange)")
     }
     
     func startScan() {
@@ -71,11 +65,7 @@ extension BluetoothSensor: CBCentralManagerDelegate {
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         isEnable = central.state == .poweredOn;
-        
-        if let block = self.callBack {
-            block(isEnable)
-        }
-        
+ 
         if central.state == .poweredOn {
             print("【蓝牙】蓝牙设备开着，✅")
             if onSensorChange != nil {
@@ -83,9 +73,7 @@ extension BluetoothSensor: CBCentralManagerDelegate {
             }
         }
         
-        print("【蓝牙】蓝牙设备, state:\(central.state.rawValue)")
-        
-        
+        print("【蓝牙】蓝牙设备, state:\(central.state.rawValue)")        
     }
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
@@ -95,7 +83,7 @@ extension BluetoothSensor: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
   
-        print("\n【蓝牙】didDiscover，name: \(peripheral)，advertisementData: \(advertisementData) ，rssi: \(RSSI), \n self:\(self)")
+        //print("\n【蓝牙】didDiscover，name: \(peripheral)，advertisementData: \(advertisementData) ，rssi: \(RSSI), \n self:\(self)")
         
         // Todo: jison_1222
         let values: [String : Any] = [

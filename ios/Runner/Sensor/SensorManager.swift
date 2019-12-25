@@ -16,17 +16,17 @@ class SensorManager {
     func initialize() {
         registerSensorList.removeAll()
 
-        let blueToothSensor = BluetoothSensor();
+        let blueToothSensor = BluetoothSensor.share;
         blueToothSensor.onSensorChange = onSensorChange
         registerSensorList.append(blueToothSensor)
         
         let gpsSensor = GpsSensor()
         gpsSensor.onSensorChange = onSensorChange
-//        registerSensorList.append(gpsSensor)
+        registerSensorList.append(gpsSensor)
         
         let cellularSensor = CellularSensor()
         cellularSensor.onSensorChange = onSensorChange
-//        registerSensorList.append(cellularSensor)
+        registerSensorList.append(cellularSensor)
 
         for sensor in registerSensorList {
             sensor.initialize()
@@ -37,14 +37,14 @@ class SensorManager {
         for sensor in registerSensorList {
             sensor.startScan()
         }
-        print("[ios] --> startScan")
+        //print("[ios] --> startScan")
     }
 
     func stopScan() {
         for sensor in registerSensorList {
             sensor.stopScan()
         }
-        print("[ios] --> stopScan")
+        //print("[ios] --> stopScan")
     }
 
     func destory() {
@@ -53,6 +53,6 @@ class SensorManager {
         }
         registerSensorList.removeAll()
         
-        print("[ios] --> destory")
+        //print("[ios] --> destory")
     }
 }

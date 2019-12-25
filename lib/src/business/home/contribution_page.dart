@@ -60,6 +60,7 @@ class _ContributionState extends State<ContributionPage> {
   List<Map<dynamic, dynamic>> cellularList = List();
   var _currentIndex = -1;
   var _isFinishScan = false;
+  bool _isOnPressed = false;
 
   int lastMoveTime = 0;
   int startTime = 0;
@@ -341,8 +342,6 @@ class _ContributionState extends State<ContributionPage> {
           }),
     );
   }
-
-  bool _isOnPressed = false;
 
   void _onPressed() {
     try {
