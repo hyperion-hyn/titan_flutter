@@ -14,6 +14,7 @@ class HttpResponseNot200Exception implements Exception {
 
 class HttpResponseCodeNotSuccess implements Exception {
   int code;
+
   String message;
 
   HttpResponseCodeNotSuccess(this.code, this.message);
@@ -21,6 +22,21 @@ class HttpResponseCodeNotSuccess implements Exception {
   @override
   String toString() {
     return "HttpResponseCodeNotSuccess: {message:$message,code:$code}";
+  }
+}
+
+class DefineHttpResponseCodeNotSuccess extends HttpResponseCodeNotSuccess {
+  int code;
+
+  String get message => messageFunction();
+
+  Function messageFunction;
+
+  DefineHttpResponseCodeNotSuccess(this.code, this.messageFunction) : super(code, messageFunction());
+
+  @override
+  String toString() {
+    return "DefineHttpResponseCodeNotSuccess: {message:$message,code:$code}";
   }
 }
 
@@ -42,30 +58,30 @@ class HttpResponseCodeNotSuccess implements Exception {
 //var ERROR_CHECK_IN_LIMIT = HttpResponseCodeNotSuccess(-20009, "check-in reach the upper limit"); //签到达到上限
 //var ERROR_CHECK_IN_INTERVAL = HttpResponseCodeNotSuccess(-20010, "check-in interval is 30 minutes."); //签到时间间隔var
 
-var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, S.of(globalContext).over_limit_hint);
+var ERROR_OUT_OF_RANGE = DefineHttpResponseCodeNotSuccess(-1007, () => S.of(globalContext).over_limit_hint);
 
-var ERROR_FUND_PASSWORD = HttpResponseCodeNotSuccess(-20011, S.of(globalContext).fund_pwd_error_hint); //签到时间间隔var
+var ERROR_FUND_PASSWORD = DefineHttpResponseCodeNotSuccess(-20011, () => S.of(globalContext).fund_pwd_error_hint); //签到时间间隔var
 
-List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
-  HttpResponseCodeNotSuccess(-10000, S.of(globalContext).unknown_error_hint),
-  HttpResponseCodeNotSuccess(-10001, S.of(globalContext).para_error_hint),
-  HttpResponseCodeNotSuccess(-10002, S.of(globalContext).unauthorized),
-  HttpResponseCodeNotSuccess(-1003, S.of(globalContext).insufficient_permission_hint),
-  HttpResponseCodeNotSuccess(-1004, S.of(globalContext).content_conflict_hint),
-  HttpResponseCodeNotSuccess(-1005, S.of(globalContext).no_content_hint),
-  HttpResponseCodeNotSuccess(-1006, S.of(globalContext).net_error_hint),
+List<DefineHttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
+  DefineHttpResponseCodeNotSuccess(-10000, () => S.of(globalContext).unknown_error_hint),
+  DefineHttpResponseCodeNotSuccess(-10001, () => S.of(globalContext).para_error_hint),
+  DefineHttpResponseCodeNotSuccess(-10002, () => S.of(globalContext).unauthorized),
+  DefineHttpResponseCodeNotSuccess(-1003, () => S.of(globalContext).insufficient_permission_hint),
+  DefineHttpResponseCodeNotSuccess(-1004, () => S.of(globalContext).content_conflict_hint),
+  DefineHttpResponseCodeNotSuccess(-1005, () => S.of(globalContext).no_content_hint),
+  DefineHttpResponseCodeNotSuccess(-1006, () => S.of(globalContext).net_error_hint),
   ERROR_OUT_OF_RANGE,
-  HttpResponseCodeNotSuccess(-20001, S.of(globalContext).create_user_fail_hint),
-  HttpResponseCodeNotSuccess(-20002, S.of(globalContext).account_exist_hint),
-  HttpResponseCodeNotSuccess(-20004, S.of(globalContext).update_user_info_fail_hint),
-  HttpResponseCodeNotSuccess(-20005, S.of(globalContext).verify_code_error_hint),
-  HttpResponseCodeNotSuccess(-20006, S.of(globalContext).invite_code_error_hint),
-  HttpResponseCodeNotSuccess(-20007, S.of(globalContext).username_pwd_not_match_hint),
-  HttpResponseCodeNotSuccess(-20008, S.of(globalContext).psw_reset_error_hint),
-  HttpResponseCodeNotSuccess(-20009, S.of(globalContext).today_complete_hint),
-  HttpResponseCodeNotSuccess(-20010, S.of(globalContext).task_interval_below_limit),
+  DefineHttpResponseCodeNotSuccess(-20001, () => S.of(globalContext).create_user_fail_hint),
+  DefineHttpResponseCodeNotSuccess(-20002, () => S.of(globalContext).account_exist_hint),
+  DefineHttpResponseCodeNotSuccess(-20004, () => S.of(globalContext).update_user_info_fail_hint),
+  DefineHttpResponseCodeNotSuccess(-20005, () => S.of(globalContext).verify_code_error_hint),
+  DefineHttpResponseCodeNotSuccess(-20006, () => S.of(globalContext).invite_code_error_hint),
+  DefineHttpResponseCodeNotSuccess(-20007, () => S.of(globalContext).username_pwd_not_match_hint),
+  DefineHttpResponseCodeNotSuccess(-20008, () => S.of(globalContext).psw_reset_error_hint),
+  DefineHttpResponseCodeNotSuccess(-20009, () => S.of(globalContext).today_complete_hint),
+  DefineHttpResponseCodeNotSuccess(-20010, () => S.of(globalContext).task_interval_below_limit),
   ERROR_FUND_PASSWORD
 ];
 
-Map<int, HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_MAP =
+Map<int, DefineHttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_MAP =
     Map.fromIterable(NOT_SUCCESS_ERROR_CODE_LIST, key: (errorTemp) => errorTemp.code, value: (errorTemp) => errorTemp);

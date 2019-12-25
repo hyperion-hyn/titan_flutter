@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_finish_page.dart';
+import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
@@ -17,6 +18,7 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
+import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/scan_util.dart';
 import '../../global.dart';
 import '../webview/webview.dart';
@@ -32,6 +34,7 @@ class ContributionPage extends StatefulWidget {
 }
 
 class _ContributionState extends State<ContributionPage> {
+  UserService _userService = UserService();
   MapboxMapController mapController;
 
   Api _api = Api();
@@ -346,6 +349,7 @@ class _ContributionState extends State<ContributionPage> {
   Future<void> _onPressed() async {
     var isFinish = await uploadCollectData();
     //print('[Request] --> isFinish: ${isFinish}');
+    _finishCheckIn();
     if (isFinish) {
       createWalletPopUtilName = '/data_contribution_page';
       Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
@@ -354,6 +358,19 @@ class _ContributionState extends State<ContributionPage> {
       setState(() {
         _isOnPressed = false;
       });
+    }
+  }
+
+  Future _finishCheckIn() async {
+    try {
+      await _userService.checkIn();
+      setState(() {});
+      Fluttertoast.showToast(msg: S.of(context).thank_you_for_contribute_data);
+    } catch (e) {
+      print('[me_page] --> e:$e');
+
+      ExceptionProcess.process(e);
+      throw e;
     }
   }
 
