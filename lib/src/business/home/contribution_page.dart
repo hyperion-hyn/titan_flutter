@@ -416,7 +416,8 @@ class _ContributionState extends State<ContributionPage> {
                           decoration: TextDecoration.combine([
                             TextDecoration.underline, // 下划线
                           ]),
-                          decorationStyle: TextDecorationStyle.solid, // 装饰样式
+                          decorationStyle: TextDecorationStyle.solid,
+                          // 装饰样式
                           decorationColor: Colors.white,
                         ),
                       ),
@@ -520,8 +521,8 @@ class _ContributionState extends State<ContributionPage> {
     var address = _walletVo.accountList[0].account.address;
     var platform = Platform.isIOS ? "iOS" : "android";
 
-    await _api.signalCollector(platform, address, _signalCollector);
-    return true;
+    var uploadStatus = await _api.signalCollector(platform, address, _signalCollector);
+    return uploadStatus;
   }
 
   void _showCloseDialog() {
