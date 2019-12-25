@@ -309,7 +309,7 @@ class S implements WidgetsLocalizations {
   String private_share_receive_address(String shortAddress) => "Receive Address : ${shortAddress}";
   String receiver_symbol(String symbol) => "Receive ${symbol}";
   String scan_collect_signal_func(String Num) => "${Num} signals collected";
-  String scan_ing_func(String scanName) => "Scanning for ${scanName}";
+  String scan_ing_func(String scanName) => "Scanning ${scanName}";
   String send_count_label(String symbol) => "$symbol Quantity";
   String send_symbol(String symbol) => "Send $symbol";
 }
@@ -893,7 +893,7 @@ class $ko extends S {
   @override
   String my_symbol_address(String symbol) => "나의${symbol}접수주소:";
   @override
-  String scan_ing_func(String scanName) => "${scanName} 스캔 중";
+  String scan_ing_func(String scanName) => "스캐닝 ${scanName}";
   @override
   String n_minute(String minute) => "${minute}분";
   @override
@@ -1487,7 +1487,7 @@ class $zh_CN extends S {
   @override
   String my_symbol_address(String symbol) => "我的${symbol}接收地址:";
   @override
-  String scan_ing_func(String scanName) => "正在${scanName}信号扫描";
+  String scan_ing_func(String scanName) => "正在扫描${scanName}信号";
   @override
   String n_minute(String minute) => "${minute}分钟";
   @override

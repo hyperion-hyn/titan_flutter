@@ -284,7 +284,7 @@
   "scan_exit_tips" : "Scanning, confirm exit?",
   "scan_hyn_is_empty" : "HYN wallet is empty",
   "scan_finish" : "Scan completed",
-  "scan_ing_func": "Scanning for ${scanName}",
+  "scan_ing_func": "Scanning ${scanName}",
   "scan_upload_error" : "Upload failed",
   "scan_upload_signal_success_hint": "Signal data uploaded successfully",
   "scan_thanks_contribution_signal_hint": "Thank you for your data contribution！",
