@@ -275,7 +275,7 @@
   "open_location_service": "위치추적 서비스 열기",
   "open_location_service_message": "위치정보 서비스가 닫혔습니다. 켜주세요",
   "scan_name_wifi": "와이파이",
-  "scan_name_cellular": "기지국",
+  "scan_name_cellular": "셀 타워",
   "scan_name_bluetooth": "기지국",
   "scan_name_gps": "GPS",
   "scan_name_start" : "시작",
