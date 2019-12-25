@@ -522,7 +522,6 @@ class _ContributionState extends State<ContributionPage> {
     var platform = Platform.isIOS ? "iOS" : "android";
 
     var uploadStatus = await _api.signalCollector(platform, address, _signalCollector);
-    print("-------ddddd");
     return uploadStatus;
   }
 
