@@ -22,7 +22,7 @@ class SensorPlugin {
         if (sensorChangeCallBack != null) {
           sensorChangeCallBack(params);
         }
-        print('[sensor_plugin] --> param:${params}');
+        //print('[sensor_plugin] --> param:${params}');
 
         return null;
     }

@@ -343,17 +343,17 @@ class _ContributionState extends State<ContributionPage> {
     );
   }
 
-  void _onPressed() {
-    try {
-      var isFinish = uploadCollectData();
-      if (isFinish != null) {
-        createWalletPopUtilName = '/data_contribution_page';
-        Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
-      } else {
-        Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
-      }
-    } catch (_) {
+  Future<void> _onPressed() async {
+    var isFinish = await uploadCollectData();
+    //print('[Request] --> isFinish: ${isFinish}');
+    if (isFinish) {
+      createWalletPopUtilName = '/data_contribution_page';
+      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+    } else {
       Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
+      setState(() {
+        _isOnPressed = false;
+      });
     }
   }
 
@@ -441,7 +441,7 @@ class _ContributionState extends State<ContributionPage> {
         style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 16, fontWeight: FontWeight.w500),
       ),
       margin: EdgeInsets.only(
-        bottom: 6,
+        bottom: 4,
       ),
     );
   }
@@ -454,7 +454,7 @@ class _ContributionState extends State<ContributionPage> {
         style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 12),
       ),
       margin: EdgeInsets.only(
-        bottom: 6,
+        bottom: 4,
       ),
     );
   }
@@ -522,6 +522,7 @@ class _ContributionState extends State<ContributionPage> {
     var platform = Platform.isIOS ? "iOS" : "android";
 
     var uploadStatus = await _api.signalCollector(platform, address, _signalCollector);
+    print("-------ddddd");
     return uploadStatus;
   }
 
