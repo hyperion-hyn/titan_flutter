@@ -273,13 +273,24 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.fromLTRB(15, 4, 10, 0),
-                child: Image.asset(
-                  'res/drawable/data_contribution_wallet.png',
-                  width: 40,
-                  height: 40,
-                )),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 12),
+              alignment: Alignment.center,
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+              child: Stack(
+                children: <Widget>[
+                  Align(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        "res/drawable/hyn_wallet.png",
+                        width: 20,
+                        height: 20,
+                      )),
+                ],
+              ),
+            ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
