@@ -225,7 +225,7 @@ class S implements WidgetsLocalizations {
   String get safety_verification => "Safety Verification";
   String get save_mnemonic_notice => "Write down or copy these words in the correct order and keep them safe.";
   String get save_mnemonic_safe_notice => "Never share the mnemonic with anyone, store your backup securely!";
-  String get scan_confirm_upload => "Confirm upload";
+  String get scan_confirm_upload => "Upload signal data";
   String get scan_exit_tips => "Scanning, confirm exit?";
   String get scan_finish => "Scan completed";
   String get scan_hyn_is_empty => "HYN wallet is empty";
@@ -237,6 +237,9 @@ class S implements WidgetsLocalizations {
   String get scan_name_wifi => "WiFi";
   String get scan_signal_item_title => "Scan nearby signal data";
   String get scan_signal_upload_protocol => "Signal upload protocol";
+  String get scan_thanks_contribution_signal_hint => "Thank you for your data contribution！";
+  String get scan_upload_error => "Upload failed";
+  String get scan_upload_signal_success_hint => "Signal data uploaded successfully";
   String get search_empty_data => "No Data";
   String get search_history => "History";
   String get search_or_decode => "Search / Decrypt";
@@ -305,6 +308,7 @@ class S implements WidgetsLocalizations {
   String network_request_err(String code) => "Network request error, code: $code";
   String private_share_receive_address(String shortAddress) => "Receive Address : ${shortAddress}";
   String receiver_symbol(String symbol) => "Receive ${symbol}";
+  String scan_collect_signal_func(String Num) => "${Num} signals collected";
   String scan_ing_func(String scanName) => "Scanning for ${scanName}";
   String send_count_label(String symbol) => "$symbol Quantity";
   String send_symbol(String symbol) => "Send $symbol";
@@ -320,6 +324,8 @@ class $ko extends S {
   String get cancel => "취소";
   @override
   String get update_now => "지금 업데이트";
+  @override
+  String get scan_upload_error => "업로드 실패";
   @override
   String get foods => "식당";
   @override
@@ -451,7 +457,7 @@ class $ko extends S {
   @override
   String get internet_bar => "인터넷 카페";
   @override
-  String get scan_name_cellular => "基站";
+  String get scan_name_cellular => "기지국";
   @override
   String get later => "아직 업데이트되지 않았습니다";
   @override
@@ -563,7 +569,7 @@ class $ko extends S {
   @override
   String get import_wallet => "지갑 가져오기";
   @override
-  String get scan_confirm_upload => "업로드 확인";
+  String get scan_confirm_upload => "신호 데이터 업로드";
   @override
   String get dmap_life => "생활 가이드";
   @override
@@ -650,6 +656,8 @@ class $ko extends S {
   String get clean_search_history => "기록 지우기";
   @override
   String get skip => "건너 뛰기";
+  @override
+  String get scan_upload_signal_success_hint => "신호 데이터가 성공적으로 업로드되었습니다";
   @override
   String get click_again_to_exist_app => "다시 누르면 앱이 종료됩니다";
   @override
@@ -753,7 +761,7 @@ class $ko extends S {
   @override
   String get public_key_scan_fail_rescan => "잘못된 공개 키입니다. 다시 스캔하십시오";
   @override
-  String get scan_name_wifi => "WiFi";
+  String get scan_name_wifi => "와이파이";
   @override
   String get save_mnemonic_safe_notice => "복구된 메시지를 아무에게도 공유하지 말고 안전하게 저장하세요!";
   @override
@@ -835,6 +843,8 @@ class $ko extends S {
   @override
   String get backup_wallet_mnemonic_text => "니모닉을 올바르게 복사하려면 종이와 펜을 사용하십시오.\n휴대 전화를 분실했거나 도난당한 경우 손상, 니모닉으로 자산을 복구 할 수 있습니다";
   @override
+  String get scan_thanks_contribution_signal_hint => "귀하의 데이터 기여에 감사드립니다！";
+  @override
   String get global_embassies => "글로벌 대사관";
   @override
   String get wechat => "위챗";
@@ -875,6 +885,8 @@ class $ko extends S {
   @override
   String network_request_err(String code) => "网络请求错误,状态码: $code";
   @override
+  String scan_collect_signal_func(String Num) => "${Num} 개의 신호 수집";
+  @override
   String distance(String distance) => "${distance}남";
   @override
   String private_share_receive_address(String shortAddress) => "수신 주소:${shortAddress}";
@@ -906,6 +918,8 @@ class $zh_CN extends S {
   String get cancel => "取消";
   @override
   String get update_now => "现在更新";
+  @override
+  String get scan_upload_error => "上传失败";
   @override
   String get foods => "美食";
   @override
@@ -1151,7 +1165,7 @@ class $zh_CN extends S {
   @override
   String get import_wallet => "导入钱包";
   @override
-  String get scan_confirm_upload => "确认上传";
+  String get scan_confirm_upload => "上传信号数据";
   @override
   String get dmap_life => "生活指引";
   @override
@@ -1238,6 +1252,8 @@ class $zh_CN extends S {
   String get clean_search_history => "清除记录";
   @override
   String get skip => "跳过";
+  @override
+  String get scan_upload_signal_success_hint => "信号数据上传成功";
   @override
   String get click_again_to_exist_app => "再按一下退出程序";
   @override
@@ -1411,7 +1427,7 @@ class $zh_CN extends S {
   @override
   String get map_dmap => "地图DMap";
   @override
-  String get scan_finish => "扫描已完成";
+  String get scan_finish => "扫描完成";
   @override
   String get gas_station => "加油站";
   @override
@@ -1422,6 +1438,8 @@ class $zh_CN extends S {
   String get police_security_station => "警察安全站";
   @override
   String get backup_wallet_mnemonic_text => "使用纸和笔正确抄写助记词\n如果你的手机丢失、被盗。损坏，助记词将可以恢复你的资产";
+  @override
+  String get scan_thanks_contribution_signal_hint => "感谢您做的数据贡献！";
   @override
   String get global_embassies => "全球大使馆";
   @override
@@ -1460,6 +1478,8 @@ class $zh_CN extends S {
   String receiver_symbol(String symbol) => "接收 ${symbol}";
   @override
   String network_request_err(String code) => "网络请求错误,状态码: $code";
+  @override
+  String scan_collect_signal_func(String num) => "已收集到${num}个信号";
   @override
   String distance(String distance) => "${distance}米";
   @override

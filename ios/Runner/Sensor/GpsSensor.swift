@@ -2,7 +2,7 @@
 //  GpsSensor.swift
 //  Runner
 //
-//  Created by 蔡景松 on 2019/12/20.
+//  Created by naru.j on 2019/12/20.
 //  Copyright © 2019 The Chromium Authors. All rights reserved.
 //
 
@@ -78,7 +78,9 @@ extension GpsSensor: CLLocationManagerDelegate {
             "speed": location.speed,
             "time": location.timestamp.milliStamp
         ]
-        onSensorChange(type, values)
+        if onSensorChange != nil {
+            onSensorChange(type, values)
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

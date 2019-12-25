@@ -110,7 +110,7 @@ class Api {
 
   ///collect signal
   Future signalCollector(String platform, String address, SignalCollector signalCollector) async {
-    await HttpCore.instance.post("map-collector/signal/collector",
+     await HttpCore.instance.post("map-collector/signal/collector",
         params: signalCollector.toJson(),
         options: RequestOptions(headers: {"platform": platform, "UUID": address}, contentType: "application/json"));
   }

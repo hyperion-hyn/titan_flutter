@@ -280,10 +280,14 @@
   "scan_name_gps": "GPS",
   "scan_name_start" : "开始",
   "scan_name_title" : "信号扫描",
-  "scan_confirm_upload" : "确认上传",
   "scan_signal_upload_protocol" : "信号上传协议",
   "scan_exit_tips" : "正在扫描中，确认退出吗?",
   "scan_hyn_is_empty" : "HYN wallet 为空",
-  "scan_finish" : "扫描已完成",
-  "scan_ing_func": "正在${scanName}信号扫描"
+  "scan_finish" : "扫描完成",
+  "scan_ing_func": "正在${scanName}信号扫描",
+  "scan_upload_error" : "上传失败",
+  "scan_upload_signal_success_hint": "信号数据上传成功",
+  "scan_thanks_contribution_signal_hint": "感谢您做的数据贡献！",
+  "scan_confirm_upload" : "上传信号数据",
+  "scan_collect_signal_func": "已收集到${num}个信号"
 }

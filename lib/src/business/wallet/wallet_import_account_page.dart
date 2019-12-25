@@ -50,6 +50,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                 }
               },
               child: IconButton(
+                onPressed: (){},
                 icon: Icon(
                   ExtendsIconFont.qrcode_scan,
                   color: Colors.white,

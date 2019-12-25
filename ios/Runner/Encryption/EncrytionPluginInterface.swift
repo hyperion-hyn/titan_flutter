@@ -2,7 +2,7 @@
 //  EncrytionPluginInterface.swift
 //  Runner
 //
-//  Created by 蔡景松 on 2019/12/20.
+//  Created by naru.j on 2019/12/20.
 //  Copyright © 2019 The Chromium Authors. All rights reserved.
 //
 

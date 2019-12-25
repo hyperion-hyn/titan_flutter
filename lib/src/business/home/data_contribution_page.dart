@@ -415,11 +415,18 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     //3. 检查蓝牙权限
 
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
-    if (!blueAvaiable) {
-      _showGoToOpenCommonAppSettingsDialog(S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
-        AppSettings.openBluetoothSettings();
-      });
-      return false;
+    if (Platform.isAndroid) {
+      if (!blueAvaiable) {
+        _showGoToOpenCommonAppSettingsDialog(S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
+          AppSettings.openBluetoothSettings();
+        });
+        return false;
+      }
+    }
+    else {
+      if (!blueAvaiable) {
+        return false;
+      }
     }
 
     //4. 安卓增加判断wifi
@@ -530,11 +537,11 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   content: Text(S.of(context).open_location_service_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(S.of(context).cancel),
+                      child: Text(S.of(context).cancel, style: TextStyle(color: Colors.blue),),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text(S.of(context).setting),
+                      child: Text(S.of(context).setting, style: TextStyle(color: Colors.blue),),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);

@@ -46,15 +46,21 @@ import CoreBluetooth
             let encrytion = self.encrytionPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
             if(!wallet && !encrytion) {
                 switch methodCall.method {
-//                case "wifiEnable":
-//                    result(true)
-//                    break
-                    
+
                 case "bluetoothEnable":
-                    self.blueSensor.initialize()
-                    //self.blueSensor.startScan()
-                    let isEnable = self.blueSensor.isEnable
-                    result(isEnable)
+                    if self.blueSensor.isEnable {
+                        result(true)
+                    }
+                    else {
+                        DispatchQueue.main.async {
+                            self.blueSensor.initialize { (isEnable) in
+                                print("isEnable --> \(isEnable)")
+                                
+                                result(isEnable)
+                            }
+                        }
+                    }
+                    
                     break
                     
                 default:
@@ -70,8 +76,6 @@ import CoreBluetooth
                 result(FlutterMethodNotImplemented)
             }
         }
-        
-//        blueSensor.initialize()
     }
     
     

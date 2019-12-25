@@ -2,7 +2,7 @@
 //  BluetoothSensor.swift
 //  Runner
 //
-//  Created by 蔡景松 on 2019/12/20.
+//  Created by naru.j on 2019/12/20.
 //  Copyright © 2019 The Chromium Authors. All rights reserved.
 //
 
@@ -11,6 +11,7 @@ import CoreBluetooth
 
 class BluetoothSensor: NSObject, Sensor {
     
+//    static var share
     var onSensorChange: OnSensorValueChangeListener!
     
     var bluetoothManager: CBCentralManager!
@@ -18,6 +19,13 @@ class BluetoothSensor: NSObject, Sensor {
     var type = SensorType.BLUETOOTH
     
     var isEnable: Bool = false
+
+    var callBack: BluetoothSensorBlock? = nil
+    
+    func initialize(callBack: BluetoothSensorBlock?=nil) {
+        self.callBack = callBack
+        self.initialize()
+    }
     
     func initialize() {
         let queue = DispatchQueue(label: "centralQueue")
@@ -26,12 +34,13 @@ class BluetoothSensor: NSObject, Sensor {
             CBCentralManagerOptionRestoreIdentifierKey: "unique identifier",
         ]
         bluetoothManager = CBCentralManager(delegate: self, queue: queue, options: options)
+        print("[BluetoothSensor] -->\(self), onSensorChange: \(onSensorChange)")
     }
     
     func startScan() {
-//        guard bluetoothManager.state == .poweredOn else {
-//            return
-//        }
+        guard bluetoothManager.state == .poweredOn else {
+            return
+        }
         
         guard !bluetoothManager.isScanning else {
             return
@@ -44,9 +53,9 @@ class BluetoothSensor: NSObject, Sensor {
     }
     
     func stopScan() {
-//        guard bluetoothManager.state == .poweredOn else {
-//            return
-//        }
+        guard bluetoothManager.state == .poweredOn else {
+            return
+        }
         bluetoothManager.stopScan()
     }
     
@@ -58,17 +67,25 @@ class BluetoothSensor: NSObject, Sensor {
 
 // MARK: - Bluetooth
 extension BluetoothSensor: CBCentralManagerDelegate {
-    
+//    2019-12-25 03:05:10.497944+0800 Runner[659:119163] [CoreBluetooth] API MISUSE: <CBCentralManager: 0x2815aeca0> can only accept this command while in the powered on state
+
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         isEnable = central.state == .poweredOn;
         
+        if let block = self.callBack {
+            block(isEnable)
+        }
+        
         if central.state == .poweredOn {
             print("【蓝牙】蓝牙设备开着，✅")
-            
-            startScan()
-        } else {
-            print("【蓝牙】蓝牙设备关闭，❌")
+            if onSensorChange != nil {
+                startScan()
+            }
         }
+        
+        print("【蓝牙】蓝牙设备, state:\(central.state.rawValue)")
+        
+        
     }
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
@@ -78,7 +95,7 @@ extension BluetoothSensor: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
   
-        //print("\n【蓝牙】didDiscover，name: \(peripheral)，advertisementData: \(advertisementData) ，rssi: \(RSSI), \n")
+        print("\n【蓝牙】didDiscover，name: \(peripheral)，advertisementData: \(advertisementData) ，rssi: \(RSSI), \n self:\(self)")
         
         // Todo: jison_1222
         let values: [String : Any] = [
@@ -87,62 +104,8 @@ extension BluetoothSensor: CBCentralManagerDelegate {
             "rssi": RSSI,
             //"advertisementData": advertisementData
         ]
-        onSensorChange(type, values)
+        if onSensorChange != nil {
+            onSensorChange(type, values)
+        }
     }
 }
-
-//Utils.addIfNonNull(values, "name", deviceName)
-//Utils.addIfNonNull(values, "mac", deviceHardwareAddress)
-//Utils.addIfNonNull(values, "type", deviceType)
-
-/*
-【蓝牙】didDiscover，
-name: <CBPeripheral: 0x281675400,
-identifier = 8B4D4011-EC16-51B8-B31E-FC4D006390A5,
-name = 宝宝的BeatsX, state = disconnected>，
-
-advertisementData: ["kCBAdvDataTimestamp": 596968823.778265, "kCBAdvDataIsConnectable": 0] ，
-
-rssi: -38,
-*/
-
-
-/*
-let CBAdvertisementDataLocalNameKey: String
-The local name of a peripheral.
- 
-let CBAdvertisementDataManufacturerDataKey: String
-The manufacturer data of a peripheral.
- 
-let CBAdvertisementDataServiceDataKey: String
-A dictionary that contains service-specific advertisement data.
- 
-let CBAdvertisementDataServiceUUIDsKey: String
-An array of service UUIDs.
- 
-let CBAdvertisementDataOverflowServiceUUIDsKey: String
-An array of UUIDs found in the overflow area of the advertisement data.
- 
-let CBAdvertisementDataTxPowerLevelKey: String
-The transmit power of a peripheral.
- 
-let CBAdvertisementDataIsConnectable: String
-A Boolean value that indicates whether the advertising event type is connectable.
- 
-let CBAdvertisementDataSolicitedServiceUUIDsKey: String
-An array of solicited service UUIDs.
-
-【蓝牙】didDiscover，
- name: <CBPeripheral: 0x281675400,
- identifier = 8B4D4011-EC16-51B8-B31E-FC4D006390A5,
- name = 宝宝的BeatsX, state = disconnected>，
- 
- advertisementData: ["kCBAdvDataTimestamp": 596968823.778265, "kCBAdvDataIsConnectable": 0] ，
- 
- rssi: -38,
- 
- Q:
- ** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'State restoration of CBCentralManager is only allowed for applications that have specified the "bluetooth-central" background mode'
- 
- A: Uses Bluetooth LE accessories    bluetooth-central    iPhone 作为蓝牙中心设备使用，也就是做为 server；需要在后台不断更新蓝牙状态的
-*/
