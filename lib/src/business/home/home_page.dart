@@ -253,11 +253,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           return SizedBox.expand(
             child: LayoutBuilder(
               builder: (ctx, BoxConstraints boxConstraints) {
-                var maxHeight = boxConstraints.biggest.height;
+                double maxHeight = boxConstraints.biggest.height;
                 double anchorSize = 0.5;
                 double minChildSize = 88.0 / maxHeight;
                 double initSize = 280.0 / maxHeight;
                 double maxChildSize = (maxHeight - MediaQuery.of(ctx).padding.top) / maxHeight;
+                if (maxHeight == 0.0) {
+                  return Container();
+                }
+
                 return NotificationListener<myWidget.DraggableScrollableNotification>(
                   onNotification: (notification) {
                     if (state is home.InitialHomeState) {
