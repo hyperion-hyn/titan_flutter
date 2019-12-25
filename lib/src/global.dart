@@ -12,7 +12,7 @@ EventBus eventBus = EventBus();
 
 var logger = Logger();
 
-double bottomBarHeight = 65;
+//double bottomBarHeight = 65;
 
 
 ///some const
