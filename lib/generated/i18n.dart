@@ -230,7 +230,7 @@ class S implements WidgetsLocalizations {
   String get scan_finish => "Scan completed";
   String get scan_hyn_is_empty => "HYN wallet is empty";
   String get scan_name_bluetooth => "Bluetooth";
-  String get scan_name_cellular => "Base station";
+  String get scan_name_cellular => "Cell Tower";
   String get scan_name_gps => "GPS";
   String get scan_name_start => "Start";
   String get scan_name_title => "Signal scan";
@@ -457,7 +457,7 @@ class $ko extends S {
   @override
   String get internet_bar => "인터넷 카페";
   @override
-  String get scan_name_cellular => "기지국";
+  String get scan_name_cellular => "셀 타워";
   @override
   String get later => "아직 업데이트되지 않았습니다";
   @override

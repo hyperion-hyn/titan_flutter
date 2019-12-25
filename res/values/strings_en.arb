@@ -275,7 +275,7 @@
   "open_location_service": "Turn on location services",
   "open_location_service_message": "Location services are off, please turn on",
   "scan_name_wifi": "WiFi",
-  "scan_name_cellular": "Base station",
+  "scan_name_cellular": "Cell Tower",
   "scan_name_bluetooth": "Bluetooth",
   "scan_name_gps": "GPS",
   "scan_name_start" : "Start",
