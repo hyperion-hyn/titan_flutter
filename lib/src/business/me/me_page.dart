@@ -16,7 +16,7 @@ import 'package:titan/src/business/webview/inappwebview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'me_check_in_page.dart';

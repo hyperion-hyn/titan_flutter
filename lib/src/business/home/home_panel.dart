@@ -21,6 +21,7 @@ import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/dianping_poi.dart';
 import 'package:titan/src/utils/coord_convert.dart';
@@ -31,6 +32,7 @@ import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
+import 'data_contribution_page.dart';
 
 class HomePanel extends StatefulWidget {
   final ScrollController scrollController;
@@ -93,11 +95,32 @@ class HomePanelState extends UserState<HomePanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+    return Container(
+      padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
       child: CustomScrollView(
         controller: widget.scrollController,
         slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 12),
+                  child: DragTick(),
+                ),
+              ],
+            ),
+          ),
           /* 搜索 */
           SliverToBoxAdapter(
             child: _search(),
@@ -192,10 +215,10 @@ class HomePanelState extends UserState<HomePanel> {
   Widget _search() {
     return InkWell(
       onTap: onSearch,
-      borderRadius: BorderRadius.all(Radius.circular(31)),
-      child: Ink(
-        height: 44,
-        decoration: BoxDecoration(color: Color(0xfffff4f4fa), borderRadius: BorderRadius.all(Radius.circular(31))),
+      borderRadius: BorderRadius.all(Radius.circular(32)),
+      child: Container(
+        height: 46,
+        decoration: BoxDecoration(color: Color(0xfff4f4fa), borderRadius: BorderRadius.all(Radius.circular(32))),
         child: Row(
           children: <Widget>[
             Padding(
@@ -320,7 +343,7 @@ class HomePanelState extends UserState<HomePanel> {
 
   Widget focusArea(context) {
     return Container(
-      margin: EdgeInsets.only(top: 32),
+      margin: EdgeInsets.only(top: 16),
       height: 180,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -441,48 +464,53 @@ class HomePanelState extends UserState<HomePanel> {
             width: 12,
           ),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                  border: Border.all(color: Color(0xFFE9E9E9), width: 1)),
-              child: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0, left: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          S.of(context).data_contribute,
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            S.of(context).data_contribute_reward,
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            S.of(context).coming_soon,
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Color(0xFFF82530)),
-                          ),
-                        ),
-                      ],
-                    ),
+            child: InkWell(
+              borderRadius: BorderRadius.all(Radius.circular(4.0)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    settings: RouteSettings(name: '/data_contribution_page'),
+                    builder: (context) => DataContributionPage(),
                   ),
-                  Positioned(
-                      top: 36,
-                      right: 16,
-                      child: Image.asset(
-                        'res/drawable/data.png',
-                        width: 32,
-                        height: 32,
-                      )),
-                ],
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                    border: Border.all(color: Color(0xFFE9E9E9), width: 1)),
+                child: Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0, left: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            S.of(context).data_contribute,
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              S.of(context).data_contribute_reward,
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                        top: 36,
+                        right: 16,
+                        child: Image.asset(
+                          'res/drawable/data.png',
+                          width: 32,
+                          height: 32,
+                        )),
+                  ],
+                ),
               ),
             ),
           ),

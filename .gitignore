@@ -84,9 +84,11 @@ pMapping.txt
 shrinklist.txt
 
 lib/config.dart
+*.apk
+ios/Flutter/flutter_export_environment.sh
+.flutter-plugins-dependencies
+
 flutter_export_environment.sh
 _mode.md
 .apk
-.flutter-plugins-dependencies
 ios/Flutter/Flutter.podspec
-ios/Flutter/flutter_export_environment.sh

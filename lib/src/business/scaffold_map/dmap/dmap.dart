@@ -4,7 +4,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import '../map.dart';
 import '../scaffold_map.dart';
 
-typedef PaddingTopFun = double Function(BuildContext context);
+typedef ContextFun = double Function(BuildContext context);
 
 class DMapConfigModel {
   final List<HeavenDataModel> heavenDataModelList;
@@ -17,10 +17,10 @@ class DMapConfigModel {
   final OnMapLongPressHandle onMapLongPressHandle;
 
   final PanelBuilder panelBuilder;
-  final PaddingTopFun panelPaddingTop;
+  final ContextFun panelPaddingTop;
   final bool panelDraggable;
-  final double panelCollapsedHeight;
-  final double panelAnchorHeight;
+  final ContextFun panelCollapsedHeight;
+  final ContextFun panelAnchorHeight;
   final bool alwaysShowPanel;
 
   final bool showCenterMarker;

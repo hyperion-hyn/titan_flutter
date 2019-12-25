@@ -4,10 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/discover/dapp/embassy/model/model.dart';
-import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/webview/webview.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet.dart';
+import 'package:titan/src/widget/drag_tick.dart';
+import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../../../global.dart';
 
@@ -33,7 +33,7 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
       if (MediaQuery.of(context).padding.bottom > 0) {
         h += safeAreaBottomPadding;
       }
-      return h + 76; //76 is hack options height;
+      return h + 84; //48 is hack options height;
     }
     return 0;
   }
@@ -42,7 +42,6 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
   void initState() {
     super.initState();
 
-    //动态设置收缩高度
     SchedulerBinding.instance.addPostFrameCallback((_) {
       HeaderHeightNotification(height: getHeaderHeight()).dispatch(context);
     });
@@ -50,79 +49,113 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: widget.scrollController,
-      child: WillPopScope(
-        onWillPop: () async {
-          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-          return false;
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            //header
-            Container(
-//          color: Colors.blue,
-              padding: EdgeInsets.all(16),
-              child: Column(
-                key: _poiHeaderKey,
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+//      padding: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
+      child: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          widget.poi.name,
-                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                        },
-                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                        highlightColor: Colors.transparent,
-                        child: Ink(
-                          padding: EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xffececec),
-                          ),
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.grey,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: DragTick(),
                   ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  buildHeadItem(Icons.location_on, widget.poi.address, hint: S.of(context).no_detail_address),
-//                  if (widget.poi.remark != null && widget.poi.remark.length > 0)
-//                    buildHeadItem(Icons.message, widget.poi.remark, hint: '无备注'),
                 ],
               ),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: widget.scrollController,
+                  child: WillPopScope(
+                    onWillPop: () async {
+                      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+                      return false;
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        //header
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            key: _poiHeaderKey,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(
+                                      widget.poi.name,
+                                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              buildHeadItem(Icons.location_on, widget.poi.address, hint: S.of(context).no_detail_address),
+//                  if (widget.poi.remark != null && widget.poi.remark.length > 0)
+//                    buildHeadItem(Icons.message, widget.poi.remark, hint: '无备注'),
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          height: 0,
+                        ),
+                        buildInfoItem(S.of(context).department, widget.poi.department),
+                        buildInfoItem(S.of(context).operating_hours, widget.poi.remark),
+                        buildInfoItem(S.of(context).telphone, widget.poi.telephone),
+                        buildInfoItem(S.of(context).official_website, widget.poi.website, textColor: Colors.blue, onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WebViewContainer(
+                                        initUrl: widget.poi.website,
+                                        title: widget.poi.name,
+                                      )));
+                        }),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: InkWell(
+              onTap: () {
+                BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+              },
+              borderRadius: BorderRadius.all(Radius.circular(32.0)),
+              highlightColor: Colors.transparent,
+              child: Ink(
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xffececec),
+                ),
+                child: Icon(
+                  Icons.cancel,
+                  color: Colors.grey,
+                ),
+              ),
             ),
-            Divider(
-              height: 0,
-            ),
-            buildInfoItem(S.of(context).department, widget.poi.department),
-            buildInfoItem(S.of(context).operating_hours, widget.poi.remark),
-            buildInfoItem(S.of(context).telphone, widget.poi.telephone),
-            buildInfoItem(S.of(context).official_website, widget.poi.website, textColor: Colors.blue, onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => WebViewContainer(
-                            initUrl: widget.poi.website,
-                            title: widget.poi.name,
-                          )));
-            }),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

@@ -2,6 +2,7 @@ import UIKit
 import Flutter
 import Mobile
 import RxSwift
+import CoreBluetooth
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -11,10 +12,21 @@ import RxSwift
         return FlutterMethodChannel(name: "org.hyn.titan/call_channel", binaryMessenger: controller.binaryMessenger)
     }()
     
-    private lazy var encryptService: EncryptionService = EthEncryptionService()
+    private lazy var sensorChannel: FlutterMethodChannel = {
+        let controller = window.rootViewController as! FlutterViewController
+        return FlutterMethodChannel(name: "org.hyn.titan/sensor_call_channel", binaryMessenger: controller.binaryMessenger)
+    }()
     
-    private lazy var walletPluginInterface: WalletPluginInterface = WalletPluginInterface()
+    private lazy var walletPlugin: WalletPluginInterface = WalletPluginInterface()
     
+    private lazy var sensorPlugin: SensorPluginInterface = {
+        let plugin = SensorPluginInterface()
+        plugin.sensorChannel = sensorChannel
+        return plugin
+    }()
+
+    private lazy var encrytionPlugin: EncrytionPluginInterface = EncrytionPluginInterface()
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -28,64 +40,45 @@ import RxSwift
     
     private func flutterMethodCallHandler() {
         callChannel.setMethodCallHandler { (methodCall, result) in
-            let handled = self.walletPluginInterface.setMethodCallHandler(methodCall: methodCall, result: result)
-            if(!handled) {
-                switch(methodCall.method) {
-                case "initKeyPair":
-                    if self.encryptService.publicKey == nil || Date().milliStamp > self.encryptService.expireTime {
-                        guard let expired = methodCall.arguments as? Int64 else { return }
-                        self.generateKey(expired: expired, result: result)
-                    } else {
-                        result(self.encryptService.publicKey)
+            let wallet = self.walletPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
+            let encrytion = self.encrytionPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
+            if(!wallet && !encrytion) {
+                switch methodCall.method {
+
+                case "bluetoothEnable":
+                    BluetoothSensor.share.initialize()
+                    result(BluetoothSensor.share.isEnable)
+
+                    /*
+                    if self.blueSensor.isEnable {
+                        result(true)
                     }
-                case "genKeyPair":
-                    let expired = methodCall.arguments as? Int64 ?? 3600
-                    self.generateKey(expired: expired, result: result)
-                case "getPublicKey":
-                    result(self.encryptService.publicKey)
-                case "getExpired":
-                    result(self.encryptService.expireTime)
-                case "encrypt":
-                    guard let params = methodCall.arguments as? [String: String] else {
-                        result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
-                        return
+                    else {
+                        DispatchQueue.main.async {
+                            self.blueSensor.initialize { (isEnable) in
+                                print("isEnable --> \(isEnable)")
+                                
+                                result(isEnable)
+                            }
+                        }
                     }
-                    guard let pub = params["pub"], let message = params["message"] else {
-                        result(FlutterError.init(code: "-1", message: "params can not find message", details: nil))
-                        return
-                    }
-                    self.encryptService.encrypt(publicKeyStr: pub, message: message)
-                        .subscribe(onNext: { (ciphertext) in
-                            result(ciphertext)
-                        }, onError: { error in
-                            result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
-                        }, onCompleted: nil, onDisposed: nil)
-                case "decrypt":
-                    guard let ciphertext = methodCall.arguments as? String else {
-                        result(FlutterError.init(code: "-1", message: "params is not String", details: nil))
-                        return
-                    }
-                    self.encryptService.decrypt(ciphertext: ciphertext)
-                        .subscribe(onNext: { (message) in
-                            result(message)
-                        }, onError: { error in
-                            result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
-                        }, onCompleted: nil, onDisposed: nil)
+                    */
+                    break
+                    
                 default:
                     result(FlutterMethodNotImplemented)
                 }
+                result(FlutterMethodNotImplemented)
+            }
+        }
+        
+        sensorChannel.setMethodCallHandler { (methodCall, result) in
+            let sensor = self.sensorPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
+            if(!sensor) {
+                result(FlutterMethodNotImplemented)
             }
         }
     }
     
-    private func generateKey(expired: Int64, result: @escaping FlutterResult) {
-        let disposeBag = DisposeBag()
-        self.encryptService.generateKeyPairAndStore(expireAt: expired)
-            .subscribe(onNext: { (isSuccess) in
-                if let pub = self.encryptService.publicKey {
-                    result(pub)
-                }
-            }, onError: nil, onCompleted: nil, onDisposed: nil)
-            .disposed(by: disposeBag)
-    }
+    
 }

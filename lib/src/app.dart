@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
@@ -9,15 +9,6 @@ import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/theme.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'business/discover/bloc/bloc.dart';
-import 'business/home/bloc/bloc.dart';
-import 'business/home/home_page.dart';
-import 'business/home/map/bloc/bloc.dart';
-import 'business/home/searchbar/bloc/bloc.dart';
-import 'business/home/sheets/bloc/bloc.dart';
-import 'business/scaffold_map/bloc/bloc.dart';
 import 'business/updater/bloc/bloc.dart';
 import 'global.dart';
 import 'guide.dart';

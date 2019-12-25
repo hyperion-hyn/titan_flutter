@@ -14,7 +14,7 @@ import 'package:titan/src/business/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 
 import 'model/quotes.dart';
 import 'model/withdrawal_info.dart';

@@ -13,7 +13,6 @@ import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi_interface.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import 'dapp/embassy/embassy.dart';
 import 'dapp/embassy/embassy_poi_panel.dart';
@@ -109,7 +108,6 @@ final embassyDMapConfigModel = DMapConfigModel(
       return true;
     },
     panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
-      print('xxx $poi');
       return EmbassyPoiPanel(poi: poi, scrollController: scrollController);
     },
     panelPaddingTop: (context) => MediaQuery.of(context).padding.top + 56 - 12 //减去drag的高度
@@ -169,9 +167,9 @@ final encryptShareDMapConfigModel = DMapConfigModel(
   panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
     return SharePoisPanel(scrollController: scrollController);
   },
-  panelPaddingTop: (context) => kAnchorPoiHeight,
-  panelAnchorHeight: 220,
-  panelCollapsedHeight: 220,
+  panelPaddingTop: (context) => MediaQuery.of(context).size.height * 0.45,
+  panelAnchorHeight: (context) => MediaQuery.of(context).size.height * 0.55,
+  panelCollapsedHeight: (context) => 220,
 );
 
 Future<Map<String, dynamic>> _getFeature(Point<double> point, LatLng coordinates, String layerId) async {

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/utils/validator_util.dart';
 
 import 'wallet_finish_import_page.dart';
@@ -49,8 +49,9 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   _mnemonicController.text = mnemonicWords;
                 }
               },
-              child: IconButton(
-                icon: Icon(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
                   ExtendsIconFont.qrcode_scan,
                   color: Colors.white,
                 ),

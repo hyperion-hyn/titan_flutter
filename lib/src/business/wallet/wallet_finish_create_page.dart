@@ -74,6 +74,7 @@ class _FinishCreateState extends State<FinishCreatePage> {
                       Navigator.of(context).popUntil((r) => r.isFirst);
                     } else {
                       Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
+                      createWalletPopUtilName = null;
                     }
                   },
                   child: Padding(

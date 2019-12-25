@@ -5,7 +5,7 @@ import 'package:titan/src/business/login/reset_fund_password_page.dart';
 import 'package:titan/src/business/login/reset_password_page.dart';
 import 'package:titan/src/business/me/user_info_state.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 
 class PersonalSettingsPage extends StatefulWidget {
   @override

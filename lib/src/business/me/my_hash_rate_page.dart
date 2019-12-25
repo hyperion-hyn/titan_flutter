@@ -10,7 +10,7 @@ import 'package:titan/src/business/me/model/power_detail.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 
 class MyHashRatePage extends StatefulWidget {

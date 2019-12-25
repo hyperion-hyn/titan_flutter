@@ -4,16 +4,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/draggable_bottom_sheet_controller.dart';
 
 import 'bloc/bloc.dart';
 
 class SearchBar extends StatefulWidget {
-  final DraggableBottomSheetController bottomPanelController;
+//  final DraggableBottomSheetController bottomPanelController;
 
   final String searchText;
 
-  SearchBar({Key key, this.bottomPanelController, this.searchText}) : super(key: key);
+  SearchBar({Key key, this.searchText}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -34,35 +33,35 @@ class _SearchBarState extends State<SearchBar> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       selfHeight = UtilUi.getRenderObjectHeight(rootKey);
     });
-    widget.bottomPanelController.addListener(onDragUpdate);
+//    widget.bottomPanelController.addListener(onDragUpdate);
   }
 
-  void onDragUpdate() {
-    if (selfHeight > 0) {
-      var sheetY = widget.bottomPanelController.sheetY;
-      var threshold = 10;
-      var activeY = widget.bottomPanelController.anchorHeight - threshold;
-      if (sheetY < activeY) {
-        double top = sheetY - activeY;
-        if (top < -selfHeight) {
-          top = -selfHeight;
-        }
-        if (_selfTop != top) {
-          setState(() {
-            _selfTop = top;
-          });
-        }
-      } else if (_selfTop != 0) {
-        setState(() {
-          _selfTop = 0;
-        });
-      }
-    }
-  }
+//  void onDragUpdate() {
+//    if (selfHeight > 0) {
+//      var sheetY = widget.bottomPanelController.sheetY;
+//      var threshold = 10;
+//      var activeY = widget.bottomPanelController.anchorHeight - threshold;
+//      if (sheetY < activeY) {
+//        double top = sheetY - activeY;
+//        if (top < -selfHeight) {
+//          top = -selfHeight;
+//        }
+//        if (_selfTop != top) {
+//          setState(() {
+//            _selfTop = top;
+//          });
+//        }
+//      } else if (_selfTop != 0) {
+//        setState(() {
+//          _selfTop = 0;
+//        });
+//      }
+//    }
+//  }
 
   @override
   void dispose() {
-    widget.bottomPanelController.removeListener(onDragUpdate);
+//    widget.bottomPanelController.removeListener(onDragUpdate);
     super.dispose();
   }
 

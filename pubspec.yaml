@@ -32,7 +32,7 @@ dependencies:
   #https://pub.dev/packages/package_info
   package_info: ^0.4.0+4
   #https://github.com/baseflowit/flutter-permission-handler
-  permission_handler: '^3.1.0'
+  permission_handler: ^4.0.0
   #https://pub.dev/packages/event_bus#-installing-tab-
   event_bus: ^1.1.0
   #https://pub.dev/packages/fluttertoast
@@ -61,7 +61,7 @@ dependencies:
   #https://pub.dev/packages/logger#-installing-tab-
   logger: ^0.7.0+2
   #https://pub.dev/packages/flutter_statusbarcolor#-installing-tab-
-  flutter_statusbarcolor: 0.2.1
+  flutter_statusbarcolor: ^0.2.3
   #https://github.com/dart-lang/json_serializable
   #  json_annotation: ^2.4.0
   #https://pub.dev/packages/esys_flutter_share
@@ -101,6 +101,8 @@ dependencies:
   flutter_inappwebview: ^2.1.0+1
   #https://pub.flutter-io.cn/packages/flutter_bugly
   flutter_bugly: 0.2.7
+  android_intent: 0.3.4+8
+  app_settings: 3.0.0+1
 
   #https://pub.dev/packages/connectivity
   connectivity: ^0.4.5+3
@@ -115,9 +117,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  build_runner: ^1.6.7
-  json_serializable: ^3.1.0
-  floor_generator: ^0.7.0
+  build_runner: ^1.7.2
+  json_serializable: ^3.2.4
+  #  floor_generator: ^0.9.0
 
   #https://github.com/dart-lang/mockito
   mockito: ^4.0.0
@@ -200,6 +202,24 @@ flutter:
     - res/drawable/backup_notice_image.png
     - res/drawable/check_outline.png
     - res/drawable/hyn_wallet.png
+    - res/drawable/wifi_scan.png
+    - res/drawable/tile_scan.png
+    - res/drawable/magnetic_scan.png
+    - res/drawable/gps_scan.png
+    - res/drawable/bluetooth_scan.png
+    - res/drawable/basestation_scan.png
+    - res/drawable/wifi_status_scan.png
+    - res/drawable/tile_status_scan.png
+    - res/drawable/magnetic_status_scan.png
+    - res/drawable/gps_status_scan.png
+    - res/drawable/bluetooth_status_scan.png
+    - res/drawable/basestation_status_scan.png
+    - res/drawable/radar_scan.png
+    - res/drawable/data_contribution_wallet.png
+    - res/drawable/data_contribution_position.png
+    - res/drawable/data_contribution_signal.png
+    - res/drawable/data_contribution_check.png
+    - res/drawable/data_contribution_wallet_check.png
     - res/drawable/radar_scan.png
     - res/drawable/wifi.png
     - res/drawable/wifi_bg.png

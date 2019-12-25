@@ -5,7 +5,7 @@ import 'package:titan/src/business/me/model/user_level_info.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/presentation/extends_icon_font.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 
 class GradePage extends StatefulWidget {
   @override

@@ -7,6 +7,7 @@ import 'package:titan/src/domain/gaode_model.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/update.dart';
+import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 
 class Api {
   ///附近可以分享的位置
@@ -126,5 +127,23 @@ class Api {
               'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Mobile Safari/537.36',
           'Referer': 'https://m.dianping.com/',
         }));
+  }
+
+  ///collect signal
+  Future<bool> signalCollector(String platform, String address, SignalCollector signalCollector) async {
+    try {
+      var res = await HttpCore.instance.post("map-collector/signal/collector",
+          params: signalCollector.toJson(),
+          options: RequestOptions(headers: {"platform": platform, "UUID": address}, contentType: "application/json"));
+      var responseEntity = ResponseEntity<String>.fromJson(res, factory: EntityFactory((json) => json));
+      if (responseEntity.code == 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      logger.e(_);
+      return false;
+    }
   }
 }
