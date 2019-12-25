@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_finish_page.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
@@ -485,13 +486,20 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   Widget _mapView() {
+    var style;
+    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+      style = "https://cn.tile.map3.network/fiord-color.json";
+    } else {
+      style = "https://static.hyn.space/maptiles/fiord-color.json";
+    }
+
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(
         target: userPosition ?? LatLng(23.12076, 113.322058),
         zoom: defaultZoom,
       ),
-      styleString: 'https://cn.tile.map3.network/fiord-color.json',
+      styleString: style,
       onStyleLoaded: (mapboxController) {
         mapController = mapboxController;
         Future.delayed(Duration(milliseconds: 1000)).then((v) {

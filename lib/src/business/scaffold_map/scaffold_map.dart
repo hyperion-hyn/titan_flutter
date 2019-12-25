@@ -116,6 +116,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
     return LayoutBuilder(builder: (ctx, BoxConstraints boxConstraints) {
       return BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(builder: (context, state) {
         var languageCode = Localizations.localeOf(context).languageCode;
+        double maxHeight = boxConstraints.biggest.height;
 
         //---------------------------
         //set map
@@ -196,7 +197,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         bool draggable = false;
         SheetPanelBuilder panelBuilder;
         double collapsedHeight = 140;
-        double anchorHeight = boxConstraints.biggest.height * 0.55;
+        double anchorHeight = maxHeight * 0.55;
         double initHeight = 0;
 
         if (state is InitialScaffoldMapState) {
@@ -308,7 +309,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           initHeight = collapsedHeight;
         }
 
-        double maxHeight = boxConstraints.biggest.height;
         double panelMax = (maxHeight - topPadding) / maxHeight;
         double panelMin = collapsedHeight / maxHeight;
         double panelAnchor = anchorHeight / maxHeight;
