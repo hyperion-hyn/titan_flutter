@@ -372,6 +372,8 @@ class _ContributionState extends State<ContributionPage> {
                       setState(() {
                         _isOnPressed = true;
                       });
+
+                      _onPressed();
                     },
               color: HexColor("#CC941E"),
               disabledColor: Colors.grey,
