@@ -90,7 +90,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          "数据贡献",
+          S.of(context).data_contribute,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -154,7 +154,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 34),
               width: 194,
               child: Text(
-                '数据贡献需要有HYN地址，请先创建 或导入HYN钱包。',
+                S.of(context).data_contrebution_with_hyn_wallet_tips,
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -234,7 +234,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           height: 8,
           color: Colors.grey[200],
         ),
-        _buildItem('signal', '扫描附近信号数据', () async {
+        _buildItem('signal', S.of(context).scan_signal_item_title, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
 
@@ -248,9 +248,9 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', '添加地理位置信息', () {}),
+        _buildItem('position', S.of(context).add_poi_item_title, () {}),
         _divider(),
-        _buildItem('check', '校验地理位置信息', () {}),
+        _buildItem('check', S.of(context).check_poi_item_title, () {}),
         _divider(),
       ],
     );
@@ -304,7 +304,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                '切换地址',
+                S.of(context).switch_contribute_address,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: HexColor('#333333'),
@@ -356,7 +356,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Text(
-          '即将开放',
+          S.of(context).coming_soon,
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#AAAAAA')),
         ),
       );
@@ -403,7 +403,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         Map<PermissionGroup, PermissionStatus> permissions =
             await PermissionHandler().requestPermissions([PermissionGroup.phone]);
         if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
-          _showGoToOpenCommonAppSettingsDialog("申请权限", "采集信号数据，需要获取电话权限", () {
+          _showGoToOpenCommonAppSettingsDialog(
+              S.of(context).require_permission, S.of(context).collect_signal_require_telephone, () {
             PermissionHandler().openAppSettings();
           });
           return false;
@@ -414,13 +415,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     //3. 检查蓝牙权限
 
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
-    if (Platform.isIOS) {
-      print('[Contribution] --> ios_blue:${blueAvaiable}');
-    }
-    print('----------------ddddd');
-
     if (!blueAvaiable) {
-      _showGoToOpenCommonAppSettingsDialog("开启蓝牙", "请开启蓝牙", () {
+      _showGoToOpenCommonAppSettingsDialog(S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
         AppSettings.openBluetoothSettings();
       });
       return false;
@@ -430,7 +426,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     if (Platform.isAndroid) {
       bool wifiAvaiable = await TitanPlugin.wifiEnable();
       if (!wifiAvaiable) {
-        _showGoToOpenCommonAppSettingsDialog("开启WIFI", "请开启WIFI", () {
+        _showGoToOpenCommonAppSettingsDialog(S.of(context).open_wifi, S.of(context).please_open_wifi, () {
           AppSettings.openWIFISettings();
         });
         return false;
@@ -450,11 +446,11 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   content: Text(message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         goToSetting();
                         Navigator.pop(context);
@@ -467,11 +463,11 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   content: Text(message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         goToSetting();
                         Navigator.pop(context);
@@ -488,15 +484,15 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         builder: (BuildContext context) {
           return Platform.isIOS
               ? CupertinoAlertDialog(
-                  title: Text('申请定位授权'),
-                  content: Text('请你授权使用定位功能.'),
+                  title: Text(S.of(context).require_location),
+                  content: Text(S.of(context).require_location_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);
@@ -505,15 +501,15 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   ],
                 )
               : AlertDialog(
-                  title: Text('申请定位授权'),
-                  content: Text('请你授权使用定位功能.'),
+                  title: Text(S.of(context).require_location),
+                  content: Text(S.of(context).require_location_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);
@@ -530,15 +526,15 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         builder: (BuildContext context) {
           return Platform.isIOS
               ? CupertinoAlertDialog(
-                  title: Text('打开定位服务'),
-                  content: Text('定位服务已关闭，请开启'),
+                  title: Text(S.of(context).open_location_service),
+                  content: Text(S.of(context).open_location_service_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);
@@ -547,15 +543,15 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   ],
                 )
               : AlertDialog(
-                  title: Text('打开定位服务'),
-                  content: Text('定位服务已关闭，请开启'),
+                  title: Text(S.of(context).open_location_service),
+                  content: Text(S.of(context).open_location_service_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         AndroidIntent intent = new AndroidIntent(
                           action: 'action_location_source_settings',

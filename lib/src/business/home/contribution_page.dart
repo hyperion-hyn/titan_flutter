@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/sensor/bloc.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
@@ -31,8 +33,6 @@ class ContributionPage extends StatefulWidget {
 
 class _ContributionState extends State<ContributionPage> {
   MapboxMapController mapController;
-
-//  ScrollController scrollController = ScrollController();
 
   Api _api = Api();
 
@@ -59,6 +59,7 @@ class _ContributionState extends State<ContributionPage> {
   List<Map<dynamic, dynamic>> gpsList = List();
   List<Map<dynamic, dynamic>> cellularList = List();
   var _currentIndex = -1;
+  var _isFinishScan = false;
 
   @override
   void initState() {
@@ -176,7 +177,6 @@ class _ContributionState extends State<ContributionPage> {
   bool isVisibleToast = false;
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
-  bool _isFinishScan = false;
   var _currentScanType = SensorType.GNSS;
 
   void startScan() async {
@@ -192,7 +192,12 @@ class _ContributionState extends State<ContributionPage> {
     subscription = timerObservable.listen((t) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       var timeGap = nowTime - startTime;
-      progressStreamController.add(timeGap / duration.toDouble());
+      var progress = timeGap / duration.toDouble();
+      progressStreamController.add(progress);
+      //print("[contribution] --> progress:$progress");
+
+      _setCurrentScanType(progress);
+
       if (timeGap < duration) {
         //scan 30s
         if (nowTime - lastMoveTime > timeStep) {
@@ -201,6 +206,8 @@ class _ContributionState extends State<ContributionPage> {
         }
       } else {
         subscription?.cancel();
+        _isFinishScan = true;
+        sensorPlugin.stopScan();
       }
     });
     sensorPlugin.startScan();
@@ -238,28 +245,29 @@ class _ContributionState extends State<ContributionPage> {
     return _imageName;
   }
 
+
   String _getScanName() {
     var name = "WiFi";
 
     switch (_currentScanType) {
       case SensorType.WIFI:
-        name = "WiFi";
+        name = S.of(context).scan_name_wifi;
         break;
 
       case SensorType.CELLULAR:
-        name = "基站";
+        name = S.of(context).scan_name_cellular;
         break;
 
       case SensorType.BLUETOOTH:
-        name = "蓝牙";
+        name = S.of(context).scan_name_bluetooth;
         break;
 
       case SensorType.GPS:
-        name = "GPS";
+        name = S.of(context).scan_name_gps;
         break;
 
       case SensorType.GNSS:
-        name = "开始";
+        name = S.of(context).scan_name_start;
         break;
     }
 
@@ -321,106 +329,84 @@ class _ContributionState extends State<ContributionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: _showCloseDialog,
+            );
+          },
+        ),
         elevation: 0,
         title: Text(
-          "地图AI校验",
+          S.of(context).scan_name_title,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
-      body: Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.center,
-        children: <Widget>[
-          mapView(),
-          StreamBuilder<double>(
-            stream: progressStreamController.stream,
-            builder: (ctx, snap) {
-              if (snap?.data != null && snap.data >= 0) {
-                return RadarScan();
-              }
-              return Container(width: 0.0, height: 0.0);
-            },
-          ),
-          Positioned(
-            top: 21,
-            left: 14,
-            child: StreamBuilder(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                return _blocBuild(ctx, snap);
-              },
-            ),
-          ),
-          /*
-          Positioned(
-            top: 21,
-            right: 15,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    child: Text(
-                      '最大范围约：$maxMeter 米',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
-                    margin: EdgeInsets.only(
-                      top: 8,
-                    ),
-                    decoration: BoxDecoration(
-                        color: _themeColor,
-                        borderRadius: BorderRadius.circular(30)),
+      body: StreamBuilder<double>(
+        stream: progressStreamController.stream,
+        builder: (context, snapshot) {
+          return Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.center,
+            children: <Widget>[
+              mapView(),
+              RadarScan(),
+              Positioned(
+                top: 21,
+                left: 14,
+                child: _blocBuild(context, snapshot),
+              ),
+              /*
+              Positioned(
+                top: 21,
+                right: 15,
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          '最大范围约：$maxMeter 米',
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
+                        margin: EdgeInsets.only(
+                          top: 8,
+                        ),
+                        decoration: BoxDecoration(
+                            color: _themeColor,
+                            borderRadius: BorderRadius.circular(30)),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          */
-          Positioned(
-            child: SizedBox(
-              height: 3,
-              child: StreamBuilder<double>(
-                stream: progressStreamController.stream,
-                builder: (ctx, snap) {
-                  return LinearProgressIndicator(
+              */
+              Positioned(
+                child: SizedBox(
+                  height: 3,
+                  child: LinearProgressIndicator(
                     backgroundColor: _themeColor,
-                    value: snap?.data ?? 0.0,
+                    value: snapshot?.data ?? 0.0,
                     valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
-                  );
-                },
+                  ),
+                ),
+                top: 0,
+                left: 0,
+                right: 0,
               ),
-            ),
-            top: 0,
-            left: 0,
-            right: 0,
-          ),
-          StreamBuilder<double>(
-            stream: progressStreamController.stream,
-            builder: (ctx, snap) {
-              _setCurrentScanType(snap.data);
-
-              return Image.asset(
+              Image.asset(
                 'res/drawable/${_getImageName()}_scan.png',
                 scale: 2,
-              );
-            },
-          ),
-          Positioned(
-            bottom: 20,
-            child: StreamBuilder<double>(
-              stream: progressStreamController.stream,
-              builder: (ctx, snap) {
-                var snapValue = snap.data ?? 0.0001;
-
-                if (snapValue < 1.0) {
-                  return Container(width: 0.0, height: 0.0);
-                }
-                return Column(
+              ),
+              Positioned(
+                bottom: 20,
+                child: Column(
                   children: <Widget>[
                     RaisedButton(
                       shape: StadiumBorder(),
@@ -433,7 +419,7 @@ class _ContributionState extends State<ContributionPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
                         child: Text(
-                          '确认上传',
+                          S.of(context).scan_confirm_upload,
                           style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -444,9 +430,9 @@ class _ContributionState extends State<ContributionPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WebViewContainer(
-                                      initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
-                                      title: "信号上传协议",
-                                    )));
+                                  initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                                  title: S.of(context).scan_signal_upload_protocol,
+                                )));
                       },
                       child: SizedBox(
                           width: 200,
@@ -463,19 +449,27 @@ class _ContributionState extends State<ContributionPage> {
                                 },
                               ),
                               Text(
-                                "信号上传协议",
-                                style: TextStyle(color: Colors.white, fontSize: 11),
+                                S.of(context).scan_signal_upload_protocol,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  decoration: TextDecoration.combine([
+                                    TextDecoration.underline, // 下划线
+                                  ]),
+                                  decorationStyle: TextDecorationStyle.solid, // 装饰样式
+                                  decorationColor: Colors.white,
+                                ),
                               ),
                             ],
                             mainAxisAlignment: MainAxisAlignment.center,
                           )),
                     ),
                   ],
-                );
-              },
-            ),
-          ),
-        ],
+                ),
+              ),
+            ],
+          );
+        }
       ),
     );
   }
@@ -487,7 +481,7 @@ class _ContributionState extends State<ContributionPage> {
       child: Text(
         value,
         textAlign: TextAlign.left,
-        style: TextStyle(color: _isFinishScan ? Theme.of(context).primaryColor : HexColor("#FEFEFE"), fontSize: 14),
+        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
       ),
       margin: EdgeInsets.only(
         bottom: 6,
@@ -536,14 +530,12 @@ class _ContributionState extends State<ContributionPage> {
 
   Widget _blocBuild(BuildContext context, AsyncSnapshot snap) {
     var newDataList = List();
-    String signalName = '正在${_getScanName()}信号扫描';
+    String signalName = S.of(context).scan_ing_func(_getScanName());
 
     var snapValue = snap.data ?? 0.0001;
     //print('[Contribution] -->_blocBuild, snapValue:${snapValue}');
     if (snapValue > 1.0) {
-      signalName = "扫描任务已完成";
-      sensorPlugin.stopScan();
-      _isFinishScan = true;
+      signalName = S.of(context).scan_finish;
     }
     newDataList.add(signalName);
 
@@ -558,7 +550,7 @@ class _ContributionState extends State<ContributionPage> {
     }
     var values = list[_currentIndex];
     var sensorType = values["sensorType"] as int;
-    //print('[contribution] --> scanType: ${_currentScanType}, count:${list.length}, values: ${values}');
+    print('[contribution] --> scanType: ${_getScanName()}, count:${list.length}, values: ${values}');
 
     switch (sensorType) {
       case SensorType.WIFI:
@@ -752,7 +744,7 @@ class _ContributionState extends State<ContributionPage> {
     SignalCollector _signalCollector = SignalCollector(_latlng, collectData);
     WalletVo _walletVo = await _walletService.getDefaultWalletVo();
     if (_walletVo == null) {
-      Fluttertoast.showToast(msg: "HYN wallet 为空");
+      Fluttertoast.showToast(msg: S.of(context).scan_hyn_is_empty);
       return;
     }
 
@@ -760,6 +752,51 @@ class _ContributionState extends State<ContributionPage> {
     var platform = Platform.isIOS ? "iOS" : "android";
 
     await _api.signalCollector(platform, address, _signalCollector);
+  }
+
+  void _showCloseDialog() {
+    if (_isFinishScan) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  content: Text(S.of(context).scan_exit_tips),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(S.of(context).cancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text(S.of(context).confirm),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  content: Text(S.of(context).scan_exit_tips),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(S.of(context).cancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text(S.of(context).confirm),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+        });
   }
 }
 

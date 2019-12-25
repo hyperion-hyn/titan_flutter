@@ -13,9 +13,11 @@ class BluetoothSensor: NSObject, Sensor {
     
     var onSensorChange: OnSensorValueChangeListener!
     
-    var _bluetoothManager: CBCentralManager!
+    var bluetoothManager: CBCentralManager!
 
     var type = SensorType.BLUETOOTH
+    
+    var isEnable: Bool = false
     
     func initialize() {
         let queue = DispatchQueue(label: "centralQueue")
@@ -23,33 +25,33 @@ class BluetoothSensor: NSObject, Sensor {
             CBCentralManagerOptionShowPowerAlertKey: true,
             CBCentralManagerOptionRestoreIdentifierKey: "unique identifier",
         ]
-        _bluetoothManager = CBCentralManager(delegate: self, queue: queue, options: options)
+        bluetoothManager = CBCentralManager(delegate: self, queue: queue, options: options)
     }
     
     func startScan() {
-        guard _bluetoothManager.state == .poweredOn else {
-            return
-        }
+//        guard bluetoothManager.state == .poweredOn else {
+//            return
+//        }
         
-        guard !_bluetoothManager.isScanning else {
+        guard !bluetoothManager.isScanning else {
             return
         }
         let options: [String: Any] = [
             CBCentralManagerOptionShowPowerAlertKey: true,
             CBCentralManagerScanOptionAllowDuplicatesKey: false,
         ]
-        _bluetoothManager.scanForPeripherals(withServices: nil, options: options)
+        bluetoothManager.scanForPeripherals(withServices: nil, options: options)
     }
     
     func stopScan() {
-        guard _bluetoothManager.state == .poweredOn else {
-            return
-        }
-        _bluetoothManager.stopScan()
+//        guard bluetoothManager.state == .poweredOn else {
+//            return
+//        }
+        bluetoothManager.stopScan()
     }
     
     func destory() {
-        _bluetoothManager = nil
+        bluetoothManager = nil
     }
     
 }
@@ -58,6 +60,8 @@ class BluetoothSensor: NSObject, Sensor {
 extension BluetoothSensor: CBCentralManagerDelegate {
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        isEnable = central.state == .poweredOn;
+        
         if central.state == .poweredOn {
             print("【蓝牙】蓝牙设备开着，✅")
             

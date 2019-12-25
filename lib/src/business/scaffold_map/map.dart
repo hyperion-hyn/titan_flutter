@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
@@ -487,15 +488,15 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         builder: (BuildContext context) {
           return Platform.isIOS
               ? CupertinoAlertDialog(
-                  title: Text('申请定位授权'),
-                  content: Text('请你授权使用定位功能.'),
+                  title: Text(S.of(context).require_location),
+                  content: Text(S.of(context).require_location_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);
@@ -504,15 +505,15 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                   ],
                 )
               : AlertDialog(
-                  title: Text('申请定位授权'),
-                  content: Text('请你授权使用定位功能.'),
+                  title: Text(S.of(context).require_location),
+                  content: Text(S.of(context).require_location_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);
@@ -529,15 +530,15 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         builder: (BuildContext context) {
           return Platform.isIOS
               ? CupertinoAlertDialog(
-                  title: Text('打开定位服务'),
-                  content: Text('定位服务已关闭，请开启'),
+                  title: Text(S.of(context).open_location_service),
+                  content: Text(S.of(context).open_location_service_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);
@@ -546,15 +547,15 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                   ],
                 )
               : AlertDialog(
-                  title: Text('打开定位服务'),
-                  content: Text('定位服务已关闭，请开启'),
+                  title: Text(S.of(context).open_location_service),
+                  content: Text(S.of(context).open_location_service_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text('取消'),
+                      child: Text(S.of(context).cancel),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text('设置'),
+                      child: Text(S.of(context).setting),
                       onPressed: () {
                         AndroidIntent intent = new AndroidIntent(
                           action: 'action_location_source_settings',
