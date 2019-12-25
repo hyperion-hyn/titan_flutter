@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //    _loadAppArea();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
+//      bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
       if (isShowSetAppAreaDialog == false) {
         _loadAppArea();
       }
