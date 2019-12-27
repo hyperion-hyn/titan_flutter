@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
@@ -93,62 +94,36 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
     return Column(
       children: <Widget>[
         Expanded(child: _buildWalletView(context)),
-//        Spacer(),
         InkWell(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MarketPricePage()));
-          },
           child: Container(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(8),
             color: Color(0xFFF5F5F5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).hyn_market,
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                    ),
-                    Spacer(),
-                    Text(
-                      S.of(context).view_all,
-                      style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Color(0xFF9B9B9B),
-                    )
-                  ],
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${DOUBLE_NUMBER_FORMAT.format(appLocale.languageCode == "zh" ? marketPriceResponse.avgCNYPrice : marketPriceResponse.avgPrice)} ${S.of(context).hynPriceUnit}',
-                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text(
-                            S.of(context).hyn_price,
-                            style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14),
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Image.asset(
+                          'res/drawable/ic_hyperion.png',
+                          width: 20,
+                          height: 20,
+                        ),
                       ),
+                      Text(
+                        S.of(context).hyn_price,
+                        style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14),
+                      ),
+                      //Container(width: 100,),
                       Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            marketPriceResponse.total.toString(),
-                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text(S.of(context).online_exchange, style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14)),
-                        ],
-                      )
+                      Text(
+                        '${DOUBLE_NUMBER_FORMAT.format(appLocale.languageCode == "zh" ? marketPriceResponse.avgCNYPrice : marketPriceResponse.avgPrice)} ${S.of(context).hynPriceUnit}',
+                        style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
                     ],
                   ),
                 )
