@@ -9,7 +9,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
+import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 import '../wallet/wallet_create_new_account_page.dart';
@@ -156,7 +158,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               width: 194,
               child: Text(
                 S.of(context).data_contrebution_with_hyn_wallet_tips,
-                maxLines: 2,
+//                maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
@@ -169,7 +171,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
 //                height: 38,
-//                width: 152,
+                width: 240,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
@@ -182,6 +184,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
                         S.of(context).create_wallet,
+                        textAlign: TextAlign.center,
                         style:
                             TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
@@ -195,7 +198,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
 //                height: 38,
-//                width: 152,
+                width: 240,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
@@ -240,10 +243,12 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           print('[Permission] -->status:$status');
 
           if (status) {
+            var latlng =
+                await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ContributionPage(),
+                builder: (context) => ContributionPage(initLocation: latlng),
               ),
             );
           }
@@ -434,8 +439,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         });
         return false;
       }
-    }
-    else {
+    } else {
       if (!blueAvaiable) {
         return false;
       }
@@ -549,11 +553,17 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   content: Text(S.of(context).open_location_service_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(S.of(context).cancel, style: TextStyle(color: Colors.blue),),
+                      child: Text(
+                        S.of(context).cancel,
+                        style: TextStyle(color: Colors.blue),
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text(S.of(context).setting, style: TextStyle(color: Colors.blue),),
+                      child: Text(
+                        S.of(context).setting,
+                        style: TextStyle(color: Colors.blue),
+                      ),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);
