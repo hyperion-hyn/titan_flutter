@@ -8,7 +8,6 @@
 .buildlog/
 .history
 .svn/
-apks
 
 # IntelliJ related
 *.iml
@@ -92,3 +91,5 @@ flutter_export_environment.sh
 _mode.md
 .apk
 ios/Flutter/Flutter.podspec
+
+vendor
