@@ -187,8 +187,8 @@ class S implements WidgetsLocalizations {
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
-  String get please_open_bluetooth => "Please turn on Bluetooth";
-  String get please_open_wifi => "Please turn on WIFI";
+  String get please_open_bluetooth => "Bluetooth beacons can effectively assist positioning, please turn on the device Bluetooth";
+  String get please_open_wifi => "WIFI signal can assist triangle positioning, please turn on the device WIFI";
   String get please_selecte_app_area => "Please set the region of the map";
   String get please_waiting => "Please Wait";
   String get police_security_station => "Police Station";
@@ -613,7 +613,7 @@ class $ko extends S {
   @override
   String get wallet_name => "지갑 명칭";
   @override
-  String get please_open_wifi => "WIFI를 켜세요.";
+  String get please_open_wifi => "WIFI 신호는 삼각형 위치 결정을 지원할 수 있습니다. 장치를 켜십시오.";
   @override
   String get document_optimization => "문서최적화중입니다.";
   @override
@@ -703,7 +703,7 @@ class $ko extends S {
   @override
   String get receiver_encrypted_address => "공유키";
   @override
-  String get please_open_bluetooth => "블루투스를 여세요.";
+  String get please_open_bluetooth => "블루투스 비콘은 효과적으로 포지셔닝을 지원할 수 있습니다. 블루투스를 켜십시오.";
   @override
   String get kais_talk => "케이시 스토리";
   @override
@@ -1209,7 +1209,7 @@ class $zh_CN extends S {
   @override
   String get wallet_name => "钱包名称";
   @override
-  String get please_open_wifi => "请开启WIFI";
+  String get please_open_wifi => "WIFI信号可以辅助三角定位，请开启设备WIFI";
   @override
   String get document_optimization => "文档优化中...";
   @override
@@ -1299,7 +1299,7 @@ class $zh_CN extends S {
   @override
   String get receiver_encrypted_address => "接收者加密地址（公钥）";
   @override
-  String get please_open_bluetooth => "请开启蓝牙";
+  String get please_open_bluetooth => "蓝牙信标可以有效辅助定位，请开启设备蓝牙";
   @override
   String get kais_talk => "凯氏物语";
   @override
