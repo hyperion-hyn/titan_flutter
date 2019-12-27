@@ -158,7 +158,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               width: 194,
               child: Text(
                 S.of(context).data_contrebution_with_hyn_wallet_tips,
-                maxLines: 2,
+//                maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
