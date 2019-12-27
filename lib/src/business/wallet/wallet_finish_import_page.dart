@@ -85,6 +85,8 @@ class _FinishImportState extends State<FinishImportPage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () async {
+                      var walletVo = await _walletService.buildWalletVo(widget.wallet);
+                      await _walletService.saveDefaultWalletVo(walletVo);
                       await _walletService.saveDefaultWalletFileName(widget.wallet.keystore.fileName);
                       if (createWalletPopUtilName == null) {
                         eventBus.fire(ReScanWalletEvent());
