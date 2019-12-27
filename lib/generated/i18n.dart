@@ -166,8 +166,8 @@ class S implements WidgetsLocalizations {
   String get get_power => "Get HashRate";
   String get get_powers => "Get HashRate";
   String get global_embassies => "Global Embassies";
-  String get global_map_server_nodes => "Global Map Service Nodes";
-  String get global_nodes => "Global Nodes";
+  String get global_map_server_nodes => "View global data updates";
+  String get global_nodes => "Dashboard";
   String get grade => "Level";
   String get hashrate => "HashRate";
   String get home_page => "Home";
@@ -232,7 +232,7 @@ class S implements WidgetsLocalizations {
   String get mainland_china => "Mainland China";
   String get mall => "Mall";
   String get manually_refresh => "Refresh Manually";
-  String get map3_global_nodes => "Map3 Global Nodes";
+  String get map3_global_nodes => "Dashboard";
   String get map3_node_introduction => "Mp3 Node";
   String get map_ai_verificate => "Map AI verification";
   String get map_dmap => "DMap";
@@ -322,8 +322,8 @@ class S implements WidgetsLocalizations {
   String get please_input_wallet_password_hint => "Please enter wallet password";
   String get please_input_withdrawal_quantity => "Please input withdrawal amount ";
   String get please_mortgage => "Please stake";
-  String get please_open_bluetooth => "Please turn on Bluetooth";
-  String get please_open_wifi => "Please turn on WIFI";
+  String get please_open_bluetooth => "Bluetooth beacons can effectively assist positioning, please turn on the device Bluetooth";
+  String get please_open_wifi => "WIFI signal can assist triangle positioning, please turn on the device WIFI";
   String get please_selecte_app_area => "Please set the region of the map";
   String get please_waiting => "Please Wait";
   String get police_security_station => "Police Station";
@@ -713,7 +713,7 @@ class $ko extends S {
   @override
   String get medium => "중간";
   @override
-  String get map3_global_nodes => "map3글로벌 노드";
+  String get map3_global_nodes => "계기반";
   @override
   String get paste => "붙히기";
   @override
@@ -877,7 +877,7 @@ class $ko extends S {
   @override
   String get invitation_code => "초대코드번호";
   @override
-  String get please_open_bluetooth => "블루투스를 여세요.";
+  String get please_open_bluetooth => "블루투스 비콘은 효과적으로 포지셔닝을 지원할 수 있습니다. 블루투스를 켜십시오.";
   @override
   String get kais_talk => "케이시 스토리";
   @override
@@ -1103,7 +1103,7 @@ class $ko extends S {
   @override
   String get refresh_public_key_minutes_tips => "%d분후 자동으로 새로 고침합니다.";
   @override
-  String get global_map_server_nodes => "글로벌 지도 서비스 노드";
+  String get global_map_server_nodes => "실시간 글로벌 데이터 업데이트보기";
   @override
   String get input_password_again_hint => "비밀번호를 다시 한번 입력해주십시오.";
   @override
@@ -1239,7 +1239,7 @@ class $ko extends S {
   @override
   String get wallet_name => "지갑 명칭";
   @override
-  String get please_open_wifi => "WIFI를 켜세요.";
+  String get please_open_wifi => "WIFI 신호는 삼각형 위치 결정을 지원할 수 있습니다. 장치를 켜십시오.";
   @override
   String get please_mortgage => "저당을 설정하여 주십시요";
   @override
@@ -1407,7 +1407,7 @@ class $ko extends S {
   @override
   String get telegram_operator => "텔레그람 운영자";
   @override
-  String get global_nodes => "글로벌 노드";
+  String get global_nodes => "계기반";
   @override
   String get open_wifi => "WIFI 시작하기";
   @override
@@ -1745,7 +1745,7 @@ class $zh_CN extends S {
   @override
   String get medium => "Medium";
   @override
-  String get map3_global_nodes => "map3全球节点";
+  String get map3_global_nodes => "数据展示";
   @override
   String get paste => "粘贴";
   @override
@@ -1909,7 +1909,7 @@ class $zh_CN extends S {
   @override
   String get invitation_code => "邀请码";
   @override
-  String get please_open_bluetooth => "请开启蓝牙";
+  String get please_open_bluetooth => "蓝牙信标可以有效辅助定位，请开启设备蓝牙";
   @override
   String get kais_talk => "凯氏物语";
   @override
@@ -2135,7 +2135,7 @@ class $zh_CN extends S {
   @override
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override
-  String get global_map_server_nodes => "全球地图服务节点";
+  String get global_map_server_nodes => "实时查看全球数据更新情况";
   @override
   String get input_password_again_hint => "请再次输入密码";
   @override
@@ -2271,7 +2271,7 @@ class $zh_CN extends S {
   @override
   String get wallet_name => "钱包名称";
   @override
-  String get please_open_wifi => "请开启WIFI";
+  String get please_open_wifi => "WIFI信号可以辅助三角定位，请开启设备WIFI";
   @override
   String get please_mortgage => "请抵押";
   @override
@@ -2439,7 +2439,7 @@ class $zh_CN extends S {
   @override
   String get telegram_operator => "Telegram Operator";
   @override
-  String get global_nodes => "全球节点";
+  String get global_nodes => "数据展示";
   @override
   String get open_wifi => "开启WIFI";
   @override
