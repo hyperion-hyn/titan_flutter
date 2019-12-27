@@ -34,7 +34,7 @@ class SensorType {
   }
 
   static String getScanName(int type) {
-    var name = "WiFi";
+    var name = '';
 
     switch (type) {
       case WIFI:
@@ -54,7 +54,8 @@ class SensorType {
         break;
 
       case GNSS:
-        name = S.of(globalContext).scan_name_start;
+//        name = S.of(globalContext).scan_name_start;
+        name = '';
         break;
     }
 

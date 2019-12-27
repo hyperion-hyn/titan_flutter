@@ -25,7 +25,13 @@ import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
 import 'contribution_finish_page.dart';
 
+const _default_map_location = LatLng(23.106541, 113.324827);
+
 class ContributionPage extends StatefulWidget {
+  final LatLng initLocation;
+
+  ContributionPage({this.initLocation = _default_map_location});
+
   @override
   State<StatefulWidget> createState() {
     return _ContributionState();
@@ -70,16 +76,16 @@ class _ContributionState extends State<ContributionPage> {
   bool isVisibleWiFi = false;
   bool isVisibleToast = false;
   var _isAcceptSignalProtocol = true;
-  var _themeColor = HexColor("#0F95B0");
   var _currentScanType = SensorType.GNSS;
 
   @override
   void initState() {
     super.initState();
 
+    userPosition = widget.initLocation;
     sensorPlugin = SensorPlugin();
     initSensorChangeCallBack();
-    initPosition();
+    initScanner();
   }
 
   @override
@@ -115,7 +121,6 @@ class _ContributionState extends State<ContributionPage> {
       case SensorType.WIFI:
         {
           //print('[contribution] -->_blocBuild___wifi');
-
           if (Platform.isIOS) {
           } else {
             ScanUtils.addValuesToList(values, wifiList, "bssid");
@@ -134,6 +139,11 @@ class _ContributionState extends State<ContributionPage> {
         }
       case SensorType.GPS:
         {
+          var newLatLng = LatLng(values['lat'], values['lon']);
+          if (userPosition.distanceTo(newLatLng) > 5) {
+            userPosition = newLatLng;
+            mapController?.animateCamera(CameraUpdate.newLatLng(userPosition));
+          }
           gpsList.add(values);
 
           break;
@@ -155,9 +165,9 @@ class _ContributionState extends State<ContributionPage> {
     }
   }
 
-  void initPosition() async {
-    userPosition =
-        await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
+  void initScanner() async {
+//    userPosition =
+//        await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
     await sensorPlugin.init();
   }
 
@@ -170,9 +180,9 @@ class _ContributionState extends State<ContributionPage> {
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
 
-    if (userPosition != null) {
-      mapController.animateCamera(CameraUpdate.newLatLng(userPosition));
-    }
+//    if (userPosition != null) {
+//      mapController.animateCamera(CameraUpdate.newLatLng(userPosition));
+//    }
 
     subscription = timerObservable.listen((t) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
@@ -228,23 +238,23 @@ class _ContributionState extends State<ContributionPage> {
       item = 1.0 / 3.0;
 
       if (value > 0 && value < 1.0 * item) {
-        _currentScanType = SensorType.CELLULAR;
+        _currentScanType = SensorType.GPS;
       } else if (value >= 1.0 * item && value < 2.0 * item) {
         _currentScanType = SensorType.BLUETOOTH;
       } else if (value >= 2.0 * item && value < 1.0) {
-        _currentScanType = SensorType.GPS;
+        _currentScanType = SensorType.CELLULAR;
       }
     } else {
       item = 1.0 / 4.0;
 
       if (value > 0 && value < 1.0 * item) {
-        _currentScanType = SensorType.WIFI;
+        _currentScanType = SensorType.GPS;
       } else if (value >= 1.0 * item && value < 2.0 * item) {
         _currentScanType = SensorType.CELLULAR;
       } else if (value >= 2.0 * item && value < 3.0 * item) {
         _currentScanType = SensorType.BLUETOOTH;
       } else if (value >= 3.0 * item && value < 1.0) {
-        _currentScanType = SensorType.GPS;
+        _currentScanType = SensorType.WIFI;
       }
     }
   }
@@ -323,7 +333,7 @@ class _ContributionState extends State<ContributionPage> {
                     child: SizedBox(
                       height: 3,
                       child: LinearProgressIndicator(
-                        backgroundColor: _themeColor,
+                        backgroundColor: Theme.of(context).primaryColor,
                         value: snapshot?.data ?? 0.0,
                         valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
                       ),
@@ -402,7 +412,7 @@ class _ContributionState extends State<ContributionPage> {
                     children: <Widget>[
                       Checkbox(
                         value: _isAcceptSignalProtocol,
-                        activeColor: _themeColor, //选中时的颜色
+                        activeColor: Theme.of(context).accentColor, //选中时的颜色
                         onChanged: (value) {
                           setState(() {
                             _isAcceptSignalProtocol = value;
@@ -496,7 +506,7 @@ class _ContributionState extends State<ContributionPage> {
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(
-        target: userPosition ?? LatLng(23.12076, 113.322058),
+        target: userPosition,
         zoom: defaultZoom,
       ),
       styleString: style,
@@ -506,7 +516,7 @@ class _ContributionState extends State<ContributionPage> {
           startScan();
         });
       },
-      myLocationTrackingMode: MyLocationTrackingMode.None,
+      myLocationTrackingMode: MyLocationTrackingMode.Tracking,
       rotateGesturesEnabled: false,
       tiltGesturesEnabled: false,
       enableLogo: false,
@@ -517,7 +527,7 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   Future<bool> uploadCollectData() async {
-    var uploadPosition = userPosition ?? LatLng(23.12076, 113.322058);
+    var uploadPosition = userPosition;
     contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(uploadPosition.latitude, uploadPosition.longitude);
     SignalCollector _signalCollector = SignalCollector(_latlng, collectData);
     WalletVo _walletVo = await _walletService.getDefaultWalletVo();
