@@ -111,8 +111,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
 //          return _listView();
         } else if (state is ShowWalletState) {
           currentWalletVo = state.wallet;
-          return _walletTipsView();
-//          return _listView();
+//          return _walletTipsView();
+          return _listView();
         } else if (state is ScanWalletLoadingState) {
           return _buildLoading(context);
         } else {
