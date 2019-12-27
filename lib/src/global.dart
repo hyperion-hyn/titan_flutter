@@ -43,7 +43,7 @@ String get QUOTE_UNIT_SYMBOL {
 
 WalletVo currentWalletVo;
 Locale appLocale;
-
+Locale defaultLocale = Locale("zh","CN");
 var appLanguageCode = "en";
 
 BuildContext globalContext;

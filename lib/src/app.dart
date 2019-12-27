@@ -47,6 +47,7 @@ class _AppState extends State<App> {
     var languageCode = prefs.getString(PrefsKey.appLanguageCode);
     var countryCode = prefs.getString(PrefsKey.appCountryCode);
     if (languageCode == null) {
+      localeChange(defaultLocale);
       return;
     }
     localeChange(Locale(languageCode, countryCode));
@@ -54,6 +55,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocProvider(
       builder: (context) => AppBloc(),
       child: RefreshConfiguration(
@@ -69,7 +71,7 @@ class _AppState extends State<App> {
         hideFooterWhenNotFull: true,
         enableBallisticLoad: true,
         child: MaterialApp(
-          locale: appLocale == null ? null : appLocale,
+          locale: appLocale == null ? defaultLocale : appLocale,
           debugShowCheckedModeBanner: false,
           key: Keys.materialAppKey,
           title: 'Titan',
