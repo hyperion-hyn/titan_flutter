@@ -49,8 +49,9 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   _mnemonicController.text = mnemonicWords;
                 }
               },
-              child: IconButton(
-                icon: Icon(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
                   ExtendsIconFont.qrcode_scan,
                   color: Colors.white,
                 ),

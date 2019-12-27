@@ -2,7 +2,7 @@
 //  SensorManager.swift
 //  Runner
 //
-//  Created by 蔡景松 on 2019/12/20.
+//  Created by naru.j on 2019/12/20.
 //  Copyright © 2019 The Chromium Authors. All rights reserved.
 //
 
@@ -16,7 +16,7 @@ class SensorManager {
     func initialize() {
         registerSensorList.removeAll()
 
-        let blueToothSensor = BluetoothSensor();
+        let blueToothSensor = BluetoothSensor.share;
         blueToothSensor.onSensorChange = onSensorChange
         registerSensorList.append(blueToothSensor)
         
@@ -37,12 +37,14 @@ class SensorManager {
         for sensor in registerSensorList {
             sensor.startScan()
         }
+        //print("[ios] --> startScan")
     }
 
     func stopScan() {
         for sensor in registerSensorList {
             sensor.stopScan()
         }
+        //print("[ios] --> stopScan")
     }
 
     func destory() {
@@ -50,5 +52,7 @@ class SensorManager {
             sensor.destory();
         }
         registerSensorList.removeAll()
+        
+        //print("[ios] --> destory")
     }
 }

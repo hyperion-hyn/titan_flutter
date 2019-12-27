@@ -7,6 +7,7 @@ import 'package:flutter/services.dart' show PlatformException, SystemChrome, Sys
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
@@ -68,7 +69,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //    _loadAppArea();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
+//      bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
       if (isShowSetAppAreaDialog == false) {
         _loadAppArea();
       }
@@ -248,36 +249,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget buildMainSheetPanel(home.HomeState state) {
     return myWidget.DraggableScrollableActuator(
-      child: Builder(
-        builder: (BuildContext context) {
-          return SizedBox.expand(
-            child: LayoutBuilder(
-              builder: (ctx, BoxConstraints boxConstraints) {
-                var maxHeight = boxConstraints.biggest.height;
-                double anchorSize = 0.5;
-                double minChildSize = 88.0 / maxHeight;
-                double initSize = 280.0 / maxHeight;
-                double maxChildSize = (maxHeight - MediaQuery.of(ctx).padding.top) / maxHeight;
-                return NotificationListener<myWidget.DraggableScrollableNotification>(
-                  onNotification: (notification) {
-                    if (state is home.InitialHomeState) {
-                      updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
-                    }
-                    return true;
-                  },
-                  child: myWidget.DraggableScrollableSheet(
-                    key: panelKey,
-                    maxChildSize: maxChildSize,
-                    expand: false,
-                    minChildSize: minChildSize,
-                    anchorSize: anchorSize,
-                    initialChildSize: initSize,
-                    draggable: true,
-                    builder: (BuildContext ctx, ScrollController scrollController) {
-                      return HomePanel(scrollController: scrollController);
-                    },
-                  ),
-                );
+      child: LayoutBuilder(
+        builder: (ctx, BoxConstraints boxConstraints) {
+          double maxHeight = boxConstraints.biggest.height;
+          double anchorSize = 0.5;
+          double minChildSize = 88.0 / maxHeight;
+          double initSize = 280.0 / maxHeight;
+          double maxChildSize = (maxHeight - MediaQuery.of(ctx).padding.top) / maxHeight;
+//              if (maxHeight == 0.0) {
+//                return Container();
+//              }
+//              Fluttertoast.showToast(msg: 'xxx height $maxHeight');
+          return NotificationListener<myWidget.DraggableScrollableNotification>(
+            onNotification: (notification) {
+              if (state is home.InitialHomeState) {
+                updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
+              }
+              return true;
+            },
+            child: myWidget.DraggableScrollableSheet(
+              key: panelKey,
+              maxChildSize: maxChildSize,
+              expand: true,
+              minChildSize: minChildSize,
+              anchorSize: anchorSize,
+              initialChildSize: initSize,
+              draggable: true,
+              builder: (BuildContext ctx, ScrollController scrollController) {
+                return HomePanel(scrollController: scrollController);
               },
             ),
           );

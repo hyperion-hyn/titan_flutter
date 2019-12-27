@@ -52,7 +52,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
 
   @override
   void postFrameCallBackAfterInitState() async {
-    await _walletService.updateAccountVo(widget.walletAccountVo);
+//    updateAccountBalace();
     loadDataBloc.add(LoadingEvent());
   }
 
@@ -329,35 +329,40 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                     size: 24,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        title,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Text(
-                          account,
-                          style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              title,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Spacer(),
+                            Text(
+                              amountText,
+                              style: TextStyle(color: amountColor, fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        amountText,
-                        style: TextStyle(color: amountColor, fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Text(
+                                account,
+                                style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -375,7 +380,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
 
   @override
   Future<List<dynamic>> onLoadData(int page) async {
-    await _walletService.updateAccountVo(widget.walletAccountVo);
+    updateAccountBalace();
     var retList = [];
     if (page == getStartPage()) {
       retList.add('header');
@@ -390,6 +395,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     }
     retList.addAll(trasferList);
     return retList;
+  }
+
+  Future<void> updateAccountBalace() async {
+    await _walletService.updateAccountVo(widget.walletAccountVo);
+    setState(() {});
   }
 }
 

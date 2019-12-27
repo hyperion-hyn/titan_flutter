@@ -27,8 +27,6 @@ import CoreBluetooth
 
     private lazy var encrytionPlugin: EncrytionPluginInterface = EncrytionPluginInterface()
 
-    let blueSensor = BluetoothSensor()
-
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -46,15 +44,19 @@ import CoreBluetooth
             let encrytion = self.encrytionPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
             if(!wallet && !encrytion) {
                 switch methodCall.method {
-//                case "wifiEnable":
-//                    result(true)
-//                    break
-                    
+
                 case "bluetoothEnable":
-                    self.blueSensor.initialize()
-                    //self.blueSensor.startScan()
-                    let isEnable = self.blueSensor.isEnable
-                    result(isEnable)
+                    BluetoothSensor.share.initialize()
+                    
+                    var isEnable = BluetoothSensor.share.isEnable
+                    if !isEnable {
+                        Thread.sleep(forTimeInterval: 0.667)
+                        isEnable = BluetoothSensor.share.isEnable
+                        result(isEnable)
+                    } else {
+                        result(true)
+                    }
+
                     break
                     
                 default:
@@ -70,8 +72,6 @@ import CoreBluetooth
                 result(FlutterMethodNotImplemented)
             }
         }
-        
-//        blueSensor.initialize()
     }
     
     

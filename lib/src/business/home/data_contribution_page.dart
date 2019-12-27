@@ -148,6 +148,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                 'res/drawable/data_contribution_wallet_check.png',
                 width: 110,
                 height: 108,
+                color: Theme.of(context).primaryColor,
               ),
             ),
             Container(
@@ -272,13 +273,24 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.fromLTRB(15, 4, 10, 0),
-                child: Image.asset(
-                  'res/drawable/data_contribution_wallet.png',
-                  width: 40,
-                  height: 40,
-                )),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 12),
+              alignment: Alignment.center,
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+              child: Stack(
+                children: <Widget>[
+                  Align(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        "res/drawable/hyn_wallet.png",
+                        width: 20,
+                        height: 20,
+                      )),
+                ],
+              ),
+            ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -415,11 +427,18 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     //3. 检查蓝牙权限
 
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
-    if (!blueAvaiable) {
-      _showGoToOpenCommonAppSettingsDialog(S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
-        AppSettings.openBluetoothSettings();
-      });
-      return false;
+    if (Platform.isAndroid) {
+      if (!blueAvaiable) {
+        _showGoToOpenCommonAppSettingsDialog(S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
+          AppSettings.openBluetoothSettings();
+        });
+        return false;
+      }
+    }
+    else {
+      if (!blueAvaiable) {
+        return false;
+      }
     }
 
     //4. 安卓增加判断wifi
@@ -530,11 +549,11 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   content: Text(S.of(context).open_location_service_message),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(S.of(context).cancel),
+                      child: Text(S.of(context).cancel, style: TextStyle(color: Colors.blue),),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text(S.of(context).setting),
+                      child: Text(S.of(context).setting, style: TextStyle(color: Colors.blue),),
                       onPressed: () {
                         PermissionHandler().openAppSettings();
                         Navigator.pop(context);

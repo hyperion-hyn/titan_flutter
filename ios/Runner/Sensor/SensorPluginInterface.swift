@@ -2,7 +2,7 @@
 //  SensorPluginInterface.swift
 //  Runner
 //
-//  Created by 蔡景松 on 2019/12/20.
+//  Created by naru.j on 2019/12/20.
 //  Copyright © 2019 The Chromium Authors. All rights reserved.
 //
 
@@ -26,6 +26,8 @@ class SensorPluginInterface {
                     guard let channel = self.sensorChannel else { return }
                     var arguments = values
                     arguments["sensorType"] = sensorType
+                    //print("sensor#valueChange, values:\(values)")
+
                     channel.invokeMethod("sensor#valueChange", arguments: arguments)
                 }
                 sensorManager.initialize()
@@ -35,19 +37,19 @@ class SensorPluginInterface {
             case "sensor#startScan":
                 
                 sensorManager.startScan()
-                print("sensor#startScan")
+                //print("sensor#startScan")
                 return true
             
             case "sensor#stopScan":
                 
                 sensorManager.stopScan()
-                print("sensor#stopScan")
+                //print("sensor#stopScan")
                 return true
             
             case "sensor#destory":
                 
                 sensorManager.destory()
-                print("sensor#destory")
+                //print("sensor#destory")
                 return true
             
             default:

@@ -81,22 +81,24 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   void initState() {
     super.initState();
     _mapPositionAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 200),
       value: 1.0,
       vsync: this,
     );
 
-    _updateMapPositionSubject.debounceTime(Duration(milliseconds: 100)).listen((lastValue) {
-      _mapPositionAnimationController.animateTo(lastValue, curve: Curves.linearToEaseOut);
-//      _mapPositionAnimationController.value = lastValue;
+    _updateMapPositionSubject.debounceTime(Duration(milliseconds: 50)).listen((lastValue) {
+//      _mapPositionAnimationController.animateTo(lastValue, curve: Curves.linearToEaseOut);
+      _mapPositionAnimationController.value = lastValue;
     });
 
     _listenEventBus();
   }
 
   void onDragPanelYChange(double value) {
-    _mapPositionAnimationController.value = value;
-//    _updateMapPositionSubject.add(value);
+    if (value != _mapPositionAnimationController.value) {
+//      _mapPositionAnimationController.value = value;
+      _updateMapPositionSubject.add(value);
+    }
   }
 
   void _onMapClick(Point<double> point, LatLng coordinates) async {

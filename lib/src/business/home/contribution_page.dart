@@ -8,6 +8,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/home/contribution_finish_page.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
@@ -15,9 +17,12 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
+import 'package:titan/src/utils/scan_util.dart';
+import '../../global.dart';
 import '../webview/webview.dart';
 import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
+import 'contribution_finish_page.dart';
 
 class ContributionPage extends StatefulWidget {
   @override
@@ -55,6 +60,17 @@ class _ContributionState extends State<ContributionPage> {
   List<Map<dynamic, dynamic>> cellularList = List();
   var _currentIndex = -1;
   var _isFinishScan = false;
+  bool _isOnPressed = false;
+
+  int lastMoveTime = 0;
+  int startTime = 0;
+  int duration = 30000;
+  double lastZoom;
+  bool isVisibleWiFi = false;
+  bool isVisibleToast = false;
+  var _isAcceptSignalProtocol = true;
+  var _themeColor = HexColor("#0F95B0");
+  var _currentScanType = SensorType.GNSS;
 
   @override
   void initState() {
@@ -62,46 +78,26 @@ class _ContributionState extends State<ContributionPage> {
 
     sensorPlugin = SensorPlugin();
     initSensorChangeCallBack();
-
     initPosition();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    subscription?.cancel();
+    progressStreamController.close();
+    sensorPlugin.destory();
   }
 
   void initSensorChangeCallBack() {
     _sensorChangeCallBack = (Map values) {
-      _saveData(values);
+      _saveAllScanData(values);
     };
-
     sensorPlugin.sensorChangeCallBack = _sensorChangeCallBack;
   }
 
-  // tools
-  void addValuesToList(Map values, List list, String key) {
-    if (list.isEmpty) {
-      list.add(values);
-      return;
-    }
-
-    var _isExist = false;
-    var _value = values[key] ?? "";
-    for (var item in list) {
-      var _oldValue = item[key] ?? "";
-      if (_oldValue == _value && _value.length > 0 && _oldValue.length > 0) {
-        _isExist = true;
-        break;
-      }
-    }
-    if (!_isExist) {
-      list.add(values);
-    }
-  }
-
-  void appendValue(Map values, List list, String key) {
-    var value = values[key] ?? "";
-    value = "${key.toUpperCase()}：${value}";
-    list.add(value);
-  }
-
-  void _saveData(Map values) {
+  void _saveAllScanData(Map values) {
     var sensorType = values["sensorType"] as int;
 
     // 1.for upload
@@ -121,16 +117,16 @@ class _ContributionState extends State<ContributionPage> {
 
           if (Platform.isIOS) {
           } else {
-            addValuesToList(values, wifiList, "bssid");
+            ScanUtils.addValuesToList(values, wifiList, "bssid");
           }
           break;
         }
       case SensorType.BLUETOOTH:
         {
           if (Platform.isIOS) {
-            addValuesToList(values, bluetoothList, "identifier");
+            ScanUtils.addValuesToList(values, bluetoothList, "identifier");
           } else {
-            addValuesToList(values, bluetoothList, "mac");
+            ScanUtils.addValuesToList(values, bluetoothList, "mac");
           }
 
           break;
@@ -164,33 +160,25 @@ class _ContributionState extends State<ContributionPage> {
     await sensorPlugin.init();
   }
 
-  int lastMoveTime = 0;
-  int startTime = 0;
-  int duration = 30000;
-  double lastZoom;
-  bool isVisibleWiFi = false;
-  bool isVisibleToast = false;
-  var _isAcceptSignalProtocol = true;
-  var _themeColor = HexColor("#0F95B0");
-  var _currentScanType = SensorType.GNSS;
-
   void startScan() async {
     progressStreamController.add(0);
+
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
     var timeStep = duration / (defaultZoom - minZoom + 1);
     var timerObservable = Stream.periodic(Duration(milliseconds: 500), (x) => x);
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
+
     if (userPosition != null) {
       mapController.animateCamera(CameraUpdate.newLatLng(userPosition));
     }
+
     subscription = timerObservable.listen((t) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       var timeGap = nowTime - startTime;
+
       var progress = timeGap / duration.toDouble();
       progressStreamController.add(progress);
-      //print("[contribution] --> progress:$progress");
-
       _setCurrentScanType(progress);
 
       if (timeGap < duration) {
@@ -205,71 +193,11 @@ class _ContributionState extends State<ContributionPage> {
         sensorPlugin.stopScan();
       }
     });
+
     sensorPlugin.startScan();
   }
 
-  @override
-  void dispose() {
-    subscription?.cancel();
-    progressStreamController.close();
-    super.dispose();
-    sensorPlugin.destory();
-  }
-
-  String _getImageName() {
-    var _imageName = "wifi";
-
-    switch (_currentScanType) {
-      case SensorType.WIFI:
-        _imageName = "wifi";
-        break;
-
-      case SensorType.CELLULAR:
-        _imageName = "basestation";
-        break;
-
-      case SensorType.BLUETOOTH:
-        _imageName = "bluetooth";
-        break;
-
-      case SensorType.GPS:
-        _imageName = "gps";
-        break;
-    }
-
-    return _imageName;
-  }
-
-
-  String _getScanName() {
-    var name = "WiFi";
-
-    switch (_currentScanType) {
-      case SensorType.WIFI:
-        name = S.of(context).scan_name_wifi;
-        break;
-
-      case SensorType.CELLULAR:
-        name = S.of(context).scan_name_cellular;
-        break;
-
-      case SensorType.BLUETOOTH:
-        name = S.of(context).scan_name_bluetooth;
-        break;
-
-      case SensorType.GPS:
-        name = S.of(context).scan_name_gps;
-        break;
-
-      case SensorType.GNSS:
-        name = S.of(context).scan_name_start;
-        break;
-    }
-
-    return name;
-  }
-
-  List _getList() {
+  List _getCurrentScanList() {
     switch (_currentScanType) {
       case SensorType.WIFI:
         return wifiList;
@@ -320,6 +248,45 @@ class _ContributionState extends State<ContributionPage> {
     }
   }
 
+  List _getStatusDataList() {
+    var dataList = List();
+    String signalName = S.of(context).scan_ing_func(SensorType.getScanName(context, _currentScanType));
+
+    if (_isFinishScan) {
+      signalName = S.of(context).scan_finish;
+      dataList.add(signalName);
+
+      var num = wifiList.length + bluetoothList.length + cellularList.length + gpsList.length;
+      String allSignal = S.of(context).scan_collect_signal_func(num.toString());
+      dataList.add(allSignal);
+    } else {
+      dataList.add(signalName);
+    }
+
+    var list = _getCurrentScanList();
+    if (list.isEmpty || _isFinishScan) {
+      return dataList;
+    }
+
+    _currentIndex += 1;
+    if (_currentIndex >= list.length || _currentIndex <= -1) {
+      _currentIndex = 0;
+    }
+    Map values = list[_currentIndex] as Map<dynamic, dynamic>;
+
+    for (var key in values.keys) {
+      var value = values[key].toString();
+      if (value.length == 0 || value == null || key == "sensorType" || value == "" || value == "0") {
+        continue;
+      } else {
+        value = key.toString().toUpperCase() + "：" + value;
+        dataList.add(value);
+      }
+    }
+
+    return dataList;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -341,382 +308,197 @@ class _ContributionState extends State<ContributionPage> {
         centerTitle: true,
       ),
       body: StreamBuilder<double>(
-        stream: progressStreamController.stream,
-        builder: (context, snapshot) {
-          return Stack(
-            fit: StackFit.expand,
-            alignment: Alignment.center,
-            children: <Widget>[
-              mapView(),
-              RadarScan(),
-              Positioned(
-                top: 21,
-                left: 14,
-                child: _blocBuild(context, snapshot),
-              ),
-              /*
-              Positioned(
-                top: 21,
-                right: 15,
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          '最大范围约：$maxMeter 米',
-                          textAlign: TextAlign.center,
-                          style:
-                              TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 3, horizontal: 13),
-                        margin: EdgeInsets.only(
-                          top: 8,
-                        ),
-                        decoration: BoxDecoration(
-                            color: _themeColor,
-                            borderRadius: BorderRadius.circular(30)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              */
-              Positioned(
-                child: SizedBox(
-                  height: 3,
-                  child: LinearProgressIndicator(
-                    backgroundColor: _themeColor,
-                    value: snapshot?.data ?? 0.0,
-                    valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
-                  ),
-                ),
-                top: 0,
-                left: 0,
-                right: 0,
-              ),
-              Image.asset(
-                'res/drawable/${_getImageName()}_scan.png',
-                scale: 2,
-              ),
-              Positioned(
-                bottom: 20,
-                child: Column(
-                  children: <Widget>[
-                    RaisedButton(
-                      shape: StadiumBorder(),
-                      onPressed: () {
-                        uploadCollectData();
-                        Navigator.pop(context);
-                      },
-//                    color: Theme.of(context).primaryColor,
-                      color: HexColor("#CC941E"),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
-                        child: Text(
-                          S.of(context).scan_confirm_upload,
-                          style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
+          stream: progressStreamController.stream,
+          builder: (context, snapshot) {
+            return Center(
+              child: Stack(
+                fit: StackFit.expand,
+                alignment: Alignment.center,
+                children: <Widget>[
+                  _mapView(),
+                  RadarScan(),
+                  _buildStatusListView(),
+                  Positioned(
+                    child: SizedBox(
+                      height: 3,
+                      child: LinearProgressIndicator(
+                        backgroundColor: _themeColor,
+                        value: snapshot?.data ?? 0.0,
+                        valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
                       ),
                     ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WebViewContainer(
-                                  initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
-                                  title: S.of(context).scan_signal_upload_protocol,
-                                )));
-                      },
-                      child: SizedBox(
-                          width: 200,
-                          height: 40,
-                          child: Row(
-                            children: <Widget>[
-                              Checkbox(
-                                value: _isAcceptSignalProtocol,
-                                activeColor: _themeColor, //选中时的颜色
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isAcceptSignalProtocol = value;
-                                  });
-                                },
-                              ),
-                              Text(
-                                S.of(context).scan_signal_upload_protocol,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  decoration: TextDecoration.combine([
-                                    TextDecoration.underline, // 下划线
-                                  ]),
-                                  decorationStyle: TextDecorationStyle.solid, // 装饰样式
-                                  decorationColor: Colors.white,
-                                ),
-                              ),
-                            ],
-                            mainAxisAlignment: MainAxisAlignment.center,
-                          )),
-                    ),
-                  ],
-                ),
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                  ),
+                  Image.asset(
+                    'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
+                    scale: 2,
+                  ),
+                  _confirmView(),
+                ],
               ),
-            ],
-          );
-        }
-      ),
+            );
+          }),
     );
   }
 
-  Widget _buildFirstItem(String value) {
-    //print('[contribution] --> _buildFirstItem:${value}');
+  Future<void> _onPressed() async {
+    var isFinish = await uploadCollectData();
+    //print('[Request] --> isFinish: ${isFinish}');
+    if (isFinish) {
+      createWalletPopUtilName = '/data_contribution_page';
+      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
+      setState(() {
+        _isOnPressed = false;
+      });
+    }
+  }
 
+  Widget _confirmView() {
+    if (_isFinishScan) {
+      return Positioned(
+        bottom: 20,
+        child: Column(
+          children: <Widget>[
+            RaisedButton(
+              shape: StadiumBorder(),
+              onPressed: _isOnPressed
+                  ? null
+                  : () {
+                      setState(() {
+                        _isOnPressed = true;
+                      });
+
+                      _onPressed();
+                    },
+              color: HexColor("#CC941E"),
+              disabledColor: Colors.grey,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),
+                child: Text(
+                  S.of(context).scan_confirm_upload,
+                  style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WebViewContainer(
+                              initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                              title: S.of(context).scan_signal_upload_protocol,
+                            )));
+              },
+              child: SizedBox(
+                  width: 200,
+                  height: 40,
+                  child: Row(
+                    children: <Widget>[
+                      Checkbox(
+                        value: _isAcceptSignalProtocol,
+                        activeColor: _themeColor, //选中时的颜色
+                        onChanged: (value) {
+                          setState(() {
+                            _isAcceptSignalProtocol = value;
+                          });
+                        },
+                      ),
+                      Text(
+                        S.of(context).scan_signal_upload_protocol,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          decoration: TextDecoration.combine([
+                            TextDecoration.underline, // 下划线
+                          ]),
+                          decorationStyle: TextDecorationStyle.solid,
+                          // 装饰样式
+                          decorationColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  )),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _buildFirstItem(String value) {
     return Container(
       child: Text(
         value,
         textAlign: TextAlign.left,
-        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 14),
+        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 16, fontWeight: FontWeight.w500),
       ),
       margin: EdgeInsets.only(
-        bottom: 6,
+        bottom: 4,
       ),
     );
   }
 
   Widget _buildItem(String value) {
-    //print('[contribution] --> _buildItem:${value}');
-
     return Container(
       child: Text(
         value,
         textAlign: TextAlign.left,
-        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 11),
+        style: TextStyle(color: HexColor("#FEFEFE"), fontSize: 12),
       ),
       margin: EdgeInsets.only(
-        bottom: 6,
+        bottom: 4,
       ),
     );
   }
 
-  Widget _buildListView(List list) {
-    if (list.length == 0) {
-      return Container(width: 0.0, height: 0.0);
-    }
-
-    return Container(
-      height: 300,
-      width: 250,
-      child: ListView.separated(
-        physics: new NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.only(top: 0, bottom: 0),
-        itemBuilder: (context, index) {
-          return index == 0 ? _buildFirstItem(list.first) : _buildItem(list[index]);
-        },
-        separatorBuilder: (context, index) {
-          return Container(
-            height: 6,
-          );
-        },
-        itemCount: list.length,
+  Widget _buildStatusListView() {
+    var list = _getStatusDataList();
+    return Positioned(
+      top: 21,
+      left: 14,
+      child: Container(
+        height: 300,
+        width: 250,
+        child: ListView.separated(
+          physics: new NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.only(top: 0, bottom: 0),
+          itemBuilder: (context, index) {
+            return index == 0 ? _buildFirstItem(list.first) : _buildItem(list[index]);
+          },
+          separatorBuilder: (context, index) {
+            return Container(
+              height: 6,
+            );
+          },
+          itemCount: list.length,
+        ),
       ),
     );
   }
 
-  Widget _blocBuild(BuildContext context, AsyncSnapshot snap) {
-    var newDataList = List();
-    String signalName = S.of(context).scan_ing_func(_getScanName());
-
-    var snapValue = snap.data ?? 0.0001;
-    //print('[Contribution] -->_blocBuild, snapValue:${snapValue}');
-    if (snapValue > 1.0) {
-      signalName = S.of(context).scan_finish;
-    }
-    newDataList.add(signalName);
-
-    var list = _getList();
-    if (list.isEmpty || snapValue > 1.0) {
-      return _buildListView(newDataList);
+  Widget _mapView() {
+    var style;
+    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+      style = "https://cn.tile.map3.network/fiord-color.json";
+    } else {
+      style = "https://static.hyn.space/maptiles/fiord-color.json";
     }
 
-    _currentIndex += 1;
-    if (_currentIndex >= list.length || _currentIndex <= -1) {
-      _currentIndex = 0;
-    }
-    var values = list[_currentIndex];
-    var sensorType = values["sensorType"] as int;
-    print('[contribution] --> scanType: ${_getScanName()}, count:${list.length}, values: ${values}');
-
-    switch (sensorType) {
-      case SensorType.WIFI:
-        {
-          //print('[contribution] -->_blocBuild___wifi');
-
-          if (Platform.isIOS) {
-          } else {
-            appendValue(values, newDataList, "ssid");
-
-            appendValue(values, newDataList, "bssid");
-
-            appendValue(values, newDataList, "level");
-          }
-          break;
-        }
-      case SensorType.BLUETOOTH:
-        {
-          if (Platform.isIOS) {
-            appendValue(values, newDataList, "identifier");
-
-            appendValue(values, newDataList, "rssi");
-
-            //appendValue(values, newDataList, "name");
-
-          } else {
-            appendValue(values, newDataList, "mac");
-
-            appendValue(values, newDataList, "name");
-          }
-          break;
-        }
-      case SensorType.GPS:
-        {
-          appendValue(values, newDataList, "lat");
-
-          appendValue(values, newDataList, "lon");
-
-          appendValue(values, newDataList, "altitude");
-
-          appendValue(values, newDataList, "speed");
-
-          if (Platform.isIOS) {
-            appendValue(values, newDataList, "horizontalAccuracy");
-
-            appendValue(values, newDataList, "verticalAccuracy");
-
-            appendValue(values, newDataList, "course");
-          } else {
-            appendValue(values, newDataList, "accuracy");
-
-            appendValue(values, newDataList, "bearing");
-          }
-          break;
-        }
-      case SensorType.GNSS:
-        {
-          break;
-        }
-      case SensorType.CELLULAR:
-        {
-          if (Platform.isIOS) {
-            appendValue(values, newDataList, "type");
-            appendValue(values, newDataList, "carrierName");
-            appendValue(values, newDataList, "mcc");
-            appendValue(values, newDataList, "mnc");
-            appendValue(values, newDataList, "icc");
-          } else {
-            var mobileType = values["type"].toString() ?? "";
-            appendValue(values, newDataList, "type");
-
-            switch (mobileType) {
-              case "GSM":
-                appendValue(values, newDataList, "lac");
-                appendValue(values, newDataList, "mcc");
-                appendValue(values, newDataList, "mnc");
-                appendValue(values, newDataList, "level");
-
-//                  Utils.addIfNonNull(values, "type", "GSM")
-//                  Utils.addIfNonNull(values, "cid", cid)
-//                  Utils.addIfNonNull(values, "lac", lac)
-//                  Utils.addIfNonNull(values, "mcc", mcc)
-//                  Utils.addIfNonNull(values, "mnc", mnc)
-//                  Utils.addIfNonNull(values, "asu", asu)
-//                  Utils.addIfNonNull(values, "dbm", dbm)
-//                  Utils.addIfNonNull(values, "level", level)
-                break;
-
-              case "WCDMA":
-                appendValue(values, newDataList, "lac");
-                appendValue(values, newDataList, "mcc");
-                appendValue(values, newDataList, "mnc");
-                appendValue(values, newDataList, "level");
-
-//                  Utils.addIfNonNull(values, "type", "WCDMA")
-//                  Utils.addIfNonNull(values, "cid", cid)
-//                  Utils.addIfNonNull(values, "lac", lac)
-//                  Utils.addIfNonNull(values, "mcc", mcc)
-//                  Utils.addIfNonNull(values, "mnc", mnc)
-//                  Utils.addIfNonNull(values, "psc", psc)
-//                  Utils.addIfNonNull(values, "asu", asu)
-//                  Utils.addIfNonNull(values, "dbm", dbm)
-//                  Utils.addIfNonNull(values, "level", level)
-
-                break;
-
-              case "CDMA":
-                appendValue(values, newDataList, "basestationId");
-                appendValue(values, newDataList, "cdmaDbm");
-                appendValue(values, newDataList, "cdmaLevel");
-                appendValue(values, newDataList, "level");
-
-//                  Utils.addIfNonNull(values, "type", "CDMA")
-//                  Utils.addIfNonNull(values, "basestationId", basestationId)
-//                  Utils.addIfNonNull(values, "latitude", latitude)
-//                  Utils.addIfNonNull(values, "longitude", longitude)
-//                  Utils.addIfNonNull(values, "networkId", networkId)
-//                  Utils.addIfNonNull(values, "systemId", systemId)
-//                  Utils.addIfNonNull(values, "asu", asu)
-//                  Utils.addIfNonNull(values, "cdmaDbm", cdmaDbm)
-//                  Utils.addIfNonNull(values, "cdmaEcio", cdmaEcio)
-//                  Utils.addIfNonNull(values, "cdmaLevel", cdmaLevel)
-//                  Utils.addIfNonNull(values, "dbm", dbm)
-//                  Utils.addIfNonNull(values, "evdoDbm", evdoDbm)
-//                  Utils.addIfNonNull(values, "evdoEcio", evdoEcio)
-//                  Utils.addIfNonNull(values, "evdoLevel", evdoLevel)
-//                  Utils.addIfNonNull(values, "evdoSnr", evdoSnr)
-//                  Utils.addIfNonNull(values, "level", level)
-
-                break;
-
-              case "LTE":
-                appendValue(values, newDataList, "ci");
-                appendValue(values, newDataList, "mcc");
-                appendValue(values, newDataList, "mnc");
-                appendValue(values, newDataList, "level");
-
-//                  Utils.addIfNonNull(values, "type", "LTE")
-//                  Utils.addIfNonNull(values, "ci", ci)
-//                  Utils.addIfNonNull(values, "mcc", mcc)
-//                  Utils.addIfNonNull(values, "mnc", mnc)
-//                  Utils.addIfNonNull(values, "pci", pci)
-//                  Utils.addIfNonNull(values, "tac", tac)
-//                  Utils.addIfNonNull(values, "asu", asu)
-//                  Utils.addIfNonNull(values, "dbm", dbm)
-//                  Utils.addIfNonNull(values, "level", level)
-//                  Utils.addIfNonNull(values, "timingAdvance", timingAdvance)
-                break;
-            }
-          }
-          break;
-        }
-      default:
-        {
-          break;
-        }
-    }
-
-    //print('[contribution] -->_blocBuild___4, count:${newDataList.length}');
-
-    return _buildListView(newDataList);
-  }
-
-  Widget mapView() {
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(
         target: userPosition ?? LatLng(23.12076, 113.322058),
         zoom: defaultZoom,
       ),
-      styleString: 'https://cn.tile.map3.network/fiord-color.json',
+      styleString: style,
       onStyleLoaded: (mapboxController) {
         mapController = mapboxController;
         Future.delayed(Duration(milliseconds: 1000)).then((v) {
@@ -733,20 +515,21 @@ class _ContributionState extends State<ContributionPage> {
     );
   }
 
-  Future<void> uploadCollectData() async {
+  Future<bool> uploadCollectData() async {
     var uploadPosition = userPosition ?? LatLng(23.12076, 113.322058);
     contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(uploadPosition.latitude, uploadPosition.longitude);
     SignalCollector _signalCollector = SignalCollector(_latlng, collectData);
     WalletVo _walletVo = await _walletService.getDefaultWalletVo();
     if (_walletVo == null) {
       Fluttertoast.showToast(msg: S.of(context).scan_hyn_is_empty);
-      return;
+      return false;
     }
 
     var address = _walletVo.accountList[0].account.address;
     var platform = Platform.isIOS ? "iOS" : "android";
 
-    await _api.signalCollector(platform, address, _signalCollector);
+    var uploadStatus = await _api.signalCollector(platform, address, _signalCollector);
+    return uploadStatus;
   }
 
   void _showCloseDialog() {
@@ -763,12 +546,19 @@ class _ContributionState extends State<ContributionPage> {
                   content: Text(S.of(context).scan_exit_tips),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(S.of(context).cancel),
+                      child: Text(
+                        S.of(context).cancel,
+                        style: TextStyle(color: Colors.blue),
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     FlatButton(
-                      child: Text(S.of(context).confirm),
+                      child: Text(
+                        S.of(context).confirm,
+                        style: TextStyle(color: Colors.blue),
+                      ),
                       onPressed: () {
+                        sensorPlugin.stopScan();
                         Navigator.pop(context);
                         Navigator.of(context).pop();
                       },
@@ -785,6 +575,7 @@ class _ContributionState extends State<ContributionPage> {
                     FlatButton(
                       child: Text(S.of(context).confirm),
                       onPressed: () {
+                        sensorPlugin.stopScan();
                         Navigator.pop(context);
                         Navigator.of(context).pop();
                       },

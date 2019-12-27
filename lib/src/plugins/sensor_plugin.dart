@@ -1,7 +1,4 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:titan/src/business/home/sensor/bloc.dart';
+ import 'package:flutter/services.dart';
 
 typedef SensorChangeCallBack = void Function(Map values);
 
@@ -25,7 +22,8 @@ class SensorPlugin {
         if (sensorChangeCallBack != null) {
           sensorChangeCallBack(params);
         }
-//        print("[Sensor] --> params:${params}");
+        //print('[sensor_plugin] --> param:${params}');
+
         return null;
     }
   }

@@ -374,10 +374,10 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> wit
     } else if (_InheritedUpdatePositionStateNotifier.shouldSetMax(context)) {
       _animateSheetTo(_extent.maxExtent);
     } else if (_InheritedUpdatePositionStateNotifier.shouldSetAnchor(context)) {
-      _contentScrollToZero(1);
+//      _contentScrollToZero(1);
       _animateSheetTo(_extent.anchorExtent);
     } else if (_InheritedUpdatePositionStateNotifier.shouldSetMin(context)) {
-      _contentScrollToZero(1);
+//      _contentScrollToZero(1);
       _animateSheetTo(_extent.minExtent);
     } else if (_InheritedUpdatePositionStateNotifier.shouldHide(context)) {
       _extent._currentExtent.value = 0;
