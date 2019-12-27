@@ -18,6 +18,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		9AC59B1923B5B93900CD9636 /* EncrytionPluginInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC59B1823B5B93900CD9636 /* EncrytionPluginInterface.swift */; };
 		B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41DD00F668BA4794C96C93BA /* Pods_Runner.framework */; };
 		F5147211237EF6F500931008 /* ErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5147210237EF6F500931008 /* ErrorCode.swift */; };
 		F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53740FE22E83D8500ADF4FF /* EncryptionService.swift */; };
@@ -69,6 +70,7 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9AC59B1823B5B93900CD9636 /* EncrytionPluginInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncrytionPluginInterface.swift; sourceTree = "<group>"; };
 		AD1B0CAE230E4F7F00C5395E /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		F5147210237EF6F500931008 /* ErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCode.swift; sourceTree = "<group>"; };
 		F53740FE22E83D8500ADF4FF /* EncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionService.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 		F53740FD22E83D2A00ADF4FF /* Encryption */ = {
 			isa = PBXGroup;
 			children = (
+				9AC59B1823B5B93900CD9636 /* EncrytionPluginInterface.swift */,
 				F53740FE22E83D8500ADF4FF /* EncryptionService.swift */,
 				F537410D22E8683400ADF4FF /* EthEncryptionService.swift */,
 			);
@@ -389,6 +392,7 @@
 				F5A3560223B5B6E900DAEFC9 /* SensorManager.swift in Sources */,
 				F5A3560023B5B6E900DAEFC9 /* Sensor.swift in Sources */,
 				F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */,
+				9AC59B1923B5B93900CD9636 /* EncrytionPluginInterface.swift in Sources */,
 				F5A3560323B5B6E900DAEFC9 /* OnSensorValueChangeListener.swift in Sources */,
 				F537410E22E8683400ADF4FF /* EthEncryptionService.swift in Sources */,
 				F537410C22E867A000ADF4FF /* DateExt.swift in Sources */,
