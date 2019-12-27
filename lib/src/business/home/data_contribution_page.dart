@@ -109,8 +109,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
 //          return _listView();
         } else if (state is ShowWalletState) {
           currentWalletVo = state.wallet;
-//          return _walletTipsView();
-          return _listView();
+          return _walletTipsView();
+//          return _listView();
         } else if (state is ScanWalletLoadingState) {
           return _buildLoading(context);
         } else {
@@ -169,7 +169,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
 //                height: 38,
-//                width: 152,
+                width: 240,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
@@ -182,6 +182,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
                         S.of(context).create_wallet,
+                        textAlign: TextAlign.center,
                         style:
                             TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
@@ -195,7 +196,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
 //                height: 38,
-//                width: 152,
+                width: 240,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
