@@ -59,6 +59,8 @@
 	<string>Please allow obtain speech recognition permission</string>
     <key>NSBluetoothAlwaysUsageDescription</key>
     <string>Please allow obtain bluetooth permission</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>Please allow obtain bluetooth permission</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
