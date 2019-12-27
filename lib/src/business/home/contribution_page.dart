@@ -30,7 +30,7 @@ const _default_map_location = LatLng(23.106541, 113.324827);
 class ContributionPage extends StatefulWidget {
   final LatLng initLocation;
 
-  ContributionPage({this.initLocation = _default_map_location});
+  ContributionPage({this.initLocation});
 
   @override
   State<StatefulWidget> createState() {
@@ -82,7 +82,9 @@ class _ContributionState extends State<ContributionPage> {
   void initState() {
     super.initState();
 
-    userPosition = widget.initLocation;
+    userPosition = widget.initLocation ?? _default_map_location;
+    //print('[initState] , userPosition:${userPosition}');
+
     sensorPlugin = SensorPlugin();
     initSensorChangeCallBack();
     initScanner();
@@ -503,6 +505,7 @@ class _ContributionState extends State<ContributionPage> {
       style = "https://static.hyn.space/maptiles/fiord-color.json";
     }
 
+    //print('[_mapView] ,userPosition: ${userPosition}');
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(

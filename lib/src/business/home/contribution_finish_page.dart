@@ -45,8 +45,8 @@ class _FinishUploadState extends State<FinishUploadPage> {
                   padding: const EdgeInsets.symmetric(vertical: 32),
                   child: Image.asset(
                     "res/drawable/check_outline.png",
-                    height: 60,
-                    width: 60,
+                    height: 120,
+                    width: 120,
                   ),
                 ),
                 Padding(
@@ -61,6 +61,7 @@ class _FinishUploadState extends State<FinishUploadPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     S.of(context).scan_thanks_contribution_signal_hint,
+                    textAlign: TextAlign.center,
                     style: TextStyle(color: Color(0xFF9B9B9B)),
                   ),
                 ),
