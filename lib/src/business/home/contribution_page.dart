@@ -70,7 +70,6 @@ class _ContributionState extends State<ContributionPage> {
   bool isVisibleWiFi = false;
   bool isVisibleToast = false;
   var _isAcceptSignalProtocol = true;
-  var _themeColor = HexColor("#0F95B0");
   var _currentScanType = SensorType.GNSS;
 
   @override
@@ -323,7 +322,7 @@ class _ContributionState extends State<ContributionPage> {
                     child: SizedBox(
                       height: 3,
                       child: LinearProgressIndicator(
-                        backgroundColor: _themeColor,
+                        backgroundColor: Theme.of(context).primaryColor,
                         value: snapshot?.data ?? 0.0,
                         valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
                       ),
@@ -402,7 +401,7 @@ class _ContributionState extends State<ContributionPage> {
                     children: <Widget>[
                       Checkbox(
                         value: _isAcceptSignalProtocol,
-                        activeColor: _themeColor, //选中时的颜色
+                        activeColor: Theme.of(context).accentColor, //选中时的颜色
                         onChanged: (value) {
                           setState(() {
                             _isAcceptSignalProtocol = value;
