@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/utils/validator_util.dart';
@@ -70,7 +71,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                 ),
                 Text(
                   S.of(context).input_resume_mnemonic,
-                  style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                  style: TextStyle(color: HexColor('#AAAAAA'), fontSize: 14),
                 ),
                 SizedBox(
                   height: 12,
@@ -130,8 +131,8 @@ class _ImportAccountState extends State<ImportAccountPage> {
                     Text(
                       S.of(context).wallet_name_label,
                       style: TextStyle(
-                        color: Color(0xFF6D6D6D),
-                        fontSize: 16,
+                        color: HexColor('#333333'),
+                        fontSize: 14,
                       ),
                     )
                   ],
@@ -151,6 +152,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                       controller: _walletNameController,
                       decoration: InputDecoration(
                         hintText: S.of(context).input_wallet_name_length_hint,
+                        hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
@@ -165,8 +167,8 @@ class _ImportAccountState extends State<ImportAccountPage> {
                     Text(
                       S.of(context).create_wallet_password_label,
                       style: TextStyle(
-                        color: Color(0xFF6D6D6D),
-                        fontSize: 16,
+                        color: HexColor('#333333'),
+                        fontSize: 14,
                       ),
                     )
                   ],
@@ -184,6 +186,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                     controller: _walletPasswordController,
                     decoration: InputDecoration(
                       hintText: S.of(context).input_wallet_password_length_hint,
+                      hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
@@ -199,8 +202,8 @@ class _ImportAccountState extends State<ImportAccountPage> {
                     Text(
                       S.of(context).reinput_wallet_password_label,
                       style: TextStyle(
-                        color: Color(0xFF6D6D6D),
-                        fontSize: 16,
+                        color: HexColor('#333333'),
+                        fontSize: 14,
                       ),
                     )
                   ],
@@ -220,6 +223,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                     controller: _walletConfimPasswordController,
                     decoration: InputDecoration(
                       hintText: S.of(context).input_confirm_wallet_password_hint,
+                      hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
@@ -228,7 +232,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
+                  margin: EdgeInsets.fromLTRB(0, 24, 0, 48),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

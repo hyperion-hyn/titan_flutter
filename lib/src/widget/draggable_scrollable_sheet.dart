@@ -820,7 +820,7 @@ class _InheritedUpdatePositionStateNotifier extends InheritedNotifier<_UpdatePos
   ///
   /// Returns true if the notifier requested a reset, false otherwise.
   static bool shouldReset(BuildContext context) {
-    final InheritedWidget widget = context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+    final InheritedWidget widget = context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (widget == null) {
       return false;
     }
@@ -832,7 +832,7 @@ class _InheritedUpdatePositionStateNotifier extends InheritedNotifier<_UpdatePos
   }
 
   static bool shouldSetMax(BuildContext context) {
-    final InheritedWidget widget = context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+    final InheritedWidget widget = context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (widget == null) {
       return false;
     }
@@ -844,7 +844,7 @@ class _InheritedUpdatePositionStateNotifier extends InheritedNotifier<_UpdatePos
   }
 
   static bool shouldSetMin(BuildContext context) {
-    final InheritedWidget widget = context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+    final InheritedWidget widget = context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (widget == null) {
       return false;
     }
@@ -856,7 +856,7 @@ class _InheritedUpdatePositionStateNotifier extends InheritedNotifier<_UpdatePos
   }
 
   static bool shouldSetAnchor(BuildContext context) {
-    final InheritedWidget widget = context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+    final InheritedWidget widget = context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (widget == null) {
       return false;
     }
@@ -868,7 +868,7 @@ class _InheritedUpdatePositionStateNotifier extends InheritedNotifier<_UpdatePos
   }
 
   static bool shouldHide(BuildContext context) {
-    final InheritedWidget widget = context.inheritFromWidgetOfExactType(_InheritedUpdatePositionStateNotifier);
+    final InheritedWidget widget = context.dependOnInheritedWidgetOfExactType<_InheritedUpdatePositionStateNotifier>();
     if (widget == null) {
       return false;
     }

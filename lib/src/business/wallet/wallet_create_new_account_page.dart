@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/utils/validator_util.dart';
@@ -57,8 +58,8 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       Text(
                         S.of(context).create_wallet_name_label,
                         style: TextStyle(
-                          color: Color(0xFF6D6D6D),
-                          fontSize: 16,
+                          color: HexColor('#333333'),
+                          fontSize: 14,
                         ),
                       )
                     ],
@@ -78,6 +79,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                         controller: _walletNameController,
                         decoration: InputDecoration(
                           hintText: S.of(context).input_wallet_name_length_hint,
+                          hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         ),
@@ -89,8 +91,8 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       Text(
                         S.of(context).create_wallet_password_label,
                         style: TextStyle(
-                          color: Color(0xFF6D6D6D),
-                          fontSize: 16,
+                          color: HexColor('#333333'),
+                          fontSize: 14,
                         ),
                       )
                     ],
@@ -108,6 +110,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       controller: _walletPasswordController,
                       decoration: InputDecoration(
                         hintText: S.of(context).input_wallet_password_length_hint,
+                        hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
@@ -120,8 +123,8 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       Text(
                         S.of(context).reinput_wallet_password_label,
                         style: TextStyle(
-                          color: Color(0xFF6D6D6D),
-                          fontSize: 16,
+                          color: HexColor('#333333'),
+                          fontSize: 14,
                         ),
                       )
                     ],
@@ -141,6 +144,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       controller: _walletConfimPasswordController,
                       decoration: InputDecoration(
                         hintText: S.of(context).input_confirm_wallet_password_hint,
+                        hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
@@ -149,7 +153,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: 16),
+                    margin: EdgeInsets.fromLTRB(0, 24, 0, 48),
                     constraints: BoxConstraints.expand(height: 48),
                     child: RaisedButton(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
