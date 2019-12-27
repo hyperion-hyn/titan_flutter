@@ -1,5 +1,7 @@
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/model/news_detail.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -53,6 +55,16 @@ class _InfoDetailState extends State<InfoDetailPage> {
             widget.title,
             style: TextStyle(color: Colors.white),
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.share),
+              color: Colors.white,
+              tooltip: S.of(context).share,
+              onPressed: (){
+                _shareQr(context);
+              },
+            ),
+          ],
         ),
         body: isLoadingContent ? _loadContent() : _loadUrl());
   }
@@ -122,4 +134,11 @@ class _InfoDetailState extends State<InfoDetailPage> {
     newsDetail = await _newsApi.getNewsDetai(widget.id);
     setState(() {});
   }
+
+  void _shareQr(BuildContext context) async {
+    if (widget.url != null && widget.url.isNotEmpty) {
+      Share.text(S.of(context).share, widget.url, 'text/plain');
+    }
+  }
+  
 }
