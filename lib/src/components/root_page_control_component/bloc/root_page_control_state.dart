@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 abstract class RootPageControlState extends Equatable {
-  RootPageControlState([List props = const []]) : super(props);
+  const RootPageControlState();
 }
 
 class InitialRootPageControlState extends RootPageControlState {
@@ -13,5 +13,8 @@ class InitialRootPageControlState extends RootPageControlState {
 class UpdateRootPageState extends RootPageControlState {
   final Widget child;
 
-  UpdateRootPageState({this.child}) : super([child]);
+  UpdateRootPageState({this.child});
+
+  @override
+  List<Object> get props => [child];
 }

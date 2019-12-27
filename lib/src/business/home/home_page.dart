@@ -19,7 +19,7 @@ import 'package:titan/src/business/home/wallet_content.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
-import 'package:titan/src/business/updater/updater.dart';
+import 'package:titan/src/components/updater/updater_component.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
@@ -34,7 +34,7 @@ import '../../../env.dart';
 import '../../global.dart';
 import 'bloc/bloc.dart';
 import 'bottom_fabs_widget.dart';
-import 'drawer/drawer_scenes.dart';
+import '../../pages/app_tabbar/drawer_component.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   StreamSubscription _appLinkSubscription;
   var selectedAppArea = AppArea.MAINLAND_CHINA_AREA.key;
 
-  var _currentIndex = 0;
+  var _currentTabIndex = 0;
 
   AnimationController animationController;
 
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _updateStatusBar() {
-    if ([0, 1, 3].indexOf(_currentIndex) > -1) {
+    if ([0, 1, 3].indexOf(_currentTabIndex) > -1) {
       //status text black color
       FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     } else {
@@ -151,12 +151,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           },
         ),
       ],
-      child: Updater(
+      child: UpdaterComponent(
         child: BlocBuilder<home.HomeBloc, home.HomeState>(
           builder: (context, state) {
             return Scaffold(
               resizeToAvoidBottomPadding: false,
-              drawer: isDebug ? DrawerScenes() : null,
+              drawer: isDebug ? DrawerComponent() : null,
               bottomNavigationBar: BlocBuilder<home.HomeBloc, home.HomeState>(
                 builder: (context, state) {
                   return Container(
@@ -171,11 +171,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         type: BottomNavigationBarType.fixed,
                         onTap: (index) {
                           setState(() {
-                            _currentIndex = index;
+                            _currentTabIndex = index;
                             _updateStatusBar();
                           });
                         },
-                        currentIndex: _currentIndex,
+                        currentIndex: _currentTabIndex,
                         items: [
                           BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
                           BottomNavigationBarItem(
@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   buildMainSheetPanel(state),
 
                   //tab views
-                  _getContent(_currentIndex),
+                  _getViewContent(_currentTabIndex),
                 ],
               ),
             );
@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Widget _getContent(int index) {
+  Widget _getViewContent(int index) {
     switch (index) {
       case 1:
         return WalletContentWidget();

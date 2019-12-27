@@ -6,10 +6,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
 
-import 'business/updater/bloc/bloc.dart';
+import 'components/root_page_control_component/bloc/bloc.dart';
+import 'components/updater/bloc/bloc.dart';
 import 'components/root_page_control_component/root_page_control_component.dart';
 import 'global.dart';
 
@@ -39,7 +41,7 @@ class _AppState extends State<App> {
         currentAppArea = appArea;
       });
     };
-    getLocale();
+//    getLocale();
   }
 
   Future getLocale() async {
@@ -54,8 +56,12 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      builder: (context) => AppBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UpdateBloc>(create: (context) => UpdateBloc()),
+        BlocProvider<RootPageControlBloc>(create: (context) => RootPageControlBloc()),
+        BlocProvider<SettingBloc>(create: (context) => SettingBloc(context: context)),
+      ],
       child: RefreshConfiguration(
         //pull to refresh config
         dragSpeedRatio: 0.91,

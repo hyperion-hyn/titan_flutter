@@ -4,13 +4,16 @@ import 'package:equatable/equatable.dart';
 
 @immutable
 abstract class SearchEvent extends Equatable {
-  SearchEvent([List props = const []]) : super(props);
+  const SearchEvent();
 }
 
 class AddSearchItemEvent extends SearchEvent {
   final dynamic item;
 
   AddSearchItemEvent(this.item);
+
+  @override
+  List<Object> get props => [item];
 }
 
 class FetchSearchItemsEvent extends SearchEvent {
@@ -25,6 +28,12 @@ class FetchSearchItemsEvent extends SearchEvent {
   String toString() {
     return '$runtimeType(isHistory: $isHistory, searchText: $searchText, center: $center, language: $language)';
   }
+
+  @override
+  List<Object> get props => [isHistory, searchText, center, language];
 }
 
-class ClearSearchHisotoryEvent extends SearchEvent {}
+class ClearSearchHisotoryEvent extends SearchEvent {
+  @override
+  List<Object> get props => [];
+}

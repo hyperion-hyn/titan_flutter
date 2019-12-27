@@ -145,6 +145,7 @@ class S implements WidgetsLocalizations {
   String get language => "Language";
   String get later => "Later";
   String get latest_news => "Article";
+  String get latest_version_tip => "Already the latest version";
   String get less_than_1_min => "Less than 1 minute";
   String get lossz_wallet_mnemonic_notice => "I understand that if I lose the recovery word, I will not be able to access my wallet";
   String get main_my_public_key => "My encrypted key(public key)";
@@ -420,6 +421,8 @@ class $ko extends S {
   String get input_password_again_hint => "비밀번호를 다시 입력하십시오";
   @override
   String get eth_balance_not_enough_for_gas_fee => "ETH 잔액이 네트워크 요금을 지불하기에 충분하지 않습니다";
+  @override
+  String get latest_version_tip => "이미 최신 버전";
   @override
   String get services => "서비스";
   @override
@@ -1008,6 +1011,8 @@ class $zh_CN extends S {
   String get input_password_again_hint => "请再次输入密码";
   @override
   String get eth_balance_not_enough_for_gas_fee => "ETH余额不足支付网络费用";
+  @override
+  String get latest_version_tip => "已经是最新版本";
   @override
   String get services => "服务";
   @override

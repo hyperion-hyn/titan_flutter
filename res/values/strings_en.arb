@@ -285,5 +285,6 @@
   "scan_exit_tips" : "Scanning, confirm exit?",
   "scan_hyn_is_empty" : "HYN wallet is empty",
   "scan_finish" : "Scan completed",
-  "scan_ing_func": "Scanning for ${scanName}"
+  "scan_ing_func": "Scanning for ${scanName}",
+  "latest_version_tip": "Already the latest version"
 }

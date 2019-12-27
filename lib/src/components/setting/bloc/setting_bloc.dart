@@ -12,9 +12,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   SettingState get initialState => InitialSettingState();
 
   @override
-  Stream<SettingState> mapEventToState(
-    SettingEvent event,
-  ) async* {
-    // TODO: Add Logic
+  Stream<SettingState> mapEventToState(SettingEvent event) async* {
+
   }
 }

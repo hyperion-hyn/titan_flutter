@@ -285,5 +285,6 @@
   "scan_exit_tips" : "正在扫描中，确认退出吗?",
   "scan_hyn_is_empty" : "HYN wallet 为空",
   "scan_finish" : "扫描已完成",
-  "scan_ing_func": "正在${scanName}信号扫描"
+  "scan_ing_func": "正在${scanName}信号扫描",
+  "latest_version_tip": "已经是最新版本"
 }

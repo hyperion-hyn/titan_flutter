@@ -13,4 +13,7 @@ class ValueChangeListenerState extends SensorState {
   Map<dynamic, dynamic> values;
 
   ValueChangeListenerState(this.values);
+
+  @override
+  List<Object> get props => [values];
 }

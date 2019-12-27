@@ -5,19 +5,22 @@ import '../../../store.dart';
 
 @immutable
 abstract class SearchState extends Equatable {
-  SearchState([List props = const []]) : super(props);
+  SearchState();
 
   Map<String, dynamic> get store => getStoreOfGlobal('searchState');
 }
 
-class InitialSearchState extends SearchState {}
+class InitialSearchState extends SearchState {
+  @override
+  List<Object> get props => [];
+}
 
 class SearchLoadedState extends SearchState {
   SearchLoadedState({
     @required items,
     @required currentSearchText,
     @required isHistory,
-  }) : super([items, currentSearchText, isHistory]) {
+  }) {
     store['items'] = items;
     store['currentSearchText'] = currentSearchText;
     store['isHistory'] = isHistory;
@@ -33,4 +36,7 @@ class SearchLoadedState extends SearchState {
   String toString() {
     return '$runtimeType(isHistory: $isHistory, currentSearchText: $currentSearchText, items: $items)';
   }
+
+  @override
+  List<Object> get props => [items, currentSearchText, isHistory];
 }

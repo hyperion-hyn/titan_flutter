@@ -424,7 +424,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     _locationClickSubscription?.cancel();
 
     _clickTimes++;
-    _locationClickSubscription = Observable.timer('', Duration(milliseconds: 300)).listen((value) async {
+    _locationClickSubscription = Rx.timer('', Duration(milliseconds: 300)).listen((value) async {
       var latLng = await mapboxMapController?.lastKnownLocation();
       if (_clickTimes > 1) {
         // double click
@@ -471,7 +471,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
               await PermissionHandler().requestPermissions([PermissionGroup.location]);
           if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
             _toMyLocation();
-            Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
+            Rx.timer('', Duration(milliseconds: 1500)).listen((d) {
               _toMyLocation(); //hack, location not auto move
             });
           } else {

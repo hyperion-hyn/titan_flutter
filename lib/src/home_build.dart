@@ -4,7 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/discover/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/business/wallet/wallet_account_bloc/wallet_account_bloc.dart';
 import 'package:titan/src/global.dart';
 
 import 'business/home/bloc/bloc.dart';
@@ -64,10 +63,10 @@ class _HomeBuilderState extends State<HomeBuilder> {
             child: HomePage(),
           ),
           providers: [
-            BlocProvider<SearchbarBloc>(builder: (context) => searchBarBloc..context = context),
-            BlocProvider<HomeBloc>(builder: (context) => homeBloc..context = context),
-            BlocProvider<ScaffoldMapBloc>(builder: (context) => ScaffoldMapBloc(context)),
-            BlocProvider<DiscoverBloc>(builder: (context) => DiscoverBloc(context)),
+            BlocProvider<SearchbarBloc>(create: (context) => searchBarBloc..context = context),
+            BlocProvider<HomeBloc>(create: (context) => homeBloc..context = context),
+            BlocProvider<ScaffoldMapBloc>(create: (context) => ScaffoldMapBloc(context)),
+            BlocProvider<DiscoverBloc>(create: (context) => DiscoverBloc(context)),
           ],
         );
       },

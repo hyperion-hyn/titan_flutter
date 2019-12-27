@@ -1,23 +1,18 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/home/sensor/bloc.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/data/api/api.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import '../webview/webview.dart';
@@ -183,7 +178,7 @@ class _ContributionState extends State<ContributionPage> {
     progressStreamController.add(0);
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
     var timeStep = duration / (defaultZoom - minZoom + 1);
-    var timerObservable = Observable.periodic(Duration(milliseconds: 500), (x) => x);
+    var timerObservable = Stream.periodic(Duration(milliseconds: 500), (x) => x);
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
     if (userPosition != null) {

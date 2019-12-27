@@ -36,4 +36,6 @@ class PrefsKey {
   static final appLanguageCode = "app_languageCode";
   static final appCountryCode = "app_countryCode";
   static final appArea = "app_area";
+
+  static const String FIRST_TIME_LAUNCHER_KEY = 'app_first_time_launcher';
 }

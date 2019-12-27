@@ -102,7 +102,7 @@ class _SearchPageState extends State<SearchPage> {
 
       _subscription?.cancel();
       _subscription = null;
-      _subscription = Observable.timer(event, Duration(milliseconds: 1000)).listen((data) {
+      _subscription = Rx.timer(event, Duration(milliseconds: 1000)).listen((data) {
         if (data.searchText == currentText) {
           _searchBloc.add(data);
         }

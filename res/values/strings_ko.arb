@@ -285,5 +285,6 @@
   "scan_exit_tips" : "스캔 진행 중, 종료 확인?",
   "scan_hyn_is_empty" : "HYN 지갑이 비어 있습니다",
   "scan_finish" : "스캔 완료",
-  "scan_ing_func": "${scanName} 스캔 중"
+  "scan_ing_func": "${scanName} 스캔 중",
+  "latest_version_tip": "이미 최신 버전"
 }
