@@ -148,7 +148,7 @@ class HomePanelState extends State<HomePanel> {
                       child: Stack(
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(top: 16.0, left: 8),
+                            padding: const EdgeInsets.only(top: 4.0, left: 8),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,7 +158,7 @@ class HomePanelState extends State<HomePanel> {
                                   style: TextStyle(fontWeight: FontWeight.w600),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
+                                  padding: const EdgeInsets.only(top: 4.0, right: 4),
                                   child: Text(
                                     S.of(context).global_map_server_nodes,
                                     style: TextStyle(color: Colors.grey, fontSize: 12),
@@ -168,8 +168,8 @@ class HomePanelState extends State<HomePanel> {
                             ),
                           ),
                           Positioned(
-                              top: 15,
-                              right: 15,
+                              top: 12,
+                              right: 12,
                               child: Image.asset(
                                 'res/drawable/global.png',
                                 width: 32,
@@ -181,7 +181,7 @@ class HomePanelState extends State<HomePanel> {
                   ),
                 ),
                 SizedBox(
-                  height: 12,
+                  height: 8,
                 ),
                 Expanded(
                   child: InkWell(
@@ -202,7 +202,7 @@ class HomePanelState extends State<HomePanel> {
                       child: Stack(
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(top: 16.0, left: 8),
+                            padding: const EdgeInsets.only(top: 4.0, left: 8),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -222,8 +222,8 @@ class HomePanelState extends State<HomePanel> {
                             ),
                           ),
                           Positioned(
-                              top: 15,
-                              right: 15,
+                              top: 8,
+                              right: 8,
                               child: Image.asset(
                                 'res/drawable/ic_hyperion.png',
                                 width: 32,

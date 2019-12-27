@@ -103,8 +103,8 @@ class S implements WidgetsLocalizations {
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
   String get global_embassies => "Global Embassies";
-  String get global_map_server_nodes => "Global Map Service Nodes";
-  String get global_nodes => "Global Nodes";
+  String get global_map_server_nodes => "View global data updates";
+  String get global_nodes => "Dashboard";
   String get home_page => "Home";
   String get hospital => "Hospital";
   String get hot_area => "Hot spots";
@@ -151,7 +151,7 @@ class S implements WidgetsLocalizations {
   String get mainland_china => "Mainland China";
   String get mall => "Mall";
   String get manually_refresh => "Refresh Manually";
-  String get map3_global_nodes => "Map3 Global Nodes";
+  String get map3_global_nodes => "Dashboard";
   String get map3_node_introduction => "Mp3 Node";
   String get map_dmap => "Map DMap";
   String get medium => "Medium";
@@ -421,7 +421,7 @@ class $ko extends S {
   @override
   String get refresh_public_key_minutes_tips => "%d분후 자동으로 새로 고침합니다.";
   @override
-  String get global_map_server_nodes => "글로벌 지도 서비스 노드";
+  String get global_map_server_nodes => "실시간 글로벌 데이터 업데이트보기";
   @override
   String get input_password_again_hint => "비밀번호를 다시 한번 입력해주십시오.";
   @override
@@ -509,7 +509,7 @@ class $ko extends S {
   @override
   String get medium => "중간";
   @override
-  String get map3_global_nodes => "map3글로벌 노드";
+  String get map3_global_nodes => "계기반";
   @override
   String get wallet_create_success_tips => "축하드립니다.당신의 비밀 계정이 성공적으로 만들어졌습니다.";
   @override
@@ -791,7 +791,7 @@ class $ko extends S {
   @override
   String get telegram_operator => "텔레그람 운영자";
   @override
-  String get global_nodes => "글로벌 노드";
+  String get global_nodes => "계기반";
   @override
   String get open_wifi => "WIFI 시작하기";
   @override
@@ -1017,7 +1017,7 @@ class $zh_CN extends S {
   @override
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override
-  String get global_map_server_nodes => "全球地图服务节点";
+  String get global_map_server_nodes => "实时查看全球数据更新情况";
   @override
   String get input_password_again_hint => "请再次输入密码";
   @override
@@ -1105,7 +1105,7 @@ class $zh_CN extends S {
   @override
   String get medium => "Medium";
   @override
-  String get map3_global_nodes => "map3全球节点";
+  String get map3_global_nodes => "数据展示";
   @override
   String get wallet_create_success_tips => "恭喜，你的私密账户已经创建成功";
   @override
@@ -1387,7 +1387,7 @@ class $zh_CN extends S {
   @override
   String get telegram_operator => "Telegram Operator";
   @override
-  String get global_nodes => "全球节点";
+  String get global_nodes => "数据展示";
   @override
   String get open_wifi => "开启WIFI";
   @override
