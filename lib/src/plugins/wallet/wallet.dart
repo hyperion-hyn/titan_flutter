@@ -485,9 +485,9 @@ class Wallet {
     return WalletChannel.delete(keystore.fileName, password);
   }
 
-  factory Wallet.fromJson(Map<String, dynamic> json) => _$TrustWalletFromJson(json);
+  factory Wallet.fromJson(Map<String, dynamic> json) => _$WalletFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TrustWalletToJson(this);
+  Map<String, dynamic> toJson() => _$WalletToJson(this);
 
   @override
   String toString() {

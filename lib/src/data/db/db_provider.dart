@@ -7,15 +7,14 @@ import 'search_history_dao.dart';
 class DBProvider {
   static Database _db;
 
-  static AppDatabase _appDatabase;
-
-  static Future<AppDatabase> getAppDb() async {
-    if (_appDatabase != null) {
-      return _appDatabase;
-    }
-    _appDatabase = await $FloorAppDatabase.databaseBuilder("titan_app_databse.db").build();
-    return _appDatabase;
-  }
+//  static AppDatabase _appDatabase;
+//  static Future<AppDatabase> getAppDb() async {
+//    if (_appDatabase != null) {
+//      return _appDatabase;
+//    }
+//    _appDatabase = await $FloorAppDatabase.databaseBuilder("titan_app_databse.db").build();
+//    return _appDatabase;
+//  }
 
   static Future<Database> open({String dbName = 'titan_app.db'}) async {
     if (_db != null && _db.isOpen) {

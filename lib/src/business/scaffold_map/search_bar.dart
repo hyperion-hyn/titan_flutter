@@ -31,7 +31,7 @@ class _SearchBarState extends State<SearchBar> {
     super.initState();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      selfHeight = UtilUi.getRenderObjectHeight(rootKey);
+      selfHeight = UiUtil.getRenderObjectHeight(rootKey);
     });
 //    widget.bottomPanelController.addListener(onDragUpdate);
   }

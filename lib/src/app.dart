@@ -6,11 +6,11 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/my/app_area.dart';
-import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
 
 import 'components/root_page_control_component/bloc/bloc.dart';
+import 'components/setting/setting_component.dart';
 import 'components/updater/bloc/bloc.dart';
 import 'components/root_page_control_component/root_page_control_component.dart';
 import 'global.dart';
@@ -56,42 +56,47 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<UpdateBloc>(create: (context) => UpdateBloc()),
-        BlocProvider<RootPageControlBloc>(create: (context) => RootPageControlBloc()),
-        BlocProvider<SettingBloc>(create: (context) => SettingBloc(context: context)),
-      ],
-      child: RefreshConfiguration(
-        //pull to refresh config
-        dragSpeedRatio: 0.91,
-        headerTriggerDistance: 80,
-        footerTriggerDistance: 80,
-        maxOverScrollExtent: 100,
-        maxUnderScrollExtent: 0,
-        headerBuilder: () => WaterDropMaterialHeader(),
-        footerBuilder: () => ClassicFooter(),
-        autoLoad: true,
-        enableLoadingWhenFailed: false,
-        hideFooterWhenNotFull: true,
-        enableBallisticLoad: true,
-        child: MaterialApp(
-          locale: appLocale == null ? null : appLocale,
-          debugShowCheckedModeBanner: false,
-          key: Keys.materialAppKey,
-          title: 'Titan',
-          theme: appTheme,
-          localizationsDelegates: [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            RefreshLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
+    return SettingComponent(
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<UpdateBloc>(create: (context) => UpdateBloc(context: context)),
+          BlocProvider<RootPageControlBloc>(create: (context) => RootPageControlBloc()),
+        ],
+        child: Builder(
+          builder: (context) {
+            return RefreshConfiguration(
+              //pull to refresh config
+              dragSpeedRatio: 0.91,
+              headerTriggerDistance: 80,
+              footerTriggerDistance: 80,
+              maxOverScrollExtent: 100,
+              maxUnderScrollExtent: 0,
+              headerBuilder: () => WaterDropMaterialHeader(),
+              footerBuilder: () => ClassicFooter(),
+              autoLoad: true,
+              enableLoadingWhenFailed: false,
+              hideFooterWhenNotFull: true,
+              enableBallisticLoad: true,
+              child: MaterialApp(
+                key: Keys.materialAppKey,
+                debugShowCheckedModeBanner: false,
+                locale: SettingViewModel.of(context).languageModel?.locale,
+                title: 'titan',
+                theme: appTheme,
+                localizationsDelegates: [
+                  S.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                  RefreshLocalizations.delegate,
+                ],
+                supportedLocales: S.delegate.supportedLocales,
 //          home: HomeBuilder(),
-          home: RootPageControlComponent(),
-          navigatorObservers: [routeObserver],
+                home: RootPageControlComponent(key: Keys.mainPageKey),
+                navigatorObservers: [routeObserver],
+              ),
+            );
+          },
         ),
       ),
     );

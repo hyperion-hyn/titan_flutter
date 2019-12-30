@@ -245,6 +245,8 @@ class S implements WidgetsLocalizations {
   String get search_history => "History";
   String get search_or_decode => "Search / Decrypt";
   String get search_title => "Search / Decrypt";
+  String get select_region_tip => "Please select region";
+  String get selected_area => "Select region";
   String get send => "Send";
   String get sent => "Sent";
   String get service_area => "Area";
@@ -298,6 +300,7 @@ class S implements WidgetsLocalizations {
   String get wechat => "Wechat";
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
+  String get what_region_use_titan => "What's the region do you use titan?";
   String get your_mnemonic => "Your Mnemonic phrases";
   String distance(String distance) => "$distance m";
   String get hynPriceUnitSymbol => "\$";
@@ -432,6 +435,8 @@ class $ko extends S {
   @override
   String get services => "서비스";
   @override
+  String get what_region_use_titan => "타이탄을 사용하는 지역은 어디입니까?";
+  @override
   String get confirm => "확정";
   @override
   String get app_name => "타이탄";
@@ -479,6 +484,8 @@ class $ko extends S {
   String get confirm_mnemonic => "복원 단어를 입력해주십시오.";
   @override
   String get recommended_area => "추천 지역";
+  @override
+  String get select_region_tip => "지역을 선택하십시오";
   @override
   String get no_data => "데이터가없습니다.";
   @override
@@ -695,6 +702,8 @@ class $ko extends S {
   String get show_mnemonic_label => "복원 단어 보여주기";
   @override
   String get refresh_public_key_seconds_tips => "%d초후 자동으로 새로 고침합니다.";
+  @override
+  String get selected_area => "지역을 선택하십시오";
   @override
   String get delete_wallet_fail => "삭제 실패";
   @override
@@ -1030,6 +1039,8 @@ class $zh_CN extends S {
   @override
   String get services => "服务";
   @override
+  String get what_region_use_titan => "你在什么地区使用titan?";
+  @override
   String get confirm => "确定";
   @override
   String get app_name => "泰坦";
@@ -1077,6 +1088,8 @@ class $zh_CN extends S {
   String get confirm_mnemonic => "输入恢复短语";
   @override
   String get recommended_area => "推荐地区";
+  @override
+  String get select_region_tip => "请选择地区";
   @override
   String get no_data => "暂无数据";
   @override
@@ -1293,6 +1306,8 @@ class $zh_CN extends S {
   String get show_mnemonic_label => "显示恢复短语";
   @override
   String get refresh_public_key_seconds_tips => "%d秒后自动刷新";
+  @override
+  String get selected_area => "选择地区";
   @override
   String get delete_wallet_fail => "删除失败";
   @override

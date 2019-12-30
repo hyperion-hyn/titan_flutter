@@ -1,12 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'bloc.dart';
 
 class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
+  BuildContext context;
+
+  UpdateBloc({this.context});
+
   @override
   UpdateState get initialState => InitialAppState();
 
@@ -15,7 +20,7 @@ class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
     if (event is CheckUpdate) {
       yield UpdateCheckState(isChecking: true);
       try {
-        var injector = Injector.of(Keys.materialAppKey.currentContext);
+        var injector = Injector.of(context);
         var channel = "";
         if (env.channel == BuildChannel.OFFICIAL) {
           channel = "official";

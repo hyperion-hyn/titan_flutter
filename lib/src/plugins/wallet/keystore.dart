@@ -56,9 +56,9 @@ class KeyStore {
     );
   }
 
-  factory KeyStore.fromJson(Map<String, dynamic> json) => _$TrustWalletKeyStoreFromJson(json);
+  factory KeyStore.fromJson(Map<String, dynamic> json) => _$KeyStoreFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TrustWalletKeyStoreToJson(this);
+  Map<String, dynamic> toJson() => _$KeyStoreToJson(this);
 
   @override
   String toString() {

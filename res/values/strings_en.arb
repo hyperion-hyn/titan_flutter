@@ -290,5 +290,8 @@
   "scan_upload_signal_success_hint": "Signal data uploaded successfully",
   "scan_thanks_contribution_signal_hint": "Thank you for your data contribution！",
   "scan_confirm_upload" : "Upload signal data",
-  "scan_collect_signal_func": "${Num} signals collected"
+  "scan_collect_signal_func": "${Num} signals collected",
+  "selected_area": "Select region",
+  "what_region_use_titan": "What's the region do you use titan?",
+  "select_region_tip": "Please select region"
 }

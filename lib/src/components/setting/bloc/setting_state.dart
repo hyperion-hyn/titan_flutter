@@ -25,5 +25,5 @@ class UpdateSettingState extends SettingState {
   });
 
   @override
-  List<Object> get props => [areaModel, areaModel];
+  List<Object> get props => [languageModel, areaModel];
 }

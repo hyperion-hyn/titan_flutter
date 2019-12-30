@@ -36,7 +36,7 @@ class _TopBarState extends State<TopBar> {
     super.initState();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      selfHeight = UtilUi.getRenderObjectHeight(rootKey);
+      selfHeight = UiUtil.getRenderObjectHeight(rootKey);
       if (widget.heightCallBack != null) {
         widget.heightCallBack(selfHeight);
       }

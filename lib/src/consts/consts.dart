@@ -27,7 +27,7 @@ class Const {
 
 class Keys {
   static final materialAppKey = GlobalKey(debugLabel: '__app__');
-  static final mainContextKey = GlobalKey(debugLabel: '__main_context__');
+  static final mainPageKey = GlobalKey(debugLabel: '__main_page__');
   static final mapContainerKey = GlobalKey(debugLabel: '__map__');
   static final mapParentKey = GlobalKey(debugLabel: '__map_parent__');
 }
@@ -38,4 +38,8 @@ class PrefsKey {
   static final appArea = "app_area";
 
   static const String FIRST_TIME_LAUNCHER_KEY = 'app_first_time_launcher';
+
+  //setting
+  static const String SETTING_LANGUAGE = 'setting_language';
+  static const String SETTING_AREA = 'setting_area';
 }

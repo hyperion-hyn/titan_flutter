@@ -290,5 +290,8 @@
   "scan_upload_signal_success_hint": "신호 데이터가 성공적으로 업로드되었습니다",
   "scan_thanks_contribution_signal_hint": "귀하의 데이터 기여에 감사드립니다！",
   "scan_confirm_upload" : "신호 데이터 업로드",
-  "scan_collect_signal_func": "${Num} 개의 신호 수집"
+  "scan_collect_signal_func": "${Num} 개의 신호 수집",
+  "selected_area": "지역을 선택하십시오",
+  "what_region_use_titan": "타이탄을 사용하는 지역은 어디입니까?",
+  "select_region_tip": "지역을 선택하십시오"
 }

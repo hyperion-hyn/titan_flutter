@@ -108,7 +108,7 @@ dev_dependencies:
     sdk: flutter
 
   build_runner: ^1.7.2
-  json_serializable: ^3.2.4
+  json_serializable: ^3.2.5
   #  floor_generator: ^0.9.0
 
   #https://github.com/dart-lang/mockito

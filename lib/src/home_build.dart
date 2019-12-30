@@ -48,7 +48,7 @@ class _HomeBuilderState extends State<HomeBuilder> {
   Widget build(BuildContext context) {
     appLocale = Localizations.localeOf(context);
     return Builder(
-      key: Keys.mainContextKey,
+      key: Keys.mainPageKey,
       builder: (context) {
         return MultiBlocProvider(
           child: WillPopScope(

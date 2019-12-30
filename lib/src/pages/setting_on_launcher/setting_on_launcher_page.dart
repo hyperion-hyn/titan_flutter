@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
+import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class SettingOnLauncherPage extends StatefulWidget {
   @override
@@ -15,54 +20,106 @@ class SettingOnLauncherPage extends StatefulWidget {
 }
 
 class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
-  AreaModel selectedArea;
-  LanguageModel selectedLanguage;
+  AreaModel _currentArea;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _currentArea = null;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(S.of(context).selected_area),
+      ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 200.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            DropdownButton(
-              items: SupportedLanguage.all().map<DropdownMenuItem<LanguageModel>>(((language) {
-                return DropdownMenuItem<LanguageModel>(
-                  value: language,
-                  child: Text(language.name),
-                );
-              })).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedLanguage = value;
-                });
-              },
-              value: selectedLanguage,
+            Row(
+              children: <Widget>[
+                Text(
+                  S.of(context).language,
+                  style: TextStyle(fontSize: 16),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: DropdownButton(
+                    items: SupportedLanguage.all().map<DropdownMenuItem<LanguageModel>>(((language) {
+                      return DropdownMenuItem<LanguageModel>(
+                        value: language,
+                        child: Text(
+                          language.name,
+                          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        ),
+                      );
+                    })).toList(),
+                    onChanged: (value) {
+                      BlocProvider.of<SettingBloc>(context).add(UpdateLanguageEvent(languageModel: value));
+                    },
+                    value: SettingViewModel.of(context).languageModel,
+                  ),
+                ),
+              ],
             ),
-            Text('你在什么地区使用titan?'),
+            Padding(
+              padding: const EdgeInsets.only(left: 24.0, top: 56, bottom: 16),
+              child: Text(
+                S.of(context).what_region_use_titan,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54),
+              ),
+            ),
             ListView(
               shrinkWrap: true,
               children: SupportedArea.all(context).map((area) {
+                if (area == SettingViewModel.of(context).areaModel) {
+                  _currentArea = area;
+                }
                 return RadioListTile<AreaModel>(
-                  title: Text(area.name),
+                  title: Text(
+                    area.name,
+                    style: TextStyle(fontSize: 16),
+                  ),
                   value: area,
                   onChanged: (AreaModel value) {
-                    setState(() {
-                      selectedArea = value;
-                    });
+                    BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: value));
+                    _currentArea = value;
                   },
-                  groupValue: selectedArea,
+                  groupValue: SettingViewModel.of(context).areaModel,
                 );
               }).toList(),
             ),
-            RaisedButton(
-              onPressed: () async {
-                var prefs = await SharedPreferences.getInstance();
-                await prefs.setBool(PrefsKey.FIRST_TIME_LAUNCHER_KEY, true);
-
-                BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
-              },
-              child: Text('进入titan'),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 40, left: 24.0, right: 24, bottom: 16),
+                    child: Builder(
+                      builder: (context) {
+                        return OutlineButton(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                          textColor: Theme.of(context).primaryColor,
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                          onPressed: () async {
+                            if (_currentArea == null) {
+                              UiUtil.showSnackBar(context, S.of(context).select_region_tip);
+                              return;
+                            }
+                            var prefs = await SharedPreferences.getInstance();
+                            await prefs.setBool(PrefsKey.FIRST_TIME_LAUNCHER_KEY, true);
+                            BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
+                          },
+                          child: Text('${S.of(context).enter} titan'),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

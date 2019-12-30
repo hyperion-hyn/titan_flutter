@@ -8,6 +8,8 @@ import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/pages/setting_on_launcher/setting_on_launcher_page.dart';
 
 class RootPageControlComponent extends StatefulWidget {
+  RootPageControlComponent({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return RootPageControlComponentState();
@@ -25,6 +27,7 @@ class RootPageControlComponentState extends State<RootPageControlComponent> {
     var prefs = await SharedPreferences.getInstance();
     bool notFirstTimeLauncher = prefs.containsKey(PrefsKey.FIRST_TIME_LAUNCHER_KEY);
     if (notFirstTimeLauncher) {
+//    if (false) {
       //launch dashboard
       BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
     } else {
