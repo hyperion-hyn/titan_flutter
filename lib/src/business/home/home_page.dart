@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart' show PlatformException, SystemChrome, SystemUiOverlayStyle;
 import 'package:flutter/widgets.dart';
@@ -249,38 +250,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Widget buildMainSheetPanel(home.HomeState state) {
     return myWidget.DraggableScrollableActuator(
-      child: LayoutBuilder(
-        builder: (ctx, BoxConstraints boxConstraints) {
-          double maxHeight = boxConstraints.biggest.height;
-          double anchorSize = 0.5;
-          double minChildSize = 88.0 / maxHeight;
-          double initSize = 280.0 / maxHeight;
-          double maxChildSize = (maxHeight - MediaQuery.of(ctx).padding.top) / maxHeight;
-//              if (maxHeight == 0.0) {
-//                return Container();
-//              }
-//              Fluttertoast.showToast(msg: 'xxx height $maxHeight');
-          return NotificationListener<myWidget.DraggableScrollableNotification>(
-            onNotification: (notification) {
-              if (state is home.InitialHomeState) {
-                updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
-              }
-              return true;
-            },
-            child: myWidget.DraggableScrollableSheet(
-              key: panelKey,
-              maxChildSize: maxChildSize,
-              expand: true,
-              minChildSize: minChildSize,
-              anchorSize: anchorSize,
-              initialChildSize: initSize,
-              draggable: true,
-              builder: (BuildContext ctx, ScrollController scrollController) {
-                return HomePanel(scrollController: scrollController);
+      child: Container(
+        constraints: BoxConstraints.expand(),
+        child: LayoutBuilder(
+          builder: (ctx, BoxConstraints boxConstraints) {
+            double maxHeight = boxConstraints.biggest.height;
+            double anchorSize = 0.5;
+            double minChildSize = 88.0 / maxHeight;
+            double initSize = 280.0 / maxHeight;
+            double maxChildSize = (maxHeight - MediaQuery.of(ctx).padding.top) / maxHeight;
+//            var pheight = MediaQuery.of(ctx).removePadding(removeBottom: true, removeTop: true).size.height - 56;
+//            Fluttertoast.showToast(msg: 'xxx height $maxHeight, $pheight');
+            //hack, why maxHeight == 0 for the first time of release???
+            if (maxHeight == 0.0) {
+              return Container();
+            }
+            return NotificationListener<myWidget.DraggableScrollableNotification>(
+              onNotification: (notification) {
+                if (state is home.InitialHomeState) {
+                  updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
+                }
+                return true;
               },
-            ),
-          );
-        },
+              child: myWidget.DraggableScrollableSheet(
+                key: panelKey,
+                maxChildSize: maxChildSize,
+                expand: true,
+                minChildSize: minChildSize,
+                anchorSize: anchorSize,
+                initialChildSize: initSize,
+                draggable: true,
+                builder: (BuildContext ctx, ScrollController scrollController) {
+                  return HomePanel(scrollController: scrollController);
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
