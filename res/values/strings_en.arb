@@ -289,5 +289,7 @@
   "scan_upload_signal_success_hint": "Signal data uploaded successfully",
   "scan_thanks_contribution_signal_hint": "Thank you for your data contribution！",
   "scan_confirm_upload" : "Upload signal data",
-  "scan_collect_signal_func": "${Num} signals collected"
+  "scan_collect_signal_func": "${Num} signals collected",
+  "data_position_adding": "添加中",
+  "data_save": "存储"
 }

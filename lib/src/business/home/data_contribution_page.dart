@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/position/add_position_page.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -249,7 +250,14 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', S.of(context).add_poi_item_title, () {}),
+        _buildItem('position', S.of(context).add_poi_item_title, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddPositionPage(),
+            ),
+          );
+        }, isOpen: true),
         _divider(),
         _buildItem('check', S.of(context).check_poi_item_title, () {}),
         _divider(),

@@ -75,6 +75,8 @@ class S implements WidgetsLocalizations {
   String get data_contrebution_with_hyn_wallet_tips => "Data contribution requires a HYN wallet address. Please create or import a HYN wallet first.";
   String get data_contribute => "Data Contribution";
   String get data_contribute_reward => "Contribute your map data";
+  String get data_position_adding => "添加中";
+  String get data_save => "存储";
   String get decrypt_location_cipher_tips => "How to decipher coded location information？";
   String get decrypt_location_cipher_tips_context => "Please paste the location code, and click enter to decode.";
   String get delete => "Delete";
@@ -471,6 +473,8 @@ class $ko extends S {
   @override
   String get hyn_price => "HYN 지수";
   @override
+  String get data_save => "存储";
+  @override
   String get nav_share_app => "App 공유";
   @override
   String get confirm_mnemonic => "복원 단어를 입력해주십시오.";
@@ -865,6 +869,8 @@ class $ko extends S {
   @override
   String get scan_exit_tips => "스캔 진행 중, 종료 확인?";
   @override
+  String get data_position_adding => "添加中";
+  @override
   String get import_account_success => "계정 가져오기 성공";
   @override
   String get install_now => "바로 설치합니다.";
@@ -1066,6 +1072,8 @@ class $zh_CN extends S {
   String get search_title => "搜索 / 解码";
   @override
   String get hyn_price => "HYN指数";
+  @override
+  String get data_save => "存储";
   @override
   String get nav_share_app => "分享App";
   @override
@@ -1460,6 +1468,8 @@ class $zh_CN extends S {
   String get data_contrebution_with_hyn_wallet_tips => "数据贡献需要有HYN地址，请先创建 或导入HYN钱包。";
   @override
   String get scan_exit_tips => "正在扫描中，确认退出吗?";
+  @override
+  String get data_position_adding => "添加中";
   @override
   String get import_account_success => "账户导入成功";
   @override
