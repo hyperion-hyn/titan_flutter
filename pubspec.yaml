@@ -196,6 +196,8 @@ flutter:
     - res/drawable/data_contribution_signal.png
     - res/drawable/data_contribution_check.png
     - res/drawable/data_contribution_wallet_check.png
+    - res/drawable/ic_select_category_search_bar.png
+    - res/drawable/ic_select_category_search_bar_clear.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -9,3 +9,12 @@ abstract class PositionEvent extends Equatable {
 }
 
 class AddPositionEvent extends PositionEvent {}
+
+class SelectCategoryLoadingEvent extends PositionEvent {
+}
+
+class SelectCategoryResultEvent extends PositionEvent {
+  String searchText;
+
+  SelectCategoryResultEvent({this.searchText});
+}
