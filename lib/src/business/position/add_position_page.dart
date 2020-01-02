@@ -8,9 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+
 //import 'package:titan/src/basic/utils/hex_color.dart';
 //import 'package:titan/src/basic/utils/styles.dart';
 //import 'package:titan/src/basic/widget/input_view.dart';
+
 import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
