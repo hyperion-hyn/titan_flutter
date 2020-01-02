@@ -10,6 +10,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/add_position_page.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
+import 'package:titan/src/business/position/business_time_page.dart';
 import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -255,7 +256,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SelectCategoryPage(),
+              builder: (context) => BusinessTimePage(),
             ),
           );
         }, isOpen: true),

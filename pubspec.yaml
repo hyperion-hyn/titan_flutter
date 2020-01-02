@@ -198,6 +198,10 @@ flutter:
     - res/drawable/data_contribution_wallet_check.png
     - res/drawable/ic_select_category_search_bar.png
     - res/drawable/ic_select_category_search_bar_clear.png
+    - res/drawable/widget_checkbox_uncheck.png
+    - res/drawable/widget_checkbox_checked.png
+    - res/drawable/ic_business_time_switch_on.png
+    - res/drawable/ic_business_time_switch_off.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
