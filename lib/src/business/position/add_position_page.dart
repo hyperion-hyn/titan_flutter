@@ -1,40 +1,28 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:android_intent/android_intent.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-
-//import 'package:titan/src/basic/utils/hex_color.dart';
-//import 'package:titan/src/basic/utils/styles.dart';
-//import 'package:titan/src/basic/widget/input_view.dart';
-
-import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
-import 'package:titan/src/business/wallet/service/wallet_service.dart';
+import 'package:titan/src/business/position/model/category_item.dart';
+import 'package:titan/src/business/position/position_finish_page.dart';
+import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/utils/utils.dart';
-import '../wallet/wallet_create_new_account_page.dart';
-import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
-import 'package:titan/src/global.dart';
-import '../wallet/wallet_manager/wallet_manager.dart';
-
 import 'package:image_pickers/image_pickers.dart';
 import 'package:flutter/services.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:image_pickers/UIConfig.dart';
-import 'dart:ui' as ui;
+import 'package:titan/src/global.dart';
 
 class AddPositionPage extends StatefulWidget {
+  LatLng userPosition;
+
+  AddPositionPage(this.userPosition);
+
   @override
   State<StatefulWidget> createState() {
     return _AddPositionState();
@@ -43,21 +31,21 @@ class AddPositionPage extends StatefulWidget {
 
 class _AddPositionState extends State<AddPositionPage> {
   PositionBloc _positionBloc = PositionBloc();
-  TextEditingController _addressNameController = TextEditingController();
 
+  TextEditingController _addressNameController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
   TextEditingController _addressHouseNumController = TextEditingController();
   TextEditingController _addressPostcodeController = TextEditingController();
-
   TextEditingController _detailPhoneNumController = TextEditingController();
   TextEditingController _detailWebsiteController = TextEditingController();
 
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
 
-  GalleryMode _galleryMode = GalleryMode.image;
   List<Media> _listImagePaths = List();
-
   final int _listImagePathsMaxLength = 9;
+
+  String _categoryText = "";
 
   @override
   void initState() {
@@ -76,20 +64,18 @@ class _AddPositionState extends State<AddPositionPage> {
         ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            );
-          },
-        ),
         actions: <Widget>[
           InkWell(
             onTap: () {
               print('[add] --> 存储中。。。');
+
+              createWalletPopUtilName = '/data_contribution_page';
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FinishAddPositionPage(),
+                ),
+              );
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -145,26 +131,53 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   Widget _buildBody() {
-    return Container(
-      decoration: new BoxDecoration(color: Color(0xfff8f8f8)),
+    return Padding(
       padding: const EdgeInsets.only(top: 16),
-      child: ListView(
+      child: Stack(
         children: <Widget>[
-          _buildCategoryCell(),
-          _buildAddressNameCell(),
-          _buildPhotosCell(),
-          _buildAddressCell(),
-          _buildDetailCell(),
-          _buildProtocolCell(),
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _buildCategoryCell(),
+                _buildAddressNameCell(),
+                _buildPhotosCell(),
+                _buildAddressCell(),
+                _buildDetailCell(),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildProtocolCell(),
+          ),
         ],
       ),
     );
   }
 
+  void _pushCategoryPage() async {
+    print('[add] --> 添加类目');
+
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectCategoryPage(),
+      ),
+    );
+
+    if (result is CategoryItem) {
+      setState(() {
+        _categoryText = result.title;
+      });
+    }
+  }
+
   Widget _buildCategoryCell() {
     return InkWell(
       onTap: () {
-        print('[add] --> 添加类目');
+        _pushCategoryPage();
       },
       child: Container(
           height: 40,
@@ -190,7 +203,7 @@ class _AddPositionState extends State<AddPositionPage> {
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Text('书店', style: TextStyle(color: Color(0xff777777), fontSize: 14))),
+                  child: Text(_categoryText, style: TextStyle(color: Color(0xff777777), fontSize: 14))),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
@@ -380,16 +393,20 @@ class _AddPositionState extends State<AddPositionPage> {
                       children: <Widget>[
                         Image.asset('res/drawable/add_position_address.png', width: 19, height: 19),
                         Padding(
-                            padding: const EdgeInsets.only(right: 10, left: 28),
-                            child: Text(
-                              '添加街道',
-                              style: TextStyle(color: HexColor('#777777'), fontWeight: FontWeight.normal, fontSize: 13),
-                            )),
-                        Spacer(),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 14,
-                          color: Colors.grey,
+                          padding: const EdgeInsets.only(right: 10, left: 28),
+                          child: SizedBox(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _addressController,
+                              style: TextStyle(fontSize: 14),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: '添加街道',
+                                hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
+                              ),
+                              keyboardType: TextInputType.text,
+                            ),
+                          ),
                         ),
                       ],
                     )),
@@ -472,7 +489,7 @@ class _AddPositionState extends State<AddPositionPage> {
               style: TextStyle(color: Color(0xff333333), fontWeight: FontWeight.normal, fontSize: 14),
             )),
         Container(
-          height: 170,
+          height: 270,
           decoration: new BoxDecoration(color: Colors.white),
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
@@ -569,7 +586,7 @@ class _AddPositionState extends State<AddPositionPage> {
                   )),
               _divider(),
               Container(
-                height: 30,
+                height: 130,
                 color: Colors.white,
               ),
             ],
@@ -644,22 +661,15 @@ class _AddPositionState extends State<AddPositionPage> {
 
   Future<void> _selectImages() async {
     try {
-      _galleryMode = GalleryMode.image;
       var tempListImagePaths = await ImagePickers.pickerPaths(
-        galleryMode: _galleryMode,
+        galleryMode: GalleryMode.image,
         selectCount: _listImagePathsMaxLength - _listImagePaths.length,
         showCamera: true,
         cropConfig: null,
-//        cropConfig :CropConfig(enableCrop: true,height: 1,width: 1),
-//        uiConfig: UIConfig(uiThemeColor: Color(0xffff0000)),
         compressSize: 500,
         uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
       );
-
       _listImagePaths.addAll(tempListImagePaths);
-//      _listImagePaths.forEach((media){
-//        print(media.path.toString());
-//      });
       setState(() {});
     } on PlatformException {}
   }

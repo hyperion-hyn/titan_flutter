@@ -8,20 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/position/add_position_page.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
-import 'package:titan/src/business/position/select_category_page.dart';
+import 'package:titan/src/business/position/confirm_position_page.dart';
+import 'package:titan/src/business/position/select_position_page.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
-import '../wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
 import 'package:titan/src/global.dart';
+
 import '../wallet/wallet_manager/wallet_manager.dart';
+import '../wallet/wallet_create_new_account_page.dart';
 
 class DataContributionPage extends StatefulWidget {
   @override
@@ -255,12 +256,19 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SelectCategoryPage(),
+              builder: (context) => SelectPositionPage(),
             ),
           );
         }, isOpen: true),
         _divider(),
-        _buildItem('check', S.of(context).check_poi_item_title, () {}),
+        _buildItem('check', S.of(context).check_poi_item_title, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConfirmPositionPage(),
+            ),
+          );
+        }, isOpen: true),
         _divider(),
       ],
     );

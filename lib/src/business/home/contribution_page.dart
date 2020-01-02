@@ -506,7 +506,7 @@ class _ContributionState extends State<ContributionPage> {
           startScan();
         });
       },
-      myLocationTrackingMode: MyLocationTrackingMode.None,
+      myLocationTrackingMode: MyLocationTrackingMode.Tracking,
       rotateGesturesEnabled: false,
       tiltGesturesEnabled: false,
       enableLogo: false,
