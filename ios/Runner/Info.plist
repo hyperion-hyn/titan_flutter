@@ -37,8 +37,14 @@
 	<string>pk.eyJ1IjoibnVyYm90IiwiYSI6ImNpaG0ycXA3czBvamh2NWtsZzBzdHE2dmQifQ.B7NiVcQD0DFguQF1aRcOeQ</string>
 	<key>MGLMapboxMetricsEnabledSettingShownInApp</key>
 	<true/>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Please allow obtain photo library permission</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Please allow obtain add photo permission</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Please allow obtain media library permission</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Please allow obtain microphone permission</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Please allow obtain calendars permission</string>
 	<key>NSCameraUsageDescription</key>
@@ -80,6 +86,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key> <true/>
+    </dict>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>

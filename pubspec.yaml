@@ -103,6 +103,8 @@ dependencies:
   flutter_bugly: 0.2.7
   android_intent: 0.3.4+8
   app_settings: 3.0.0+1
+  #https://pub:dev/packages/image_pickers#-readme-tab-
+  image_pickers: ^1.0.7+1
 
 
 dev_dependencies:
@@ -196,6 +198,14 @@ flutter:
     - res/drawable/data_contribution_signal.png
     - res/drawable/data_contribution_check.png
     - res/drawable/data_contribution_wallet_check.png
+    - res/drawable/add_position_add.png
+    - res/drawable/add_position_address.png
+    - res/drawable/add_position_camera.png
+    - res/drawable/add_position_delete.png
+    - res/drawable/add_position_phone.png
+    - res/drawable/add_position_star.png
+    - res/drawable/add_position_time.png
+    - res/drawable/add_position_website.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
