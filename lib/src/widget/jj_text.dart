@@ -22,21 +22,21 @@ class JJText extends StatefulWidget {
   final JJTextFieldCallBack fieldCallBack;
   TextEditingController controller = TextEditingController();
 
-  JJText({
-    Key key,
-    this.text = "输入内容",
-    this.password = false,
-    this.isShowClean = false,
-    this.onChanged,
-    this.onRightBtnClick,
-    this.maxLines = 1,
-    this.height = 68,
-    this.icon,
-    this.rightIcon,
-    this.isRightBtn = false,
-    this.fieldCallBack,
-    this.controller
-  }) : super(key: key);
+  JJText(
+      {Key key,
+      this.text = "输入内容",
+      this.password = false,
+      this.isShowClean = false,
+      this.onChanged,
+      this.onRightBtnClick,
+      this.maxLines = 1,
+      this.height = 68,
+      this.icon,
+      this.rightIcon,
+      this.isRightBtn = false,
+      this.fieldCallBack,
+      this.controller})
+      : super(key: key);
 
   @override
   _JJTextaState createState() => _JJTextaState();
@@ -66,62 +66,61 @@ class _JJTextaState extends State<JJText> {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(right: 10, left: 28),
-          child: SizedBox(
-            width: 200,
-            child: TextField(
+        Container(
+          width: 160,
+          color: Colors.red,
+          padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
 
-              style: TextStyle(fontSize: 14),
-//        focusNode: _focusNode,
-              controller: widget.controller,
-//        maxLines: widget.maxLines,
-//        obscureText: widget.password,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                icon: widget.icon,
-                  fillColor: Colors.green,
-                  suffixIcon: Container(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        widget.isShowClean
-                            ? IconButton(
-                          icon: Image.asset('res/drawable/ic_select_category_search_bar_clear.png',height: 10,width: 10,),
-                          onPressed: onCancel,
-                        )
-                            : Text(""),
-                        widget.isRightBtn
-                            ? IconButton(
-                          icon: widget.rightIcon,
-                          onPressed: widget.onRightBtnClick,
-                        )
-                            : Text(""),
-                      ],
-                    ),
-                  ),
-                  hintText: widget.text,
-/*border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none)*/),
-              textAlignVertical: TextAlignVertical.center,
-              textAlign: TextAlign.left,
-              onChanged: (v) {
-                widget.fieldCallBack(v);
-                // if(v.length == 0){
-                //   print("00000000");
-                // }
-                setState(() {
-                  widget.isShowClean = v.isNotEmpty;
-                });
-              },
-              onSubmitted: (v) {
-                widget.fieldCallBack(v);
-                setState(() {
-                  widget.isShowClean = false;
-                });
-              },
+          child: TextField(
+            style: TextStyle(fontSize: 14),
+            controller: widget.controller,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              icon: widget.icon,
+              fillColor: Colors.green,
+              suffixIcon: Container(
+                color: Colors.blue,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+//                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    widget.isShowClean
+                        ? IconButton(
+                            icon: Image.asset(
+                              'res/drawable/ic_select_category_search_bar_clear.png',
+                              height: 10,
+                              width: 10,
+                            ),
+                            onPressed: onCancel,
+                          )
+                        : Text(""),
+                    widget.isRightBtn
+                        ? IconButton(
+                            icon: widget.rightIcon,
+                            onPressed: widget.onRightBtnClick,
+                          )
+                        : Text(""),
+                  ],
+                ),
+              ),
+              hintText: widget.text,
+              hintStyle: TextStyle(fontSize: 12)
             ),
+//            textAlignVertical: TextAlignVertical.bottom,
+            textAlign: TextAlign.left,
+            onChanged: (v) {
+              widget.fieldCallBack(v);
+              setState(() {
+                widget.isShowClean = v.isNotEmpty;
+              });
+            },
+            onSubmitted: (v) {
+              widget.fieldCallBack(v);
+              setState(() {
+                widget.isShowClean = false;
+              });
+            },
           ),
         ),
       ],

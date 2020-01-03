@@ -208,12 +208,10 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
   Widget _buildBody(PositionState state) {
     return Container(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-          buildSearchBar(),
-          Expanded(child: _buildBottomBody(state))
-        ]));
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[buildSearchBar(), Expanded(child: _buildBottomBody(state))]),
+    );
   }
 
   Widget _buildBottomBody(PositionState state) {
@@ -236,8 +234,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
             return _divider();
           },
           itemCount: categoryList.length);
-    } else if (state is InitialPositionState ||
-        state is SelectCategoryClearState) {
+    } else if (state is InitialPositionState || state is SelectCategoryClearState) {
       return Wrap(
           alignment: WrapAlignment.center,
           spacing: 10,
@@ -260,77 +257,36 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   }
 
   Widget buildSearchBar() {
-    return /*Material(
-      elevation: 0,
-      child: */
-        Stack(alignment: AlignmentDirectional.center, children: <Widget>[
-      Container(
-        color: Theme.of(context).primaryColor,
-        height: 43,
-      ),
-      Container(
-          height: 29,
-        decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(14.5))
-      ),
-//            height: 29,
-//          margin: EdgeInsets.only(left: 48, right: 48),
-//          padding: EdgeInsets.only(left: 17, right: 17),),
-//          decoration: BoxDecoration(
-//              color: Colors.white, borderRadius: BorderRadius.circular(14.5))),
-      Container(
-        color:Colors.yellow,
-        width: 246,
-//            height: 29,
-//          margin: EdgeInsets.only(left: 48, right: 48),
-//          padding: EdgeInsets.only(left: 17, right: 17),
-//          decoration: BoxDecoration(
-//              color: Colors.white, borderRadius: BorderRadius.circular(14.5)),
-          child: Row(
-
-            mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Image.asset('res/drawable/ic_select_category_search_bar.png',
-                    width: 13, height: 13),
-                Container(
-//                      width: 150,
-//                      height: 29,
-                    /*child: TextField(
-                          textInputAction: TextInputAction.search,
-                          controller: _searchTextController,
-                          keyboardType: TextInputType.text,
-                          onSubmitted: handleSearch,
-                          decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.all(10.0),
-                            hintStyle:
-                                TextStyle(color: Colors.grey, fontSize: 14),
-                            hintText: '请输入搜索词',
-                          ))*/
-                    child: JJText(
-                  controller: _searchTextController,
-                  fieldCallBack: (textStr) {
-                    if (textStr.length == 0) {
-                      _positionBloc.add(SelectCategoryClearEvent());
-                    }
-                    print("jjtext = " + textStr);
-                  },
-                )),
-//                  Spacer(),
-                if (_visibleCloseIcon)
-                  InkWell(
-                      onTap: () {
+    double height = 43;
+    return Container(
+      color: Theme.of(context).primaryColor,
+      height: height,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+            margin: EdgeInsets.only(left: 48, right: 48),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(height * 0.5)),
+            height: 29,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(17, 8, 11, 8),
+                    child: Image.asset('res/drawable/ic_select_category_search_bar.png', width: 13, height: 13),
+                  ),
+                  JJText(
+                    controller: _searchTextController,
+                    fieldCallBack: (textStr) {
+                      if (textStr.length == 0) {
                         _positionBloc.add(SelectCategoryClearEvent());
-                      },
-                      child: Image.asset(
-                        'res/drawable/ic_select_category_search_bar_clear.png',
-                        width: 13,
-                        height: 13,
-                      ))
-              ]))
-    ]);
-//    );
+                      }
+                      print("jjtext = " + textStr);
+                    },
+                  ),
+                ])),
+      ),
+    );
   }
 
   void handleSearch(textOrPoi) async {
