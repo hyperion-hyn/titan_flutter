@@ -1,6 +1,3 @@
-import 'dart:collection';
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
@@ -8,7 +5,7 @@ import 'package:titan/src/business/position/model/category_item.dart';
 
 class PositionApi {
   Future<List<CategoryItem>> getCategoryList(String keyword) async {
-    print("print start ");
+    print("[PositionApi] ,print start ");
 
     var data = await HttpCore.instance.getEntity(
         "map-collector/poi/category/search",

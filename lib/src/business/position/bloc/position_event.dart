@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
 
 @immutable

@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 
 abstract class PositionState {

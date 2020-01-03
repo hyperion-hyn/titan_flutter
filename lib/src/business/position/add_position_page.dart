@@ -195,7 +195,8 @@ class _AddPositionState extends State<AddPositionPage> {
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Text(_categoryText??_categoryDefaultText, style: TextStyle(color: Color(0xff777777), fontSize: 14))),
+                  child: Text(_categoryText ?? _categoryDefaultText,
+                      style: TextStyle(color: Color(0xff777777), fontSize: 14))),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
@@ -371,7 +372,7 @@ class _AddPositionState extends State<AddPositionPage> {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  print('[add] --> 添加地址');
+                  //print('[add] --> 添加地址');
                 },
                 child: Container(
                     height: 40,
@@ -488,7 +489,6 @@ class _AddPositionState extends State<AddPositionPage> {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  print('[add] --> 添加工作时间');
                   _pushTimePage();
                 },
                 child: Container(
@@ -504,12 +504,12 @@ class _AddPositionState extends State<AddPositionPage> {
                         Image.asset('res/drawable/add_position_time.png', width: 19, height: 19),
                         Container(
 //                          color: Colors.red,
-                          padding: const EdgeInsets.only(left: 28,right:20),
+                          padding: const EdgeInsets.only(left: 28, right: 20),
                           child: Container(
 //                            color: Colors.green,
                             width: 230,
                             child: Text(
-                              _timeText??_timeDefaultText,
+                              _timeText ?? _timeDefaultText,
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(color: HexColor('#777777'), fontWeight: FontWeight.normal, fontSize: 13),
@@ -597,7 +597,6 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-
   Widget _divider() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -676,16 +675,13 @@ class _AddPositionState extends State<AddPositionPage> {
     } on PlatformException {}
   }
 
-
   void _pushTimePage() async {
-
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BusinessTimePage(),
       ),
     );
-
 
     if (result is BusinessInfo) {
       setState(() {
@@ -718,5 +714,4 @@ class _AddPositionState extends State<AddPositionPage> {
       });
     }
   }
-
 }
