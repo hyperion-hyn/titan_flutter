@@ -16,4 +16,5 @@ class TextStyles {
 
   static TextStyle textC333S14 = textStyle(color: HexColor("#333333"));
   static TextStyle textC777S14 = textStyle(color: HexColor("#777777"));
+  static TextStyle textCaaaS14 = textStyle(color: HexColor("#aaaaaa"));
 }

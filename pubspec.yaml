@@ -202,6 +202,7 @@ flutter:
     - res/drawable/widget_checkbox_checked.png
     - res/drawable/ic_business_time_switch_on.png
     - res/drawable/ic_business_time_switch_off.png
+    - res/drawable/ic_business_time_add_custom.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

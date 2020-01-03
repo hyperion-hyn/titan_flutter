@@ -243,19 +243,25 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
             ));
           }).toList());
     }
+    return Container(
+      width: 0.0,
+      height: 0.0,
+    );
   }
 
   Widget buildSearchBar() {
-    return Material(
+    return /*Material(
       elevation: 0,
-      child: Stack(children: <Widget>[
+      child: */Stack(
+          alignment: AlignmentDirectional.centerStart,
+          children: <Widget>[
         Container(
           color: Theme.of(context).primaryColor,
           height: 43,
         ),
         Container(
             height: 29,
-            margin: EdgeInsets.only(left: 48, right: 48, top: 7, bottom: 7),
+            margin: EdgeInsets.only(left: 48, right: 48),
             padding: EdgeInsets.only(left: 17, right: 17),
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(14.5)),
@@ -292,8 +298,8 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
                           height: 13,
                         ))
                 ]))
-      ]),
-    );
+      ]);
+//    );
   }
 
   void handleSearch(textOrPoi) async {
