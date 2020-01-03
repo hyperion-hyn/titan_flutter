@@ -11,8 +11,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/position/confirm_position_page.dart';
 import 'package:titan/src/business/position/select_position_page.dart';
-import 'package:titan/src/business/position/business_time_page.dart';
-import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';

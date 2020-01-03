@@ -6,6 +6,8 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
+import 'package:titan/src/business/position/business_time_page.dart';
+import 'package:titan/src/business/position/model/business_time.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/position_finish_page.dart';
 import 'package:titan/src/business/position/select_category_page.dart';
@@ -45,11 +47,18 @@ class _AddPositionState extends State<AddPositionPage> {
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
 
-  String _categoryText = "";
+  String _categoryText;
+  String _timeText;
+
+  String _categoryDefaultText = "";
+  String _timeDefaultText = "";
 
   @override
   void initState() {
     _positionBloc.add(AddPositionEvent());
+    _categoryDefaultText = "请选择类别";
+    _timeDefaultText = "请添加工作时间";
+
     super.initState();
   }
 
@@ -157,23 +166,6 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  void _pushCategoryPage() async {
-    print('[add] --> 添加类目');
-
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SelectCategoryPage(),
-      ),
-    );
-
-    if (result is CategoryItem) {
-      setState(() {
-        _categoryText = result.title;
-      });
-    }
-  }
-
   Widget _buildCategoryCell() {
     return InkWell(
       onTap: () {
@@ -203,7 +195,7 @@ class _AddPositionState extends State<AddPositionPage> {
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Text(_categoryText, style: TextStyle(color: Color(0xff777777), fontSize: 14))),
+                  child: Text(_categoryText??_categoryDefaultText, style: TextStyle(color: Color(0xff777777), fontSize: 14))),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
@@ -497,6 +489,7 @@ class _AddPositionState extends State<AddPositionPage> {
               InkWell(
                 onTap: () {
                   print('[add] --> 添加工作时间');
+                  _pushTimePage();
                 },
                 child: Container(
                     height: 40,
@@ -509,12 +502,20 @@ class _AddPositionState extends State<AddPositionPage> {
                       // 交叉轴（竖直）对其方式
                       children: <Widget>[
                         Image.asset('res/drawable/add_position_time.png', width: 19, height: 19),
-                        Padding(
-                            padding: const EdgeInsets.only(right: 10, left: 28),
+                        Container(
+//                          color: Colors.red,
+                          padding: const EdgeInsets.only(left: 28,right:20),
+                          child: Container(
+//                            color: Colors.green,
+                            width: 230,
                             child: Text(
-                              '添加工作时间',
+                              _timeText??_timeDefaultText,
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(color: HexColor('#777777'), fontWeight: FontWeight.normal, fontSize: 13),
-                            )),
+                            ),
+                          ),
+                        ),
                         Spacer(),
                         Icon(
                           Icons.arrow_forward_ios,
@@ -596,6 +597,7 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
+
   Widget _divider() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -618,7 +620,7 @@ class _AddPositionState extends State<AddPositionPage> {
                     )));
       },
       child: Container(
-        color: Color(0xffd8d8d8),
+        color: Color(0x88d8d8d8),
         height: 44,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -673,4 +675,48 @@ class _AddPositionState extends State<AddPositionPage> {
       setState(() {});
     } on PlatformException {}
   }
+
+
+  void _pushTimePage() async {
+
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BusinessTimePage(),
+      ),
+    );
+
+
+    if (result is BusinessInfo) {
+      setState(() {
+        print('[add] --> 添加时间, time:${result.timeStr}, dayCount:${result.dayList.length}');
+        String dayText = "";
+
+        for (var item in result.dayList) {
+          if (!item.isCheck) continue;
+          dayText += "${item.label}、";
+        }
+
+        _timeText = result.timeStr + " " + dayText;
+      });
+    }
+  }
+
+  void _pushCategoryPage() async {
+    print('[add] --> 添加类目');
+
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectCategoryPage(),
+      ),
+    );
+
+    if (result is CategoryItem) {
+      setState(() {
+        _categoryText = result.title;
+      });
+    }
+  }
+
 }

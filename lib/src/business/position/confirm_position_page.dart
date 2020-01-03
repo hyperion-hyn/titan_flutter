@@ -5,6 +5,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/widget/radio_checkbox_widget.dart';
 
 class ConfirmPositionPage extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   MapboxMapController mapController;
   LatLng userPosition;
   double defaultZoom = 18;
+  bool _isLoading = false;
 
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
@@ -178,17 +180,18 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           return InkWell(
             onTap: () {},
             child: Container(
-              child: Center(
-                child: Image.asset(
-                  'res/drawable/add_position_add.png',
-                  width: 20,
-                  height: 20,
-//                        fit: BoxFit.scaleDown,
-                ),
-              ),
               decoration: BoxDecoration(
                 color: HexColor('#D8D8D8'),
                 borderRadius: BorderRadius.circular(3.0),
+              ),
+              child: Center(
+                child: _isLoading
+                    ? CircularProgressIndicator()
+                    : FadeInImage.assetNetwork(
+                        placeholder: 'res/drawable/img_placeholder.jpg',
+                        image: "",
+                        fit: BoxFit.fill,
+                      ),
               ),
             ),
           );
@@ -199,17 +202,16 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   }
 
   Widget _detailView() {
-
     var itemCount = _detailTextList.length;
-    double  padding = 15;
-    double height = (17.0+4.0) * itemCount + 10;
+    double padding = 15;
+    double height = (17.0 + 4.0) * itemCount + 10;
     return Container(
 //      color: Colors.red,
-        height: height,
-        padding: EdgeInsets.symmetric(horizontal: padding),
-        child: ListView.builder(
-//          physics: new NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
+      height: height,
+      padding: EdgeInsets.symmetric(horizontal: padding),
+      child: ListView.builder(
+        physics: new NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
           return Padding(
             padding: EdgeInsets.only(bottom: 4),
             child: Text(
@@ -224,11 +226,35 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           );
         },
         itemCount: itemCount,
-        ),
+      ),
     );
   }
 
   Widget _confirmView() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 52, left: 25, right: 25),
+      child: CustomRadioButton(
+        enableShape: true,
+        hight: 40,
+        width: 150,
+        buttonColor: Colors.white,
+        selectedColor: Theme.of(context).primaryColor,
+        buttonLables: [
+          '信息有误',
+          '信息正确',
+        ],
+        buttonValues: [
+          '信息有误',
+          '信息正确',
+        ],
+        radioButtonValue: (value) {
+          print(value);
+        },
+      ),
+    );
+  }
+
+  Widget _confirmView_old() {
     return Padding(
       padding: const EdgeInsets.only(top: 52),
       child: Row(
@@ -241,7 +267,6 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             textColor: Colors.white,
             disabledTextColor: Colors.white,
             onPressed: () async {
-
               if (createWalletPopUtilName == null) {
                 Navigator.of(context).popUntil((r) => r.isFirst);
               } else {
@@ -262,7 +287,9 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               ),
             ),
           ),
-          SizedBox(width: 40,),
+          SizedBox(
+            width: 40,
+          ),
           RaisedButton(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             disabledColor: Colors.grey[600],
@@ -270,7 +297,6 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             textColor: Colors.white,
             disabledTextColor: Colors.white,
             onPressed: () async {
-
               if (createWalletPopUtilName == null) {
                 Navigator.of(context).popUntil((r) => r.isFirst);
               } else {
