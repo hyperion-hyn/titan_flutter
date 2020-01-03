@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,15 +41,23 @@ class _AppState extends State<App> {
         currentAppArea = appArea;
       });
     };
-    getLocale();
+    _getLocale();
   }
 
-  Future getLocale() async {
+  Future _getLocale() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var languageCode = prefs.getString(PrefsKey.appLanguageCode);
     var countryCode = prefs.getString(PrefsKey.appCountryCode);
     if (languageCode == null) {
-      localeChange(defaultLocale);
+      //set default locale
+      var l = window.locale?.languageCode;
+      if (l == 'zh') {
+        localeChange(Locale("zh", "CN"));
+      } else if (l == 'ko') {
+        localeChange(Locale('ko', ''));
+      } else {
+        localeChange(Locale('en', ''));
+      }
       return;
     }
     localeChange(Locale(languageCode, countryCode));
@@ -55,7 +65,6 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocProvider(
       builder: (context) => AppBloc(),
       child: RefreshConfiguration(

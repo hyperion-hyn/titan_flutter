@@ -102,7 +102,7 @@ class _DrawBalanceState extends State<DrawBalancePage> {
       amount = _amount;
       fee = withdrawalInfo.free_rate * amount;
       //if (_selectedWithdrawalTypeString == RECHARGE) fee = 0;
-      canGetHynAmount = (amount - fee) / quotes.avgRate;
+      canGetHynAmount = (amount - fee) / quotes.rate;
       print('canGetHynAmount is: $canGetHynAmount');
     }
   }
@@ -364,11 +364,13 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                               S.of(context).amount_received,
                               style: TextStyle(color: Colors.black54),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                S.of(context).actual_amount_received,
-                                style: TextStyle(color: Colors.black54, fontSize: 12),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  S.of(context).actual_amount_received,
+                                  style: TextStyle(color: Colors.black54, fontSize: 12),
+                                ),
                               ),
                             ),
                           ],

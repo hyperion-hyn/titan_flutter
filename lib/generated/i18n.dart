@@ -36,7 +36,7 @@ class S implements WidgetsLocalizations {
   String get account_new_password => "New password";
   String get account_password => "account password";
   String get action_success_hint => "Operated successfully";
-  String get actual_amount_received => "(Actual amount received shall prevail)";
+  String get actual_amount_received => "(subject to HYN price fluctuations)";
   String get add_poi_item_title => "Add POI information";
   String get add_share_options => "Sharing options";
   String get address_copied => "Address copied";
@@ -47,7 +47,7 @@ class S implements WidgetsLocalizations {
   String get already_latest_version_hint => "latest version already installed";
   String get amount => "Amount：";
   String get amount_copy_success_hint => "Amount copied successfully";
-  String get amount_received => "Amount Received";
+  String get amount_received => "HYN received";
   String get app_area_setting => "Area";
   String get app_name => "Star Rich";
   String get app_version => "Version";
@@ -486,7 +486,7 @@ class S implements WidgetsLocalizations {
   String get wechat_official_account => "Wechat Official Account";
   String get withdrawal => "Withdraw";
   String get withdrawal_apply_success => "Withdrawal application is successful";
-  String get withdrawal_audit_message => "Convert the corresponding HYN to your withdrawal address. In order to secure the funds, we will manually check the withdrawal. Withdrawal processing time: same day receipt during 9:00 am - 21:00 PM , next day receipt during non-working hours .";
+  String get withdrawal_audit_message => "Convert the corresponding HYN to your withdrawal address. In order to secure the funds, we will manually check the withdrawal. Withdrawal processing time: same day receipt during 10:00 am - 21:00 PM , next day receipt during non-working hours .";
   String get withdrawal_fail => "Withdrawal error";
   String get withdrawal_records => "Withdrawal record";
   String get without_hyn_wallet => "You don't have a HYN wallet yet.";
@@ -1091,7 +1091,7 @@ class $ko extends S {
   @override
   String get open_camera => "카메라 권한을 열어주십시오.";
   @override
-  String get actual_amount_received => "(수령 한 실제 금액을 기준으로)";
+  String get actual_amount_received => "(입금거래소 실시간가 기준)";
   @override
   String get node_mortgage_with_unit => "노드저당(USDT)";
   @override
@@ -1131,7 +1131,7 @@ class $ko extends S {
   @override
   String get scan_name_cellular => "셀 타워";
   @override
-  String get withdrawal_audit_message => "해당 HYN으로 환산하여 당신의 인출 주소에 표시합니다.자금의 안전을 보장하기 위해 우리는 화폐 인출에 대하여 인공적인 심사를 진행합니다.인출 처리시간:오전9:00-오후21:00 당일 입금합니다.비근무시간에 접수한 주문서는 다음날 바로 입금됩니다.";
+  String get withdrawal_audit_message => "해당 HYN으로 환산하여 당신의 인출 주소에 표시합니다.자금의 안전을 보장하기 위해 우리는 화폐 인출에 대하여 인공적인 심사를 진행합니다.인출 처리시간:오전10:00-오후21:00 당일 입금합니다.비근무시간에 접수한 주문서는 다음날 바로 입금됩니다.";
   @override
   String get search_title => "검색/디코딩";
   @override
@@ -1139,7 +1139,7 @@ class $ko extends S {
   @override
   String get confirm_mnemonic => "복원 단어를 입력해주십시오.";
   @override
-  String get amount_received => "입금수량";
+  String get amount_received => "HYN 입금수량";
   @override
   String get no_data => "데이터가없습니다.";
   @override
@@ -2123,7 +2123,7 @@ class $zh_CN extends S {
   @override
   String get open_camera => "请开启相机权限";
   @override
-  String get actual_amount_received => "(以实际到账数量为准)";
+  String get actual_amount_received => "(以到账交易所实时价为准)";
   @override
   String get node_mortgage_with_unit => "节点抵押(USDT)";
   @override
@@ -2163,7 +2163,7 @@ class $zh_CN extends S {
   @override
   String get scan_name_cellular => "基站";
   @override
-  String get withdrawal_audit_message => "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早9:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。";
+  String get withdrawal_audit_message => "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早10:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。";
   @override
   String get search_title => "搜索 / 解码";
   @override
@@ -2171,7 +2171,7 @@ class $zh_CN extends S {
   @override
   String get confirm_mnemonic => "输入恢复短语";
   @override
-  String get amount_received => "到账数量";
+  String get amount_received => "HYN到账数量";
   @override
   String get no_data => "暂无数据";
   @override
@@ -2317,7 +2317,7 @@ class $zh_CN extends S {
   @override
   String get by_hyn_transfer => "使用HYN钱包转入";
   @override
-  String get scan_hyn_is_empty => "HYN wallet 为空";
+  String get scan_hyn_is_empty => "HYN钱包为空";
   @override
   String get copy => "复制";
   @override
