@@ -6,6 +6,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
@@ -39,6 +40,7 @@ class BusinessTimePage extends StatefulWidget {
 
 class _BusinessTimeState extends State<BusinessTimePage> {
   PositionBloc _positionBloc = PositionBloc();
+  TextEditingController _timeController = TextEditingController();
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
   List<BusinessDayItem> _dayList;
@@ -83,17 +85,25 @@ class _BusinessTimeState extends State<BusinessTimePage> {
           InkWell(
             onTap: () {
               bool hasCheck = false;
+              String customTime = _timeController.text;
               _dayList.forEach((item) => {
-                if(item.isCheck){
-                  hasCheck = true
-                }
-              });
-              if(!hasCheck || currentTime == null){
+                    if (item.isCheck) {hasCheck = true}
+                  });
+              if (!hasCheck || (currentTime == null && customTime.isEmpty)) {
                 Fluttertoast.showToast(msg: "请选择营业时间");
                 return;
               }
 
-              BusinessInfo businessInfo = BusinessInfo(dayList: _dayList,timeStr: currentTime.label);
+              if (currentTime == null && isRightTime(customTime)) {
+                currentTime = BusinessTimeItem();
+                currentTime.label = customTime;
+              } else if (currentTime == null && !isRightTime(customTime)){
+                Fluttertoast.showToast(msg: "请输入正确的时间，例如 07:00-23:00");
+                return;
+              }
+
+              BusinessInfo businessInfo =
+                  BusinessInfo(dayList: _dayList, timeStr: currentTime.label);
               Navigator.pop(context, businessInfo);
             },
             child: Container(
@@ -109,6 +119,10 @@ class _BusinessTimeState extends State<BusinessTimePage> {
       ),
       body: _buildView(context),
     );
+  }
+
+  bool isRightTime(String customTime) {
+    return RegExp("([0-1]?[0-9]|2[0-3]):([0-5][0-9])-([0-1]?[0-9]|2[0-3]):([0-5][0-9])").hasMatch(customTime);
   }
 
   Widget _buildView(BuildContext context) {
@@ -136,27 +150,27 @@ class _BusinessTimeState extends State<BusinessTimePage> {
   Widget _buildTimeItem(BusinessTimeItem timeItem) {
     TextStyle textStyle =
         timeItem.isCheck ? TextStyles.textC333S14 : TextStyles.textC777S14;
-    String imagePath = 
-        timeItem.isCheck ? "res/drawable/ic_business_time_switch_on.png" : "res/drawable/ic_business_time_switch_off.png";
+    String imagePath = timeItem.isCheck
+        ? "res/drawable/ic_business_time_switch_on.png"
+        : "res/drawable/ic_business_time_switch_off.png";
     return Container(
-      padding: const EdgeInsets.only(left: 15,right: 15),
-        height: 41,
-        child: Row(
-          children: <Widget>[
-            Text(
-                timeItem.label,
-                style: textStyle,
-              ),
-            Spacer(),
-            Image.asset(imagePath,width: 24,height: 15)
-            /*Switch(value: timeItem.isCheck,
+      padding: const EdgeInsets.only(left: 15, right: 15),
+      height: 41,
+      child: Row(
+        children: <Widget>[
+          Text(
+            timeItem.label,
+            style: textStyle,
+          ),
+          Spacer(),
+          Image.asset(imagePath, width: 24, height: 15)
+          /*Switch(value: timeItem.isCheck,
             activeColor: Colors.blue,
             onChanged: (bool val){
 
             })*/
-          ],
-        ),
-
+        ],
+      ),
     );
   }
 
@@ -168,7 +182,8 @@ class _BusinessTimeState extends State<BusinessTimePage> {
       Padding(
           padding: EdgeInsets.only(left: 15),
           child: Text("营业时间", style: TextStyles.textC333S14)),
-      Column(children: _buildBusinessTime())
+      Column(children: _buildBusinessTime()),
+      _buildCustomTime()
 //    getabc()
     ]);
   }
@@ -193,7 +208,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
         .map(
           (item) => InkWell(
               onTap: () {
-                if(currentTime != null) {
+                if (currentTime != null) {
                   currentTime.isCheck = false;
                 }
                 item.isCheck = !item.isCheck;
@@ -205,4 +220,35 @@ class _BusinessTimeState extends State<BusinessTimePage> {
         .toList();
   }
 
+  Widget _buildCustomTime() {
+    return Stack(
+        alignment: AlignmentDirectional.centerStart,
+        children: <Widget>[
+          Container(
+            color: HexColor("#f8f8f8"),
+            height: 40,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Image.asset("res/drawable/ic_business_time_add_custom.png",
+                    width: 15, height: 15),
+                SizedBox(width: 10, height: 1),
+                Expanded(
+                  child: TextField(
+                      controller: _timeController,
+                      decoration: new InputDecoration(
+                        border: InputBorder.none,
+//                  contentPadding: const EdgeInsets.all(10.0),
+                        hintStyle: TextStyles.textCaaaS14,
+                        hintText: '添加时间',
+                      )),
+                )
+              ],
+            ),
+          )
+        ]);
+  }
 }
