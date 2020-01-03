@@ -21,6 +21,8 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       var categoryList = await _positionApi.getCategoryList(event.searchText);
 
       yield SelectCategoryResultState(categoryList: categoryList);
+    }else if(event is SelectCategoryClearEvent){
+      yield SelectCategoryClearState();
     }
   }
 }

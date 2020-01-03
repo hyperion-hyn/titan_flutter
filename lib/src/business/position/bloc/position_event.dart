@@ -18,3 +18,6 @@ class SelectCategoryResultEvent extends PositionEvent {
 
   SelectCategoryResultEvent({this.searchText});
 }
+
+class SelectCategoryClearEvent extends PositionEvent {
+}
