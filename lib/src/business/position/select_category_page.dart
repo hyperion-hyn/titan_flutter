@@ -15,6 +15,7 @@ import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/jj_text.dart';
 import '../wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +41,8 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   FocusNode _searchFocusNode = FocusNode();
   bool _visibleCloseIcon = false;
   bool _isLoading = true;
-  PublishSubject<String> _filterSubject = PublishSubject<String>();
+
+//  PublishSubject<String> _filterSubject = PublishSubject<String>();
   List<String> _tagList = [];
 
   @override
@@ -52,7 +54,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     _tagList.add("健康食品店");
     _tagList.add("美甲店");
 
-    _searchTextController.addListener(searchTextChangeListener);
+//    _searchTextController.addListener(searchTextChangeListener);
 
 //    _positionBloc.add(SelectCategoryLoadingEvent());
 
@@ -62,15 +64,15 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
     super.initState();
 
-    _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
+    /*_filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
       handleSearch(text);
-    });
+    });*/
   }
 
   void searchTextChangeListener() {
     String currentText = _searchTextController.text.trim();
     if (currentText.isNotEmpty) {
-      _filterSubject.sink.add(currentText);
+//      _filterSubject.sink.add(currentText);
       if (!_visibleCloseIcon) {
         setState(() {
           _visibleCloseIcon = true;
@@ -121,6 +123,8 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       bloc: _positionBloc,
       builder: (BuildContext context, PositionState state) {
         if (state is InitialPositionState) {
+          categoryList.clear();
+//          _searchTextController.text = "";
           return _buildBody(state);
         } else if (state is SelectCategoryResultState) {
           _isLoading = false;
@@ -133,6 +137,10 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 //          setState(() {
 //
 //          });
+          return _buildBody(state);
+        } else if (state is SelectCategoryClearState) {
+          categoryList.clear();
+//          _searchTextController.text = "";
           return _buildBody(state);
         } else {
           return Container(
@@ -147,7 +155,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   @override
   void dispose() {
     _positionBloc.close();
-    _filterSubject.close();
+//    _filterSubject.close();
     super.dispose();
   }
 
@@ -228,19 +236,21 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
             return _divider();
           },
           itemCount: categoryList.length);
-    } else if (state is InitialPositionState) {
+    } else if (state is InitialPositionState ||
+        state is SelectCategoryClearState) {
       return Wrap(
           alignment: WrapAlignment.center,
           spacing: 10,
           runSpacing: 5,
           children: _tagList.map<Widget>((s) {
-            return InkWell(onTap: () {
-              _searchTextController.text = s;
-              handleSearch(s);
-            },
-            child:Chip(
-              label: Text('$s'),
-            ));
+            return InkWell(
+                onTap: () {
+                  _searchTextController.text = s;
+                  handleSearch(s);
+                },
+                child: Chip(
+                  label: Text('$s'),
+                ));
           }).toList());
     }
     return Container(
@@ -252,29 +262,41 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   Widget buildSearchBar() {
     return /*Material(
       elevation: 0,
-      child: */Stack(
-          alignment: AlignmentDirectional.centerStart,
-          children: <Widget>[
-        Container(
-          color: Theme.of(context).primaryColor,
-          height: 43,
-        ),
-        Container(
-            height: 29,
-            margin: EdgeInsets.only(left: 48, right: 48),
-            padding: EdgeInsets.only(left: 17, right: 17),
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(14.5)),
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset('res/drawable/ic_select_category_search_bar.png',
-                      width: 13, height: 13),
-                  Container(
-                      width: 150,
-                      height: 29,
-                      child: TextField(
-//                          style: TextStyle(height: 14, fontSize: 14),
+      child: */
+        Stack(alignment: AlignmentDirectional.center, children: <Widget>[
+      Container(
+        color: Theme.of(context).primaryColor,
+        height: 43,
+      ),
+      Container(
+          height: 29,
+        decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(14.5))
+      ),
+//            height: 29,
+//          margin: EdgeInsets.only(left: 48, right: 48),
+//          padding: EdgeInsets.only(left: 17, right: 17),),
+//          decoration: BoxDecoration(
+//              color: Colors.white, borderRadius: BorderRadius.circular(14.5))),
+      Container(
+        color:Colors.yellow,
+        width: 246,
+//            height: 29,
+//          margin: EdgeInsets.only(left: 48, right: 48),
+//          padding: EdgeInsets.only(left: 17, right: 17),
+//          decoration: BoxDecoration(
+//              color: Colors.white, borderRadius: BorderRadius.circular(14.5)),
+          child: Row(
+
+            mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('res/drawable/ic_select_category_search_bar.png',
+                    width: 13, height: 13),
+                Container(
+//                      width: 150,
+//                      height: 29,
+                    /*child: TextField(
                           textInputAction: TextInputAction.search,
                           controller: _searchTextController,
                           keyboardType: TextInputType.text,
@@ -285,20 +307,29 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
                             hintStyle:
                                 TextStyle(color: Colors.grey, fontSize: 14),
                             hintText: '请输入搜索词',
-                          ))),
-                  Spacer(),
-                  if (_visibleCloseIcon)
-                    InkWell(
-                        onTap: () {
-                          _searchTextController.text = "";
-                        },
-                        child: Image.asset(
-                          'res/drawable/ic_select_category_search_bar_clear.png',
-                          width: 13,
-                          height: 13,
-                        ))
-                ]))
-      ]);
+                          ))*/
+                    child: JJText(
+                  controller: _searchTextController,
+                  fieldCallBack: (textStr) {
+                    if (textStr.length == 0) {
+                      _positionBloc.add(SelectCategoryClearEvent());
+                    }
+                    print("jjtext = " + textStr);
+                  },
+                )),
+//                  Spacer(),
+                if (_visibleCloseIcon)
+                  InkWell(
+                      onTap: () {
+                        _positionBloc.add(SelectCategoryClearEvent());
+                      },
+                      child: Image.asset(
+                        'res/drawable/ic_select_category_search_bar_clear.png',
+                        width: 13,
+                        height: 13,
+                      ))
+              ]))
+    ]);
 //    );
   }
 

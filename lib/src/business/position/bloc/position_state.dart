@@ -21,3 +21,7 @@ class SelectCategoryResultState extends PositionState {
   List<CategoryItem> categoryList;
   SelectCategoryResultState({this.categoryList});
 }
+
+class SelectCategoryClearState extends PositionState {
+  SelectCategoryClearState();
+}
