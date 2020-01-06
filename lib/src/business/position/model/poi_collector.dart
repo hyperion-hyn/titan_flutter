@@ -16,6 +16,9 @@ class PoiCollector extends Object {
   @JsonKey(name: 'name')
   String name;
 
+//  @JsonKey(name: 'country_code')
+//  String countryCode;
+
   @JsonKey(name: 'country')
   String country;
 

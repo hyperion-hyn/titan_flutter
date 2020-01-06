@@ -683,6 +683,9 @@ class _AddPositionState extends State<AddPositionPage> {
         uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
       );
       _listImagePaths.addAll(tempListImagePaths);
+      for (var path in _listImagePaths) {
+        print('[add] --> path:${path.path}');
+      }
 
       setState(() {});
     } on PlatformException {}
@@ -753,10 +756,15 @@ class _AddPositionState extends State<AddPositionPage> {
       return;
     }
 
+    if (_openCageData == null) {
+      Fluttertoast.showToast(msg: "OpenCageData 为空");
+      return;
+    }
+
     var categoryId = _categoryItem.id;
     var location = widget.userPosition;
     var name = _addressNameController.text;
-    var country = _openCageData["country"];
+    var country = _openCageData["country"] ?? "";
     var state = _openCageData["state"];
     var city = _openCageData["city"] + _openCageData["county"];
     var address1 = _addressController.text ?? "";
@@ -767,6 +775,7 @@ class _AddPositionState extends State<AddPositionPage> {
     var workTime = _timeText ?? "";
     var phone = _detailPhoneNumController.text ?? "";
     var website = _detailWebsiteController.text ?? "";
+    var country_code = _openCageData["country_code"] ?? "";
     _poiCollector = PoiCollector(
         categoryId,
         location,
@@ -784,7 +793,7 @@ class _AddPositionState extends State<AddPositionPage> {
     );
 
     var address = currentWalletVo.accountList[0].account.address;
-    bool isFinish = await _service.postPoiCollector(_listImagePaths, address, _poiCollector);
+    bool isFinish = await _service.postPoiCollector(_listImagePaths,address,_poiCollector,country_code);
 
     if (isFinish) {
       createWalletPopUtilName = '/data_contribution_page';

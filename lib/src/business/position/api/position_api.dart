@@ -30,7 +30,7 @@ class PositionApi {
   }
 
   ///collect poi
-  Future<bool> postPoiCollector(List<Media> imagePaths, String address, PoiCollector poiCollector) async {
+  Future<bool> postPoiCollector(List<Media> imagePaths, String address, PoiCollector poiCollector, String country_code) async {
     try {
 
       List imgList = List();
@@ -42,15 +42,32 @@ class PositionApi {
       }
 
       Map<String, dynamic> params = {
-        "poi": poiCollector.toJson(),
+        "poi": {
+          "house_number": poiCollector.number,
+          "location": {
+            "lat": poiCollector.location.lat,
+            "lon": poiCollector.location.lon,
+          },
+          "road": poiCollector.name,
+          "postcode": poiCollector.postalCode,
+          "city": poiCollector.city,
+          "county": poiCollector.country,
+          "state": poiCollector.state,
+          "country": poiCollector.country,
+          "country_code": country_code,
+          "work_time": poiCollector.workTime,
+          "phone": poiCollector.phone,
+          "website": poiCollector.website,
+          "number": poiCollector.number
+        },
       };
 
       print('[position] poiCollector, 1, params:${params}');
 
       for (var i = 0; i < imgList.length; i += 1) {
-        var index = i - 1;
+        var index = i + 1;
         String key = "img${index}";
-         params[key] = imgList[i];
+         //params[key] = imgList[i];
       }
       print('[position] poiCollector, 2, params:${params}');
 
@@ -59,7 +76,9 @@ class PositionApi {
           options: RequestOptions(headers: {
             "Lang": "zh-Hans",
             "UUID": address
-          }, contentType: "multipart/form-data"));
+          }, contentType: "multipart/form-data"
+          )
+      );
       var responseEntity = ResponseEntity<String>.fromJson(res, factory: EntityFactory((json) => json));
       print("[PositionApi] , poiCollector,  responseEntity:${responseEntity}");
 
