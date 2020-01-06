@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+//import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/position/api/position_api.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/business_time_page.dart';
 import 'package:titan/src/business/position/model/business_time.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
+import 'package:titan/src/business/position/model/poi_collector.dart';
 import 'package:titan/src/business/position/position_finish_page.dart';
 import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
@@ -18,6 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:image_pickers/UIConfig.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/business/contribution/vo/latlng.dart';
 
 class AddPositionPage extends StatefulWidget {
   LatLng userPosition;
@@ -31,6 +35,9 @@ class AddPositionPage extends StatefulWidget {
 }
 
 class _AddPositionState extends State<AddPositionPage> {
+
+  PositionApi _service = PositionApi();
+
   PositionBloc _positionBloc = PositionBloc();
 
   TextEditingController _addressNameController = TextEditingController();
@@ -46,17 +53,23 @@ class _AddPositionState extends State<AddPositionPage> {
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
 
-  String _categoryText;
+  CategoryItem _categoryItem;
   String _timeText;
 
   String _categoryDefaultText = "";
   String _timeDefaultText = "";
+
+  Map<String, dynamic> _openCageData;
+
+  PoiCollector _poiCollector;
 
   @override
   void initState() {
     _positionBloc.add(AddPositionEvent());
     _categoryDefaultText = "请选择类别";
     _timeDefaultText = "请添加工作时间";
+
+    _getOpenCageData();
 
     super.initState();
   }
@@ -75,15 +88,7 @@ class _AddPositionState extends State<AddPositionPage> {
         actions: <Widget>[
           InkWell(
             onTap: () {
-              print('[add] --> 存储中。。。');
-
-              createWalletPopUtilName = '/data_contribution_page';
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FinishAddPositionPage(),
-                ),
-              );
+              _uploadPoiData();
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -166,6 +171,13 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   Widget _buildCategoryCell() {
+    String _categoryText = "";
+    if (_categoryItem == null || _categoryItem.title == null) {
+      _categoryText = _categoryDefaultText;
+    } else {
+      _categoryText = _categoryItem.title;
+    }
+
     return InkWell(
       onTap: () {
         _pushCategoryPage();
@@ -194,7 +206,7 @@ class _AddPositionState extends State<AddPositionPage> {
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Text(_categoryText ?? _categoryDefaultText,
+                  child: Text(_categoryText,
                       style: TextStyle(color: Color(0xff777777), fontSize: 14))),
               Icon(
                 Icons.arrow_forward_ios,
@@ -711,11 +723,80 @@ class _AddPositionState extends State<AddPositionPage> {
 
     if (result is CategoryItem) {
       setState(() {
-        _categoryText = result.title;
+        _categoryItem = result;
       });
     }
   }
 
+  void _getOpenCageData() async {
+    //widget.userPosition = LatLng(23.12084, 113.32193);
+    var query = "${widget.userPosition.lat},${widget.userPosition.lon}";
+    _openCageData = await _service.getOpenCageData(query, 'zh');
+  }
 
+  Future _uploadPoiData() async {
+
+    print('[add] --> 存储中。。。');
+
+    // 1.检测必须选项
+    var _isEmptyOfCatogory = (_categoryItem.title.length == 0 || _categoryItem.title == "");
+    var _isEmptyOfName = (_addressNameController.text.length == 0 || _addressNameController.text == "");
+    var _isEmptyOfImages = (_listImagePaths.length == 0);
+
+    if (_isEmptyOfCatogory || _isEmptyOfName || _isEmptyOfImages) {
+      Fluttertoast.showToast(msg: "类别、地点名、拍摄图片不能为空");
+      return;
+    }
+
+    if (!_isAcceptSignalProtocol) {
+      Fluttertoast.showToast(msg: "地理位置上传协议未接受");
+      return;
+    }
+
+    var categoryId = _categoryItem.id;
+    var location = widget.userPosition;
+    var name = _addressNameController.text;
+    var country = _openCageData["country"];
+    var state = _openCageData["state"];
+    var city = _openCageData["city"] + _openCageData["county"];
+    var address1 = _addressController.text ?? "";
+    var address2 = "";
+    var number = _addressHouseNumController.text ?? "";
+    //var postalCode = _addressPostcodeController.text ?? "";
+    var postalCode = _openCageData["postcode"];
+    var workTime = _timeText ?? "";
+    var phone = _detailPhoneNumController.text ?? "";
+    var website = _detailWebsiteController.text ?? "";
+    _poiCollector = PoiCollector(
+        categoryId,
+        location,
+        name,
+        country,
+        state,
+        city,
+        address1,
+        address2,
+        number,
+        postalCode,
+        workTime,
+        phone,
+        website
+    );
+
+    var address = currentWalletVo.accountList[0].account.address;
+    bool isFinish = await _service.postPoiCollector(_listImagePaths, address, _poiCollector);
+
+    if (isFinish) {
+      createWalletPopUtilName = '/data_contribution_page';
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FinishAddPositionPage(),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: "存储失败!");
+    }
+  }
 
 }

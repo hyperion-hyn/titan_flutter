@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as Mapbox;
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/business/position/add_position_page.dart';
+import 'package:titan/src/business/contribution/vo/latlng.dart' as LatLng;
 
 class SelectPositionPage extends StatefulWidget {
   @override
@@ -14,13 +15,14 @@ class SelectPositionPage extends StatefulWidget {
 
 class _SelectPositionState extends State<SelectPositionPage> {
 
-  MapboxMapController mapController;
-  LatLng userPosition;
+  Mapbox.MapboxMapController mapController;
+  LatLng.LatLng userPosition;
+//  LatLng userPosition;
   double defaultZoom = 18;
 
   @override
   void initState() {
-    userPosition = LatLng(23.12076, 113.322058);
+    userPosition = LatLng.LatLng(23.12076, 113.322058);
     super.initState();
   }
 
@@ -82,10 +84,10 @@ class _SelectPositionState extends State<SelectPositionPage> {
 
 //    style = 'https://static.hyn.space/maptiles/see-it-all.json';
 
-    return MapboxMap(
+    return Mapbox.MapboxMap(
       compassEnabled: false,
-      initialCameraPosition: CameraPosition(
-        target: userPosition ?? LatLng(23.12076, 113.322058),
+      initialCameraPosition: Mapbox.CameraPosition(
+        target: Mapbox.LatLng(userPosition.lat, userPosition.lon),
         zoom: defaultZoom,
       ),
       styleString: style,
@@ -93,12 +95,12 @@ class _SelectPositionState extends State<SelectPositionPage> {
         mapController = mapboxController;
 
       },
-      myLocationTrackingMode: MyLocationTrackingMode.Tracking,
+      myLocationTrackingMode: Mapbox.MyLocationTrackingMode.Tracking,
       rotateGesturesEnabled: false,
       tiltGesturesEnabled: false,
       enableLogo: false,
       enableAttribution: false,
-      minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+      minMaxZoomPreference: Mapbox.MinMaxZoomPreference(1.1, 19.0),
       myLocationEnabled: false,
     );
   }
