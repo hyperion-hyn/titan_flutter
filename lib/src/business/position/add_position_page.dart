@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -671,6 +670,7 @@ class _AddPositionState extends State<AddPositionPage> {
         uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
       );
       _listImagePaths.addAll(tempListImagePaths);
+
       setState(() {});
     } on PlatformException {}
   }
@@ -714,4 +714,7 @@ class _AddPositionState extends State<AddPositionPage> {
       });
     }
   }
+
+
+
 }
