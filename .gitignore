@@ -83,6 +83,7 @@ pMapping.txt
 shrinklist.txt
 
 lib/config.dart
+lib/config_hyn.dart
 apks
 *.apk
 ios/Flutter/flutter_export_environment.sh

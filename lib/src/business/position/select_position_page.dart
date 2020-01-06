@@ -1,12 +1,18 @@
-
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/business/position/add_position_page.dart';
 
+const _default_map_location = LatLng(23.10904, 113.31904);
+
 class SelectPositionPage extends StatefulWidget {
+  final LatLng initLocation;
+
+  SelectPositionPage({this.initLocation});
+
   @override
   State<StatefulWidget> createState() {
     return _SelectPositionState();
@@ -14,15 +20,40 @@ class SelectPositionPage extends StatefulWidget {
 }
 
 class _SelectPositionState extends State<SelectPositionPage> {
-
   MapboxMapController mapController;
   LatLng userPosition;
   double defaultZoom = 18;
 
+  var trackingMode = MyLocationTrackingMode.Tracking;
+  var enableLocation = true;
+
   @override
   void initState() {
-    userPosition = LatLng(23.12076, 113.322058);
+    userPosition = widget.initLocation ?? _default_map_location;
     super.initState();
+  }
+
+  void _mapMoveListener() {
+    //change tracking mode to none if user drag the map
+    if (mapController?.isGesture == true) {
+      _updateMyLocationTrackingMode(MyLocationTrackingMode.None);
+    }
+  }
+
+  bool _updateMyLocationTrackingMode(MyLocationTrackingMode mode) {
+    if (mode != trackingMode) {
+      setState(() {
+        trackingMode = mode;
+      });
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  void dispose() {
+    mapController?.removeListener(_mapMoveListener);
+    super.dispose();
   }
 
   @override
@@ -49,14 +80,14 @@ class _SelectPositionState extends State<SelectPositionPage> {
         actions: <Widget>[
           InkWell(
             onTap: () {
-              print('[add] --> 确认中。。。');
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPositionPage(userPosition),
-                ),
-              );
+              var latLng = mapController?.cameraPosition?.target;
+              print('[add] --> 确认中。。。 $latLng');
+//              Navigator.push(
+//                context,
+//                MaterialPageRoute(
+//                  builder: (context) => AddPositionPage(userPosition),
+//                ),
+//              );
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -76,31 +107,48 @@ class _SelectPositionState extends State<SelectPositionPage> {
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/fiord-color.json";
+      style = "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
     } else {
-      style = "https://static.hyn.space/maptiles/fiord-color.json";
+      style = "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
     }
 
-//    style = 'https://static.hyn.space/maptiles/see-it-all.json';
-
-    return MapboxMap(
-      compassEnabled: false,
-      initialCameraPosition: CameraPosition(
-        target: userPosition ?? LatLng(23.12076, 113.322058),
-        zoom: defaultZoom,
-      ),
-      styleString: style,
-      onStyleLoaded: (mapboxController) {
-        mapController = mapboxController;
-
-      },
-      myLocationTrackingMode: MyLocationTrackingMode.Tracking,
-      rotateGesturesEnabled: false,
-      tiltGesturesEnabled: false,
-      enableLogo: false,
-      enableAttribution: false,
-      minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-      myLocationEnabled: false,
+    return Stack(
+      children: <Widget>[
+        MapboxMap(
+          compassEnabled: false,
+          initialCameraPosition: CameraPosition(
+            target: userPosition,
+            zoom: defaultZoom,
+          ),
+          styleString: style,
+          onStyleLoaded: (mapboxController) {
+            mapController = mapboxController;
+            mapController.removeListener(_mapMoveListener);
+            mapController.addListener(_mapMoveListener);
+          },
+          myLocationEnabled: enableLocation,
+          myLocationTrackingMode: trackingMode,
+          trackCameraPosition: true,
+          rotateGesturesEnabled: false,
+          tiltGesturesEnabled: false,
+          enableLogo: false,
+          enableAttribution: false,
+          minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+        ),
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(
+                ExtendsIconFont.position_marker,
+                size: 64,
+                color: Theme.of(context).primaryColor,
+              ),
+              SizedBox(height: 68)
+            ],
+          ),
+        )
+      ],
     );
   }
 }

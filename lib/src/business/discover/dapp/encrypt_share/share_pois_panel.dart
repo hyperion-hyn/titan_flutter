@@ -56,7 +56,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
           }
         }
         _lastPosition = position;
-          debounce(() {
+        debounce(() {
           loadPois(position.latitude, position.longitude);
         }, 500)();
       }
@@ -154,7 +154,6 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
                   selectedId = index;
                   activeSelectPoiCallback();
                 });
-                mapController?.disableLocation();
                 mapController?.moveCamera(CameraUpdate.newLatLng(poi.latLng));
               },
               child: Padding(
