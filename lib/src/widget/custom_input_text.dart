@@ -46,6 +46,7 @@ class CustomInputText extends StatefulWidget {
 class _TextaState extends State<CustomInputText> {
   FocusNode _focusNode = new FocusNode();
   PublishSubject<String> _filterSubject = PublishSubject<String>();
+  String oldText = "";
 
   @override
   void initState() {
@@ -66,8 +67,11 @@ class _TextaState extends State<CustomInputText> {
   void searchTextChangeListener() {
     String currentText = widget.controller.text.trim();
     widget.controller.selection = TextSelection(baseOffset:currentText.length , extentOffset:currentText.length);
-    if (currentText.isNotEmpty) {
+    if(oldText != currentText){
       _filterSubject.sink.add(currentText);
+      oldText = currentText;
+    }
+    if (currentText.isNotEmpty) {
       setState(() {
           widget.isShowClean = true;
         });
@@ -160,7 +164,7 @@ class _TextaState extends State<CustomInputText> {
   }
 
   onCancel() {
-    _filterSubject.sink.add("");
+//    _filterSubject.sink.add("");
     // 保证在组件build的第一帧时才去触发取消清空内
     WidgetsBinding.instance.addPostFrameCallback((_) => widget.controller.clear());
     setState(() {
