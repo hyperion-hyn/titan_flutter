@@ -68,8 +68,9 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       fieldCallBack: (textStr) {
         if (textStr.length == 0) {
           _positionBloc.add(SelectCategoryClearEvent());
+        }else{
+          handleSearch(textStr);
         }
-        handleSearch(textStr);
         print("inputText = " + textStr);
       },
     );
@@ -255,7 +256,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
             return InkWell(
                 onTap: () {
                   _searchTextController.text = s;
-                  handleSearch(s);
+//                  handleSearch(s);
                 },
                 child: Chip(
                   label: Text('$s'),
@@ -300,6 +301,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         return;
       }
 
+      _positionBloc.add(SelectCategoryLoadingEvent());
       _positionBloc.add(SelectCategoryResultEvent(searchText: textOrPoi));
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 typedef void TextFieldCallBack(String content);
 
@@ -44,18 +45,33 @@ class CustomInputText extends StatefulWidget {
 
 class _TextaState extends State<CustomInputText> {
   FocusNode _focusNode = new FocusNode();
+  PublishSubject<String> _filterSubject = PublishSubject<String>();
+  String oldText = "";
+
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(searchTextChangeListener);
+    _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
+      widget.fieldCallBack(text);
+    });
 //    _focusNode.addListener(_focusNodeListener);
+  }
+
+  @override
+  void dispose() {
+    _filterSubject.close();
+    super.dispose();
   }
 
   void searchTextChangeListener() {
     String currentText = widget.controller.text.trim();
     widget.controller.selection = TextSelection(baseOffset:currentText.length , extentOffset:currentText.length);
+    if(oldText != currentText){
+      _filterSubject.sink.add(currentText);
+      oldText = currentText;
+    }
     if (currentText.isNotEmpty) {
-//      _filterSubject.sink.add(currentText);
       setState(() {
           widget.isShowClean = true;
         });
@@ -78,6 +94,8 @@ class _TextaState extends State<CustomInputText> {
       });
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +164,7 @@ class _TextaState extends State<CustomInputText> {
   }
 
   onCancel() {
+//    _filterSubject.sink.add("");
     // 保证在组件build的第一帧时才去触发取消清空内
     WidgetsBinding.instance.addPostFrameCallback((_) => widget.controller.clear());
     setState(() {

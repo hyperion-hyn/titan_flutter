@@ -238,12 +238,13 @@ class _BusinessTimeState extends State<BusinessTimePage> {
                 SizedBox(width: 10, height: 1),
                 Expanded(
                   child: TextField(
+//                    inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                       controller: _timeController,
                       decoration: new InputDecoration(
                         border: InputBorder.none,
 //                  contentPadding: const EdgeInsets.all(10.0),
                         hintStyle: TextStyles.textCaaaS14,
-                        hintText: '添加时间',
+                        hintText: '自定义时间，格式 07:00-23:00',
                       )),
                 )
               ],
