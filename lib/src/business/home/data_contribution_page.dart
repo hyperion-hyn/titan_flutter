@@ -245,8 +245,9 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           print('[Permission] -->status:$status');
 
           if (status) {
-            var latlng =
-                await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
+            var latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
+                ?.mapboxMapController
+                ?.lastKnownLocation();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -256,11 +257,13 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', S.of(context).add_poi_item_title, () {
+        _buildItem('position', S.of(context).add_poi_item_title, () async {
+          var latlng =
+              await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SelectPositionPage(),
+              builder: (context) => SelectPositionPage(initLocation: latlng),
             ),
           );
         }, isOpen: true),
