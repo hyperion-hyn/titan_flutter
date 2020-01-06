@@ -659,10 +659,11 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
+  var galleryMode = GalleryMode.image;
   Future<void> _selectImages() async {
     try {
       var tempListImagePaths = await ImagePickers.pickerPaths(
-        galleryMode: GalleryMode.image,
+        galleryMode: galleryMode,
         selectCount: _listImagePathsMaxLength - _listImagePaths.length,
         showCamera: true,
         cropConfig: null,
