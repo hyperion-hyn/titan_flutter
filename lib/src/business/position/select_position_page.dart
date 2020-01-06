@@ -49,8 +49,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
           InkWell(
             onTap: () {
               print('[add] --> 确认中。。。');
-
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => AddPositionPage(userPosition),

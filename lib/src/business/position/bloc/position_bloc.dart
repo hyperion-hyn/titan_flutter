@@ -20,10 +20,15 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       yield SelectCategoryLoadingState();
     } else if (event is SelectCategoryResultEvent) {
       var address = currentWalletVo.accountList[0].account.address;
-      var categoryList = await _positionApi.getCategoryList(event.searchText, address);
+      var categoryList =
+          await _positionApi.getCategoryList(event.searchText, address);
       yield SelectCategoryResultState(categoryList: categoryList);
-    }else if(event is SelectCategoryClearEvent){
+    } else if (event is SelectCategoryClearEvent) {
       yield SelectCategoryClearState();
+    } else if (event is ConfirmPositionLoadingEvent) {
+      yield ConfirmPositionLoadingState();
+    } else if (event is ConfirmPositionResultEvent) {
+      yield ConfirmPositionResultState();
     }
   }
 }

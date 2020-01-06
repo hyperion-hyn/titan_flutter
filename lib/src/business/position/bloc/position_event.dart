@@ -20,3 +20,9 @@ class SelectCategoryResultEvent extends PositionEvent {
 
 class SelectCategoryClearEvent extends PositionEvent {
 }
+
+class ConfirmPositionLoadingEvent extends PositionEvent {
+}
+
+class ConfirmPositionResultEvent extends PositionEvent {
+}

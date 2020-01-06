@@ -25,3 +25,11 @@ class SelectCategoryResultState extends PositionState {
 class SelectCategoryClearState extends PositionState {
   SelectCategoryClearState();
 }
+
+class ConfirmPositionLoadingState extends PositionState {
+  ConfirmPositionLoadingState();
+}
+
+class ConfirmPositionResultState extends PositionState {
+  ConfirmPositionResultState();
+}

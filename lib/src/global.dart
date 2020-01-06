@@ -38,3 +38,5 @@ Locale appLocale;
 BuildContext globalContext = null;
 
 AppArea currentAppArea = AppArea.MAINLAND_CHINA_AREA;
+
+final String ROUTE_CONFIRM_POSITION_PAGE = "route_confirm_position_page";

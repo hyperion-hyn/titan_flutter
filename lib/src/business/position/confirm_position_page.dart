@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/widget/radio_checkbox_widget.dart';
+
+import 'bloc/bloc.dart';
+import 'position_finish_page.dart';
 
 class ConfirmPositionPage extends StatefulWidget {
   @override
@@ -15,6 +20,7 @@ class ConfirmPositionPage extends StatefulWidget {
 }
 
 class _ConfirmPositionState extends State<ConfirmPositionPage> {
+  PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
   LatLng userPosition;
   double defaultZoom = 18;
@@ -23,10 +29,22 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
   List<String> _detailTextList = List();
+  String currentResult = "信息有误";
 
   @override
   void initState() {
-    _detailTextList = ["类别：中餐馆", "邮编：510000", "电话：13667510000", "网址：www13667510000", "工作时间：09:00-22:00"];
+    _detailTextList = [
+      "类别：中餐馆",
+      "邮编：510000",
+      "电话：13667510000",
+      "网址：www13667510000",
+      "工作时间：09:00-22:00"
+    ];
+
+    _positionBloc.add(ConfirmPositionLoadingEvent());
+    Future.delayed(Duration(seconds: 1), (){
+      _positionBloc.add(ConfirmPositionResultEvent());
+    });
 
     super.initState();
   }
@@ -45,9 +63,9 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         actions: <Widget>[
           InkWell(
             onTap: () {
-              print('[add] --> 完成中。。。');
-
-              Navigator.pop(context);
+              showConfirmDialog();
+//              print('[add] --> 完成中。。。');
+//              Navigator.pop(context);
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -64,22 +82,72 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     );
   }
 
+  void showConfirmDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("位置信息确认"),
+            content: Text("是否确认$currentResult"),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(S.of(context).cancel)),
+              FlatButton(
+                  onPressed: () {
+                    createWalletPopUtilName = '/data_contribution_page';
+
+                    Navigator.of(context).pop();
+//                    Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+                    );
+//                    genNewKeys();
+                  },
+                  child: Text(S.of(context).confirm))
+            ],
+          );
+        },
+        barrierDismissible: true);
+  }
+
   Widget _buildView() {
-    return Center(
-      child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            _mapView(),
-            _nameView(),
-            _buildPhotosCell(),
-            _detailView(),
-            _confirmView(),
-          ],
-        ),
-      ),
+    return BlocBuilder<PositionBloc, PositionState>(
+        bloc: _positionBloc,
+        builder: (BuildContext context, PositionState state) {
+          if (state is ConfirmPositionLoadingState) {
+            return LoadDataWidget(isLoading: true,);
+          } else if(state is ConfirmPositionResultState){
+            return _buildListBody();
+          } else {
+            return Container(
+              width: 0.0,
+              height: 0.0,
+            );
+          }
+        });
+  }
+
+  Widget _buildListBody() {
+    return ListView(
+      children: <Widget>[
+        _mapView(),
+        _nameView(),
+        _buildPhotosCell(),
+        _detailView(),
+        _confirmView(),
+      ],
     );
+  }
+
+  @override
+  void dispose() {
+    _positionBloc.close();
+    super.dispose();
   }
 
   Widget _mapView() {
@@ -157,7 +225,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     var itemCount = 1;
     if (_listImagePaths.length == 0) {
       itemCount = 1;
-    } else if (_listImagePaths.length > 0 && _listImagePaths.length < _listImagePathsMaxLength) {
+    } else if (_listImagePaths.length > 0 &&
+        _listImagePaths.length < _listImagePathsMaxLength) {
       itemCount = 1 + _listImagePaths.length;
     } else if (_listImagePaths.length >= _listImagePathsMaxLength) {
       itemCount = _listImagePathsMaxLength;
@@ -248,10 +317,10 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           '信息正确',
         ],
         radioButtonValue: (value) {
+          currentResult = value;
           print(value);
         },
       ),
     );
   }
-
 }

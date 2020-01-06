@@ -78,10 +78,11 @@ class _AddPositionState extends State<AddPositionPage> {
               print('[add] --> 存储中。。。');
 
               createWalletPopUtilName = '/data_contribution_page';
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FinishAddPositionPage(),
+
+                  builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
                 ),
               );
             },
