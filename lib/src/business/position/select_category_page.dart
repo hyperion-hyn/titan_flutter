@@ -15,7 +15,7 @@ import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/jj_text.dart';
+import 'package:titan/src/widget/custom_input_text.dart';
 import '../wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,6 +41,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   FocusNode _searchFocusNode = FocusNode();
   bool _visibleCloseIcon = false;
   bool _isLoading = true;
+  CustomInputText inputText;
 
 //  PublishSubject<String> _filterSubject = PublishSubject<String>();
   List<String> _tagList = [];
@@ -61,6 +62,17 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     if (_searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
     }
+
+    inputText = CustomInputText(
+      controller: _searchTextController,
+      fieldCallBack: (textStr) {
+        if (textStr.length == 0) {
+          _positionBloc.add(SelectCategoryClearEvent());
+        }
+        handleSearch(textStr);
+        print("inputText = " + textStr);
+      },
+    );
 
     super.initState();
 
@@ -260,9 +272,9 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     double height = 43;
     return Container(
       color: Theme.of(context).primaryColor,
+//      padding: EdgeInsets.only(top: 10, bottom: 10),
       height: height,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
+      child: Center(
         child: Container(
             margin: EdgeInsets.only(left: 48, right: 48),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(height * 0.5)),
@@ -275,15 +287,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
                     padding: const EdgeInsets.fromLTRB(17, 8, 11, 8),
                     child: Image.asset('res/drawable/ic_select_category_search_bar.png', width: 13, height: 13),
                   ),
-                  JJText(
-                    controller: _searchTextController,
-                    fieldCallBack: (textStr) {
-                      if (textStr.length == 0) {
-                        _positionBloc.add(SelectCategoryClearEvent());
-                      }
-                      print("jjtext = " + textStr);
-                    },
-                  ),
+                  inputText,
                 ])),
       ),
     );
