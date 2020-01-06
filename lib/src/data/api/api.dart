@@ -45,11 +45,12 @@ class Api {
     String type,
     double radius = 2000,
     int page = 1,
+    String language,
     CancelToken cancelToken,
   }) async {
     var json = await HttpCore.instance.get(
       'titan-map/api/place/nearbysearch/json',
-      params: {"location": "$lat,$lon", "radius": radius, "type": type, "language": appLocale.languageCode},
+      params: {"location": "$lat,$lon", "radius": radius, "type": type, "language": language},
       options: RequestOptions(cancelToken: cancelToken),
     );
 

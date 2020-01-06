@@ -10,7 +10,7 @@ import 'package:titan/src/business/discover/dapp/police_service/police_station_p
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi_interface.dart';
 

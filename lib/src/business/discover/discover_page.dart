@@ -11,7 +11,7 @@ import 'package:titan/src/business/discover/dmap_define.dart';
 import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 
 import 'bloc/bloc.dart';
 

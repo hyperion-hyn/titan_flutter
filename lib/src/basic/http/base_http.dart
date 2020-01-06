@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 
 import '../../../env.dart';
 import 'entity.dart';
@@ -127,7 +127,7 @@ class BaseHttpCore {
 
     statusCode = response.statusCode;
     if (statusCode < 0) {
-      errorMsg = S.of(Keys.mainPageKey.currentContext).network_request_err(statusCode.toString());
+      errorMsg = S.of(Keys.homePageKey.currentContext).network_request_err(statusCode.toString());
       throw HttpResponseNot200Exception(errorMsg);
     }
 //    String res2Json = '{"code":0,"msg":"mssss","data":[{"name":"moo"},{"name":"moo2"}]}';

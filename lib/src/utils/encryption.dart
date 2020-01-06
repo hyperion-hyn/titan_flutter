@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';

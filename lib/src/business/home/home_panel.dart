@@ -7,12 +7,12 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
-import 'data_contribution_page.dart';
+import '../../pages/contribution/data_contribution_page.dart';
 
 class HomePanel extends StatefulWidget {
   final ScrollController scrollController;

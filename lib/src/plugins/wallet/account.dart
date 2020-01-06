@@ -11,14 +11,14 @@ class Account {
   final int coinType;
 
   final AssetToken token;
-  final List<AssetToken> erc20AssetTokens;
+  final List<AssetToken> contractAssetTokens;
 
   Account({
     this.address,
     this.derivationPath,
     this.coinType,
     this.token,
-    this.erc20AssetTokens,
+    this.contractAssetTokens,
   });
 
   factory Account.fromJsonWithNet(Map<dynamic, dynamic> json, [bool isMainNet = true]) {
@@ -26,7 +26,7 @@ class Account {
     var erc20Tokens = <AssetToken>[];
     if (json['coinType'] == CoinType.ETHEREUM) {
       token = SupportedTokens.ETHEREUM;
-      //active erc20 tokens
+      //active contract tokens
       if (isMainNet) {
         erc20Tokens.add(SupportedTokens.HYN);
 //        erc20Tokens.add(SupportedTokens.USDT_ERC20);
@@ -43,7 +43,7 @@ class Account {
       derivationPath: json['derivationPath'],
       coinType: json['coinType'],
       token: token,
-      erc20AssetTokens: erc20Tokens,
+      contractAssetTokens: erc20Tokens,
     );
   }
 
@@ -53,6 +53,6 @@ class Account {
 
   @override
   String toString() {
-    return 'Account{address: $address, derivationPath: $derivationPath, coinType: $coinType, token: $token, erc20AssetTokens: $erc20AssetTokens}';
+    return 'Account{address: $address, derivationPath: $derivationPath, coinType: $coinType, token: $token, contractAssetTokens: $contractAssetTokens}';
   }
 }

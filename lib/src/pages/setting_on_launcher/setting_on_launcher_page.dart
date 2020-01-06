@@ -8,7 +8,7 @@ import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart'
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
@@ -48,7 +48,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 16.0),
                   child: DropdownButton(
-                    items: SupportedLanguage.all().map<DropdownMenuItem<LanguageModel>>(((language) {
+                    items: SupportedLanguage.all.map<DropdownMenuItem<LanguageModel>>(((language) {
                       return DropdownMenuItem<LanguageModel>(
                         value: language,
                         child: Text(
@@ -60,7 +60,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                     onChanged: (value) {
                       BlocProvider.of<SettingBloc>(context).add(UpdateLanguageEvent(languageModel: value));
                     },
-                    value: SettingViewModel.of(context).languageModel,
+                    value: SettingViewModel.of(context, aspect: SettingAspect.language).languageModel,
                   ),
                 ),
               ],
@@ -75,7 +75,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
             ListView(
               shrinkWrap: true,
               children: SupportedArea.all(context).map((area) {
-                if (area == SettingViewModel.of(context).areaModel) {
+                if (area == SettingViewModel.of(context, aspect: SettingAspect.area).areaModel) {
                   _currentArea = area;
                 }
                 return RadioListTile<AreaModel>(
@@ -88,7 +88,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                     BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: value));
                     _currentArea = value;
                   },
-                  groupValue: SettingViewModel.of(context).areaModel,
+                  groupValue: SettingViewModel.of(context, aspect: SettingAspect.area).areaModel,
                 );
               }).toList(),
             ),

@@ -5,7 +5,7 @@ import 'package:titan/src/components/updater/updater_component.dart';
 
 import '../../../env.dart';
 import '../home/home_page.dart';
-import '../wallet/wallet_page.dart';
+import '../wallet/wallet_tabs_page.dart';
 import '../discover/discover_page.dart';
 import '../news/news_page.dart';
 import '../mine/mine_page.dart';
@@ -66,7 +66,7 @@ class AppTabBarPageState extends State<AppTabBarPage> {
   Widget _getTabView(int index) {
     switch (index) {
       case 1:
-        return WalletPage();
+        return WalletTabsPage();
       case 2:
         return DiscoverPage();
       case 3:

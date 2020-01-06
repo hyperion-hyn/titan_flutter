@@ -6,7 +6,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/poi_interface.dart';

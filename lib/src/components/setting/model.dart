@@ -21,6 +21,10 @@ class AreaModel extends Equatable {
 
   factory AreaModel.fromJson(Map<String, Object> json) => _$AreaModelFromJson(json);
 
+  bool get isChinaMainland {
+    return id == 'mainland_china_area';
+  }
+
   @override
   String toString() {
     return toJson().toString();
@@ -72,20 +76,18 @@ class SupportedArea {
 class SupportedLanguage {
   static LanguageModel defaultModel(BuildContext context) {
     var systemLocale = Localizations.localeOf(context);
-    var allLocales = all();
+    var allLocales = all;
     for (var locale in allLocales) {
-      if (locale.locale == systemLocale) {
+      if (locale.locale.languageCode == systemLocale.languageCode) {
         return locale;
       }
     }
     return LanguageModel(name: 'English', locale: Locale('en'));
   }
 
-  static List<LanguageModel> all() {
-    return [
-      LanguageModel(name: '简体中文', locale: Locale("zh", "CN")),
-      LanguageModel(name: 'English', locale: Locale('en')),
-      LanguageModel(name: '한국어', locale: Locale("ko")),
-    ];
-  }
+  static List<LanguageModel> all = [
+    LanguageModel(name: '简体中文', locale: Locale("zh", "CN")),
+    LanguageModel(name: 'English', locale: Locale('en')),
+    LanguageModel(name: '한국어', locale: Locale("ko")),
+  ];
 }

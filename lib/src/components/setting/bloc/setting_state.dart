@@ -15,15 +15,20 @@ class InitialSettingState extends SettingState {
   List<Object> get props => [];
 }
 
-class UpdateSettingState extends SettingState {
-  final AreaModel areaModel;
+class UpdateLanguageState extends SettingState {
   final LanguageModel languageModel;
 
-  UpdateSettingState({
-    this.languageModel,
-    this.areaModel,
-  });
+  UpdateLanguageState({this.languageModel});
 
   @override
-  List<Object> get props => [languageModel, areaModel];
+  List<Object> get props => [languageModel];
+}
+
+class UpdateAreaState extends SettingState {
+  final AreaModel areaModel;
+
+  UpdateAreaState({this.areaModel});
+
+  @override
+  List<Object> get props => [areaModel];
 }

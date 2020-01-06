@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/config.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
+import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/setting/model.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 
 import 'bloc/bloc.dart';
@@ -34,6 +37,9 @@ class _SettingManager extends StatefulWidget {
 }
 
 class _SettingManagerState extends State<_SettingManager> {
+  LanguageModel languageModel;
+  AreaModel areaModel;
+
   @override
   void initState() {
     super.initState();
@@ -49,7 +55,7 @@ class _SettingManagerState extends State<_SettingManager> {
         BlocProvider.of<SettingBloc>(context).add(UpdateLanguageEvent(languageModel: languageModel));
       } else {
         BlocProvider.of<SettingBloc>(context)
-            .add(UpdateLanguageEvent(languageModel: SupportedLanguage.defaultModel(Keys.mainPageKey.currentContext)));
+            .add(UpdateLanguageEvent(languageModel: SupportedLanguage.defaultModel(Keys.homePageKey.currentContext)));
       }
       var areaModelStr = await AppCache.getValue<String>(PrefsKey.SETTING_AREA);
       if (areaModelStr != null) {
@@ -57,26 +63,48 @@ class _SettingManagerState extends State<_SettingManager> {
         BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: areaModel));
       } else {
         BlocProvider.of<SettingBloc>(context)
-            .add(UpdateAreaEvent(areaModel: SupportedArea.defaultModel(Keys.mainPageKey.currentContext)));
+            .add(UpdateAreaEvent(areaModel: SupportedArea.defaultModel(Keys.homePageKey.currentContext)));
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SettingBloc, SettingState>(
-      builder: (ctx, state) {
-        var languageMode = (state is UpdateSettingState) ? state.languageModel : null;
-        var areaModel = (state is UpdateSettingState) ? state.areaModel : null;
-        return SettingViewModel(areaModel: areaModel, languageModel: languageMode, child: widget.child);
+    return BlocListener<SettingBloc, SettingState>(
+      listener: (context, state) {
+        if (state is UpdateAreaState) {
+          Config.updateConfig(state.areaModel);
+        } else if (state is UpdateLanguageState) {
+          //update current quotes
+          var sign = SupportedQuotes.of('USD');
+          if (languageModel?.locale?.languageCode == 'zh') {
+            sign = SupportedQuotes.of('CNY');
+          }
+          BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: sign));
+        }
       },
+      child: BlocBuilder(
+        builder: (context, state) {
+          if (state is UpdateAreaState) {
+            areaModel = state.areaModel;
+          } else if (state is UpdateLanguageState) {
+            languageModel = state.languageModel;
+          }
+
+          return SettingViewModel(
+            areaModel: areaModel,
+            languageModel: languageModel,
+            child: widget.child,
+          );
+        },
+      ),
     );
   }
 }
 
-enum SettingProps { language, area }
+enum SettingAspect { language, area, sign }
 
-class SettingViewModel extends InheritedModel<SettingProps> {
+class SettingViewModel extends InheritedModel<SettingAspect> {
   final LanguageModel languageModel;
   final AreaModel areaModel;
 
@@ -87,18 +115,22 @@ class SettingViewModel extends InheritedModel<SettingProps> {
     @required Widget child,
   }) : super(key: key, child: child);
 
+  String get languageCode {
+    return languageModel?.locale?.languageCode;
+  }
+
   @override
   bool updateShouldNotify(SettingViewModel oldWidget) {
     return languageModel != oldWidget.languageModel || areaModel != oldWidget.areaModel;
   }
 
-  static SettingViewModel of(BuildContext context, {String aspect}) {
+  static SettingViewModel of(BuildContext context, {SettingAspect aspect}) {
     return InheritedModel.inheritFrom<SettingViewModel>(context, aspect: aspect);
   }
 
   @override
-  bool updateShouldNotifyDependent(SettingViewModel oldWidget, Set<SettingProps> dependencies) {
-    return (languageModel != oldWidget.languageModel && dependencies.contains(SettingProps.language) ||
-        areaModel != oldWidget.areaModel && dependencies.contains(SettingProps.area));
+  bool updateShouldNotifyDependent(SettingViewModel oldWidget, Set<SettingAspect> dependencies) {
+    return (languageModel != oldWidget.languageModel && dependencies.contains(SettingAspect.language) ||
+        areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area));
   }
 }

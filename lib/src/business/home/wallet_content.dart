@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/map3/map3_node_introduction.dart';
-import 'package:titan/src/business/wallet/wallet_page.dart';
+import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 
 class WalletContentWidget extends StatefulWidget {
   @override

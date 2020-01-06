@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/business/wallet/etherscan_api.dart';
+import 'package:titan/src/pages/wallet/etherscan_api.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -350,16 +350,7 @@ class Wallet {
   Future<BigInt> getErc20Balance(String contractAddress) async {
     var account = getEthAccount();
     if (account != null) {
-//      return await EtherscanApi().queryErc20TokenBalance(address: account.address, contractAddress: contractAddress);
-      final contract = WalletUtil.getHynErc20Contract(contractAddress);
-      final balanceFun = contract.function('balanceOf');
-      try {
-        final balance = await WalletUtil.getWeb3Client()
-            .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(account.address)]);
-        return balance.first;
-      } catch (e) {
-        logger.e(e);
-      }
+      return getBalanceByCoinTypeAndAddress(account.coinType, account.address, contractAddress);
     }
 
     return BigInt.from(0);
@@ -375,18 +366,35 @@ class Wallet {
   }
 
   ///get balance of account
-  ///black: an integer block number, or the string "latest", "earliest" or "pending"
+  ///@param block: an integer block number, or the string "latest", "earliest" or "pending"
   Future<BigInt> getBalance(Account account, [dynamic block = 'latest']) async {
     if (account != null) {
-      switch (account.coinType) {
-        case CoinType.ETHEREUM:
-//          return await EtherscanApi().queryBalance(account.address, block);
-          var response = await WalletUtil.postInfura(method: "eth_getBalance", params: [account.address, block]);
+      return getBalanceByCoinTypeAndAddress(account.coinType, account.address);
+    }
+    return BigInt.from(0);
+  }
+
+  Future<BigInt> getBalanceByCoinTypeAndAddress(int coinType, String address,
+      [String contractAddress, String block = 'latest']) async {
+    switch (coinType) {
+      case CoinType.ETHEREUM:
+        if (contractAddress == null) {
+          var response = await WalletUtil.postInfura(method: "eth_getBalance", params: [address, block]);
           if (response['result'] != null) {
             return hexToInt(response['result']);
           }
-          break;
-      }
+        } else {
+          final contract = WalletUtil.getHynErc20Contract(contractAddress);
+          final balanceFun = contract.function('balanceOf');
+          try {
+            final balance = await WalletUtil.getWeb3Client()
+                .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
+            return balance.first;
+          } catch (e) {
+            logger.e(e);
+          }
+        }
+        break;
     }
     return BigInt.from(0);
   }
