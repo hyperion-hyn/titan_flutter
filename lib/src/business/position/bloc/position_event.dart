@@ -26,3 +26,6 @@ class ConfirmPositionLoadingEvent extends PositionEvent {
 
 class ConfirmPositionResultEvent extends PositionEvent {
 }
+
+class ConfirmPositionPageEvent extends PositionEvent {
+}

@@ -27,6 +27,8 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       yield SelectCategoryClearState();
     } else if (event is ConfirmPositionLoadingEvent) {
       yield ConfirmPositionLoadingState();
+    } else if (event is ConfirmPositionPageEvent) {
+      yield ConfirmPositionPageState();
     } else if (event is ConfirmPositionResultEvent) {
       yield ConfirmPositionResultState();
     }

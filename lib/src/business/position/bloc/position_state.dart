@@ -30,6 +30,10 @@ class ConfirmPositionLoadingState extends PositionState {
   ConfirmPositionLoadingState();
 }
 
+class ConfirmPositionPageState extends PositionState {
+  ConfirmPositionPageState();
+}
+
 class ConfirmPositionResultState extends PositionState {
   ConfirmPositionResultState();
 }

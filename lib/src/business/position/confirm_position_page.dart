@@ -43,7 +43,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
     _positionBloc.add(ConfirmPositionLoadingEvent());
     Future.delayed(Duration(seconds: 1), (){
-      _positionBloc.add(ConfirmPositionResultEvent());
+      _positionBloc.add(ConfirmPositionPageEvent());
     });
 
     super.initState();
@@ -97,16 +97,16 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                   child: Text(S.of(context).cancel)),
               FlatButton(
                   onPressed: () {
+//                    todo _positionBloc.add(ConfirmPositionPageEvent());
+
                     createWalletPopUtilName = '/data_contribution_page';
 
                     Navigator.of(context).pop();
-//                    Navigator.of(context).pop();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
                     );
-//                    genNewKeys();
                   },
                   child: Text(S.of(context).confirm))
             ],
