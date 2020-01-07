@@ -49,7 +49,8 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       yield SelectCategoryLoadingState();
     } else if (event is SelectCategoryResultEvent) {
       var address = currentWalletVo.accountList[0].account.address;
-      var categoryList = await _positionApi.getCategoryList(event.searchText, address);
+      var categoryList =
+          await _positionApi.getCategoryList(event.searchText, address);
       yield SelectCategoryResultState(categoryList: categoryList);
     } else if (event is SelectCategoryClearEvent) {
       yield SelectCategoryClearState();
@@ -82,6 +83,12 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       yield StartPostPoiDataState();
     } else if (event is FailPostPoiDataEvent) {
       yield StartPostPoiDataState();
+    } else if (event is ConfirmPositionLoadingEvent) {
+      yield ConfirmPositionLoadingState();
+    } else if (event is ConfirmPositionPageEvent) {
+      yield ConfirmPositionPageState();
+    } else if (event is ConfirmPositionResultEvent) {
+      yield ConfirmPositionResultState();
     }
   }
 
@@ -150,7 +157,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       add(SuccessPostPoiDataEvent());
     } else {
       add(FailPostPoiDataEvent());
-    }
+    } 
   }
 
 

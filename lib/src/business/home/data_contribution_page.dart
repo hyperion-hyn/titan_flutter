@@ -431,6 +431,16 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       }
     }
 
+    PermissionStatus storagePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+    if (storagePermission != PermissionStatus.granted) {
+      Map<PermissionGroup, PermissionStatus> permissions =
+      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
+        _showGoToOpenAppSettingsDialog();
+        return false;
+      }
+    }
+
     //2. 检查电话权限
 
     if (Platform.isAndroid) {

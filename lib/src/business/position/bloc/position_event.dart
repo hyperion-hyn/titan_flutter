@@ -54,4 +54,11 @@ class SuccessPostPoiDataEvent extends PositionEvent {
 }
 
 class FailPostPoiDataEvent extends PositionEvent {
+class ConfirmPositionLoadingEvent extends PositionEvent {
+}
+
+class ConfirmPositionResultEvent extends PositionEvent {
+}
+
+class ConfirmPositionPageEvent extends PositionEvent {
 }

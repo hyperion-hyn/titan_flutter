@@ -22,7 +22,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
   TextEditingController _timeController = TextEditingController();
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
-  List<BusinessDayItem> _dayList;
+  List<BusinessDayItem> _dayList = [];
   BusinessTimeItem currentTime;
   List<String> _dayLabel = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
   List<String> _timeLabel = [
@@ -41,8 +41,15 @@ class _BusinessTimeState extends State<BusinessTimePage> {
 
   @override
   void initState() {
-    _dayList =
-        _dayLabel.map((labelStr) => BusinessDayItem(label: labelStr)).toList();
+    for (int i = 0; i < 7; i++) {
+      if (i > 0 && i < 6) {
+        _dayList.add(BusinessDayItem(label: _dayLabel[i], isCheck: true));
+      } else {
+        _dayList.add(BusinessDayItem(label: _dayLabel[i], isCheck: false));
+      }
+    }
+//    _dayList =
+//        _dayLabel.map((labelStr) => BusinessDayItem(label: labelStr)).toList();
     _timeList = _timeLabel
         .map((labelStr) => BusinessTimeItem(label: labelStr))
         .toList();
@@ -78,7 +85,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
               if (currentTime == null && isRightTime(customTime)) {
                 currentTime = BusinessTimeItem();
                 currentTime.label = customTime;
-              } else if (currentTime == null && !isRightTime(customTime)){
+              } else if (currentTime == null && !isRightTime(customTime)) {
                 Fluttertoast.showToast(msg: "请输入正确的时间，例如 07:00-23:00");
                 return;
               }
@@ -104,7 +111,9 @@ class _BusinessTimeState extends State<BusinessTimePage> {
   }
 
   bool isRightTime(String customTime) {
-    return RegExp("([0-1]?[0-9]|2[0-3]):([0-5][0-9])-([0-1]?[0-9]|2[0-3]):([0-5][0-9])").hasMatch(customTime);
+    return RegExp(
+            "([0-1]?[0-9]|2[0-3]):([0-5][0-9])-([0-1]?[0-9]|2[0-3]):([0-5][0-9])")
+        .hasMatch(customTime);
   }
 
   Widget _buildView(BuildContext context) {
@@ -183,11 +192,20 @@ class _BusinessTimeState extends State<BusinessTimePage> {
         .map(
           (item) => InkWell(
               onTap: () {
-                if (currentTime != null) {
-                  currentTime.isCheck = false;
+                if(currentTime == item){
+                  item.isCheck = !item.isCheck;
+                  if(!item.isCheck){
+                    currentTime = null;
+                  }else{
+                    currentTime = item;
+                  }
+                } else {
+                  if (currentTime != null) {
+                    currentTime.isCheck = false;
+                  }
+                  item.isCheck = !item.isCheck;
+                  currentTime = item;
                 }
-                item.isCheck = !item.isCheck;
-                currentTime = item;
                 setState(() {});
               },
               child: _buildTimeItem(item)),
