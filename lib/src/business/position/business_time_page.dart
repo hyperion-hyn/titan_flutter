@@ -217,11 +217,20 @@ class _BusinessTimeState extends State<BusinessTimePage> {
         .map(
           (item) => InkWell(
               onTap: () {
-                if (currentTime != null) {
-                  currentTime.isCheck = false;
+                if(currentTime == item){
+                  item.isCheck = !item.isCheck;
+                  if(!item.isCheck){
+                    currentTime = null;
+                  }else{
+                    currentTime = item;
+                  }
+                } else {
+                  if (currentTime != null) {
+                    currentTime.isCheck = false;
+                  }
+                  item.isCheck = !item.isCheck;
+                  currentTime = item;
                 }
-                item.isCheck = !item.isCheck;
-                currentTime = item;
                 setState(() {});
               },
               child: _buildTimeItem(item)),
