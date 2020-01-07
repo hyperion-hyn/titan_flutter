@@ -1,32 +1,13 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:android_intent/android_intent.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
-import 'package:titan/src/business/wallet/service/wallet_service.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/custom_input_text.dart';
-import '../wallet/wallet_create_new_account_page.dart';
-import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
-import 'package:titan/src/global.dart';
-import '../wallet/wallet_manager/wallet_manager.dart';
 import 'model/category_item.dart';
 
 class SelectCategoryPage extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() {
     return _SelectCategoryState();
@@ -34,17 +15,16 @@ class SelectCategoryPage extends StatefulWidget {
 }
 
 class _SelectCategoryState extends State<SelectCategoryPage> {
-  PositionBloc _positionBloc = PositionBloc();
+
+  PositionBloc _positionBloc;
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
   TextEditingController _searchTextController = TextEditingController();
   FocusNode _searchFocusNode = FocusNode();
   bool _visibleCloseIcon = false;
-  bool _isLoading = true;
   CustomInputText inputText;
-
-//  PublishSubject<String> _filterSubject = PublishSubject<String>();
   List<String> _tagList = [];
+
 
   @override
   void initState() {
@@ -55,9 +35,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     _tagList.add("健康食品店");
     _tagList.add("美甲店");
 
-//    _searchTextController.addListener(searchTextChangeListener);
-
-//    _positionBloc.add(SelectCategoryLoadingEvent());
+    _positionBloc = BlocProvider.of<PositionBloc>(context);
 
     if (_searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
@@ -75,17 +53,15 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       },
     );
 
+    _positionBloc.add(SelectCategoryInitEvent());
+
     super.initState();
 
-    /*_filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
-      handleSearch(text);
-    });*/
   }
 
   void searchTextChangeListener() {
     String currentText = _searchTextController.text.trim();
     if (currentText.isNotEmpty) {
-//      _filterSubject.sink.add(currentText);
       if (!_visibleCloseIcon) {
         setState(() {
           _visibleCloseIcon = true;
@@ -111,21 +87,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        /*actions: <Widget>[
-          InkWell(
-            onTap: () {
-              Navigator.pop(context,"");
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                '完成',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          )
-        ],*/
       ),
       body: _buildView(context),
     );
@@ -135,25 +96,20 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     return BlocBuilder<PositionBloc, PositionState>(
       bloc: _positionBloc,
       builder: (BuildContext context, PositionState state) {
-        if (state is InitialPositionState) {
+
+        if (state is SelectCategoryInitState) {
           categoryList.clear();
-//          _searchTextController.text = "";
           return _buildBody(state);
         } else if (state is SelectCategoryResultState) {
-          _isLoading = false;
           categoryList.clear();
           categoryList.addAll(state.categoryList);
 
           return _buildBody(state);
         } else if (state is SelectCategoryLoadingState) {
-          _isLoading = true;
-//          setState(() {
-//
-//          });
+
           return _buildBody(state);
         } else if (state is SelectCategoryClearState) {
           categoryList.clear();
-//          _searchTextController.text = "";
           return _buildBody(state);
         } else {
           return Container(
@@ -167,8 +123,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
   @override
   void dispose() {
-    _positionBloc.close();
-//    _filterSubject.close();
     super.dispose();
   }
 
@@ -185,15 +139,12 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   Widget _buildInfoContainer(CategoryItem categoryItem) {
     return InkWell(
       onTap: () {
-        Navigator.pop(context, categoryItem);
-        /*setState(() {
-          selectCategory = categoryItem.title;
-        });*/
+        _positionBloc.add(SelectCategorySelectedEvent(categoryItem: categoryItem));
+        Navigator.pop(context);
       },
       child: Container(
         height: 41,
         child: Row(
-//          mainAxisAlignment: MainAxisAlignment.left,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left: 16),
@@ -202,17 +153,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
                 style: TextStyle(color: HexColor("#333333"), fontSize: 16),
               ),
             ),
-            /*Spacer(),
-            Visibility(
-              visible: selectCategory == categoryItem.title,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Icon(
-                  Icons.check,
-                  color: Colors.green,
-                ),
-              ),
-            )*/
           ],
         ),
       ),
@@ -247,7 +187,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
             return _divider();
           },
           itemCount: categoryList.length);
-    } else if (state is InitialPositionState || state is SelectCategoryClearState) {
+    } else if (state is SelectCategoryInitState || state is SelectCategoryClearState) {
       return Wrap(
           alignment: WrapAlignment.center,
           spacing: 10,
@@ -256,7 +196,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
             return InkWell(
                 onTap: () {
                   _searchTextController.text = s;
-//                  handleSearch(s);
                 },
                 child: Chip(
                   label: Text('$s'),
@@ -273,7 +212,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     double height = 43;
     return Container(
       color: Theme.of(context).primaryColor,
-//      padding: EdgeInsets.only(top: 10, bottom: 10),
       height: height,
       child: Center(
         child: Container(
@@ -305,4 +243,5 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       _positionBloc.add(SelectCategoryResultEvent(searchText: textOrPoi));
     }
   }
+
 }

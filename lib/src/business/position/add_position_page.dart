@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,25 +5,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/position/api/position_api.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/business_time_page.dart';
-import 'package:titan/src/business/position/model/business_time.dart';
-import 'package:titan/src/business/position/model/category_item.dart';
-import 'package:titan/src/business/position/model/poi_collector.dart';
 import 'package:titan/src/business/position/position_finish_page.dart';
 import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
-import 'package:image_pickers/image_pickers.dart';
 import 'package:flutter/services.dart';
-import 'package:image_pickers/Media.dart';
-import 'package:image_pickers/UIConfig.dart';
 import 'package:titan/src/global.dart';
 
 class AddPositionPage extends StatefulWidget {
-  LatLng userPosition;
+  final LatLng userPosition;
 
   AddPositionPage(this.userPosition);
 
@@ -35,8 +26,6 @@ class AddPositionPage extends StatefulWidget {
 }
 
 class _AddPositionState extends State<AddPositionPage> {
-
-  PositionApi _service = PositionApi();
 
   PositionBloc _positionBloc = PositionBloc();
 
@@ -50,26 +39,15 @@ class _AddPositionState extends State<AddPositionPage> {
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
 
-  List<Media> _listImagePaths = List();
-  final int _listImagePathsMaxLength = 9;
-
-  CategoryItem _categoryItem;
-  String _timeText;
-
   String _categoryDefaultText = "";
   String _timeDefaultText = "";
 
-  Map<String, dynamic> _openCageData;
-
-  PoiCollector _poiCollector;
-
   @override
   void initState() {
-    _positionBloc.add(AddPositionEvent());
     _categoryDefaultText = "请选择类别";
     _timeDefaultText = "请添加工作时间";
 
-    _getOpenCageData();
+    _positionBloc.add(GetOpenCageEvent());
 
     super.initState();
   }
@@ -109,18 +87,19 @@ class _AddPositionState extends State<AddPositionPage> {
     return BlocBuilder<PositionBloc, PositionState>(
       bloc: _positionBloc,
       builder: (BuildContext context, PositionState state) {
-        if (state is InitialPositionState) {
-          return _buildLoading(context);
-        } else if (state is AddPositionState) {
-          return _buildBody();
-        } else if (state is ScanWalletLoadingState) {
-          return _buildLoading(context);
-        } else {
-          return Container(
-            width: 0.0,
-            height: 0.0,
+        if (state is SuccessPostPoiDataEvent) {
+          createWalletPopUtilName = '/data_contribution_page';
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
+            ),
           );
+        } else if (state is FailPostPoiDataEvent) {
+          Fluttertoast.showToast(msg: "存储失败!");
         }
+
+        return _buildBody();
       },
     );
   }
@@ -139,6 +118,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
   @override
   void dispose() {
+    print('[add] --> dispose');
     _positionBloc.close();
     super.dispose();
   }
@@ -172,6 +152,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
   Widget _buildCategoryCell() {
     String _categoryText = "";
+    var _categoryItem = _positionBloc.categoryItem;
     if (_categoryItem == null || _categoryItem.title == null) {
       _categoryText = _categoryDefaultText;
     } else {
@@ -180,7 +161,17 @@ class _AddPositionState extends State<AddPositionPage> {
 
     return InkWell(
       onTap: () {
-        _pushCategoryPage();
+//        _positionBloc.add(AddPositionEvent());
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BlocProvider<PositionBloc>(
+              child: SelectCategoryPage(),
+              builder: (context) => _positionBloc,
+            ),
+          ),
+        );
       },
       child: Container(
           height: 40,
@@ -206,8 +197,7 @@ class _AddPositionState extends State<AddPositionPage> {
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Text(_categoryText,
-                      style: TextStyle(color: Color(0xff777777), fontSize: 14))),
+                  child: Text(_categoryText, style: TextStyle(color: Color(0xff777777), fontSize: 14))),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
@@ -259,6 +249,8 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   Widget _buildPhotosCell() {
+    var _listImagePaths = _positionBloc.listImagePaths;
+    var _listImagePathsMaxLength = _positionBloc.listImagePathsMaxLength;
     var size = MediaQuery.of(context).size;
     var itemWidth = (size.width - 16 * 2.0 - 15 * 2.0) / 3.0;
     var childAspectRatio = (105.0 / 74.0);
@@ -313,7 +305,7 @@ class _AddPositionState extends State<AddPositionPage> {
               if (index == itemCount - 1 && _listImagePaths.length < _listImagePathsMaxLength) {
                 return InkWell(
                   onTap: () {
-                    _selectImages();
+                    _positionBloc.add(SelectImageSelectedEvent());
                   },
                   child: Container(
                     child: Center(
@@ -521,7 +513,15 @@ class _AddPositionState extends State<AddPositionPage> {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  _pushTimePage();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider<PositionBloc>(
+                        child: BusinessTimePage(),
+                        builder: (context) => _positionBloc,
+                      ),
+                    ),
+                  );
                 },
                 child: Container(
                     height: 40,
@@ -541,7 +541,7 @@ class _AddPositionState extends State<AddPositionPage> {
 //                            color: Colors.green,
                             width: 230,
                             child: Text(
-                              _timeText ?? _timeDefaultText,
+                              _positionBloc.timeText ?? _timeDefaultText,
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(color: HexColor('#777777'), fontWeight: FontWeight.normal, fontSize: 13),
@@ -692,151 +692,24 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  var galleryMode = GalleryMode.image;
-  Future<void> _selectImages() async {
-    try {
-      var tempListImagePaths = await ImagePickers.pickerPaths(
-        galleryMode: galleryMode,
-        selectCount: _listImagePathsMaxLength - _listImagePaths.length,
-        showCamera: true,
-        cropConfig: null,
-        compressSize: 500,
-        uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
-      );
-      _listImagePaths.addAll(tempListImagePaths);
-      for (var path in _listImagePaths) {
-        print('[add] --> path:${path.path}');
-      }
-
-      setState(() {});
-    } on PlatformException {}
-  }
-
-  void _pushTimePage() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BusinessTimePage(),
-      ),
-    );
-
-    if (result is BusinessInfo) {
-      setState(() {
-        print('[add] --> 添加时间, time:${result.timeStr}, dayCount:${result.dayList.length}');
-        String dayText = "";
-
-        for (var item in result.dayList) {
-          if (!item.isCheck) continue;
-          dayText += "${item.label}、";
-        }
-
-        _timeText = result.timeStr + " " + dayText;
-      });
-    }
-  }
-
-  void _pushCategoryPage() async {
-    print('[add] --> 添加类目');
-
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SelectCategoryPage(),
-      ),
-    );
-
-    if (result is CategoryItem) {
-      setState(() {
-        _categoryItem = result;
-      });
-    }
-  }
-
-  void _getOpenCageData() async {
-    //widget.userPosition = LatLng(23.12084, 113.32193);
-    var query = "${widget.userPosition.latitude},${widget.userPosition.longitude}";
-    _openCageData = await _service.getOpenCageData(query, 'zh');
-  }
-
-  Future _uploadPoiData() async {
-
+  _uploadPoiData() {
     print('[add] --> 存储中。。。');
 
     // 1.检测必须选项
-    var _isEmptyOfCatogory = (_categoryItem.title.length == 0 || _categoryItem.title == "");
-    var _isEmptyOfName = (_addressNameController.text.length == 0 || _addressNameController.text == "");
-    var _isEmptyOfImages = (_listImagePaths.length == 0);
-
-    if (_isEmptyOfCatogory || _isEmptyOfName || _isEmptyOfImages) {
-      Fluttertoast.showToast(msg: "类别、地点名、拍摄图片不能为空");
-      return;
-    }
 
     if (!_isAcceptSignalProtocol) {
       Fluttertoast.showToast(msg: "地理位置上传协议未接受");
       return;
     }
 
-    if (_openCageData == null) {
-      Fluttertoast.showToast(msg: "OpenCageData 为空");
-      return;
-    }
+    _positionBloc.userPosition = widget.userPosition;
+    _positionBloc.poiName = _addressNameController.text ?? "";
+    _positionBloc.poiAddress = _addressController.text ?? "";
+    _positionBloc.poiHouseNum = _addressHouseNumController.text ?? "";
+    _positionBloc.poiPhoneNum = _detailPhoneNumController.text ?? "";
+    _positionBloc.poiWebsite = _detailWebsiteController.text ?? "";
 
-    var categoryId = _categoryItem.id;
-    var location = widget.userPosition;
-    var name = _addressNameController.text;
-    var country = _openCageData["country"] ?? "";
-    var state = _openCageData["state"];
-    var city = _openCageData["city"] + _openCageData["county"];
-    var address1 = _addressController.text ?? "";
-    var address2 = "";
-    var number = _addressHouseNumController.text ?? "";
-    //var postalCode = _addressPostcodeController.text ?? "";
-    var postalCode = _openCageData["postcode"];
-    var workTime = _timeText ?? "";
-    var phone = _detailPhoneNumController.text ?? "";
-    var website = _detailWebsiteController.text ?? "";
-    var country_code = _openCageData["country_code"] ?? "";
-    _poiCollector = PoiCollector(
-        categoryId,
-        location,
-        name,
-        country_code,
-        country,
-        state,
-        city,
-        address1,
-        address2,
-        number,
-        postalCode,
-        workTime,
-        phone,
-        website
-    );
-
-    var address = currentWalletVo.accountList[0].account.address;
-    bool isFinish = await _service.postPoiCollector(_listImagePaths,address,_poiCollector);
-
-    if (isFinish) {
-      createWalletPopUtilName = '/data_contribution_page';
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-
-          builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
-        ),
-      );
-
-      /*createWalletPopUtilName = '/data_contribution_page';
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FinishAddPositionPage(),
-        ),
-      );*/
-    } else {
-      Fluttertoast.showToast(msg: "存储失败!");
-    }
+    _positionBloc.add(StartPostPoiDataEvent());
   }
 
 }

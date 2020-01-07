@@ -13,6 +13,10 @@ class AddPositionState extends PositionState {
   AddPositionState();
 }
 
+class SelectCategoryInitState extends PositionState {
+  SelectCategoryInitState();
+}
+
 class SelectCategoryLoadingState extends PositionState {
   SelectCategoryLoadingState();
 }
@@ -24,6 +28,37 @@ class SelectCategoryResultState extends PositionState {
 
 class SelectCategoryClearState extends PositionState {
   SelectCategoryClearState();
+}
+
+class SelectCategorySelectedState extends PositionState {
+  SelectCategorySelectedState();
+}
+
+class SelectTimeSelectedState extends PositionState {
+  SelectTimeSelectedState();
+}
+
+class SelectImageSelectedState extends PositionState {
+  SelectImageSelectedState();
+}
+
+class GetOpenCageState extends PositionState {
+  GetOpenCageState();
+}
+
+class StartPostPoiDataState extends PositionState {
+}
+
+class LoadingPostPoiDataState extends PositionState {
+  double progress;
+  LoadingPostPoiDataState(this.progress);
+}
+
+class SuccessPostPoiDataState extends PositionState {
+}
+
+class FailPostPoiDataState extends PositionState {
+
 }
 
 class ConfirmPositionLoadingState extends PositionState {
