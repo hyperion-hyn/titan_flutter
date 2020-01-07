@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -337,7 +338,28 @@ class _AddPositionState extends State<AddPositionPage> {
                     _listImagePaths.removeAt(index);
                   });
                 },
-                child: Container(
+                child:Stack(
+                  children: <Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(3),
+                      child: Image.file(File(_listImagePaths[index].path),width: itemWidth,fit: BoxFit.cover),
+                    ),
+                    Positioned(
+                      right:0,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(0, 4, 4, 0),
+//                      alignment: Alignment.topRight,
+                        child: Image.asset(
+                          'res/drawable/add_position_delete.png',
+                          width: 12,
+                          height: 12,
+                          fit: BoxFit.scaleDown,
+                        ),
+                      ),
+                    )
+                  ],
+                )
+                /*child: Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(image: AssetImage(_listImagePaths[index].path), fit: BoxFit.fitWidth),
                     color: HexColor('#D8D8D8'),
@@ -353,7 +375,7 @@ class _AddPositionState extends State<AddPositionPage> {
                       fit: BoxFit.scaleDown,
                     ),
                   ),
-                ),
+                ),*/
               );
             },
             itemCount: itemCount,
