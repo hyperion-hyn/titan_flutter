@@ -91,7 +91,7 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
                 SizedBox(
                   height: 36,
                 ),
-                Container(
+                /*Container(
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
@@ -116,16 +116,8 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
                           MaterialPageRoute(
                               builder: (context) => ConfirmPositionPage()),
                         );
-//                        Navigator.of(context).popUntil(
-//                            ModalRoute.withName(ROUTE_CONFIRM_POSITION_PAGE));
                       }
 
-                      /*if (createWalletPopUtilName == null) {
-                        Navigator.of(context).popUntil((r) => r.isFirst);
-                      } else {
-                        Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                        createWalletPopUtilName = null;
-                      }*/
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -141,7 +133,7 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
                       ),
                     ),
                   ),
-                ),
+                ),*/
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
                   constraints: BoxConstraints.expand(height: 48),
