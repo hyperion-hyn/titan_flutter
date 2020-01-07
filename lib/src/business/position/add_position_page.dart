@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-//import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/api/position_api.dart';
@@ -21,7 +21,6 @@ import 'package:flutter/services.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:image_pickers/UIConfig.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/business/contribution/vo/latlng.dart';
 
 class AddPositionPage extends StatefulWidget {
   LatLng userPosition;
@@ -733,7 +732,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
   void _getOpenCageData() async {
     //widget.userPosition = LatLng(23.12084, 113.32193);
-    var query = "${widget.userPosition.lat},${widget.userPosition.lon}";
+    var query = "${widget.userPosition.latitude},${widget.userPosition.longitude}";
     _openCageData = await _service.getOpenCageData(query, 'zh');
   }
 
@@ -780,6 +779,7 @@ class _AddPositionState extends State<AddPositionPage> {
         categoryId,
         location,
         name,
+        country_code,
         country,
         state,
         city,
@@ -793,7 +793,7 @@ class _AddPositionState extends State<AddPositionPage> {
     );
 
     var address = currentWalletVo.accountList[0].account.address;
-    bool isFinish = await _service.postPoiCollector(_listImagePaths,address,_poiCollector,country_code);
+    bool isFinish = await _service.postPoiCollector(_listImagePaths,address,_poiCollector);
 
     if (isFinish) {
       createWalletPopUtilName = '/data_contribution_page';

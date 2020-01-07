@@ -1,5 +1,5 @@
+//import 'dart:html';
 import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:image_pickers/Media.dart';
@@ -30,49 +30,34 @@ class PositionApi {
   }
 
   ///collect poi
-  Future<bool> postPoiCollector(List<Media> imagePaths, String address, PoiCollector poiCollector, String country_code) async {
+  Future<bool> postPoiCollector(List<Media> imagePaths, String address, PoiCollector poiCollector) async {
     try {
 
       List imgList = List();
       for (var item in imagePaths) {
         String firstPath = item.path;
-        final ByteData imageByte = await rootBundle.load(firstPath);
-        imgList.add(imageByte.buffer.asUint8List());
-        print('[add] _selectImages, firstPath:${firstPath}, imageByte:${imageByte.lengthInBytes}');
+//        final ByteData imageByte = await rootBundle.load(firstPath);
+//        imgList.add(imageByte.buffer.asUint8List());
+//        print('[add] _selectImages, firstPath:${firstPath}, imageByte:${imageByte.lengthInBytes}');
       }
 
       Map<String, dynamic> params = {
-        "poi": {
-          "house_number": poiCollector.number,
-          "location": {
-            "lat": poiCollector.location.lat,
-            "lon": poiCollector.location.lon,
-          },
-          "road": poiCollector.name,
-          "postcode": poiCollector.postalCode,
-          "city": poiCollector.city,
-          "county": poiCollector.country,
-          "state": poiCollector.state,
-          "country": poiCollector.country,
-          "country_code": country_code,
-          "work_time": poiCollector.workTime,
-          "phone": poiCollector.phone,
-          "website": poiCollector.website,
-          "number": poiCollector.number
-        },
+        "poi": poiCollector.toJson(),
       };
 
       print('[position] poiCollector, 1, params:${params}');
 
-      for (var i = 0; i < imgList.length; i += 1) {
+      for (var i = 0; i < imagePaths.length; i += 1) {
         var index = i + 1;
-        String key = "img${index}";
-         //params[key] = imgList[i];
+//        String key = "img${index}";
+//         params[key] = imgList[i];
       }
-      print('[position] poiCollector, 2, params:${params}');
 
+      FormData formData = new FormData.fromMap(params);
+
+      print('[position] poiCollector, 2, params:${params}, \naddress:${address}');
       var res = await HttpCore.instance.post("map-collector/poi/collector",
-          params: params,
+          data: formData,
           options: RequestOptions(headers: {
             "Lang": "zh-Hans",
             "UUID": address

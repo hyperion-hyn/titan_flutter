@@ -77,18 +77,19 @@ class BaseHttpCore {
     return _request(url, method: GET, params: params, options: options, cancelToken: cancelToken);
   }
 
-  //post method
-  Future<dynamic> post(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    return _request(url, method: POST, params: params, options: options, cancelToken: cancelToken);
-  }
 
   //post method
+  Future<dynamic> post(String url, {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    return _request(url, method: POST, data: data, params: params, options: options, cancelToken: cancelToken);
+  }
+
+  //patch method
   Future<dynamic> patch(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
     return _request(url, method: PATCH, params: params, options: options, cancelToken: cancelToken);
   }
 
   Future<dynamic> _request(String url,
-      {String method, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {String method, dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
 //    dio.onHttpClientCreate = (HttpClient client) {
 //      client.findProxy = (uri) {
 //        //proxy all request to localhost:8888
@@ -114,7 +115,9 @@ class BaseHttpCore {
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
         response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
-      } else {
+      } else if (data != null) {
+        response = await dio.post(url, data: data, options: options, cancelToken: cancelToken);
+      } else{
         response = await dio.post(url, options: options, cancelToken: cancelToken);
       }
     } else if (method == PATCH) {
