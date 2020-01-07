@@ -25,7 +25,13 @@ import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
 import 'contribution_finish_page.dart';
 
+const _default_map_location = LatLng(23.10904, 113.31904);
+
 class ContributionPage extends StatefulWidget {
+  final LatLng initLocation;
+
+  ContributionPage({this.initLocation});
+
   @override
   State<StatefulWidget> createState() {
     return _ContributionState();
@@ -77,9 +83,11 @@ class _ContributionState extends State<ContributionPage> {
   void initState() {
     super.initState();
 
+    userPosition = widget.initLocation ?? _default_map_location;
+
     sensorPlugin = SensorPlugin();
     initSensorChangeCallBack();
-    initPosition();
+    initScanner();
   }
 
   @override
@@ -134,6 +142,11 @@ class _ContributionState extends State<ContributionPage> {
         }
       case SensorType.GPS:
         {
+          var newLatLng = LatLng(values['lat'], values['lon']);
+          if (userPosition.distanceTo(newLatLng) > 5) {
+            userPosition = newLatLng;
+            mapController?.animateCamera(CameraUpdate.newLatLng(userPosition));
+          }
           gpsList.add(values);
 
           break;
@@ -155,9 +168,8 @@ class _ContributionState extends State<ContributionPage> {
     }
   }
 
-  void initPosition() async {
-    userPosition =
-        await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
+  void initScanner() async {
+//    userPosition = widget.initLocation ?? _default_map_location;
     await sensorPlugin.init();
   }
 
@@ -170,9 +182,9 @@ class _ContributionState extends State<ContributionPage> {
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
 
-    if (userPosition != null) {
-      mapController.animateCamera(CameraUpdate.newLatLng(userPosition));
-    }
+//    if (userPosition != null) {
+//      mapController.animateCamera(CameraUpdate.newLatLng(userPosition));
+//    }
 
     subscription = timerObservable.listen((t) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
@@ -308,39 +320,41 @@ class _ContributionState extends State<ContributionPage> {
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
-      body: StreamBuilder<double>(
-          stream: progressStreamController.stream,
-          builder: (context, snapshot) {
-            return Center(
-              child: Stack(
-                fit: StackFit.expand,
-                alignment: Alignment.center,
-                children: <Widget>[
-                  _mapView(),
-                  RadarScan(),
-                  _buildStatusListView(),
-                  Positioned(
-                    child: SizedBox(
-                      height: 3,
-                      child: LinearProgressIndicator(
-                        backgroundColor: _themeColor,
-                        value: snapshot?.data ?? 0.0,
-                        valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+      body: Stack(
+        children: <Widget>[
+          _mapView(),
+          RadarScan(),
+          StreamBuilder<double>(
+              stream: progressStreamController.stream,
+              builder: (context, snapshot) {
+                return Stack(
+                  fit: StackFit.expand,
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    _buildStatusListView(),
+                    Positioned(
+                      child: SizedBox(
+                        height: 3,
+                        child: LinearProgressIndicator(
+                          backgroundColor: _themeColor,
+                          value: snapshot?.data ?? 0.0,
+                          valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                        ),
                       ),
+                      top: 0,
+                      left: 0,
+                      right: 0,
                     ),
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                  ),
-                  Image.asset(
-                    'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
-                    scale: 2,
-                  ),
-                  _confirmView(),
-                ],
-              ),
-            );
-          }),
+                    Image.asset(
+                      'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
+                      scale: 2,
+                    ),
+                    _confirmView(),
+                  ],
+                );
+              }),
+        ],
+      ),
     );
   }
 
@@ -496,7 +510,7 @@ class _ContributionState extends State<ContributionPage> {
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(
-        target: userPosition ?? LatLng(23.12076, 113.322058),
+        target: userPosition,
         zoom: defaultZoom,
       ),
       styleString: style,
@@ -506,7 +520,7 @@ class _ContributionState extends State<ContributionPage> {
           startScan();
         });
       },
-      myLocationTrackingMode: MyLocationTrackingMode.Tracking,
+      myLocationTrackingMode: MyLocationTrackingMode.None,
       rotateGesturesEnabled: false,
       tiltGesturesEnabled: false,
       enableLogo: false,
@@ -517,7 +531,7 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   Future<bool> uploadCollectData() async {
-    var uploadPosition = userPosition ?? LatLng(23.12076, 113.322058);
+    var uploadPosition = userPosition;
     contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(uploadPosition.latitude, uploadPosition.longitude);
     SignalCollector _signalCollector = SignalCollector(_latlng, collectData);
     WalletVo _walletVo = await _walletService.getDefaultWalletVo();

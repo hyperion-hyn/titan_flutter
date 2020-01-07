@@ -249,7 +249,6 @@ class HotAreaState extends BaseState<HotArea> {
   }
 
   void zoomToHotArea(LatLng coordinate, double zoom) {
-    mapboxMapController?.disableLocation();
     mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(coordinate, zoom));
   }
 

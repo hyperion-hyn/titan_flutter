@@ -23,7 +23,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
   LatLng userPosition;
-  double defaultZoom = 18;
+  double defaultZoom = 15;
   bool _isLoading = false;
 
   List<Media> _listImagePaths = List();
@@ -153,15 +153,13 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/fiord-color.json";
+      style = "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
     } else {
-      style = "https://static.hyn.space/maptiles/fiord-color.json";
+      style = "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
     }
 
-//    style = 'https://static.hyn.space/maptiles/see-it-all.json';
-
     return SizedBox(
-      height: 180,
+      height: 220,
       child: MapboxMap(
         compassEnabled: false,
         initialCameraPosition: CameraPosition(
@@ -170,15 +168,27 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         ),
         styleString: style,
         onStyleLoaded: (mapboxController) {
-          mapController = mapboxController;
+          onStyleLoaded(mapboxController);
         },
-        myLocationTrackingMode: MyLocationTrackingMode.Tracking,
+        myLocationTrackingMode: MyLocationTrackingMode.None,
         rotateGesturesEnabled: false,
         tiltGesturesEnabled: false,
         enableLogo: false,
         enableAttribution: false,
         minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
         myLocationEnabled: false,
+      ),
+    );
+  }
+
+  void onStyleLoaded(MapboxMapController controller) {
+    mapController = controller;
+    mapController.addSymbol(
+      SymbolOptions(
+        geometry: LatLng(23.12076, 113.322058),
+        iconImage: "hyn_marker_big",
+        iconAnchor: "bottom",
+        iconOffset: Offset(0.0, 3.0),
       ),
     );
   }

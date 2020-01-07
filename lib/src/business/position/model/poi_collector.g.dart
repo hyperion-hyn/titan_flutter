@@ -29,7 +29,7 @@ PoiCollector _$PoiCollectorFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$PoiCollectorToJson(PoiCollector instance) =>
     <String, dynamic>{
       'category_id': instance.categoryId,
-      'location': instance.location,
+      'location': instance.location.toJson(),
       'name': instance.name,
       'country': instance.country,
       'state': instance.state,
