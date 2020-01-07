@@ -1,34 +1,13 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:android_intent/android_intent.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/model/business_time.dart';
-import 'package:titan/src/business/wallet/service/wallet_service.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/open_location_code.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/RoundCheckBox.dart';
-import '../wallet/wallet_create_new_account_page.dart';
-import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
-import 'package:titan/src/global.dart';
-import '../wallet/wallet_manager/wallet_manager.dart';
 import 'model/category_item.dart';
 
 class BusinessTimePage extends StatefulWidget {
@@ -39,7 +18,7 @@ class BusinessTimePage extends StatefulWidget {
 }
 
 class _BusinessTimeState extends State<BusinessTimePage> {
-  PositionBloc _positionBloc = PositionBloc();
+  PositionBloc _positionBloc;
   TextEditingController _timeController = TextEditingController();
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
@@ -67,6 +46,8 @@ class _BusinessTimeState extends State<BusinessTimePage> {
     _timeList = _timeLabel
         .map((labelStr) => BusinessTimeItem(label: labelStr))
         .toList();
+    _positionBloc = BlocProvider.of<PositionBloc>(context);
+
     super.initState();
   }
 
@@ -104,7 +85,8 @@ class _BusinessTimeState extends State<BusinessTimePage> {
 
               BusinessInfo businessInfo =
                   BusinessInfo(dayList: _dayList, timeStr: currentTime.label);
-              Navigator.pop(context, businessInfo);
+              _positionBloc.add(SelectTimeSelectedEvent(timeItem: businessInfo));
+              Navigator.pop(context);
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -143,7 +125,6 @@ class _BusinessTimeState extends State<BusinessTimePage> {
 
   @override
   void dispose() {
-    _positionBloc.close();
     super.dispose();
   }
 
@@ -164,11 +145,6 @@ class _BusinessTimeState extends State<BusinessTimePage> {
           ),
           Spacer(),
           Image.asset(imagePath, width: 24, height: 15)
-          /*Switch(value: timeItem.isCheck,
-            activeColor: Colors.blue,
-            onChanged: (bool val){
-
-            })*/
         ],
       ),
     );
@@ -184,7 +160,6 @@ class _BusinessTimeState extends State<BusinessTimePage> {
           child: Text("营业时间", style: TextStyles.textC333S14)),
       Column(children: _buildBusinessTime()),
       _buildCustomTime()
-//    getabc()
     ]);
   }
 
@@ -238,11 +213,9 @@ class _BusinessTimeState extends State<BusinessTimePage> {
                 SizedBox(width: 10, height: 1),
                 Expanded(
                   child: TextField(
-//                    inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                       controller: _timeController,
                       decoration: new InputDecoration(
                         border: InputBorder.none,
-//                  contentPadding: const EdgeInsets.all(10.0),
                         hintStyle: TextStyles.textCaaaS14,
                         hintText: '自定义时间，格式 07:00-23:00',
                       )),

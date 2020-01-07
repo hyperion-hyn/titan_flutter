@@ -1,7 +1,5 @@
-//import 'dart:html';
-import 'dart:typed_data';
+import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
@@ -30,30 +28,22 @@ class PositionApi {
   }
 
   ///collect poi
-  Future<bool> postPoiCollector(List<Media> imagePaths, String address, PoiCollector poiCollector) async {
+  Future<bool> postPoiCollector(List<Media> imagePaths, String address, PoiCollector poiCollector, ProgressCallback onSendProgress) async {
     try {
 
-      List imgList = List();
-      for (var item in imagePaths) {
-        String firstPath = item.path;
-//        final ByteData imageByte = await rootBundle.load(firstPath);
-//        imgList.add(imageByte.buffer.asUint8List());
-//        print('[add] _selectImages, firstPath:${firstPath}, imageByte:${imageByte.lengthInBytes}');
-      }
-
       Map<String, dynamic> params = {
-        "poi": poiCollector.toJson(),
+        "poi": json.encode(poiCollector.toJson()),
       };
 
       print('[position] poiCollector, 1, params:${params}');
 
       for (var i = 0; i < imagePaths.length; i += 1) {
         var index = i + 1;
-//        String key = "img${index}";
-//         params[key] = imgList[i];
+        String key = "img${index}";
+         params[key] = MultipartFile.fromFile(imagePaths[i].path);
       }
 
-      FormData formData = new FormData.fromMap(params);
+      FormData formData = FormData.fromMap(params);
 
       print('[position] poiCollector, 2, params:${params}, \naddress:${address}');
       var res = await HttpCore.instance.post("map-collector/poi/collector",
@@ -62,7 +52,8 @@ class PositionApi {
             "Lang": "zh-Hans",
             "UUID": address
           }, contentType: "multipart/form-data"
-          )
+          ),
+        onSendProgress: onSendProgress
       );
       var responseEntity = ResponseEntity<String>.fromJson(res, factory: EntityFactory((json) => json));
       print("[PositionApi] , poiCollector,  responseEntity:${responseEntity}");
