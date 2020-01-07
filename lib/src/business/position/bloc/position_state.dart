@@ -54,6 +54,9 @@ class SuccessPostPoiDataState extends PositionState {
 }
 
 class FailPostPoiDataState extends PositionState {
+
+}
+
 class ConfirmPositionLoadingState extends PositionState {
   ConfirmPositionLoadingState();
 }

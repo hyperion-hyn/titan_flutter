@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +92,7 @@ class _AddPositionState extends State<AddPositionPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FinishAddPositionPage(),
+              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
             ),
           );
         } else if (state is FailPostPoiDataEvent) {
