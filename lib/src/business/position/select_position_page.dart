@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:mapbox_gl/mapbox_gl.dart' as Mapbox;
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/business/position/add_position_page.dart';
-import 'package:titan/src/business/contribution/vo/latlng.dart' as LatLng;
 
 const _default_map_location = LatLng(23.10904, 113.31904);
 
@@ -22,10 +21,8 @@ class SelectPositionPage extends StatefulWidget {
 
 class _SelectPositionState extends State<SelectPositionPage> {
 
-  Mapbox.MapboxMapController mapController;
-  LatLng.LatLng userPosition;
-//  LatLng userPosition;
-
+  MapboxMapController mapController;
+  LatLng userPosition;
   double defaultZoom = 18;
 
   var trackingMode = MyLocationTrackingMode.Tracking;

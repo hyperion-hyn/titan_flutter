@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/business/contribution/vo/latlng.dart';
-
+import 'package:mapbox_gl/mapbox_gl.dart';
 part 'poi_collector.g.dart';
 
 
@@ -16,8 +15,8 @@ class PoiCollector extends Object {
   @JsonKey(name: 'name')
   String name;
 
-//  @JsonKey(name: 'country_code')
-//  String countryCode;
+  @JsonKey(name: 'country_code')
+  String countryCode;
 
   @JsonKey(name: 'country')
   String country;
@@ -28,14 +27,14 @@ class PoiCollector extends Object {
   @JsonKey(name: 'city')
   String city;
 
-  @JsonKey(name: 'address_1')
-  String address1;
+  @JsonKey(name: 'road')
+  String road;
 
   @JsonKey(name: 'address_2')
   String address2;
 
-  @JsonKey(name: 'number')
-  String number;
+  @JsonKey(name: 'house_number')
+  String houseNumber;
 
   @JsonKey(name: 'postal_code')
   String postalCode;
@@ -49,7 +48,7 @@ class PoiCollector extends Object {
   @JsonKey(name: 'website')
   String website;
 
-  PoiCollector(this.categoryId,this.location,this.name,this.country,this.state,this.city,this.address1,this.address2,this.number,this.postalCode,this.workTime,this.phone,this.website);
+  PoiCollector(this.categoryId,this.location,this.name, this.countryCode,this.country,this.state,this.city,this.road,this.address2,this.houseNumber,this.postalCode,this.workTime,this.phone,this.website);
 
   factory PoiCollector.fromJson(Map<String, dynamic> srcJson) => _$PoiCollectorFromJson(srcJson);
 
