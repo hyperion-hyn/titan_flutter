@@ -2,11 +2,16 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_pickers/Media.dart';
+import 'package:image_pickers/UIConfig.dart';
+import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/business_time_page.dart';
+import 'package:titan/src/business/position/model/business_time.dart';
+import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/position_finish_page.dart';
 import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
@@ -27,7 +32,7 @@ class AddPositionPage extends StatefulWidget {
 
 class _AddPositionState extends State<AddPositionPage> {
 
-  PositionBloc _positionBloc;
+  PositionBloc _positionBloc = PositionBloc();
 
   TextEditingController _addressNameController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
@@ -42,13 +47,16 @@ class _AddPositionState extends State<AddPositionPage> {
   String _categoryDefaultText = "";
   String _timeDefaultText = "";
 
+  List<Media> _listImagePaths = List();
+  final int _listImagePathsMaxLength = 9;
+  CategoryItem _categoryItem;
+  String _timeText;
+
   @override
   void initState() {
     _categoryDefaultText = "请选择类别";
     _timeDefaultText = "请添加工作时间";
-    _positionBloc = PositionBloc();
     _positionBloc.add(GetOpenCageEvent());
-    print('[add] initState, _positionBloc:${_positionBloc.hashCode}');
 
     super.initState();
   }
@@ -156,9 +164,9 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
+
   Widget _buildCategoryCell() {
     String _categoryText = "";
-    var _categoryItem = _positionBloc.categoryItem;
     if (_categoryItem == null || _categoryItem.title == null) {
       _categoryText = _categoryDefaultText;
     } else {
@@ -168,17 +176,7 @@ class _AddPositionState extends State<AddPositionPage> {
     return InkWell(
 
       onTap: () {
-//        _positionBloc.add(AddPositionEvent());
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BlocProvider<PositionBloc>(
-              child: SelectCategoryPage(),
-              builder: (context) => _positionBloc,
-            ),
-          ),
-        );
+        _pushCategory();
       },
       child: Container(
           height: 40,
@@ -256,8 +254,6 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   Widget _buildPhotosCell() {
-    var _listImagePaths = _positionBloc.listImagePaths;
-    var _listImagePathsMaxLength = _positionBloc.listImagePathsMaxLength;
     var size = MediaQuery.of(context).size;
     var itemWidth = (size.width - 16 * 2.0 - 15 * 2.0) / 3.0;
     var childAspectRatio = (105.0 / 74.0);
@@ -312,7 +308,7 @@ class _AddPositionState extends State<AddPositionPage> {
               if (index == itemCount - 1 && _listImagePaths.length < _listImagePathsMaxLength) {
                 return InkWell(
                   onTap: () {
-                    _positionBloc.add(SelectImageSelectedEvent());
+                    _selectImages();
                   },
                   child: Container(
                     child: Center(
@@ -520,15 +516,7 @@ class _AddPositionState extends State<AddPositionPage> {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BlocProvider<PositionBloc>(
-                        child: BusinessTimePage(),
-                        builder: (context) => _positionBloc,
-                      ),
-                    ),
-                  );
+                  _pushTime();
                 },
                 child: Container(
                     height: 40,
@@ -548,7 +536,7 @@ class _AddPositionState extends State<AddPositionPage> {
 //                            color: Colors.green,
                             width: 230,
                             child: Text(
-                              _positionBloc.timeText ?? _timeDefaultText,
+                              _timeText ?? _timeDefaultText,
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(color: HexColor('#777777'), fontWeight: FontWeight.normal, fontSize: 13),
@@ -697,6 +685,53 @@ class _AddPositionState extends State<AddPositionPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _selectImages() async {
+    var tempListImagePaths = await ImagePickers.pickerPaths(
+      galleryMode: GalleryMode.image,
+      selectCount: _listImagePathsMaxLength - _listImagePaths.length,
+      showCamera: true,
+      cropConfig: null,
+      compressSize: 500,
+      uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+    );
+    _listImagePaths.addAll(tempListImagePaths);
+  }
+
+  _pushCategory() async{
+    var categoryItem = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectCategoryPage(),
+      ),
+    );
+    if (categoryItem is CategoryItem) {
+      setState(() {
+        _categoryItem = categoryItem;
+      });
+    }
+  }
+
+  _pushTime() async{
+
+    var _timeItem = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BusinessTimePage(),
+      ),
+    );
+
+    if (_timeItem is BusinessInfo) {
+      String dayText = "";
+      for (var item in _timeItem.dayList) {
+        if (!item.isCheck) continue;
+        dayText += "${item.label}、";
+      }
+      setState(() {
+        _timeText = _timeItem.timeStr + " " + dayText;
+      });
+    }
   }
 
   _uploadPoiData() {

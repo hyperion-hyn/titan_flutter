@@ -16,7 +16,7 @@ class SelectCategoryPage extends StatefulWidget {
 
 class _SelectCategoryState extends State<SelectCategoryPage> {
 
-  PositionBloc _positionBloc;
+  PositionBloc _positionBloc = PositionBloc();
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
   TextEditingController _searchTextController = TextEditingController();
@@ -50,8 +50,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         print("inputText = " + textStr);
       },
     );
-
-//    _positionBloc.add(SelectCategoryInitEvent());
 
     super.initState();
 
@@ -90,21 +88,14 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _positionBloc = BlocProvider.of<PositionBloc>(context);
-
-  }
-
 
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, PositionState>(
       bloc: _positionBloc,
       builder: (BuildContext context, PositionState state) {
+        print('state: ${state}');
 
-        if (state is AddPositionState) {
+        if (state is InitialPositionState) {
           categoryList.clear();
           return _buildBody(state);
         } else if (state is SelectCategoryResultState) {
@@ -142,8 +133,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   Widget _buildInfoContainer(CategoryItem categoryItem) {
     return InkWell(
       onTap: () {
-        _positionBloc.add(SelectCategorySelectedEvent(categoryItem: categoryItem));
-        Navigator.pop(context);
+        Navigator.pop(context, categoryItem);
       },
       child: Container(
         height: 41,

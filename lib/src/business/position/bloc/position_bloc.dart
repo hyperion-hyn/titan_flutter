@@ -3,11 +3,8 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_pickers/Media.dart';
-import 'package:image_pickers/UIConfig.dart';
-import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/position/api/position_api.dart';
-import 'package:titan/src/business/position/model/business_time.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/model/poi_collector.dart';
 import 'package:titan/src/global.dart';
@@ -54,23 +51,6 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       yield SelectCategoryResultState(categoryList: categoryList);
     } else if (event is SelectCategoryClearEvent) {
       yield SelectCategoryClearState();
-    } else if (event is SelectCategorySelectedEvent) {
-      categoryItem = event.categoryItem;
-      yield SelectCategorySelectedState();
-    } else if (event is SelectTimeSelectedEvent) {
-      var timeItem = event.timeItem;
-      if (timeItem is BusinessInfo) {
-        String dayText = "";
-        for (var item in timeItem.dayList) {
-          if (!item.isCheck) continue;
-          dayText += "${item.label}、";
-        }
-        timeText = timeItem.timeStr + " " + dayText;
-      }
-      yield SelectTimeSelectedState();
-    } else if (event is SelectImageSelectedEvent) {
-      await _selectImages();
-      yield SelectImageSelectedState();
     } else if (event is GetOpenCageEvent) {
       await _getOpenCageData();
       yield GetOpenCageState();
@@ -92,17 +72,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     }
   }
 
-  Future<void> _selectImages() async {
-    var tempListImagePaths = await ImagePickers.pickerPaths(
-      galleryMode: GalleryMode.image,
-      selectCount: listImagePathsMaxLength - listImagePaths.length,
-      showCamera: true,
-      cropConfig: null,
-      compressSize: 500,
-      uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
-    );
-    listImagePaths.addAll(tempListImagePaths);
-  }
+
 
   Future _getOpenCageData() async {
     var query = "${userPosition.latitude},${userPosition.longitude}";
@@ -173,10 +143,4 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     }
   }
 
-  @override
-  void close() {
-    print('[position_bloc] --> close');
-
-    super.close();
-  }
 }

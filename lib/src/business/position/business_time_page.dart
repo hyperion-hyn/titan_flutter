@@ -18,7 +18,7 @@ class BusinessTimePage extends StatefulWidget {
 }
 
 class _BusinessTimeState extends State<BusinessTimePage> {
-  PositionBloc _positionBloc;
+  PositionBloc _positionBloc = PositionBloc();
   TextEditingController _timeController = TextEditingController();
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
@@ -48,12 +48,10 @@ class _BusinessTimeState extends State<BusinessTimePage> {
         _dayList.add(BusinessDayItem(label: _dayLabel[i], isCheck: false));
       }
     }
-//    _dayList =
-//        _dayLabel.map((labelStr) => BusinessDayItem(label: labelStr)).toList();
+
     _timeList = _timeLabel
         .map((labelStr) => BusinessTimeItem(label: labelStr))
         .toList();
-    //_positionBloc = BlocProvider.of<PositionBloc>(context);
 
     super.initState();
   }
@@ -93,7 +91,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
               BusinessInfo businessInfo =
                   BusinessInfo(dayList: _dayList, timeStr: currentTime.label);
               _positionBloc.add(SelectTimeSelectedEvent(timeItem: businessInfo));
-              Navigator.pop(context);
+              Navigator.pop(context, businessInfo);
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -130,14 +128,6 @@ class _BusinessTimeState extends State<BusinessTimePage> {
         }
       },
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _positionBloc = BlocProvider.of<PositionBloc>(context);
-
   }
 
 
