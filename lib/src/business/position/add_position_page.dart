@@ -12,6 +12,8 @@ import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/business_time_page.dart';
 import 'package:titan/src/business/position/model/business_time.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
+import 'package:titan/src/business/position/model/poi_collector.dart';
+import 'package:titan/src/business/position/model/poi_data.dart';
 import 'package:titan/src/business/position/position_finish_page.dart';
 import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
@@ -31,7 +33,6 @@ class AddPositionPage extends StatefulWidget {
 }
 
 class _AddPositionState extends State<AddPositionPage> {
-
   PositionBloc _positionBloc = PositionBloc();
 
   TextEditingController _addressNameController = TextEditingController();
@@ -52,11 +53,18 @@ class _AddPositionState extends State<AddPositionPage> {
   CategoryItem _categoryItem;
   String _timeText;
 
+  Map<String, dynamic> _openCageData;
+
+  bool _isUploading = false;
+  double _uploadingProgress = 0.15;
+
+  final _addressNameKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     _categoryDefaultText = "请选择类别";
     _timeDefaultText = "请添加工作时间";
-    _positionBloc.add(GetOpenCageEvent());
+    _positionBloc.add(GetOpenCageEvent(widget.userPosition));
 
     super.initState();
   }
@@ -92,11 +100,11 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, PositionState>(
       bloc: _positionBloc,
-      builder: (BuildContext context, PositionState state) {
+      condition: (PositionState fromState, PositionState state) {
+        //print('[add] --> state:${fromState}, toState:${state}');
         if (state is SuccessPostPoiDataState) {
           createWalletPopUtilName = '/data_contribution_page';
           Navigator.push(
@@ -106,25 +114,37 @@ class _AddPositionState extends State<AddPositionPage> {
             ),
           );
         } else if (state is FailPostPoiDataState) {
+          setState(() {
+            _isUploading = false;
+          });
           Fluttertoast.showToast(msg: "存储失败!");
+        } else if (state is GetOpenCageState) {
+          _openCageData = state.openCageData;
+        } else if (state is LoadingPostPoiDataState) {
+          setState(() {
+            _uploadingProgress = state.progress;
+          });
         }
-        else if (state is SelectImageSelectedState) {
-          //print('-----------SelectImageSelectedState');
-        }
-        //print('-----------SelectImageSelectedState 2');
 
+        return true;
+      },
+      builder: (BuildContext context, PositionState state) {
         return _buildBody();
       },
     );
   }
 
-  Widget _buildLoading(context) {
-    return Center(
-      child: SizedBox(
-        height: 40,
-        width: 40,
-        child: CircularProgressIndicator(
-          strokeWidth: 3,
+  Widget _buildLoading() {
+    return Visibility(
+      visible: _isUploading,
+      child: Center(
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(
+            value: _uploadingProgress,
+            strokeWidth: 3,
+          ),
         ),
       ),
     );
@@ -132,8 +152,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
   @override
   void dispose() {
-    print('[add] --> dispose');
-    //_positionBloc.close();
+    _positionBloc.close();
     super.dispose();
   }
 
@@ -143,14 +162,17 @@ class _AddPositionState extends State<AddPositionPage> {
       child: Stack(
         children: <Widget>[
           SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                _buildCategoryCell(),
-                _buildAddressNameCell(),
-                _buildPhotosCell(),
-                _buildAddressCell(),
-                _buildDetailCell(),
-              ],
+            child: Form(
+              key: _addressNameKey,
+              child: Column(
+                children: <Widget>[
+                  _buildCategoryCell(),
+                  _buildAddressNameCell(),
+                  _buildPhotosCell(),
+                  _buildAddressCell(),
+                  _buildDetailCell(),
+                ],
+              ),
             ),
           ),
           Positioned(
@@ -159,11 +181,11 @@ class _AddPositionState extends State<AddPositionPage> {
             bottom: 0,
             child: _buildProtocolCell(),
           ),
+          _buildLoading(),
         ],
       ),
     );
   }
-
 
   Widget _buildCategoryCell() {
     String _categoryText = "";
@@ -174,7 +196,6 @@ class _AddPositionState extends State<AddPositionPage> {
     }
 
     return InkWell(
-
       onTap: () {
         _pushCategory();
       },
@@ -235,15 +256,22 @@ class _AddPositionState extends State<AddPositionPage> {
           ],
         ),
         Container(
-          height: 40,
+//          height: 40,
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
           child: TextFormField(
             controller: _addressNameController,
+            validator: (value) {
+              if (value.isEmpty) {
+                return '地点名称不能为空';
+              } else {
+                return null;
+              }
+            },
             style: TextStyle(fontSize: 14),
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: '该地点名称',
+              hintText: '请输入地点名称',
               hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
             ),
             keyboardType: TextInputType.text,
@@ -327,34 +355,34 @@ class _AddPositionState extends State<AddPositionPage> {
                 );
               }
               return InkWell(
-                onTap: () {
+                  onTap: () {
 //                  ImagePickers.previewImagesByMedia(_listImagePaths,index);
-                  setState(() {
-                    _listImagePaths.removeAt(index);
-                  });
-                },
-                child:Stack(
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(3),
-                      child: Image.file(File(_listImagePaths[index].path),width: itemWidth,fit: BoxFit.cover),
-                    ),
-                    Positioned(
-                      right:0,
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(0, 4, 4, 0),
-//                      alignment: Alignment.topRight,
-                        child: Image.asset(
-                          'res/drawable/add_position_delete.png',
-                          width: 12,
-                          height: 12,
-                          fit: BoxFit.scaleDown,
-                        ),
+                    setState(() {
+                      _listImagePaths.removeAt(index);
+                    });
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.file(File(_listImagePaths[index].path), width: itemWidth, fit: BoxFit.cover),
                       ),
-                    )
-                  ],
-                )
-                /*child: Container(
+                      Positioned(
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(0, 4, 4, 0),
+//                      alignment: Alignment.topRight,
+                          child: Image.asset(
+                            'res/drawable/add_position_delete.png',
+                            width: 12,
+                            height: 12,
+                            fit: BoxFit.scaleDown,
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                  /*child: Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(image: AssetImage(_listImagePaths[index].path), fit: BoxFit.fitWidth),
                     color: HexColor('#D8D8D8'),
@@ -371,7 +399,7 @@ class _AddPositionState extends State<AddPositionPage> {
                     ),
                   ),
                 ),*/
-              );
+                  );
             },
             itemCount: itemCount,
           ),
@@ -538,7 +566,7 @@ class _AddPositionState extends State<AddPositionPage> {
                             child: Text(
                               _timeText ?? _timeDefaultText,
                               textAlign: TextAlign.left,
-                              overflow: TextOverflow.ellipsis,
+                              overflow: TextOverflow.clip,
                               style: TextStyle(color: HexColor('#777777'), fontWeight: FontWeight.normal, fontSize: 13),
                             ),
                           ),
@@ -576,7 +604,7 @@ class _AddPositionState extends State<AddPositionPage> {
                               hintText: '电话',
                               hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
                             ),
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                           ),
                         ),
                       ),
@@ -606,7 +634,7 @@ class _AddPositionState extends State<AddPositionPage> {
                               hintText: '网址',
                               hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
                             ),
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.emailAddress,
                           ),
                         ),
                       ),
@@ -696,10 +724,12 @@ class _AddPositionState extends State<AddPositionPage> {
       compressSize: 500,
       uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
     );
-    _listImagePaths.addAll(tempListImagePaths);
+    setState(() {
+      _listImagePaths.addAll(tempListImagePaths);
+    });
   }
 
-  _pushCategory() async{
+  _pushCategory() async {
     var categoryItem = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -713,8 +743,7 @@ class _AddPositionState extends State<AddPositionPage> {
     }
   }
 
-  _pushTime() async{
-
+  _pushTime() async {
     var _timeItem = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -737,21 +766,54 @@ class _AddPositionState extends State<AddPositionPage> {
   _uploadPoiData() {
     print('[add] --> 存储中。。。');
 
-    // 1.检测必须选项
+    // 0. 检测地点名称
+    if (!_addressNameKey.currentState.validate()) {
+      return;
+    }
+
+    // 1.检测必须类别、图片
+    var _isEmptyOfCategory = (_categoryItem == null || _categoryItem.title.length == 0 || _categoryItem.title == "");
+    var _isEmptyOfImages = (_listImagePaths.length == 0);
+
+    if (_isEmptyOfCategory) {
+      Fluttertoast.showToast(msg: "类别不能为空");
+      return;
+    }
+
+    if (_isEmptyOfImages) {
+      Fluttertoast.showToast(msg: "拍摄图片不能为空");
+      return;
+    }
 
     if (!_isAcceptSignalProtocol) {
       Fluttertoast.showToast(msg: "地理位置上传协议未接受");
       return;
     }
 
-    _positionBloc.userPosition = widget.userPosition;
-    _positionBloc.poiName = _addressNameController.text ?? "";
-    _positionBloc.poiAddress = _addressController.text ?? "";
-    _positionBloc.poiHouseNum = _addressHouseNumController.text ?? "";
-    _positionBloc.poiPhoneNum = _detailPhoneNumController.text ?? "";
-    _positionBloc.poiWebsite = _detailWebsiteController.text ?? "";
+    // 2.检测网络数据
+    if (_openCageData == null) {
+      return;
+    }
 
-    _positionBloc.add(StartPostPoiDataEvent());
+    var categoryId = _categoryItem.id;
+    var country = _openCageData["country"] ?? "";
+    var state = _openCageData["state"];
+    var city = _openCageData["city"] + _openCageData["county"];
+    var postalCode = _openCageData["postcode"];
+    var countryCode = _openCageData["country_code"] ?? "";
+    var poiName = _addressNameController.text ?? "";
+    var poiAddress = _addressController.text ?? "";
+    var poiHouseNum = _addressHouseNumController.text ?? "";
+    var poiPhoneNum = _detailPhoneNumController.text ?? "";
+    var poiWebsite = _detailWebsiteController.text ?? "";
+
+    var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city,
+        poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite);
+
+    var model = PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
+    _positionBloc.add(StartPostPoiDataEvent(model));
+    setState(() {
+      _isUploading = true;
+    });
   }
-
 }

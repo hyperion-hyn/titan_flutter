@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
-import 'package:titan/src/business/position/model/business_time.dart';
-import 'package:titan/src/business/position/model/category_item.dart';
+import 'package:titan/src/business/position/model/poi_data.dart';
 
 @immutable
 abstract class PositionEvent extends Equatable {
@@ -21,7 +21,7 @@ class SelectCategoryLoadingEvent extends PositionEvent {
 }
 
 class SelectCategoryResultEvent extends PositionEvent {
-  String searchText;
+  final String searchText;
 
   SelectCategoryResultEvent({this.searchText});
 }
@@ -29,27 +29,20 @@ class SelectCategoryResultEvent extends PositionEvent {
 class SelectCategoryClearEvent extends PositionEvent {
 }
 
-class SelectCategorySelectedEvent extends PositionEvent {
-  CategoryItem categoryItem;
-  SelectCategorySelectedEvent({this.categoryItem});
-}
-
-class SelectTimeSelectedEvent extends PositionEvent {
-  BusinessInfo timeItem;
-  SelectTimeSelectedEvent({this.timeItem});
-}
-
-class SelectImageSelectedEvent extends PositionEvent {
-}
-
+// get
 class GetOpenCageEvent extends PositionEvent {
+  final LatLng userPosition;
+  GetOpenCageEvent(this.userPosition);
 }
 
+// uploading
 class StartPostPoiDataEvent extends PositionEvent {
+  final PoiDataModel poiDataModel;
+  StartPostPoiDataEvent(this.poiDataModel);
 }
 
 class LoadingPostPoiDataEvent extends PositionEvent {
-  double progress;
+  final double progress;
   LoadingPostPoiDataEvent(this.progress);
 }
 
@@ -60,6 +53,7 @@ class FailPostPoiDataEvent extends PositionEvent {
 
 }
 
+// confirm
 class ConfirmPositionLoadingEvent extends PositionEvent {
 }
 
