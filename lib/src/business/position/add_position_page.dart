@@ -56,8 +56,6 @@ class _AddPositionState extends State<AddPositionPage> {
   Map<String, dynamic> _openCageData;
 
   bool _isUploading = false;
-  double _uploadingProgress = 0.15;
-
   final _addressNameKey = GlobalKey<FormState>();
 
   @override
@@ -120,10 +118,6 @@ class _AddPositionState extends State<AddPositionPage> {
           Fluttertoast.showToast(msg: "存储失败!");
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
-        } else if (state is LoadingPostPoiDataState) {
-          setState(() {
-            _uploadingProgress = state.progress;
-          });
         }
 
         return true;
@@ -142,7 +136,6 @@ class _AddPositionState extends State<AddPositionPage> {
           height: 40,
           width: 40,
           child: CircularProgressIndicator(
-            value: _uploadingProgress,
             strokeWidth: 3,
           ),
         ),
@@ -256,7 +249,6 @@ class _AddPositionState extends State<AddPositionPage> {
           ],
         ),
         Container(
-//          height: 40,
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
           child: TextFormField(
@@ -344,7 +336,6 @@ class _AddPositionState extends State<AddPositionPage> {
                         'res/drawable/add_position_add.png',
                         width: 20,
                         height: 20,
-//                        fit: BoxFit.scaleDown,
                       ),
                     ),
                     decoration: BoxDecoration(
@@ -371,7 +362,6 @@ class _AddPositionState extends State<AddPositionPage> {
                         right: 0,
                         child: Container(
                           padding: EdgeInsets.fromLTRB(0, 4, 4, 0),
-//                      alignment: Alignment.topRight,
                           child: Image.asset(
                             'res/drawable/add_position_delete.png',
                             width: 12,
@@ -382,23 +372,6 @@ class _AddPositionState extends State<AddPositionPage> {
                       )
                     ],
                   )
-                  /*child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: AssetImage(_listImagePaths[index].path), fit: BoxFit.fitWidth),
-                    color: HexColor('#D8D8D8'),
-                    borderRadius: BorderRadius.circular(3.0),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(0, 4, 4, 0),
-                    alignment: Alignment.topRight,
-                    child: Image.asset(
-                      'res/drawable/add_position_delete.png',
-                      width: 12,
-                      height: 12,
-                      fit: BoxFit.scaleDown,
-                    ),
-                  ),
-                ),*/
                   );
             },
             itemCount: itemCount,
