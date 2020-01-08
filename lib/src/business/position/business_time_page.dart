@@ -53,7 +53,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
     _timeList = _timeLabel
         .map((labelStr) => BusinessTimeItem(label: labelStr))
         .toList();
-    _positionBloc = BlocProvider.of<PositionBloc>(context);
+    //_positionBloc = BlocProvider.of<PositionBloc>(context);
 
     super.initState();
   }
@@ -133,9 +133,13 @@ class _BusinessTimeState extends State<BusinessTimePage> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _positionBloc = BlocProvider.of<PositionBloc>(context);
+
   }
+
 
   Widget _buildTimeItem(BusinessTimeItem timeItem) {
     TextStyle textStyle =

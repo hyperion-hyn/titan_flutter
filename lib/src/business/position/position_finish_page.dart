@@ -11,7 +11,7 @@ class FinishAddPositionPage extends StatefulWidget {
   static const String FINISH_PAGE_TYPE_ADD = "finish_page_type_add";
   static const String FINISH_PAGE_TYPE_CONFIRM = "finish_page_type_confirm";
 
-  String pageType;
+  final String pageType;
 
   FinishAddPositionPage(this.pageType);
 

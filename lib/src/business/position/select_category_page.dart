@@ -35,8 +35,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     _tagList.add("健康食品店");
     _tagList.add("美甲店");
 
-    _positionBloc = BlocProvider.of<PositionBloc>(context);
-
     if (_searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
     }
@@ -90,12 +88,21 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _positionBloc = BlocProvider.of<PositionBloc>(context);
+
+  }
+
+
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, PositionState>(
       bloc: _positionBloc,
       builder: (BuildContext context, PositionState state) {
 
-        if (state is InitialPositionState) {
+        if (state is AddPositionState) {
           categoryList.clear();
           return _buildBody(state);
         } else if (state is SelectCategoryResultState) {
@@ -119,10 +126,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   Widget _divider() {
     return Padding(

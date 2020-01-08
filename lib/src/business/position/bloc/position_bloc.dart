@@ -40,9 +40,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
   String poiPostcode;
 
   @override
-  Stream<PositionState> mapEventToState(
-    PositionEvent event,
-  ) async* {
+  Stream<PositionState> mapEventToState(PositionEvent event,) async* {
     if (event is AddPositionEvent) {
       yield AddPositionState();
     } else if (event is SelectCategoryLoadingEvent) {
@@ -50,7 +48,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     } else if (event is SelectCategoryResultEvent) {
       var address = currentWalletVo.accountList[0].account.address;
       var categoryList =
-          await _positionApi.getCategoryList(event.searchText, address);
+      await _positionApi.getCategoryList(event.searchText, address);
       yield SelectCategoryResultState(categoryList: categoryList);
     } else if (event is SelectCategoryClearEvent) {
       yield SelectCategoryClearState();
@@ -69,13 +67,13 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       }
       yield SelectTimeSelectedState();
     } else if (event is SelectImageSelectedEvent) {
-      _selectImages();
+      await _selectImages();
       yield SelectImageSelectedState();
     } else if (event is GetOpenCageEvent) {
-      _getOpenCageData();
+      await _getOpenCageData();
       yield GetOpenCageState();
     } else if (event is StartPostPoiDataEvent) {
-      _uploadPoiData();
+      await _uploadPoiData();
       yield StartPostPoiDataState();
     } else if (event is LoadingPostPoiDataEvent) {
       yield LoadingPostPoiDataState(event.progress);
@@ -143,8 +141,21 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     var phone = poiPhoneNum ?? "";
     var website = poiWebsite ?? "";
     var country_code = _openCageData["country_code"] ?? "";
-    _poiCollector = PoiCollector(categoryId, location, name, country_code, country, state, city, address1, address2,
-        number, postalCode, workTime, phone, website);
+    _poiCollector = PoiCollector(
+        categoryId,
+        location,
+        name,
+        country_code,
+        country,
+        state,
+        city,
+        address1,
+        address2,
+        number,
+        postalCode,
+        workTime,
+        phone,
+        website);
 
     var address = currentWalletVo.accountList[0].account.address;
     bool isFinish = await _positionApi.postPoiCollector(listImagePaths, address, _poiCollector, (int count, int total) {
@@ -157,8 +168,13 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       add(SuccessPostPoiDataEvent());
     } else {
       add(FailPostPoiDataEvent());
-    } 
+    }
   }
 
+  @override
+  void close() {
+    print('[position_bloc] --> close');
 
+    super.close();
+  }
 }

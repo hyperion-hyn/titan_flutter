@@ -27,7 +27,7 @@ class AddPositionPage extends StatefulWidget {
 
 class _AddPositionState extends State<AddPositionPage> {
 
-  PositionBloc _positionBloc = PositionBloc();
+  PositionBloc _positionBloc;
 
   TextEditingController _addressNameController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
@@ -46,8 +46,9 @@ class _AddPositionState extends State<AddPositionPage> {
   void initState() {
     _categoryDefaultText = "请选择类别";
     _timeDefaultText = "请添加工作时间";
-
+    _positionBloc = PositionBloc();
     _positionBloc.add(GetOpenCageEvent());
+    print('[add] initState, _positionBloc:${_positionBloc.hashCode}');
 
     super.initState();
   }
@@ -83,11 +84,12 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
+
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, PositionState>(
       bloc: _positionBloc,
       builder: (BuildContext context, PositionState state) {
-        if (state is SuccessPostPoiDataEvent) {
+        if (state is SuccessPostPoiDataState) {
           createWalletPopUtilName = '/data_contribution_page';
           Navigator.push(
             context,
@@ -95,9 +97,13 @@ class _AddPositionState extends State<AddPositionPage> {
               builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
             ),
           );
-        } else if (state is FailPostPoiDataEvent) {
+        } else if (state is FailPostPoiDataState) {
           Fluttertoast.showToast(msg: "存储失败!");
         }
+        else if (state is SelectImageSelectedState) {
+          //print('-----------SelectImageSelectedState');
+        }
+        //print('-----------SelectImageSelectedState 2');
 
         return _buildBody();
       },
@@ -119,7 +125,7 @@ class _AddPositionState extends State<AddPositionPage> {
   @override
   void dispose() {
     print('[add] --> dispose');
-    _positionBloc.close();
+    //_positionBloc.close();
     super.dispose();
   }
 
@@ -160,8 +166,9 @@ class _AddPositionState extends State<AddPositionPage> {
     }
 
     return InkWell(
-      onTap: () {
+      onTap: () async {
         _positionBloc.add(AddPositionEvent());
+        print('[add]  _buildCategoryCell, _positionBloc:${_positionBloc.hashCode}');
 
         Navigator.push(
           context,
