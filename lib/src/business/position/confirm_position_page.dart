@@ -121,7 +121,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         builder: (BuildContext context, PositionState state) {
           if (state is ConfirmPositionLoadingState) {
             return LoadDataWidget(isLoading: true,);
-          } else if(state is ConfirmPositionResultState){
+          } else if(state is ConfirmPositionPageState){
             return _buildListBody();
           } else {
             return Container(
