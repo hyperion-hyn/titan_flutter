@@ -53,7 +53,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       },
     );
 
-    _positionBloc.add(SelectCategoryInitEvent());
+//    _positionBloc.add(SelectCategoryInitEvent());
 
     super.initState();
 
@@ -97,7 +97,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       bloc: _positionBloc,
       builder: (BuildContext context, PositionState state) {
 
-        if (state is SelectCategoryInitState) {
+        if (state is InitialPositionState) {
           categoryList.clear();
           return _buildBody(state);
         } else if (state is SelectCategoryResultState) {
@@ -187,7 +187,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
             return _divider();
           },
           itemCount: categoryList.length);
-    } else if (state is SelectCategoryInitState || state is SelectCategoryClearState) {
+    } else if (state is InitialPositionState || state is SelectCategoryClearState) {
       return Wrap(
           alignment: WrapAlignment.center,
           spacing: 10,
