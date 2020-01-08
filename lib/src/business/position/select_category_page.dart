@@ -51,6 +51,8 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       },
     );
 
+//    _positionBloc.add(SelectCategoryInitEvent());
+
     super.initState();
 
   }

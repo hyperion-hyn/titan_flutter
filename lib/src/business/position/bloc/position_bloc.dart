@@ -43,6 +43,8 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
   Stream<PositionState> mapEventToState(PositionEvent event,) async* {
     if (event is AddPositionEvent) {
       yield AddPositionState();
+    } else if (event is SelectCategoryInitEvent) {
+      yield SelectCategoryInitState();
     } else if (event is SelectCategoryLoadingEvent) {
       yield SelectCategoryLoadingState();
     } else if (event is SelectCategoryResultEvent) {
@@ -102,7 +104,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     listImagePaths.addAll(tempListImagePaths);
   }
 
-  void _getOpenCageData() async {
+  Future _getOpenCageData() async {
     var query = "${userPosition.latitude},${userPosition.longitude}";
     openCageData = await _positionApi.getOpenCageData(query, 'zh');
   }

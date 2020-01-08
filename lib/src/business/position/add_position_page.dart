@@ -166,9 +166,9 @@ class _AddPositionState extends State<AddPositionPage> {
     }
 
     return InkWell(
-      onTap: () async {
-        _positionBloc.add(AddPositionEvent());
-        print('[add]  _buildCategoryCell, _positionBloc:${_positionBloc.hashCode}');
+
+      onTap: () {
+//        _positionBloc.add(AddPositionEvent());
 
         Navigator.push(
           context,

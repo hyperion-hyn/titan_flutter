@@ -124,7 +124,7 @@ class _TextaState extends State<CustomInputText> {
                 searchTextChangeListener();
               },
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(10),
+                contentPadding: EdgeInsets.all(9),
                 border: InputBorder.none,
                 hintText: '请输入搜索词',
                 hintStyle: TextStyle(fontSize: 14, color: Color(0xff777777)),

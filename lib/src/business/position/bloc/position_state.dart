@@ -13,6 +13,10 @@ class AddPositionState extends PositionState {
   AddPositionState();
 }
 
+class SelectCategoryInitState extends PositionState {
+  SelectCategoryInitState();
+}
+
 class SelectCategoryLoadingState extends PositionState {
   SelectCategoryLoadingState();
 }

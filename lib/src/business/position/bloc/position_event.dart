@@ -14,6 +14,9 @@ class AddPositionEvent extends PositionEvent {
 }
 
 // category
+class SelectCategoryInitEvent extends PositionEvent {
+}
+
 class SelectCategoryLoadingEvent extends PositionEvent {
 }
 
