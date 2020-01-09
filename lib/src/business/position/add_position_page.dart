@@ -72,6 +72,12 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   @override
+  void dispose() {
+    _positionBloc.close();
+    super.dispose();
+  }
+  
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -87,6 +93,7 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
+  // build view
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, PositionState>(
       bloc: _positionBloc,
@@ -144,12 +151,6 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  @override
-  void dispose() {
-    _positionBloc.close();
-    super.dispose();
-  }
-
   Widget _buildBody() {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
@@ -197,25 +198,11 @@ class _AddPositionState extends State<AddPositionPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             // 交叉轴（竖直）对其方式
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
-                child: Image.asset('res/drawable/add_position_category.png', width: 18, height: 18,),
-              ),
-              Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Text(
-                    '类别',
-                    style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14),
-                  )),
-              Image.asset(
-                'res/drawable/add_position_star.png',
-                width: 8,
-                height: 9,
-              ),
+              _buildTitleRow('category', Size(18,18), '类别', true, isCategory: true),
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Text(_categoryText, style: TextStyle(color: Color(0xff777777), fontSize: 14))),
+                  child: Text(_categoryText, style: TextStyle(color: DefaultColors.color777, fontSize: 14))),
               Padding(
                 padding: const EdgeInsets.only(right: 14),
                 child: Icon(
@@ -232,28 +219,7 @@ class _AddPositionState extends State<AddPositionPage> {
   Widget _buildAddressNameCell() {
     return Column(
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // 交叉轴（竖直）对其方式
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 10, 0),
-              child: Image.asset('res/drawable/add_position_name.png', width: 18, height: 18,),
-            ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(0, 16, 10, 6),
-                child: Text(
-                  '名称',
-                  style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14),
-                )),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 16, 10, 6),
-              child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
-            ),
-          ],
-        ),
+        _buildTitleRow('name', Size(18,18), '名称', true),
         Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
@@ -272,7 +238,7 @@ class _AddPositionState extends State<AddPositionPage> {
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: '请输入地点名称',
-              hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
+              hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
             ),
             keyboardType: TextInputType.text,
           ),
@@ -299,28 +265,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
     return Column(
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // 交叉轴（竖直）对其方式
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
-              child: Image.asset('res/drawable/add_position_camera.png', width: 19, height: 15),
-            ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(0, 14, 10, 6),
-                child: Text(
-                  '现场拍照',
-                  style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14),
-                )),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 14, 10, 6),
-              child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
-            ),
-          ],
-        ),
+        _buildTitleRow('camera', Size(19,15), '现场拍照', true),
         Container(
           height: containerHeight,
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
@@ -396,24 +341,7 @@ class _AddPositionState extends State<AddPositionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // 交叉轴（竖直）对其方式
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
-              child: Image.asset('res/drawable/add_position_address.png', width: 17, height: 21),
-            ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(0, 16, 10, 6),
-                child: Text(
-                  address,
-                  style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14),
-                )),
-          ],
-        ),
+        _buildTitleRow('address', Size(17,21), address, false),
         Container(
           height: 140,
           width: 400,
@@ -421,11 +349,11 @@ class _AddPositionState extends State<AddPositionPage> {
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              _buildAddressDetail('街道详情', '请添加街道', _addressController),
+              _buildAddressCellRow('街道详情', '请添加街道', _addressController),
               _divider(),
-              _buildAddressDetail('门牌号码', '请输入门牌号码', _addressHouseNumController),
+              _buildAddressCellRow('门牌号码', '请输入门牌号码', _addressHouseNumController),
               _divider(),
-              _buildAddressDetail('邮政编码', '请输入邮政编码', _addressPostcodeController),
+              _buildAddressCellRow('邮政编码', '请输入邮政编码', _addressPostcodeController),
             ],
           ),
         ),
@@ -433,66 +361,11 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  Widget _buildAddressDetail(String title, String hintText, TextEditingController controller) {
-    return Container(
-        height: 40,
-        padding: const EdgeInsets.only(left: 15, right: 14),
-        decoration: new BoxDecoration(color: Colors.white),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // 交叉轴（竖直）对其方式
-          children: <Widget>[
-            Container(
-                width: 80,
-              //color: Colors.blue,
-              child: Text(
-                title,
-                textAlign: TextAlign.left,
-                style: TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
-              ),
-            ),
-            Container(
-              width: 220,
-              //color: Colors.red,
-              child: TextFormField(
-                controller: controller,
-                style: TextStyle(fontSize: 13),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: hintText,
-                  hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
-                ),
-                keyboardType: TextInputType.text,
-              ),
-            ),
-          ],
-        ));
-  }
-
   Widget _buildDetailCell() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // 交叉轴（竖直）对其方式
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
-              child: Image.asset('res/drawable/add_position_detail.png', width: 18, height: 18),
-            ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(0, 14, 10, 6),
-                child: Text(
-                  '详情',
-                  style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14),
-                )),
-          ],
-        ),
+        _buildTitleRow('detail', Size(18,18), '详情', false),
         Container(
           height: 140,
           decoration: new BoxDecoration(color: Colors.white),
@@ -536,79 +409,13 @@ class _AddPositionState extends State<AddPositionPage> {
                     )),
               ),
               _divider(),
-              Container(
-                  height: 40,
-                  padding: const EdgeInsets.only(left: 15, right: 14),
-                  decoration: new BoxDecoration(color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    // // 主轴方向（横向）对齐方式
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    // 交叉轴（竖直）对其方式
-                    children: <Widget>[
-                      Image.asset('res/drawable/add_position_phone.png', width: 19, height: 19),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 28),
-                        child: SizedBox(
-                          width: 200,
-                          child: TextFormField(
-                            controller: _detailPhoneNumController,
-                            style: TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: '电话',
-                              hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
+              _buildDetailCellRow('phone', '电话', TextInputType.number, _detailPhoneNumController),
               _divider(),
-              Container(
-                  height: 40,
-                  padding: const EdgeInsets.only(left: 15, right: 14),
-                  decoration: new BoxDecoration(color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    // // 主轴方向（横向）对齐方式
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    // 交叉轴（竖直）对其方式
-                    children: <Widget>[
-                      Image.asset('res/drawable/add_position_website.png', width: 19, height: 19),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 28),
-                        child: SizedBox(
-                          width: 200,
-                          child: TextFormField(
-                            controller: _detailWebsiteController,
-                            style: TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: '网址',
-                              hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
+              _buildDetailCellRow('website', '网址', TextInputType.emailAddress, _detailWebsiteController),
             ],
           ),
         ),
       ],
-    );
-  }
-
-  Widget _divider() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Divider(
-        height: 8,
-        color: HexColor('#E9E9E9'),
-      ),
     );
   }
 
@@ -618,28 +425,39 @@ class _AddPositionState extends State<AddPositionPage> {
       //color: Colors.red,
       child: Column(
         children: <Widget>[
-          RaisedButton(
-            shape: StadiumBorder(),
-            onPressed: _isOnPressed
-                ? null
-                : () {
-              setState(() {
-                _isOnPressed = true;
-              });
-              Future.delayed(Duration(seconds: 1), (){
+          Container(
+            //margin: EdgeInsets.symmetric(vertical: 16),
+            constraints: BoxConstraints.expand(height: 48),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              disabledColor: Colors.grey[600],
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              disabledTextColor: Colors.white,
+              onPressed: _isOnPressed
+                  ? null
+                  : () {
                 setState(() {
-                  _isOnPressed = false;
+                  _isOnPressed = true;
                 });
-              });
-              _uploadPoiData();
-            },
-            color: Theme.of(context).primaryColor,
-            disabledColor: Colors.grey,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 13),
-              child: Text(
-                "提交",
-                style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                Future.delayed(Duration(seconds: 1), (){
+                  setState(() {
+                    _isOnPressed = false;
+                  });
+                });
+                _uploadPoiData();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '提交',
+                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -695,7 +513,116 @@ class _AddPositionState extends State<AddPositionPage> {
       ),
     );
   }
- 
+
+  Widget _divider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Divider(
+        height: 8,
+        color: HexColor('#E9E9E9'),
+      ),
+    );
+  }
+
+  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller) {
+    return Container(
+        height: 40,
+        padding: const EdgeInsets.only(left: 15, right: 14),
+        decoration: new BoxDecoration(color: Colors.white),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          // // 主轴方向（横向）对齐方式
+          crossAxisAlignment: CrossAxisAlignment.center,
+          // 交叉轴（竖直）对其方式
+          children: <Widget>[
+            Container(
+              width: 80,
+              //color: Colors.blue,
+              child: Text(
+                title,
+                textAlign: TextAlign.left,
+                style: TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
+              ),
+            ),
+            Container(
+              width: 220,
+              //color: Colors.red,
+              child: TextFormField(
+                controller: controller,
+                style: TextStyle(fontSize: 13),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: hintText,
+                  hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+                ),
+                keyboardType: TextInputType.text,
+              ),
+            ),
+          ],
+        ));
+  }
+
+  Widget _buildDetailCellRow(String imageName, String hintText, TextInputType keyboardType, TextEditingController controller) {
+    return Container(
+        height: 40,
+        padding: const EdgeInsets.only(left: 15, right: 14),
+        decoration: new BoxDecoration(color: Colors.white),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          // // 主轴方向（横向）对齐方式
+          crossAxisAlignment: CrossAxisAlignment.center,
+          // 交叉轴（竖直）对其方式
+          children: <Widget>[
+            Image.asset('res/drawable/add_position_$imageName.png', width: 19, height: 19),
+            Padding(
+              padding: const EdgeInsets.only(right: 10, left: 28),
+              child: SizedBox(
+                width: 200,
+                child: TextFormField(
+                  controller: controller,
+                  style: TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: hintText,
+                    hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+                  ),
+                  keyboardType: keyboardType,
+                ),
+              ),
+            ),
+          ],
+        ));
+  }
+
+  Widget _buildTitleRow(String imageName, Size size, String title, bool isVisibleStar, {bool isCategory = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      // // 主轴方向（横向）对齐方式
+      crossAxisAlignment: CrossAxisAlignment.center,
+      // 交叉轴（竖直）对其方式
+      children: <Widget>[
+        Padding(
+          padding: isCategory?const EdgeInsets.fromLTRB(15, 0, 10, 0):const EdgeInsets.fromLTRB(15, 18, 10, 11),
+          child: Image.asset('res/drawable/add_position_$imageName.png', width: size.width, height: size.height),
+        ),
+        Padding(
+            padding: isCategory?const EdgeInsets.only(right: 10):const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            child: Text(
+              title,
+              style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14),
+            )),
+        Visibility(
+          visible: isVisibleStar,
+          child: Padding(
+            padding: isCategory?const EdgeInsets.only(right: 10):const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // actions
   Future<void> _selectImages() async {
     var tempListImagePaths = await ImagePickers.pickerPaths(
       galleryMode: GalleryMode.image,
@@ -774,7 +701,6 @@ class _AddPositionState extends State<AddPositionPage> {
     // 2.检测网络数据
     if (_openCageData == null) {
       _positionBloc.add(GetOpenCageEvent(widget.userPosition));
-
       return;
     }
 
@@ -799,4 +725,5 @@ class _AddPositionState extends State<AddPositionPage> {
       _isUploading = true;
     });
   }
+
 }
