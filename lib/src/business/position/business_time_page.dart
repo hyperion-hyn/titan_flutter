@@ -57,6 +57,12 @@ class _BusinessTimeState extends State<BusinessTimePage> {
   }
 
   @override
+  void dispose() {
+    _positionBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -90,7 +96,6 @@ class _BusinessTimeState extends State<BusinessTimePage> {
 
               BusinessInfo businessInfo =
                   BusinessInfo(dayList: _dayList, timeStr: currentTime.label);
-              _positionBloc.add(SelectTimeSelectedEvent(timeItem: businessInfo));
               Navigator.pop(context, businessInfo);
             },
             child: Container(

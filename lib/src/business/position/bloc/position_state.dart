@@ -13,6 +13,7 @@ class AddPositionState extends PositionState {
   AddPositionState();
 }
 
+// category
 class SelectCategoryInitState extends PositionState {
   SelectCategoryInitState();
 }
@@ -30,22 +31,14 @@ class SelectCategoryClearState extends PositionState {
   SelectCategoryClearState();
 }
 
-class SelectCategorySelectedState extends PositionState {
-  SelectCategorySelectedState();
-}
-
-class SelectTimeSelectedState extends PositionState {
-  SelectTimeSelectedState();
-}
-
-class SelectImageSelectedState extends PositionState {
-  SelectImageSelectedState();
-}
-
+// get
 class GetOpenCageState extends PositionState {
-  GetOpenCageState();
+  Map<String, dynamic> openCageData;
+
+  GetOpenCageState(this.openCageData);
 }
 
+// uploading
 class StartPostPoiDataState extends PositionState {
 }
 
@@ -61,6 +54,7 @@ class FailPostPoiDataState extends PositionState {
 
 }
 
+// confirm
 class ConfirmPositionLoadingState extends PositionState {
   ConfirmPositionLoadingState();
 }

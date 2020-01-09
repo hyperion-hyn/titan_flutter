@@ -57,5 +57,25 @@ class PoiCollector extends Object {
 }
 
 
+/*
+    PoiCollector(
+        this.categoryId,
+        this.location,
+        this.name,
+        this.countryCode,
+        this.country,
+        this.state,
+        this.city,
+        this.road,
+        this.address2,
+        this.houseNumber,
+        this.postalCode,
+        this.workTime,
+        this.phone,
+        this.website);
+    */
+
+
+
 
 

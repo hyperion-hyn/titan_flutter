@@ -52,7 +52,12 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
 
     super.initState();
+  }
 
+  @override
+  void dispose() {
+    _positionBloc.close();
+    super.dispose();
   }
 
   void searchTextChangeListener() {
