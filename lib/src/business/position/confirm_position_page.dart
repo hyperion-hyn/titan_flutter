@@ -5,6 +5,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/widget/radio_checkbox_widget.dart';
@@ -31,6 +32,15 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   List<String> _detailTextList = List();
   String currentResult = "信息有误";
 
+//  var picItemWidth;
+  final List<UserInfoItem> _userInfoList = [
+    (UserInfoItem("res/drawable/ic_user_poi_category_name.png", "中餐馆")),
+    (UserInfoItem("res/drawable/ic_user_poi_zip_code.png", "510000")),
+    (UserInfoItem("res/drawable/ic_user_poi_phone_num.png", "13645793930")),
+    (UserInfoItem("res/drawable/ic_user_poi_web_site.png", "www.13645793930")),
+    (UserInfoItem("res/drawable/ic_user_poi_business_time.png", "09:00-22:00"))
+  ];
+
   @override
   void initState() {
     _detailTextList = [
@@ -41,6 +51,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
       "工作时间：09:00-22:00"
     ];
 
+//    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
     _positionBloc.add(ConfirmPositionLoadingEvent());
     Future.delayed(Duration(seconds: 1), (){
       _positionBloc.add(ConfirmPositionPageEvent());
@@ -133,12 +144,23 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   }
 
   Widget _buildListBody() {
+    var picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
+
     return ListView(
       children: <Widget>[
         _mapView(),
         _nameView(),
-        _buildPhotosCell(),
-        _detailView(),
+//        _buildPhotosCell(),
+        buildPicList(picItemWidth,10),
+        Padding(
+          padding: const EdgeInsets.all(15),
+          child: Divider(
+            height: 1.0,
+            color: HexColor('#E9E9E9'),
+          ),
+        ),
+        buildBottomInfoList(_userInfoList),
+//        _detailView(),
         _confirmView(),
       ],
     );
@@ -311,7 +333,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   Widget _confirmView() {
     return Padding(
-      padding: const EdgeInsets.only(top: 52, left: 25, right: 25),
+      padding: const EdgeInsets.only(top: 15, left: 25, right: 25,bottom: 15),
       child: CustomRadioButton(
         enableShape: true,
         hight: 40,

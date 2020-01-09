@@ -25,13 +25,15 @@ import 'bottom_panels/common_panel.dart';
 import 'bottom_panels/poi_panel.dart';
 import 'bottom_panels/route_panel.dart';
 import 'bottom_panels/search_list_panel.dart';
+import 'bottom_panels/user_poi_panel.dart';
 import 'map.dart';
 import 'opt_bar.dart';
 import 'route_bar.dart';
 
 //final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
 
-final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+//final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+final kStyleZh = 'http://10.10.1.120:9999/titan-see-it-all.json';
 
 final kStyleEn = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
 
@@ -128,6 +130,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         } else {
           style = kStyleEn;
         }
+        print("style url = " + style);
         if (state.dMapConfigModel?.showCenterMarker == true) {
           showCenterMarker = true;
         }
@@ -220,10 +223,14 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
           if (panelBuilder == null) {
             if (state.getCurrentPoi() is PoiEntity) {
-              panelBuilder = (context, controller) => PoiPanel(
+              panelBuilder = (context, controller) => UserPoiPanel(
+                scrollController: controller,
+                selectedPoiEntity: state.getCurrentPoi(),
+              );
+              /*panelBuilder = (context, controller) => PoiPanel(
                     scrollController: controller,
                     selectedPoiEntity: state.getCurrentPoi(),
-                  );
+                  );*/
             } else if (state.getCurrentPoi() is GaodePoi) {
               panelBuilder = (context, controller) => GaodePoiPanel(
                     scrollController: controller,

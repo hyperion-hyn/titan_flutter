@@ -376,8 +376,17 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         return true;
       }
 
-      var poi = PoiEntity(name: name, latLng: coordinates);
-      BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+      var pid = firstFeature["properties"]["pid"];
+      if(pid != null){
+        print("has get pid");
+        var className = firstFeature["properties"]["class"];
+        var rank = firstFeature["properties"]["rank"];
+      }else{
+        var poi = PoiEntity(name: name, latLng: coordinates);
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+      }
+
+
 
       return true;
     } else {
