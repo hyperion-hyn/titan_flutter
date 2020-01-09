@@ -206,6 +206,9 @@ flutter:
     - res/drawable/add_position_star.png
     - res/drawable/add_position_time.png
     - res/drawable/add_position_website.png
+    - res/drawable/add_position_category.png
+    - res/drawable/add_position_detail.png
+    - res/drawable/add_position_name.png
     - res/drawable/ic_select_category_search_bar.png
     - res/drawable/ic_select_category_search_bar_clear.png
     - res/drawable/widget_checkbox_uncheck.png
