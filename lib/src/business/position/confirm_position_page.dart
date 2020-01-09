@@ -14,6 +14,11 @@ import 'bloc/bloc.dart';
 import 'position_finish_page.dart';
 
 class ConfirmPositionPage extends StatefulWidget {
+
+  final LatLng initLocation;
+
+  ConfirmPositionPage({this.initLocation});
+
   @override
   State<StatefulWidget> createState() {
     return _ConfirmPositionState();
@@ -53,7 +58,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
 //    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
     _positionBloc.add(ConfirmPositionLoadingEvent());
-    Future.delayed(Duration(seconds: 1), (){
+    Future.delayed(Duration(seconds: 1), () {
       _positionBloc.add(ConfirmPositionPageEvent());
     });
 
@@ -75,8 +80,6 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           InkWell(
             onTap: () {
               showConfirmDialog();
-//              print('[add] --> 完成中。。。');
-//              Navigator.pop(context);
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -116,7 +119,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+                          builder: (context) => FinishAddPositionPage(
+                              FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
                     );
                   },
                   child: Text(S.of(context).confirm))
@@ -131,8 +135,10 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         bloc: _positionBloc,
         builder: (BuildContext context, PositionState state) {
           if (state is ConfirmPositionLoadingState) {
-            return LoadDataWidget(isLoading: true,);
-          } else if(state is ConfirmPositionPageState){
+            return LoadDataWidget(
+              isLoading: true,
+            );
+          } else if (state is ConfirmPositionPageState) {
             return _buildListBody();
           } else {
             return Container(
@@ -146,21 +152,40 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   Widget _buildListBody() {
     var picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
 
-    return ListView(
+    return Column(
       children: <Widget>[
         _mapView(),
-        _nameView(),
-//        _buildPhotosCell(),
-        buildPicList(picItemWidth,10),
-        Padding(
-          padding: const EdgeInsets.all(15),
-          child: Divider(
-            height: 1.0,
-            color: HexColor('#E9E9E9'),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 20.0,
+                ),
+              ],
+            ),
+            child: ListView(
+              children: <Widget>[
+                _nameView(),
+                buildPicList(picItemWidth, 10),
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Divider(
+                    height: 1.0,
+                    color: HexColor('#E9E9E9'),
+                  ),
+                ),
+                buildBottomInfoList(_userInfoList),
+              ],
+            ),
           ),
         ),
-        buildBottomInfoList(_userInfoList),
-//        _detailView(),
+        Divider(
+          height: 1.0,
+          color: HexColor('#E9E9E9'),
+        ),
         _confirmView(),
       ],
     );
@@ -177,11 +202,12 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
       style = "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
     } else {
-      style = "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+      style =
+          "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
     }
 
     return SizedBox(
-      height: 220,
+      height: 150,
       child: MapboxMap(
         compassEnabled: false,
         initialCameraPosition: CameraPosition(
@@ -332,8 +358,9 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   }
 
   Widget _confirmView() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15, left: 25, right: 25,bottom: 15),
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.only(top: 15, left: 25, right: 25, bottom: 15),
       child: CustomRadioButton(
         enableShape: true,
         hight: 40,
