@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
@@ -7,17 +10,18 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/widget/radio_checkbox_widget.dart';
 
 import 'bloc/bloc.dart';
+import 'model/confirm_poi_item.dart';
 import 'position_finish_page.dart';
 
 class ConfirmPositionPage extends StatefulWidget {
+  final LatLng userPosition;
 
-  final LatLng initLocation;
-
-  ConfirmPositionPage({this.initLocation});
+  ConfirmPositionPage({this.userPosition});
 
   @override
   State<StatefulWidget> createState() {
@@ -28,7 +32,6 @@ class ConfirmPositionPage extends StatefulWidget {
 class _ConfirmPositionState extends State<ConfirmPositionPage> {
   PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
-  LatLng userPosition;
   double defaultZoom = 15;
   bool _isLoading = false;
 
@@ -36,6 +39,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   final int _listImagePathsMaxLength = 9;
   List<String> _detailTextList = List();
   String currentResult = "信息有误";
+  ConfirmPoiItem confirmPoiItem;
+  bool _isPostData = false;
 
 //  var picItemWidth;
   final List<UserInfoItem> _userInfoList = [
@@ -58,9 +63,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
 //    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
     _positionBloc.add(ConfirmPositionLoadingEvent());
-    Future.delayed(Duration(seconds: 1), () {
-      _positionBloc.add(ConfirmPositionPageEvent());
-    });
+    _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
 
     super.initState();
   }
@@ -76,7 +79,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        actions: <Widget>[
+        /*actions: <Widget>[
           InkWell(
             onTap: () {
               showConfirmDialog();
@@ -90,7 +93,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               ),
             ),
           )
-        ],
+        ],*/
       ),
       body: _buildView(),
     );
@@ -111,9 +114,21 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                   child: Text(S.of(context).cancel)),
               FlatButton(
                   onPressed: () {
-//                    todo _positionBloc.add(ConfirmPositionPageEvent());
+                    int answer;
+                    if (currentResult == "信息有误") {
+                      answer = 0;
+                    } else {
+                      answer = 1;
+                    }
+                    _isPostData = true;
+                    _positionBloc.add(ConfirmPositionResultLoadingEvent());
+                    Navigator.of(context).pop();
+                    _positionBloc.add(
+                        ConfirmPositionResultEvent(answer, confirmPoiItem));
+//                    _positionBloc.add(
+//                        ConfirmPositionResultEvent(answer, confirmPoiItem));
 
-                    createWalletPopUtilName = '/data_contribution_page';
+                    /*createWalletPopUtilName = '/data_contribution_page';
 
                     Navigator.of(context).pop();
                     Navigator.pushReplacement(
@@ -121,7 +136,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                       MaterialPageRoute(
                           builder: (context) => FinishAddPositionPage(
                               FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-                    );
+                    );*/
                   },
                   child: Text(S.of(context).confirm))
             ],
@@ -139,7 +154,45 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               isLoading: true,
             );
           } else if (state is ConfirmPositionPageState) {
+            confirmPoiItem = state.confirmPoiItem;
             return _buildListBody();
+          } else if (state is ConfirmPositionResultLoadingState) {
+            return _buildListBody();
+          } else if (state is ConfirmPositionResultState) {
+//            createWalletPopUtilName = '/data_contribution_page';
+            _isPostData = false;
+            print("result = " + state.confirmResult.toString());
+            if (state.confirmResult) {
+              Navigator.of(context).pop();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FinishAddPositionPage(
+                        FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+              );
+              return Container(
+                width: 0.0,
+                height: 0.0,
+              );
+            } else {
+              Fluttertoast.showToast(msg: "您提交的信息有误，请重试。");
+              /*showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("您提交的信息有误，请重试。"),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(S.of(context).confirm))
+                    ],
+                  );
+                },
+              );*/
+              return _buildListBody();
+            }
           } else {
             return Container(
               width: 0.0,
@@ -152,42 +205,63 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   Widget _buildListBody() {
     var picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
 
-    return Column(
+    return Stack(
       children: <Widget>[
-        _mapView(),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 20.0,
+        Column(
+          children: <Widget>[
+            _mapView(),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 20.0,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: ListView(
-              children: <Widget>[
-                _nameView(),
-                buildPicList(picItemWidth, 10),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Divider(
-                    height: 1.0,
-                    color: HexColor('#E9E9E9'),
-                  ),
+                child: ListView(
+                  children: <Widget>[
+                    _nameView(),
+                    if (confirmPoiItem.images != null)
+                      buildPicList(picItemWidth, 10, confirmPoiItem),
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Divider(
+                        height: 1.0,
+                        color: HexColor('#E9E9E9'),
+                      ),
+                    ),
+                    buildBottomInfoList(confirmPoiItem),
+                  ],
                 ),
-                buildBottomInfoList(_userInfoList),
-              ],
+              ),
             ),
+            Divider(
+              height: 1.0,
+              color: HexColor('#E9E9E9'),
+            ),
+            _confirmView(),
+          ]
+        ),
+        _buildLoading()
+      ],
+    );
+  }
+
+  Widget _buildLoading() {
+    return Visibility(
+      visible: _isPostData,
+      child: Center(
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
           ),
         ),
-        Divider(
-          height: 1.0,
-          color: HexColor('#E9E9E9'),
-        ),
-        _confirmView(),
-      ],
+      ),
     );
   }
 
@@ -252,7 +326,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           Padding(
             padding: EdgeInsets.only(bottom: 15),
             child: Text(
-              "名称：中国好功夫-China gongfu",
+              "名称：${confirmPoiItem.name}",
               textAlign: TextAlign.left,
               style: TextStyle(
                 color: HexColor('#333333'),
@@ -262,7 +336,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             ),
           ),
           Text(
-            "位置：中国广州xxx",
+            "位置：${confirmPoiItem.address}",
             textAlign: TextAlign.left,
             style: TextStyle(
               color: HexColor('#333333'),
@@ -359,9 +433,73 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   Widget _confirmView() {
     return Container(
+//      alignment: Alignment.center,
       color: Colors.white,
       padding: const EdgeInsets.only(top: 15, left: 25, right: 25, bottom: 15),
-      child: CustomRadioButton(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            height: 44,
+            width: 150,
+            margin: const EdgeInsets.only(right: 25),
+            child: RaisedButton(
+              color: HexColor('#DD4E41'),
+              onPressed: () {
+                currentResult = "信息有误";
+                showConfirmDialog();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    "res/drawable/ic_confirm_button_error.png",
+                    width: 18,
+                    height: 17,
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 8, bottom: 2),
+                      child: Text("信息有误", style: TextStyles.textCfffS16)),
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(22)),
+              ),
+            ),
+          ),
+          Container(
+            height: 44,
+            width: 150,
+            margin: const EdgeInsets.only(right: 25),
+            child: RaisedButton(
+              color: HexColor('#0F95B0'),
+              onPressed: () {
+                currentResult = "信息正确";
+                showConfirmDialog();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    "res/drawable/ic_confirm_button_right.png",
+                    width: 18,
+                    height: 17,
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 8, bottom: 2),
+                      child: Text("信息正确", style: TextStyles.textCfffS16)),
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(22)),
+              ),
+            ),
+          ),
+        ],
+      ),
+      /*child: CustomRadioButton(
         enableShape: true,
         hight: 40,
         width: 150,
@@ -379,7 +517,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           currentResult = value;
           print(value);
         },
-      ),
+      ),*/
     );
   }
 }

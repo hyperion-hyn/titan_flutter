@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/position/model/poi_data.dart';
 
 @immutable
@@ -57,8 +58,17 @@ class FailPostPoiDataEvent extends PositionEvent {
 class ConfirmPositionLoadingEvent extends PositionEvent {
 }
 
-class ConfirmPositionResultEvent extends PositionEvent {
-}
 
 class ConfirmPositionPageEvent extends PositionEvent {
+  LatLng userPosition;
+  ConfirmPositionPageEvent (this.userPosition);
+}
+
+class ConfirmPositionResultLoadingEvent extends PositionEvent {
+}
+
+class ConfirmPositionResultEvent extends PositionEvent {
+  int answer;
+  ConfirmPoiItem confirmPoiItem;
+  ConfirmPositionResultEvent(this.answer,this.confirmPoiItem);
 }

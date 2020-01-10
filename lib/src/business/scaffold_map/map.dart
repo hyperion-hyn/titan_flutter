@@ -12,6 +12,8 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/position/api/position_api.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
@@ -78,6 +80,8 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
   Map<String, IPoi> _currentGrayMarkerMap = Map();
   List<String> heavenMapLayers = [];
+
+//  PositionApi _positionApi = PositionApi();
 
   @override
   void initState() {
@@ -377,10 +381,16 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       }
 
       var pid = firstFeature["properties"]["pid"];
+      //user contribute poi
       if(pid != null){
         print("has get pid");
-        var className = firstFeature["properties"]["class"];
-        var rank = firstFeature["properties"]["rank"];
+//        var className = firstFeature["properties"]["class"];
+//        var rank = firstFeature["properties"]["rank"];
+//        var lat = firstFeature["properties"]["lat"];
+//        var language = "zh-Hans";
+//        var _confirmDataList = await _positionApi.mapGetConfirmData(pid);
+        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid);
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
       }else{
         var poi = PoiEntity(name: name, latLng: coordinates);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));

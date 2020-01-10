@@ -3,8 +3,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_pickers/image_pickers.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/widget/drag_tick.dart';
@@ -13,7 +15,7 @@ import 'package:titan/src/widget/header_height_notification.dart';
 import '../../../global.dart';
 
 class UserPoiPanel extends StatefulWidget {
-  final PoiEntity selectedPoiEntity;
+  final ConfirmPoiItem selectedPoiEntity;
   final ScrollController scrollController;
 
   UserPoiPanel({this.selectedPoiEntity, this.scrollController});
@@ -52,22 +54,21 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    /*SchedulerBinding.instance.addPostFrameCallback((_) {
       HeaderHeightNotification(height: getHeaderHeight()).dispatch(context);
 
       picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
       itemHeight = picItemWidth / childAspectRatio;
 
-//      _userInfoList = [(UserInfoItem("res/drawable/ic_user_poi_category_name.png","中餐馆")),
-//        (UserInfoItem("res/drawable/ic_user_poi_category_name.png","中餐馆")),
-//        (UserInfoItem("res/drawable/ic_user_poi_category_name.png","中餐馆")),
-//        (UserInfoItem("res/drawable/ic_user_poi_category_name.png","中餐馆")),
-//        (UserInfoItem("res/drawable/ic_user_poi_category_name.png","中餐馆"))];
-    });
+    });*/
+//    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
+//    itemHeight = picItemWidth / childAspectRatio;
   }
 
   @override
   Widget build(BuildContext context) {
+    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
+    itemHeight = picItemWidth / childAspectRatio;
     return Container(
       padding: const EdgeInsets.only(top: 4),
       decoration: BoxDecoration(
@@ -140,7 +141,9 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                   Divider(
                     height: 0,
                   ),
-                  buildPicList(picItemWidth,29),
+                  if (widget.selectedPoiEntity.images != null &&
+                      widget.selectedPoiEntity.images.length > 0)
+                    buildPicList(picItemWidth, 29, widget.selectedPoiEntity),
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: Divider(
@@ -148,7 +151,7 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                       color: HexColor('#E9E9E9'),
                     ),
                   ),
-                  buildBottomInfoList(_userInfoList)
+                  buildBottomInfoList(widget.selectedPoiEntity)
                 ],
               ),
               Positioned(
@@ -231,7 +234,7 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
     );
   }
 
-  /*Widget _buildPicList() {
+/*Widget _buildPicList() {
     return Container(
       padding: const EdgeInsets.only(left: 15.0, bottom: 14, top: 29),
       height: 138,
@@ -308,7 +311,10 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
   }*/
 }
 
-Widget buildPicList(double itemWidth,double topValue) {
+Widget buildPicList(
+    double itemWidth, double topValue, ConfirmPoiItem confirmPoiItem) {
+  print("image = hahaha");
+  print("image = " + confirmPoiItem.images.toString());
   return Container(
     padding: EdgeInsets.only(left: 15.0, bottom: 14, top: topValue),
     height: 138,
@@ -325,22 +331,48 @@ Widget buildPicList(double itemWidth,double topValue) {
                   color: HexColor('#D8D8D8'),
                   borderRadius: BorderRadius.circular(3.0),
                 ),
-                child: Center(
-                  child: FadeInImage.assetNetwork(
-                    placeholder: 'res/drawable/img_placeholder.jpg',
-                    image: "",
-                    fit: BoxFit.fill,
-                  ),
+                child: FadeInImage.assetNetwork(
+                  placeholder: 'res/drawable/img_placeholder.jpg',
+                  image: confirmPoiItem.images[index],
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
           );
         },
-        itemCount: 10),
+        itemCount: confirmPoiItem.images.length),
   );
 }
 
-Widget buildBottomInfoList(List<UserInfoItem> _infoList) {
+Widget buildBottomInfoList(ConfirmPoiItem confirmPoiItem) {
+  List<UserInfoItem> _infoList = [];
+//    (UserInfoItem("res/drawable/ic_user_poi_category_name.png", "中餐馆")),
+//    (UserInfoItem("res/drawable/ic_user_poi_zip_code.png", "510000")),
+//    (UserInfoItem("res/drawable/ic_user_poi_phone_num.png", "13645793930")),
+//    (UserInfoItem("res/drawable/ic_user_poi_web_site.png", "www.13645793930")),
+//    (UserInfoItem("res/drawable/ic_user_poi_business_time.png", "09:00-22:00"))
+//  ];
+  if (confirmPoiItem.category.isNotEmpty) {
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_category_name.png", confirmPoiItem.category));
+  }
+  if (confirmPoiItem.postcode.isNotEmpty) {
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_zip_code.png", confirmPoiItem.postcode));
+  }
+  if (confirmPoiItem.phone.isNotEmpty) {
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_phone_num.png", confirmPoiItem.phone));
+  }
+  if (confirmPoiItem.website.isNotEmpty) {
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_web_site.png", confirmPoiItem.website));
+  }
+  if (confirmPoiItem.workTime.isNotEmpty) {
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_business_time.png", confirmPoiItem.workTime));
+  }
+
   return Container(
     height: 235,
     padding: const EdgeInsets.only(top: 0, left: 15.0, right: 15),

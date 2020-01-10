@@ -1,4 +1,5 @@
 import 'package:titan/src/business/position/model/category_item.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 
 abstract class PositionState {
   const PositionState();
@@ -60,9 +61,15 @@ class ConfirmPositionLoadingState extends PositionState {
 }
 
 class ConfirmPositionPageState extends PositionState {
-  ConfirmPositionPageState();
+  ConfirmPoiItem confirmPoiItem;
+  ConfirmPositionPageState(this.confirmPoiItem);
+}
+
+class ConfirmPositionResultLoadingState extends PositionState {
+
 }
 
 class ConfirmPositionResultState extends PositionState {
-  ConfirmPositionResultState();
+  bool confirmResult;
+  ConfirmPositionResultState(this.confirmResult);
 }

@@ -4,6 +4,7 @@ import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/position/model/poi_collector.dart';
 import 'package:titan/src/global.dart';
 
@@ -95,6 +96,65 @@ class PositionApi {
     }
 
     return json;
+  }
+
+  Future<List<ConfirmPoiItem>> getConfirmData(double lon,double lat, String language) async {
+    var address = currentWalletVo.accountList[0].account.address;
+    var data = await HttpCore.instance.getEntity(
+        "map-collector/poi/query/v1",
+        EntityFactory<List<ConfirmPoiItem>>((list) =>
+            (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
+        params: {
+          'lon': lon,
+          'lat': lat,
+          'language': language
+        },
+        options: RequestOptions(headers: {
+          "Lang": "zh-Hans",
+          "UUID": address,
+          "Iso-3166-1": "CN"
+        }, contentType: "application/json"));
+
+    return data;
+
+  }
+
+  Future<List<ConfirmPoiItem>> mapGetConfirmData(String pid) async {
+    var data = await HttpCore.instance.getEntity(
+//        "/map-collector/poi/detail/$pid",
+        "/map-collector/poi/detail/5e13f8caea7db700f4411406",
+        EntityFactory<List<ConfirmPoiItem>>((list) =>
+            (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
+//        params: {
+//          'id': pid,
+//        },
+        options: RequestOptions(headers: {
+          "Lang": "zh-Hans",
+        }, contentType: "application/json"));
+
+    return data;
+
+  }
+
+  Future<bool> postConfirmPoiData(int answer,ConfirmPoiItem confirmPoiItem) async {
+    var address = currentWalletVo.accountList[0].account.address;
+    var data = await HttpCore.instance.postEntity(
+        "/map-collector/poi/confirm",
+        EntityFactory<bool>((result) {
+          return result;
+        }
+    ),
+        params: {
+          'answer': answer,
+          'poi': confirmPoiItem.toJson(),
+        },
+        options: RequestOptions(headers: {
+          "Lang": "zh-Hans",
+          "UUID": address,
+        }, contentType: "application/json"));
+
+    return data;
+
   }
 
 }
