@@ -41,7 +41,7 @@ class PositionApi {
       for (var i = 0; i < imagePaths.length; i += 1) {
         var index = i + 1;
         String key = "img${index}";
-         params[key] = MultipartFile.fromFile(imagePaths[i].path);
+         params[key] = MultipartFile.fromFileSync(imagePaths[i].path);
       }
 
       FormData formData = FormData.fromMap(params);
