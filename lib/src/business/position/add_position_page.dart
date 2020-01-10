@@ -118,13 +118,13 @@ class _AddPositionState extends State<AddPositionPage> {
 
           var country = _openCageData["country"] ?? "";
           var provinces = _openCageData["state"];
-          var city = _openCageData["city"] + _openCageData["county"];
-          //_addressController.text = road;
+          var city = _openCageData["city"];
+          var county = _openCageData["county"] ?? "";
           setState(() {
-            _addressText = country + " " + provinces + " " + city;
+            _addressText = country + " " + provinces + " " + city + " " + county;
           });
 
-          var postalCode = _openCageData["postcode"];
+          var postalCode = _openCageData["postcode"] ?? "";
           _addressPostcodeController.text = postalCode;
         }
 
@@ -335,16 +335,40 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   Widget _buildAddressCell() {
-    var address = "详细地址";
-    if (_addressText != null && _addressText.length > 0) { address += "：$_addressText";};
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        _buildTitleRow('address', Size(17,21), address, false),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          // // 主轴方向（横向）对齐方式
+          crossAxisAlignment: CrossAxisAlignment.center,
+          // 交叉轴（竖直）对其方式
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
+              child: Image.asset('res/drawable/add_position_address.png', width: 17, height: 21),
+            ),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(0, 14, 4, 6),
+                child: Text(
+                  "地址：",
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14,),
+                )),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right:8.0),
+                child: Text(
+                  _addressText??"",
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14,),
+                ),
+              ),
+            ),
+          ],
+        ),
         Container(
           height: 140,
-          width: 400,
           decoration: new BoxDecoration(color: Colors.white),
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
@@ -609,7 +633,8 @@ class _AddPositionState extends State<AddPositionPage> {
             padding: isCategory?const EdgeInsets.only(right: 10):const EdgeInsets.fromLTRB(0, 14, 10, 6),
             child: Text(
               title,
-              style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14),
+              overflow: TextOverflow.clip,
+              style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14,),
             )),
         Visibility(
           visible: isVisibleStar,
@@ -679,6 +704,12 @@ class _AddPositionState extends State<AddPositionPage> {
       return;
     }
 
+    // 2.检测网络数据
+    if (_openCageData == null) {
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+      return;
+    }
+
     // 1.检测必须类别、图片
     var _isEmptyOfCategory = (_categoryItem == null || _categoryItem.title.length == 0 || _categoryItem.title == "");
     var _isEmptyOfImages = (_listImagePaths.length == 0);
@@ -698,11 +729,6 @@ class _AddPositionState extends State<AddPositionPage> {
       return;
     }
 
-    // 2.检测网络数据
-    if (_openCageData == null) {
-      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
-      return;
-    }
 
     var categoryId = _categoryItem.id;
     var country = _openCageData["country"] ?? "";
