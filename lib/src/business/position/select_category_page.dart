@@ -29,12 +29,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
   @override
   void initState() {
-    _tagList.add(S.of(context).select_category_bookstore);
-    _tagList.add(S.of(context).select_category_bakery);
-    _tagList.add(S.of(context).select_category_chocolateshop);
-    _tagList.add(S.of(context).select_category_fabrics);
-    _tagList.add(S.of(context).select_category_healthfood);
-    _tagList.add(S.of(context).select_category_nailsalon);
+    //print('[category] --> initState, $context');
 
     if (_searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
@@ -59,6 +54,27 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   void dispose() {
     _positionBloc.close();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    //print('[category] --> didChangeDependencies');
+    _setupData();
+    super.didChangeDependencies();
+  }
+
+  void _setupData() {
+    _tagList.add(S.of(context).select_category_bookstore);
+    _tagList.add(S.of(context).select_category_bakery);
+    _tagList.add(S.of(context).select_category_chocolateshop);
+    _tagList.add(S.of(context).select_category_fabrics);
+    _tagList.add(S.of(context).select_category_healthfood);
+    _tagList.add(S.of(context).select_category_nailsalon);
+
+    setState(() {
+
+    });
   }
 
   void searchTextChangeListener() {
