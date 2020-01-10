@@ -38,7 +38,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
   List<String> _detailTextList = List();
-  String currentResult = "信息有误";
+  String currentResult = S.of(globalContext).confirm_info_wrong;
   ConfirmPoiItem confirmPoiItem;
   bool _isPostData = false;
 
@@ -53,14 +53,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   @override
   void initState() {
-    _detailTextList = [
-      "类别：中餐馆",
-      "邮编：510000",
-      "电话：13667510000",
-      "网址：www13667510000",
-      "工作时间：09:00-22:00"
-    ];
-
+    
 //    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
     _positionBloc.add(ConfirmPositionLoadingEvent());
     _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
@@ -69,31 +62,37 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    _setupData();
+    super.didChangeDependencies();
+  }
+
+  void _setupData() {
+    _detailTextList = [
+      S.of(context).category + " " + "中餐馆",
+      S.of(context).postal_code + " " + "510000",
+      S.of(context).phone_number + " " + "13667510000",
+      S.of(context).website + " " + "www.hyn.space",
+      S.of(context).work_time + " " + "09:00-22:00"
+    ];
+    
+    setState(() {
+
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          "位置信息确认",
+          S.of(context).position_info_confirm,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        /*actions: <Widget>[
-          InkWell(
-            onTap: () {
-              showConfirmDialog();
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                S.of(context).finish,
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          )
-        ],*/
       ),
       body: _buildView(),
     );
@@ -104,8 +103,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("位置信息确认"),
-            content: Text("是否确认$currentResult"),
+            title: Text(S.of(context).position_info_confirm),
+            content: Text(S.of(context).if_confirm_position_info_func(currentResult)),
             actions: <Widget>[
               FlatButton(
                   onPressed: () {
@@ -115,7 +114,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               FlatButton(
                   onPressed: () {
                     int answer;
-                    if (currentResult == "信息有误") {
+                    if (currentResult == S.of(context).confirm_info_wrong) {
                       answer = 0;
                     } else {
                       answer = 1;
@@ -125,18 +124,6 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                     Navigator.of(context).pop();
                     _positionBloc.add(
                         ConfirmPositionResultEvent(answer, confirmPoiItem));
-//                    _positionBloc.add(
-//                        ConfirmPositionResultEvent(answer, confirmPoiItem));
-
-                    /*createWalletPopUtilName = '/data_contribution_page';
-
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FinishAddPositionPage(
-                              FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-                    );*/
                   },
                   child: Text(S.of(context).confirm))
             ],
@@ -175,22 +162,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                 height: 0.0,
               );
             } else {
-              Fluttertoast.showToast(msg: "您提交的信息有误，请重试。");
-              /*showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text("您提交的信息有误，请重试。"),
-                    actions: <Widget>[
-                      FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(S.of(context).confirm))
-                    ],
-                  );
-                },
-              );*/
+              Fluttertoast.showToast(msg: S.of(context).info_is_wrong_please_again_submit_hint);
               return _buildListBody();
             }
           } else {
@@ -317,7 +289,6 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   Widget _nameView() {
     return Container(
-//      color: Colors.red,
       padding: EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +297,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           Padding(
             padding: EdgeInsets.only(bottom: 15),
             child: Text(
-              "名称：${confirmPoiItem.name}",
+              S.of(context).confirm_position_name_func(confirmPoiItem.name),
               textAlign: TextAlign.left,
               style: TextStyle(
                 color: HexColor('#333333'),
@@ -336,7 +307,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             ),
           ),
           Text(
-            "位置：${confirmPoiItem.address}",
+            S.of(context).confirm_position_func(confirmPoiItem.address),
             textAlign: TextAlign.left,
             style: TextStyle(
               color: HexColor('#333333'),
@@ -402,7 +373,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     );
   }
 
-  Widget _detailView() {
+  /*Widget _detailView() {
     var itemCount = _detailTextList.length;
     double padding = 15;
     double height = (17.0 + 4.0) * itemCount + 10;
@@ -429,7 +400,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         itemCount: itemCount,
       ),
     );
-  }
+  }*/
 
   Widget _confirmView() {
     return Container(
@@ -442,7 +413,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             child: RaisedButton(
               color: HexColor('#DD4E41'),
               onPressed: () {
-                currentResult = "信息有误";
+                currentResult = S.of(context).confirm_info_wrong;
                 showConfirmDialog();
               },
               child: Row(
@@ -456,7 +427,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                   ),
                   Padding(
                       padding: const EdgeInsets.only(left: 8, bottom: 2),
-                      child: Text("信息有误", style: TextStyles.textCfffS14)),
+                      child: Text(S.of(context).confirm_info_wrong, style: TextStyles.textCfffS14)),
                 ],
               ),
               shape: RoundedRectangleBorder(
@@ -469,7 +440,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             child: RaisedButton(
               color: HexColor('#0F95B0'),
               onPressed: () {
-                currentResult = "信息正确";
+                currentResult = S.of(context).confirm_info_right;
                 showConfirmDialog();
               },
               child: Row(
@@ -483,7 +454,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                   ),
                   Padding(
                       padding: const EdgeInsets.only(left: 8, bottom: 2),
-                      child: Text("信息正确", style: TextStyles.textCfffS14)),
+                      child: Text(S.of(context).confirm_info_right, style: TextStyles.textCfffS14)),
                 ],
               ),
               shape: RoundedRectangleBorder(

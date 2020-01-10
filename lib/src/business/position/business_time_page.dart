@@ -6,6 +6,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/model/business_time.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/RoundCheckBox.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,9 +26,16 @@ class _BusinessTimeState extends State<BusinessTimePage> {
   String selectCategory = "";
   List<BusinessDayItem> _dayList = [];
   BusinessTimeItem currentTime;
-  List<String> _dayLabel = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+  List<String> _dayLabel = [
+    S.of(globalContext).business_time_sunday,
+    S.of(globalContext).business_time_monday,
+    S.of(globalContext).business_time_tuesday,
+    S.of(globalContext).business_time_wednesday,
+    S.of(globalContext).business_time_thursday,
+    S.of(globalContext).business_time_friday,
+    S.of(globalContext).business_time_saturday];
   List<String> _timeLabel = [
-    "全天（24小时）",
+    S.of(globalContext).throughout_of_day,
     "07:00-23:00",
     "08:00-18:00",
     "08:00-18:30",

@@ -51,8 +51,16 @@ class S implements WidgetsLocalizations {
   String get backup_wallet_notice_text1 => "Obtaining mnemonic words proves your ownership of wallet assets";
   String get bank => "Bank";
   String get business_time => "营业时间";
+  String get business_time_friday => "周五";
+  String get business_time_monday => "周一";
+  String get business_time_saturday => "周六";
+  String get business_time_sunday => "周日";
+  String get business_time_thursday => "周四";
+  String get business_time_tuesday => "周二";
+  String get business_time_wednesday => "周三";
   String get cafe => "Cafe";
   String get cancel => "Cancel";
+  String get category => "类别";
   String get check_poi_item_title => "Verify POI information";
   String get clean_search_history => "Clear History";
   String get click_again_to_exist_app => "press again to exit app";
@@ -60,6 +68,8 @@ class S implements WidgetsLocalizations {
   String get collect_signal_require_telephone => "To collect signal data, you need to obtain phone permissions";
   String get coming_soon => "Coming Soon";
   String get confirm => "Confirm";
+  String get confirm_info_right => "信息正确";
+  String get confirm_info_wrong => "信息有误";
   String get confirm_mnemonic => "Confirm Mnemonic";
   String get confirm_mnemonic_incorrect => "Your mnemonic is incorrect, please try again";
   String get confirm_mnemonic_tips => "Click on the words to put them in the correct order";
@@ -127,6 +137,7 @@ class S implements WidgetsLocalizations {
   String get improvement_plan_message => "Tell us your suggestions about Titan by joining our user experience plan. Check for more details.\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">Titan Privacy Policy</a>\n        </b>";
   String get improvement_plan_refuse => "No";
   String get improvement_plan_title => "Titan improvement plan";
+  String get info_is_wrong_please_again_submit_hint => "您提交的信息有误，请重试。";
   String get information => "News";
   String get information_guide => "Guidance";
   String get information_video => "Video";
@@ -187,6 +198,7 @@ class S implements WidgetsLocalizations {
   String get password_incorrect => "incorrect password";
   String get password_not_equal_hint => "Inconsistent passwords";
   String get paste => "paste";
+  String get phone_number => "电话";
   String get please_enter_correct_time_format_hint => "请输入正确的时间，例如 07:00-23:00";
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
@@ -198,6 +210,8 @@ class S implements WidgetsLocalizations {
   String get please_waiting => "Please Wait";
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
+  String get position_info_confirm => "位置信息确认";
+  String get postal_code => "邮编";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 characters";
   String get private_and_safety => "Private and Secure";
@@ -283,6 +297,7 @@ class S implements WidgetsLocalizations {
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
+  String get throughout_of_day => "全天（24小时）";
   String get time => "Opening times";
   String get tips => "Tips";
   String get titan_encrypted_map_ecology => "Titan Cryptographic Map Ecology";
@@ -308,12 +323,17 @@ class S implements WidgetsLocalizations {
   String get wallet_password_label => "Wallet password";
   String get wallet_setting => "Wallet Settings";
   String get wallet_setting_backup_notice => "If you cannot access this device, your funds will not be recovered unless you back it up!";
+  String get website => "网址";
   String get wechat => "Wechat";
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
+  String get work_time => "工作时间";
   String get your_mnemonic => "Your Mnemonic phrases";
+  String confirm_position_func(String address) => "位置：${address}";
+  String confirm_position_name_func(String name) => "名称：${name}";
   String distance(String distance) => "$distance m";
   String get hynPriceUnitSymbol => "\$";
+  String if_confirm_position_info_func(String currentResult) => "是否确认$currentResult";
   String km(String km) => "$km km ";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
@@ -383,6 +403,8 @@ class $ko extends S {
   @override
   String get dmap_document_title => "DMap 지도를문서에바인딩합니다.";
   @override
+  String get position_info_confirm => "位置信息确认";
+  @override
   String get my_location => "나의위치";
   @override
   String get improvement_plan_agree => "프로그램 참여";
@@ -407,6 +429,10 @@ class $ko extends S {
   @override
   String get data_contribute_reward => "지도 데이터 기여로 HYN 인센티브 획득";
   @override
+  String get business_time_sunday => "周日";
+  @override
+  String get work_time => "工作时间";
+  @override
   String get receiver_address_not_empty_hint => "접수주소가비어서는안됩니다.";
   @override
   String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
@@ -423,9 +449,13 @@ class $ko extends S {
   @override
   String get nightlife_guide => "야간활동안내";
   @override
+  String get business_time_friday => "周五";
+  @override
   String get open_camera => "카메라 권한을 열어주십시오.";
   @override
   String get unknown_error => "Unknown error";
+  @override
+  String get confirm_info_wrong => "信息有误";
   @override
   String get hotel => "호텔";
   @override
@@ -436,6 +466,8 @@ class $ko extends S {
   String get input_wallet_name_hint => "지갑 명칭을 입력해주십시오.";
   @override
   String get business_time => "营业时间";
+  @override
+  String get website => "网址";
   @override
   String get refresh_public_key_minutes_tips => "%d분후 자동으로 새로 고침합니다.";
   @override
@@ -474,6 +506,8 @@ class $ko extends S {
   String get extract_mnemonic_fail => "도움말 불러오기 실패";
   @override
   String get language => "언어";
+  @override
+  String get info_is_wrong_please_again_submit_hint => "您提交的信息有误，请重试。";
   @override
   String get open_bluetooth => "블루투스 열림";
   @override
@@ -523,6 +557,8 @@ class $ko extends S {
   @override
   String get service_area => "지역";
   @override
+  String get phone_number => "电话";
+  @override
   String get backup_wallet_notice_text1 => "도움말을 얻는것은 지갑 자산 소유권을 갖는것과 같습니다.";
   @override
   String get next => "계속";
@@ -554,6 +590,8 @@ class $ko extends S {
   String get input_wallet_name_length_hint => "6자리이내의 명칭을 입력해 주십시오.";
   @override
   String get wallet_manage => "지갑 관리";
+  @override
+  String get business_time_tuesday => "周二";
   @override
   String get private_wallet_tips => "프라이빗 계좌.";
   @override
@@ -620,6 +658,8 @@ class $ko extends S {
   String get navigation => "네비게이션";
   @override
   String get select_position => "选择位置";
+  @override
+  String get business_time_saturday => "周六";
   @override
   String get switch_contribute_address => "주소 전환";
   @override
@@ -711,6 +751,8 @@ class $ko extends S {
   @override
   String get online_exchange => "온라인 거래소";
   @override
+  String get business_time_wednesday => "周三";
+  @override
   String get wallet => "지갑";
   @override
   String get less_than_1_min => "1분이내";
@@ -730,6 +772,8 @@ class $ko extends S {
   String get delete_wallet_fail => "삭제 실패";
   @override
   String get share_qrcode => "공유키 QR코드 공유";
+  @override
+  String get postal_code => "邮编";
   @override
   String get latest_news => "최신 뉴스";
   @override
@@ -752,6 +796,8 @@ class $ko extends S {
   String get twitterhyperion => "트위트 하이페리온";
   @override
   String get wallet_password_label => "지갑 비밀번호";
+  @override
+  String get confirm_info_right => "信息正确";
   @override
   String get public_key_copied => "공유키 주소를 복사완료하였습니다.";
   @override
@@ -819,6 +865,8 @@ class $ko extends S {
   @override
   String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
   @override
+  String get business_time_thursday => "周四";
+  @override
   String get please_selecte_app_area => "지도사용영역을설정하십시오.";
   @override
   String get send => "발송";
@@ -879,6 +927,8 @@ class $ko extends S {
   @override
   String get police_security_station => "경찰안전소";
   @override
+  String get throughout_of_day => "全天（24小时）";
+  @override
   String get backup_wallet_mnemonic_text => "종이와 펜을 사용하여 도움말을 정확하게 기록하세요.\n 만일 휴대폰을 분실하거나 도난당하거나 혹은 파손됐을 경우 도움말을 통해 당신의 자산을 회복할수 있습니다.";
   @override
   String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
@@ -890,6 +940,8 @@ class $ko extends S {
   String get wechat => "위쳇";
   @override
   String get telegram => "텔레그램";
+  @override
+  String get business_time_monday => "周一";
   @override
   String get check_poi_item_title => "지리적 위치 정보를 검사하다.";
   @override
@@ -915,6 +967,8 @@ class $ko extends S {
   @override
   String get decrypt_location_cipher_tips => "암호화 위치 문서를 어떻게 해제합니까?";
   @override
+  String get category => "类别";
+  @override
   String get require_location => "위치 라이센스 신청";
   @override
   String get hynPriceUnitSymbol => "\$";
@@ -939,9 +993,15 @@ class $ko extends S {
   @override
   String n_minute(String minute) => "${minute}분";
   @override
+  String confirm_position_func(String address) => "位置：${address}";
+  @override
   String km(String km) => "${km}킬로미터";
   @override
+  String confirm_position_name_func(String name) => "名称：${name}";
+  @override
   String send_symbol(String symbol) => "발송 $symbol";
+  @override
+  String if_confirm_position_info_func(String currentResult) => "是否确认$currentResult";
   @override
   String send_count_label(String symbol) => "$symbol 수량";
 }
@@ -1007,6 +1067,8 @@ class $zh_CN extends S {
   @override
   String get dmap_document_title => "DMap地图应用接入文档";
   @override
+  String get position_info_confirm => "位置信息确认";
+  @override
   String get my_location => "我的位置";
   @override
   String get improvement_plan_agree => "参与计划";
@@ -1031,6 +1093,10 @@ class $zh_CN extends S {
   @override
   String get data_contribute_reward => "已开放地图数据贡献";
   @override
+  String get business_time_sunday => "周日";
+  @override
+  String get work_time => "工作时间";
+  @override
   String get receiver_address_not_empty_hint => "接收地址不能为空";
   @override
   String get input_wallet_password_length_hint => "请输入至少6位的密码";
@@ -1047,9 +1113,13 @@ class $zh_CN extends S {
   @override
   String get nightlife_guide => "夜生活指南";
   @override
+  String get business_time_friday => "周五";
+  @override
   String get open_camera => "请开启相机权限";
   @override
   String get unknown_error => "Unknown error";
+  @override
+  String get confirm_info_wrong => "信息有误";
   @override
   String get hotel => "酒店";
   @override
@@ -1060,6 +1130,8 @@ class $zh_CN extends S {
   String get input_wallet_name_hint => "请输入钱包名称";
   @override
   String get business_time => "营业时间";
+  @override
+  String get website => "网址";
   @override
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override
@@ -1098,6 +1170,8 @@ class $zh_CN extends S {
   String get extract_mnemonic_fail => "提取助记词失败";
   @override
   String get language => "语言";
+  @override
+  String get info_is_wrong_please_again_submit_hint => "您提交的信息有误，请重试。";
   @override
   String get open_bluetooth => "开启蓝牙";
   @override
@@ -1147,6 +1221,8 @@ class $zh_CN extends S {
   @override
   String get service_area => "区域";
   @override
+  String get phone_number => "电话";
+  @override
   String get backup_wallet_notice_text1 => "获得助记词等于拥有钱包资产所有权";
   @override
   String get next => "继续";
@@ -1178,6 +1254,8 @@ class $zh_CN extends S {
   String get input_wallet_name_length_hint => "请输入6位以内的名称";
   @override
   String get wallet_manage => "钱包管理";
+  @override
+  String get business_time_tuesday => "周二";
   @override
   String get private_wallet_tips => "账户私钥永远不会离开你的设备";
   @override
@@ -1244,6 +1322,8 @@ class $zh_CN extends S {
   String get navigation => "导航";
   @override
   String get select_position => "选择位置";
+  @override
+  String get business_time_saturday => "周六";
   @override
   String get switch_contribute_address => "切换地址";
   @override
@@ -1335,6 +1415,8 @@ class $zh_CN extends S {
   @override
   String get online_exchange => "上线交易所";
   @override
+  String get business_time_wednesday => "周三";
+  @override
   String get wallet => "钱包";
   @override
   String get less_than_1_min => "小于1分钟";
@@ -1354,6 +1436,8 @@ class $zh_CN extends S {
   String get delete_wallet_fail => "删除失败";
   @override
   String get share_qrcode => "分享公钥二维码";
+  @override
+  String get postal_code => "邮编";
   @override
   String get latest_news => "最新资讯";
   @override
@@ -1376,6 +1460,8 @@ class $zh_CN extends S {
   String get twitterhyperion => "推特-海伯利安";
   @override
   String get wallet_password_label => "钱包密码";
+  @override
+  String get confirm_info_right => "信息正确";
   @override
   String get public_key_copied => "公钥地址已复制";
   @override
@@ -1443,6 +1529,8 @@ class $zh_CN extends S {
   @override
   String get hyperion_project_intro_url => "https://shimo.im/docs/GDp72cj3ATwEB7ke/read";
   @override
+  String get business_time_thursday => "周四";
+  @override
   String get please_selecte_app_area => "请设置地图使用区域";
   @override
   String get send => "发送";
@@ -1503,6 +1591,8 @@ class $zh_CN extends S {
   @override
   String get police_security_station => "警察安全站";
   @override
+  String get throughout_of_day => "全天（24小时）";
+  @override
   String get backup_wallet_mnemonic_text => "使用纸和笔正确抄写助记词\n如果你的手机丢失、被盗。损坏，助记词将可以恢复你的资产";
   @override
   String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
@@ -1514,6 +1604,8 @@ class $zh_CN extends S {
   String get wechat => "公众号";
   @override
   String get telegram => "电报群";
+  @override
+  String get business_time_monday => "周一";
   @override
   String get check_poi_item_title => "校验地理位置信息";
   @override
@@ -1539,6 +1631,8 @@ class $zh_CN extends S {
   @override
   String get decrypt_location_cipher_tips => "怎么解码位置密文？";
   @override
+  String get category => "类别";
+  @override
   String get require_location => "申请定位授权";
   @override
   String n_hour(String hour) => "${hour}小时";
@@ -1561,9 +1655,15 @@ class $zh_CN extends S {
   @override
   String n_minute(String minute) => "${minute}分钟";
   @override
+  String confirm_position_func(String address) => "位置：${address}";
+  @override
   String km(String km) => "${km}公里";
   @override
+  String confirm_position_name_func(String name) => "名称：${name}";
+  @override
   String send_symbol(String symbol) => "发送 $symbol";
+  @override
+  String if_confirm_position_info_func(String currentResult) => "是否确认$currentResult";
   @override
   String send_count_label(String symbol) => "$symbol 数量";
 }
