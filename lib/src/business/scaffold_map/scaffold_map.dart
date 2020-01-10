@@ -32,8 +32,8 @@ import 'route_bar.dart';
 
 //final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
 
-//final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
-final kStyleZh = 'http://10.10.1.120:9999/titan-see-it-all.json';
+final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+//final kStyleZh = 'http://10.10.1.120:9999/titan-see-it-all.json';
 
 final kStyleEn = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
 
