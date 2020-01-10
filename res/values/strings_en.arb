@@ -291,5 +291,17 @@
   "scan_confirm_upload" : "Upload signal data",
   "scan_collect_signal_func": "${Num} signals collected",
   "data_position_adding": "添加中",
-  "data_save": "存储"
+  "data_save": "存储",
+  "select_category_bookstore": "书店",
+  "select_category_bakery": "西饼店",
+  "select_category_chocolateshop": "巧克力店",
+  "select_category_fabrics": "布艺店",
+  "select_category_healthfood": "健康食品店",
+  "select_category_nailsalon": "美甲店",
+  "select_category": "选择类别",
+  "select_position": "选择位置",
+  "user_defined_time_format_hint": "自定义时间，格式 07:00-23:00",
+  "business_time": "营业时间",
+  "please_select_business_hours_hint": "请选择营业时间",
+  "please_enter_correct_time_format_hint": "请输入正确的时间，例如 07:00-23:00"
 }

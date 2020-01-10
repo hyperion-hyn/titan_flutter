@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/widget/custom_input_text.dart';
@@ -28,12 +29,12 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
   @override
   void initState() {
-    _tagList.add("书店");
-    _tagList.add("西饼店");
-    _tagList.add("巧克力店");
-    _tagList.add("布艺店");
-    _tagList.add("健康食品店");
-    _tagList.add("美甲店");
+    _tagList.add(S.of(context).select_category_bookstore);
+    _tagList.add(S.of(context).select_category_bakery);
+    _tagList.add(S.of(context).select_category_chocolateshop);
+    _tagList.add(S.of(context).select_category_fabrics);
+    _tagList.add(S.of(context).select_category_healthfood);
+    _tagList.add(S.of(context).select_category_nailsalon);
 
     if (_searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
@@ -83,7 +84,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          '选择类别',
+          S.of(context).select_category,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),

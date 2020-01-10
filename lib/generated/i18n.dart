@@ -50,6 +50,7 @@ class S implements WidgetsLocalizations {
   String get backup_wallet_mnemonic_title => "Backup mnemonics";
   String get backup_wallet_notice_text1 => "Obtaining mnemonic words proves your ownership of wallet assets";
   String get bank => "Bank";
+  String get business_time => "营业时间";
   String get cafe => "Cafe";
   String get cancel => "Cancel";
   String get check_poi_item_title => "Verify POI information";
@@ -186,11 +187,13 @@ class S implements WidgetsLocalizations {
   String get password_incorrect => "incorrect password";
   String get password_not_equal_hint => "Inconsistent passwords";
   String get paste => "paste";
+  String get please_enter_correct_time_format_hint => "请输入正确的时间，例如 07:00-23:00";
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
   String get please_open_bluetooth => "Please turn on Bluetooth";
   String get please_open_wifi => "Please turn on WIFI";
+  String get please_select_business_hours_hint => "请选择营业时间";
   String get please_selecte_app_area => "Please set the region of the map";
   String get please_waiting => "Please Wait";
   String get police_security_station => "Police Station";
@@ -246,6 +249,14 @@ class S implements WidgetsLocalizations {
   String get search_history => "History";
   String get search_or_decode => "Search / Decrypt";
   String get search_title => "Search / Decrypt";
+  String get select_category => "选择类别";
+  String get select_category_bakery => "西饼店";
+  String get select_category_bookstore => "书店";
+  String get select_category_chocolateshop => "巧克力店";
+  String get select_category_fabrics => "布艺店";
+  String get select_category_healthfood => "健康食品店";
+  String get select_category_nailsalon => "美甲店";
+  String get select_position => "选择位置";
   String get send => "Send";
   String get sent => "Sent";
   String get service_area => "Area";
@@ -282,6 +293,7 @@ class S implements WidgetsLocalizations {
   String get twittertitan => "Twitter-Titan";
   String get unknown_error => "Unknown error";
   String get update_now => "Update Now";
+  String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
   String get user_this_account => "Use this private account";
   String get video => "Video";
   String get view_all => "View All";
@@ -399,6 +411,8 @@ class $ko extends S {
   @override
   String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
   @override
+  String get select_category_bakery => "西饼店";
+  @override
   String get dapp_setting => "DApp설정";
   @override
   String get user_this_account => "비밀 계정 사용";
@@ -421,6 +435,8 @@ class $ko extends S {
   @override
   String get input_wallet_name_hint => "지갑 명칭을 입력해주십시오.";
   @override
+  String get business_time => "营业时间";
+  @override
   String get refresh_public_key_minutes_tips => "%d분후 자동으로 새로 고침합니다.";
   @override
   String get global_map_server_nodes => "글로벌 지도 서비스 노드";
@@ -430,6 +446,8 @@ class $ko extends S {
   String get eth_balance_not_enough_for_gas_fee => "ETH잔액부족으로네트워크비용을지불할수없습니다.";
   @override
   String get services => "서비스";
+  @override
+  String get select_category => "选择类别";
   @override
   String get confirm => "확정";
   @override
@@ -450,6 +468,8 @@ class $ko extends S {
   String get improvement_plan_title => "체험 프로그램 개선";
   @override
   String get app_version => "어플버전";
+  @override
+  String get please_enter_correct_time_format_hint => "请输入正确的时间，例如 07:00-23:00";
   @override
   String get extract_mnemonic_fail => "도움말 불러오기 실패";
   @override
@@ -482,6 +502,8 @@ class $ko extends S {
   String get recommended_area => "추천 지역";
   @override
   String get no_data => "데이터가없습니다.";
+  @override
+  String get select_category_healthfood => "健康食品店";
   @override
   String get account_error => "계정오류";
   @override
@@ -555,6 +577,8 @@ class $ko extends S {
   @override
   String get forum => "포럼";
   @override
+  String get select_category_chocolateshop => "巧克力店";
+  @override
   String get add_share_options => "선택사항 공유";
   @override
   String get account_backup_notice => "당신의 계좌를 백업중입니다.";
@@ -595,6 +619,8 @@ class $ko extends S {
   @override
   String get navigation => "네비게이션";
   @override
+  String get select_position => "选择位置";
+  @override
   String get switch_contribute_address => "주소 전환";
   @override
   String get wechat_official_account => "위쳇 서비스번호";
@@ -620,6 +646,8 @@ class $ko extends S {
   String get please_open_wifi => "WIFI를 켜세요.";
   @override
   String get document_optimization => "문서최적화중입니다.";
+  @override
+  String get please_select_business_hours_hint => "请选择营业时间";
   @override
   String get refresh_keypaire_message => "공유키 주소를 새로 고치기하면 이전에 받았던 위치의 암호화 문서는 영구적으로 복구할수 없습니다.새로 고치기를 계속하시겠습니까?";
   @override
@@ -679,6 +707,8 @@ class $ko extends S {
   @override
   String get copy => "복사";
   @override
+  String get select_category_fabrics => "布艺店";
+  @override
   String get online_exchange => "온라인 거래소";
   @override
   String get wallet => "지갑";
@@ -730,6 +760,8 @@ class $ko extends S {
   String get twittertitan => "트위터-타이탄";
   @override
   String get copyed => "복사 완료";
+  @override
+  String get select_category_nailsalon => "美甲店";
   @override
   String get share_encrypted_location => "암호화 위치 공유";
   @override
@@ -803,6 +835,8 @@ class $ko extends S {
   @override
   String get Clean => "흔적 지우기";
   @override
+  String get select_category_bookstore => "书店";
+  @override
   String get delete => "삭제";
   @override
   String get refresh_public_key_hours_tips => "%d시간%d분후 자동으로 새로 고침합니다.";
@@ -846,6 +880,8 @@ class $ko extends S {
   String get police_security_station => "경찰안전소";
   @override
   String get backup_wallet_mnemonic_text => "종이와 펜을 사용하여 도움말을 정확하게 기록하세요.\n 만일 휴대폰을 분실하거나 도난당하거나 혹은 파손됐을 경우 도움말을 통해 당신의 자산을 회복할수 있습니다.";
+  @override
+  String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
   @override
   String get scan_thanks_contribution_signal_hint => "귀하의 데이터 기여에 감사드립니다！";
   @override
@@ -999,6 +1035,8 @@ class $zh_CN extends S {
   @override
   String get input_wallet_password_length_hint => "请输入至少6位的密码";
   @override
+  String get select_category_bakery => "西饼店";
+  @override
   String get dapp_setting => "DApp设置";
   @override
   String get user_this_account => "使用该私密账户";
@@ -1021,6 +1059,8 @@ class $zh_CN extends S {
   @override
   String get input_wallet_name_hint => "请输入钱包名称";
   @override
+  String get business_time => "营业时间";
+  @override
   String get refresh_public_key_minutes_tips => "%d分后自动刷新";
   @override
   String get global_map_server_nodes => "全球地图服务节点";
@@ -1030,6 +1070,8 @@ class $zh_CN extends S {
   String get eth_balance_not_enough_for_gas_fee => "ETH余额不足支付网络费用";
   @override
   String get services => "服务";
+  @override
+  String get select_category => "选择类别";
   @override
   String get confirm => "确定";
   @override
@@ -1050,6 +1092,8 @@ class $zh_CN extends S {
   String get improvement_plan_title => "改进体验计划";
   @override
   String get app_version => "版本";
+  @override
+  String get please_enter_correct_time_format_hint => "请输入正确的时间，例如 07:00-23:00";
   @override
   String get extract_mnemonic_fail => "提取助记词失败";
   @override
@@ -1082,6 +1126,8 @@ class $zh_CN extends S {
   String get recommended_area => "推荐地区";
   @override
   String get no_data => "暂无数据";
+  @override
+  String get select_category_healthfood => "健康食品店";
   @override
   String get account_error => "账户错误";
   @override
@@ -1155,6 +1201,8 @@ class $zh_CN extends S {
   @override
   String get forum => "论坛";
   @override
+  String get select_category_chocolateshop => "巧克力店";
+  @override
   String get add_share_options => "分享选项";
   @override
   String get account_backup_notice => "现在备份你的账户";
@@ -1195,6 +1243,8 @@ class $zh_CN extends S {
   @override
   String get navigation => "导航";
   @override
+  String get select_position => "选择位置";
+  @override
   String get switch_contribute_address => "切换地址";
   @override
   String get wechat_official_account => "服务号";
@@ -1220,6 +1270,8 @@ class $zh_CN extends S {
   String get please_open_wifi => "请开启WIFI";
   @override
   String get document_optimization => "文档优化中...";
+  @override
+  String get please_select_business_hours_hint => "请选择营业时间";
   @override
   String get refresh_keypaire_message => "刷新公钥地址后，之前的接收的位置密文将永久解密不了！确定继续刷新吗？";
   @override
@@ -1279,6 +1331,8 @@ class $zh_CN extends S {
   @override
   String get copy => "复制";
   @override
+  String get select_category_fabrics => "布艺店";
+  @override
   String get online_exchange => "上线交易所";
   @override
   String get wallet => "钱包";
@@ -1330,6 +1384,8 @@ class $zh_CN extends S {
   String get twittertitan => "推特-泰坦";
   @override
   String get copyed => "已拷贝";
+  @override
+  String get select_category_nailsalon => "美甲店";
   @override
   String get share_encrypted_location => "分享加密位置";
   @override
@@ -1403,6 +1459,8 @@ class $zh_CN extends S {
   @override
   String get Clean => "清除痕迹";
   @override
+  String get select_category_bookstore => "书店";
+  @override
   String get delete => "删除";
   @override
   String get refresh_public_key_hours_tips => "%d小时%d分后自动刷新";
@@ -1446,6 +1504,8 @@ class $zh_CN extends S {
   String get police_security_station => "警察安全站";
   @override
   String get backup_wallet_mnemonic_text => "使用纸和笔正确抄写助记词\n如果你的手机丢失、被盗。损坏，助记词将可以恢复你的资产";
+  @override
+  String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
   @override
   String get scan_thanks_contribution_signal_hint => "感谢您做的数据贡献！";
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/model/business_time.dart';
@@ -68,7 +69,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          '营业时间',
+          S.of(context).business_time,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -82,7 +83,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
                     if (item.isCheck) {hasCheck = true}
                   });
               if (!hasCheck || (currentTime == null && customTime.isEmpty)) {
-                Fluttertoast.showToast(msg: "请选择营业时间");
+                Fluttertoast.showToast(msg: S.of(context).please_select_business_hours_hint);
                 return;
               }
 
@@ -90,7 +91,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
                 currentTime = BusinessTimeItem();
                 currentTime.label = customTime;
               } else if (currentTime == null && !isRightTime(customTime)) {
-                Fluttertoast.showToast(msg: "请输入正确的时间，例如 07:00-23:00");
+                Fluttertoast.showToast(msg: S.of(context).please_enter_correct_time_format_hint);
                 return;
               }
 
@@ -102,7 +103,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               alignment: Alignment.centerRight,
               child: Text(
-                '完成',
+                S.of(context).finish,
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
@@ -165,7 +166,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
           children: _buildDayView()),
       Padding(
           padding: EdgeInsets.only(left: 15),
-          child: Text("营业时间", style: TextStyles.textC333S14)),
+          child: Text(S.of(context).business_time, style: TextStyles.textC333S14)),
       Column(children: _buildBusinessTime()),
       _buildCustomTime()
     ]);
@@ -234,7 +235,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
                       decoration: new InputDecoration(
                         border: InputBorder.none,
                         hintStyle: TextStyles.textCaaaS14,
-                        hintText: '自定义时间，格式 07:00-23:00',
+                        hintText: S.of(context).user_defined_time_format_hint,
                       )),
                 )
               ],
