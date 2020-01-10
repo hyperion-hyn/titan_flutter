@@ -321,7 +321,7 @@ class _DataContributionState extends State<DataContributionPage>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ConfirmPositionPage(initLocation: latlng),
+                builder: (context) => ConfirmPositionPage(userPosition: latlng),
               ),
             );
           }

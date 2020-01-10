@@ -44,9 +44,13 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     } else if (event is ConfirmPositionLoadingEvent) {
       yield ConfirmPositionLoadingState();
     } else if (event is ConfirmPositionPageEvent) {
-      yield ConfirmPositionPageState();
+      var userPosition = event.userPosition;
+      var language = 'zh-Hans';
+      var _confirmDataList = await _positionApi.getConfirmData(userPosition.longitude,userPosition.latitude, language);
+      yield ConfirmPositionPageState(_confirmDataList[0]);
     } else if (event is ConfirmPositionResultEvent) {
-      yield ConfirmPositionResultState();
+      var confirmResult = await _positionApi.postConfirmPoiData(event.answer,event.confirmPoiItem);
+      yield ConfirmPositionResultState(confirmResult);
     }
   }
 

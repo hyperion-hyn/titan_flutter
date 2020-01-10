@@ -11,13 +11,13 @@ import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/widget/radio_checkbox_widget.dart';
 
 import 'bloc/bloc.dart';
+import 'model/confirm_poi_item.dart';
 import 'position_finish_page.dart';
 
 class ConfirmPositionPage extends StatefulWidget {
+  final LatLng userPosition;
 
-  final LatLng initLocation;
-
-  ConfirmPositionPage({this.initLocation});
+  ConfirmPositionPage({this.userPosition});
 
   @override
   State<StatefulWidget> createState() {
@@ -28,7 +28,6 @@ class ConfirmPositionPage extends StatefulWidget {
 class _ConfirmPositionState extends State<ConfirmPositionPage> {
   PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
-  LatLng userPosition;
   double defaultZoom = 15;
   bool _isLoading = false;
 
@@ -36,6 +35,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   final int _listImagePathsMaxLength = 9;
   List<String> _detailTextList = List();
   String currentResult = "信息有误";
+  ConfirmPoiItem confirmPoiItem;
 
 //  var picItemWidth;
   final List<UserInfoItem> _userInfoList = [
@@ -58,9 +58,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
 //    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
     _positionBloc.add(ConfirmPositionLoadingEvent());
-    Future.delayed(Duration(seconds: 1), () {
-      _positionBloc.add(ConfirmPositionPageEvent());
-    });
+    _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
 
     super.initState();
   }
@@ -111,9 +109,16 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                   child: Text(S.of(context).cancel)),
               FlatButton(
                   onPressed: () {
-//                    todo _positionBloc.add(ConfirmPositionPageEvent());
+                    int answer;
+                    if (currentResult == "信息有误") {
+                      answer = 0;
+                    } else {
+                      answer = 1;
+                    }
+                    _positionBloc.add(
+                        ConfirmPositionResultEvent(answer, confirmPoiItem));
 
-                    createWalletPopUtilName = '/data_contribution_page';
+                    /*createWalletPopUtilName = '/data_contribution_page';
 
                     Navigator.of(context).pop();
                     Navigator.pushReplacement(
@@ -121,7 +126,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                       MaterialPageRoute(
                           builder: (context) => FinishAddPositionPage(
                               FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-                    );
+                    );*/
                   },
                   child: Text(S.of(context).confirm))
             ],
@@ -139,7 +144,38 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               isLoading: true,
             );
           } else if (state is ConfirmPositionPageState) {
+            confirmPoiItem = state.confirmPoiItem;
             return _buildListBody();
+          } else if (state is ConfirmPositionResultState) {
+//            createWalletPopUtilName = '/data_contribution_page';
+
+            if (state.confirmResult) {
+              Navigator.of(context).pop();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FinishAddPositionPage(
+                        FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("您提交的信息有误，请重试。"),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(S.of(context).confirm))
+                    ],
+                  );
+                },
+              );
+            }
+
+            return null;
           } else {
             return Container(
               width: 0.0,
@@ -169,7 +205,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             child: ListView(
               children: <Widget>[
                 _nameView(),
-                buildPicList(picItemWidth, 10),
+                if (confirmPoiItem.images != null)
+                  buildPicList(picItemWidth, 10, confirmPoiItem),
                 Padding(
                   padding: const EdgeInsets.all(15),
                   child: Divider(
@@ -177,7 +214,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                     color: HexColor('#E9E9E9'),
                   ),
                 ),
-                buildBottomInfoList(_userInfoList),
+                buildBottomInfoList(confirmPoiItem),
               ],
             ),
           ),
@@ -252,7 +289,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           Padding(
             padding: EdgeInsets.only(bottom: 15),
             child: Text(
-              "名称：中国好功夫-China gongfu",
+              "名称：${confirmPoiItem.name}",
               textAlign: TextAlign.left,
               style: TextStyle(
                 color: HexColor('#333333'),
@@ -262,7 +299,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             ),
           ),
           Text(
-            "位置：中国广州xxx",
+            "位置：${confirmPoiItem.address}",
             textAlign: TextAlign.left,
             style: TextStyle(
               color: HexColor('#333333'),

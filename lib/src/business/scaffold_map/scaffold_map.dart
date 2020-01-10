@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/gaode_poi_panel.dart';
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -32,8 +33,8 @@ import 'route_bar.dart';
 
 //final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
 
-//final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
-final kStyleZh = 'http://10.10.1.120:9999/titan-see-it-all.json';
+final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+//final kStyleZh = 'http://10.10.1.120:9999/titan-see-it-all.json';
 
 final kStyleEn = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
 
@@ -223,19 +224,20 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
           if (panelBuilder == null) {
             if (state.getCurrentPoi() is PoiEntity) {
-              panelBuilder = (context, controller) => UserPoiPanel(
-                scrollController: controller,
-                selectedPoiEntity: state.getCurrentPoi(),
-              );
-              /*panelBuilder = (context, controller) => PoiPanel(
+              panelBuilder = (context, controller) => PoiPanel(
                     scrollController: controller,
                     selectedPoiEntity: state.getCurrentPoi(),
-                  );*/
+                  );
             } else if (state.getCurrentPoi() is GaodePoi) {
               panelBuilder = (context, controller) => GaodePoiPanel(
                     scrollController: controller,
                     poi: state.getCurrentPoi(),
                   );
+            } else if (state.getCurrentPoi() is ConfirmPoiItem){
+              panelBuilder = (context, controller) => UserPoiPanel(
+                scrollController: controller,
+                selectedPoiEntity: state.getCurrentPoi(),
+              );
             }
           }
           initHeight = collapsedHeight;
