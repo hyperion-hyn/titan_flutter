@@ -64,6 +64,9 @@ class ConfirmPositionPageEvent extends PositionEvent {
   ConfirmPositionPageEvent (this.userPosition);
 }
 
+class ConfirmPositionResultLoadingEvent extends PositionEvent {
+}
+
 class ConfirmPositionResultEvent extends PositionEvent {
   int answer;
   ConfirmPoiItem confirmPoiItem;

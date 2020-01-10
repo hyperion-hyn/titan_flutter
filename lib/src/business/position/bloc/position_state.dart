@@ -65,6 +65,10 @@ class ConfirmPositionPageState extends PositionState {
   ConfirmPositionPageState(this.confirmPoiItem);
 }
 
+class ConfirmPositionResultLoadingState extends PositionState {
+
+}
+
 class ConfirmPositionResultState extends PositionState {
   bool confirmResult;
   ConfirmPositionResultState(this.confirmResult);

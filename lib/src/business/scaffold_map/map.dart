@@ -81,7 +81,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   Map<String, IPoi> _currentGrayMarkerMap = Map();
   List<String> heavenMapLayers = [];
 
-  PositionApi _positionApi = PositionApi();
+//  PositionApi _positionApi = PositionApi();
 
   @override
   void initState() {
@@ -381,12 +381,15 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       }
 
       var pid = firstFeature["properties"]["pid"];
+      //user contribute poi
       if(pid != null){
         print("has get pid");
-        var className = firstFeature["properties"]["class"];
-        var rank = firstFeature["properties"]["rank"];
-        var _confirmDataList = await _positionApi.mapGetConfirmData(pid);
-        ConfirmPoiItem confirmPoiItem = _confirmDataList[0];
+//        var className = firstFeature["properties"]["class"];
+//        var rank = firstFeature["properties"]["rank"];
+//        var lat = firstFeature["properties"]["lat"];
+//        var language = "zh-Hans";
+//        var _confirmDataList = await _positionApi.mapGetConfirmData(pid);
+        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
       }else{
         var poi = PoiEntity(name: name, latLng: coordinates);

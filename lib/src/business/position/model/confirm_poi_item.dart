@@ -7,7 +7,7 @@ part 'confirm_poi_item.g.dart';
 
 
 @JsonSerializable()
-class ConfirmPoiItem  extends Object implements IPoi{
+class ConfirmPoiItem extends Object implements IPoi{
 
   @JsonKey(name: 'id')
   String id;
@@ -51,10 +51,14 @@ class ConfirmPoiItem  extends Object implements IPoi{
 
   Map<String, dynamic> toJson() => _$ConfirmPoiItemToJson(this);
 
+  @override
   String remark;
 
+  @override
   @JsonKey(fromJson: LatLngConverter.latLngFromJson, toJson: LatLngConverter.latLngToJson)
   LatLng latLng;
+
+  ConfirmPoiItem.setPid(this.id);
 
 }
 

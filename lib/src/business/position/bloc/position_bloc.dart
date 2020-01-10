@@ -49,8 +49,14 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       var _confirmDataList = await _positionApi.getConfirmData(userPosition.longitude,userPosition.latitude, language);
       yield ConfirmPositionPageState(_confirmDataList[0]);
     } else if (event is ConfirmPositionResultEvent) {
-      var confirmResult = await _positionApi.postConfirmPoiData(event.answer,event.confirmPoiItem);
-      yield ConfirmPositionResultState(confirmResult);
+      try{
+        var confirmResult = await _positionApi.postConfirmPoiData(event.answer,event.confirmPoiItem);
+        yield ConfirmPositionResultState(confirmResult);
+      }catch(code,message){
+        yield ConfirmPositionResultState(false);
+      }
+    }else if (event is ConfirmPositionResultLoadingEvent){
+      yield ConfirmPositionResultLoadingState();
     }
   }
 

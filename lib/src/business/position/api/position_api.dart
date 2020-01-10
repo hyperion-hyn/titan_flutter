@@ -120,20 +120,16 @@ class PositionApi {
   }
 
   Future<List<ConfirmPoiItem>> mapGetConfirmData(String pid) async {
-    var address = currentWalletVo.accountList[0].account.address;
     var data = await HttpCore.instance.getEntity(
-        "map-collector/poi/query/v1",
+//        "/map-collector/poi/detail/$pid",
+        "/map-collector/poi/detail/5e13f8caea7db700f4411406",
         EntityFactory<List<ConfirmPoiItem>>((list) =>
             (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
-        params: {
-          'pid': pid,
-//          'lat': lat,
-//          'language': language
-        },
+//        params: {
+//          'id': pid,
+//        },
         options: RequestOptions(headers: {
           "Lang": "zh-Hans",
-          "UUID": address,
-          "Iso-3166-1": "CN"
         }, contentType: "application/json"));
 
     return data;
@@ -144,8 +140,10 @@ class PositionApi {
     var address = currentWalletVo.accountList[0].account.address;
     var data = await HttpCore.instance.postEntity(
         "/map-collector/poi/confirm",
-        EntityFactory<bool>((result) =>
-    result),
+        EntityFactory<bool>((result) {
+          return result;
+        }
+    ),
         params: {
           'answer': answer,
           'poi': confirmPoiItem.toJson(),
