@@ -293,5 +293,9 @@
   "scan_collect_signal_func": "${Num} 개의 신호 수집",
   "selected_area": "지역을 선택하십시오",
   "what_region_use_titan": "타이탄을 사용하는 지역은 어디입니까?",
-  "select_region_tip": "지역을 선택하십시오"
+  "select_region_tip": "지역을 선택하십시오",
+  "data_position_adding": "추가",
+  "data_save": "스토어",
+  "input_valid_address": "유효한 수취인 주소를 입력하십시오",
+  "transfer_confirm": "전송 확인"
 }

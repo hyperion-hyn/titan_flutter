@@ -1,7 +1,6 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:titan/src/business/my/app_area.dart';
 import 'components/wallet/vo/wallet_vo.dart';
 
 ///// The global [EventBus] object.
@@ -15,7 +14,7 @@ var logger = Logger();
 //const safeAreaBottomPadding = 24.0;
 //const saveAreaTopPadding = 32.0;
 
-String createWalletPopUtilName;
+//String createWalletPopUtilName;
 
 String createWalletNameTemp = "";
 String createWalletPasswordTemp = "";
@@ -35,3 +34,5 @@ String createWalletMnemonicTemp = "";
 //Locale appLocale;
 //WalletVo currentWalletVo;
 //AppArea currentAppArea = AppArea.MAINLAND_CHINA_AREA;
+
+final String ROUTE_CONFIRM_POSITION_PAGE = "route_confirm_position_page";

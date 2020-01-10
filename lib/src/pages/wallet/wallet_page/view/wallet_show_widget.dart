@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
@@ -6,7 +8,6 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/routes.dart';
-import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 
 class ShowWalletView extends StatelessWidget {
@@ -37,7 +38,7 @@ class ShowWalletView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "${QuotesViewModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.quote ?? ''}",
+                            "${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.quote ?? ''}",
                             style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 16),
                           ),
                           SizedBox(
@@ -46,14 +47,15 @@ class ShowWalletView extends StatelessWidget {
                           Row(
                             children: <Widget>[
                               Text(
-                                QuotesViewModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.sign ?? '',
+                                QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.sign ??
+                                    '',
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                               SizedBox(
                                 width: 8,
                               ),
                               Text(
-                                "${WalletViewModel.formatPrice(walletVo.balance)}",
+                                "${WalletInheritedModel.formatPrice(walletVo.balance)}",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
                               ),
@@ -64,7 +66,8 @@ class ShowWalletView extends StatelessWidget {
                       Spacer(),
                       InkWell(
                         onTap: () {
-                          Application.router.navigateTo(context, Routes.wallet_manager);
+                          Application.router.navigateTo(
+                              context, Routes.wallet_manager + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -96,11 +99,9 @@ class ShowWalletView extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ShowAccountPage(walletVo.coins[index]),
-                              settings: RouteSettings(name: "/show_account_page")));
+                      var coinVo = walletVo.coins[index];
+                      var coinVoJsonStr = json.encode(coinVo.toJson());
+                      Application.router.navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr}');
                     },
                     child: _buildAccountItem(context, walletVo.coins[index]));
               },
@@ -111,7 +112,7 @@ class ShowWalletView extends StatelessWidget {
   }
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
-    var symbolQuote = QuotesViewModel.of(context).currentSymbolQuote(coin.symbol);
+    var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -144,7 +145,7 @@ class ShowWalletView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${symbolQuote.sign.sign} ${WalletViewModel.formatPrice(symbolQuote.quoteVo.price)}",
+                    "${symbolQuote?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(symbolQuote?.quoteVo?.price ?? '--')}",
                     style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                   ),
                 ),
@@ -158,7 +159,7 @@ class ShowWalletView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "${WalletViewModel.formatPrice(coin.balance)}",
+                  "${WalletInheritedModel.formatPrice(coin.balance)}",
                   style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                 ),
                 SizedBox(
@@ -167,7 +168,7 @@ class ShowWalletView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${symbolQuote.sign.sign} ${WalletViewModel.formatPrice(coin.balance * symbolQuote.quoteVo.price)}",
+                    "${symbolQuote?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(coin.balance * (symbolQuote?.quoteVo?.price ?? 0))}",
                     style: TextStyle(fontSize: 14, color: HexColor("#FF848181")),
                   ),
                 ),

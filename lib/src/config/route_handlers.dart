@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
+import 'package:titan/src/pages/wallet/wallet_import_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager.dart';
+import 'package:titan/src/pages/wallet/wallet_send_confirm_page.dart';
+import 'package:titan/src/pages/wallet/wallet_send_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 
 import 'consts.dart';
@@ -12,8 +19,39 @@ var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<S
 });
 
 //wallet
+var createWalletHandler = Handler(handlerFunc: (context, params) {
+  _cacheOrClearEntryWalletRouteName(params);
+  return CreateAccountPage();
+});
+
+var importWalletHandler = Handler(handlerFunc: (context, params) {
+  _cacheOrClearEntryWalletRouteName(params);
+  return ImportAccountPage();
+});
+
+void _cacheOrClearEntryWalletRouteName(params) {
+  var url = params["entryRouteName"]?.first;
+  if (url != null) {
+    url = Uri.decodeComponent(url);
+  }
+  Routes.createOrImportWalletEntryRouteName = url;
+}
+
+var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
+  return ShowAccountPage(params['coinVo']?.first);
+});
+
+var walletAccountSendTransactionHandler = Handler(handlerFunc: (context, params) {
+  return WalletSendPage(params['coinVo']?.first, params['backRouteName']?.first);
+});
+
+var transferConfirmHandler = Handler(handlerFunc: (context, params) {
+  return WalletSendConfirmPage(
+      params['coinVo']?.first, double.parse(params['transferAmount']?.first ?? '0'), params['receiverAddress']?.first,
+      backRouteName: params['backRouteName']?.first);
+});
+
 var managerWalletHandler = Handler(handlerFunc: (context, params) => WalletManagerPage());
-var walletCoinDetailHandler = Handler(handlerFunc: (context, json) => ShowAccountPage(CoinVo.fromJson(json)));
 
 //var demoRouteHandler = Handler(
 //    handlerFunc: (BuildContext context, Map<String, List<String>> params) {

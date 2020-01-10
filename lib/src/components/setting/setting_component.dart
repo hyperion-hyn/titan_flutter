@@ -75,7 +75,7 @@ class _SettingManagerState extends State<_SettingManager> {
         if (state is UpdateAreaState) {
           Config.updateConfig(state.areaModel);
         } else if (state is UpdateLanguageState) {
-          //update current quotes
+          //update current quotes by setting
           var sign = SupportedQuotes.of('USD');
           if (languageModel?.locale?.languageCode == 'zh') {
             sign = SupportedQuotes.of('CNY');
@@ -91,7 +91,7 @@ class _SettingManagerState extends State<_SettingManager> {
             languageModel = state.languageModel;
           }
 
-          return SettingViewModel(
+          return SettingInheritedModel(
             areaModel: areaModel,
             languageModel: languageModel,
             child: widget.child,
@@ -104,11 +104,11 @@ class _SettingManagerState extends State<_SettingManager> {
 
 enum SettingAspect { language, area, sign }
 
-class SettingViewModel extends InheritedModel<SettingAspect> {
+class SettingInheritedModel extends InheritedModel<SettingAspect> {
   final LanguageModel languageModel;
   final AreaModel areaModel;
 
-  SettingViewModel({
+  SettingInheritedModel({
     @required this.languageModel,
     @required this.areaModel,
     Key key,
@@ -120,16 +120,16 @@ class SettingViewModel extends InheritedModel<SettingAspect> {
   }
 
   @override
-  bool updateShouldNotify(SettingViewModel oldWidget) {
+  bool updateShouldNotify(SettingInheritedModel oldWidget) {
     return languageModel != oldWidget.languageModel || areaModel != oldWidget.areaModel;
   }
 
-  static SettingViewModel of(BuildContext context, {SettingAspect aspect}) {
-    return InheritedModel.inheritFrom<SettingViewModel>(context, aspect: aspect);
+  static SettingInheritedModel of(BuildContext context, {SettingAspect aspect}) {
+    return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: aspect);
   }
 
   @override
-  bool updateShouldNotifyDependent(SettingViewModel oldWidget, Set<SettingAspect> dependencies) {
+  bool updateShouldNotifyDependent(SettingInheritedModel oldWidget, Set<SettingAspect> dependencies) {
     return (languageModel != oldWidget.languageModel && dependencies.contains(SettingAspect.language) ||
         areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area));
   }

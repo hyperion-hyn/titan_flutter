@@ -101,7 +101,7 @@ class _MarketPriceState extends State<MarketPricePage> {
       return MarketPriceVo(
           iconUrl: _priceTemp.icon,
           marketName: _priceTemp.source,
-          price: SettingViewModel.of(context, aspect: SettingAspect.language).languageCode == 'zh'
+          price: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageCode == 'zh'
               ? _priceTemp.cnyPrice
               : _priceTemp.price,
           marketUrl: _priceTemp.url);

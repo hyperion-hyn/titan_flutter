@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/pages/wallet/etherscan_api.dart';
+import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -30,8 +30,8 @@ class EthereumConst {
   static const FAST_SPEED = 10 * TokenUnit.G_WEI;
   static const SUPER_FAST_SPEED = 30 * TokenUnit.G_WEI;
 
-  static const ETH_GAS_LIMIT = 21000;
-  static const ERC20_GAS_LIMIT = 60000;
+  static const int ETH_GAS_LIMIT = 21000;
+  static const int ERC20_GAS_LIMIT = 25000;
 
   static const HYN_ERC20_ABI = '''
 [

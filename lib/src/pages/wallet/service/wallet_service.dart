@@ -43,8 +43,8 @@ class WalletService {
     WalletVo walletVo = WalletVo(
         wallet: wallet,
         balance: 0,
-        baseUnitName: SettingViewModel.of(context, aspect: SettingAspect.language).quoteUnitName,
-        baseUnitSymbol: SettingViewModel.of(context, aspect: SettingAspect.language).quoteUnitSymbol,
+        baseUnitName: SettingInheritedModel.of(context, aspect: SettingAspect.language).quoteUnitName,
+        baseUnitSymbol: SettingInheritedModel.of(context, aspect: SettingAspect.language).quoteUnitSymbol,
         accountList: walletAccountList);
     return walletVo;
   }
@@ -97,7 +97,7 @@ class WalletService {
   /// 构建 eth account
   Future<WalletAccountVo> buildMainTokenAccountVo(Wallet wallet, Account account, AssetToken token) async {
     WalletAccountVo walletAccountVo = WalletAccountVo(
-        walletVo: wallet, account: account, assetToken: token, name: token.name, balance: 0, symbol: token.symbol);
+        wallet: wallet, account: account, assetToken: token, name: token.name, balance: 0, symbol: token.symbol);
     return walletAccountVo;
   }
 
@@ -105,7 +105,7 @@ class WalletService {
   /// 构建erc20 account
   Future<WalletAccountVo> buildErc20TokenAccountVo(Wallet wallet, Account account, AssetToken token) async {
     WalletAccountVo walletAccountVo = WalletAccountVo(
-        walletVo: wallet, account: account, assetToken: token, name: token.name, balance: 0, symbol: token.symbol);
+        wallet: wallet, account: account, assetToken: token, name: token.name, balance: 0, symbol: token.symbol);
     return walletAccountVo;
   }
 
@@ -122,8 +122,8 @@ class WalletService {
       var price = priceMap[accountVo.symbol];
       accountVo.currencyRate = price;
       accountVo.ethCurrencyRate = priceMap["ETH"];
-      accountVo.currencyUnit = SettingViewModel.of(context, aspect: SettingAspect.language).quoteUnitName;
-      accountVo.currencyUnitSymbol = SettingViewModel.of(context, aspect: SettingAspect.language).quoteUnitSymbol;
+      accountVo.currencyUnit = SettingInheritedModel.of(context, aspect: SettingAspect.language).quoteUnitName;
+      accountVo.currencyUnitSymbol = SettingInheritedModel.of(context, aspect: SettingAspect.language).quoteUnitSymbol;
       accountVo.amount = price * accountVo.balance;
     }
   }
@@ -138,8 +138,8 @@ class WalletService {
     var price = priceMap[accountVo.symbol];
     accountVo.currencyRate = price;
     accountVo.ethCurrencyRate = priceMap["ETH"];
-    accountVo.currencyUnit = SettingViewModel.of(context, aspect: SettingAspect.language).quoteUnitName;
-    accountVo.currencyUnitSymbol = SettingViewModel.of(context, aspect: SettingAspect.language).quoteUnitSymbol;
+    accountVo.currencyUnit = SettingInheritedModel.of(context, aspect: SettingAspect.language).quoteUnitName;
+    accountVo.currencyUnitSymbol = SettingInheritedModel.of(context, aspect: SettingAspect.language).quoteUnitSymbol;
     accountVo.amount = price * accountVo.balance;
     return accountVo;
   }
@@ -147,7 +147,7 @@ class WalletService {
   ///
   /// 更新单个account的价格
   Future updateAccountVo(WalletAccountVo accountVo) async {
-    await updateAccountBalance(accountVo, accountVo.walletVo);
+    await updateAccountBalance(accountVo, accountVo.wallet);
     await updateAccountPrice(accountVo);
   }
 
@@ -157,7 +157,7 @@ class WalletService {
     if (!symbols.contains("ETH")) {
       symbols.add("ETH");
     }
-    return _coinMarketApi.quotes(symbols, SettingViewModel.of(context, aspect: SettingAspect.language).quoteUnitName);
+    return _coinMarketApi.quotes(symbols, SettingInheritedModel.of(context, aspect: SettingAspect.language).quoteUnitName);
   }
 
   ///

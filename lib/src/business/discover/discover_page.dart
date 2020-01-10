@@ -87,9 +87,9 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => WebViewContainer(
-                                    initUrl: focusImage.link,
-                                    title: "",
-                                  )));
+                                        initUrl: focusImage.link,
+                                        title: "",
+                                      )));
                         },
                         dotVerticalPadding: 16,
                         dotBgColor: Colors.transparent,
@@ -121,8 +121,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
                                   child: Text(S.of(context).document_optimization,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                      textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.grey)),
                                 )
                               ],
                             ),
@@ -153,7 +152,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                           padding: EdgeInsets.only(top: 16),
                           child: InkWell(
                             onTap: () async {
-                              activeDMap('encryptShare');
+                              await activeDMap('encryptShare');
                               var mapboxController =
                                   (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
 
@@ -181,7 +180,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                         children: <Widget>[
                                           Text(
                                             S.of(context).private_sharing,
-                                            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
+                                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 8.0),
@@ -240,7 +239,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                       children: <Widget>[
                                                         Text(
                                                           S.of(context).embassy_guide,
-                                                          style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
+                                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                                         ),
                                                         Padding(
                                                           padding: const EdgeInsets.only(top: 8.0),
@@ -249,8 +248,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                               Expanded(
                                                                 child: Text(
                                                                   S.of(context).global_embassies,
-                                                                  style:
-                                                                  TextStyle(color: Colors.grey, fontSize: 12),
+                                                                  style: TextStyle(color: Colors.grey, fontSize: 12),
                                                                 ),
                                                               ),
                                                             ],
@@ -295,7 +293,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                     children: <Widget>[
                                                       Text(
                                                         S.of(context).discount_map,
-                                                        style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
+                                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                                       ),
                                                       Padding(
                                                         padding: const EdgeInsets.only(top: 8.0),
@@ -342,7 +340,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                             padding: const EdgeInsets.only(top: 16.0),
                                             child: Text(
                                               S.of(context).police_security_station,
-                                              style: TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
+                                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                             ),
                                           ),
                                           Padding(
@@ -382,21 +380,21 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
     );
   }
 
-  void activeDMap(String dMapName) async {
+  Future activeDMap(String dMapName) async {
     BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
 
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {
-      var mapboxController = (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
-      await mapboxController?.disableLocation();
-
       if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
-        Future.delayed(Duration(milliseconds: 500)).then((value) {
-          mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(
-            model.dMapConfigModel.defaultLocation,
-            model.dMapConfigModel.defaultZoom,
-          ));
-        });
+        MapContainerState mapState = (Keys.mapContainerKey.currentState as MapContainerState);
+        mapState.updateMyLocationTrackingMode(MyLocationTrackingMode.None);
+        await Future.delayed(Duration(milliseconds: 300));
+
+        mapState?.mapboxMapController?.animateCamera(
+            CameraUpdate.newLatLngZoom(
+              model.dMapConfigModel.defaultLocation,
+              model.dMapConfigModel.defaultZoom,
+            ));
       }
     }
   }

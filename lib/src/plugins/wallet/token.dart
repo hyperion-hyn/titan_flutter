@@ -62,4 +62,12 @@ class SupportedTokens {
       contractAddress: '0xaebbada2bece10c84cbeac637c438cb63e1446c9',
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
+
+  static List<AssetToken> allContractTokens(bool isMainNet) {
+    if (isMainNet) {
+      return [HYN, USDT_ERC20];
+    } else {
+      return [HYN_ROPSTEN];
+    }
+  }
 }

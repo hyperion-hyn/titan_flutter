@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/global.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 
 class Map3NodeIntroductionPage extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class _Map3IntroductionState extends State<Map3NodeIntroductionPage> {
   @override
   Widget build(BuildContext context) {
     var image;
-    if (appLocale.languageCode == "zh") {
+    if (SettingInheritedModel.of(context).languageCode == 'zh') {
       image = "res/drawable/map3_node_introduction.jpeg";
     } else {
       image = "res/drawable/map3_node_introduction_en.jpg";

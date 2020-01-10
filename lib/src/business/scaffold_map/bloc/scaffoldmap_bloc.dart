@@ -111,7 +111,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           var _api = Api();
           var gaodeModel;
 
-          if (SettingViewModel.of(context, aspect: SettingAspect.area).areaModel?.isChinaMainland == true) {
+          if (SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel?.isChinaMainland == true) {
             gaodeModel =
                 await _api.searchByGaode(lat: event.center.latitude, lon: event.center.longitude, type: event.type);
           } else {
@@ -119,7 +119,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
                 lat: event.center.latitude,
                 lon: event.center.longitude,
                 type: event.stringType,
-                language: SettingViewModel.of(context, aspect: SettingAspect.language).languageCode);
+                language: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageCode);
           }
 
           yield SearchPoiByTextSuccessState(list: gaodeModel.data);

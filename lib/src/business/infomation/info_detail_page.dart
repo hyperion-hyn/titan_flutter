@@ -35,6 +35,7 @@ class _InfoDetailState extends State<InfoDetailPage> {
 
   @override
   void initState() {
+    super.initState();
     if (widget.url.isEmpty) {
       _getInfoDetail();
     }

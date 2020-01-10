@@ -3,8 +3,8 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 
 class Application {
+  // route
   static Router router;
-
   static RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   /// The global [EventBus] object.

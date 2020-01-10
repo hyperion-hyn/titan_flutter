@@ -15,9 +15,13 @@ class EtherscanApi {
     }
   }
 
-  static String getTxDetailUrl(String txHash) {
+  static String getTxDetailUrl(String txHash, bool isChinaMainland) {
+    if (isChinaMainland && WalletConfig.isMainNet) {
+      return "https://cn.etherscan.com/tx/$txHash";
+    }
+
     if (WalletConfig.isMainNet) {
-      return "https://etherscan.io/tx/$txHash";
+      return "https://cn.etherscan.io/tx/$txHash";
     } else {
       return "https://ropsten.etherscan.io/tx/$txHash";
     }

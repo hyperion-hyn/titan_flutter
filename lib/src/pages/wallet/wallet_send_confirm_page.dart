@@ -1,30 +1,34 @@
-import 'package:decimal/decimal.dart';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/routes.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
-import 'package:web3dart/credentials.dart' as web3;
 import 'package:web3dart/json_rpc.dart';
 
-import '../../pages/wallet/model/wallet_account_vo.dart';
+import '../../extension/navigator_ext.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
-  WalletAccountVo walletAccountVo;
-  final double count;
+  final CoinVo coinVo;
+  final double transferAmount;
   final String receiverAddress;
   final String backRouteName;
 
-  WalletSendConfirmPage(this.walletAccountVo, this.count, this.receiverAddress, {this.backRouteName});
+  WalletSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress, {this.backRouteName})
+      : coinVo = CoinVo.fromJson(json.decode(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -32,7 +36,7 @@ class WalletSendConfirmPage extends StatefulWidget {
   }
 }
 
-class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
+class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   double ethFee = 0.0;
   double currencyFee = 0.0;
 
@@ -45,12 +49,20 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
   int speed = EthereumConst.FAST_SPEED;
 
   @override
-  void initState() {
-    _getGasFee();
+  void onCreated() {
+    var defaultSpeed = EthereumConst.FAST_SPEED;
+    var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+    _updateSpeed(defaultSpeed, quotePrice);
   }
 
   @override
   Widget build(BuildContext context) {
+    var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+    var quoteSign = activatedQuoteSign?.sign?.sign;
+    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -58,7 +70,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
           iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           title: Text(
-            S.of(context).confirm,
+            S.of(context).transfer_confirm,
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -81,12 +93,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                           child: Text(
-                            "-${widget.count} ${widget.walletAccountVo.symbol}",
+                            "-${widget.transferAmount} ${widget.coinVo.symbol}",
                             style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ),
                         Text(
-                          "≈ ${widget.walletAccountVo.currencyUnitSymbol}${currency_format.format(widget.count * widget.walletAccountVo.currencyRate)}",
+                          "≈ $quoteSign${currency_format.format(widget.transferAmount * quotePrice)}",
                           style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
@@ -112,7 +124,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "${(widget.walletAccountVo.walletVo.keystore as KeyStore).name}(${shortEthAddress(widget.walletAccountVo.account.address)})",
+                          "${activatedWallet.wallet.keystore.name}(${shortBlockChainAddress(widget.coinVo.address)})",
                           style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
@@ -143,7 +155,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          shortEthAddress(widget.receiverAddress),
+                          shortBlockChainAddress(widget.receiverAddress),
                           style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                         ),
                       )
@@ -176,7 +188,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                           alignment: Alignment.centerLeft,
                           height: 24,
                           child: Text(
-                            "$ethFee ETH(≈${widget.walletAccountVo.currencyUnitSymbol} ${currency_format.format(currencyFee)})",
+                            "$ethFee ETH(≈ $quoteSign${currency_format.format(currencyFee)})",
                             style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                           ),
                         ),
@@ -196,7 +208,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              _speedOnTap(EthereumConst.LOW_SPEED);
+                              _updateSpeed(EthereumConst.LOW_SPEED, quotePrice);
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 12),
@@ -220,7 +232,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              _speedOnTap(EthereumConst.FAST_SPEED);
+                              _updateSpeed(EthereumConst.FAST_SPEED, quotePrice);
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 12),
@@ -244,7 +256,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              _speedOnTap(EthereumConst.SUPER_FAST_SPEED);
+                              _updateSpeed(EthereumConst.SUPER_FAST_SPEED, quotePrice);
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 12),
@@ -299,50 +311,54 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         ));
   }
 
-  void _speedOnTap(int newSpeed) {
-    speed = newSpeed;
-    setState(() {});
-    _getGasFee();
+  void _updateSpeed(int newSpeed, double price) {
+    setState(() {
+      speed = newSpeed;
+      ethFee = speed.toDouble() *
+          (widget.coinVo.contractAddress == null ? EthereumConst.ETH_GAS_LIMIT : EthereumConst.ERC20_GAS_LIMIT);
+      currencyFee = ethFee * price;
+    });
+//    _getGasFee();
   }
 
-  Future _getGasFee() async {
-    setState(() {
-      isLoadingGasFee = true;
-    });
-    var wallet = widget.walletAccountVo.walletVo;
-    var toAddress = widget.receiverAddress;
-    var contract = widget.walletAccountVo.assetToken.contractAddress;
-    var decimals = widget.walletAccountVo.assetToken.decimals;
-    var amount = widget.count;
-
-    var ethCurrencyRate = widget.walletAccountVo.ethCurrencyRate;
-
-    var erc20FunAbi;
-
-    if (widget.walletAccountVo.assetToken.contractAddress != null) {
-      erc20FunAbi = WalletUtil.getErc20FuncAbiHex(
-          erc20Address: contract,
-          funName: 'transfer',
-          params: [web3.EthereumAddress.fromHex(toAddress), ConvertTokenUnit.etherToWei(etherDouble: amount)]);
-    }
-
-    var ret = await wallet.estimateGasPrice(
-      toAddress: toAddress,
-      value: ConvertTokenUnit.etherToWei(etherDouble: amount),
-      gasPrice: BigInt.from(speed),
-      data: erc20FunAbi,
-    );
-
-    ethFee = ConvertTokenUnit.weiToDecimal(ret, decimals).toDouble();
-    currencyFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
-
-    logger.i('费率是 $ethFee eth');
-    logger.i('费率是 $currencyFee usd');
-
-    setState(() {
-      isLoadingGasFee = false;
-    });
-  }
+//  Future _getGasFee() async {
+//    setState(() {
+//      isLoadingGasFee = true;
+//    });
+//    var wallet = widget.coinVo.wallet;
+//    var toAddress = widget.receiverAddress;
+//    var contract = widget.coinVo.assetToken.contractAddress;
+//    var decimals = widget.coinVo.assetToken.decimals;
+//    var amount = widget.transferAmount;
+//
+//    var ethCurrencyRate = widget.coinVo.ethCurrencyRate;
+//
+//    var erc20FunAbi;
+//
+//    if (widget.coinVo.assetToken.contractAddress != null) {
+//      erc20FunAbi = WalletUtil.getErc20FuncAbiHex(
+//          erc20Address: contract,
+//          funName: 'transfer',
+//          params: [web3.EthereumAddress.fromHex(toAddress), ConvertTokenUnit.etherToWei(etherDouble: amount)]);
+//    }
+//
+//    var ret = await wallet.estimateGasPrice(
+//      toAddress: toAddress,
+//      value: ConvertTokenUnit.etherToWei(etherDouble: amount),
+//      gasPrice: BigInt.from(speed),
+//      data: erc20FunAbi,
+//    );
+//
+//    ethFee = ConvertTokenUnit.weiToDecimal(ret, decimals).toDouble();
+//    currencyFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
+//
+//    logger.i('费率是 $ethFee eth');
+//    logger.i('费率是 $currencyFee usd');
+//
+//    setState(() {
+//      isLoadingGasFee = false;
+//    });
+//  }
 
   Future _transfer() async {
     showModalBottomSheet(
@@ -351,7 +367,6 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         builder: (BuildContext context) {
           return EnterWalletPasswordWidget();
         }).then((walletPassword) async {
-      print("walletPassword:$walletPassword");
       if (walletPassword == null) {
         return;
       }
@@ -360,16 +375,17 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         setState(() {
           isLoading = true;
         });
-        if (widget.walletAccountVo.symbol == "ETH") {
-          await _transferEth(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.walletVo);
+        var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+        if (widget.coinVo.symbol == "ETH") {
+          await _transferEth(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
         } else {
-          await _transferErc20(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.walletVo);
+          await _transferErc20(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
         }
         Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
         if (widget.backRouteName == null) {
-          Navigator.of(context).popUntil(ModalRoute.withName("/show_account_page"));
+          Navigator.of(context).popUntilRouteName(Routes.wallet_account_detail);
         } else {
-          Navigator.of(context).popUntil(ModalRoute.withName(widget.backRouteName));
+          Navigator.of(context).popUntilRouteName(Uri.decodeComponent(widget.backRouteName));
         }
       } catch (_) {
         logger.e(_);
@@ -405,12 +421,12 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
       value: amount,
     );
 
-    logger.i('ETH交易已提交，交易hash $txHash');
+    logger.i('ETH transaction committed，txhash $txHash');
   }
 
   Future _transferErc20(String password, double etherDouble, String toAddress, Wallet wallet) async {
     var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
-    var contractAddress = widget.walletAccountVo.assetToken.contractAddress;
+    var contractAddress = widget.coinVo.contractAddress;
 
     final txHash = await wallet.sendErc20Transaction(
       contractAddress: contractAddress,
@@ -420,6 +436,6 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
       toAddress: toAddress,
     );
 
-    logger.i('HYN交易已提交，交易hash $txHash ');
+    logger.i('HYN transaction committed，txhash $txHash ');
   }
 }

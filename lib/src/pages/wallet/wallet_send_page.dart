@@ -1,28 +1,24 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
-import 'package:titan/src/pages/wallet/service/wallet_service.dart';
-import 'package:titan/src/pages/wallet/wallet_send_confirm_page.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 
 import '../../global.dart';
-import '../../pages/wallet/model/wallet_account_vo.dart';
 
 class WalletSendPage extends StatefulWidget {
-  final WalletAccountVo walletAccountVo;
-  final String receiverAddress;
-  final double count;
-  final String symbol;
-  final String currencyUnit = "CNY";
+  final CoinVo coinVo;
   final String backRouteName;
 
-  WalletSendPage(this.walletAccountVo, {this.receiverAddress, this.count, this.symbol = "HYN", this.backRouteName});
+  WalletSendPage(String coinVo, this.backRouteName) : coinVo = CoinVo.fromJson(json.decode(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -32,64 +28,18 @@ class WalletSendPage extends StatefulWidget {
 
 class _WalletSendState extends State<WalletSendPage> {
   final TextEditingController _receiverAddressController = TextEditingController();
-  final TextEditingController _countController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
 
   final _fromKey = GlobalKey<FormState>();
 
-  double amount = 0;
-
-  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.####");
-
-  WalletService _walletService = WalletService();
-
-  var walletAccountVo;
-
-  var symbol;
-  var currencyUnit;
-
-  @override
-  void initState() {
-    symbol = widget.walletAccountVo != null ? widget.walletAccountVo.symbol : widget.symbol;
-    currencyUnit = widget.walletAccountVo != null ? widget.walletAccountVo.currencyUnit : widget.currencyUnit;
-    loadData();
-    super.initState();
-  }
-
-  Future loadData() async {
-    if (widget.receiverAddress != null) {
-      _receiverAddressController.text = widget.receiverAddress;
-    }
-    if (widget.count != null) {
-      _countController.text = widget.count.toString();
-    }
-    if (mounted) {
-      setState(() {});
-    }
-    if (widget.walletAccountVo == null) {
-      WalletVo _walletVo = await _walletService.getDefaultWalletVo();
-      logger.i("walletVo:$_walletVo");
-
-      var account = _walletVo.accountList.firstWhere((accountTemp) {
-        return accountTemp.symbol == symbol;
-      }, orElse: () {
-        return null;
-      });
-      if (account == null) {
-        Fluttertoast.showToast(msg: S.of(context).account_error);
-        return;
-      }
-      walletAccountVo = account;
-    } else {
-      walletAccountVo = widget.walletAccountVo;
-    }
-
-    await _walletService.updateAccountBalance(walletAccountVo, walletAccountVo.walletVo);
-
-    setState(() {});
-  }
+  double _notionalValue = 0;
 
   @override
   Widget build(BuildContext context) {
+    var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+    var quoteSign = activatedQuoteSign?.sign?.sign;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -97,7 +47,7 @@ class _WalletSendState extends State<WalletSendPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          S.of(context).send_symbol(symbol),
+          S.of(context).send_symbol(widget.coinVo.symbol),
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -135,7 +85,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           ),
                         ),
                         InkWell(
-                          onTap: onScan,
+                          onTap: () => onScan(quotePrice),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Icon(
@@ -152,6 +102,12 @@ class _WalletSendState extends State<WalletSendPage> {
                           validator: (value) {
                             if (value.isEmpty) {
                               return S.of(context).receiver_address_not_empty_hint;
+                            } else {
+                              //TODO support more chain address regexp
+                              final RegExp _ethBasicAddress = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
+                              if (!_ethBasicAddress.hasMatch(value)) {
+                                return S.of(context).input_valid_address;
+                              }
                             }
                             return null;
                           },
@@ -168,7 +124,7 @@ class _WalletSendState extends State<WalletSendPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          S.of(context).send_count_label(symbol),
+                          S.of(context).send_count_label(widget.coinVo.symbol),
                           style: TextStyle(
                             color: Color(0xFF6D6D6D),
                             fontSize: 16,
@@ -177,9 +133,7 @@ class _WalletSendState extends State<WalletSendPage> {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            _countController.text = walletAccountVo.balance.toString();
-                            amount = double.parse(_countController.text) * walletAccountVo.currencyRate;
-                            setState(() {});
+                            _amountController.text = widget.coinVo.balance.toString();
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
@@ -205,31 +159,28 @@ class _WalletSendState extends State<WalletSendPage> {
                           if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
                             return S.of(context).input_corrent_count_hint;
                           }
-                          if (double.parse(value) > walletAccountVo.balance) {
+                          if (double.parse(value) > widget.coinVo.balance) {
                             return S.of(context).input_count_over_balance;
                           }
                           return null;
                         },
-                        controller: _countController,
+                        controller: _amountController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                         onChanged: (value) {
-                          amount = double.parse(value) * walletAccountVo.currencyRate;
-                          setState(() {});
-                        },
-                        onFieldSubmitted: (value) {
-                          amount = double.parse(_countController.text) * walletAccountVo.currencyRate;
-                          setState(() {});
+                          setState(() {
+                            _notionalValue = double.parse(value) * quotePrice;
+                          });
                         },
                       ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ $amount $currencyUnit")),
+                        Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ $_notionalValue $quoteSign")),
                       ],
                     ),
                     SizedBox(
@@ -247,7 +198,7 @@ class _WalletSendState extends State<WalletSendPage> {
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
                   disabledTextColor: Colors.white,
-                  onPressed: walletAccountVo == null ? null : submit,
+                  onPressed: widget.coinVo == null ? null : submit,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -271,37 +222,26 @@ class _WalletSendState extends State<WalletSendPage> {
 
   void submit() {
     if (_fromKey.currentState.validate()) {
-      if (walletAccountVo == null) {
-        Fluttertoast.showToast(msg: S.of(context).account_is_empty);
-        return;
-      }
-      Navigator.push(
+      var voStr = json.encode(widget.coinVo.toJson());
+      Application.router.navigateTo(
           context,
-          MaterialPageRoute(
-              builder: (context) => WalletSendConfirmPage(
-                    walletAccountVo,
-                    double.parse(_countController.text),
-                    _receiverAddressController.text,
-                    backRouteName: widget.backRouteName,
-                  )));
+          Routes.wallet_transfer_token_confirm +
+              "?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=${_receiverAddressController.text}&backRouteName=${widget.backRouteName}");
     }
   }
 
-  Future onScan() async {
+  Future onScan(double price) async {
     try {
       String barcode = await BarcodeScanner.scan();
       if (barcode.contains("ethereum")) {
-        //是imtoken的标准格式
-
+        //imtoken style address
         var barcodeArray = barcode.split("?");
-        if (barcodeArray.length >= 1) {
-          //处理地址
+        var withAddress = barcodeArray[0];
+        var address = withAddress.replaceAll("ethereum:", "");
+        _receiverAddressController.text = address;
 
-          var withAddress = barcodeArray[0];
-          var address = withAddress.replaceAll("ethereum:", "");
-          _receiverAddressController.text = address;
-
-          //处理value
+        //handle params
+        if (barcodeArray.length > 1) {
           var withValue = barcodeArray[1];
           var valuesArray = withValue.split("&");
           var valueMap = Map();
@@ -311,27 +251,23 @@ class _WalletSendState extends State<WalletSendPage> {
           });
           var value = valueMap["value"];
           var decimal = valueMap["decimal"];
-          if (double.parse(value) > 0) {
-            _countController.text = (double.parse(value) / (pow(10, int.parse(decimal)))).toString();
-            amount = double.parse(_countController.text) * walletAccountVo.currencyRate;
+          if (value != null && decimal != null && double.parse(value) > 0) {
+            var transferSize = (double.parse(value) / (pow(10, int.parse(decimal))));
+            _amountController.text = transferSize.toString();
+            setState(() {
+              _notionalValue = transferSize * price;
+            });
           }
-        } else {
-          var address = barcode.replaceAll("ethereum:", "");
-          _receiverAddressController.text = address;
-          _countController.text = "";
         }
       } else {
         _receiverAddressController.text = barcode;
-        _countController.text = "";
       }
-
-      setState(() => {});
     } catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         Fluttertoast.showToast(msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
       } else {
-        logger.e("", e);
-        setState(() => _receiverAddressController.text = "");
+        logger.e(e);
+        _receiverAddressController.text = "";
       }
     }
   }
@@ -342,6 +278,5 @@ class _WalletSendState extends State<WalletSendPage> {
       return;
     }
     _receiverAddressController.text = text.text;
-    setState(() {});
   }
 }

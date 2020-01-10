@@ -43,7 +43,7 @@ class _QuotesManagerState extends State<_QuotesManager> {
         if (state is UpdatedQuotesSignState) {
           _quotesSign = state.sign;
         }
-        return QuotesViewModel(
+        return QuotesInheritedModel(
           quotesModel: _quotesModel,
           activeQuotesSign: _quotesSign,
           child: widget.child,
@@ -55,39 +55,39 @@ class _QuotesManagerState extends State<_QuotesManager> {
 
 enum QuotesAspect { quote, sign }
 
-class QuotesViewModel extends InheritedModel<QuotesAspect> {
+class QuotesInheritedModel extends InheritedModel<QuotesAspect> {
   final QuotesModel quotesModel;
   final QuotesSign activeQuotesSign;
 
-  QuotesViewModel({
+  QuotesInheritedModel({
     this.quotesModel,
     this.activeQuotesSign,
     Key key,
     @required Widget child,
   }) : super(key: key, child: child);
 
-  SymbolQuote currentSymbolQuote(String symbol) {
+  ActiveQuoteVoAndSign activatedQuoteVoAndSign(String symbol) {
     if (quotesModel != null && activeQuotesSign != null) {
       for (var quote in quotesModel.quotes) {
         if (quote.symbol == symbol) {
-          return SymbolQuote(quoteVo: quote, sign: activeQuotesSign);
+          return ActiveQuoteVoAndSign(quoteVo: quote, sign: activeQuotesSign);
         }
       }
     }
     return null;
   }
 
-  static QuotesViewModel of(BuildContext context, {QuotesAspect aspect}) {
-    return InheritedModel.inheritFrom<QuotesViewModel>(context, aspect: aspect);
+  static QuotesInheritedModel of(BuildContext context, {QuotesAspect aspect}) {
+    return InheritedModel.inheritFrom<QuotesInheritedModel>(context, aspect: aspect);
   }
 
   @override
-  bool updateShouldNotify(QuotesViewModel oldWidget) {
+  bool updateShouldNotify(QuotesInheritedModel oldWidget) {
     return quotesModel != oldWidget.quotesModel || activeQuotesSign != oldWidget.activeQuotesSign;
   }
 
   @override
-  bool updateShouldNotifyDependent(QuotesViewModel oldWidget, Set<QuotesAspect> dependencies) {
+  bool updateShouldNotifyDependent(QuotesInheritedModel oldWidget, Set<QuotesAspect> dependencies) {
     return (quotesModel != oldWidget.quotesModel && dependencies.contains(QuotesAspect.quote) ||
         activeQuotesSign != oldWidget.activeQuotesSign && dependencies.contains(QuotesAspect.sign));
   }

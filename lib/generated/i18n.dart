@@ -75,6 +75,8 @@ class S implements WidgetsLocalizations {
   String get data_contrebution_with_hyn_wallet_tips => "Data contribution requires a HYN wallet address. Please create or import a HYN wallet first.";
   String get data_contribute => "Data Contribution";
   String get data_contribute_reward => "Contribute your map data";
+  String get data_position_adding => "Pending";
+  String get data_save => "Save";
   String get decrypt_location_cipher_tips => "How to decipher coded location information？";
   String get decrypt_location_cipher_tips_context => "Please paste the location code, and click enter to decode.";
   String get delete => "Delete";
@@ -133,6 +135,7 @@ class S implements WidgetsLocalizations {
   String get input_password_again_hint => "Please re-enter the password";
   String get input_resume_mnemonic => "Enter backup mnemonics separated by spaces";
   String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
+  String get input_valid_address => "Please enter a valid recipient address";
   String get input_wallet_name_hint => "Please input wallet name";
   String get input_wallet_name_length_hint => "Name must be within 6 characters";
   String get input_wallet_password_length_hint => "Wallet password must be at least 6 characters";
@@ -277,6 +280,7 @@ class S implements WidgetsLocalizations {
   String get tips => "Tips";
   String get titan_encrypted_map_ecology => "Titan Cryptographic Map Ecology";
   String get toilet => "Toilet";
+  String get transfer_confirm => "Transfer confirmation";
   String get transfer_fail => "Transfer failed";
   String get transfer_submitted => "The transfer has been submitted";
   String get twitterhyperion => "Twitter-Hyperion";
@@ -457,6 +461,8 @@ class $ko extends S {
   @override
   String get app_version => "어플버전";
   @override
+  String get input_valid_address => "유효한 수취인 주소를 입력하십시오";
+  @override
   String get extract_mnemonic_fail => "도움말 불러오기 실패";
   @override
   String get language => "언어";
@@ -478,6 +484,8 @@ class $ko extends S {
   String get search_title => "검색/디코딩";
   @override
   String get hyn_price => "HYN 지수";
+  @override
+  String get data_save => "스토어";
   @override
   String get nav_share_app => "App 공유";
   @override
@@ -775,6 +783,8 @@ class $ko extends S {
   @override
   String get scan_name_wifi => "와이파이";
   @override
+  String get transfer_confirm => "전송 확인";
+  @override
   String get save_mnemonic_safe_notice => "복원 단어를 그 누구와도 공유하지 말고 안전하게 저장하십시오!";
   @override
   String get service_hours => "서비스시간";
@@ -876,6 +886,8 @@ class $ko extends S {
   String get data_contrebution_with_hyn_wallet_tips => "데이터 기여는 HYN 주소가 필요합니다. 먼저 HYN 지갑을 만드거나 가져오십시오.";
   @override
   String get scan_exit_tips => "스캔 진행 중, 종료 확인?";
+  @override
+  String get data_position_adding => "추가";
   @override
   String get import_account_success => "계정 가져오기 성공";
   @override
@@ -1061,6 +1073,8 @@ class $zh_CN extends S {
   @override
   String get app_version => "版本";
   @override
+  String get input_valid_address => "请输入合法的接收者地址";
+  @override
   String get extract_mnemonic_fail => "提取助记词失败";
   @override
   String get language => "语言";
@@ -1082,6 +1096,8 @@ class $zh_CN extends S {
   String get search_title => "搜索 / 解码";
   @override
   String get hyn_price => "HYN指数";
+  @override
+  String get data_save => "存储";
   @override
   String get nav_share_app => "分享App";
   @override
@@ -1379,6 +1395,8 @@ class $zh_CN extends S {
   @override
   String get scan_name_wifi => "WiFi";
   @override
+  String get transfer_confirm => "转账确认";
+  @override
   String get save_mnemonic_safe_notice => "永远不要与任何人共享恢复短语，安全的存储它！";
   @override
   String get service_hours => "服务时间";
@@ -1480,6 +1498,8 @@ class $zh_CN extends S {
   String get data_contrebution_with_hyn_wallet_tips => "数据贡献需要有HYN地址，请先创建 或导入HYN钱包。";
   @override
   String get scan_exit_tips => "正在扫描中，确认退出吗?";
+  @override
+  String get data_position_adding => "添加中";
   @override
   String get import_account_success => "账户导入成功";
   @override

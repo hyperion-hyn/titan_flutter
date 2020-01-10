@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/pages/wallet/service/wallet_service.dart';
-import 'package:titan/src/global.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/config/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
-import '../../pages/wallet/event_bus_event.dart';
-
-class FinishCreatePage extends StatefulWidget {
-  Wallet wallet;
+class FinishCreatePage extends StatelessWidget {
+  final Wallet wallet;
 
   FinishCreatePage(this.wallet);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _FinishCreateState();
-  }
-}
-
-class _FinishCreateState extends State<FinishCreatePage> {
-  WalletService _walletService = WalletService();
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +19,8 @@ class _FinishCreateState extends State<FinishCreatePage> {
             builder: (BuildContext context) {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: (){
-                  if (createWalletPopUtilName == null) {
-                    eventBus.fire(ReScanWalletEvent());
-                    Navigator.of(context).popUntil((r) => r.isFirst);
-                  } else {
-                    Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                    createWalletPopUtilName = null;
-                  }
+                onPressed: () {
+                  Routes.popUntilCreateOrImportWalletEntryRoute(context, wallet);
                 },
               );
             },
@@ -85,16 +69,9 @@ class _FinishCreateState extends State<FinishCreatePage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () async {
-                      var walletVo = await _walletService.buildWalletVo(widget.wallet);
-                      await _walletService.saveDefaultWalletVo(walletVo);
-                      await _walletService.saveDefaultWalletFileName(widget.wallet.keystore.fileName);
-                      if (createWalletPopUtilName == null) {
-                        eventBus.fire(ReScanWalletEvent());
-                        Navigator.of(context).popUntil((r) => r.isFirst);
-                      } else {
-                        Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                        createWalletPopUtilName = null;
-                      }
+                      BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+
+                      Routes.popUntilCreateOrImportWalletEntryRoute(context, wallet);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

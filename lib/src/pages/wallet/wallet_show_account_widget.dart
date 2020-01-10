@@ -1,34 +1,41 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
-import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
+import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/pages/wallet/etherscan_api.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/routes.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
-import 'package:titan/src/pages/wallet/service/wallet_service.dart';
 import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_page.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/utils/wallet_icon_utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
-import '../../pages/wallet/model/wallet_account_vo.dart';
+import 'api/etherscan_api.dart';
 
 class ShowAccountPage extends StatefulWidget {
   final CoinVo coinVo;
 
-  ShowAccountPage(this.coinVo);
+  ShowAccountPage(String coinVo) : coinVo = CoinVo.fromJson(json.decode(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -37,14 +44,9 @@ class ShowAccountPage extends StatefulWidget {
 }
 
 class _ShowAccountPageState extends DataListState<ShowAccountPage> {
-  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.####");
-
-  static NumberFormat token_format = new NumberFormat("#,###.####");
-
   DateFormat dateFormat = new DateFormat("yyyy/MM/dd");
 
   AccountTransferService _accountTransferService = AccountTransferService();
-  WalletService _walletService = WalletService();
 
   @override
   int getStartPage() {
@@ -53,19 +55,22 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
 
   @override
   void postFrameCallBackAfterInitState() async {
-//    updateAccountBalace();
     loadDataBloc.add(LoadingEvent());
   }
 
   @override
   Widget build(BuildContext context) {
+    //activated quote sign
+    ActiveQuoteVoAndSign activeQuoteVoAndSign =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.white),
           title: Text(
-            "${widget.walletAccountVo.name} (${widget.walletAccountVo.symbol})",
+            "${widget.coinVo.name} (${widget.coinVo.symbol})",
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -92,19 +97,17 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                               border: Border.all(color: Color(0xFF9B9B9B), width: 0),
                               shape: BoxShape.circle,
                             ),
-                            child: Image.asset(
-                              WalletIconUtils.getIcon(widget.walletAccountVo.symbol),
-                            ),
+                            child: Image.asset(widget.coinVo.logo),
                           ),
                         ),
                         Text(
-                          "${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.balance)} ${widget.walletAccountVo.symbol}",
+                          "${WalletInheritedModel.formatPrice(widget.coinVo.balance)} ${widget.coinVo.symbol}",
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "≈${widget.walletAccountVo.currencyUnitSymbol} ${DOUBLE_NUMBER_FORMAT.format(widget.walletAccountVo.amount)}",
+                            "≈${activeQuoteVoAndSign?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(widget.coinVo.balance * activeQuoteVoAndSign?.quoteVo?.price)}",
                             style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                           ),
                         ),
@@ -123,10 +126,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                               children: <Widget>[
                                 InkWell(
                                   onTap: () {
-                                    Navigator.push(
+                                    var backRouteName =
+                                        ModalRoute.of(context).settings?.name ?? Routes.wallet_account_detail;
+                                    Application.router.navigateTo(
                                         context,
-                                        MaterialPageRoute(
-                                            builder: (context) => WalletSendPage(widget.walletAccountVo)));
+                                        Routes.wallet_account_send_transaction +
+                                            '?coinVo=${json.encode(widget.coinVo.toJson())}&backRouteName=${Uri.encodeComponent(backRouteName)}');
                                   },
                                   child: Row(
                                     children: <Widget>[
@@ -155,10 +160,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 VerticalDivider(),
                                 InkWell(
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => WalletReceivePage(widget.walletAccountVo)));
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) => WalletReceivePage(widget.coinVo)));
                                   },
                                   child: Row(
                                     children: <Widget>[
@@ -189,7 +192,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                   builder: (BuildContext context) {
                                     return InkWell(
                                       onTap: () {
-                                        Clipboard.setData(ClipboardData(text: widget.walletAccountVo.account.address));
+                                        Clipboard.setData(ClipboardData(text: widget.coinVo.address));
                                         Scaffold.of(context)
                                             .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
                                       },
@@ -232,17 +235,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                       shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
                         if (index == 0) {
-                          return SizedBox(
-                            height: 0,
-                            width: 0,
-                          );
+                          return SizedBox.shrink();
                         } else {
-                          var currentTranstionDetail = dataList[index];
-                          TransactionDetailVo lastTranstionDetail = null;
+                          var currentTransactionDetail = dataList[index];
+                          TransactionDetailVo lastTransactionDetail;
                           if (index > 1) {
-                            lastTranstionDetail = dataList[index - 1];
+                            lastTransactionDetail = dataList[index - 1];
                           }
-                          return _buildTransactionItem(context, currentTranstionDetail, lastTranstionDetail);
+                          return _buildTransactionItem(context, currentTransactionDetail, lastTransactionDetail);
                         }
                       },
                       itemCount: max<int>(0, dataList.length),
@@ -253,43 +253,46 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   }
 
   Widget _buildTransactionItem(
-      BuildContext context, TransactionDetailVo transtionDetail, TransactionDetailVo lastTranstionDetail) {
-    var iconData = null;
+    BuildContext context,
+    TransactionDetailVo transactionDetail,
+    TransactionDetailVo lastTransactionDetail,
+  ) {
+    var iconData;
     var title = "";
     var account = "";
-    var amountColor = null;
-    var amountText = null;
-    if (transtionDetail.type == TranstionType.TRANSFER_IN) {
+    var amountColor;
+    var amountText = "${WalletInheritedModel.formatPrice(transactionDetail.amount)} ${transactionDetail.unit}";
+    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconData = ExtendsIconFont.receiver;
       title = S.of(context).received;
-      account = "From:" + shortEthAddress(transtionDetail.fromAddress);
-      amountColor = HexColor("#FF259B24");
-      amountText = "+ ${token_format.format(transtionDetail.amount)} ${transtionDetail.unit}";
-    } else if (transtionDetail.type == TranstionType.TRANSFER_OUT) {
+      account = "From:" + shortBlockChainAddress(transactionDetail.fromAddress);
+      if (transactionDetail.amount > 0) {
+        amountColor = HexColor("#FF259B24");
+        amountText = '+ $amountText';
+      }
+    } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconData = ExtendsIconFont.send;
       title = S.of(context).sent;
-      account = "To:" + shortEthAddress(transtionDetail.toAddress);
+      account = "To:" + shortBlockChainAddress(transactionDetail.toAddress);
 
-      amountColor = HexColor("#FFE51C23");
-      amountText = "- ${token_format.format(transtionDetail.amount)} ${transtionDetail.unit}";
+      if (transactionDetail.amount > 0) {
+        amountColor = HexColor("#FFE51C23");
+        amountText = '- $amountText';
+      }
     }
 
-    var hynContractAddress = "";
-
-    if (WalletConfig.isMainNet) {
-      hynContractAddress = "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07";
-    } else {
-      hynContractAddress = "0xaebbada2bece10c84cbeac637c438cb63e1446c9";
-    }
-    if (transtionDetail.toAddress.toLowerCase() == hynContractAddress.toLowerCase()) {
+    if (SupportedTokens.allContractTokens(WalletConfig.isMainNet)
+        .map((token) => token.contractAddress.toLowerCase())
+        .toList()
+        .contains(transactionDetail.toAddress.toLowerCase())) {
       title = S.of(context).contract_call;
     }
 
-    var time = dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transtionDetail.time));
-    var lastTranstionTime = lastTranstionDetail != null
-        ? dateFormat.format(DateTime.fromMillisecondsSinceEpoch(lastTranstionDetail.time))
+    var time = dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
+    var lastTransactionTime = lastTransactionDetail != null
+        ? dateFormat.format(DateTime.fromMillisecondsSinceEpoch(lastTransactionDetail.time))
         : null;
-    var isShowTime = lastTranstionTime != time;
+    var isShowTime = lastTransactionTime != time;
 
     return Column(
       children: <Widget>[
@@ -307,15 +310,16 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
               )),
         InkWell(
           onTap: () {
-//            var url = EtherscanApi.getTxDetailUrl(transtionDetail.hash);
-//            print("txUrl:$url");
-//            Navigator.push(
-//                context,
-//                MaterialPageRoute(
-//                    builder: (context) => InfoDetailPage(
-//                          url: url,
-//                          title: "交易详情",
-//                        )));
+            var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
+            var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+            print("txUrl:$url");
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => WebViewContainer(
+                          initUrl: url,
+                          title: '',
+                        )));
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -375,33 +379,22 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Future<List<dynamic>> onLoadData(int page) async {
-    updateAccountBalace();
     var retList = [];
     if (page == getStartPage()) {
       retList.add('header');
+
+      //update balance
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent(symbol: widget.coinVo.symbol));
     }
 
-    List<TransactionDetailVo> trasferList = [];
-
+    List<TransactionDetailVo> transferList = [];
     try {
-      trasferList = await _accountTransferService.getTransferList(widget.walletAccountVo, page);
-    } catch (_) {
-      logger.e(_);
+      transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
+    } catch (e) {
+      logger.e(e);
     }
-    retList.addAll(trasferList);
+    retList.addAll(transferList);
     return retList;
   }
-
-  Future<void> updateAccountBalace() async {
-    await _walletService.updateAccountVo(widget.walletAccountVo);
-    setState(() {});
-  }
 }
-
-class Refresh {}

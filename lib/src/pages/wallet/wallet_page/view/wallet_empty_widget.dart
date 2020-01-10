@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/pages/wallet/wallet_import_account_page.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/routes.dart';
 
-import '../../wallet_create_new_account_page.dart';
-
-class EmptyWallet extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _EmptyWalletState();
-  }
-}
-
-class _EmptyWalletState extends State<EmptyWallet> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class EmptyWalletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -53,7 +40,7 @@ class _EmptyWalletState extends State<EmptyWallet> {
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                  Application.router.navigateTo(context, Routes.wallet_create + '?entryRouteName=${Routes.root}');
                 },
                 child: Container(
                   child: Padding(
@@ -73,7 +60,8 @@ class _EmptyWalletState extends State<EmptyWallet> {
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                    Application.router.navigateTo(
+                        context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
                   },
                   child: Container(
                     child: Padding(

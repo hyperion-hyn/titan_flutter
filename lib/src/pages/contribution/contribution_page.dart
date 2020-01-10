@@ -6,25 +6,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
+import 'package:titan/src/business/home/contribution_finish_page.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
-import 'package:titan/src/pages/wallet/service/wallet_service.dart';
-import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/business/wallet/model/wallet_vo.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import 'package:titan/src/utils/scan_util.dart';
 import '../../global.dart';
-import '../../business/webview/webview.dart';
+import '../webview/webview.dart';
 import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
-import '../../pages/contribution/contribution_finish_page.dart';
+import 'contribution_finish_page.dart';
 
-const _default_map_location = LatLng(23.106541, 113.324827);
+const _default_map_location = LatLng(23.10904, 113.31904);
 
 class ContributionPage extends StatefulWidget {
   final LatLng initLocation;
@@ -75,6 +76,7 @@ class _ContributionState extends State<ContributionPage> {
   bool isVisibleWiFi = false;
   bool isVisibleToast = false;
   var _isAcceptSignalProtocol = true;
+  var _themeColor = HexColor("#0F95B0");
   var _currentScanType = SensorType.GNSS;
 
   @override
@@ -82,7 +84,6 @@ class _ContributionState extends State<ContributionPage> {
     super.initState();
 
     userPosition = widget.initLocation ?? _default_map_location;
-    //print('[initState] , userPosition:${userPosition}');
 
     sensorPlugin = SensorPlugin();
     initSensorChangeCallBack();
@@ -122,6 +123,7 @@ class _ContributionState extends State<ContributionPage> {
       case SensorType.WIFI:
         {
           //print('[contribution] -->_blocBuild___wifi');
+
           if (Platform.isIOS) {
           } else {
             ScanUtils.addValuesToList(values, wifiList, "bssid");
@@ -167,8 +169,7 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   void initScanner() async {
-//    userPosition =
-//        await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
+//    userPosition = widget.initLocation ?? _default_map_location;
     await sensorPlugin.init();
   }
 
@@ -177,7 +178,7 @@ class _ContributionState extends State<ContributionPage> {
 
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
     var timeStep = duration / (defaultZoom - minZoom + 1);
-    var timerObservable = Stream.periodic(Duration(milliseconds: 500), (x) => x);
+    var timerObservable = Observable.periodic(Duration(milliseconds: 500), (x) => x);
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
 
@@ -239,30 +240,30 @@ class _ContributionState extends State<ContributionPage> {
       item = 1.0 / 3.0;
 
       if (value > 0 && value < 1.0 * item) {
-        _currentScanType = SensorType.GPS;
+        _currentScanType = SensorType.CELLULAR;
       } else if (value >= 1.0 * item && value < 2.0 * item) {
         _currentScanType = SensorType.BLUETOOTH;
       } else if (value >= 2.0 * item && value < 1.0) {
-        _currentScanType = SensorType.CELLULAR;
+        _currentScanType = SensorType.GPS;
       }
     } else {
       item = 1.0 / 4.0;
 
       if (value > 0 && value < 1.0 * item) {
-        _currentScanType = SensorType.GPS;
+        _currentScanType = SensorType.WIFI;
       } else if (value >= 1.0 * item && value < 2.0 * item) {
         _currentScanType = SensorType.CELLULAR;
       } else if (value >= 2.0 * item && value < 3.0 * item) {
         _currentScanType = SensorType.BLUETOOTH;
       } else if (value >= 3.0 * item && value < 1.0) {
-        _currentScanType = SensorType.WIFI;
+        _currentScanType = SensorType.GPS;
       }
     }
   }
 
   List _getStatusDataList() {
     var dataList = List();
-    String signalName = S.of(context).scan_ing_func(SensorType.getScanName(context, _currentScanType));
+    String signalName = S.of(context).scan_ing_func(SensorType.getScanName(_currentScanType));
 
     if (_isFinishScan) {
       signalName = S.of(context).scan_finish;
@@ -319,39 +320,41 @@ class _ContributionState extends State<ContributionPage> {
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
-      body: StreamBuilder<double>(
-          stream: progressStreamController.stream,
-          builder: (context, snapshot) {
-            return Center(
-              child: Stack(
-                fit: StackFit.expand,
-                alignment: Alignment.center,
-                children: <Widget>[
-                  _mapView(),
-                  RadarScan(),
-                  _buildStatusListView(),
-                  Positioned(
-                    child: SizedBox(
-                      height: 3,
-                      child: LinearProgressIndicator(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        value: snapshot?.data ?? 0.0,
-                        valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+      body: Stack(
+        children: <Widget>[
+          _mapView(),
+          RadarScan(),
+          StreamBuilder<double>(
+              stream: progressStreamController.stream,
+              builder: (context, snapshot) {
+                return Stack(
+                  fit: StackFit.expand,
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    _buildStatusListView(),
+                    Positioned(
+                      child: SizedBox(
+                        height: 3,
+                        child: LinearProgressIndicator(
+                          backgroundColor: _themeColor,
+                          value: snapshot?.data ?? 0.0,
+                          valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                        ),
                       ),
+                      top: 0,
+                      left: 0,
+                      right: 0,
                     ),
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                  ),
-                  Image.asset(
-                    'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
-                    scale: 2,
-                  ),
-                  _confirmView(),
-                ],
-              ),
-            );
-          }),
+                    Image.asset(
+                      'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
+                      scale: 2,
+                    ),
+                    _confirmView(),
+                  ],
+                );
+              }),
+        ],
+      ),
     );
   }
 
@@ -413,7 +416,7 @@ class _ContributionState extends State<ContributionPage> {
                     children: <Widget>[
                       Checkbox(
                         value: _isAcceptSignalProtocol,
-                        activeColor: Theme.of(context).accentColor, //选中时的颜色
+                        activeColor: _themeColor, //选中时的颜色
                         onChanged: (value) {
                           setState(() {
                             _isAcceptSignalProtocol = value;
@@ -504,7 +507,6 @@ class _ContributionState extends State<ContributionPage> {
       style = "https://static.hyn.space/maptiles/fiord-color.json";
     }
 
-    //print('[_mapView] ,userPosition: ${userPosition}');
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(

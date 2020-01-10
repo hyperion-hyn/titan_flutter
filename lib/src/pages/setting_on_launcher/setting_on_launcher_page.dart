@@ -60,7 +60,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                     onChanged: (value) {
                       BlocProvider.of<SettingBloc>(context).add(UpdateLanguageEvent(languageModel: value));
                     },
-                    value: SettingViewModel.of(context, aspect: SettingAspect.language).languageModel,
+                    value: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel,
                   ),
                 ),
               ],
@@ -75,7 +75,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
             ListView(
               shrinkWrap: true,
               children: SupportedArea.all(context).map((area) {
-                if (area == SettingViewModel.of(context, aspect: SettingAspect.area).areaModel) {
+                if (area == SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel) {
                   _currentArea = area;
                 }
                 return RadioListTile<AreaModel>(
@@ -88,7 +88,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                     BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: value));
                     _currentArea = value;
                   },
-                  groupValue: SettingViewModel.of(context, aspect: SettingAspect.area).areaModel,
+                  groupValue: SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel,
                 );
               }).toList(),
             ),

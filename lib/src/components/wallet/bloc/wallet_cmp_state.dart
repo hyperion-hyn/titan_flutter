@@ -20,8 +20,6 @@ class InitialWalletCmpState extends WalletCmpState {}
 
 class LoadingWalletState extends WalletCmpState {}
 
-class LoadWalletEmptyState extends WalletCmpState {}
-
 class LoadWalletFailState extends WalletCmpState {}
 
 class ActivatedWalletState extends WalletVoAwareCmpState {
@@ -30,4 +28,6 @@ class ActivatedWalletState extends WalletVoAwareCmpState {
 
 class UpdatingWalletBalanceState extends WalletCmpState {}
 
-class UpdatedWalletBalanceState extends WalletCmpState {}
+class UpdatedWalletBalanceState extends WalletVoAwareCmpState {
+  UpdatedWalletBalanceState({WalletVo walletVo}) : super(walletVo: walletVo);
+}

@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import 'bloc.dart';
 import '../../../global.dart';
@@ -25,31 +22,30 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   @override
   Stream<WalletCmpState> mapEventToState(WalletCmpEvent event) async* {
     if (event is ActiveWalletEvent) {
-      _activatedWalletVo = event.walletVo;
+      if (event.wallet == null) {
+        _activatedWalletVo = null;
+      } else {
+        _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
+      }
 
-      await walletRepository.saveDefaultWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
+      await walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
-      yield ActivatedWalletState(walletVo: event.walletVo);
+      yield ActivatedWalletState(walletVo: _activatedWalletVo);
     } else if (event is UpdateActivatedWalletBalanceEvent) {
       if (_activatedWalletVo != null) {
         yield UpdatingWalletBalanceState();
 
-        await walletRepository.updateWalletVoBalance(_activatedWalletVo);
+        await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
 
-        yield UpdatedWalletBalanceState();
+        yield UpdatedWalletBalanceState(walletVo: _activatedWalletVo);
       }
-    } else if (event is FindBestWalletAndActiveEvent) {
+    } else if (event is LoadLocalDiskWalletAndActiveEvent) {
       yield LoadingWalletState();
 
       try {
-        var wallet = await walletRepository.getLocalDiskWallet();
-        if (wallet != null) {
-          WalletVo walletVo = walletToWalletCoinsVo(wallet);
-          //now active loaded wallet_vo
-          add(ActiveWalletEvent(walletVo: walletVo));
-        } else {
-          yield LoadWalletEmptyState();
-        }
+        var wallet = await walletRepository.getActivatedWalletFormLocalDisk();
+        //now active loaded wallet_vo. tips: maybe null
+        add(ActiveWalletEvent(wallet: wallet));
       } catch (e) {
         logger.e(e);
 
@@ -58,6 +54,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     }
   }
 
+  /// flat wallet accounts
   WalletVo walletToWalletCoinsVo(Wallet wallet) {
     List<CoinVo> coins = [];
     for (var account in wallet.accounts) {

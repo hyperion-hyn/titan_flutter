@@ -5,22 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 
-import '../../pages/wallet/model/wallet_account_vo.dart';
+class WalletReceivePage extends StatelessWidget {
+  final CoinVo coinVo;
 
-class WalletReceivePage extends StatefulWidget {
-  final WalletAccountVo walletAccountVo;
+  WalletReceivePage(this.coinVo);
 
-  WalletReceivePage(this.walletAccountVo);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _WalletReceiveState();
-  }
-}
-
-class _WalletReceiveState extends State<WalletReceivePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +22,7 @@ class _WalletReceiveState extends State<WalletReceivePage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          S.of(context).receiver_symbol(widget.walletAccountVo.symbol),
+          S.of(context).receiver_symbol(coinVo.symbol),
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -51,14 +43,14 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     QrImage(
-                      data: widget.walletAccountVo.account.address,
+                      data: coinVo.address,
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.grey[800],
                       version: 4,
                       size: 180,
                     ),
                     Text(
-                      widget.walletAccountVo.account.address,
+                      coinVo.address,
                       softWrap: true,
                       style: TextStyle(color: Colors.grey[500], fontSize: 16),
                     )
@@ -78,7 +70,7 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                     builder: (BuildContext context) {
                       return InkWell(
                         onTap: () {
-                          Clipboard.setData(ClipboardData(text: widget.walletAccountVo.account.address));
+                          Clipboard.setData(ClipboardData(text: coinVo.address));
                           Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
                         },
                         child: Row(
@@ -109,8 +101,7 @@ class _WalletReceiveState extends State<WalletReceivePage> {
                   ),
                   InkWell(
                     onTap: () {
-                      Share.text(S.of(context).my_symbol_address(widget.walletAccountVo.symbol),
-                          widget.walletAccountVo.account.address, "text/plain");
+                      Share.text(S.of(context).my_symbol_address(coinVo.symbol), coinVo.address, "text/plain");
                     },
                     child: Row(
                       children: <Widget>[

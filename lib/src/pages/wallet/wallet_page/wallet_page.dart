@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
+import 'package:titan/src/components/quotes/bloc/quotes_cmp_bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
-import 'bloc/bloc.dart';
 
 class WalletPage extends StatefulWidget {
   @override
@@ -49,12 +52,17 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
   @override
   void initState() {
     super.initState();
+
+    //update quotes
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
+    //update all coin balance
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     //hyn quote
-    SymbolQuote hynQuote = QuotesViewModel.of(context).currentSymbolQuote('HYN');
+    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
 
     return Column(
       children: <Widget>[
@@ -87,7 +95,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
                     Spacer(),
                     //quote
                     Text(
-                      '${hynQuote != null ? '${hynQuote.quoteVo.price} ${hynQuote.sign.sign}' : '--'}',
+                      '${hynQuoteSign != null ? '${hynQuoteSign.quoteVo.price} ${hynQuoteSign.sign.sign}' : '--'}',
                       style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ],
@@ -101,22 +109,24 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
   }
 
   Widget _buildWalletView(BuildContext context) {
-    return BlocBuilder<WalletPageBloc, WalletPageState>(
-      builder: (BuildContext context, WalletPageState state) {
-        if (state is EmptyWallet) {
-          return EmptyWallet();
-        } else if (state is WalletLoadedState) {
-          return ShowWalletView(state.walletVo);
-        } else if (state is LoadingWalletState) {
-          return buildLoading(context);
-        } else {
-          return Container();
+    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    if (activatedWalletVo != null) {
+      return ShowWalletView(activatedWalletVo);
+    }
+
+    return BlocBuilder<WalletCmpBloc, WalletCmpState>(
+      builder: (BuildContext context, WalletCmpState state) {
+        switch (state.runtimeType) {
+          case LoadingWalletState:
+            return loadingView(context);
+          default:
+            return EmptyWalletView();
         }
       },
     );
   }
 
-  Widget buildLoading(context) {
+  Widget loadingView(context) {
     return Center(
       child: SizedBox(
         height: 40,

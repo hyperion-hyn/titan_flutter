@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 
 abstract class WalletCmpEvent extends Equatable {
   const WalletCmpEvent();
@@ -9,14 +9,19 @@ abstract class WalletCmpEvent extends Equatable {
 }
 
 class ActiveWalletEvent extends WalletCmpEvent {
-  final WalletVo walletVo;
+  final Wallet wallet;
 
-  ActiveWalletEvent({this.walletVo});
+  ActiveWalletEvent({this.wallet});
 
   @override
-  List<Object> get props => [walletVo];
+  List<Object> get props => [wallet];
 }
 
-class FindBestWalletAndActiveEvent extends WalletCmpEvent {}
+class LoadLocalDiskWalletAndActiveEvent extends WalletCmpEvent {}
 
-class UpdateActivatedWalletBalanceEvent extends WalletCmpEvent {}
+class UpdateActivatedWalletBalanceEvent extends WalletCmpEvent {
+  ///only update the symbol balance? or null for all coin balance.
+  final String symbol;
+
+  UpdateActivatedWalletBalanceEvent({this.symbol});
+}

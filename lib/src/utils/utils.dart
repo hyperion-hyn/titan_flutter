@@ -26,7 +26,7 @@ String getExpiredTimeShowTip(BuildContext context, int expireTime) {
   }
 }
 
-String shortEthAddress(String address) {
+String shortBlockChainAddress(String address) {
   if (address == null || address == "") {
     return "";
   }

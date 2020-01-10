@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
+import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 
 import 'bloc/bloc.dart';
@@ -37,27 +40,74 @@ class _WalletManager extends StatefulWidget {
 class _WalletManagerState extends State<_WalletManager> {
   WalletVo _activatedWallet;
 
+  QuotesModel _quoteModel;
+  QuotesSign _quotesSign;
+
   @override
   void initState() {
     super.initState();
 
     //load default wallet
-    BlocProvider.of<WalletCmpBloc>(context).add(FindBestWalletAndActiveEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WalletCmpBloc, WalletCmpState>(
-      builder: (BuildContext context, WalletCmpState state) {
-        if (state is ActivatedWalletState) {
-          _activatedWallet = state.walletVo;
+    return BlocListener<QuotesCmpBloc, QuotesCmpState>(
+      listener: (context, state) {
+        //update WalletVo total balance
+        if (state is UpdatedQuotesState || state is UpdatedQuotesSignState) {
+          if (state is UpdatedQuotesState) {
+            _quoteModel = state.quoteModel;
+          } else if (state is UpdatedQuotesSignState) {
+            _quotesSign = state.sign;
+          }
+          if (_activatedWallet != null) {
+            var balance = _calculateTotalBalance(_activatedWallet);
+            setState(() {
+              this._activatedWallet = this._activatedWallet.copyWith(WalletVo(balance: balance));
+            });
+          }
         }
-        return WalletViewModel(
-          activatedWallet: _activatedWallet,
-          child: widget.child,
-        );
       },
+      child: BlocBuilder<WalletCmpBloc, WalletCmpState>(
+        builder: (BuildContext context, WalletCmpState state) {
+          if (state is WalletVoAwareCmpState) {
+            _activatedWallet = state.walletVo;
+            _activatedWallet.balance = _calculateTotalBalance(_activatedWallet);
+          } else if (state is LoadingWalletState) {
+            _activatedWallet = null;
+          }
+          return WalletInheritedModel(
+            activatedWallet: _activatedWallet,
+            child: widget.child,
+          );
+        },
+      ),
     );
+  }
+
+  double _calculateTotalBalance(WalletVo walletVo) {
+    if (walletVo != null && _quotesSign != null && _quoteModel != null) {
+      double totalBalance = 0;
+      for (var coin in walletVo.coins) {
+        var vo = _getQuoteVoPriceBySign(_quoteModel, _quotesSign);
+        if (vo != null) {
+          totalBalance += vo.price * coin.balance;
+        }
+      }
+      return totalBalance;
+    }
+    return 0;
+  }
+
+  SymbolQuoteVo _getQuoteVoPriceBySign(QuotesModel quotesModel, QuotesSign quotesSign) {
+    for (var vo in quotesModel.quotes) {
+      if (vo.quote == quotesSign.quote) {
+        return vo;
+      }
+    }
+    return null;
   }
 }
 
@@ -65,26 +115,26 @@ enum WalletAspect {
   activatedWallet,
 }
 
-class WalletViewModel extends InheritedModel<WalletAspect> {
+class WalletInheritedModel extends InheritedModel<WalletAspect> {
   final WalletVo activatedWallet;
 
-  WalletViewModel({
+  WalletInheritedModel({
     this.activatedWallet,
     Key key,
     @required Widget child,
   }) : super(key: key, child: child);
 
-  static WalletViewModel of(BuildContext context, {WalletAspect aspect}) {
-    return InheritedModel.inheritFrom<WalletViewModel>(context, aspect: aspect);
+  static WalletInheritedModel of(BuildContext context, {WalletAspect aspect}) {
+    return InheritedModel.inheritFrom<WalletInheritedModel>(context, aspect: aspect);
   }
 
   @override
-  bool updateShouldNotify(WalletViewModel oldWidget) {
+  bool updateShouldNotify(WalletInheritedModel oldWidget) {
     return activatedWallet != oldWidget.activatedWallet;
   }
 
   @override
-  bool updateShouldNotifyDependent(WalletViewModel oldWidget, Set<WalletAspect> dependencies) {
+  bool updateShouldNotifyDependent(WalletInheritedModel oldWidget, Set<WalletAspect> dependencies) {
     return (activatedWallet != oldWidget.activatedWallet && dependencies.contains(WalletAspect.activatedWallet));
   }
 

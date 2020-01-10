@@ -8,22 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/application.dart';
-import 'package:titan/src/config/routes.dart';
-import 'package:titan/src/pages/contribution/contribution_page.dart';
+import 'package:titan/src/business/home/contribution_page.dart';
+import 'package:titan/src/business/position/confirm_position_page.dart';
+import 'package:titan/src/business/position/select_position_page.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
-import 'package:titan/src/pages/wallet/service/wallet_service.dart';
-import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/business/wallet/service/wallet_service.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
-import '../wallet/wallet_create_new_account_page.dart';
-import 'package:titan/src/pages/wallet/wallet_import_account_page.dart';
+import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/pages/wallet/wallet_bloc/wallet_bloc.dart';
-import 'package:titan/src/pages/wallet/wallet_bloc/wallet_event.dart';
-import 'package:titan/src/pages/wallet/wallet_bloc/wallet_state.dart';
+import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
+import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
+import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
 import 'package:titan/src/global.dart';
-import '../../pages/wallet/wallet_manager/wallet_manager.dart';
+
+import '../wallet/wallet_manager/wallet_manager.dart';
+import '../wallet/wallet_create_new_account_page.dart';
 
 class DataContributionPage extends StatefulWidget {
   @override
@@ -52,9 +53,9 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
 
   Future doDidPopNext() async {
     if (currentWalletVo != null) {
-      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
+      String defaultWalletFileName = await _walletService.getActivatedWalletFileName();
       logger.i("defaultWalletFileName:$defaultWalletFileName");
-      String updateWalletFileName = currentWalletVo.walletVo.keystore.fileName;
+      String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
       logger.i("updateWalletFileName:$updateWalletFileName");
       if (defaultWalletFileName == updateWalletFileName) {
         logger.i("do UpdateWalletEvent");
@@ -160,7 +161,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               width: 194,
               child: Text(
                 S.of(context).data_contrebution_with_hyn_wallet_tips,
-//                maxLines: 2,
+                maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
@@ -173,7 +174,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
 //                height: 38,
-                width: 240,
+//                width: 152,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
@@ -186,7 +187,6 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
                         S.of(context).create_wallet,
-                        textAlign: TextAlign.center,
                         style:
                             TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
@@ -200,7 +200,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
 //                height: 38,
-                width: 240,
+//                width: 152,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
@@ -245,8 +245,9 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           print('[Permission] -->status:$status');
 
           if (status) {
-            var latlng =
-                await (Keys.mapContainerKey.currentState as MapContainerState).mapboxMapController?.lastKnownLocation();
+            var latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
+                ?.mapboxMapController
+                ?.lastKnownLocation();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -256,9 +257,25 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', S.of(context).add_poi_item_title, () {}),
+        _buildItem('position', S.of(context).add_poi_item_title, () async {
+          var latlng =
+              await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SelectPositionPage(initLocation: latlng),
+            ),
+          );
+        }, isOpen: true),
         _divider(),
-        _buildItem('check', S.of(context).check_poi_item_title, () {}),
+        _buildItem('check', S.of(context).check_poi_item_title, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConfirmPositionPage(),
+            ),
+          );
+        }, isOpen: true),
         _divider(),
       ],
     );
@@ -270,7 +287,10 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     }
     return InkWell(
       onTap: () {
-        Application.router.navigateTo(context, Routes.wallet_manager);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => WalletManagerPage(), settings: RouteSettings(name: "/wallet_manager_page")));
       },
       child: SizedBox(
         height: 64,
@@ -300,7 +320,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  currentWalletVo.walletVo.keystore.name ?? "",
+                  currentWalletVo.wallet.keystore.name ?? "",
                   textAlign: TextAlign.left,
                   style: TextStyle(fontWeight: FontWeight.w500, color: HexColor('#333333')),
                 ),
@@ -310,7 +330,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortEthAddress(currentWalletVo.walletVo.getEthAccount().address) ?? "",
+                    shortBlockChainAddress(currentWalletVo.wallet.getEthAccount().address) ?? "",
                     style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )

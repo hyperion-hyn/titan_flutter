@@ -20,11 +20,11 @@ class QuotesSign {
   QuotesSign({this.quote, this.sign});
 }
 
-class SymbolQuote {
+class ActiveQuoteVoAndSign {
   final SymbolQuoteVo quoteVo;
   final QuotesSign sign;
 
-  SymbolQuote({this.quoteVo, this.sign});
+  ActiveQuoteVoAndSign({this.quoteVo, this.sign});
 }
 
 class SupportedQuotes {

@@ -44,5 +44,5 @@ class PrefsKey {
   static const String SETTING_AREA = 'setting_area';
 
   //wallet
-  static const String DEFAULT_WALLET_FILE_NAME = 'default_wallet_file_name';
+  static const String ACTIVATED_WALLET_FILE_NAME = 'default_wallet_file_name';
 }

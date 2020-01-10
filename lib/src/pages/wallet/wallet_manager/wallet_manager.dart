@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/routes.dart';
 import 'package:titan/src/pages/wallet/service/wallet_service.dart';
 import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
@@ -22,14 +24,11 @@ class WalletManagerPage extends StatefulWidget {
 
 class _WalletManagerState extends State<WalletManagerPage> {
   WalletManagerBloc _walletManagerBloc;
-  WalletService _walletService;
 
   @override
   void initState() {
     super.initState();
     _walletManagerBloc = WalletManagerBloc(context);
-    _walletService = WalletService(context: context);
-
     _walletManagerBloc.add(ScanWalletEvent());
     initData();
   }
@@ -37,8 +36,14 @@ class _WalletManagerState extends State<WalletManagerPage> {
   void initData() {}
 
   @override
+  void dispose() {
+    _walletManagerBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold( 
         appBar: AppBar(
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.white),
@@ -50,7 +55,10 @@ class _WalletManagerState extends State<WalletManagerPage> {
           actions: <Widget>[
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+//                Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                var currentRouteName = ModalRoute.of(context).settings.name;
+                Application.router.navigateTo(
+                    context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(currentRouteName)}');
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -161,7 +169,7 @@ class _WalletManagerState extends State<WalletManagerPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        shortEthAddress(ethAccount.address),
+                        shortBlockChainAddress(ethAccount.address),
                         style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                       ),
                     ),

@@ -108,7 +108,7 @@ class _MyPageState extends State<MyPage> {
               children: <Widget>[
                 Divider(height: 0),
                 _buildDMapItem(Icons.location_on, S.of(context).private_share,
-                    S.of(context).private_share_receive_address(shortEthAddress(_pubKey)), () {
+                    S.of(context).private_share_receive_address(shortBlockChainAddress(_pubKey)), () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
                 }),
                 Divider(height: 0),

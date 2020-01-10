@@ -188,7 +188,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                       if (result) {
                         if (await _walletService.isDefaultWallet(widget.wallet)) {
                           _walletService.saveDefaultWalletFileName(null);
-                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(walletVo: null));
+                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
                         }
                         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
 //                        eventBus.fire(ReScanWalletEvent());

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/map3/map3_node_introduction.dart';
-import 'package:titan/src/pages/wallet/wallet_page/bloc/bloc.dart';
+import 'package:titan/src/pages/wallet/map3_node_page/map3_node_introduction.dart';
 
 import 'wallet_page/wallet_page.dart';
 
@@ -57,10 +56,7 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
         ),
         body: TabBarView(
           children: [
-            BlocProvider<WalletPageBloc>(
-              create: (context) => WalletPageBloc(),
-              child: WalletPage(),
-            ),
+            WalletPage(),
             Map3NodeIntroductionPage(),
           ],
           physics: NeverScrollableScrollPhysics(),
