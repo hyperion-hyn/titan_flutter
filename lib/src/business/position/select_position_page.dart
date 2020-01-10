@@ -63,7 +63,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          "选择位置",
+          S.of(context).select_position,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),

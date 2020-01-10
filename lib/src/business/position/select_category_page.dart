@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/widget/custom_input_text.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'model/category_item.dart';
 
 class SelectCategoryPage extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() {
     return _SelectCategoryState();
@@ -14,6 +16,7 @@ class SelectCategoryPage extends StatefulWidget {
 }
 
 class _SelectCategoryState extends State<SelectCategoryPage> {
+
   PositionBloc _positionBloc = PositionBloc();
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
@@ -23,15 +26,10 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   CustomInputText inputText;
   List<String> _tagList = [];
 
+
   @override
   void initState() {
-    _tagList.add("书店");
-    _tagList.add("西饼店");
-    _tagList.add("巧克力店");
-    _tagList.add("布艺店");
-    _tagList.add("健康食品店");
-    _tagList.add("美甲店");
-    _tagList.add("餐馆");
+    //print('[category] --> initState, $context');
 
     if (_searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
@@ -58,6 +56,27 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    //print('[category] --> didChangeDependencies');
+    _setupData();
+    super.didChangeDependencies();
+  }
+
+  void _setupData() {
+    _tagList.add(S.of(context).select_category_bookstore);
+    _tagList.add(S.of(context).select_category_bakery);
+    _tagList.add(S.of(context).select_category_chocolateshop);
+    _tagList.add(S.of(context).select_category_fabrics);
+    _tagList.add(S.of(context).select_category_healthfood);
+    _tagList.add(S.of(context).select_category_nailsalon);
+
+    setState(() {
+
+    });
+  }
+
   void searchTextChangeListener() {
     String currentText = _searchTextController.text.trim();
     if (currentText.isNotEmpty) {
@@ -81,7 +100,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          '选择类别',
+          S.of(context).select_category,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -90,6 +109,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       body: _buildView(context),
     );
   }
+
 
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, PositionState>(
@@ -106,6 +126,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
           return _buildBody(state);
         } else if (state is SelectCategoryLoadingState) {
+
           return _buildBody(state);
         } else if (state is SelectCategoryClearState) {
           categoryList.clear();
@@ -119,6 +140,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       },
     );
   }
+
 
   Widget _divider() {
     return Padding(
@@ -250,4 +272,5 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       _lastSearch = textOrPoi;
     }
   }
+
 }

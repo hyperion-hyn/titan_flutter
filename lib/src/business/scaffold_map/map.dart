@@ -138,7 +138,9 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   }
 
   bool updateMyLocationTrackingMode(MyLocationTrackingMode mode) {
+    print('xxx 1 $locationTrackingMode $mode $myLocationEnabled');
     if (mode != locationTrackingMode) {
+      print('xxx 2 $mode');
       setState(() {
         locationTrackingMode = mode;
       });
