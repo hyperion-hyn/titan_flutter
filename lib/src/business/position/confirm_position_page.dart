@@ -433,16 +433,12 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   Widget _confirmView() {
     return Container(
-//      alignment: Alignment.center,
       color: Colors.white,
-      padding: const EdgeInsets.only(top: 15, left: 25, right: 25, bottom: 15),
+      padding: const EdgeInsets.all(15.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            height: 44,
-            width: 150,
-            margin: const EdgeInsets.only(right: 25),
             child: RaisedButton(
               color: HexColor('#DD4E41'),
               onPressed: () {
@@ -455,12 +451,12 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                 children: <Widget>[
                   Image.asset(
                     "res/drawable/ic_confirm_button_error.png",
-                    width: 18,
-                    height: 17,
+                    width: 15,
+                    height: 14,
                   ),
                   Padding(
                       padding: const EdgeInsets.only(left: 8, bottom: 2),
-                      child: Text("信息有误", style: TextStyles.textCfffS16)),
+                      child: Text("信息有误", style: TextStyles.textCfffS14)),
                 ],
               ),
               shape: RoundedRectangleBorder(
@@ -468,10 +464,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               ),
             ),
           ),
+          SizedBox(width: 25,),
           Container(
-            height: 44,
-            width: 150,
-            margin: const EdgeInsets.only(right: 25),
             child: RaisedButton(
               color: HexColor('#0F95B0'),
               onPressed: () {
@@ -484,12 +478,12 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                 children: <Widget>[
                   Image.asset(
                     "res/drawable/ic_confirm_button_right.png",
-                    width: 18,
-                    height: 17,
+                    width: 15,
+                    height: 14,
                   ),
                   Padding(
                       padding: const EdgeInsets.only(left: 8, bottom: 2),
-                      child: Text("信息正确", style: TextStyles.textCfffS16)),
+                      child: Text("信息正确", style: TextStyles.textCfffS14)),
                 ],
               ),
               shape: RoundedRectangleBorder(
@@ -499,25 +493,6 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           ),
         ],
       ),
-      /*child: CustomRadioButton(
-        enableShape: true,
-        hight: 40,
-        width: 150,
-        buttonColor: Colors.white,
-        selectedColor: Theme.of(context).primaryColor,
-        buttonLables: [
-          '信息有误',
-          '信息正确',
-        ],
-        buttonValues: [
-          '信息有误',
-          '信息正确',
-        ],
-        radioButtonValue: (value) {
-          currentResult = value;
-          print(value);
-        },
-      ),*/
     );
   }
 }
