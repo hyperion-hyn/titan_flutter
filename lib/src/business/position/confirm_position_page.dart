@@ -9,6 +9,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
@@ -237,9 +238,9 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyleCn;
     } else {
-      style = "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyle;
     }
 
     return SizedBox(

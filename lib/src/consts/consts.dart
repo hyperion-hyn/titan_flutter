@@ -18,6 +18,14 @@ class Const {
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
 
+  //white
+  //static const kWhiteMapStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+  static const kWhiteMapStyleCn = 'http://10.10.1.115:9999/titan-see-it-all.json';
+  static const kWhiteMapStyle = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+  //black
+  static const kBlackMapStyleCn = "https://cn.tile.map3.network/fiord-color.json";
+  static const kBlackMapStyle = "https://static.hyn.space/maptiles/fiord-color.json";
+
   static const Map LANGUAGE_NAME_MAP = {
     "zh_CN": "简体中文",
     "ko_": "한글",
