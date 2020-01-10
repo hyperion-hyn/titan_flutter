@@ -126,7 +126,7 @@ class _TextaState extends State<CustomInputText> {
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(9),
                 border: InputBorder.none,
-                hintText: '请输入搜索词',
+                hintText: '输入类别关键词',
                 hintStyle: TextStyle(fontSize: 14, color: Color(0xff777777)),
               ),
               keyboardType: TextInputType.text,
