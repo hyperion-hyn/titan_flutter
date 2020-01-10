@@ -65,7 +65,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   MapboxMapController mapboxMapController;
 
   MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
-  bool myLocationEnabled = true;
+  bool myLocationEnabled;
 
 //  StreamSubscription _locationClickSubscription;
   PublishSubject<dynamic> _toLocationEventSubject = PublishSubject<dynamic>();
