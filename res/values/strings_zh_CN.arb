@@ -507,5 +507,6 @@
   "open_location_service": "请开启定位服务",
   "apply_location_service": "申请定位授权",
   "allow_location_service": "请你授权使用定位功能.",
-  "again_click_exit_app": "再按一下退出程序"
+  "again_click_exit_app": "再按一下退出程序",
+  "give_away": "赠送"
 }

@@ -165,6 +165,7 @@ class S implements WidgetsLocalizations {
   String get get_current_position_fail_tips => "Could not get your current location";
   String get get_power => "Get HashRate";
   String get get_powers => "Get HashRate";
+  String get give_away => "Give away";
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "View global data updates";
   String get global_nodes => "Dashboard";
@@ -894,6 +895,8 @@ class $ko extends S {
   String get share_encrypted_location => "암호화 위치 공유";
   @override
   String get discount_map => "할인지도";
+  @override
+  String get give_away => "줘";
   @override
   String get domestic_video => "국내동영상";
   @override
@@ -1926,6 +1929,8 @@ class $zh_CN extends S {
   String get share_encrypted_location => "分享加密位置";
   @override
   String get discount_map => "折扣地图";
+  @override
+  String get give_away => "赠送";
   @override
   String get domestic_video => "国内视频";
   @override

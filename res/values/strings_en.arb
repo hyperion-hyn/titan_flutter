@@ -507,5 +507,6 @@
   "get_current_position_fail_tips": "Could not get your current location",
   "apply_location_service": "Application for location authorization",
   "allow_location_service": "Please authorize the location function.",
-  "again_click_exit_app": "Click again to exit the program"
+  "again_click_exit_app": "Click again to exit the program",
+  "give_away": "Give away"
 }
