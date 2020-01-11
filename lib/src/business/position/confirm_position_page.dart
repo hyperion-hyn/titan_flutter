@@ -87,6 +87,18 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             },
           );
         }
+      }else if (state is ConfirmPositionResultState) {
+//            createWalletPopUtilName = '/data_contribution_page';
+        if (state.confirmResult) {
+//              Navigator.of(context).pop();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    FinishAddPositionPage(
+                        FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+          );
+        }
       }
     });
 
@@ -209,21 +221,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           } else if (state is ConfirmPositionResultState) {
 //            createWalletPopUtilName = '/data_contribution_page';
             _isPostData = false;
-            print("result = " + state.confirmResult.toString());
-            if (state.confirmResult) {
-              Navigator.of(context).pop();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => FinishAddPositionPage(
-                        FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-              );
-              return Container(
-                width: 0.0,
-                height: 0.0,
-              );
-            } else {
-              Fluttertoast.showToast(msg: "您提交的信息有误，请重试。");
+            if (!state.confirmResult) {
+              Fluttertoast.showToast(msg: "服务器异常，请重试。");
               /*showDialog(
                 context: context,
                 builder: (context) {
@@ -240,6 +239,11 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                 },
               );*/
               return _buildListBody();
+            }else{
+              return Container(
+                width: 0.0,
+                height: 0.0,
+              );
             }
           } else {
             return Container(

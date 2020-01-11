@@ -6,6 +6,7 @@ import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
+import 'package:titan/src/business/position/model/confirm_poi_network_item.dart';
 import 'package:titan/src/business/position/model/poi_collector.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
@@ -145,9 +146,12 @@ class PositionApi {
 
     if(confirmPoiItem != null) {
 
-      confirmPoiItem.properties = confirmPoiItem;
-      confirmPoiItem.jsonStr = json.encode(confirmPoiItem);
-      print("confirmPoiItem.jsonStr = ${confirmPoiItem.jsonStr}");
+      print("confirmPoiItem.jsonStr!!!!!!111");
+//      confirmPoiItem.properties = Properties(confirmPoiItem.name,confirmPoiItem.address,confirmPoiItem.category
+//          ,confirmPoiItem.ext,confirmPoiItem.state,confirmPoiItem.phone,confirmPoiItem.workTime);
+      print("confirmPoiItem.jsonStr!!!!!!22222");
+//      confirmPoiItem.jsonStr = json.encode(confirmPoiItem);
+//      print("confirmPoiItem.jsonStr = ${confirmPoiItem.jsonStr}");
     }
     return confirmPoiItem;
 
@@ -171,23 +175,34 @@ class PositionApi {
   }
 
   Future<bool> postConfirmPoiData(int answer,ConfirmPoiItem confirmPoiItem) async {
+//    var confirmItem = confirmPoiItem;
+//    var poiNetItem = ConfirmPoiNetworkItem(confirmPoiItem.id,confirmPoiItem.latLng,Properties());
+//    var confirmPoiItem = json.encode()
+
     var address = currentWalletVo.accountList[0].account.address;
-    var data = await HttpCore.instance.postEntity(
+    var poiNetItem = ConfirmPoiNetworkItem(confirmPoiItem.id,confirmPoiItem.location,Properties(
+      confirmPoiItem.name,confirmPoiItem.address,confirmPoiItem.category,confirmPoiItem.ext,
+        confirmPoiItem.state,confirmPoiItem.phone,confirmPoiItem.workTime
+    ));
+    var poiStr = json.encode(poiNetItem);
+    print("confirm result poi = $poiStr");
+
+    Map<String, dynamic> params = {
+      "poi": poiStr,
+      "answer": answer,
+    };
+    FormData formData = FormData.fromMap(params);
+
+
+    var data = await HttpCore.instance.post(
         "/map-collector/poi/confirm",
-        EntityFactory<bool>((result) {
-          return result;
-        }
-    ),
-        params: {
-          'answer': answer,
-          'poi': confirmPoiItem.jsonStr,
-        },
+        data:formData,
         options: RequestOptions(headers: {
           "Lang": "zh-Hans",
           "UUID": address,
         }, contentType: "application/json"));
 
-    return data;
+    return data['data'];
 
   }
 
