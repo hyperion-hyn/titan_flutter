@@ -24,8 +24,6 @@ import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
 import 'contribution_finish_page.dart';
 
-const _default_map_location = LatLng(23.10904, 113.31904);
-
 class ContributionPage extends StatefulWidget {
   final LatLng initLocation;
 
@@ -82,7 +80,7 @@ class _ContributionState extends State<ContributionPage> {
   void initState() {
     super.initState();
 
-    userPosition = widget.initLocation ?? _default_map_location;
+    userPosition = widget.initLocation ?? recentlyLocation;
 
     sensorPlugin = SensorPlugin();
     initSensorChangeCallBack();

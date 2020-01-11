@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
@@ -38,6 +39,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
+
 //  List<String> _detailTextList = List();
   String currentResult = S.of(globalContext).confirm_info_wrong;
   ConfirmPoiItem confirmPoiItem;
@@ -58,10 +60,10 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 //    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
     _positionBloc.add(ConfirmPositionLoadingEvent());
     _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
-    _positionBloc.listen((state){
-      if(state is ConfirmPositionPageState){
+    _positionBloc.listen((state) {
+      if (state is ConfirmPositionPageState) {
         confirmPoiItem = state.confirmPoiItem;
-        if(confirmPoiItem == null || (confirmPoiItem != null && confirmPoiItem.name == null)) {
+        if (confirmPoiItem?.name == null) {
           showDialog(
             context: context,
             builder: (context) {
@@ -70,33 +72,50 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
+                        Navigator.of(context)..pop()..pop();
                       },
-                      child: Text(S
-                          .of(context)
-                          .confirm))
+                      child: Text(S.of(context).confirm))
                 ],
               );
             },
           );
+        } else {
+          addMarkerAndMoveToPoi();
         }
-      }else if (state is ConfirmPositionResultState) {
+      } else if (state is ConfirmPositionResultState) {
 //            createWalletPopUtilName = '/data_contribution_page';
         if (state.confirmResult) {
 //              Navigator.of(context).pop();
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    FinishAddPositionPage(
-                        FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+                builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
           );
         }
       }
     });
 
     super.initState();
+
+    _addMarkerSubject.debounceTime(Duration(milliseconds: 500)).listen((_) {
+      var latlng = LatLng(confirmPoiItem.location.coordinates[1], confirmPoiItem.location.coordinates[0]);
+      mapController?.addSymbol(
+        SymbolOptions(
+          geometry: latlng,
+          iconImage: "hyn_marker_big",
+          iconAnchor: "bottom",
+          iconOffset: Offset(0.0, 3.0),
+        ),
+      );
+      mapController?.animateCamera(CameraUpdate.newLatLng(latlng));
+    });
+  }
+
+  var _addMarkerSubject = PublishSubject<dynamic>();
+  void addMarkerAndMoveToPoi() {
+    if (mapController != null && confirmPoiItem?.name != null) {
+      _addMarkerSubject.sink.add(1);
+    }
   }
 
   @override
@@ -159,7 +178,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             );
           } else if (state is ConfirmPositionPageState) {
             confirmPoiItem = state.confirmPoiItem;
-            if(confirmPoiItem == null || (confirmPoiItem != null && confirmPoiItem.name == null)){
+            if (confirmPoiItem?.name == null) {
               /*showDialog(
                 context: context,
                 builder: (context) {
@@ -180,7 +199,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                 width: 0.0,
                 height: 0.0,
               );
-            }else{
+            } else {
               return _buildListBody();
             }
           } else if (state is ConfirmPositionResultLoadingState) {
@@ -206,7 +225,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                 },
               );*/
               return _buildListBody();
-            }else{
+            } else {
               return Container(
                 width: 0.0,
                 height: 0.0,
@@ -284,6 +303,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   @override
   void dispose() {
     _positionBloc.close();
+    _addMarkerSubject.close();
     super.dispose();
   }
 
@@ -300,7 +320,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
       child: MapboxMap(
         compassEnabled: false,
         initialCameraPosition: CameraPosition(
-          target: LatLng(23.12076, 113.322058),
+          target: recentlyLocation,
           zoom: defaultZoom,
         ),
         styleString: style,
@@ -320,14 +340,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   void onStyleLoaded(MapboxMapController controller) {
     mapController = controller;
-    mapController.addSymbol(
-      SymbolOptions(
-        geometry: LatLng(23.12076, 113.322058),
-        iconImage: "hyn_marker_big",
-        iconAnchor: "bottom",
-        iconOffset: Offset(0.0, 3.0),
-      ),
-    );
+    addMarkerAndMoveToPoi();
   }
 
   Widget _nameView() {

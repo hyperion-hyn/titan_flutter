@@ -3,9 +3,6 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/global.dart';
 
-import 'add_position_page.dart';
-import 'confirm_position_page.dart';
-import 'select_position_page.dart';
 
 class FinishAddPositionPage extends StatefulWidget {
   static const String FINISH_PAGE_TYPE_ADD = "finish_page_type_add";
@@ -48,13 +45,14 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  if (createWalletPopUtilName == null) {
-                    Navigator.of(context).popUntil((r) => r.isFirst);
-                  } else {
-                    Navigator.of(context)
-                        .popUntil(ModalRoute.withName(createWalletPopUtilName));
-                    createWalletPopUtilName = null;
-                  }
+//                  if (createWalletPopUtilName == null) {
+//                    Navigator.of(context).popUntil((r) => r.isFirst);
+//                  } else {
+//                    Navigator.of(context)
+//                        .popUntil(ModalRoute.withName(createWalletPopUtilName));
+//                    createWalletPopUtilName = null;
+//                  }
+                Navigator.pop(context);
                 },
               );
             },
@@ -145,13 +143,14 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () async {
-                      if (createWalletPopUtilName == null) {
-                        Navigator.of(context).popUntil((r) => r.isFirst);
-                      } else {
-                        Navigator.of(context).popUntil(
-                            ModalRoute.withName(createWalletPopUtilName));
-                        createWalletPopUtilName = null;
-                      }
+//                      if (createWalletPopUtilName == null) {
+//                        Navigator.of(context).popUntil((r) => r.isFirst);
+//                      } else {
+//                        Navigator.of(context).popUntil(
+//                            ModalRoute.withName(createWalletPopUtilName));
+//                        createWalletPopUtilName = null;
+//                      }
+                      Navigator.pop(context);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
