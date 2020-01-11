@@ -51,7 +51,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     } else if (event is ConfirmPositionResultEvent) {
       try{
         var confirmResult = await _positionApi.postConfirmPoiData(event.answer,event.confirmPoiItem);
-//        print("result $confirmResult");
+        print("poi confirm result = $confirmResult");
         yield ConfirmPositionResultState(true);
       }catch(code,message){
         yield ConfirmPositionResultState(false);

@@ -13,6 +13,7 @@ import 'package:titan/src/business/home/contribution_finish_page.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
@@ -500,9 +501,9 @@ class _ContributionState extends State<ContributionPage> {
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/fiord-color.json";
+      style = Const.kBlackMapStyleCn;
     } else {
-      style = "https://static.hyn.space/maptiles/fiord-color.json";
+      style = Const.kBlackMapStyle;
     }
 
     return MapboxMap(

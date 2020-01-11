@@ -44,7 +44,7 @@ class PositionApi {
       for (var i = 0; i < imagePaths.length; i += 1) {
         var index = i + 1;
         String key = "img${index}";
-         params[key] = MultipartFile.fromFile(imagePaths[i].path);
+         params[key] = MultipartFile.fromFileSync(imagePaths[i].path);
       }
 
       FormData formData = FormData.fromMap(params);
@@ -159,8 +159,8 @@ class PositionApi {
 
   Future<List<ConfirmPoiItem>> mapGetConfirmData(String pid) async {
     var data = await HttpCore.instance.getEntity(
-//        "/map-collector/poi/detail/$pid",
-        "/map-collector/poi/detail/5e13f8caea7db700f4411406",
+        "/map-collector/poi/detail/$pid",
+//        "/map-collector/poi/detail/5e13f8caea7db700f4411406",
         EntityFactory<List<ConfirmPoiItem>>((list) =>
             (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
 //        params: {
