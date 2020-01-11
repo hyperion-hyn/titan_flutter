@@ -7,8 +7,6 @@ import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/business/position/add_position_page.dart';
 
-const _default_map_location = LatLng(23.10904, 113.31904);
-
 class SelectPositionPage extends StatefulWidget {
   final LatLng initLocation;
 
@@ -31,7 +29,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
 
   @override
   void initState() {
-    userPosition = widget.initLocation ?? _default_map_location;
+    userPosition = widget.initLocation ?? recentlyLocation;
     super.initState();
   }
 
