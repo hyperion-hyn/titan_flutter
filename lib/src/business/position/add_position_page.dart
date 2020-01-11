@@ -76,7 +76,7 @@ class _AddPositionState extends State<AddPositionPage> {
     _positionBloc.close();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,6 +122,7 @@ class _AddPositionState extends State<AddPositionPage> {
           var county = _openCageData["county"] ?? "";
           setState(() {
             _addressText = country + " " + provinces + " " + city + " " + county;
+            //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
           });
 
           var postalCode = _openCageData["postcode"] ?? "";
@@ -198,7 +199,7 @@ class _AddPositionState extends State<AddPositionPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             // 交叉轴（竖直）对其方式
             children: <Widget>[
-              _buildTitleRow('category', Size(18,18), '类别', true, isCategory: true),
+              _buildTitleRow('category', Size(18, 18), '类别', true, isCategory: true),
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
@@ -219,7 +220,7 @@ class _AddPositionState extends State<AddPositionPage> {
   Widget _buildAddressNameCell() {
     return Column(
       children: <Widget>[
-        _buildTitleRow('name', Size(18,18), '名称', true),
+        _buildTitleRow('name', Size(18, 18), '名称', true),
         Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
@@ -232,7 +233,7 @@ class _AddPositionState extends State<AddPositionPage> {
                 return null;
               }
             },
-            onChanged: (String inputText){
+            onChanged: (String inputText) {
               //print('[add] --> inputText:${inputText}');
             },
             decoration: InputDecoration(
@@ -265,7 +266,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
     return Column(
       children: <Widget>[
-        _buildTitleRow('camera', Size(19,15), '现场拍照', true),
+        _buildTitleRow('camera', Size(19, 15), '现场拍照', true),
         Container(
           height: containerHeight,
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
@@ -300,10 +301,7 @@ class _AddPositionState extends State<AddPositionPage> {
               }
               return InkWell(
                   onTap: () {
-//                  ImagePickers.previewImagesByMedia(_listImagePaths,index);
-                    setState(() {
-                      _listImagePaths.removeAt(index);
-                    });
+                    ImagePickers.previewImagesByMedia(_listImagePaths, index);
                   },
                   child: Stack(
                     children: <Widget>[
@@ -312,20 +310,27 @@ class _AddPositionState extends State<AddPositionPage> {
                         child: Image.file(File(_listImagePaths[index].path), width: itemWidth, fit: BoxFit.cover),
                       ),
                       Positioned(
+                        top: 0,
                         right: 0,
-                        child: Container(
-                          padding: EdgeInsets.fromLTRB(0, 4, 4, 0),
-                          child: Image.asset(
-                            'res/drawable/add_position_delete.png',
-                            width: 12,
-                            height: 12,
-                            fit: BoxFit.scaleDown,
+                        child: InkWell(
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            padding: EdgeInsets.all(6),
+                            child: Image.asset(
+                              'res/drawable/add_position_delete.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              _listImagePaths.removeAt(index);
+                            });
+                          },
                         ),
-                      )
+                      ),
                     ],
-                  )
-                  );
+                  ));
             },
             itemCount: itemCount,
           ),
@@ -334,37 +339,55 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
+  // todo: 加入抖动
   Widget _buildAddressCell() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        SizedBox(
+          height: 8,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           // 交叉轴（竖直）对其方式
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
               child: Image.asset('res/drawable/add_position_address.png', width: 17, height: 21),
             ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(0, 14, 4, 6),
-                child: Text(
-                  "地址：",
-                  overflow: TextOverflow.clip,
-                  style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14,),
-                )),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(right:8.0),
-                child: Text(
-                  _addressText??"",
-                  overflow: TextOverflow.clip,
-                  style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14,),
-                ),
-              ),
-            ),
+            _openCageData == null
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 18, 4, 6),
+                    child: InkWell(
+                      child: Text(
+                        "点击自动获取",
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                      onTap: () {
+                        _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+                      },
+                    ))
+                : Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 18, 8, 6),
+                      child: Text(
+                        _addressText ?? "",
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                          color: DefaultColors.color333,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
           ],
         ),
         Container(
@@ -389,7 +412,7 @@ class _AddPositionState extends State<AddPositionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        _buildTitleRow('detail', Size(18,18), '详情', false),
+        _buildTitleRow('detail', Size(18, 18), '详情', false),
         Container(
           height: 140,
           decoration: new BoxDecoration(color: Colors.white),
@@ -419,7 +442,8 @@ class _AddPositionState extends State<AddPositionPage> {
                               _timeText ?? _timeDefaultText,
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.clip,
-                              style: TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
+                              style:
+                                  TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
                             ),
                           ),
                         ),
@@ -461,16 +485,16 @@ class _AddPositionState extends State<AddPositionPage> {
               onPressed: _isOnPressed
                   ? null
                   : () {
-                setState(() {
-                  _isOnPressed = true;
-                });
-                Future.delayed(Duration(seconds: 1), (){
-                  setState(() {
-                    _isOnPressed = false;
-                  });
-                });
-                _uploadPoiData();
-              },
+                      setState(() {
+                        _isOnPressed = true;
+                      });
+                      Future.delayed(Duration(seconds: 1), () {
+                        setState(() {
+                          _isOnPressed = false;
+                        });
+                      });
+                      _uploadPoiData();
+                    },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -491,9 +515,9 @@ class _AddPositionState extends State<AddPositionPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => WebViewContainer(
-                        initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
-                        title: S.of(context).scan_signal_upload_protocol,
-                      )));
+                            initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                            title: S.of(context).scan_signal_upload_protocol,
+                          )));
             },
             child: SizedBox(
                 width: 200,
@@ -586,7 +610,8 @@ class _AddPositionState extends State<AddPositionPage> {
         ));
   }
 
-  Widget _buildDetailCellRow(String imageName, String hintText, TextInputType keyboardType, TextEditingController controller) {
+  Widget _buildDetailCellRow(
+      String imageName, String hintText, TextInputType keyboardType, TextEditingController controller) {
     return Container(
         height: 40,
         padding: const EdgeInsets.only(left: 15, right: 14),
@@ -626,20 +651,24 @@ class _AddPositionState extends State<AddPositionPage> {
       // 交叉轴（竖直）对其方式
       children: <Widget>[
         Padding(
-          padding: isCategory?const EdgeInsets.fromLTRB(15, 0, 10, 0):const EdgeInsets.fromLTRB(15, 18, 10, 11),
+          padding: isCategory ? const EdgeInsets.fromLTRB(15, 0, 10, 0) : const EdgeInsets.fromLTRB(15, 18, 10, 11),
           child: Image.asset('res/drawable/add_position_$imageName.png', width: size.width, height: size.height),
         ),
         Padding(
-            padding: isCategory?const EdgeInsets.only(right: 10):const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            padding: isCategory ? const EdgeInsets.only(right: 10) : const EdgeInsets.fromLTRB(0, 14, 10, 6),
             child: Text(
               title,
               overflow: TextOverflow.clip,
-              style: TextStyle(color: DefaultColors.color333, fontWeight: FontWeight.w400, fontSize: 14,),
+              style: TextStyle(
+                color: DefaultColors.color333,
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+              ),
             )),
         Visibility(
           visible: isVisibleStar,
           child: Padding(
-            padding: isCategory?const EdgeInsets.only(right: 10):const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            padding: isCategory ? const EdgeInsets.only(right: 10) : const EdgeInsets.fromLTRB(0, 14, 10, 6),
             child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
           ),
         ),
@@ -729,7 +758,6 @@ class _AddPositionState extends State<AddPositionPage> {
       return;
     }
 
-
     var categoryId = _categoryItem.id;
     var country = _openCageData["country"] ?? "";
     var state = _openCageData["state"];
@@ -751,5 +779,4 @@ class _AddPositionState extends State<AddPositionPage> {
       _isUploading = true;
     });
   }
-
 }

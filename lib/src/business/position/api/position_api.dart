@@ -40,13 +40,13 @@ class PositionApi {
 
       for (var i = 0; i < imagePaths.length; i += 1) {
         var index = i + 1;
-        String key = "img${index}";
+        String key = "img$index";
          params[key] = MultipartFile.fromFile(imagePaths[i].path);
       }
 
       FormData formData = FormData.fromMap(params);
 
-      print('[position] poiCollector, 2, params:${params}, \naddress:${address}');
+      print('[position] poiCollector, 2, params:$params, \naddress:$address');
       var res = await HttpCore.instance.post("map-collector/poi/collector",
           data: formData,
           options: RequestOptions(headers: {
