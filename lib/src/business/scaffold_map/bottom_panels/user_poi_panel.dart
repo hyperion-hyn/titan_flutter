@@ -31,13 +31,6 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
   var picItemWidth;
   var childAspectRatio = (105.0 / 74.0);
   var itemHeight;
-  final List<UserInfoItem> _userInfoList = [
-    (UserInfoItem("res/drawable/ic_user_poi_category_name.png", "中餐馆")),
-    (UserInfoItem("res/drawable/ic_user_poi_zip_code.png", "510000")),
-    (UserInfoItem("res/drawable/ic_user_poi_phone_num.png", "13645793930")),
-    (UserInfoItem("res/drawable/ic_user_poi_web_site.png", "www.13645793930")),
-    (UserInfoItem("res/drawable/ic_user_poi_business_time.png", "09:00-22:00"))
-  ];
 
   double getHeaderHeight() {
     RenderBox renderBox = _poiHeaderKey.currentContext?.findRenderObject();
@@ -54,15 +47,10 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
   @override
   void initState() {
     super.initState();
-    /*SchedulerBinding.instance.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       HeaderHeightNotification(height: getHeaderHeight()).dispatch(context);
 
-      picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
-      itemHeight = picItemWidth / childAspectRatio;
-
-    });*/
-//    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
-//    itemHeight = picItemWidth / childAspectRatio;
+    });
   }
 
   @override

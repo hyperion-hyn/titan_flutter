@@ -40,7 +40,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       fieldCallBack: (textStr) {
         if (textStr.length == 0) {
           _positionBloc.add(SelectCategoryClearEvent());
-        }else{
+        } else {
           handleSearch(textStr);
         }
         print("inputText = " + textStr);
@@ -203,19 +203,26 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
           },
           itemCount: categoryList.length);
     } else if (state is InitialPositionState || state is SelectCategoryClearState) {
-      return Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 10,
-          runSpacing: 5,
-          children: _tagList.map<Widget>((s) {
-            return InkWell(
-                onTap: () {
-                  _searchTextController.text = s;
-                },
-                child: Chip(
-                  label: Text('$s'),
-                ));
-          }).toList());
+      return Padding(
+        padding: const EdgeInsets.only(top: 48.0),
+        child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 10,
+            runSpacing: 5,
+            children: _tagList.map<Widget>((s) {
+              return InkWell(
+                  onTap: () {
+                    _searchTextController.text = s;
+                    handleSearch(s);
+                  },
+                  child: Chip(
+                    label: Text(
+                      '$s',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ));
+            }).toList()),
+      );
     }
     return Container(
       width: 0.0,
@@ -247,7 +254,13 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
   }
 
-  void handleSearch(textOrPoi) async {
+  String _lastSearch;
+
+  void handleSearch(textOrPoi) {
+    if (_lastSearch == textOrPoi) {
+      return;
+    }
+
     if (textOrPoi is String) {
       textOrPoi = (textOrPoi as String).trim();
       if ((textOrPoi as String).isEmpty) {
@@ -256,6 +269,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
       _positionBloc.add(SelectCategoryLoadingEvent());
       _positionBloc.add(SelectCategoryResultEvent(searchText: textOrPoi));
+      _lastSearch = textOrPoi;
     }
   }
 

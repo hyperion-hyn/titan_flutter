@@ -45,7 +45,7 @@ class ConfirmPoiItem extends Object implements IPoi{
   @JsonKey(name: 'website')
   String website;
 
-  ConfirmPoiItem(this.id,this.name,this.address,this.category,this.location,this.ext,this.state,this.phone,this.workTime,this.images,this.postcode,this.website,);
+  ConfirmPoiItem(this.id,this.name,this.address,this.category,this.location,this.ext,this.state,this.phone,this.workTime,this.images,this.postcode,this.website);
 
   factory ConfirmPoiItem.fromJson(Map<String, dynamic> srcJson) => _$ConfirmPoiItemFromJson(srcJson);
 
@@ -58,7 +58,7 @@ class ConfirmPoiItem extends Object implements IPoi{
   @JsonKey(fromJson: LatLngConverter.latLngFromJson, toJson: LatLngConverter.latLngToJson)
   LatLng latLng;
 
-  ConfirmPoiItem.setPid(this.id);
+  ConfirmPoiItem.setPid(this.id,this.latLng);
 
 }
 
@@ -79,5 +79,4 @@ class Location extends Object {
   Map<String, dynamic> toJson() => _$LocationToJson(this);
 
 }
-
 

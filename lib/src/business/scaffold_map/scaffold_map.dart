@@ -31,13 +31,6 @@ import 'map.dart';
 import 'opt_bar.dart';
 import 'route_bar.dart';
 
-//final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
-
-//final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
-final kStyleZh = 'http://10.10.1.115:9999/titan-see-it-all.json';
-
-final kStyleEn = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
-
 typedef PanelBuilder = Widget Function(BuildContext context, ScrollController scrollController, IDMapPoi poi);
 typedef SheetPanelBuilder = Widget Function(BuildContext context, ScrollController scrollController);
 
@@ -125,13 +118,12 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         //set map
         //---------------------------
         bool showCenterMarker = false;
-        String style = kStyleEn;
+        String style;
         if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-          style = kStyleZh;
+          style = Const.kWhiteMapStyleCn;
         } else {
-          style = kStyleEn;
+          style = Const.kWhiteMapStyle;
         }
-        print("style url = " + style);
         if (state.dMapConfigModel?.showCenterMarker == true) {
           showCenterMarker = true;
         }
@@ -233,11 +225,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                     scrollController: controller,
                     poi: state.getCurrentPoi(),
                   );
-            } else if (state.getCurrentPoi() is ConfirmPoiItem){
+            } else if (state.getCurrentPoi() is ConfirmPoiItem) {
               panelBuilder = (context, controller) => UserPoiPanel(
-                scrollController: controller,
-                selectedPoiEntity: state.getCurrentPoi(),
-              );
+                    scrollController: controller,
+                    selectedPoiEntity: state.getCurrentPoi(),
+                  );
             }
           }
           initHeight = collapsedHeight;

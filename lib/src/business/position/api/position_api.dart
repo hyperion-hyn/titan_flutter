@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
+import 'package:titan/src/business/position/model/confirm_poi_network_item.dart';
 import 'package:titan/src/business/position/model/poi_collector.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 
 
@@ -41,7 +44,7 @@ class PositionApi {
       for (var i = 0; i < imagePaths.length; i += 1) {
         var index = i + 1;
         String key = "img$index";
-         params[key] = MultipartFile.fromFile(imagePaths[i].path);
+         params[key] = MultipartFile.fromFileSync(imagePaths[i].path);
       }
 
       FormData formData = FormData.fromMap(params);
@@ -98,15 +101,41 @@ class PositionApi {
     return json;
   }
 
-  Future<List<ConfirmPoiItem>> getConfirmData(double lon,double lat, String language) async {
+  Future<ConfirmPoiItem> getConfirmData(double lon,double lat, String language) async {
+    /*var address = currentWalletVo.accountList[0].account.address;
+    var httpClient = HttpClient();
+    var request = await httpClient.getUrl(Uri.parse(
+        '${Const.DOMAIN}map-collector/poi/query/v1?lon=$lon&lat=$lat&language=$language'));
+    request.headers.add('Lang', language);
+    request.headers.add('UUID', address);
+    request.headers.add('Content-Type', 'application/json');
+    var response = await request.close();
+    String responseBody = await response.transform(utf8.decoder).join();
+    print("abc $responseBody");
+    ConfirmPoiItem confirmRespon;
+    if (response.statusCode == HttpStatus.OK) {
+      var jsonStr = json.decode(responseBody)["data"][0];
+      confirmRespon= ConfirmPoiItem.fromJson(jsonStr);
+      confirmRespon.jsonStr = json.encode(confirmRespon);
+      print("abcccc " + jsonStr.toString());
+      print("abccccdddd " + json.encode(confirmRespon));
+    }
+    return confirmRespon;*/
     var address = currentWalletVo.accountList[0].account.address;
-    var data = await HttpCore.instance.getEntity(
+    var confirmPoiItem = await HttpCore.instance.getEntity(
         "map-collector/poi/query/v1",
-        EntityFactory<List<ConfirmPoiItem>>((list) =>
-            (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
+        EntityFactory<ConfirmPoiItem>((dataList) {
+          if((dataList as List).length > 0 ){
+            return ConfirmPoiItem.fromJson(dataList[0]);
+          }
+          return null;
+        }),
+//            (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
         params: {
           'lon': lon,
           'lat': lat,
+//          'lon': 113.322201,
+//          'lat': 23.1210719,
           'language': language
         },
         options: RequestOptions(headers: {
@@ -115,14 +144,23 @@ class PositionApi {
           "Iso-3166-1": "CN"
         }, contentType: "application/json"));
 
-    return data;
+    if(confirmPoiItem != null) {
+
+      print("confirmPoiItem.jsonStr!!!!!!111");
+//      confirmPoiItem.properties = Properties(confirmPoiItem.name,confirmPoiItem.address,confirmPoiItem.category
+//          ,confirmPoiItem.ext,confirmPoiItem.state,confirmPoiItem.phone,confirmPoiItem.workTime);
+      print("confirmPoiItem.jsonStr!!!!!!22222");
+//      confirmPoiItem.jsonStr = json.encode(confirmPoiItem);
+//      print("confirmPoiItem.jsonStr = ${confirmPoiItem.jsonStr}");
+    }
+    return confirmPoiItem;
 
   }
 
   Future<List<ConfirmPoiItem>> mapGetConfirmData(String pid) async {
     var data = await HttpCore.instance.getEntity(
-//        "/map-collector/poi/detail/$pid",
-        "/map-collector/poi/detail/5e13f8caea7db700f4411406",
+        "/map-collector/poi/detail/$pid",
+//        "/map-collector/poi/detail/5e13f8caea7db700f4411406",
         EntityFactory<List<ConfirmPoiItem>>((list) =>
             (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
 //        params: {
@@ -137,23 +175,34 @@ class PositionApi {
   }
 
   Future<bool> postConfirmPoiData(int answer,ConfirmPoiItem confirmPoiItem) async {
+//    var confirmItem = confirmPoiItem;
+//    var poiNetItem = ConfirmPoiNetworkItem(confirmPoiItem.id,confirmPoiItem.latLng,Properties());
+//    var confirmPoiItem = json.encode()
+
     var address = currentWalletVo.accountList[0].account.address;
-    var data = await HttpCore.instance.postEntity(
+    var poiNetItem = ConfirmPoiNetworkItem(confirmPoiItem.id,confirmPoiItem.location,Properties(
+      confirmPoiItem.name,confirmPoiItem.address,confirmPoiItem.category,confirmPoiItem.ext,
+        confirmPoiItem.state,confirmPoiItem.phone,confirmPoiItem.workTime
+    ));
+    var poiStr = json.encode(poiNetItem);
+    print("confirm result poi = $poiStr");
+
+    Map<String, dynamic> params = {
+      "poi": poiStr,
+      "answer": answer,
+    };
+    FormData formData = FormData.fromMap(params);
+
+
+    var data = await HttpCore.instance.post(
         "/map-collector/poi/confirm",
-        EntityFactory<bool>((result) {
-          return result;
-        }
-    ),
-        params: {
-          'answer': answer,
-          'poi': confirmPoiItem.toJson(),
-        },
+        data:formData,
         options: RequestOptions(headers: {
           "Lang": "zh-Hans",
           "UUID": address,
         }, contentType: "application/json"));
 
-    return data;
+    return data['data'];
 
   }
 

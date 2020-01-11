@@ -9,6 +9,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
@@ -37,49 +38,65 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
-  List<String> _detailTextList = List();
+//  List<String> _detailTextList = List();
   String currentResult = S.of(globalContext).confirm_info_wrong;
   ConfirmPoiItem confirmPoiItem;
   bool _isPostData = false;
 
 //  var picItemWidth;
-  final List<UserInfoItem> _userInfoList = [
-    (UserInfoItem("res/drawable/ic_user_poi_category_name.png", "中餐馆")),
-    (UserInfoItem("res/drawable/ic_user_poi_zip_code.png", "510000")),
-    (UserInfoItem("res/drawable/ic_user_poi_phone_num.png", "13645793930")),
-    (UserInfoItem("res/drawable/ic_user_poi_web_site.png", "www.13645793930")),
-    (UserInfoItem("res/drawable/ic_user_poi_business_time.png", "09:00-22:00"))
-  ];
+//  final List<UserInfoItem> _userInfoList = [
+//    (UserInfoItem("res/drawable/ic_user_poi_category_name.png", "中餐馆")),
+//    (UserInfoItem("res/drawable/ic_user_poi_zip_code.png", "510000")),
+//    (UserInfoItem("res/drawable/ic_user_poi_phone_num.png", "13645793930")),
+//    (UserInfoItem("res/drawable/ic_user_poi_web_site.png", "www.13645793930")),
+//    (UserInfoItem("res/drawable/ic_user_poi_business_time.png", "09:00-22:00"))
+//  ];
 
   @override
   void initState() {
-    
+    super.initState();
 //    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
     _positionBloc.add(ConfirmPositionLoadingEvent());
     _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+    _positionBloc.listen((state){
+      if(state is ConfirmPositionPageState){
+        confirmPoiItem = state.confirmPoiItem;
+        if(confirmPoiItem == null || (confirmPoiItem != null && confirmPoiItem.name == null)) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("周围没有可验证的位置信息。"),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(S
+                          .of(context)
+                          .confirm))
+                ],
+              );
+            },
+          );
+        }
+      }else if (state is ConfirmPositionResultState) {
+//            createWalletPopUtilName = '/data_contribution_page';
+        if (state.confirmResult) {
+//              Navigator.of(context).pop();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    FinishAddPositionPage(
+                        FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+          );
+        }
+      }
+    });
 
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    _setupData();
-    super.didChangeDependencies();
-  }
-
-  void _setupData() {
-    _detailTextList = [
-      S.of(context).category + " " + "中餐馆",
-      S.of(context).postal_code + " " + "510000",
-      S.of(context).phone_number + " " + "13667510000",
-      S.of(context).website + " " + "www.hyn.space",
-      S.of(context).work_time + " " + "09:00-22:00"
-    ];
-    
-    setState(() {
-
-    });
   }
 
   @override
@@ -98,17 +115,17 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     );
   }
 
-  void showConfirmDialog() {
-    showDialog(
+  Future<bool> showConfirmDialog(String content) {
+    return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: Text(S.of(context).position_info_confirm),
-            content: Text(S.of(context).if_confirm_position_info_func(currentResult)),
+            content: Text(content),
             actions: <Widget>[
               FlatButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(false);
                   },
                   child: Text(S.of(context).cancel)),
               FlatButton(
@@ -121,9 +138,9 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                     }
                     _isPostData = true;
                     _positionBloc.add(ConfirmPositionResultLoadingEvent());
-                    Navigator.of(context).pop();
-                    _positionBloc.add(
-                        ConfirmPositionResultEvent(answer, confirmPoiItem));
+                    Navigator.of(context).pop(true);
+//                    _positionBloc.add(
+//                        ConfirmPositionResultEvent(answer, confirmPoiItem));
                   },
                   child: Text(S.of(context).confirm))
             ],
@@ -142,28 +159,58 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             );
           } else if (state is ConfirmPositionPageState) {
             confirmPoiItem = state.confirmPoiItem;
-            return _buildListBody();
+            if(confirmPoiItem == null || (confirmPoiItem != null && confirmPoiItem.name == null)){
+              /*showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("周围没有可验证的位置信息。"),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(S.of(context).confirm))
+                    ],
+                  );
+                },
+              );*/
+              return Container(
+                width: 0.0,
+                height: 0.0,
+              );
+            }else{
+              return _buildListBody();
+            }
           } else if (state is ConfirmPositionResultLoadingState) {
             return _buildListBody();
           } else if (state is ConfirmPositionResultState) {
 //            createWalletPopUtilName = '/data_contribution_page';
             _isPostData = false;
-            print("result = " + state.confirmResult.toString());
-            if (state.confirmResult) {
-              Navigator.of(context).pop();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => FinishAddPositionPage(
-                        FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-              );
+            if (!state.confirmResult) {
+              Fluttertoast.showToast(msg: S.of(context).info_is_wrong_please_again_submit_hint);
+              /*showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("您提交的信息有误，请重试。"),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(S.of(context).confirm))
+                    ],
+                  );
+                },
+              );*/
+              return _buildListBody();
+            }else{
               return Container(
                 width: 0.0,
                 height: 0.0,
               );
-            } else {
-              Fluttertoast.showToast(msg: S.of(context).info_is_wrong_please_again_submit_hint);
-              return _buildListBody();
             }
           } else {
             return Container(
@@ -179,44 +226,41 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
     return Stack(
       children: <Widget>[
-        Column(
-          children: <Widget>[
-            _mapView(),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 20.0,
+        Column(children: <Widget>[
+          _mapView(),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 20.0,
+                  ),
+                ],
+              ),
+              child: ListView(
+                children: <Widget>[
+                  _nameView(),
+                  if (confirmPoiItem.images != null) buildPicList(picItemWidth, 10, confirmPoiItem),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Divider(
+                      height: 1.0,
+                      color: HexColor('#E9E9E9'),
                     ),
-                  ],
-                ),
-                child: ListView(
-                  children: <Widget>[
-                    _nameView(),
-                    if (confirmPoiItem.images != null)
-                      buildPicList(picItemWidth, 10, confirmPoiItem),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Divider(
-                        height: 1.0,
-                        color: HexColor('#E9E9E9'),
-                      ),
-                    ),
-                    buildBottomInfoList(confirmPoiItem),
-                  ],
-                ),
+                  ),
+                  buildBottomInfoList(confirmPoiItem),
+                ],
               ),
             ),
-            Divider(
-              height: 1.0,
-              color: HexColor('#E9E9E9'),
-            ),
-            _confirmView(),
-          ]
-        ),
+          ),
+          Divider(
+            height: 1.0,
+            color: HexColor('#E9E9E9'),
+          ),
+          _confirmView(),
+        ]),
         _buildLoading()
       ],
     );
@@ -246,10 +290,9 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyleCn;
     } else {
-      style =
-          "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyle;
     }
 
     return SizedBox(
@@ -328,8 +371,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     var itemCount = 1;
     if (_listImagePaths.length == 0) {
       itemCount = 1;
-    } else if (_listImagePaths.length > 0 &&
-        _listImagePaths.length < _listImagePathsMaxLength) {
+    } else if (_listImagePaths.length > 0 && _listImagePaths.length < _listImagePathsMaxLength) {
       itemCount = 1 + _listImagePaths.length;
     } else if (_listImagePaths.length >= _listImagePathsMaxLength) {
       itemCount = _listImagePathsMaxLength;
@@ -412,9 +454,12 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           Container(
             child: RaisedButton(
               color: HexColor('#DD4E41'),
-              onPressed: () {
+              onPressed: () async {
                 currentResult = S.of(context).confirm_info_wrong;
-                showConfirmDialog();
+                var option = await showConfirmDialog('你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？');
+                if (option == true) {
+                  _positionBloc.add(ConfirmPositionResultEvent(0, confirmPoiItem));
+                }
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -435,13 +480,18 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               ),
             ),
           ),
-          SizedBox(width: 25,),
+          SizedBox(
+            width: 25,
+          ),
           Container(
             child: RaisedButton(
               color: HexColor('#0F95B0'),
-              onPressed: () {
+              onPressed: () async {
                 currentResult = S.of(context).confirm_info_right;
-                showConfirmDialog();
+                var option = await showConfirmDialog('你认为这个位置信息是真实存在并且信息描述完全正确的，确定提交吗？');
+                if (option == true) {
+                  _positionBloc.add(ConfirmPositionResultEvent(1, confirmPoiItem));
+                }
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/business/position/add_position_page.dart';
@@ -110,9 +111,9 @@ class _SelectPositionState extends State<SelectPositionPage> {
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyleCn;
     } else {
-      style = "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyle;
     }
 
     return Stack(
