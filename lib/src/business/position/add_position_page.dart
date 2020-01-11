@@ -6,6 +6,7 @@ import 'package:image_pickers/Media.dart';
 import 'package:image_pickers/UIConfig.dart';
 import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
@@ -43,6 +44,7 @@ class _AddPositionState extends State<AddPositionPage> {
   TextEditingController _detailPhoneNumController = TextEditingController();
   TextEditingController _detailWebsiteController = TextEditingController();
 
+  double _inputHeight = 40.0;
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
 
@@ -62,18 +64,28 @@ class _AddPositionState extends State<AddPositionPage> {
 
   bool _isOnPressed = false;
 
+  PublishSubject<int> _filterSubject = PublishSubject<int>();
+  int _requestOpenCageDataCount = 0;
+
   @override
   void initState() {
     _categoryDefaultText = "请选择类别";
     _timeDefaultText = "请添加营业时间";
-    _positionBloc.add(GetOpenCageEvent(widget.userPosition));
 
+    _addressController.addListener(_checkInputHeight);
+
+    _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+    _filterSubject.debounceTime(Duration(seconds: 1)).listen((count) {
+      //print('[add] ---> count:$count, _requestOpenCageDataCount:$_requestOpenCageDataCount');
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+    });
     super.initState();
   }
 
   @override
   void dispose() {
     _positionBloc.close();
+    _filterSubject.close();
     super.dispose();
   }
 
@@ -266,7 +278,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
     return Column(
       children: <Widget>[
-        _buildTitleRow('camera', Size(19, 15), '现场拍照', true),
+        _buildTitleRow('camera', Size(19, 15), S.of(context).scene_photographed, true),
         Container(
           height: containerHeight,
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
@@ -362,7 +374,7 @@ class _AddPositionState extends State<AddPositionPage> {
                     padding: const EdgeInsets.fromLTRB(0, 18, 4, 6),
                     child: InkWell(
                       child: Text(
-                        "点击自动获取",
+                        S.of(context).click_auto_get_hint,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
                           color: Colors.blue,
@@ -371,7 +383,8 @@ class _AddPositionState extends State<AddPositionPage> {
                         ),
                       ),
                       onTap: () {
-                        _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+                        _requestOpenCageDataCount += 1;
+                        _filterSubject.sink.add(_requestOpenCageDataCount);
                       },
                     ))
                 : Expanded(
@@ -391,16 +404,16 @@ class _AddPositionState extends State<AddPositionPage> {
           ],
         ),
         Container(
-          height: 140,
+          height: 100+_inputHeight,
           decoration: new BoxDecoration(color: Colors.white),
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              _buildAddressCellRow('街道详情', '请添加街道', _addressController),
+              _buildAddressCellRow(S.of(context).details_of_street, S.of(context).please_add_streets_hint, _addressController, isDetailAddress: true),
               _divider(),
-              _buildAddressCellRow('门牌号码', '请输入门牌号码', _addressHouseNumController),
+              _buildAddressCellRow(S.of(context).house_number, S.of(context).please_enter_door_number_hint, _addressHouseNumController),
               _divider(),
-              _buildAddressCellRow('邮政编码', '请输入邮政编码', _addressPostcodeController),
+              _buildAddressCellRow(S.of(context).postal_code, S.of(context).please_enter_postal_code, _addressPostcodeController),
             ],
           ),
         ),
@@ -412,7 +425,7 @@ class _AddPositionState extends State<AddPositionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        _buildTitleRow('detail', Size(18, 18), '详情', false),
+        _buildTitleRow('detail', Size(18, 18), S.of(context).detail, false),
         Container(
           height: 140,
           decoration: new BoxDecoration(color: Colors.white),
@@ -457,9 +470,9 @@ class _AddPositionState extends State<AddPositionPage> {
                     )),
               ),
               _divider(),
-              _buildDetailCellRow('phone', '电话', TextInputType.number, _detailPhoneNumController),
+              _buildDetailCellRow('phone', S.of(context).phone_number, TextInputType.number, _detailPhoneNumController),
               _divider(),
-              _buildDetailCellRow('website', '网址', TextInputType.emailAddress, _detailWebsiteController),
+              _buildDetailCellRow('website', S.of(context).website, TextInputType.emailAddress, _detailWebsiteController),
             ],
           ),
         ),
@@ -501,7 +514,7 @@ class _AddPositionState extends State<AddPositionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '提交',
+                      S.of(context).submit,
                       style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                     ),
                   ],
@@ -515,7 +528,7 @@ class _AddPositionState extends State<AddPositionPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => WebViewContainer(
-                            initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                            initUrl: 'https://api.hyn.space/map-collector/pol-policy',
                             title: S.of(context).scan_signal_upload_protocol,
                           )));
             },
@@ -534,14 +547,14 @@ class _AddPositionState extends State<AddPositionPage> {
                       },
                     ),
                     Text(
-                      '地理位置',
+                      S.of(context).geographical_position,
                       style: TextStyle(
                         color: HexColor('#333333'),
                         fontSize: 11,
                       ),
                     ),
                     Text(
-                      '上传协议',
+                      S.of(context).upload_protocol,
                       style: TextStyle(
                         color: HexColor('#333333'),
                         fontSize: 11,
@@ -572,9 +585,30 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller) {
+  void _checkInputHeight() async {
+//    int count = _addressController.text.split('\n').length;
+    int length = _addressController.text.length;
+    double count = _addressController.text.length / 15;
+
+    print('[add] --> count:$count, length:$length');
+
+    if (count < 1) {
+      return;
+    }
+
+    if (count <= 4) {  // use a maximum height of 6 rows
+      // height values can be adapted based on the font size
+      var newHeight = count < 1 ? 40.0 : 28.0 + (count * 18.0);
+      setState(() {
+        _inputHeight = newHeight;
+        print('[add] --> newHeight:$newHeight');
+      });
+    }
+  }
+
+  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller,{bool isDetailAddress = false}) {
     return Container(
-        height: 40,
+        height: !isDetailAddress?40:_inputHeight,
         padding: const EdgeInsets.only(left: 15, right: 14),
         decoration: new BoxDecoration(color: Colors.white),
         child: Row(
@@ -583,18 +617,16 @@ class _AddPositionState extends State<AddPositionPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           // 交叉轴（竖直）对其方式
           children: <Widget>[
-            Container(
-              width: 80,
-              //color: Colors.blue,
+            Expanded(
+              flex: 1,
               child: Text(
                 title,
                 textAlign: TextAlign.left,
                 style: TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
               ),
             ),
-            Container(
-              width: 220,
-              //color: Colors.red,
+            Expanded(
+              flex: 3,
               child: TextFormField(
                 controller: controller,
                 style: TextStyle(fontSize: 13),
@@ -604,6 +636,8 @@ class _AddPositionState extends State<AddPositionPage> {
                   hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
                 ),
                 keyboardType: TextInputType.text,
+                maxLines: !isDetailAddress?1:4,
+                //maxLength: !isDetailAddress?50:200,
               ),
             ),
           ],
@@ -744,17 +778,17 @@ class _AddPositionState extends State<AddPositionPage> {
     var _isEmptyOfImages = (_listImagePaths.length == 0);
 
     if (_isEmptyOfCategory) {
-      Fluttertoast.showToast(msg: "类别不能为空");
+      Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
       return;
     }
 
     if (_isEmptyOfImages) {
-      Fluttertoast.showToast(msg: "拍摄图片不能为空");
+      Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
       return;
     }
 
     if (!_isAcceptSignalProtocol) {
-      Fluttertoast.showToast(msg: "地理位置上传协议未接受");
+      Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
       return;
     }
 
@@ -764,11 +798,11 @@ class _AddPositionState extends State<AddPositionPage> {
     var city = _openCageData["city"] + _openCageData["county"];
     var postalCode = _openCageData["postcode"];
     var countryCode = _openCageData["country_code"] ?? "";
-    var poiName = _addressNameController.text ?? "";
-    var poiAddress = _addressController.text ?? "";
-    var poiHouseNum = _addressHouseNumController.text ?? "";
-    var poiPhoneNum = _detailPhoneNumController.text ?? "";
-    var poiWebsite = _detailWebsiteController.text ?? "";
+    var poiName = _maxLengthLimit(_addressNameController);
+    var poiAddress = _maxLengthLimit(_addressController, isDetailAddress: true);
+    var poiHouseNum = _maxLengthLimit(_addressHouseNumController);
+    var poiPhoneNum = _maxLengthLimit(_detailPhoneNumController);
+    var poiWebsite = _maxLengthLimit(_detailWebsiteController);
 
     var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city,
         poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite);
@@ -779,4 +813,19 @@ class _AddPositionState extends State<AddPositionPage> {
       _isUploading = true;
     });
   }
+
+  String _maxLengthLimit(TextEditingController controller, {bool isDetailAddress = false}) {
+    String text = controller.text ?? "";
+    if (isDetailAddress) {
+      if (text.length > 200) {
+        text = text.substring(0, 200);
+      }
+    } else {
+      if (text.length > 50) {
+        text = text.substring(0, 50);
+      }
+    }
+    return text;
+  }
+
 }

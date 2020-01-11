@@ -323,5 +323,19 @@
   "postal_code": "邮编",
   "phone_number": "电话",
   "website": "网址",
-  "work_time": "工作时间"
+  "work_time": "工作时间",
+  "category_cannot_be_empty_hint": "类别不能为空",
+  "take_pictures_must_not_be_empty_hint": "拍摄图片不能为空",
+  "poi_upload_protocol_not_accepted_hint": "地理位置上传协议未接受",
+  "upload_protocol": "上传协议",
+  "geographical_position": "地理位置",
+  "submit": "提交",
+  "detail": "详情",
+  "details_of_street": "街道详情",
+  "house_number": "门牌号码",
+  "please_add_streets_hint": "请添加街道",
+  "please_enter_door_number_hint": "请输入门牌号码",
+  "please_enter_postal_code": "请输入邮政编码",
+  "click_auto_get_hint": "点击自动获取",
+  "scene_photographed": "现场拍照"
 }
