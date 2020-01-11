@@ -49,8 +49,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       if(poi is ConfirmPoiItem) {
         yield SearchingPoiState(searchingPoi: poi);
         var _confirmDataList = await _positionApi.mapGetConfirmData(poi.id);
-
         var fullInfomationPoi = _confirmDataList[0];
+        fullInfomationPoi.latLng = poi.latLng;
         yield ShowPoiState(poi: fullInfomationPoi);
       } else if (poi.address == null) {
         yield SearchingPoiState(searchingPoi: poi);

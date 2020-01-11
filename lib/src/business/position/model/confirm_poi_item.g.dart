@@ -41,6 +41,7 @@ Map<String, dynamic> _$ConfirmPoiItemToJson(ConfirmPoiItem instance) =>
       'images': instance.images,
       'postcode': instance.postcode,
       'website': instance.website,
+      'Properties': instance.properties,
 //      'remark': instance.remark,
 //      'latLng': LatLngConverter.latLngToJson(instance.latLng),
     };

@@ -389,7 +389,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 //        var lat = firstFeature["properties"]["lat"];
 //        var language = "zh-Hans";
 //        var _confirmDataList = await _positionApi.mapGetConfirmData(pid);
-        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid);
+        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid,coordinates);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
       }else{
         var poi = PoiEntity(name: name, latLng: coordinates);

@@ -64,6 +64,31 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 //    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
     _positionBloc.add(ConfirmPositionLoadingEvent());
     _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+    _positionBloc.listen((state){
+      if(state is ConfirmPositionPageState){
+        confirmPoiItem = state.confirmPoiItem;
+        if(confirmPoiItem == null || (confirmPoiItem != null && confirmPoiItem.name == null)) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("周围没有可验证的位置信息。"),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(S
+                          .of(context)
+                          .confirm))
+                ],
+              );
+            },
+          );
+        }
+      }
+    });
 
     super.initState();
   }
@@ -155,7 +180,30 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             );
           } else if (state is ConfirmPositionPageState) {
             confirmPoiItem = state.confirmPoiItem;
-            return _buildListBody();
+            if(confirmPoiItem == null || (confirmPoiItem != null && confirmPoiItem.name == null)){
+              /*showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("周围没有可验证的位置信息。"),
+                    actions: <Widget>[
+                      FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(S.of(context).confirm))
+                    ],
+                  );
+                },
+              );*/
+              return Container(
+                width: 0.0,
+                height: 0.0,
+              );
+            }else{
+              return _buildListBody();
+            }
           } else if (state is ConfirmPositionResultLoadingState) {
             return _buildListBody();
           } else if (state is ConfirmPositionResultState) {

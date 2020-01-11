@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -6,6 +7,7 @@ import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/position/model/poi_collector.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 
 
@@ -98,15 +100,41 @@ class PositionApi {
     return json;
   }
 
-  Future<List<ConfirmPoiItem>> getConfirmData(double lon,double lat, String language) async {
+  Future<ConfirmPoiItem> getConfirmData(double lon,double lat, String language) async {
+    /*var address = currentWalletVo.accountList[0].account.address;
+    var httpClient = HttpClient();
+    var request = await httpClient.getUrl(Uri.parse(
+        '${Const.DOMAIN}map-collector/poi/query/v1?lon=$lon&lat=$lat&language=$language'));
+    request.headers.add('Lang', language);
+    request.headers.add('UUID', address);
+    request.headers.add('Content-Type', 'application/json');
+    var response = await request.close();
+    String responseBody = await response.transform(utf8.decoder).join();
+    print("abc $responseBody");
+    ConfirmPoiItem confirmRespon;
+    if (response.statusCode == HttpStatus.OK) {
+      var jsonStr = json.decode(responseBody)["data"][0];
+      confirmRespon= ConfirmPoiItem.fromJson(jsonStr);
+      confirmRespon.jsonStr = json.encode(confirmRespon);
+      print("abcccc " + jsonStr.toString());
+      print("abccccdddd " + json.encode(confirmRespon));
+    }
+    return confirmRespon;*/
     var address = currentWalletVo.accountList[0].account.address;
-    var data = await HttpCore.instance.getEntity(
+    var confirmPoiItem = await HttpCore.instance.getEntity(
         "map-collector/poi/query/v1",
-        EntityFactory<List<ConfirmPoiItem>>((list) =>
-            (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
+        EntityFactory<ConfirmPoiItem>((dataList) {
+          if((dataList as List).length > 0 ){
+            return ConfirmPoiItem.fromJson(dataList[0]);
+          }
+          return null;
+        }),
+//            (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
         params: {
           'lon': lon,
           'lat': lat,
+//          'lon': 113.322201,
+//          'lat': 23.1210719,
           'language': language
         },
         options: RequestOptions(headers: {
@@ -115,7 +143,13 @@ class PositionApi {
           "Iso-3166-1": "CN"
         }, contentType: "application/json"));
 
-    return data;
+    if(confirmPoiItem != null) {
+
+      confirmPoiItem.properties = confirmPoiItem;
+      confirmPoiItem.jsonStr = json.encode(confirmPoiItem);
+      print("confirmPoiItem.jsonStr = ${confirmPoiItem.jsonStr}");
+    }
+    return confirmPoiItem;
 
   }
 
@@ -146,7 +180,7 @@ class PositionApi {
     ),
         params: {
           'answer': answer,
-          'poi': confirmPoiItem.toJson(),
+          'poi': confirmPoiItem.jsonStr,
         },
         options: RequestOptions(headers: {
           "Lang": "zh-Hans",
