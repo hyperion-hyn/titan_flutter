@@ -9,6 +9,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
@@ -312,7 +313,9 @@ Widget buildPicList(
           return Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                ImagePickers.previewImages(confirmPoiItem.images,index);
+              },
               child: Container(
                 width: itemWidth,
                 decoration: BoxDecoration(
@@ -383,7 +386,7 @@ Widget buildBottomInfoList(ConfirmPoiItem confirmPoiItem) {
                       width: 14,
                       height: 1,
                     ),
-                    Text(userInfoItem.infoStr)
+                    Expanded(child: Text(userInfoItem.infoStr,style: TextStyles.textC333S14,))
                   ],
                 ),
               ),

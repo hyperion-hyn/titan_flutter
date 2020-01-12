@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
@@ -33,7 +34,8 @@ class _BusinessTimeState extends State<BusinessTimePage> {
     S.of(globalContext).business_time_wednesday,
     S.of(globalContext).business_time_thursday,
     S.of(globalContext).business_time_friday,
-    S.of(globalContext).business_time_saturday];
+    S.of(globalContext).business_time_saturday
+  ];
   List<String> _timeLabel = [
     S.of(globalContext).throughout_of_day,
     "07:00-23:00",
@@ -45,6 +47,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
     "09:00-22:00",
     "10:00-20:00",
     "10:00-21:00"
+        "custom_time"
   ];
   List<BusinessTimeItem> _timeList;
 
@@ -61,6 +64,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
     _timeList = _timeLabel
         .map((labelStr) => BusinessTimeItem(label: labelStr))
         .toList();
+    _timeList[_timeList.length - 1].isCustom = true;
 
     super.initState();
   }
@@ -90,16 +94,17 @@ class _BusinessTimeState extends State<BusinessTimePage> {
               _dayList.forEach((item) => {
                     if (item.isCheck) {hasCheck = true}
                   });
-              if (!hasCheck || (currentTime == null && customTime.isEmpty)) {
-                Fluttertoast.showToast(msg: S.of(context).please_select_business_hours_hint);
+              if (!hasCheck || (currentTime == null/* && customTime.isEmpty*/)) {
+                Fluttertoast.showToast(
+                    msg: S.of(context).please_select_business_hours_hint);
                 return;
               }
 
-              if (currentTime == null && isRightTime(customTime)) {
-                currentTime = BusinessTimeItem();
+              if (currentTime != null && currentTime.isCustom && currentTime.isCheck && isRightTime(customTime)) {
                 currentTime.label = customTime;
-              } else if (currentTime == null && !isRightTime(customTime)) {
-                Fluttertoast.showToast(msg: S.of(context).please_enter_correct_time_format_hint);
+              } else if (currentTime != null && currentTime.isCustom && !isRightTime(customTime)) {
+                Fluttertoast.showToast(
+                    msg: S.of(context).please_enter_correct_time_format_hint);
                 return;
               }
 
@@ -144,27 +149,60 @@ class _BusinessTimeState extends State<BusinessTimePage> {
     );
   }
 
-
   Widget _buildTimeItem(BusinessTimeItem timeItem) {
     TextStyle textStyle =
         timeItem.isCheck ? TextStyles.textC333S14 : TextStyles.textC777S14;
     String imagePath = timeItem.isCheck
         ? "res/drawable/ic_business_time_switch_on.png"
         : "res/drawable/ic_business_time_switch_off.png";
-    return Container(
-      padding: const EdgeInsets.only(left: 15, right: 15),
-      height: 41,
-      child: Row(
-        children: <Widget>[
-          Text(
-            timeItem.label,
-            style: textStyle,
-          ),
-          Spacer(),
-          Image.asset(imagePath, width: 24, height: 15)
-        ],
-      ),
-    );
+    if (timeItem.isCustom) {
+      return Stack(
+          alignment: AlignmentDirectional.centerStart,
+          children: <Widget>[
+            Container(
+              color: HexColor("#f8f8f8"),
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Image.asset("res/drawable/ic_business_time_add_custom.png",
+                      width: 15, height: 15),
+                  SizedBox(width: 10, height: 1),
+                  Expanded(
+                    child: TextField(
+                      inputFormatters: [LengthLimitingTextInputFormatter(11)],
+                        controller: _timeController,
+                        decoration: new InputDecoration(
+                          border: InputBorder.none,
+                          hintStyle: TextStyles.textCaaaS14,
+                          hintText: S.of(context).user_defined_time_format_hint,
+                        )),
+                  ),
+                  SizedBox(width: 10, height: 1),
+                  Image.asset(imagePath, width: 24, height: 15)
+                ],
+              ),
+            )
+          ]);
+    } else {
+      return Container(
+        padding: const EdgeInsets.only(left: 15, right: 15),
+        height: 41,
+        child: Row(
+          children: <Widget>[
+            Text(
+              timeItem.label,
+              style: textStyle,
+            ),
+            Spacer(),
+            Image.asset(imagePath, width: 24, height: 15)
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildBody() {
@@ -174,9 +212,9 @@ class _BusinessTimeState extends State<BusinessTimePage> {
           children: _buildDayView()),
       Padding(
           padding: EdgeInsets.only(left: 15),
-          child: Text(S.of(context).business_time, style: TextStyles.textC333S14)),
+          child:
+              Text(S.of(context).business_time, style: TextStyles.textC333S14)),
       Column(children: _buildBusinessTime()),
-      _buildCustomTime()
     ]);
   }
 
@@ -200,11 +238,11 @@ class _BusinessTimeState extends State<BusinessTimePage> {
         .map(
           (item) => InkWell(
               onTap: () {
-                if(currentTime == item){
+                if (currentTime == item) {
                   item.isCheck = !item.isCheck;
-                  if(!item.isCheck){
+                  if (!item.isCheck) {
                     currentTime = null;
-                  }else{
+                  } else {
                     currentTime = item;
                   }
                 } else {
