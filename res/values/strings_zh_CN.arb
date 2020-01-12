@@ -343,5 +343,12 @@
   "store_failed_hint": "存储失败!",
   "name": "名称",
   "place_name_cannot_be_empty_hint": "地点名称不能为空",
-  "please_enter_name_of_location_hint": "请输入地点名称"
+  "please_enter_name_of_location_hint": "请输入地点名称",
+  "please_enter_category_keywords_hint": "输入类别关键词",
+  "no_verifiable_poi_around_hint": "周围没有可验证的位置信息。",
+  "poi_confirm_title_hint": "你认为这个位置信息是真实存在并且信息描述完全正确的，确定提交吗？",
+  "poi_add_success_hint": "位置信息添加成功",
+  "poi_confirm_success_hint": "位置信息确认成功",
+  "unknown_ocations": "未知位置",
+  "poi_confirm_title_error": "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？"
 }

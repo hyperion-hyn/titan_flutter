@@ -596,27 +596,6 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  void _checkInputHeight() async {
-//    int count = _addressController.text.split('\n').length;
-    int length = _addressController.text.length;
-    double count = _addressController.text.length / 15;
-
-    print('[add] --> count:$count, length:$length');
-
-    if (count < 1) {
-      return;
-    }
-
-    if (count <= 4) {  // use a maximum height of 6 rows
-      // height values can be adapted based on the font size
-      var newHeight = count < 1 ? 40.0 : 28.0 + (count * 18.0);
-      setState(() {
-        _inputHeight = newHeight;
-        print('[add] --> newHeight:$newHeight');
-      });
-    }
-  }
-
   Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller,{bool isDetailAddress = false}) {
     return Container(
         height: !isDetailAddress?40:_inputHeight,
@@ -837,6 +816,28 @@ class _AddPositionState extends State<AddPositionPage> {
       }
     }
     return text;
+  }
+
+
+  void _checkInputHeight() async {
+//    int count = _addressController.text.split('\n').length;
+    int length = _addressController.text.length;
+    double count = _addressController.text.length / 15;
+
+    print('[add] --> count:$count, length:$length');
+
+    if (count < 1) {
+      return;
+    }
+
+    if (count <= 4) {  // use a maximum height of 6 rows
+      // height values can be adapted based on the font size
+      var newHeight = count < 1 ? 40.0 : 28.0 + (count * 18.0);
+      setState(() {
+        _inputHeight = newHeight;
+        print('[add] --> newHeight:$newHeight');
+      });
+    }
   }
 
 }

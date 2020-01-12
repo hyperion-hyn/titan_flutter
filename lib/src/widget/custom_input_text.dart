@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 
 typedef void TextFieldCallBack(String content);
 
@@ -25,7 +26,7 @@ class CustomInputText extends StatefulWidget {
 
   CustomInputText(
       {Key key,
-      this.text = "输入内容",
+      this.text = "",
       this.password = false,
       this.isShowClean = false,
       this.onChanged,
@@ -126,7 +127,7 @@ class _TextaState extends State<CustomInputText> {
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(9),
                 border: InputBorder.none,
-                hintText: '输入类别关键词',
+                hintText: S.of(context).please_enter_category_keywords_hint,
                 hintStyle: TextStyle(fontSize: 14, color: Color(0xff777777)),
               ),
               keyboardType: TextInputType.text,

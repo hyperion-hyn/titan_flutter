@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/position/api/position_api.dart';
@@ -77,7 +78,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           logger.e(err);
 
           PoiEntity poi = PoiEntity();
-          poi.name = event.poi.name ?? '未知位置';
+          poi.name = event.poi.name ?? S.of(globalContext).unknown_ocations;
           poi.address = event.poi.address ?? '${event.poi.latLng.latitude},${event.poi.latLng.longitude}';
           poi.remark = event.poi.remark;
           poi.latLng = event.poi.latLng;

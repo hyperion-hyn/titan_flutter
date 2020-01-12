@@ -49,7 +49,7 @@ class _DataContributionState extends State<DataContributionPage>
 
   @override
   void didPopNext() {
-    print("didPopNext");
+    //print("didPopNext");
     doDidPopNext();
   }
 
@@ -57,15 +57,15 @@ class _DataContributionState extends State<DataContributionPage>
     if (currentWalletVo != null) {
       String defaultWalletFileName =
           await _walletService.getDefaultWalletFileName();
-      logger.i("defaultWalletFileName:$defaultWalletFileName");
+      //logger.i("defaultWalletFileName:$defaultWalletFileName");
       String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
-      logger.i("updateWalletFileName:$updateWalletFileName");
+      //logger.i("updateWalletFileName:$updateWalletFileName");
       if (defaultWalletFileName == updateWalletFileName) {
-        logger.i("do UpdateWalletEvent");
+        //logger.i("do UpdateWalletEvent");
         _walletBloc.add(UpdateWalletEvent(currentWalletVo));
       } else {
         currentWalletVo = null;
-        logger.i("do ScanWalletEvent");
+        //logger.i("do ScanWalletEvent");
         _walletBloc.add(ScanWalletEvent());
       }
     } else {

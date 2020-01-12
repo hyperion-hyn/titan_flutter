@@ -58,8 +58,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    //print('[category] --> didChangeDependencies');
     _setupData();
     super.didChangeDependencies();
   }
