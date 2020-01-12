@@ -19,6 +19,7 @@ class BusinessDayItem extends BusinessEntity{
 class BusinessTimeItem extends BusinessEntity{
   String label;
   bool isCheck;
+  bool isCustom;
 
-  BusinessTimeItem({this.label, this.isCheck = false});
+  BusinessTimeItem({this.label, this.isCheck = false, this.isCustom = false});
 }
