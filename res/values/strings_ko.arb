@@ -337,5 +337,11 @@
   "please_enter_door_number_hint": "请输入门牌号码",
   "please_enter_postal_code": "请输入邮政编码",
   "click_auto_get_hint": "点击自动获取",
-  "scene_photographed": "现场拍照"
+  "scene_photographed": "现场拍照",
+  "please_select_category_hint": "请选择类别",
+  "please_add_business_hours_hint": "请添加营业时间",
+  "store_failed_hint": "存储失败!",
+  "name": "名称",
+  "place_name_cannot_be_empty_hint": "地点名称不能为空",
+  "please_enter_name_of_location_hint": "请输入地点名称"
 }

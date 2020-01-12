@@ -69,8 +69,6 @@ class _AddPositionState extends State<AddPositionPage> {
 
   @override
   void initState() {
-    _categoryDefaultText = "请选择类别";
-    _timeDefaultText = "请添加营业时间";
 
     _addressController.addListener(_checkInputHeight);
 
@@ -80,6 +78,19 @@ class _AddPositionState extends State<AddPositionPage> {
       _positionBloc.add(GetOpenCageEvent(widget.userPosition));
     });
     super.initState();
+  }
+  @override
+  void didChangeDependencies() {
+    _setupData();
+    super.didChangeDependencies();
+  }
+
+  void _setupData() {
+    _categoryDefaultText = S.of(context).please_select_category_hint;
+    _timeDefaultText = S.of(context).please_add_business_hours_hint;
+    setState(() {
+
+    });
   }
 
   @override
@@ -124,7 +135,7 @@ class _AddPositionState extends State<AddPositionPage> {
           setState(() {
             _isUploading = false;
           });
-          Fluttertoast.showToast(msg: "存储失败!");
+          Fluttertoast.showToast(msg: S.of(context).store_failed_hint);
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 
@@ -211,7 +222,7 @@ class _AddPositionState extends State<AddPositionPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             // 交叉轴（竖直）对其方式
             children: <Widget>[
-              _buildTitleRow('category', Size(18, 18), '类别', true, isCategory: true),
+              _buildTitleRow('category', Size(18, 18), S.of(context).category, true, isCategory: true),
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
@@ -232,7 +243,7 @@ class _AddPositionState extends State<AddPositionPage> {
   Widget _buildAddressNameCell() {
     return Column(
       children: <Widget>[
-        _buildTitleRow('name', Size(18, 18), '名称', true),
+        _buildTitleRow('name', Size(18, 18), S.of(context).name, true),
         Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
@@ -240,7 +251,7 @@ class _AddPositionState extends State<AddPositionPage> {
             controller: _addressNameController,
             validator: (value) {
               if (value.isEmpty) {
-                return '地点名称不能为空';
+                return S.of(context).place_name_cannot_be_empty_hint;
               } else {
                 return null;
               }
@@ -250,7 +261,7 @@ class _AddPositionState extends State<AddPositionPage> {
             },
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: '请输入地点名称',
+              hintText: S.of(context).please_enter_name_of_location_hint,
               hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
             ),
             keyboardType: TextInputType.text,
