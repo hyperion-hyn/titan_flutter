@@ -349,6 +349,6 @@
   "poi_confirm_title_hint": "你认为这个位置信息是真实存在并且信息描述完全正确的，确定提交吗？",
   "poi_add_success_hint": "位置信息添加成功",
   "poi_confirm_success_hint": "位置信息确认成功",
-  "unknown_ocations": "未知位置",
+  "unknown_locations": "未知位置",
   "poi_confirm_title_error": "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？"
 }

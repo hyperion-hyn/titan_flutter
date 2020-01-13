@@ -349,6 +349,6 @@
   "poi_confirm_title_hint": "Do you believe that the location information is real and that the description of the information is completely correct？",
   "poi_add_success_hint": "Poi was added successfully",
   "poi_confirm_success_hint": "Poi confirms success",
-  "unknown_ocations": "Unknown locations",
+  "unknown_locations": "Unknown locations",
   "poi_confirm_title_error": "Do you think the location information does not exist or the information description is wrong, are you sure to submit？"
 }

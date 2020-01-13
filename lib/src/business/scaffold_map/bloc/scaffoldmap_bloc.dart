@@ -78,7 +78,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           logger.e(err);
 
           PoiEntity poi = PoiEntity();
-          poi.name = event.poi.name ?? S.of(globalContext).unknown_ocations;
+          poi.name = event.poi.name ?? S.of(globalContext).unknown_locations;
           poi.address = event.poi.address ?? '${event.poi.latLng.latitude},${event.poi.latLng.longitude}';
           poi.remark = event.poi.remark;
           poi.latLng = event.poi.latLng;

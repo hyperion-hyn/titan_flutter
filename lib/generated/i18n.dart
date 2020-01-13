@@ -332,7 +332,7 @@ class S implements WidgetsLocalizations {
   String get twitterhyperion => "Twitter-Hyperion";
   String get twittertitan => "Twitter-Titan";
   String get unknown_error => "Unknown error";
-  String get unknown_ocations => "Unknown locations";
+  String get unknown_locations => "Unknown locations";
   String get update_now => "Update Now";
   String get upload_protocol => " upload protocol";
   String get user_defined_time_format_hint => "User defined time format，e.g: 07:00-23:00";
@@ -481,8 +481,6 @@ class $ko extends S {
   String get user_this_account => "비밀 계정 사용";
   @override
   String get private_and_safety => "프라이버시와 안전";
-  @override
-  String get unknown_ocations => "未知位置";
   @override
   String get view_all => "전체 보기";
   @override
@@ -835,6 +833,8 @@ class $ko extends S {
   String get backup_finish => "백업완료";
   @override
   String get no_recommended_route => "추천 루트가 없습니다.";
+  @override
+  String get unknown_locations => "未知位置";
   @override
   String get show_mnemonic_label => "복원 단어 보여주기";
   @override
@@ -1200,8 +1200,6 @@ class $zh_CN extends S {
   @override
   String get private_and_safety => "私密和安全";
   @override
-  String get unknown_ocations => "未知位置";
-  @override
   String get view_all => "查看全部";
   @override
   String get nightlife_guide => "夜生活指南";
@@ -1553,6 +1551,8 @@ class $zh_CN extends S {
   String get backup_finish => "备份完成";
   @override
   String get no_recommended_route => "暂无推荐路线";
+  @override
+  String get unknown_locations => "未知位置";
   @override
   String get show_mnemonic_label => "显示恢复短语";
   @override
