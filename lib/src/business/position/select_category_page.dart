@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/custom_input_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'model/category_item.dart';
@@ -45,29 +46,15 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
 
     super.initState();
+
+    _positionBloc.add(SelectCategoryInitEvent());
+
   }
 
   @override
   void dispose() {
     _positionBloc.close();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    _setupData();
-    super.didChangeDependencies();
-  }
-
-  void _setupData() {
-    _tagList.add(S.of(context).select_category_bookstore);
-    _tagList.add(S.of(context).select_category_bakery);
-    _tagList.add(S.of(context).select_category_chocolateshop);
-    _tagList.add(S.of(context).select_category_fabrics);
-    _tagList.add(S.of(context).select_category_healthfood);
-    _tagList.add(S.of(context).select_category_nailsalon);
-
-    setState(() {});
   }
 
   void searchTextChangeListener() {
@@ -111,6 +98,17 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
         if (state is InitialPositionState) {
           categoryList.clear();
+//          return _buildBody(state);
+          return _buildBody(state);
+        } else if (state is SelectCategoryInitState) {
+          _tagList.clear();
+          _tagList = state.categoryList.map((categoryItem){
+            return categoryItem.title;
+          }).toList();
+//          categoryList.clear();
+//          categoryList.addAll(state.categoryList);
+
+          print("tagList ${_tagList[0]}");
           return _buildBody(state);
         } else if (state is SelectCategoryResultState) {
           categoryList.clear();
@@ -187,16 +185,28 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         ),
       );
     } else if (state is SelectCategoryResultState) {
-      return ListView.separated(
-          itemBuilder: (context, index) {
-            return _buildInfoContainer(categoryList[index]);
-          },
-          separatorBuilder: (context, index) {
-            return _divider();
-          },
-          itemCount: categoryList.length);
+      if(categoryList.length == 0){
+        return Container(
+          child: Center(
+            child: Text(
+              "暂无此类别",
+              style: TextStyles.textC777S16,
+            ),
+          ),
+        );
+      }else{
+        return ListView.separated(
+            itemBuilder: (context, index) {
+              return _buildInfoContainer(categoryList[index]);
+            },
+            separatorBuilder: (context, index) {
+              return _divider();
+            },
+            itemCount: categoryList.length);
+      }
     } else if (state is InitialPositionState ||
-        state is SelectCategoryClearState) {
+        state is SelectCategoryClearState ||
+        state is SelectCategoryInitState) {
       return Padding(
         padding: const EdgeInsets.only(top: 48.0),
         child: Wrap(

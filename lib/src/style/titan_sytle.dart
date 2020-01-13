@@ -16,6 +16,7 @@ class TextStyles {
 
   static TextStyle textC333S14 = textStyle(color: DefaultColors.color333);
   static TextStyle textC777S14 = textStyle(color: DefaultColors.color777);
+  static TextStyle textC777S16 = textStyle(fontSize: 16, color: DefaultColors.color777);
   static TextStyle textCaaaS14 = textStyle(color: DefaultColors.coloraaa);
   static TextStyle textCfffS14 = textStyle(color: DefaultColors.colorfff);
 }

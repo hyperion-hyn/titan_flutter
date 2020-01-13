@@ -16,7 +16,8 @@ class AddPositionState extends PositionState {
 
 // category
 class SelectCategoryInitState extends PositionState {
-  SelectCategoryInitState();
+  List<CategoryItem> categoryList;
+  SelectCategoryInitState(this.categoryList);
 }
 
 class SelectCategoryLoadingState extends PositionState {
