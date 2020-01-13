@@ -216,6 +216,7 @@ class S implements WidgetsLocalizations {
   String get please_enter_door_number_hint => "Enter door number";
   String get please_enter_name_of_location_hint => "Enter name of location";
   String get please_enter_postal_code => "Enter postal code";
+  String get please_input_custom_time_hint => "Please input custom time";
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
@@ -338,7 +339,7 @@ class S implements WidgetsLocalizations {
   String get unknown_locations => "Unknown locations";
   String get update_now => "Update Now";
   String get upload_protocol => " upload protocol";
-  String get user_defined_time_format_hint => "User defined time format，e.g: 07:00-23:00";
+  String get user_defined_time_format_hint => "User defined time format";
   String get user_this_account => "Use this private account";
   String get video => "Video";
   String get view_all => "View All";
@@ -363,7 +364,6 @@ class S implements WidgetsLocalizations {
   String confirm_position_name_func(String name) => "Poi name：${name}";
   String distance(String distance) => "$distance m";
   String get hynPriceUnitSymbol => "\$";
-  String if_confirm_position_info_func(String currentResult) => "If confirm poi $currentResult";
   String km(String km) => "$km km ";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
@@ -436,6 +436,8 @@ class $ko extends S {
   String get details_of_street => "街道详情";
   @override
   String get search_empty_data => "데이터가 없습니다.";
+  @override
+  String get please_input_custom_time_hint => "请填写自定义时间";
   @override
   String get dmap_document_title => "DMap 지도를문서에바인딩합니다.";
   @override
@@ -1017,7 +1019,7 @@ class $ko extends S {
   @override
   String get backup_wallet_mnemonic_text => "종이와 펜을 사용하여 도움말을 정확하게 기록하세요.\n 만일 휴대폰을 분실하거나 도난당하거나 혹은 파손됐을 경우 도움말을 통해 당신의 자산을 회복할수 있습니다.";
   @override
-  String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
+  String get user_defined_time_format_hint => "自定义营业时间";
   @override
   String get scan_thanks_contribution_signal_hint => "귀하의 데이터 기여에 감사드립니다！";
   @override
@@ -1091,8 +1093,6 @@ class $ko extends S {
   @override
   String send_symbol(String symbol) => "발송 $symbol";
   @override
-  String if_confirm_position_info_func(String currentResult) => "是否确认$currentResult";
-  @override
   String send_count_label(String symbol) => "$symbol 수량";
 }
 
@@ -1160,6 +1160,8 @@ class $zh_CN extends S {
   String get details_of_street => "街道详情";
   @override
   String get search_empty_data => "暂无数据";
+  @override
+  String get please_input_custom_time_hint => "请填写自定义时间";
   @override
   String get dmap_document_title => "DMap地图应用接入文档";
   @override
@@ -1421,7 +1423,7 @@ class $zh_CN extends S {
   @override
   String get scan_confirm_upload => "上传信号数据";
   @override
-  String get take_pictures_must_not_be_empty_hint => "拍摄图片不能为空";
+  String get take_pictures_must_not_be_empty_hint => "请添加地点现场照片";
   @override
   String get dmap_life => "生活指引";
   @override
@@ -1559,7 +1561,7 @@ class $zh_CN extends S {
   @override
   String get less_than_1_min => "小于1分钟";
   @override
-  String get category_cannot_be_empty_hint => "类别不能为空";
+  String get category_cannot_be_empty_hint => "请选择地点类别";
   @override
   String get address_copied => "地址已复制";
   @override
@@ -1741,7 +1743,7 @@ class $zh_CN extends S {
   @override
   String get backup_wallet_mnemonic_text => "使用纸和笔正确抄写助记词\n如果你的手机丢失、被盗。损坏，助记词将可以恢复你的资产";
   @override
-  String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
+  String get user_defined_time_format_hint => "自定义营业时间";
   @override
   String get scan_thanks_contribution_signal_hint => "感谢您做的数据贡献！";
   @override
@@ -1757,7 +1759,7 @@ class $zh_CN extends S {
   @override
   String get check_poi_item_title => "验证附近地点";
   @override
-  String get poi_upload_protocol_not_accepted_hint => "地理位置上传协议未接受";
+  String get poi_upload_protocol_not_accepted_hint => "请接受地点上传协议";
   @override
   String get click_auto_get_hint => "点击自动获取";
   @override
@@ -1812,8 +1814,6 @@ class $zh_CN extends S {
   String confirm_position_name_func(String name) => "名称：${name}";
   @override
   String send_symbol(String symbol) => "发送 $symbol";
-  @override
-  String if_confirm_position_info_func(String currentResult) => "是否确认$currentResult";
   @override
   String send_count_label(String symbol) => "$symbol 数量";
 }

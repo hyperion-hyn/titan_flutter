@@ -90,7 +90,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
           InkWell(
             onTap: () {
               bool hasCheck = false;
-              String customTime = _timeController.text;
+              String customTimeStr = _timeController.text.trim();
               _dayList.forEach((item) => {
                     if (item.isCheck) {hasCheck = true}
                   });
@@ -100,12 +100,12 @@ class _BusinessTimeState extends State<BusinessTimePage> {
                 return;
               }
 
-              if (currentTime != null && currentTime.isCustom && currentTime.isCheck && isRightTime(customTime)) {
-                currentTime.label = customTime;
-              } else if (currentTime != null && currentTime.isCustom /*&& !isRightTime(customTime)*/) {
+              if(currentTime.isCustom && currentTime.isCheck && customTimeStr.isEmpty){
                 Fluttertoast.showToast(
-                    msg: S.of(context).please_enter_correct_time_format_hint);
+                    msg: S.of(context).please_input_custom_time_hint);
                 return;
+              } else if (currentTime.isCustom && currentTime.isCheck) {
+                currentTime.label = customTimeStr;
               }
 
               BusinessInfo businessInfo =
