@@ -363,12 +363,7 @@ Widget buildPicList(
 
 Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
   List<UserInfoItem> _infoList = [];
-//    (UserInfoItem("res/drawable/ic_user_poi_category_name.png", "中餐馆")),
-//    (UserInfoItem("res/drawable/ic_user_poi_zip_code.png", "510000")),
-//    (UserInfoItem("res/drawable/ic_user_poi_phone_num.png", "13645793930")),
-//    (UserInfoItem("res/drawable/ic_user_poi_web_site.png", "www.13645793930")),
-//    (UserInfoItem("res/drawable/ic_user_poi_business_time.png", "09:00-22:00"))
-//  ];
+
   if (confirmPoiItem.category.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_category_name.png", confirmPoiItem.category));
@@ -376,6 +371,7 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_category_name.png", S.of(context).search_empty_data));
   }
+
   if (confirmPoiItem.postcode.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_zip_code.png", confirmPoiItem.postcode));
@@ -383,6 +379,7 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_zip_code.png", S.of(context).search_empty_data));
   }
+
   if (confirmPoiItem.phone.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_phone_num.png", confirmPoiItem.phone));
@@ -390,6 +387,7 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_phone_num.png", S.of(context).search_empty_data));
   }
+
   if (confirmPoiItem.website.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_web_site.png", confirmPoiItem.website));
@@ -397,6 +395,7 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_web_site.png", S.of(context).search_empty_data));
   }
+  
   if (confirmPoiItem.workTime.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_business_time.png", confirmPoiItem.workTime));

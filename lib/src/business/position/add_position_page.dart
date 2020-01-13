@@ -458,7 +458,7 @@ class _AddPositionState extends State<AddPositionPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       // 交叉轴（竖直）对其方式
                       children: <Widget>[
-                        Image.asset('res/drawable/add_position_time.png', width: 19, height: 19),
+                        Image.asset('res/drawable/ic_user_poi_business_time.png', width: 19, height: 19),
                         Container(
                           padding: const EdgeInsets.only(left: 28, right: 20),
                           child: Container(
@@ -482,9 +482,9 @@ class _AddPositionState extends State<AddPositionPage> {
                     )),
               ),
               _divider(),
-              _buildDetailCellRow('phone', S.of(context).phone_number, TextInputType.number, _detailPhoneNumController),
+              _buildDetailCellRow('ic_user_poi_phone_num', S.of(context).phone_number, TextInputType.number, _detailPhoneNumController),
               _divider(),
-              _buildDetailCellRow('website', S.of(context).website, TextInputType.emailAddress, _detailWebsiteController),
+              _buildDetailCellRow('ic_user_poi_web_site', S.of(context).website, TextInputType.emailAddress, _detailWebsiteController),
             ],
           ),
         ),
@@ -654,7 +654,7 @@ class _AddPositionState extends State<AddPositionPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           // 交叉轴（竖直）对其方式
           children: <Widget>[
-            Image.asset('res/drawable/add_position_$imageName.png', width: 19, height: 19),
+            Image.asset('res/drawable/$imageName.png', width: 19, height: 19),
             Padding(
               padding: const EdgeInsets.only(right: 10, left: 28),
               child: SizedBox(
