@@ -391,20 +391,20 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
         "res/drawable/ic_user_poi_phone_num.png", S.of(context).search_empty_data));
   }
 
-  if (confirmPoiItem.website.isNotEmpty) {
-    _infoList.add(UserInfoItem(
-        "res/drawable/ic_user_poi_web_site.png", confirmPoiItem.website));
-  }else{
-    _infoList.add(UserInfoItem(
-        "res/drawable/ic_user_poi_web_site.png", S.of(context).search_empty_data));
-  }
-  
   if (confirmPoiItem.workTime.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_business_time.png", confirmPoiItem.workTime));
   }else{
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_business_time.png", S.of(context).search_empty_data));
+  }
+
+  if (confirmPoiItem.website.isNotEmpty) {
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_web_site.png", confirmPoiItem.website));
+  }else{
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_web_site.png", S.of(context).search_empty_data));
   }
 
   return Container(
