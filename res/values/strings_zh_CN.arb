@@ -300,7 +300,7 @@
   "select_category_nailsalon": "美甲店",
   "select_category": "选择类别",
   "select_position": "选择位置",
-  "user_defined_time_format_hint": "自定义时间，格式 07:00-23:00",
+  "user_defined_time_format_hint": "自定义营业时间",
   "business_time": "营业时间",
   "please_select_business_hours_hint": "请选择营业时间",
   "please_enter_correct_time_format_hint": "请输入正确的时间，例如 07:00-23:00",
@@ -351,5 +351,6 @@
   "poi_confirm_success_hint": "位置信息确认成功",
   "unknown_locations": "未知位置",
   "poi_confirm_title_error": "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？",
-  "poi_upload_protocol": "上传协议"
+  "poi_upload_protocol": "上传协议",
+  "please_input_custom_time_hint": "请填写自定义时间"
 }

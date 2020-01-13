@@ -215,6 +215,7 @@ class S implements WidgetsLocalizations {
   String get please_enter_door_number_hint => "Enter door number";
   String get please_enter_name_of_location_hint => "Enter name of location";
   String get please_enter_postal_code => "Enter postal code";
+  String get please_input_custom_time_hint => "Please input custom time";
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
@@ -336,7 +337,7 @@ class S implements WidgetsLocalizations {
   String get unknown_locations => "Unknown locations";
   String get update_now => "Update Now";
   String get upload_protocol => " upload protocol";
-  String get user_defined_time_format_hint => "User defined time format，e.g: 07:00-23:00";
+  String get user_defined_time_format_hint => "User defined time format";
   String get user_this_account => "Use this private account";
   String get video => "Video";
   String get view_all => "View All";
@@ -434,6 +435,8 @@ class $ko extends S {
   String get details_of_street => "街道详情";
   @override
   String get search_empty_data => "데이터가 없습니다.";
+  @override
+  String get please_input_custom_time_hint => "请填写自定义时间";
   @override
   String get dmap_document_title => "DMap 지도를문서에바인딩합니다.";
   @override
@@ -1009,7 +1012,7 @@ class $ko extends S {
   @override
   String get backup_wallet_mnemonic_text => "종이와 펜을 사용하여 도움말을 정확하게 기록하세요.\n 만일 휴대폰을 분실하거나 도난당하거나 혹은 파손됐을 경우 도움말을 통해 당신의 자산을 회복할수 있습니다.";
   @override
-  String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
+  String get user_defined_time_format_hint => "自定义营业时间";
   @override
   String get scan_thanks_contribution_signal_hint => "귀하의 데이터 기여에 감사드립니다！";
   @override
@@ -1154,6 +1157,8 @@ class $zh_CN extends S {
   String get details_of_street => "街道详情";
   @override
   String get search_empty_data => "暂无数据";
+  @override
+  String get please_input_custom_time_hint => "请填写自定义时间";
   @override
   String get dmap_document_title => "DMap地图应用接入文档";
   @override
@@ -1729,7 +1734,7 @@ class $zh_CN extends S {
   @override
   String get backup_wallet_mnemonic_text => "使用纸和笔正确抄写助记词\n如果你的手机丢失、被盗。损坏，助记词将可以恢复你的资产";
   @override
-  String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
+  String get user_defined_time_format_hint => "自定义营业时间";
   @override
   String get scan_thanks_contribution_signal_hint => "感谢您做的数据贡献！";
   @override
