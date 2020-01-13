@@ -236,7 +236,7 @@ class S implements WidgetsLocalizations {
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
   String get position_info_confirm => "POI Confirm";
-  String get post_my_check => "提交验证";
+  String get post_my_check => "Post my check";
   String get postal_code => "Postal code";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 characters";
