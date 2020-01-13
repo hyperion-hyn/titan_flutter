@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 
 typedef void TextFieldCallBack(String content);
@@ -68,7 +69,7 @@ class _TextaState extends State<CustomInputText> {
     String currentText = widget.controller.text.trim();
     widget.controller.selection = TextSelection(baseOffset:currentText.length , extentOffset:currentText.length);
     if(oldText != currentText){
-      _filterSubject.sink.add(currentText);
+//      _filterSubject.sink.add(currentText);
       oldText = currentText;
     }
     if (currentText.isNotEmpty) {
@@ -100,31 +101,37 @@ class _TextaState extends State<CustomInputText> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 220,
-      height: 28,
+      width: 300,
+      height: 50,
+      padding: EdgeInsets.only(left: 10,right: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         // // 主轴方向（横向）对齐方式
         crossAxisAlignment: CrossAxisAlignment.center,
         // 交叉轴（竖直）对其方式
         children: <Widget>[
-          SizedBox(
-            height: 28,
-            width: 150,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(17, 8, 11, 8),
+            child: Image.asset('res/drawable/ic_select_category_search_bar.png', width: 13, height: 13),
+          ),
+          Expanded(
             child: TextFormField(
+//              inputFormatters: [LengthLimitingTextInputFormatter(9)],
               textInputAction: TextInputAction.search,
               onFieldSubmitted: (value){
                 widget.fieldCallBack(value);
               },
-              focusNode: _focusNode,
-              textAlign: TextAlign.left,
+//              focusNode: _focusNode,
+//              textAlign: TextAlign.left,
               controller: widget.controller,
               style: TextStyle(fontSize: 14),
               onChanged: (value){
                 searchTextChangeListener();
               },
+              maxLines: 1,
+              textAlign: TextAlign.left,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(9),
+//                contentPadding: EdgeInsets.all(10),
                 border: InputBorder.none,
                 hintText: '输入类别关键词',
                 hintStyle: TextStyle(fontSize: 14, color: Color(0xff777777)),
@@ -132,7 +139,6 @@ class _TextaState extends State<CustomInputText> {
               keyboardType: TextInputType.text,
             ),
           ),
-          Spacer(),
           Container(
             child: Row(
               mainAxisSize: MainAxisSize.min,
