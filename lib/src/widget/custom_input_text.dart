@@ -68,7 +68,6 @@ class _TextaState extends State<CustomInputText> {
 
   void searchTextChangeListener() {
     String currentText = widget.controller.text.trim();
-    widget.controller.selection = TextSelection(baseOffset:currentText.length , extentOffset:currentText.length);
     if(oldText != currentText){
       _filterSubject.sink.add(currentText);
       oldText = currentText;
@@ -125,6 +124,7 @@ class _TextaState extends State<CustomInputText> {
 //              focusNode: _focusNode,
 //              textAlign: TextAlign.left,
               controller: widget.controller,
+              autofocus: false,
               style: TextStyle(fontSize: 14),
               onChanged: (value){
                 searchTextChangeListener();
