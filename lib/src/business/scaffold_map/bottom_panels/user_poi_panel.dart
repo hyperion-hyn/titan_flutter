@@ -344,14 +344,17 @@ Widget buildPicList(
               },
               child: Container(
                 width: itemWidth,
-                decoration: BoxDecoration(
+                /*decoration: BoxDecoration(
                   color: HexColor('#D8D8D8'),
                   borderRadius: BorderRadius.circular(3.0),
-                ),
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'res/drawable/img_placeholder.jpg',
-                  image: confirmPoiItem.images[index],
-                  fit: BoxFit.cover,
+                ),*/
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(3.0),
+                  child: FadeInImage.assetNetwork(
+                    placeholder: 'res/drawable/img_placeholder.jpg',
+                    image: confirmPoiItem.images[index],
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
@@ -408,7 +411,7 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
   return Container(
     height: 235,
     padding: const EdgeInsets.only(top: 0, left: 15.0, right: 15),
-    child: ListView.builder(
+    child: ListView.separated(
         physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 0),
         itemBuilder: (context, index) {
@@ -431,9 +434,12 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
                   ],
                 ),
               ),
-              _divider()
+//              _divider()
             ],
           );
+        },
+        separatorBuilder: (context, index) {
+          return _divider();
         },
         itemCount: _infoList.length),
   );

@@ -71,5 +71,6 @@ class ConfirmPositionResultLoadingState extends PositionState {
 
 class ConfirmPositionResultState extends PositionState {
   bool confirmResult;
-  ConfirmPositionResultState(this.confirmResult);
+  String errorMsg;
+  ConfirmPositionResultState(this.confirmResult,this.errorMsg);
 }
