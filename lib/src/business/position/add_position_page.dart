@@ -136,7 +136,7 @@ class _AddPositionState extends State<AddPositionPage> {
           setState(() {
             _isUploading = false;
           });
-          Fluttertoast.showToast(msg: S.of(context).store_failed_hint);
+          Fluttertoast.showToast(msg: S.of(context).add_failed_hint);
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 
