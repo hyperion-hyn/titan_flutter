@@ -185,6 +185,7 @@ class S implements WidgetsLocalizations {
   String get new_update_available => "Latest Update Available";
   String get next => "continue";
   String get nightlife_guide => "Nightlife Guidance";
+  String get no_category => "No such category";
   String get no_data => "No Data";
   String get no_detail_address => "No detailed address";
   String get no_fill_in => "Not Filled";
@@ -745,6 +746,8 @@ class $ko extends S {
   String get Hyperion => "하이페리온";
   @override
   String get Next => "다음";
+  @override
+  String get no_category => "暂无此类别";
   @override
   String get installation_update_package_failed => "업데이트 패키지를 설치하지 못했습니다.";
   @override
@@ -1447,6 +1450,8 @@ class $zh_CN extends S {
   String get Hyperion => "海伯利安";
   @override
   String get Next => "下一页";
+  @override
+  String get no_category => "暂无此类别";
   @override
   String get installation_update_package_failed => "安装更新包失败";
   @override

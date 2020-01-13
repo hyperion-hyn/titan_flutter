@@ -189,7 +189,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         return Container(
           child: Center(
             child: Text(
-              "暂无此类别",
+              S.of(context).no_category,
               style: TextStyles.textC777S16,
             ),
           ),
@@ -208,7 +208,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         state is SelectCategoryClearState ||
         state is SelectCategoryInitState) {
       return Padding(
-        padding: const EdgeInsets.only(top: 48.0),
+        padding: const EdgeInsets.only(top: 48.0, left: 8, right: 8),
         child: Wrap(
             alignment: WrapAlignment.center,
             spacing: 10,

@@ -342,5 +342,6 @@
   "get_poi_fail_please_again": "Failed to obtain location information, please locate the map to your location first。",
   "please_input_custom_time_hint": "Please input custom time",
   "no_remark": "No remark",
-  "post_my_check": "Post my check"
+  "post_my_check": "Post my check",
+  "no_category": "No such category"
 }
