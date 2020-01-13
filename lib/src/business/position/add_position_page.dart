@@ -144,7 +144,8 @@ class _AddPositionState extends State<AddPositionPage> {
           var city = _openCageData["city"];
           var county = _openCageData["county"] ?? "";
           setState(() {
-            _addressText = country + " " + provinces + " " + city + " " + county;
+            //_addressText = country + " " + provinces + " " + city + " " + county;
+            _addressText = county + "," + city + "," + provinces + "," + country;
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
           });
 
@@ -362,7 +363,6 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  // todo: 加入抖动
   Widget _buildAddressCell() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -544,7 +544,7 @@ class _AddPositionState extends State<AddPositionPage> {
                           )));
             },
             child: SizedBox(
-                width: 200,
+                //width: 200,
                 height: 40,
                 child: Row(
                   children: <Widget>[
@@ -557,11 +557,15 @@ class _AddPositionState extends State<AddPositionPage> {
                         });
                       },
                     ),
-                    Text(
-                      S.of(context).geographical_position,
-                      style: TextStyle(
-                        color: HexColor('#333333'),
-                        fontSize: 11,
+                    Container(
+                      width: 80,
+                      child: Text(
+                        S.of(context).geographical_position,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: HexColor('#333333'),
+                          fontSize: 11,
+                        ),
                       ),
                     ),
                     Text(
@@ -750,7 +754,7 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   _uploadPoiData() {
-    print('[add] --> 存储中。。。');
+    //print('[add] --> 存储中。。。');
 
     // 0. 检测地点名称
     if (!_addressNameKey.currentState.validate()) {
@@ -785,16 +789,20 @@ class _AddPositionState extends State<AddPositionPage> {
     var categoryId = _categoryItem.id;
     var country = _openCageData["country"] ?? "";
     var state = _openCageData["state"];
-    var city = _openCageData["city"] + _openCageData["county"];
-    var postalCode = _openCageData["postcode"];
+    var city = _openCageData["county"];
+    var county = _openCageData["city"];
+//    var city = _openCageData["city"];
+//    var county = _openCageData["county"];
+    //var postalCode = _openCageData["postcode"];
     var countryCode = _openCageData["country_code"] ?? "";
     var poiName = _maxLengthLimit(_addressNameController);
     var poiAddress = _maxLengthLimit(_addressController, isDetailAddress: true);
     var poiHouseNum = _maxLengthLimit(_addressHouseNumController);
     var poiPhoneNum = _maxLengthLimit(_detailPhoneNumController);
     var poiWebsite = _maxLengthLimit(_detailWebsiteController);
+    var postalCode = _maxLengthLimit(_addressPostcodeController);
 
-    var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city,
+    var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city, county,
         poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite);
 
     var model = PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
@@ -822,9 +830,9 @@ class _AddPositionState extends State<AddPositionPage> {
   void _checkInputHeight() async {
 //    int count = _addressController.text.split('\n').length;
     int length = _addressController.text.length;
-    double count = _addressController.text.length / 15;
+    double count = _addressController.text.length / 20;
 
-    print('[add] --> count:$count, length:$length');
+    //print('[add] --> count:$count, length:$length');
 
     if (count < 1) {
       return;
@@ -835,7 +843,7 @@ class _AddPositionState extends State<AddPositionPage> {
       var newHeight = count < 1 ? 40.0 : 28.0 + (count * 18.0);
       setState(() {
         _inputHeight = newHeight;
-        print('[add] --> newHeight:$newHeight');
+        //print('[add] --> newHeight:$newHeight');
       });
     }
   }

@@ -302,8 +302,8 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
 
 Widget buildPicList(
     double itemWidth, double topValue, ConfirmPoiItem confirmPoiItem) {
-  print("image = hahaha");
-  print("image = " + confirmPoiItem.images.toString());
+  //print("image = hahaha");
+  //print("image = " + confirmPoiItem.images.toString());
   return Container(
     padding: EdgeInsets.only(left: 15.0, bottom: 14, top: topValue),
     height: 138,
