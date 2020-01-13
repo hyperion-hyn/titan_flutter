@@ -353,5 +353,6 @@
   "select_position_please_again_hint": "Failed to select location. Please try again",
   "get_poi_fail_please_again": "Failed to obtain location information, please locate the map to your location first。",
   "please_input_custom_time_hint": "Please input custom time",
-  "no_remark": "No remark"
+  "no_remark": "No remark",
+  "post_my_check": "提交验证"
 }

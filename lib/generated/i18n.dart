@@ -236,6 +236,7 @@ class S implements WidgetsLocalizations {
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
   String get position_info_confirm => "POI Confirm";
+  String get post_my_check => "提交验证";
   String get postal_code => "Postal code";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 characters";
@@ -782,6 +783,8 @@ class $ko extends S {
   String get require_location_message => "위치 확인 기능을 사용할 수 있는 권한을 부여해 주십시오.";
   @override
   String get please_select_category_hint => "请选择类别";
+  @override
+  String get post_my_check => "提交验证";
   @override
   String get not_open_yet => "아직개방하지않았습니다.";
   @override
@@ -1506,6 +1509,8 @@ class $zh_CN extends S {
   String get require_location_message => "请你授权使用定位功能.";
   @override
   String get please_select_category_hint => "请选择类别";
+  @override
+  String get post_my_check => "提交验证";
   @override
   String get not_open_yet => "暂未开放";
   @override

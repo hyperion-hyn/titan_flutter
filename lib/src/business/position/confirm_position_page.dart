@@ -117,7 +117,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text(S.of(context).poi_confirm_success_hint),
+            title: Text(S.of(context).post_my_check),
             content: Text(content),
             actions: <Widget>[
               FlatButton(
