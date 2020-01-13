@@ -402,7 +402,7 @@ class _ContributionState extends State<ContributionPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => WebViewContainer(
-                              initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                              initUrl: Const.PRIVACY_POLICY,
                               title: S.of(context).scan_signal_upload_protocol,
                             )));
               },
