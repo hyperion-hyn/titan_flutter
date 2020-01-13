@@ -20,6 +20,7 @@ import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
@@ -539,7 +540,7 @@ class _AddPositionState extends State<AddPositionPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => WebViewContainer(
-                            initUrl: 'https://api.hyn.space/map-collector/pol-policy',
+                            initUrl: Const.POI_POLICY,
                             title: S.of(context).scan_signal_upload_protocol,
                           )));
             },
