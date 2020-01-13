@@ -12,7 +12,7 @@ import 'package:titan/src/global.dart';
 
 class PositionApi {
 
-  Future<List<CategoryItem>> getCategoryList(String keyword, String address,{String lang = "zh-Hans"}) async {
+  Future<List<CategoryItem>> getCategoryList(String keyword, String address,{String lang = "zh-Hans", String countryCode = "CN"}) async {
     print("[PositionApi] ,print start ");
 
     var data = await HttpCore.instance.getEntity(
@@ -23,7 +23,7 @@ class PositionApi {
         options: RequestOptions(headers: {
           "Lang": lang,
           "UUID": address,
-          //"Iso-3166-1": "CN"
+          "Iso-3166-1": countryCode,
         }, contentType: "application/json"));
 
     return data;

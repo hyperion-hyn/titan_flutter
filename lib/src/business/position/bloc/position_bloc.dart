@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/business/position/api/position_api.dart';
 import 'package:titan/src/business/position/model/poi_data.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import './bloc.dart';
 
@@ -20,8 +22,10 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       var address = currentWalletVo.accountList[0].account.address;
       var language = (appLocale??defaultLocale).languageCode;
       if (language.startsWith('zh')) language = "zh-Hans";
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String countryCode = prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
       var categoryList =
-      await _positionApi.getCategoryList("", address,lang: language);
+      await _positionApi.getCategoryList("", address,lang: language, countryCode: countryCode);
 
       yield SelectCategoryInitState(categoryList);
     } else if (event is SelectCategoryLoadingEvent) {
@@ -30,8 +34,10 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       var address = currentWalletVo.accountList[0].account.address;
       var language = (appLocale??defaultLocale).languageCode;
       if (language.startsWith('zh')) language = "zh-Hans";
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String countryCode = prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
       var categoryList =
-      await _positionApi.getCategoryList(event.searchText, address,lang: language);
+      await _positionApi.getCategoryList(event.searchText, address,lang: language, countryCode: countryCode);
       yield SelectCategoryResultState(categoryList: categoryList);
     } else if (event is SelectCategoryClearEvent) {
       yield SelectCategoryClearState();

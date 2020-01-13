@@ -7,6 +7,7 @@ import 'package:image_pickers/UIConfig.dart';
 import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
@@ -144,6 +145,9 @@ class _AddPositionState extends State<AddPositionPage> {
           var provinces = _openCageData["state"];
           var city = _openCageData["city"];
           var county = _openCageData["county"] ?? "";
+          String countryCode = _openCageData["country_code"] ?? "CN";
+          _saveCountryCode(countryCode: countryCode.toUpperCase());
+
           setState(() {
             //_addressText = country + " " + provinces + " " + city + " " + county;
             _addressText = county + "，" + city + "，" + provinces + "，" + country;
@@ -160,6 +164,11 @@ class _AddPositionState extends State<AddPositionPage> {
         return _buildBody();
       },
     );
+  }
+
+  void _saveCountryCode({String countryCode = "CN"}) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(PrefsKey.mapboxCountryCode, countryCode);
   }
 
   Widget _buildLoading() {
