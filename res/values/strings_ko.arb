@@ -318,7 +318,6 @@
   "confirm_position_func": "位置：${address}",
   "info_is_wrong_please_again_submit_hint": "您提交的信息有误，请重试。",
   "position_info_confirm": "位置信息确认",
-  "if_confirm_position_info_func": "是否确认$currentResult",
   "category": "类别",
   "postal_code": "邮编",
   "phone_number": "电话",

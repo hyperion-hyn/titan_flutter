@@ -318,7 +318,6 @@
   "confirm_position_func": "Poi address：${address}",
   "info_is_wrong_please_again_submit_hint": "Info is wrong,please again submit。",
   "position_info_confirm": "POI Confirm",
-  "if_confirm_position_info_func": "If confirm poi $currentResult",
   "category": "Category",
   "postal_code": "Postal code",
   "phone_number": "Phone number",
