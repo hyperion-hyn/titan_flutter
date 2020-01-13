@@ -243,18 +243,18 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
   Widget buildSearchBar() {
 //    double height = 43;
-    double height = 50;
+    double height = 60;
     return Container(
       color: Theme.of(context).primaryColor,
       height: height,
       child: Center(
         child: Container(
-            margin: EdgeInsets.only(left: 32, right: 32, bottom: 8),
+            margin: EdgeInsets.only(left: 32, right: 32, bottom: 8,top: 8),
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(height * 0.5)),
 //            height: 29,
-            height: 40,
+            height: 44,
             child: inputText),
       ),
     );
