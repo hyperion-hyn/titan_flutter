@@ -87,10 +87,10 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   void _setupData() {
-    _categoryDefaultText = S.of(context).please_select_category_hint;
-    _timeDefaultText = S.of(context).please_add_business_hours_hint;
-    setState(() {
 
+    setState(() {
+      _categoryDefaultText = S.of(context).please_select_category_hint;
+      _timeDefaultText = S.of(context).please_add_business_hours_hint;
     });
   }
 
@@ -136,7 +136,7 @@ class _AddPositionState extends State<AddPositionPage> {
           setState(() {
             _isUploading = false;
           });
-          Fluttertoast.showToast(msg: S.of(context).store_failed_hint);
+          Fluttertoast.showToast(msg: S.of(context).add_failed_hint);
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 

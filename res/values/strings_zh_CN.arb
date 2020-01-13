@@ -291,7 +291,6 @@
   "scan_confirm_upload" : "上传信号数据",
   "scan_collect_signal_func": "已收集到${num}个信号",
   "data_position_adding": "添加地点中",
-  "data_save": "存储",
   "select_category_bookstore": "书店",
   "select_category_bakery": "西饼店",
   "select_category_chocolateshop": "巧克力店",
@@ -339,7 +338,7 @@
   "scene_photographed": "现场拍照",
   "please_select_category_hint": "请选择类别",
   "please_add_business_hours_hint": "请添加营业时间",
-  "store_failed_hint": "存储失败!",
+  "add_failed_hint": "添加失败!",
   "name": "名称",
   "place_name_cannot_be_empty_hint": "地点名称不能为空",
   "please_enter_name_of_location_hint": "请输入地点名称",
@@ -353,5 +352,7 @@
   "poi_upload_protocol": "上传协议",
   "select_position_please_again_hint": "选择位置失败，请重试",
   "get_poi_fail_please_again": "获取位置信息失败，请先定位地图到你所在位置。",
-  "please_input_custom_time_hint": "请填写自定义时间"
+  "please_input_custom_time_hint": "请填写自定义时间",
+  "no_remark": "无备注",
+  "post_my_check": "提交验证"
 }

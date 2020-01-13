@@ -118,12 +118,12 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                         ),
                         buildHeadItem(context,
                             Icons.location_on, widget.selectedPoiEntity.address,
-                            hint: '暂无详细地址'),
+                            hint: S.of(context).no_detail_address),
                         if (widget.selectedPoiEntity.remark != null &&
                             widget.selectedPoiEntity.remark.length > 0)
                           buildHeadItem(context,
                               Icons.message, widget.selectedPoiEntity.remark,
-                              hint: '无备注'),
+                              hint: S.of(context).no_remark),
                       ],
                     ),
                   ),
@@ -383,6 +383,14 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
         "res/drawable/ic_user_poi_zip_code.png", S.of(context).search_empty_data));
   }
 
+  if (confirmPoiItem.workTime.isNotEmpty) {
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_business_time.png", confirmPoiItem.workTime));
+  }else{
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_business_time.png", S.of(context).search_empty_data));
+  }
+
   if (confirmPoiItem.phone.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_phone_num.png", confirmPoiItem.phone));
@@ -397,14 +405,6 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
   }else{
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_web_site.png", S.of(context).search_empty_data));
-  }
-  
-  if (confirmPoiItem.workTime.isNotEmpty) {
-    _infoList.add(UserInfoItem(
-        "res/drawable/ic_user_poi_business_time.png", confirmPoiItem.workTime));
-  }else{
-    _infoList.add(UserInfoItem(
-        "res/drawable/ic_user_poi_business_time.png", S.of(context).search_empty_data));
   }
 
   return Container(

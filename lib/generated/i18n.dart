@@ -30,6 +30,7 @@ class S implements WidgetsLocalizations {
   String get account_backup_notice => "Back up your account now";
   String get account_error => "Account Error";
   String get account_is_empty => "Account is empty";
+  String get add_failed_hint => "Add failed!";
   String get add_poi_item_title => "Add POI information";
   String get add_share_options => "Sharing options";
   String get address_copied => "Address copied";
@@ -89,7 +90,6 @@ class S implements WidgetsLocalizations {
   String get data_contribute_reward => "Contribute your map data";
   String get data_contribution_with_hyn_wallet_tips => "Data contribution requires a HYN wallet address. Please create or import a HYN wallet first.";
   String get data_position_adding => "Adding";
-  String get data_save => "Store";
   String get decrypt_location_cipher_tips => "How to decipher coded location information？";
   String get decrypt_location_cipher_tips_context => "Please paste the location code, and click enter to decode.";
   String get delete => "Delete";
@@ -191,6 +191,7 @@ class S implements WidgetsLocalizations {
   String get no_detail_address => "No detailed address";
   String get no_fill_in => "Not Filled";
   String get no_recommended_route => "No recommended route yet";
+  String get no_remark => "No remark";
   String get no_verifiable_poi_around_hint => "There is no verifiable location information around。";
   String get not_open_yet => "Coming Soon";
   String get official_announcement => "Announcement";
@@ -235,6 +236,7 @@ class S implements WidgetsLocalizations {
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
   String get position_info_confirm => "POI Confirm";
+  String get post_my_check => "提交验证";
   String get postal_code => "Postal code";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 characters";
@@ -318,7 +320,6 @@ class S implements WidgetsLocalizations {
   String get speed_slow => "Slow";
   String get start_encryption => "Encrypt";
   String get stay_tuned => "Stay tuned";
-  String get store_failed_hint => "Store failed!";
   String get submit => "Submit";
   String get supermarket => "Supermarket";
   String get switch_contribute_address => "Switch";
@@ -473,8 +474,6 @@ class $ko extends S {
   @override
   String get detail => "详情";
   @override
-  String get store_failed_hint => "存储失败!";
-  @override
   String get receiver_address_not_empty_hint => "접수주소가비어서는안됩니다.";
   @override
   String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
@@ -537,6 +536,8 @@ class $ko extends S {
   @override
   String get information => "뉴스";
   @override
+  String get no_remark => "无备注";
+  @override
   String get input_count_over_balance => "잔액한도를초과하였습니다.";
   @override
   String get search_history => "검색 내역";
@@ -572,8 +573,6 @@ class $ko extends S {
   String get search_title => "검색/디코딩";
   @override
   String get hyn_price => "HYN 지수";
-  @override
-  String get data_save => "存储";
   @override
   String get nav_share_app => "App 공유";
   @override
@@ -785,6 +784,8 @@ class $ko extends S {
   @override
   String get please_select_category_hint => "请选择类别";
   @override
+  String get post_my_check => "提交验证";
+  @override
   String get not_open_yet => "아직개방하지않았습니다.";
   @override
   String get postscript => "부언";
@@ -830,6 +831,8 @@ class $ko extends S {
   String get place_name_cannot_be_empty_hint => "地点名称不能为空";
   @override
   String get business_time_wednesday => "周三";
+  @override
+  String get add_failed_hint => "存储失败!";
   @override
   String get wallet => "지갑";
   @override
@@ -1197,8 +1200,6 @@ class $zh_CN extends S {
   @override
   String get detail => "详情";
   @override
-  String get store_failed_hint => "存储失败!";
-  @override
   String get receiver_address_not_empty_hint => "接收地址不能为空";
   @override
   String get input_wallet_password_length_hint => "请输入至少6位的密码";
@@ -1261,6 +1262,8 @@ class $zh_CN extends S {
   @override
   String get information => "资讯";
   @override
+  String get no_remark => "无备注";
+  @override
   String get input_count_over_balance => "超过余额";
   @override
   String get search_history => "历史搜索";
@@ -1296,8 +1299,6 @@ class $zh_CN extends S {
   String get search_title => "搜索 / 解码";
   @override
   String get hyn_price => "HYN指数";
-  @override
-  String get data_save => "存储";
   @override
   String get nav_share_app => "分享App";
   @override
@@ -1509,6 +1510,8 @@ class $zh_CN extends S {
   @override
   String get please_select_category_hint => "请选择类别";
   @override
+  String get post_my_check => "提交验证";
+  @override
   String get not_open_yet => "暂未开放";
   @override
   String get postscript => "附言";
@@ -1554,6 +1557,8 @@ class $zh_CN extends S {
   String get place_name_cannot_be_empty_hint => "地点名称不能为空";
   @override
   String get business_time_wednesday => "周三";
+  @override
+  String get add_failed_hint => "添加失败!";
   @override
   String get wallet => "钱包";
   @override

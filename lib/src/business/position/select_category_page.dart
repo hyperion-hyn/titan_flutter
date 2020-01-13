@@ -249,7 +249,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       height: height,
       child: Center(
         child: Container(
-            margin: EdgeInsets.only(left: 48, right: 48),
+            margin: EdgeInsets.only(left: 32, right: 32, bottom: 8),
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(height * 0.5)),
