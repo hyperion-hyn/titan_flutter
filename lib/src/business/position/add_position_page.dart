@@ -567,8 +567,7 @@ class _AddPositionState extends State<AddPositionPage> {
                         });
                       },
                     ),
-                    Container(
-//                      width: 40,
+                    /*Container(
                       child: Text(
                         S.of(context).geographical_position,
                         overflow: TextOverflow.ellipsis,
@@ -577,7 +576,7 @@ class _AddPositionState extends State<AddPositionPage> {
                           fontSize: 11,
                         ),
                       ),
-                    ),
+                    ),*/
                     Padding(
                       padding: const EdgeInsets.only(left: 5),
                       child: Text(
