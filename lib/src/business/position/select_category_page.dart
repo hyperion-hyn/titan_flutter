@@ -229,7 +229,8 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   }
 
   Widget buildSearchBar() {
-    double height = 43;
+//    double height = 43;
+    double height = 50;
     return Container(
       color: Theme.of(context).primaryColor,
       height: height,
@@ -237,17 +238,9 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         child: Container(
             margin: EdgeInsets.only(left: 48, right: 48),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(height * 0.5)),
-            height: 29,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(17, 8, 11, 8),
-                    child: Image.asset('res/drawable/ic_select_category_search_bar.png', width: 13, height: 13),
-                  ),
-                  inputText,
-                ])),
+//            height: 29,
+            height: 40,
+            child: inputText),
       ),
     );
   }
