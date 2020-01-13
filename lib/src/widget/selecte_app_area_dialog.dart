@@ -19,7 +19,7 @@ class _SelecteAppAreaState extends State<SelecteAppAreaDialog> {
       height: 220,
       child: Column(
         children: <Widget>[
-          Text(S.of(context).please_selecte_app_area),
+          Text(S.of(context).please_select_app_area),
           SizedBox(
             height: 8,
           ),

@@ -85,9 +85,9 @@ class S implements WidgetsLocalizations {
   String get create_wallet_tips => "Create a private account";
   String get cycling => "Cycling";
   String get dapp_setting => "DApp Settings";
-  String get data_contrebution_with_hyn_wallet_tips => "Data contribution requires a HYN wallet address. Please create or import a HYN wallet first.";
   String get data_contribute => "Data Contribution";
   String get data_contribute_reward => "Contribute your map data";
+  String get data_contribution_with_hyn_wallet_tips => "Data contribution requires a HYN wallet address. Please create or import a HYN wallet first.";
   String get data_position_adding => "Adding";
   String get data_save => "Store";
   String get decrypt_location_cipher_tips => "How to decipher coded location information？";
@@ -221,9 +221,9 @@ class S implements WidgetsLocalizations {
   String get please_input_wallet_password_hint => "Please enter wallet password";
   String get please_open_bluetooth => "Please turn on Bluetooth";
   String get please_open_wifi => "Please turn on WIFI";
+  String get please_select_app_area => "Please set the region of the map";
   String get please_select_business_hours_hint => "Select business hours";
   String get please_select_category_hint => "Select category";
-  String get please_selecte_app_area => "Please set the region of the map";
   String get please_waiting => "Please Wait";
   String get poi_add_success_hint => "Poi was added successfully";
   String get poi_confirm_success_hint => "Poi confirms success";
@@ -362,7 +362,6 @@ class S implements WidgetsLocalizations {
   String confirm_position_name_func(String name) => "Poi name：${name}";
   String distance(String distance) => "$distance m";
   String get hynPriceUnitSymbol => "\$";
-  String if_confirm_position_info_func(String currentResult) => "If confirm poi $currentResult";
   String km(String km) => "$km km ";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
@@ -790,7 +789,11 @@ class $ko extends S {
   @override
   String get other_area => "기타지역";
   @override
+  String get please_select_app_area => "지도사용영역을설정하십시오.";
+  @override
   String get poi_confirm_title_error => "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？";
+  @override
+  String get data_contribution_with_hyn_wallet_tips => "데이터 기여는 HYN 주소가 필요합니다. 먼저 HYN 지갑을 만드거나 가져오십시오.";
   @override
   String get postscript_hint => "부언 입력(50자이내로)";
   @override
@@ -948,8 +951,6 @@ class $ko extends S {
   @override
   String get business_time_thursday => "周四";
   @override
-  String get please_selecte_app_area => "지도사용영역을설정하십시오.";
-  @override
   String get send => "발송";
   @override
   String get transfer_submitted => "계좌이체신청제출완료";
@@ -1040,8 +1041,6 @@ class $ko extends S {
   @override
   String get operating_hours => "업무시간";
   @override
-  String get data_contrebution_with_hyn_wallet_tips => "데이터 기여는 HYN 주소가 필요합니다. 먼저 HYN 지갑을 만드거나 가져오십시오.";
-  @override
   String get scan_exit_tips => "스캔 진행 중, 종료 확인?";
   @override
   String get data_position_adding => "添加中";
@@ -1087,8 +1086,6 @@ class $ko extends S {
   String confirm_position_name_func(String name) => "名称：${name}";
   @override
   String send_symbol(String symbol) => "발송 $symbol";
-  @override
-  String if_confirm_position_info_func(String currentResult) => "是否确认$currentResult";
   @override
   String send_count_label(String symbol) => "$symbol 수량";
 }
@@ -1420,7 +1417,7 @@ class $zh_CN extends S {
   @override
   String get scan_confirm_upload => "上传信号数据";
   @override
-  String get take_pictures_must_not_be_empty_hint => "拍摄图片不能为空";
+  String get take_pictures_must_not_be_empty_hint => "请添加地点现场照片";
   @override
   String get dmap_life => "生活指引";
   @override
@@ -1512,7 +1509,11 @@ class $zh_CN extends S {
   @override
   String get other_area => "其他地区";
   @override
+  String get please_select_app_area => "请设置地图使用区域";
+  @override
   String get poi_confirm_title_error => "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？";
+  @override
+  String get data_contribution_with_hyn_wallet_tips => "数据贡献需要有HYN地址，请先创建 或导入HYN钱包。";
   @override
   String get postscript_hint => "输入附言（50字内）";
   @override
@@ -1552,7 +1553,7 @@ class $zh_CN extends S {
   @override
   String get less_than_1_min => "小于1分钟";
   @override
-  String get category_cannot_be_empty_hint => "类别不能为空";
+  String get category_cannot_be_empty_hint => "请选择地点类别";
   @override
   String get address_copied => "地址已复制";
   @override
@@ -1670,8 +1671,6 @@ class $zh_CN extends S {
   @override
   String get business_time_thursday => "周四";
   @override
-  String get please_selecte_app_area => "请设置地图使用区域";
-  @override
   String get send => "发送";
   @override
   String get transfer_submitted => "转账已提交";
@@ -1748,9 +1747,9 @@ class $zh_CN extends S {
   @override
   String get business_time_monday => "周一";
   @override
-  String get check_poi_item_title => "添加附近地点";
+  String get check_poi_item_title => "验证附近地点";
   @override
-  String get poi_upload_protocol_not_accepted_hint => "地理位置上传协议未接受";
+  String get poi_upload_protocol_not_accepted_hint => "请接受地点上传协议";
   @override
   String get click_auto_get_hint => "点击自动获取";
   @override
@@ -1761,8 +1760,6 @@ class $zh_CN extends S {
   String get attraction => "景点";
   @override
   String get operating_hours => "工作时间";
-  @override
-  String get data_contrebution_with_hyn_wallet_tips => "数据贡献需要有HYN地址，请先创建 或导入HYN钱包。";
   @override
   String get scan_exit_tips => "正在扫描中，确认退出吗?";
   @override
@@ -1807,8 +1804,6 @@ class $zh_CN extends S {
   String confirm_position_name_func(String name) => "名称：${name}";
   @override
   String send_symbol(String symbol) => "发送 $symbol";
-  @override
-  String if_confirm_position_info_func(String currentResult) => "是否确认$currentResult";
   @override
   String send_count_label(String symbol) => "$symbol 数量";
 }
