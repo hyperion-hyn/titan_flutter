@@ -203,6 +203,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                 ],
               ),
               child: ListView(
+                padding: EdgeInsets.only(bottom: 16),
                 children: <Widget>[
                   _nameView(),
                   if (confirmPoiItem.images != null) buildPicList(picItemWidth, 10, confirmPoiItem),
@@ -219,7 +220,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
             ),
           ),
           Divider(
-            height: 1.0,
+            height: 0.5,
             color: HexColor('#E9E9E9'),
           ),
           _confirmView(),
@@ -294,19 +295,22 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          SizedBox(
+            height: 8,
+          ),
           Row(
             children: <Widget>[
               Expanded(
                 child: Text(
                   confirmPoiItem.name,
                   style: TextStyle(
-                      fontSize: 17, fontWeight: FontWeight.w500),
+                      fontSize: 18, fontWeight: FontWeight.w500),
                 ),
               ),
             ],
           ),
           SizedBox(
-            height: 8,
+            height: 16,
           ),
           buildHeadItem(context,
               Icons.location_on, confirmPoiItem.address,
