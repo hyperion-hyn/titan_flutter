@@ -260,9 +260,9 @@
   "hyperion_project_intro_url": "https://shimo.im/docs/GDp72cj3ATwEB7ke/read",
   "click_again_to_exist_app": "再按一下退出程序",
   "data_contrebution_with_hyn_wallet_tips": "数据贡献需要有HYN地址，请先创建 或导入HYN钱包。",
-  "scan_signal_item_title": "扫描附近信号数据",
-  "add_poi_item_title": "添加地理位置信息",
-  "check_poi_item_title": "校验地理位置信息",
+  "scan_signal_item_title": "扫描附近信号",
+  "add_poi_item_title": "添加附近地点",
+  "check_poi_item_title": "添加附近地点",
   "switch_contribute_address": "切换地址",
   "require_permission": "申请权限",
   "collect_signal_require_telephone": "采集信号数据，需要获取电话权限",
@@ -290,7 +290,7 @@
   "scan_thanks_contribution_signal_hint": "感谢您做的数据贡献！",
   "scan_confirm_upload" : "上传信号数据",
   "scan_collect_signal_func": "已收集到${num}个信号",
-  "data_position_adding": "添加中",
+  "data_position_adding": "添加地点中",
   "data_save": "存储",
   "select_category_bookstore": "书店",
   "select_category_bakery": "西饼店",
@@ -328,7 +328,7 @@
   "take_pictures_must_not_be_empty_hint": "拍摄图片不能为空",
   "poi_upload_protocol_not_accepted_hint": "地理位置上传协议未接受",
   "upload_protocol": "上传协议",
-  "geographical_position": "地理位置",
+  "geographical_position": "",
   "submit": "提交",
   "detail": "详情",
   "details_of_street": "街道详情",
@@ -350,5 +350,6 @@
   "poi_add_success_hint": "位置信息添加成功",
   "poi_confirm_success_hint": "位置信息确认成功",
   "unknown_locations": "未知位置",
-  "poi_confirm_title_error": "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？"
+  "poi_confirm_title_error": "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？",
+  "poi_upload_protocol": "上传协议"
 }

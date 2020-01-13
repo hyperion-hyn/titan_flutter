@@ -541,7 +541,7 @@ class _AddPositionState extends State<AddPositionPage> {
                   MaterialPageRoute(
                       builder: (context) => WebViewContainer(
                             initUrl: Const.POI_POLICY,
-                            title: S.of(context).scan_signal_upload_protocol,
+                            title: S.of(context).poi_upload_protocol,
                           )));
             },
             child: SizedBox(
@@ -559,7 +559,7 @@ class _AddPositionState extends State<AddPositionPage> {
                       },
                     ),
                     Container(
-                      width: 60,
+//                      width: 40,
                       child: Text(
                         S.of(context).geographical_position,
                         overflow: TextOverflow.ellipsis,
@@ -569,17 +569,20 @@ class _AddPositionState extends State<AddPositionPage> {
                         ),
                       ),
                     ),
-                    Text(
-                      S.of(context).upload_protocol,
-                      style: TextStyle(
-                        color: HexColor('#333333'),
-                        fontSize: 11,
-                        decoration: TextDecoration.combine([
-                          TextDecoration.underline, // 下划线
-                        ]),
-                        decorationStyle: TextDecorationStyle.solid,
-                        // 装饰样式
-                        decorationColor: HexColor('#333333'),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        S.of(context).upload_protocol,
+                        style: TextStyle(
+                          color: HexColor('#333333'),
+                          fontSize: 11,
+                          decoration: TextDecoration.combine([
+                            TextDecoration.underline, // 下划线
+                          ]),
+                          decorationStyle: TextDecorationStyle.solid,
+                          // 装饰样式
+                          decorationColor: HexColor('#333333'),
+                        ),
                       ),
                     ),
                   ],

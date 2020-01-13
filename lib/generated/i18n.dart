@@ -228,6 +228,7 @@ class S implements WidgetsLocalizations {
   String get poi_confirm_success_hint => "Poi confirms success";
   String get poi_confirm_title_error => "Do you think the location information does not exist or the information description is wrong, are you sure to submit？";
   String get poi_confirm_title_hint => "Do you believe that the location information is real and that the description of the information is completely correct？";
+  String get poi_upload_protocol => "POI Upload Protocol";
   String get poi_upload_protocol_not_accepted_hint => "poi upload protocol not accepted";
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
@@ -645,6 +646,8 @@ class $ko extends S {
   String get wallet_manage => "지갑 관리";
   @override
   String get business_time_tuesday => "周二";
+  @override
+  String get poi_upload_protocol => "POI上传协议";
   @override
   String get private_wallet_tips => "프라이빗 계좌.";
   @override
@@ -1364,11 +1367,13 @@ class $zh_CN extends S {
   @override
   String get business_time_tuesday => "周二";
   @override
+  String get poi_upload_protocol => "上传协议";
+  @override
   String get private_wallet_tips => "账户私钥永远不会离开你的设备";
   @override
   String get service_description => "描述";
   @override
-  String get geographical_position => "地理位置";
+  String get geographical_position => "";
   @override
   String get search_or_decode => "搜索 / 解码位置密文";
   @override
@@ -1448,7 +1453,7 @@ class $zh_CN extends S {
   @override
   String get transfer_fail => "转账失败";
   @override
-  String get scan_signal_item_title => "扫描附近信号数据";
+  String get scan_signal_item_title => "扫描附近信号";
   @override
   String get import_account_fail => "导入失败";
   @override
@@ -1690,7 +1695,7 @@ class $zh_CN extends S {
   @override
   String get accept_share_pub_key => "点对点分享";
   @override
-  String get add_poi_item_title => "添加地理位置信息";
+  String get add_poi_item_title => "添加附近地点";
   @override
   String get walking => "步行";
   @override
@@ -1738,7 +1743,7 @@ class $zh_CN extends S {
   @override
   String get business_time_monday => "周一";
   @override
-  String get check_poi_item_title => "校验地理位置信息";
+  String get check_poi_item_title => "添加附近地点";
   @override
   String get poi_upload_protocol_not_accepted_hint => "地理位置上传协议未接受";
   @override
@@ -1756,7 +1761,7 @@ class $zh_CN extends S {
   @override
   String get scan_exit_tips => "正在扫描中，确认退出吗?";
   @override
-  String get data_position_adding => "添加中";
+  String get data_position_adding => "添加地点中";
   @override
   String get import_account_success => "账户导入成功";
   @override
