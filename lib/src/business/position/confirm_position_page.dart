@@ -167,7 +167,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           } else if (state is ConfirmPositionResultState) {
             _isPostData = false;
             if (!state.confirmResult) {
-              Fluttertoast.showToast(msg: S.of(context).info_is_wrong_please_again_submit_hint);
+              Fluttertoast.showToast(msg: state.errorMsg);
               return _buildListBody();
             } else {
               return Container(
