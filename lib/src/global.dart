@@ -37,6 +37,7 @@ String get QUOTE_UNIT_SYMBOL {
 WalletVo currentWalletVo;
 Locale appLocale;
 BuildContext globalContext = null;
+Locale defaultLocale = Locale("zh","CN");
 
 AppArea currentAppArea = AppArea.MAINLAND_CHINA_AREA;
 

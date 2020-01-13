@@ -50,26 +50,28 @@ class S implements WidgetsLocalizations {
   String get backup_wallet_mnemonic_title => "Backup mnemonics";
   String get backup_wallet_notice_text1 => "Obtaining mnemonic words proves your ownership of wallet assets";
   String get bank => "Bank";
-  String get business_time => "营业时间";
-  String get business_time_friday => "周五";
-  String get business_time_monday => "周一";
-  String get business_time_saturday => "周六";
-  String get business_time_sunday => "周日";
-  String get business_time_thursday => "周四";
-  String get business_time_tuesday => "周二";
-  String get business_time_wednesday => "周三";
+  String get business_time => "Business time";
+  String get business_time_friday => "Fri.";
+  String get business_time_monday => "Mon.";
+  String get business_time_saturday => "Sta.";
+  String get business_time_sunday => "Sun.";
+  String get business_time_thursday => "Thurs.";
+  String get business_time_tuesday => "Tues.";
+  String get business_time_wednesday => "Wednes.";
   String get cafe => "Cafe";
   String get cancel => "Cancel";
-  String get category => "类别";
+  String get category => "Category";
+  String get category_cannot_be_empty_hint => "category cannot be empty";
   String get check_poi_item_title => "Verify POI information";
   String get clean_search_history => "Clear History";
   String get click_again_to_exist_app => "press again to exit app";
+  String get click_auto_get_hint => "Click Auto Get";
   String get close => "Close";
   String get collect_signal_require_telephone => "To collect signal data, you need to obtain phone permissions";
   String get coming_soon => "Coming Soon";
   String get confirm => "Confirm";
-  String get confirm_info_right => "信息正确";
-  String get confirm_info_wrong => "信息有误";
+  String get confirm_info_right => "Right";
+  String get confirm_info_wrong => "Error";
   String get confirm_mnemonic => "Confirm Mnemonic";
   String get confirm_mnemonic_incorrect => "Your mnemonic is incorrect, please try again";
   String get confirm_mnemonic_tips => "Click on the words to put them in the correct order";
@@ -86,14 +88,16 @@ class S implements WidgetsLocalizations {
   String get data_contrebution_with_hyn_wallet_tips => "Data contribution requires a HYN wallet address. Please create or import a HYN wallet first.";
   String get data_contribute => "Data Contribution";
   String get data_contribute_reward => "Contribute your map data";
-  String get data_position_adding => "添加中";
-  String get data_save => "存储";
+  String get data_position_adding => "Adding";
+  String get data_save => "Store";
   String get decrypt_location_cipher_tips => "How to decipher coded location information？";
   String get decrypt_location_cipher_tips_context => "Please paste the location code, and click enter to decode.";
   String get delete => "Delete";
   String get delete_wallet_fail => "Delete Failed";
   String get delete_wallet_success => "Deleted Successfully";
   String get department => "Department";
+  String get detail => "Detail";
+  String get details_of_street => "Details of street";
   String get discount_map => "Discount Map";
   String get discover => "Discover";
   String get dmap_document_title => "DMap Integration Document";
@@ -115,6 +119,7 @@ class S implements WidgetsLocalizations {
   String get gas_fee => "Transaction Fee";
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
+  String get geographical_position => "Geo. position";
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "Global Map Service Nodes";
   String get global_nodes => "Global Nodes";
@@ -122,6 +127,7 @@ class S implements WidgetsLocalizations {
   String get hospital => "Hospital";
   String get hot_area => "Hot spots";
   String get hotel => "Hotel";
+  String get house_number => "House number";
   String get hynPriceUnit => "USD";
   String get hyn_market => "HYN Market";
   String get hyn_price => "HYN Price";
@@ -137,7 +143,7 @@ class S implements WidgetsLocalizations {
   String get improvement_plan_message => "Tell us your suggestions about Titan by joining our user experience plan. Check for more details.\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">Titan Privacy Policy</a>\n        </b>";
   String get improvement_plan_refuse => "No";
   String get improvement_plan_title => "Titan improvement plan";
-  String get info_is_wrong_please_again_submit_hint => "您提交的信息有误，请重试。";
+  String get info_is_wrong_please_again_submit_hint => "Info is wrong,please again submit。";
   String get information => "News";
   String get information_guide => "Guidance";
   String get information_video => "Video";
@@ -172,6 +178,7 @@ class S implements WidgetsLocalizations {
   String get more_dmap => "Stay tuned for more DMap applications";
   String get my_location => "My Location";
   String get my_page => "My";
+  String get name => "Name";
   String get nav_about_us => "About us";
   String get nav_my_privacy_map => "My Privacy Map";
   String get nav_share_app => "Share Titan APP";
@@ -183,6 +190,7 @@ class S implements WidgetsLocalizations {
   String get no_detail_address => "No detailed address";
   String get no_fill_in => "Not Filled";
   String get no_recommended_route => "No recommended route yet";
+  String get no_verifiable_poi_around_hint => "There is no verifiable location information around。";
   String get not_open_yet => "Coming Soon";
   String get official_announcement => "Announcement";
   String get official_website => "Official Website";
@@ -198,20 +206,33 @@ class S implements WidgetsLocalizations {
   String get password_incorrect => "incorrect password";
   String get password_not_equal_hint => "Inconsistent passwords";
   String get paste => "paste";
-  String get phone_number => "电话";
-  String get please_enter_correct_time_format_hint => "请输入正确的时间，例如 07:00-23:00";
+  String get phone_number => "Phone number";
+  String get place_name_cannot_be_empty_hint => "Place name cannot be empty";
+  String get please_add_business_hours_hint => "Add business hours";
+  String get please_add_streets_hint => "Add streets";
+  String get please_enter_category_keywords_hint => "enter category keywords";
+  String get please_enter_correct_time_format_hint => "Enter correct time format, e.g: 07:00-23:00";
+  String get please_enter_door_number_hint => "Enter door number";
+  String get please_enter_name_of_location_hint => "Enter name of location";
+  String get please_enter_postal_code => "Enter postal code";
   String get please_input_mnemonic => "Please enter mnemonic";
   String get please_input_wallet_name => "Please input wallet name";
   String get please_input_wallet_password_hint => "Please enter wallet password";
   String get please_open_bluetooth => "Please turn on Bluetooth";
   String get please_open_wifi => "Please turn on WIFI";
-  String get please_select_business_hours_hint => "请选择营业时间";
+  String get please_select_business_hours_hint => "Select business hours";
+  String get please_select_category_hint => "Select category";
   String get please_selecte_app_area => "Please set the region of the map";
   String get please_waiting => "Please Wait";
+  String get poi_add_success_hint => "Poi was added successfully";
+  String get poi_confirm_success_hint => "Poi confirms success";
+  String get poi_confirm_title_error => "Do you think the location information does not exist or the information description is wrong, are you sure to submit？";
+  String get poi_confirm_title_hint => "Do you believe that the location information is real and that the description of the information is completely correct？";
+  String get poi_upload_protocol_not_accepted_hint => "poi upload protocol not accepted";
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
-  String get position_info_confirm => "位置信息确认";
-  String get postal_code => "邮编";
+  String get position_info_confirm => "POI Confirm";
+  String get postal_code => "Postal code";
   String get postscript => "Notes";
   String get postscript_hint => "within 50 characters";
   String get private_and_safety => "Private and Secure";
@@ -259,18 +280,19 @@ class S implements WidgetsLocalizations {
   String get scan_thanks_contribution_signal_hint => "Thank you for your data contribution！";
   String get scan_upload_error => "Upload failed";
   String get scan_upload_signal_success_hint => "Signal data uploaded successfully";
+  String get scene_photographed => "Scene Photographed";
   String get search_empty_data => "No Data";
   String get search_history => "History";
   String get search_or_decode => "Search / Decrypt";
   String get search_title => "Search / Decrypt";
-  String get select_category => "选择类别";
-  String get select_category_bakery => "西饼店";
-  String get select_category_bookstore => "书店";
-  String get select_category_chocolateshop => "巧克力店";
-  String get select_category_fabrics => "布艺店";
-  String get select_category_healthfood => "健康食品店";
-  String get select_category_nailsalon => "美甲店";
-  String get select_position => "选择位置";
+  String get select_category => "Select category";
+  String get select_category_bakery => "Bakery store";
+  String get select_category_bookstore => "Bookstore";
+  String get select_category_chocolateshop => "Chocolate shop";
+  String get select_category_fabrics => "Fabrics";
+  String get select_category_healthfood => "Healthfood store";
+  String get select_category_nailsalon => "Nailsalon";
+  String get select_position => "Select position";
   String get send => "Send";
   String get sent => "Sent";
   String get service_area => "Area";
@@ -292,12 +314,15 @@ class S implements WidgetsLocalizations {
   String get speed_slow => "Slow";
   String get start_encryption => "Encrypt";
   String get stay_tuned => "Stay tuned";
+  String get store_failed_hint => "Store failed!";
+  String get submit => "Submit";
   String get supermarket => "Supermarket";
   String get switch_contribute_address => "Switch";
+  String get take_pictures_must_not_be_empty_hint => "take pictures must not be empty";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
-  String get throughout_of_day => "全天（24小时）";
+  String get throughout_of_day => "Throughout of day（24 hours）";
   String get time => "Opening times";
   String get tips => "Tips";
   String get titan_encrypted_map_ecology => "Titan Cryptographic Map Ecology";
@@ -307,8 +332,10 @@ class S implements WidgetsLocalizations {
   String get twitterhyperion => "Twitter-Hyperion";
   String get twittertitan => "Twitter-Titan";
   String get unknown_error => "Unknown error";
+  String get unknown_ocations => "Unknown locations";
   String get update_now => "Update Now";
-  String get user_defined_time_format_hint => "自定义时间，格式 07:00-23:00";
+  String get upload_protocol => " upload protocol";
+  String get user_defined_time_format_hint => "User defined time format，e.g: 07:00-23:00";
   String get user_this_account => "Use this private account";
   String get video => "Video";
   String get view_all => "View All";
@@ -323,17 +350,17 @@ class S implements WidgetsLocalizations {
   String get wallet_password_label => "Wallet password";
   String get wallet_setting => "Wallet Settings";
   String get wallet_setting_backup_notice => "If you cannot access this device, your funds will not be recovered unless you back it up!";
-  String get website => "网址";
+  String get website => "Website";
   String get wechat => "Wechat";
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
-  String get work_time => "工作时间";
+  String get work_time => "Work time";
   String get your_mnemonic => "Your Mnemonic phrases";
-  String confirm_position_func(String address) => "位置：${address}";
-  String confirm_position_name_func(String name) => "名称：${name}";
+  String confirm_position_func(String address) => "Poi address：${address}";
+  String confirm_position_name_func(String name) => "Poi name：${name}";
   String distance(String distance) => "$distance m";
   String get hynPriceUnitSymbol => "\$";
-  String if_confirm_position_info_func(String currentResult) => "是否确认$currentResult";
+  String if_confirm_position_info_func(String currentResult) => "If confirm poi $currentResult";
   String km(String km) => "$km km ";
   String my_symbol_address(String symbol) => "My ${symbol} Address:";
   String n_day(String day) => "$day day ";
@@ -369,7 +396,11 @@ class $ko extends S {
   @override
   String get contract_call => "스마트 콘트랙트 호출";
   @override
+  String get please_enter_postal_code => "请输入邮政编码";
+  @override
   String get open_location_service => "위치추적 서비스 열기";
+  @override
+  String get house_number => "门牌号码";
   @override
   String get wallet_create_success => "계정 새로 만들기 성공";
   @override
@@ -398,6 +429,8 @@ class $ko extends S {
   String get please_input_wallet_password_hint => "지갑 비밀번호를 입력해주십시오.";
   @override
   String get wallet_setting => "지갑 설정";
+  @override
+  String get details_of_street => "街道详情";
   @override
   String get search_empty_data => "데이터가 없습니다.";
   @override
@@ -433,6 +466,10 @@ class $ko extends S {
   @override
   String get work_time => "工作时间";
   @override
+  String get detail => "详情";
+  @override
+  String get store_failed_hint => "存储失败!";
+  @override
   String get receiver_address_not_empty_hint => "접수주소가비어서는안됩니다.";
   @override
   String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
@@ -444,6 +481,8 @@ class $ko extends S {
   String get user_this_account => "비밀 계정 사용";
   @override
   String get private_and_safety => "프라이버시와 안전";
+  @override
+  String get unknown_ocations => "未知位置";
   @override
   String get view_all => "전체 보기";
   @override
@@ -487,6 +526,8 @@ class $ko extends S {
   @override
   String get private_sharing => "프라이버시공유";
   @override
+  String get upload_protocol => "上传协议";
+  @override
   String get receiver_address => "수신자주소";
   @override
   String get share_app => "app공유";
@@ -516,6 +557,8 @@ class $ko extends S {
   String get scan_name_cellular => "셀 타워";
   @override
   String get later => "업데이트를 하지 않습니다.";
+  @override
+  String get please_enter_door_number_hint => "请输入门牌号码";
   @override
   String get finish => "완성";
   @override
@@ -555,6 +598,8 @@ class $ko extends S {
   @override
   String get delete_wallet_success => "삭제 성공";
   @override
+  String get name => "名称";
+  @override
   String get service_area => "지역";
   @override
   String get phone_number => "电话";
@@ -566,6 +611,8 @@ class $ko extends S {
   String get official_website => "공식 홈페이지";
   @override
   String get import => "가져오기";
+  @override
+  String get submit => "提交";
   @override
   String get dmap_tools => "DMAP 도구";
   @override
@@ -581,13 +628,21 @@ class $ko extends S {
   @override
   String get private_sharing_text => "암호화위치를공유하시면절대로위치정보를누설하지않습니다.";
   @override
+  String get please_enter_name_of_location_hint => "请输入地点名称";
+  @override
+  String get scene_photographed => "现场拍照";
+  @override
   String get hyn_market => "HYN 시세";
+  @override
+  String get no_verifiable_poi_around_hint => "周围没有可验证的位置信息。";
   @override
   String get data_contribute => "데이터 기여";
   @override
   String get wallet_setting_backup_notice => "이 장비에 액세스할수 없다면 백업할때까지 자금 회수가 불가능합니다!";
   @override
   String get input_wallet_name_length_hint => "6자리이내의 명칭을 입력해 주십시오.";
+  @override
+  String get please_add_business_hours_hint => "请添加营业时间";
   @override
   String get wallet_manage => "지갑 관리";
   @override
@@ -596,6 +651,8 @@ class $ko extends S {
   String get private_wallet_tips => "프라이빗 계좌.";
   @override
   String get service_description => "설명";
+  @override
+  String get geographical_position => "地理位置";
   @override
   String get search_or_decode => "암호화 문서 검색/해제";
   @override
@@ -636,6 +693,8 @@ class $ko extends S {
   String get import_wallet => "지갑 가져오기";
   @override
   String get scan_confirm_upload => "신호 데이터 업로드";
+  @override
+  String get take_pictures_must_not_be_empty_hint => "拍摄图片不能为空";
   @override
   String get dmap_life => "생활가이드";
   @override
@@ -703,6 +762,8 @@ class $ko extends S {
   @override
   String get backup_option => "백업 선택사항";
   @override
+  String get please_add_streets_hint => "请添加街道";
+  @override
   String get Hyperion => "하이페리온";
   @override
   String get Next => "다음";
@@ -717,11 +778,15 @@ class $ko extends S {
   @override
   String get require_location_message => "위치 확인 기능을 사용할 수 있는 권한을 부여해 주십시오.";
   @override
+  String get please_select_category_hint => "请选择类别";
+  @override
   String get not_open_yet => "아직개방하지않았습니다.";
   @override
   String get postscript => "부언";
   @override
   String get other_area => "기타지역";
+  @override
+  String get poi_confirm_title_error => "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？";
   @override
   String get postscript_hint => "부언 입력(50자이내로)";
   @override
@@ -751,11 +816,17 @@ class $ko extends S {
   @override
   String get online_exchange => "온라인 거래소";
   @override
+  String get place_name_cannot_be_empty_hint => "地点名称不能为空";
+  @override
   String get business_time_wednesday => "周三";
   @override
   String get wallet => "지갑";
   @override
+  String get poi_confirm_success_hint => "位置信息确认成功";
+  @override
   String get less_than_1_min => "1분이내";
+  @override
+  String get category_cannot_be_empty_hint => "类别不能为空";
   @override
   String get address_copied => "주소복사완료";
   @override
@@ -800,6 +871,8 @@ class $ko extends S {
   String get confirm_info_right => "信息正确";
   @override
   String get public_key_copied => "공유키 주소를 복사완료하였습니다.";
+  @override
+  String get poi_add_success_hint => "位置信息添加成功";
   @override
   String get encrypt_error => "암호화 실패";
   @override
@@ -856,6 +929,8 @@ class $ko extends S {
   String get driving => "차량 운전";
   @override
   String get cafe => "커피숍";
+  @override
+  String get poi_confirm_title_hint => "你认为这个位置信息是真实存在并且信息描述完全正确的，确定提交吗？";
   @override
   String get telphone => "전화";
   @override
@@ -935,6 +1010,8 @@ class $ko extends S {
   @override
   String get scan_thanks_contribution_signal_hint => "귀하의 데이터 기여에 감사드립니다！";
   @override
+  String get please_enter_category_keywords_hint => "输入类别关键词";
+  @override
   String get global_embassies => "글로벌대사관";
   @override
   String get wechat => "위쳇";
@@ -944,6 +1021,10 @@ class $ko extends S {
   String get business_time_monday => "周一";
   @override
   String get check_poi_item_title => "지리적 위치 정보를 검사하다.";
+  @override
+  String get poi_upload_protocol_not_accepted_hint => "地理位置上传协议未接受";
+  @override
+  String get click_auto_get_hint => "点击自动获取";
   @override
   String get illegal_mnemonic => "정상적인 기호가 아닙니다.";
   @override
@@ -1031,7 +1112,11 @@ class $zh_CN extends S {
   @override
   String get contract_call => "智能合约调用";
   @override
+  String get please_enter_postal_code => "请输入邮政编码";
+  @override
   String get open_location_service => "打开定位服务";
+  @override
+  String get house_number => "门牌号码";
   @override
   String get wallet_create_success => "账户创建成功";
   @override
@@ -1062,6 +1147,8 @@ class $zh_CN extends S {
   String get hynPriceUnitSymbol => "¥";
   @override
   String get wallet_setting => "钱包设置";
+  @override
+  String get details_of_street => "街道详情";
   @override
   String get search_empty_data => "暂无数据";
   @override
@@ -1097,6 +1184,10 @@ class $zh_CN extends S {
   @override
   String get work_time => "工作时间";
   @override
+  String get detail => "详情";
+  @override
+  String get store_failed_hint => "存储失败!";
+  @override
   String get receiver_address_not_empty_hint => "接收地址不能为空";
   @override
   String get input_wallet_password_length_hint => "请输入至少6位的密码";
@@ -1108,6 +1199,8 @@ class $zh_CN extends S {
   String get user_this_account => "使用该私密账户";
   @override
   String get private_and_safety => "私密和安全";
+  @override
+  String get unknown_ocations => "未知位置";
   @override
   String get view_all => "查看全部";
   @override
@@ -1151,6 +1244,8 @@ class $zh_CN extends S {
   @override
   String get private_sharing => "私密分享";
   @override
+  String get upload_protocol => "上传协议";
+  @override
   String get receiver_address => "接收者地址";
   @override
   String get share_app => "分享app";
@@ -1180,6 +1275,8 @@ class $zh_CN extends S {
   String get scan_name_cellular => "基站";
   @override
   String get later => "暂不更新";
+  @override
+  String get please_enter_door_number_hint => "请输入门牌号码";
   @override
   String get finish => "完成";
   @override
@@ -1219,6 +1316,8 @@ class $zh_CN extends S {
   @override
   String get delete_wallet_success => "删除成功";
   @override
+  String get name => "名称";
+  @override
   String get service_area => "区域";
   @override
   String get phone_number => "电话";
@@ -1230,6 +1329,8 @@ class $zh_CN extends S {
   String get official_website => "官网";
   @override
   String get import => "导 入";
+  @override
+  String get submit => "提交";
   @override
   String get dmap_tools => "工具类";
   @override
@@ -1245,13 +1346,21 @@ class $zh_CN extends S {
   @override
   String get private_sharing_text => "分享加密位置，绝不泄露位置信息";
   @override
+  String get please_enter_name_of_location_hint => "请输入地点名称";
+  @override
+  String get scene_photographed => "现场拍照";
+  @override
   String get hyn_market => "HYN行情";
+  @override
+  String get no_verifiable_poi_around_hint => "周围没有可验证的位置信息。";
   @override
   String get data_contribute => "数据贡献";
   @override
   String get wallet_setting_backup_notice => "如果你无法访问这个设备，你的资金将无法找回，除非你备份了！";
   @override
   String get input_wallet_name_length_hint => "请输入6位以内的名称";
+  @override
+  String get please_add_business_hours_hint => "请添加营业时间";
   @override
   String get wallet_manage => "钱包管理";
   @override
@@ -1260,6 +1369,8 @@ class $zh_CN extends S {
   String get private_wallet_tips => "账户私钥永远不会离开你的设备";
   @override
   String get service_description => "描述";
+  @override
+  String get geographical_position => "地理位置";
   @override
   String get search_or_decode => "搜索 / 解码位置密文";
   @override
@@ -1300,6 +1411,8 @@ class $zh_CN extends S {
   String get import_wallet => "导入钱包";
   @override
   String get scan_confirm_upload => "上传信号数据";
+  @override
+  String get take_pictures_must_not_be_empty_hint => "拍摄图片不能为空";
   @override
   String get dmap_life => "生活指引";
   @override
@@ -1367,6 +1480,8 @@ class $zh_CN extends S {
   @override
   String get backup_option => "备份选项";
   @override
+  String get please_add_streets_hint => "请添加街道";
+  @override
   String get Hyperion => "海伯利安";
   @override
   String get Next => "下一页";
@@ -1381,11 +1496,15 @@ class $zh_CN extends S {
   @override
   String get require_location_message => "请你授权使用定位功能.";
   @override
+  String get please_select_category_hint => "请选择类别";
+  @override
   String get not_open_yet => "暂未开放";
   @override
   String get postscript => "附言";
   @override
   String get other_area => "其他地区";
+  @override
+  String get poi_confirm_title_error => "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？";
   @override
   String get postscript_hint => "输入附言（50字内）";
   @override
@@ -1415,11 +1534,17 @@ class $zh_CN extends S {
   @override
   String get online_exchange => "上线交易所";
   @override
+  String get place_name_cannot_be_empty_hint => "地点名称不能为空";
+  @override
   String get business_time_wednesday => "周三";
   @override
   String get wallet => "钱包";
   @override
+  String get poi_confirm_success_hint => "位置信息确认成功";
+  @override
   String get less_than_1_min => "小于1分钟";
+  @override
+  String get category_cannot_be_empty_hint => "类别不能为空";
   @override
   String get address_copied => "地址已复制";
   @override
@@ -1464,6 +1589,8 @@ class $zh_CN extends S {
   String get confirm_info_right => "信息正确";
   @override
   String get public_key_copied => "公钥地址已复制";
+  @override
+  String get poi_add_success_hint => "位置信息添加成功";
   @override
   String get encrypt_error => "加密失败";
   @override
@@ -1520,6 +1647,8 @@ class $zh_CN extends S {
   String get driving => "驾车";
   @override
   String get cafe => "咖啡馆";
+  @override
+  String get poi_confirm_title_hint => "你认为这个位置信息是真实存在并且信息描述完全正确的，确定提交吗？";
   @override
   String get telphone => "电话";
   @override
@@ -1599,6 +1728,8 @@ class $zh_CN extends S {
   @override
   String get scan_thanks_contribution_signal_hint => "感谢您做的数据贡献！";
   @override
+  String get please_enter_category_keywords_hint => "输入类别关键词";
+  @override
   String get global_embassies => "全球大使馆";
   @override
   String get wechat => "公众号";
@@ -1608,6 +1739,10 @@ class $zh_CN extends S {
   String get business_time_monday => "周一";
   @override
   String get check_poi_item_title => "校验地理位置信息";
+  @override
+  String get poi_upload_protocol_not_accepted_hint => "地理位置上传协议未接受";
+  @override
+  String get click_auto_get_hint => "点击自动获取";
   @override
   String get illegal_mnemonic => "不是合法的助记词";
   @override

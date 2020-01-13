@@ -115,7 +115,7 @@ class BaseHttpCore {
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
         params.forEach((key,value){
-          print("post params.key $key params.values $value");
+          print("[base_http] post params.key $key params.values $value");
         });
         response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
       } else if (data != null) {
@@ -145,12 +145,12 @@ class BaseHttpCore {
     try {
       map = json.decode(response.data);
     } catch (err) {
-      print('json decode 1 err $err');
-      String res2Json = json.encode(response.data);
+      print('[base_http] json decode 1 err $err');
+      //String res2Json = json.encode(response.data);
       try {
         map = json.decode(response.data);
       } catch (err) {
-        print('json decode 2 err $err');
+        print('[base_http] json decode 2 err $err');
       }
     }
 

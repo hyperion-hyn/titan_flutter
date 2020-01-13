@@ -29,8 +29,8 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     } else if (event is GetOpenCageEvent) {
       var userPosition = event.userPosition;
       var query = "${userPosition.latitude},${userPosition.longitude}";
-      var language = 'zh';
-      var _openCageData = await _positionApi.getOpenCageData(query, language);
+      var language = (appLocale??defaultLocale).languageCode;
+      var _openCageData = await _positionApi.getOpenCageData(query, lang: language);
       yield GetOpenCageState(_openCageData);
     } else if (event is StartPostPoiDataEvent) {
       await _uploadPoiData(event.poiDataModel);
@@ -45,13 +45,13 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       yield ConfirmPositionLoadingState();
     } else if (event is ConfirmPositionPageEvent) {
       var userPosition = event.userPosition;
-      var language = 'zh-Hans';
-      var _confirmDataList = await _positionApi.getConfirmData(userPosition.longitude,userPosition.latitude, language);
-      yield ConfirmPositionPageState(_confirmDataList);
+      var language = (appLocale??defaultLocale).languageCode;
+      var _confirmPoiItem = await _positionApi.getConfirmData(userPosition.longitude,userPosition.latitude,lang: language);
+      yield ConfirmPositionPageState(_confirmPoiItem);
     } else if (event is ConfirmPositionResultEvent) {
       try{
         var confirmResult = await _positionApi.postConfirmPoiData(event.answer,event.confirmPoiItem);
-        print("poi confirm result = $confirmResult");
+        print("[PositionBloc] poi confirm result = $confirmResult");
         yield ConfirmPositionResultState(true);
       }catch(code,message){
         yield ConfirmPositionResultState(false);
