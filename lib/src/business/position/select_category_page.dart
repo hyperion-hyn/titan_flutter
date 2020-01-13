@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'model/category_item.dart';
 
 class SelectCategoryPage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return _SelectCategoryState();
@@ -16,7 +15,6 @@ class SelectCategoryPage extends StatefulWidget {
 }
 
 class _SelectCategoryState extends State<SelectCategoryPage> {
-
   PositionBloc _positionBloc = PositionBloc();
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
@@ -25,7 +23,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   bool _visibleCloseIcon = false;
   CustomInputText inputText;
   List<String> _tagList = [];
-
 
   @override
   void initState() {
@@ -70,9 +67,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     _tagList.add(S.of(context).select_category_healthfood);
     _tagList.add(S.of(context).select_category_nailsalon);
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void searchTextChangeListener() {
@@ -108,7 +103,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
   }
 
-
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, PositionState>(
       bloc: _positionBloc,
@@ -124,7 +118,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
           return _buildBody(state);
         } else if (state is SelectCategoryLoadingState) {
-
           return _buildBody(state);
         } else if (state is SelectCategoryClearState) {
           categoryList.clear();
@@ -138,7 +131,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       },
     );
   }
-
 
   Widget _divider() {
     return Padding(
@@ -176,7 +168,10 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     return Container(
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[buildSearchBar(), Expanded(child: _buildBottomBody(state))]),
+          children: <Widget>[
+            buildSearchBar(),
+            Expanded(child: _buildBottomBody(state))
+          ]),
     );
   }
 
@@ -200,22 +195,30 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
             return _divider();
           },
           itemCount: categoryList.length);
-    } else if (state is InitialPositionState || state is SelectCategoryClearState) {
+    } else if (state is InitialPositionState ||
+        state is SelectCategoryClearState) {
       return Padding(
         padding: const EdgeInsets.only(top: 48.0),
         child: Wrap(
             alignment: WrapAlignment.center,
             spacing: 10,
             runSpacing: 5,
-            children: _tagList.map<Widget>((s) {
+            children: _tagList.map<Widget>((str) {
               return InkWell(
                   onTap: () {
-                    _searchTextController.text = s;
-                    handleSearch(s);
+//                    _searchTextController.text = str;
+                    _searchTextController.value = TextEditingValue(
+                        // 设置内容
+                        text: str,
+                        // 保持光标在最后
+                        selection: TextSelection.fromPosition(TextPosition(
+                            affinity: TextAffinity.downstream,
+                            offset: str.length)));
+                    handleSearch(str);
                   },
                   child: Chip(
                     label: Text(
-                      '$s',
+                      '$str',
                       style: TextStyle(fontSize: 13),
                     ),
                   ));
@@ -237,7 +240,9 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       child: Center(
         child: Container(
             margin: EdgeInsets.only(left: 48, right: 48),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(height * 0.5)),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(height * 0.5)),
 //            height: 29,
             height: 40,
             child: inputText),
@@ -263,5 +268,4 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       _lastSearch = textOrPoi;
     }
   }
-
 }
