@@ -82,14 +82,25 @@ class _SelectPositionState extends State<SelectPositionPage> {
             onTap: () {
               var latLng = mapController?.cameraPosition?.target;
               print('[add] --> 确认中...,latLng: $latLng');
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPositionPage(latLng),
-                ),
-              );
-
+              if (latLng == null) {
+                AlertDialog(
+                  title: Text(S.of(context).select_position_please_again_hint),
+                  actions: <Widget>[
+                    FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(S.of(context).confirm))
+                  ],
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPositionPage(latLng),
+                  ),
+                );
+              }
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),

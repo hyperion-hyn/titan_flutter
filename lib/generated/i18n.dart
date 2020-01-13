@@ -120,6 +120,7 @@ class S implements WidgetsLocalizations {
   String get gas_station => "Gas Station";
   String get generating_key => "generating encrypted addr.…";
   String get geographical_position => "Geo. position";
+  String get get_poi_fail_please_again => "Failed to obtain location information, please locate the map to your location first。";
   String get global_embassies => "Global Embassies";
   String get global_map_server_nodes => "Global Map Service Nodes";
   String get global_nodes => "Global Nodes";
@@ -294,6 +295,7 @@ class S implements WidgetsLocalizations {
   String get select_category_healthfood => "Healthfood store";
   String get select_category_nailsalon => "Nailsalon";
   String get select_position => "Select position";
+  String get select_position_please_again_hint => "Failed to select location. Please try again";
   String get send => "Send";
   String get sent => "Sent";
   String get service_area => "Area";
@@ -803,6 +805,8 @@ class $ko extends S {
   @override
   String get click_again_to_exist_app => "다시 누르면 앱이 종료됩니다";
   @override
+  String get get_poi_fail_please_again => "获取位置信息失败，请先定位地图到你所在位置。";
+  @override
   String get supermarket => "슈퍼마켓";
   @override
   String get information_guide => "설명 및 안내";
@@ -836,6 +840,8 @@ class $ko extends S {
   String get address_copied => "주소복사완료";
   @override
   String get improvement_plan_message => "Titan 사용 과정에서 고객님들께 더 나은 사용 환경을 제공하기 위하여 당신을 제품 품질 향상을 위한 개선된 사용자 경험 프로그램에 초대합니다상세한 내용은\n<b>\n<a href=\"https://www.hyn.space/titan/privacy_policy/\">프로그램 설명서를 참조하시기 바랍니다.</a>\n</b>";
+  @override
+  String get select_position_please_again_hint => "选择位置失败，请重试";
   @override
   String get backup_finish => "백업완료";
   @override
@@ -1213,7 +1219,7 @@ class $zh_CN extends S {
   @override
   String get unknown_error => "Unknown error";
   @override
-  String get confirm_info_wrong => "信息有误";
+  String get confirm_info_wrong => "地点有误";
   @override
   String get hotel => "酒店";
   @override
@@ -1509,7 +1515,7 @@ class $zh_CN extends S {
   @override
   String get please_select_app_area => "请设置地图使用区域";
   @override
-  String get poi_confirm_title_error => "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？";
+  String get poi_confirm_title_error => "你认为这个地点是不存在或者描述有误的，确定提交吗？";
   @override
   String get data_contribution_with_hyn_wallet_tips => "数据贡献需要有HYN地址，请先创建 或导入HYN钱包。";
   @override
@@ -1522,6 +1528,8 @@ class $zh_CN extends S {
   String get scan_upload_signal_success_hint => "信号数据上传成功";
   @override
   String get click_again_to_exist_app => "再按一下退出程序";
+  @override
+  String get get_poi_fail_please_again => "获取位置信息失败，请先定位地图到你所在位置。";
   @override
   String get supermarket => "超市";
   @override
@@ -1547,7 +1555,7 @@ class $zh_CN extends S {
   @override
   String get wallet => "钱包";
   @override
-  String get poi_confirm_success_hint => "位置信息确认成功";
+  String get poi_confirm_success_hint => "提交成功";
   @override
   String get less_than_1_min => "小于1分钟";
   @override
@@ -1556,6 +1564,8 @@ class $zh_CN extends S {
   String get address_copied => "地址已复制";
   @override
   String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
+  @override
+  String get select_position_please_again_hint => "选择位置失败，请重试";
   @override
   String get backup_finish => "备份完成";
   @override
@@ -1595,11 +1605,11 @@ class $zh_CN extends S {
   @override
   String get wallet_password_label => "钱包密码";
   @override
-  String get confirm_info_right => "信息正确";
+  String get confirm_info_right => "地点正确";
   @override
   String get public_key_copied => "公钥地址已复制";
   @override
-  String get poi_add_success_hint => "位置信息添加成功";
+  String get poi_add_success_hint => "添加成功";
   @override
   String get encrypt_error => "加密失败";
   @override
@@ -1657,7 +1667,7 @@ class $zh_CN extends S {
   @override
   String get cafe => "咖啡馆";
   @override
-  String get poi_confirm_title_hint => "你认为这个位置信息是真实存在并且信息描述完全正确的，确定提交吗？";
+  String get poi_confirm_title_hint => "你认为这个地点是真实存在并且描述完全正确的，确定提交吗？";
   @override
   String get telphone => "电话";
   @override

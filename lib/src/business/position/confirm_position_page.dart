@@ -102,7 +102,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          S.of(context).position_info_confirm,
+          S.of(context).check_poi_item_title,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -117,7 +117,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text(S.of(context).position_info_confirm),
+            title: Text(S.of(context).poi_confirm_success_hint),
             content: Text(content),
             actions: <Widget>[
               FlatButton(
@@ -310,28 +310,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           ),
           buildHeadItem(context,
               Icons.location_on, confirmPoiItem.address,
-              hint: '暂无详细地址'),
-          /*Padding(
-            padding: EdgeInsets.only(bottom: 15),
-            child: Text(
-              S.of(context).confirm_position_name_func(confirmPoiItem.name),
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: HexColor('#333333'),
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          Text(
-            S.of(context).confirm_position_func(confirmPoiItem.address),
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: HexColor('#333333'),
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-            ),
-          ),*/
+              hint: S.of(context).no_detail_address),
         ],
       ),
     );

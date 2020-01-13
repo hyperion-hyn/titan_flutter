@@ -351,5 +351,7 @@
   "poi_confirm_success_hint": "位置信息确认成功",
   "unknown_locations": "未知位置",
   "poi_confirm_title_error": "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？",
-  "poi_upload_protocol": "POI上传协议"
+  "poi_upload_protocol": "POI上传协议",
+  "select_position_please_again_hint": "选择位置失败，请重试",
+  "get_poi_fail_please_again": "获取位置信息失败，请先定位地图到你所在位置。"
 }

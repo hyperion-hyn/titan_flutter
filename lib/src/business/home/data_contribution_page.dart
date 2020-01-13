@@ -262,10 +262,6 @@ class _DataContributionState extends State<DataContributionPage>
           print('[Permission] -->status:$status');
 
           if (status) {
-            /*var latlng =
-                await (Keys.mapContainerKey.currentState as MapContainerState)
-                    ?.mapboxMapController
-                    ?.lastKnownLocation();*/
             var latlng = await getLatlng();
             if (latlng != null) {
               Navigator.push(
@@ -279,10 +275,6 @@ class _DataContributionState extends State<DataContributionPage>
         }, isOpen: true),
         _divider(),
         _buildItem('position', S.of(context).add_poi_item_title, () async {
-          /*var latlng =
-              await (Keys.mapContainerKey.currentState as MapContainerState)
-                  ?.mapboxMapController
-                  ?.lastKnownLocation();*/
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -295,27 +287,6 @@ class _DataContributionState extends State<DataContributionPage>
         }, isOpen: true),
         _divider(),
         _buildItem('check', S.of(context).check_poi_item_title, () async {
-              /*await (Keys.mapContainerKey.currentState as MapContainerState)
-                  ?.mapboxMapController
-                  ?.lastKnownLocation();
-          if (latlng == null) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("获取位置信息失败，请先定位地图到你所在位置。"),
-                  actions: <Widget>[
-                    FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(S.of(context).confirm))
-                  ],
-                );
-              },
-            );
-            return;
-          }*/
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -342,7 +313,7 @@ class _DataContributionState extends State<DataContributionPage>
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("获取位置信息失败，请先定位地图到你所在位置。"),
+            title: Text(S.of(context).get_poi_fail_please_again),
             actions: <Widget>[
               FlatButton(
                   onPressed: () {

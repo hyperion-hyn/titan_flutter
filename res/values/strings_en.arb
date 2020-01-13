@@ -351,5 +351,7 @@
   "poi_confirm_success_hint": "Poi confirms success",
   "unknown_locations": "Unknown locations",
   "poi_confirm_title_error": "Do you think the location information does not exist or the information description is wrong, are you sure to submit？",
-  "poi_upload_protocol": "POI Upload Protocol"
+  "poi_upload_protocol": "POI Upload Protocol",
+  "select_position_please_again_hint": "Failed to select location. Please try again",
+  "get_poi_fail_please_again": "Failed to obtain location information, please locate the map to your location first。"
 }

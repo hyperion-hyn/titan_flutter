@@ -312,8 +312,8 @@
   "business_time_thursday": "周四",
   "business_time_friday": "周五",
   "business_time_saturday": "周六",
-  "confirm_info_wrong": "信息有误",
-  "confirm_info_right": "信息正确",
+  "confirm_info_wrong": "地点有误",
+  "confirm_info_right": "地点正确",
   "confirm_position_name_func": "名称：${name}",
   "confirm_position_func": "位置：${address}",
   "info_is_wrong_please_again_submit_hint": "您提交的信息有误，请重试。",
@@ -346,10 +346,12 @@
   "please_enter_name_of_location_hint": "请输入地点名称",
   "please_enter_category_keywords_hint": "输入类别关键词",
   "no_verifiable_poi_around_hint": "周围没有可验证的位置信息。",
-  "poi_confirm_title_hint": "你认为这个位置信息是真实存在并且信息描述完全正确的，确定提交吗？",
-  "poi_add_success_hint": "位置信息添加成功",
-  "poi_confirm_success_hint": "位置信息确认成功",
+  "poi_confirm_title_hint": "你认为这个地点是真实存在并且描述完全正确的，确定提交吗？",
+  "poi_add_success_hint": "添加成功",
+  "poi_confirm_success_hint": "提交成功",
   "unknown_locations": "未知位置",
-  "poi_confirm_title_error": "你认为这个位置信息是不存在或者信息描述有误的，确定提交吗？",
-  "poi_upload_protocol": "上传协议"
+  "poi_confirm_title_error": "你认为这个地点是不存在或者描述有误的，确定提交吗？",
+  "poi_upload_protocol": "上传协议",
+  "select_position_please_again_hint": "选择位置失败，请重试",
+  "get_poi_fail_please_again": "获取位置信息失败，请先定位地图到你所在位置。"
 }
