@@ -240,7 +240,12 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         ),
       );
 
-      mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+      CameraPosition p = await mapboxMapController?.getCameraPosition();
+      if (p != null && p.zoom >= 17) {
+        mapboxMapController?.animateCamera(CameraUpdate.newLatLng(poi.latLng));
+      } else {
+        mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+      }
 
       currentPoi = poi;
     }
