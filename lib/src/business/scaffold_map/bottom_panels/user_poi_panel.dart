@@ -116,12 +116,12 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                         SizedBox(
                           height: 8,
                         ),
-                        buildHeadItem(
+                        buildHeadItem(context,
                             Icons.location_on, widget.selectedPoiEntity.address,
                             hint: '暂无详细地址'),
                         if (widget.selectedPoiEntity.remark != null &&
                             widget.selectedPoiEntity.remark.length > 0)
-                          buildHeadItem(
+                          buildHeadItem(context,
                               Icons.message, widget.selectedPoiEntity.remark,
                               hint: '无备注'),
                       ],
@@ -140,7 +140,7 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                       color: HexColor('#E9E9E9'),
                     ),
                   ),
-                  buildBottomInfoList(widget.selectedPoiEntity)
+                  buildBottomInfoList(context,widget.selectedPoiEntity)
                 ],
               ),
               Positioned(
@@ -174,7 +174,7 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
     );
   }
 
-  Widget buildHeadItem(IconData icon, String info, {String hint}) {
+  /*Widget buildHeadItem(IconData icon, String info, {String hint}) {
     if (hint == null || hint.isEmpty) {
       hint = S.of(context).search_empty_data;
     }
@@ -198,7 +198,7 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
         ],
       ),
     );
-  }
+  }*/
 
   Widget buildInfoItem(String tag, String info, {String hint}) {
     if (hint == null || hint.isEmpty) {
@@ -300,6 +300,32 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
   }*/
 }
 
+Widget buildHeadItem(BuildContext context,IconData icon, String info, {String hint}) {
+  if (hint == null || hint.isEmpty) {
+    hint = S.of(context).search_empty_data;
+  }
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Icon(
+          icon,
+          color: Colors.grey[600],
+          size: 18,
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(info != null && info.isNotEmpty ? info : hint,
+                style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+          ),
+        )
+      ],
+    ),
+  );
+}
+
 Widget buildPicList(
     double itemWidth, double topValue, ConfirmPoiItem confirmPoiItem) {
   //print("image = hahaha");
@@ -335,7 +361,7 @@ Widget buildPicList(
   );
 }
 
-Widget buildBottomInfoList(ConfirmPoiItem confirmPoiItem) {
+Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
   List<UserInfoItem> _infoList = [];
 //    (UserInfoItem("res/drawable/ic_user_poi_category_name.png", "中餐馆")),
 //    (UserInfoItem("res/drawable/ic_user_poi_zip_code.png", "510000")),
@@ -346,22 +372,37 @@ Widget buildBottomInfoList(ConfirmPoiItem confirmPoiItem) {
   if (confirmPoiItem.category.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_category_name.png", confirmPoiItem.category));
+  }else{
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_category_name.png", S.of(context).search_empty_data));
   }
   if (confirmPoiItem.postcode.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_zip_code.png", confirmPoiItem.postcode));
+  }else{
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_zip_code.png", S.of(context).search_empty_data));
   }
   if (confirmPoiItem.phone.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_phone_num.png", confirmPoiItem.phone));
+  }else{
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_phone_num.png", S.of(context).search_empty_data));
   }
   if (confirmPoiItem.website.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_web_site.png", confirmPoiItem.website));
+  }else{
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_web_site.png", S.of(context).search_empty_data));
   }
   if (confirmPoiItem.workTime.isNotEmpty) {
     _infoList.add(UserInfoItem(
         "res/drawable/ic_user_poi_business_time.png", confirmPoiItem.workTime));
+  }else{
+    _infoList.add(UserInfoItem(
+        "res/drawable/ic_user_poi_business_time.png", S.of(context).search_empty_data));
   }
 
   return Container(

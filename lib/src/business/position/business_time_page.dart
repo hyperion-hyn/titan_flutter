@@ -102,7 +102,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
 
               if (currentTime != null && currentTime.isCustom && currentTime.isCheck && isRightTime(customTime)) {
                 currentTime.label = customTime;
-              } else if (currentTime != null && currentTime.isCustom && !isRightTime(customTime)) {
+              } else if (currentTime != null && currentTime.isCustom /*&& !isRightTime(customTime)*/) {
                 Fluttertoast.showToast(
                     msg: S.of(context).please_enter_correct_time_format_hint);
                 return;

@@ -213,7 +213,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                       color: HexColor('#E9E9E9'),
                     ),
                   ),
-                  buildBottomInfoList(confirmPoiItem),
+                  buildBottomInfoList(context,confirmPoiItem),
                 ],
               ),
             ),
@@ -289,12 +289,29 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
 
   Widget _nameView() {
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.only(left: 15,right: 15,top: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  confirmPoiItem.name,
+                  style: TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          buildHeadItem(context,
+              Icons.location_on, confirmPoiItem.address,
+              hint: '暂无详细地址'),
+          /*Padding(
             padding: EdgeInsets.only(bottom: 15),
             child: Text(
               S.of(context).confirm_position_name_func(confirmPoiItem.name),
@@ -314,7 +331,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               fontSize: 14,
               fontWeight: FontWeight.normal,
             ),
-          ),
+          ),*/
         ],
       ),
     );
