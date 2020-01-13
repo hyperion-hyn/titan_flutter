@@ -30,6 +30,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       var userPosition = event.userPosition;
       var query = "${userPosition.latitude},${userPosition.longitude}";
       var language = (appLocale??defaultLocale).languageCode;
+      if (language.startsWith('zh')) language = "zh-Hans";
       var _openCageData = await _positionApi.getOpenCageData(query, lang: language);
       yield GetOpenCageState(_openCageData);
     } else if (event is StartPostPoiDataEvent) {
@@ -46,6 +47,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     } else if (event is ConfirmPositionPageEvent) {
       var userPosition = event.userPosition;
       var language = (appLocale??defaultLocale).languageCode;
+      if (language.startsWith('zh')) language = "zh-Hans";
       var _confirmPoiItem = await _positionApi.getConfirmData(userPosition.longitude,userPosition.latitude,lang: language);
       yield ConfirmPositionPageState(_confirmPoiItem);
     } else if (event is ConfirmPositionResultEvent) {

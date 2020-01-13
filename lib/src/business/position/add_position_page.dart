@@ -145,7 +145,7 @@ class _AddPositionState extends State<AddPositionPage> {
           var county = _openCageData["county"] ?? "";
           setState(() {
             //_addressText = country + " " + provinces + " " + city + " " + county;
-            _addressText = county + "," + city + "," + provinces + "," + country;
+            _addressText = county + "，" + city + "，" + provinces + "，" + country;
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
           });
 
@@ -558,7 +558,7 @@ class _AddPositionState extends State<AddPositionPage> {
                       },
                     ),
                     Container(
-                      width: 80,
+                      width: 60,
                       child: Text(
                         S.of(context).geographical_position,
                         overflow: TextOverflow.ellipsis,
