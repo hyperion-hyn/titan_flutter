@@ -353,5 +353,6 @@
   "poi_upload_protocol": "POI Upload Protocol",
   "select_position_please_again_hint": "Failed to select location. Please try again",
   "get_poi_fail_please_again": "Failed to obtain location information, please locate the map to your location first。",
-  "please_input_custom_time_hint": "Please input custom time"
+  "please_input_custom_time_hint": "Please input custom time",
+  "no_remark": "No remark"
 }

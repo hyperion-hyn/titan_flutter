@@ -31,12 +31,14 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
   }
 
   void _setupData() {
-    if (widget.pageType == FinishAddPositionPage.FINISH_PAGE_TYPE_ADD) {
-      posiInfoText = S.of(context).poi_add_success_hint;
-    } else if (widget.pageType == FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM) {
-      posiInfoText = S.of(context).poi_confirm_success_hint;
-    }
-    setState(() {});
+
+    setState(() {
+      if (widget.pageType == FinishAddPositionPage.FINISH_PAGE_TYPE_ADD) {
+        posiInfoText = S.of(context).poi_add_success_hint;
+      } else if (widget.pageType == FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM) {
+        posiInfoText = S.of(context).poi_confirm_success_hint;
+      }
+    });
   }
 
   @override

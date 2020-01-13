@@ -191,6 +191,7 @@ class S implements WidgetsLocalizations {
   String get no_detail_address => "No detailed address";
   String get no_fill_in => "Not Filled";
   String get no_recommended_route => "No recommended route yet";
+  String get no_remark => "No remark";
   String get no_verifiable_poi_around_hint => "There is no verifiable location information around。";
   String get not_open_yet => "Coming Soon";
   String get official_announcement => "Announcement";
@@ -536,6 +537,8 @@ class $ko extends S {
   String get share_app => "app공유";
   @override
   String get information => "뉴스";
+  @override
+  String get no_remark => "无备注";
   @override
   String get input_count_over_balance => "잔액한도를초과하였습니다.";
   @override
@@ -1260,6 +1263,8 @@ class $zh_CN extends S {
   String get share_app => "分享app";
   @override
   String get information => "资讯";
+  @override
+  String get no_remark => "无备注";
   @override
   String get input_count_over_balance => "超过余额";
   @override

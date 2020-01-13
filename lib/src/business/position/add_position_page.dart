@@ -87,10 +87,10 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   void _setupData() {
-    _categoryDefaultText = S.of(context).please_select_category_hint;
-    _timeDefaultText = S.of(context).please_add_business_hours_hint;
-    setState(() {
 
+    setState(() {
+      _categoryDefaultText = S.of(context).please_select_category_hint;
+      _timeDefaultText = S.of(context).please_add_business_hours_hint;
     });
   }
 

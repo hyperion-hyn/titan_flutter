@@ -118,12 +118,12 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                         ),
                         buildHeadItem(context,
                             Icons.location_on, widget.selectedPoiEntity.address,
-                            hint: '暂无详细地址'),
+                            hint: S.of(context).no_detail_address),
                         if (widget.selectedPoiEntity.remark != null &&
                             widget.selectedPoiEntity.remark.length > 0)
                           buildHeadItem(context,
                               Icons.message, widget.selectedPoiEntity.remark,
-                              hint: '无备注'),
+                              hint: S.of(context).no_remark),
                       ],
                     ),
                   ),
