@@ -408,40 +408,32 @@ Widget buildBottomInfoList(BuildContext context,ConfirmPoiItem confirmPoiItem) {
   }
 
   return Container(
-    height: 235,
-    padding: const EdgeInsets.only(top: 0, left: 15.0, right: 15),
-    child: ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(top: 0),
-        itemBuilder: (context, index) {
-          UserInfoItem userInfoItem = _infoList[index];
-          return Column(
-            children: <Widget>[
-              Container(
-                child: Row(
-                  children: <Widget>[
-                    Image.asset(
-                      userInfoItem.icon,
-                      width: 18,
-                      height: 18,
-                    ),
-                    SizedBox(
-                      width: 14,
-                      height: 1,
-                    ),
-                    Expanded(child: Text(userInfoItem.infoStr,style: TextStyles.textC333S14,))
-                  ],
+    padding: EdgeInsets.only(left: 15.0, right: 15),
+    child: Column(
+      children: _infoList.map((userInfoItem){
+        return Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Image.asset(
+                  userInfoItem.icon,
+                  width: 18,
+                  height: 18,
                 ),
-              ),
-//              _divider()
-            ],
-          );
-        },
-        separatorBuilder: (context, index) {
-          return _divider();
-        },
-        itemCount: _infoList.length),
+                SizedBox(
+                  width: 14,
+                  height: 1,
+                ),
+                Expanded(child: Text(userInfoItem.infoStr,style: TextStyles.textC333S14,))
+              ],
+            ),
+            if(_infoList.last != userInfoItem) _divider()
+          ],
+        );
+      }).toList(),
+    ),
   );
+
 }
 
 Widget _divider() {
