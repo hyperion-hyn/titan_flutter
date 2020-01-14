@@ -154,12 +154,16 @@ class _AddPositionState extends State<AddPositionPage> {
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
           });
 
-          var road = _openCageData["road"] ?? "";
-          var building = _openCageData["building"] ?? "";
-          _addressController.text = road + " " + building;
+          String road = _openCageData["road"] ?? "";
+          String building = _openCageData["building"] ?? "";
+          if (road.length > 0 || building.length > 0) {
+            _addressController.text = road + " " + building;
+          }
 
-          var postalCode = _openCageData["postcode"] ?? "";
-          _addressPostcodeController.text = postalCode;
+          String postalCode = _openCageData["postcode"] ?? "";
+          if (postalCode.length > 0) {
+            _addressPostcodeController.text = postalCode;
+          }
         }
 
         return true;
