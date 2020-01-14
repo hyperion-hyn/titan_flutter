@@ -259,6 +259,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     } else {
       style = Const.kWhiteMapStyle;
     }
+    var languageCode = Localizations.localeOf(context).languageCode;
 
     return SizedBox(
       height: 150,
@@ -279,6 +280,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         enableAttribution: false,
         minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
         myLocationEnabled: false,
+        languageCode: languageCode,
       ),
     );
   }
