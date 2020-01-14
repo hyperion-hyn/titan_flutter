@@ -21,7 +21,8 @@ class SelectCategoryInitState extends PositionState {
 }
 
 class SelectCategoryLoadingState extends PositionState {
-  SelectCategoryLoadingState();
+  bool isShowSearch;
+  SelectCategoryLoadingState({this.isShowSearch = true});
 }
 
 class SelectCategoryResultState extends PositionState {

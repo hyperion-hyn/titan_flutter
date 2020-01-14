@@ -265,7 +265,7 @@ class _AddPositionState extends State<AddPositionPage> {
           child: TextFormField(
             controller: _addressNameController,
             validator: (value) {
-              if (value.isEmpty) {
+              if (value == null || value.trim().length == 0) {
                 return S.of(context).place_name_cannot_be_empty_hint;
               } else {
                 return null;

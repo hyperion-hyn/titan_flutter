@@ -173,7 +173,7 @@ class _BusinessTimeState extends State<BusinessTimePage> {
                   SizedBox(width: 10, height: 1),
                   Expanded(
                     child: TextField(
-                      inputFormatters: [LengthLimitingTextInputFormatter(11)],
+                      inputFormatters: [LengthLimitingTextInputFormatter(200)],
                         controller: _timeController,
                         decoration: new InputDecoration(
                           border: InputBorder.none,

@@ -18,7 +18,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     if (event is AddPositionEvent) {
       yield AddPositionState();
     } else if (event is SelectCategoryInitEvent) {
-      yield SelectCategoryLoadingState();
+      yield SelectCategoryLoadingState(isShowSearch: false);
       var address = currentWalletVo.accountList[0].account.address;
       var language = (appLocale??defaultLocale).languageCode;
       if (language.startsWith('zh')) language = "zh-Hans";

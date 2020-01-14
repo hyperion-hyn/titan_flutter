@@ -116,7 +116,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
           return _buildBody(state);
         } else if (state is SelectCategoryLoadingState) {
-          return _buildBody(state);
+          return _buildBody(state,isShowSearch: state.isShowSearch);
         } else if (state is SelectCategoryClearState) {
           categoryList.clear();
           return _buildBody(state);
@@ -162,12 +162,12 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
   }
 
-  Widget _buildBody(PositionState state) {
+  Widget _buildBody(PositionState state,{bool isShowSearch = true}) {
     return Container(
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            buildSearchBar(),
+            if(isShowSearch) buildSearchBar(),
             Expanded(child: _buildBottomBody(state))
           ]),
     );
