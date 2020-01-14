@@ -343,5 +343,6 @@
   "please_input_custom_time_hint": "Please input custom time",
   "no_remark": "No remark",
   "post_my_check": "Post my check",
-  "no_category": "No such category"
+  "no_category": "No such category",
+  "hot_search": "popular searches："
 }

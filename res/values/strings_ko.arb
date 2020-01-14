@@ -343,5 +343,6 @@
   "please_input_custom_time_hint": "영업시간 작성",
   "no_remark": "비고 무",
   "post_my_check": "인증 제출",
-  "no_category": "해당 카테고리 무"
+  "no_category": "해당 카테고리 무",
+  "hot_search": "인기 검색어："
 }
