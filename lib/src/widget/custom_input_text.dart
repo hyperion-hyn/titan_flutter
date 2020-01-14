@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 
-typedef void TextFieldCallBack(String content);
+typedef void TextFieldCallBack(String content,{bool isForceSearch});
 
 class CustomInputText extends StatefulWidget {
   final String text;
@@ -115,7 +115,7 @@ class _TextaState extends State<CustomInputText> {
 //              inputFormatters: [LengthLimitingTextInputFormatter(9)],
             textInputAction: TextInputAction.search,
             onFieldSubmitted: (value){
-              widget.fieldCallBack(value);
+              widget.fieldCallBack(value,isForceSearch: true);
             },
 //              focusNode: _focusNode,
 //              textAlign: TextAlign.left,

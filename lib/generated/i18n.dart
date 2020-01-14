@@ -126,6 +126,7 @@ class S implements WidgetsLocalizations {
   String get home_page => "Home";
   String get hospital => "Hospital";
   String get hot_area => "Hot spots";
+  String get hot_search => "popular searches：";
   String get hotel => "Hotel";
   String get house_number => "House number";
   String get hynPriceUnit => "USD";
@@ -732,6 +733,8 @@ class $ko extends S {
   String get more_dmap => "더많은 DMap 애플리케이션들이지속적으로추가됩니다 ~";
   @override
   String get import_account => "계정 가져오기";
+  @override
+  String get hot_search => "인기 검색어：";
   @override
   String get key_manager_title => "나의 암호화 주소";
   @override
@@ -1436,6 +1439,8 @@ class $zh_CN extends S {
   String get more_dmap => "更多DMap应用持续添加~";
   @override
   String get import_account => "导入账户";
+  @override
+  String get hot_search => "热门搜索：";
   @override
   String get key_manager_title => "我的加密地址";
   @override

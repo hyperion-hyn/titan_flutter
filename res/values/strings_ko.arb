@@ -343,5 +343,6 @@
   "please_input_custom_time_hint": "请填写营业时间时间",
   "no_remark": "无备注",
   "post_my_check": "提交验证",
-  "no_category": "暂无此类别"
+  "no_category": "暂无此类别",
+  "hot_search": "인기 검색어："
 }

@@ -35,11 +35,11 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
     inputText = CustomInputText(
       controller: _searchTextController,
-      fieldCallBack: (textStr) {
+      fieldCallBack: (textStr,{isForceSearch = false}) {
         if (textStr.length == 0) {
           _positionBloc.add(SelectCategoryClearEvent());
         } else {
-          handleSearch(textStr);
+          handleSearch(textStr,isForceSearch);
         }
         print("inputText = " + textStr);
       },
@@ -57,7 +57,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     super.dispose();
   }
 
-  void searchTextChangeListener() {
+  /*void searchTextChangeListener() {
     String currentText = _searchTextController.text.trim();
     if (currentText.isNotEmpty) {
       if (!_visibleCloseIcon) {
@@ -72,7 +72,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         });
       }
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -207,32 +207,43 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     } else if (state is InitialPositionState ||
         state is SelectCategoryClearState ||
         state is SelectCategoryInitState) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 48.0, left: 8, right: 8),
-        child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 10,
-            runSpacing: 5,
-            children: _tagList.map<Widget>((str) {
-              return InkWell(
-                  onTap: () {
+      return SingleChildScrollView(
+        child: Padding(
+              padding: const EdgeInsets.only(top: 28.0, left: 8, right: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20,left: 10),
+                    child: Text(S.of(context).hot_search,style: TextStyles.textC777S16,),
+                  ),
+                  Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 10,
+                      runSpacing: 5,
+                      children: _tagList.map<Widget>((str) {
+                        return InkWell(
+                            onTap: () {
 //                    _searchTextController.text = str;
-                    _searchTextController.value = TextEditingValue(
-                        // 设置内容
-                        text: str,
-                        // 保持光标在最后
-                        selection: TextSelection.fromPosition(TextPosition(
-                            affinity: TextAffinity.downstream,
-                            offset: str.length)));
-                    handleSearch(str);
-                  },
-                  child: Chip(
-                    label: Text(
-                      '$str',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ));
-            }).toList()),
+                              _searchTextController.value = TextEditingValue(
+                                  // 设置内容
+                                  text: str,
+                                  // 保持光标在最后
+                                  selection: TextSelection.fromPosition(TextPosition(
+                                      affinity: TextAffinity.downstream,
+                                      offset: str.length)));
+                              handleSearch(str,true);
+                            },
+                            child: Chip(
+                              label: Text(
+                                '$str',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ));
+                      }).toList()),
+                ],
+              ),
+            ),
       );
     }
     return Container(
@@ -243,7 +254,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
   Widget buildSearchBar() {
 //    double height = 43;
-    double height = 60;
+    double height = 62;
     return Container(
       color: Theme.of(context).primaryColor,
       height: height,
@@ -254,7 +265,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(height * 0.5)),
 //            height: 29,
-            height: 44,
+            height: 46,
             child: inputText),
       ),
     );
@@ -262,8 +273,8 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
   String _lastSearch;
 
-  void handleSearch(textOrPoi) {
-    if (_lastSearch == textOrPoi) {
+  void handleSearch(String textOrPoi,bool isForceSearch) {
+    if (_lastSearch == textOrPoi && !isForceSearch) {
       return;
     }
 

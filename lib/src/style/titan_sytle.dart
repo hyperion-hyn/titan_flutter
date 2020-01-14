@@ -19,6 +19,7 @@ class TextStyles {
   static TextStyle textC777S16 = textStyle(fontSize: 16, color: DefaultColors.color777);
   static TextStyle textCaaaS14 = textStyle(color: DefaultColors.coloraaa);
   static TextStyle textCfffS14 = textStyle(color: DefaultColors.colorfff);
+  static TextStyle textC000S16 = textStyle(fontSize: 16, color: DefaultColors.color000);
 }
 
 class DefaultColors {
@@ -26,4 +27,5 @@ class DefaultColors {
   static Color color777 = HexColor("#777777");
   static Color coloraaa = HexColor("#aaaaaa");
   static Color colorfff = HexColor("#ffffff");
+  static Color color000 = HexColor("#000000");
 }
