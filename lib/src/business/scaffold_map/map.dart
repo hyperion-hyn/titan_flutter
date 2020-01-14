@@ -11,13 +11,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
-import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
 import 'bloc/bloc.dart';
@@ -30,7 +31,8 @@ class MapContainer extends StatefulWidget {
   final RouteDataModel routeDataModel;
   final String style;
   final double defaultZoom;
-  final LatLng defaultCenter;
+
+//  final LatLng defaultCenter;
   final OnMapClickHandle mapClickHandle;
   final OnMapLongPressHandle mapLongPressHandle;
   final bool showCenterMarker;
@@ -43,8 +45,8 @@ class MapContainer extends StatefulWidget {
       this.heavenDataList,
       this.routeDataModel,
       this.style,
-      this.defaultZoom = 9.0,
-      this.defaultCenter = const LatLng(23.122592, 113.327356),
+      this.defaultZoom = 13,
+//      this.defaultCenter,
 //    this.bottomPanelController,
       this.mapClickHandle,
       this.mapLongPressHandle,
@@ -59,13 +61,17 @@ class MapContainer extends StatefulWidget {
 }
 
 class MapContainerState extends State<MapContainer> with SingleTickerProviderStateMixin {
-  final MAX_POI_DIFF_DISTANCE = 10000;
+  static const int _MAX_POI_DIFF_DISTANCE = 10000;
 
   MapboxMapController mapboxMapController;
 
   MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
+  bool myLocationEnabled;
 
-  StreamSubscription _locationClickSubscription;
+//  StreamSubscription _locationClickSubscription;
+  PublishSubject<dynamic> _toLocationEventSubject = PublishSubject<dynamic>();
+  PublishSubject<LatLng> _saveLastPositionSubject = PublishSubject<LatLng>();
+
   StreamSubscription _eventBusSubscription;
 
   AnimationController _mapPositionAnimationController;
@@ -77,18 +83,62 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   Map<String, IPoi> _currentGrayMarkerMap = Map();
   List<String> heavenMapLayers = [];
 
+//  PositionApi _positionApi = PositionApi();
+
+  SharedPreferences sprfs;
+
+  bool _hasRecoverRecentlyPosition = false;
+
   @override
   void initState() {
     super.initState();
+
+    SharedPreferences.getInstance().then((v) {
+      sprfs = v;
+      var posStr = sprfs.getString(PrefsKey.lastPosition);
+      if (posStr != null) {
+        var pos = posStr.split(',');
+        recentlyLocation = LatLng(double.parse(pos[0]), double.parse(pos[1]));
+      }
+      setState(() {
+        _hasRecoverRecentlyPosition = true;
+      });
+    });
+
     _mapPositionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       value: 1.0,
       vsync: this,
     );
 
+    //to my location
+    _toLocationEventSubject.debounceTime(Duration(milliseconds: 500)).listen((_) async {
+      bool needUpdate = enableMyLocation(true);
+      bool trackModeChange = updateMyLocationTrackingMode(MyLocationTrackingMode.Tracking);
+      if (needUpdate || trackModeChange) {
+        await Future.delayed(Duration(milliseconds: 300));
+      }
+
+      var latLng = await mapboxMapController?.lastKnownLocation();
+      double doubleClickZoom = 17;
+      if (latLng != null) {
+        if (_clickTimes > 1) {
+          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
+        } else if (!trackModeChange) {
+          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
+        }
+      }
+      _clickTimes = 0;
+    });
+    //map padding by bottom sheet
     _updateMapPositionSubject.debounceTime(Duration(milliseconds: 50)).listen((lastValue) {
 //      _mapPositionAnimationController.animateTo(lastValue, curve: Curves.linearToEaseOut);
       _mapPositionAnimationController.value = lastValue;
+    });
+
+    _saveLastPositionSubject.debounceTime(Duration(milliseconds: 2000)).listen((position) {
+      var saveStr = '${position.latitude},${position.longitude}';
+      sprfs.setString(PrefsKey.lastPosition, saveStr);
     });
 
     _listenEventBus();
@@ -101,6 +151,26 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     }
   }
 
+  bool enableMyLocation(bool enable) {
+    if (myLocationEnabled != enable) {
+      setState(() {
+        myLocationEnabled = enable;
+      });
+      return true;
+    }
+    return false;
+  }
+
+  bool updateMyLocationTrackingMode(MyLocationTrackingMode mode) {
+    if (mode != locationTrackingMode) {
+      setState(() {
+        locationTrackingMode = mode;
+      });
+      return true;
+    }
+    return false;
+  }
+
   void _onMapClick(Point<double> point, LatLng coordinates) async {
     if (widget.mapClickHandle != null) {
       if (await widget.mapClickHandle(context, point, coordinates)) {
@@ -111,14 +181,11 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     var range = 10;
     Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
     if (await _clickOnMarkerLayer(rect)) {
-      await mapboxMapController?.disableLocation();
+      updateMyLocationTrackingMode(MyLocationTrackingMode.None);
       return;
     }
-//    if (await _clickOnHeavenLayer(rect)) {
-//      return;
-//    }
     if (await _clickOnCommonSymbolLayer(rect)) {
-      await mapboxMapController?.disableLocation();
+      updateMyLocationTrackingMode(MyLocationTrackingMode.None);
       return;
     }
 
@@ -141,9 +208,6 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     if (await _clickOnMarkerLayer(rect)) {
       return;
     }
-//    if (await _clickOnHeavenLayer(rect)) {
-//      return;
-//    }
     if (await _clickOnCommonSymbolLayer(rect)) {
       return;
     }
@@ -176,17 +240,12 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         ),
       );
 
-//      double top = -widget.draggableBottomSheetController?.collapsedHeight;
-//      if (widget.draggableBottomSheetController?.getSheetState() == DraggableBottomSheetState.ANCHOR_POINT) {
-//        top = -widget.draggableBottomSheetController?.anchorHeight;
-//      }
-//      print("top:$top");
-//      var offset = 0.0002;
-//      var sw = LatLng(poi.latLng.latitude - offset, poi.latLng.longitude - offset);
-//      var ne = LatLng(poi.latLng.latitude + offset, poi.latLng.longitude + offset);
-//      mapboxMapController?.animateCamera(
-//          CameraUpdate.newLatLngBounds2(LatLngBounds(southwest: sw, northeast: ne), 10, top + 42, 10, 10));
-      mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+      CameraPosition p = await mapboxMapController?.getCameraPosition();
+      if (p != null && p.zoom >= 17) {
+        mapboxMapController?.animateCamera(CameraUpdate.newLatLng(poi.latLng));
+      } else {
+        mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+      }
 
       currentPoi = poi;
     }
@@ -200,7 +259,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     currentPoi = null;
   }
 
-  void addMarkers(List<IPoi> pois) async {
+  void _addMarkers(List<IPoi> pois) async {
     await clearAllMarkers();
 
     List<SymbolOptions> options = pois
@@ -218,21 +277,20 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       _currentGrayMarkerMap[symbolList[i].id] = pois[i];
     }
 
-    //计算太远的距离
+    //-----------------
+    // pan camera
+    // the first poi as center.
+    //-----------------
     var firstPoi = pois[0];
     var distanceFilterList = List<IPoi>();
     distanceFilterList.add(firstPoi);
-
     for (var i = 0; i < pois.length; i++) {
       var poiTemp = pois[i];
-      if (firstPoi.latLng.distanceTo(poiTemp.latLng) < MAX_POI_DIFF_DISTANCE &&
-          firstPoi.latLng.distanceTo(poiTemp.latLng) > 10) {
+      var distance = firstPoi.latLng.distanceTo(poiTemp.latLng);
+      if (distance < _MAX_POI_DIFF_DISTANCE && distance > 10) {
         distanceFilterList.add(poiTemp);
       }
     }
-
-    //针对过滤后的结果，看选择不同的移动方式
-
     if (distanceFilterList.length == 1) {
       mapboxMapController.animateCamera(CameraUpdate.newLatLngZoom(firstPoi.latLng, 15.0));
     } else {
@@ -240,10 +298,8 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       for (var poi in distanceFilterList) {
         latlngList.add(poi.latLng);
       }
-
       var padding = 50.0;
       var latlngBound = LatLngBounds.fromLatLngs(latlngList);
-//      var screenHeight = MediaQuery.of(context).size.height;
       mapboxMapController
           .moveCamera(CameraUpdate.newLatLngBounds2(latlngBound, padding, padding * 1.2, padding, padding * 1.2));
     }
@@ -353,8 +409,21 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         return true;
       }
 
-      var poi = PoiEntity(name: name, latLng: coordinates);
-      BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+      var pid = firstFeature["properties"]["pid"];
+      //user contribute poi
+      if (pid != null) {
+        print("has get pid");
+//        var className = firstFeature["properties"]["class"];
+//        var rank = firstFeature["properties"]["rank"];
+//        var lat = firstFeature["properties"]["lat"];
+//        var language = "zh-Hans";
+//        var _confirmDataList = await _positionApi.mapGetConfirmData(pid);
+        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid, coordinates);
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
+      } else {
+        var poi = PoiEntity(name: name, latLng: coordinates);
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+      }
 
       return true;
     } else {
@@ -383,74 +452,27 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       mapboxMapController = controller;
     });
 
-    controller.addListener(mapMoveListener);
-
-    Future.delayed(Duration(milliseconds: 2000)).then((t) {
-      return controller.lastKnownLocation();
-    }).then((position) {
-      if (position != null) {
-        eventBus.fire(OnMapMovedEvent(latLng: position));
-      }
-    });
-//    controller.lastKnownLocation().then((position) {
-//      if (position != null) {
-//        eventBus.fire(OnMapMovedEvent(latLng: position));
-//      }
-//    });
+    controller.removeListener(_mapMoveListener);
+    controller.addListener(_mapMoveListener);
   }
 
-  LatLng _lastPosition;
-
-  void mapMoveListener() {
-    if (mapboxMapController?.isCameraMoving == false) {
-      var position = mapboxMapController?.cameraPosition?.target;
-      if (position != null && position != _lastPosition) {
-        if (_lastPosition != null) {
-          var distance = position.distanceTo(_lastPosition);
-          if (distance < 10) {
-            //小于10米不更新
-            return;
-          }
-        }
-        _lastPosition = position;
-        debounce(() {
-          eventBus.fire(OnMapMovedEvent(latLng: position));
-        }, 500)();
-      }
+  void _mapMoveListener() {
+    //change tracking mode to none if user drag the map
+    if (mapboxMapController?.isGesture == true) {
+      updateMyLocationTrackingMode(MyLocationTrackingMode.None);
     }
+
+    if (mapboxMapController.cameraPosition != null) {
+      _saveLastPositionSubject.sink.add(mapboxMapController.cameraPosition.target);
+    }
+//    sprfs?.setString(key, value)
   }
 
   int _clickTimes = 0;
 
   Future _toMyLocation() async {
-    _locationClickSubscription?.cancel();
-
     _clickTimes++;
-    _locationClickSubscription = Observable.timer('', Duration(milliseconds: 300)).listen((value) async {
-      var latLng = await mapboxMapController?.lastKnownLocation();
-      if (_clickTimes > 1) {
-        // double click
-        double doubleClickZoom = 17;
-        if (latLng != null) {
-          mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom));
-
-          eventBus.fire(OnMapMovedEvent(latLng: latLng));
-        } else {
-          mapboxMapController?.animateCamera(CameraUpdate.zoomTo(doubleClickZoom));
-        }
-      } else {
-        //single click
-        if (latLng != null) {
-          mapboxMapController?.animateCamera(CameraUpdate.newLatLng(latLng));
-
-          eventBus.fire(OnMapMovedEvent(latLng: latLng));
-        }
-      }
-      Future.delayed(Duration(milliseconds: 500), () {
-        mapboxMapController?.enableLocation();
-      });
-      _clickTimes = 0;
-    });
+    _toLocationEventSubject.sink.add(1);
   }
 
   void _listenEventBus() {
@@ -571,30 +593,31 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         });
   }
 
-  ///update user track mode
-  void updateTrackMode() {
-    //TODO
-  }
-
   @override
   void dispose() {
     _updateMapPositionSubject.close();
+    _saveLastPositionSubject.close();
     _mapPositionAnimationController.dispose();
-    mapboxMapController?.removeListener(mapMoveListener);
-    _locationClickSubscription?.cancel();
+    mapboxMapController?.removeListener(_mapMoveListener);
+//    _locationClickSubscription?.cancel();
+    _toLocationEventSubject.close();
     _eventBusSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_hasRecoverRecentlyPosition != true) {
+      return Container(color: Colors.white);
+    }
+
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
       listener: (context, state) {
         if (state is SearchingPoiState || state is ShowPoiState) {
           addMarker(state.getCurrentPoi());
         } else if (state is SearchPoiByTextSuccessState) {
           if (state.getSearchPoiList().length > 0) {
-            addMarkers(state.getSearchPoiList());
+            _addMarkers(state.getSearchPoiList());
           }
         } else if (state is InitialScaffoldMapState || state is InitDMapState) {
           clearAllMarkers();
@@ -645,7 +668,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           styleString: widget.style,
                           onStyleLoaded: onStyleLoaded,
                           initialCameraPosition: CameraPosition(
-                            target: widget.defaultCenter,
+                            target: recentlyLocation,
                             zoom: widget.defaultZoom,
                           ),
                           rotateGesturesEnabled: false,
@@ -654,7 +677,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           enableAttribution: false,
                           compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
                           minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
-                          myLocationEnabled: true,
+                          myLocationEnabled: myLocationEnabled,
                           myLocationTrackingMode: locationTrackingMode,
                           languageCode: widget.languageCode,
                           children: <Widget>[
@@ -677,7 +700,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                               SizedBox(height: 68)
                             ],
                           ),
-                        )
+                        ),
                     ],
                   ),
                 ),

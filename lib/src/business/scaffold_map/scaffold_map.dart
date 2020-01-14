@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/gaode_poi_panel.dart';
 import 'package:titan/src/business/search/search_page.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -25,15 +26,10 @@ import 'bottom_panels/common_panel.dart';
 import 'bottom_panels/poi_panel.dart';
 import 'bottom_panels/route_panel.dart';
 import 'bottom_panels/search_list_panel.dart';
+import 'bottom_panels/user_poi_panel.dart';
 import 'map.dart';
 import 'opt_bar.dart';
 import 'route_bar.dart';
-
-//final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-zh.json';
-
-final kStyleZh = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
-
-final kStyleEn = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
 
 typedef PanelBuilder = Widget Function(BuildContext context, ScrollController scrollController, IDMapPoi poi);
 typedef SheetPanelBuilder = Widget Function(BuildContext context, ScrollController scrollController);
@@ -122,11 +118,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         //set map
         //---------------------------
         bool showCenterMarker = false;
-        String style = kStyleEn;
+        String style;
         if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-          style = kStyleZh;
+          style = Const.kWhiteMapStyleCn;
         } else {
-          style = kStyleEn;
+          style = Const.kWhiteMapStyle;
         }
         if (state.dMapConfigModel?.showCenterMarker == true) {
           showCenterMarker = true;
@@ -228,6 +224,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
               panelBuilder = (context, controller) => GaodePoiPanel(
                     scrollController: controller,
                     poi: state.getCurrentPoi(),
+                  );
+            } else if (state.getCurrentPoi() is ConfirmPoiItem) {
+              panelBuilder = (context, controller) => UserPoiPanel(
+                    scrollController: controller,
+                    selectedPoiEntity: state.getCurrentPoi(),
                   );
             }
           }

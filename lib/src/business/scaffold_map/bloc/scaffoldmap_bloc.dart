@@ -5,8 +5,11 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/business/position/api/position_api.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/inject/injector.dart';
@@ -20,6 +23,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   final BuildContext context;
 
   CancelToken _cancelToken;
+
+  PositionApi _positionApi = PositionApi();
 
   ScaffoldMapBloc(this.context);
 
@@ -41,8 +46,14 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     else if (event is SearchPoiEvent) {
       IPoi poi = event.poi;
 
-      //暂时只需要补全地址
-      if (poi.address == null) {
+
+      if(poi is ConfirmPoiItem) {
+        yield SearchingPoiState(searchingPoi: poi);
+        var _confirmDataList = await _positionApi.mapGetConfirmData(poi.id);
+        var fullInfomationPoi = _confirmDataList[0];
+        fullInfomationPoi.latLng = poi.latLng;
+        yield ShowPoiState(poi: fullInfomationPoi);
+      } else if (poi.address == null) {
         yield SearchingPoiState(searchingPoi: poi);
 
         try {
@@ -67,7 +78,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           logger.e(err);
 
           PoiEntity poi = PoiEntity();
-          poi.name = event.poi.name ?? '未知位置';
+          poi.name = event.poi.name ?? S.of(globalContext).unknown_locations;
           poi.address = event.poi.address ?? '${event.poi.latLng.latitude},${event.poi.latLng.longitude}';
           poi.remark = event.poi.remark;
           poi.latLng = event.poi.latLng;
