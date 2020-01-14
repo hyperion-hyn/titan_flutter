@@ -2,12 +2,13 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/model/converter/model_converter.dart';
 import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/model/search_history_aware_poi.dart';
 
 part 'confirm_poi_item.g.dart';
 
 
 @JsonSerializable()
-class ConfirmPoiItem extends Object implements IPoi{
+class ConfirmPoiItem with SearchHistoryAwarePoi implements IPoi{
 
   @JsonKey(name: 'id')
   String id;
@@ -45,6 +46,8 @@ class ConfirmPoiItem extends Object implements IPoi{
   @JsonKey(name: 'website')
   String website;
 
+  ConfirmPoiItem.empty();
+
   ConfirmPoiItem(this.id,this.name,this.address,this.category,this.location,this.ext,this.state,this.phone,this.workTime,this.images,this.postcode,this.website);
 
   factory ConfirmPoiItem.fromJson(Map<String, dynamic> srcJson) => _$ConfirmPoiItemFromJson(srcJson);
@@ -55,10 +58,14 @@ class ConfirmPoiItem extends Object implements IPoi{
   String remark;
 
   @override
-  @JsonKey(fromJson: LatLngConverter.latLngFromJson, toJson: LatLngConverter.latLngToJson)
-  LatLng latLng;
+  LatLng get latLng {
+    if(location?.coordinates != null) {
+      return LatLng(location.coordinates[1], location.coordinates[0]);
+    }
+    return null;
+  }
 
-  ConfirmPoiItem.setPid(this.id,this.latLng);
+  ConfirmPoiItem.setPid(this.id, this.location);
 
 }
 
@@ -78,5 +85,9 @@ class Location extends Object {
 
   Map<String, dynamic> toJson() => _$LocationToJson(this);
 
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }
 

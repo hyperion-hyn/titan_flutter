@@ -81,7 +81,8 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
       if (searchResult is String) {
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(searchText: searchResult, center: center));
-      } else if (searchResult is PoiEntity) {
+      } else if (searchResult is PoiEntity || searchResult is ConfirmPoiItem) {
+        print('xxx1 ${searchResult.latLng}');
         var poi = searchResult;
         if (searchResult.address == null) {
           //we need to full fil all properties

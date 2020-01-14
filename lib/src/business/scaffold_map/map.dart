@@ -19,6 +19,7 @@ import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
+import '../position/model/confirm_poi_item.dart' as position_model;
 
 import '../../global.dart';
 import 'bloc/bloc.dart';
@@ -410,15 +411,10 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       }
 
       var pid = firstFeature["properties"]["pid"];
-      //user contribute poi
       if (pid != null) {
-        print("has get pid");
-//        var className = firstFeature["properties"]["class"];
-//        var rank = firstFeature["properties"]["rank"];
-//        var lat = firstFeature["properties"]["lat"];
-//        var language = "zh-Hans";
-//        var _confirmDataList = await _positionApi.mapGetConfirmData(pid);
-        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid, coordinates);
+        var l = position_model.Location.fromJson(firstFeature['geometry']);
+        print('xxx33 $l $firstFeature');
+        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid, l);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
       } else {
         var poi = PoiEntity(name: name, latLng: coordinates);

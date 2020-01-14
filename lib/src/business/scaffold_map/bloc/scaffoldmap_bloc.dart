@@ -49,9 +49,9 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 
       if(poi is ConfirmPoiItem) {
         yield SearchingPoiState(searchingPoi: poi);
+
         var _confirmDataList = await _positionApi.mapGetConfirmData(poi.id);
         var fullInfomationPoi = _confirmDataList[0];
-        fullInfomationPoi.latLng = poi.latLng;
         yield ShowPoiState(poi: fullInfomationPoi);
       } else if (poi.address == null) {
         yield SearchingPoiState(searchingPoi: poi);
@@ -60,19 +60,12 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           var searchInteractor = Injector.of(context).searchInteractor;
           PoiEntity searchPoi =
               await searchInteractor.reverseGeoSearch(poi.latLng, Localizations.localeOf(context).languageCode);
-
           if (poi.name == null) {
             poi.name = searchPoi.name;
           }
           if (poi.address == null) {
             poi.address = searchPoi.address;
           }
-
-//        searchPoi.name = event.poi.name ?? searchPoi.name;
-//        searchPoi.address = event.poi.address ?? searchPoi.address;
-//        searchPoi.remark = event.poi.remark ?? searchPoi.remark;
-//        searchPoi.latLng = event.poi.latLng ?? searchPoi.latLng;
-
           yield ShowPoiState(poi: poi);
         } catch (err) {
           logger.e(err);

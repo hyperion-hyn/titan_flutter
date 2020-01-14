@@ -80,6 +80,14 @@ class Api {
     return data;
   }
 
+  Future<Map<String, dynamic>> searchPoiByTitan(String keyword, String lon , String lat,
+      {String language = "zh-Hans", int radius = 500}) async {
+    var data = await HttpCore.instance.get('map-collector/poi/search',
+//        params: {'lon': 113.322201, 'lat': 23.121072, 'language': 'zh-Hans', 'keyword': "高地", 'radius': "500"});
+        params: {'lon': lon, 'lat': lat, 'language': language, 'keyword': keyword, 'radius': radius});
+    return data;
+  }
+
   Future<Map<String, dynamic>> getReEncryptPubKey() async {
     var data = await HttpCore.instance.get('re/');
     return data;
