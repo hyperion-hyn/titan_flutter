@@ -124,6 +124,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
     } else {
       style = Const.kWhiteMapStyle;
     }
+    var languageCode = Localizations.localeOf(context).languageCode;
 
     return Stack(
       children: <Widget>[
@@ -147,6 +148,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
           enableLogo: false,
           enableAttribution: false,
           minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+          languageCode: languageCode,
         ),
         Center(
           child: Column(

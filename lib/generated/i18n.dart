@@ -71,8 +71,8 @@ class S implements WidgetsLocalizations {
   String get collect_signal_require_telephone => "To collect signal data, you need to obtain phone permissions";
   String get coming_soon => "Coming Soon";
   String get confirm => "Confirm";
-  String get confirm_info_right => "Correct";
-  String get confirm_info_wrong => "Error";
+  String get confirm_info_right => "Correct Address";
+  String get confirm_info_wrong => "Error Address";
   String get confirm_mnemonic => "Confirm Mnemonic";
   String get confirm_mnemonic_incorrect => "Your mnemonic is incorrect, please try again";
   String get confirm_mnemonic_tips => "Click on the words to put them in the correct order";
