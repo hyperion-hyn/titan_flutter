@@ -34,8 +34,7 @@ class DataContributionPage extends StatefulWidget {
   }
 }
 
-class _DataContributionState extends State<DataContributionPage>
-    with RouteAware {
+class _DataContributionState extends State<DataContributionPage> with RouteAware {
   WalletBloc _walletBloc = WalletBloc();
 
   StreamSubscription _eventbusSubcription;
@@ -55,8 +54,7 @@ class _DataContributionState extends State<DataContributionPage>
 
   Future doDidPopNext() async {
     if (currentWalletVo != null) {
-      String defaultWalletFileName =
-          await _walletService.getDefaultWalletFileName();
+      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
       //logger.i("defaultWalletFileName:$defaultWalletFileName");
       String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
       //logger.i("updateWalletFileName:$updateWalletFileName");
@@ -180,25 +178,18 @@ class _DataContributionState extends State<DataContributionPage>
                 width: 240,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(38)),
+                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
                     createWalletPopUtilName = '/data_contribution_page';
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CreateAccountPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                   },
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
                         S.of(context).create_wallet,
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w500),
+                        style:
+                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -213,25 +204,18 @@ class _DataContributionState extends State<DataContributionPage>
                 width: 240,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(38)),
+                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
                     createWalletPopUtilName = '/data_contribution_page';
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ImportAccountPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                   },
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
                         S.of(context).import_wallet,
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w500),
+                        style:
+                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -296,7 +280,6 @@ class _DataContributionState extends State<DataContributionPage>
               ),
             );
           }
-
         }, isOpen: true),
         _divider(),
       ],
@@ -305,23 +288,12 @@ class _DataContributionState extends State<DataContributionPage>
 
   Future<LatLng> getLatlng() async {
     var latlng =
-    await (Keys.mapContainerKey.currentState as MapContainerState)
-        ?.mapboxMapController
-        ?.lastKnownLocation();
+        await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
     if (latlng == null) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(S.of(context).get_poi_fail_please_again),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(S.of(context).confirm))
-            ],
-          );
+      _showConfirmDialog(
+        title: S.of(context).get_poi_fail_please_again,
+        func: () {
+          Navigator.of(context).pop();
         },
       );
     }
@@ -337,8 +309,7 @@ class _DataContributionState extends State<DataContributionPage>
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => WalletManagerPage(),
-                settings: RouteSettings(name: "/wallet_manager_page")));
+                builder: (context) => WalletManagerPage(), settings: RouteSettings(name: "/wallet_manager_page")));
       },
       child: SizedBox(
         height: 64,
@@ -350,9 +321,7 @@ class _DataContributionState extends State<DataContributionPage>
               alignment: Alignment.center,
               width: 40,
               height: 40,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).primaryColor),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
               child: Stack(
                 children: <Widget>[
                   Align(
@@ -372,8 +341,7 @@ class _DataContributionState extends State<DataContributionPage>
                 Text(
                   currentWalletVo.wallet.keystore.name ?? "",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500, color: HexColor('#333333')),
+                  style: TextStyle(fontWeight: FontWeight.w500, color: HexColor('#333333')),
                 ),
                 SizedBox(
                   height: 8,
@@ -381,13 +349,8 @@ class _DataContributionState extends State<DataContributionPage>
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortEthAddress(
-                            currentWalletVo.wallet.getEthAccount().address) ??
-                        "",
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: Color(0xFF9B9B9B),
-                        fontSize: 12),
+                    shortEthAddress(currentWalletVo.wallet.getEthAccount().address) ?? "",
+                    style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )
               ],
@@ -410,8 +373,7 @@ class _DataContributionState extends State<DataContributionPage>
     );
   }
 
-  Widget _buildItem(String iconName, String title, Function ontap,
-      {bool isOpen = false}) {
+  Widget _buildItem(String iconName, String title, Function ontap, {bool isOpen = false}) {
     return InkWell(
       onTap: ontap,
       child: Row(
@@ -427,10 +389,7 @@ class _DataContributionState extends State<DataContributionPage>
               )),
           Text(
             title,
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                fontSize: 14,
-                color: HexColor('#333333')),
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: HexColor('#333333')),
           ),
           Spacer(),
           _end(isOpen: isOpen),
@@ -453,10 +412,7 @@ class _DataContributionState extends State<DataContributionPage>
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Text(
           S.of(context).coming_soon,
-          style: TextStyle(
-              fontWeight: FontWeight.normal,
-              fontSize: 12,
-              color: HexColor('#AAAAAA')),
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#AAAAAA')),
         ),
       );
     }
@@ -477,34 +433,29 @@ class _DataContributionState extends State<DataContributionPage>
 
     //check location service
 
-    ServiceStatus serviceStatus =
-        await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
 
     if (serviceStatus == ServiceStatus.disabled) {
-      _showGoToOpenLocationServceDialog();
+      _showServceDialog();
       return false;
     }
 
-    PermissionStatus locationPermission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.location);
+    PermissionStatus locationPermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
     if (locationPermission != PermissionStatus.granted) {
       Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler()
-              .requestPermissions([PermissionGroup.location]);
+          await PermissionHandler().requestPermissions([PermissionGroup.location]);
       if (permissions[PermissionGroup.location] != PermissionStatus.granted) {
-        _showGoToOpenAppSettingsDialog();
+        _showAppSettingDialog();
         return false;
       }
     }
 
-    PermissionStatus storagePermission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.storage);
+    PermissionStatus storagePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
     if (storagePermission != PermissionStatus.granted) {
       Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler()
-              .requestPermissions([PermissionGroup.storage]);
+          await PermissionHandler().requestPermissions([PermissionGroup.storage]);
       if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
-        _showGoToOpenAppSettingsDialog();
+        _showAppSettingDialog();
         return false;
       }
     }
@@ -512,15 +463,13 @@ class _DataContributionState extends State<DataContributionPage>
     //2. 检查电话权限
 
     if (Platform.isAndroid) {
-      PermissionStatus phonePermission = await PermissionHandler()
-          .checkPermissionStatus(PermissionGroup.phone);
+      PermissionStatus phonePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
       if (phonePermission != PermissionStatus.granted) {
         Map<PermissionGroup, PermissionStatus> permissions =
-            await PermissionHandler()
-                .requestPermissions([PermissionGroup.phone]);
+            await PermissionHandler().requestPermissions([PermissionGroup.phone]);
         if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
-          _showGoToOpenCommonAppSettingsDialog(S.of(context).require_permission,
-              S.of(context).collect_signal_require_telephone, () {
+          _showDialog(
+              S.of(context).require_permission, S.of(context).collect_signal_require_telephone, () {
             PermissionHandler().openAppSettings();
           });
           return false;
@@ -533,9 +482,7 @@ class _DataContributionState extends State<DataContributionPage>
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
       if (!blueAvaiable) {
-        _showGoToOpenCommonAppSettingsDialog(
-            S.of(context).open_bluetooth, S.of(context).please_open_bluetooth,
-            () {
+        _showDialog(S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
           AppSettings.openBluetoothSettings();
         });
         return false;
@@ -550,8 +497,7 @@ class _DataContributionState extends State<DataContributionPage>
     if (Platform.isAndroid) {
       bool wifiAvaiable = await TitanPlugin.wifiEnable();
       if (!wifiAvaiable) {
-        _showGoToOpenCommonAppSettingsDialog(
-            S.of(context).open_wifi, S.of(context).please_open_wifi, () {
+        _showDialog(S.of(context).open_wifi, S.of(context).please_open_wifi, () {
           AppSettings.openWIFISettings();
         });
         return false;
@@ -561,139 +507,106 @@ class _DataContributionState extends State<DataContributionPage>
     return true;
   }
 
-  void _showGoToOpenCommonAppSettingsDialog(
-      String title, String message, Function goToSetting) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: Text(title),
-                  content: Text(message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        goToSetting();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  title: Text(title),
-                  content: Text(message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        goToSetting();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-        });
+  Widget _showConfirmDialog({String title, Function func}) {
+    _showConfirmDialogWidget(title: Text(title), actions: <Widget>[
+      FlatButton(
+          onPressed: () {
+            func();
+            Navigator.pop(context);
+          },
+          child: Text(S.of(context).confirm))
+    ]);
   }
 
-  void _showGoToOpenAppSettingsDialog() {
+  Widget _showConfirmDialogWidget({Widget title, List<Widget> actions}) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: Text(S.of(context).require_location),
-                  content: Text(S.of(context).require_location_message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        PermissionHandler().openAppSettings();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  title: Text(S.of(context).require_location),
-                  content: Text(S.of(context).require_location_message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        PermissionHandler().openAppSettings();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-        });
+      context: context,
+      builder: (context) {
+        return Platform.isIOS
+            ? CupertinoAlertDialog(
+                title: title,
+                actions: actions,
+              )
+            : AlertDialog(
+                title: title,
+                actions: actions,
+              );
+      },
+    );
   }
 
-  void _showGoToOpenLocationServceDialog() {
+  Widget _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: Text(S.of(context).open_location_service),
-                  content: Text(S.of(context).open_location_service_message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        S.of(context).cancel,
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(
-                        S.of(context).setting,
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                      onPressed: () {
-                        PermissionHandler().openAppSettings();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  title: Text(S.of(context).open_location_service),
-                  content: Text(S.of(context).open_location_service_message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        AndroidIntent intent = new AndroidIntent(
-                          action: 'action_location_source_settings',
-                        );
-                        intent.launch();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-        });
+      context: context,
+      builder: (context) {
+        return Platform.isIOS
+            ? CupertinoAlertDialog(
+                title: title,
+                content: content,
+                actions: actions,
+              )
+            : AlertDialog(
+                title: title,
+                content: content,
+                actions: actions,
+              );
+      },
+    );
   }
+
+
+  void _showServceDialog() {
+    _showDialog(S.of(context).open_location_service, S.of(context).open_location_service_message, (){
+      if (Platform.isIOS) {
+        PermissionHandler().openAppSettings();
+      } else {
+        AndroidIntent intent = new AndroidIntent(
+          action: 'action_location_source_settings',
+        );
+        intent.launch();
+      }
+    });
+  }
+
+  void _showAppSettingDialog() {
+    _showDialogWidget(
+        title: Text(S.of(context).require_location),
+        content: Text(S.of(context).require_location_message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(S.of(context).cancel),
+            onPressed: () => Navigator.pop(context),
+          ),
+          FlatButton(
+            child: Text(S.of(context).setting),
+            onPressed: () {
+              PermissionHandler().openAppSettings();
+              Navigator.pop(context);
+            },
+          ),
+        ]
+    );
+  }
+
+  void _showDialog(String title, String content, Function func) {
+    _showDialogWidget(
+      title: Text(title),
+      content: Text(content),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(S.of(context).cancel),
+          onPressed: () => Navigator.pop(context),
+        ),
+        FlatButton(
+          child: Text(S.of(context).setting),
+          onPressed: () {
+            func();
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  
 }
