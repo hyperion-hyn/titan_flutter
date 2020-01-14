@@ -389,11 +389,11 @@ class $ko extends S {
   @override
   String get contract_call => "스마트 콘트랙트 호출";
   @override
-  String get please_enter_postal_code => "请输入邮政编码";
+  String get please_enter_postal_code => "우편번호 입력";
   @override
   String get open_location_service => "위치추적 서비스 열기";
   @override
-  String get house_number => "门牌号码";
+  String get house_number => "번지";
   @override
   String get wallet_create_success => "계정 새로 만들기 성공";
   @override
@@ -423,11 +423,11 @@ class $ko extends S {
   @override
   String get wallet_setting => "지갑 설정";
   @override
-  String get details_of_street => "街道详情";
+  String get details_of_street => "도리 세부내역";
   @override
   String get search_empty_data => "데이터가 없습니다.";
   @override
-  String get please_input_custom_time_hint => "请填写营业时间时间";
+  String get please_input_custom_time_hint => "영업시간 작성";
   @override
   String get dmap_document_title => "DMap 지도를문서에바인딩합니다.";
   @override
@@ -455,11 +455,11 @@ class $ko extends S {
   @override
   String get data_contribute_reward => "지도 데이터 기여로 HYN 인센티브 획득";
   @override
-  String get business_time_sunday => "周日";
+  String get business_time_sunday => "일요일";
   @override
-  String get work_time => "工作时间";
+  String get work_time => "작업시간";
   @override
-  String get detail => "详情";
+  String get detail => "세부내역";
   @override
   String get receiver_address_not_empty_hint => "접수주소가비어서는안됩니다.";
   @override
@@ -475,13 +475,13 @@ class $ko extends S {
   @override
   String get nightlife_guide => "야간활동안내";
   @override
-  String get business_time_friday => "周五";
+  String get business_time_friday => "금요일";
   @override
   String get open_camera => "카메라 권한을 열어주십시오.";
   @override
   String get unknown_error => "Unknown error";
   @override
-  String get confirm_info_wrong => "地点有误";
+  String get confirm_info_wrong => "장소오류";
   @override
   String get hotel => "호텔";
   @override
@@ -491,9 +491,9 @@ class $ko extends S {
   @override
   String get input_wallet_name_hint => "지갑 명칭을 입력해주십시오.";
   @override
-  String get business_time => "营业时间";
+  String get business_time => "영업시간";
   @override
-  String get website => "网址";
+  String get website => "웹사이트";
   @override
   String get refresh_public_key_minutes_tips => "%d분후 자동으로 새로 고침합니다.";
   @override
@@ -505,7 +505,7 @@ class $ko extends S {
   @override
   String get services => "서비스";
   @override
-  String get select_category => "选择类别";
+  String get select_category => "카테고리 선택";
   @override
   String get confirm => "확정";
   @override
@@ -513,7 +513,7 @@ class $ko extends S {
   @override
   String get private_sharing => "프라이버시공유";
   @override
-  String get upload_protocol => "上传协议";
+  String get upload_protocol => "업로드 프로토콜";
   @override
   String get receiver_address => "수신자주소";
   @override
@@ -521,7 +521,7 @@ class $ko extends S {
   @override
   String get information => "뉴스";
   @override
-  String get no_remark => "无备注";
+  String get no_remark => "비고 무";
   @override
   String get input_count_over_balance => "잔액한도를초과하였습니다.";
   @override
@@ -543,7 +543,7 @@ class $ko extends S {
   @override
   String get later => "업데이트를 하지 않습니다.";
   @override
-  String get please_enter_door_number_hint => "请输入门牌号码";
+  String get please_enter_door_number_hint => "번지 입력";
   @override
   String get finish => "완성";
   @override
@@ -579,11 +579,11 @@ class $ko extends S {
   @override
   String get delete_wallet_success => "삭제 성공";
   @override
-  String get name => "名称";
+  String get name => "명";
   @override
   String get service_area => "지역";
   @override
-  String get phone_number => "电话";
+  String get phone_number => "전화";
   @override
   String get backup_wallet_notice_text1 => "도움말을 얻는것은 지갑 자산 소유권을 갖는것과 같습니다.";
   @override
@@ -593,7 +593,7 @@ class $ko extends S {
   @override
   String get import => "가져오기";
   @override
-  String get submit => "提交";
+  String get submit => "제출";
   @override
   String get dmap_tools => "DMAP 도구";
   @override
@@ -609,13 +609,13 @@ class $ko extends S {
   @override
   String get private_sharing_text => "암호화위치를공유하시면절대로위치정보를누설하지않습니다.";
   @override
-  String get please_enter_name_of_location_hint => "请输入地点名称";
+  String get please_enter_name_of_location_hint => "장소명 입력";
   @override
-  String get scene_photographed => "现场拍照";
+  String get scene_photographed => "현장 촬영";
   @override
   String get hyn_market => "HYN 시세";
   @override
-  String get no_verifiable_poi_around_hint => "周围没有可验证的地点。";
+  String get no_verifiable_poi_around_hint => "주변에 인식가능 장소 무。";
   @override
   String get data_contribute => "데이터 기여";
   @override
@@ -623,13 +623,13 @@ class $ko extends S {
   @override
   String get input_wallet_name_length_hint => "6자리이내의 명칭을 입력해 주십시오.";
   @override
-  String get please_add_business_hours_hint => "请添加营业时间";
+  String get please_add_business_hours_hint => "영업시간 추가";
   @override
   String get wallet_manage => "지갑 관리";
   @override
-  String get business_time_tuesday => "周二";
+  String get business_time_tuesday => "화요일";
   @override
-  String get poi_upload_protocol => "上传协议";
+  String get poi_upload_protocol => "프로토콜 업로드";
   @override
   String get private_wallet_tips => "프라이빗 계좌.";
   @override
@@ -673,7 +673,7 @@ class $ko extends S {
   @override
   String get scan_confirm_upload => "신호 데이터 업로드";
   @override
-  String get take_pictures_must_not_be_empty_hint => "请添加地点现场照片";
+  String get take_pictures_must_not_be_empty_hint => "장소 현장사진 추가";
   @override
   String get dmap_life => "생활가이드";
   @override
@@ -695,9 +695,9 @@ class $ko extends S {
   @override
   String get navigation => "네비게이션";
   @override
-  String get select_position => "选择位置";
+  String get select_position => "위치 선택";
   @override
-  String get business_time_saturday => "周六";
+  String get business_time_saturday => "토요일";
   @override
   String get switch_contribute_address => "주소 전환";
   @override
@@ -725,7 +725,7 @@ class $ko extends S {
   @override
   String get document_optimization => "문서최적화중입니다.";
   @override
-  String get please_select_business_hours_hint => "请选择营业时间";
+  String get please_select_business_hours_hint => "영업시간 선택";
   @override
   String get refresh_keypaire_message => "공유키 주소를 새로 고치기하면 이전에 받았던 위치의 암호화 문서는 영구적으로 복구할수 없습니다.새로 고치기를 계속하시겠습니까?";
   @override
@@ -741,13 +741,13 @@ class $ko extends S {
   @override
   String get backup_option => "백업 선택사항";
   @override
-  String get please_add_streets_hint => "请输入街道";
+  String get please_add_streets_hint => "도리 입력";
   @override
   String get Hyperion => "하이페리온";
   @override
   String get Next => "다음";
   @override
-  String get no_category => "暂无此类别";
+  String get no_category => "해당 카테고리 무";
   @override
   String get installation_update_package_failed => "업데이트 패키지를 설치하지 못했습니다.";
   @override
@@ -759,9 +759,9 @@ class $ko extends S {
   @override
   String get require_location_message => "위치 확인 기능을 사용할 수 있는 권한을 부여해 주십시오.";
   @override
-  String get please_select_category_hint => "请选择类别";
+  String get please_select_category_hint => "카테고리 선택";
   @override
-  String get post_my_check => "提交验证";
+  String get post_my_check => "인증 제출";
   @override
   String get not_open_yet => "아직개방하지않았습니다.";
   @override
@@ -771,7 +771,7 @@ class $ko extends S {
   @override
   String get please_select_app_area => "지도사용영역을설정하십시오.";
   @override
-  String get poi_confirm_title_error => "你认为这个地点是不存在或者描述有误的，确定提交吗？";
+  String get poi_confirm_title_error => "사실 존재하지 않거나 설명에 오류가 있는 장소임을 인정, 제출 확정?";
   @override
   String get data_contribution_with_hyn_wallet_tips => "데이터 기여는 HYN 주소가 필요합니다. 먼저 HYN 지갑을 만드거나 가져오십시오.";
   @override
@@ -785,7 +785,7 @@ class $ko extends S {
   @override
   String get click_again_to_exist_app => "다시 누르면 앱이 종료됩니다";
   @override
-  String get get_poi_fail_please_again => "获取位置信息失败，请先定位地图到你所在位置。";
+  String get get_poi_fail_please_again => "위치 정보 취득 실패, 우선 소재 위치로 맵 포지셔닝。";
   @override
   String get supermarket => "슈퍼마켓";
   @override
@@ -803,31 +803,31 @@ class $ko extends S {
   @override
   String get online_exchange => "온라인 거래소";
   @override
-  String get place_name_cannot_be_empty_hint => "地点名称不能为空";
+  String get place_name_cannot_be_empty_hint => "장소명이 비어서는 안됨";
   @override
-  String get business_time_wednesday => "周三";
+  String get business_time_wednesday => "수요일";
   @override
-  String get add_failed_hint => "添加失败!";
+  String get add_failed_hint => "추가 실패!";
   @override
   String get wallet => "지갑";
   @override
-  String get poi_confirm_success_hint => "提交成功";
+  String get poi_confirm_success_hint => "제출 성공";
   @override
   String get less_than_1_min => "1분이내";
   @override
-  String get category_cannot_be_empty_hint => "请选择地点类别";
+  String get category_cannot_be_empty_hint => "장소 카테고리 선택";
   @override
   String get address_copied => "주소복사완료";
   @override
   String get improvement_plan_message => "Titan 사용 과정에서 고객님들께 더 나은 사용 환경을 제공하기 위하여 당신을 제품 품질 향상을 위한 개선된 사용자 경험 프로그램에 초대합니다상세한 내용은\n<b>\n<a href=\"https://www.hyn.space/titan/privacy_policy/\">프로그램 설명서를 참조하시기 바랍니다.</a>\n</b>";
   @override
-  String get select_position_please_again_hint => "选择位置失败，请重试";
+  String get select_position_please_again_hint => "위치 선택 실패, 재시도";
   @override
   String get backup_finish => "백업완료";
   @override
   String get no_recommended_route => "추천 루트가 없습니다.";
   @override
-  String get unknown_locations => "未知位置";
+  String get unknown_locations => "알 수 없는 위치";
   @override
   String get show_mnemonic_label => "복원 단어 보여주기";
   @override
@@ -837,7 +837,7 @@ class $ko extends S {
   @override
   String get share_qrcode => "공유키 QR코드 공유";
   @override
-  String get postal_code => "邮编";
+  String get postal_code => "우편번호";
   @override
   String get latest_news => "최신 뉴스";
   @override
@@ -861,11 +861,11 @@ class $ko extends S {
   @override
   String get wallet_password_label => "지갑 비밀번호";
   @override
-  String get confirm_info_right => "地点正确";
+  String get confirm_info_right => "장소정확";
   @override
   String get public_key_copied => "공유키 주소를 복사완료하였습니다.";
   @override
-  String get poi_add_success_hint => "添加成功";
+  String get poi_add_success_hint => "추가 성공";
   @override
   String get encrypt_error => "암호화 실패";
   @override
@@ -921,7 +921,7 @@ class $ko extends S {
   @override
   String get cafe => "커피숍";
   @override
-  String get poi_confirm_title_hint => "你认为这个地点是真实存在并且描述完全正确的，确定提交吗？";
+  String get poi_confirm_title_hint => "사실 존재하고 설명이 완전 정확한 장소임을 인정, 제출 확정？";
   @override
   String get telphone => "전화";
   @override
@@ -931,7 +931,7 @@ class $ko extends S {
   @override
   String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
   @override
-  String get business_time_thursday => "周四";
+  String get business_time_thursday => "목요일";
   @override
   String get send => "발송";
   @override
@@ -989,15 +989,15 @@ class $ko extends S {
   @override
   String get police_security_station => "경찰안전소";
   @override
-  String get throughout_of_day => "全天（24小时）";
+  String get throughout_of_day => "전일(24시간)";
   @override
   String get backup_wallet_mnemonic_text => "종이와 펜을 사용하여 도움말을 정확하게 기록하세요.\n 만일 휴대폰을 분실하거나 도난당하거나 혹은 파손됐을 경우 도움말을 통해 당신의 자산을 회복할수 있습니다.";
   @override
-  String get user_defined_time_format_hint => "自定义营业时间";
+  String get user_defined_time_format_hint => "영업시간 자체 정의";
   @override
   String get scan_thanks_contribution_signal_hint => "귀하의 데이터 기여에 감사드립니다！";
   @override
-  String get please_enter_category_keywords_hint => "输入类别关键词";
+  String get please_enter_category_keywords_hint => "카테고리 키워드 입력";
   @override
   String get global_embassies => "글로벌대사관";
   @override
@@ -1005,13 +1005,13 @@ class $ko extends S {
   @override
   String get telegram => "텔레그램";
   @override
-  String get business_time_monday => "周一";
+  String get business_time_monday => "월요일";
   @override
   String get check_poi_item_title => "지리적 위치 정보를 검사하다.";
   @override
-  String get poi_upload_protocol_not_accepted_hint => "请接受地点上传协议";
+  String get poi_upload_protocol_not_accepted_hint => "장소 업로드 프로토콜 접수";
   @override
-  String get click_auto_get_hint => "点击自动获取";
+  String get click_auto_get_hint => "클릭하여 자동 취득";
   @override
   String get illegal_mnemonic => "정상적인 기호가 아닙니다.";
   @override
@@ -1023,7 +1023,7 @@ class $ko extends S {
   @override
   String get scan_exit_tips => "스캔 진행 중, 종료 확인?";
   @override
-  String get data_position_adding => "添加地点中";
+  String get data_position_adding => "주소첨가중";
   @override
   String get import_account_success => "계정 가져오기 성공";
   @override
@@ -1033,7 +1033,7 @@ class $ko extends S {
   @override
   String get decrypt_location_cipher_tips => "암호화 위치 문서를 어떻게 해제합니까?";
   @override
-  String get category => "类别";
+  String get category => "카테고리";
   @override
   String get require_location => "위치 라이센스 신청";
   @override
