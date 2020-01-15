@@ -140,7 +140,8 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                       color: HexColor('#E9E9E9'),
                     ),
                   ),
-                  buildBottomInfoList(context,widget.selectedPoiEntity)
+                  buildBottomInfoList(context,widget.selectedPoiEntity),
+                  SizedBox(height: 80,width: 1,)
                 ],
               ),
               Positioned(
