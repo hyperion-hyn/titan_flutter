@@ -110,4 +110,6 @@ class _AppState extends State<App> {
     prefs.setString(PrefsKey.appLanguageCode, locale.languageCode);
     prefs.setString(PrefsKey.appCountryCode, locale.countryCode);
   }
+
+
 }

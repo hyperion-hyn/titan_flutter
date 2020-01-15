@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/inject/injector.dart';
+import 'package:titan/src/model/history_search.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/model/search_history_aware_poi.dart';
 import 'package:titan/src/utils/encryption.dart';
 
 import '../../global.dart';
@@ -118,10 +122,10 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void handleSearch(textOrPoi) async {
-    if(textOrPoi is String) {
+    if (textOrPoi is String) {
       textOrPoi = (textOrPoi as String).trim();
-      if((textOrPoi as String).isEmpty) {
-        return ;
+      if ((textOrPoi as String).isEmpty) {
+        return;
       }
     }
 
@@ -131,7 +135,7 @@ class _SearchPageState extends State<SearchPage> {
         var poi = await ciphertextToPoi(Injector.of(context).repository, textOrPoi);
         _searchBloc.add(AddSearchItemEvent(textOrPoi));
         Navigator.pop(context, poi);
-      } catch(err) {
+      } catch (err) {
         logger.e(err);
         Fluttertoast.showToast(msg: err.message);
       }
@@ -164,7 +168,8 @@ class _SearchPageState extends State<SearchPage> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                      child: Text(S.of(context).search_history, style: TextStyle(color: Colors.grey[600], fontSize: 13))),
+                                      child: Text(S.of(context).search_history,
+                                          style: TextStyle(color: Colors.grey[600], fontSize: 13))),
                                   FlatButton(
                                     child: Text(
                                       S.of(context).clean_search_history,
@@ -184,7 +189,8 @@ class _SearchPageState extends State<SearchPage> {
                                   final int itemIndex = index ~/ 2;
                                   if (index.isEven) {
                                     var item = state.items[itemIndex];
-                                    if (item is PoiEntity) {
+                                    if (item is PoiEntity
+                                    || item is ConfirmPoiItem) {
                                       return buildPoiItem(item);
                                     } else {
                                       return buildTextItem(item.toString());
@@ -224,7 +230,8 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget buildPoiItem(PoiEntity entity) {
+  Widget buildPoiItem(IPoi entity) {
+    var isHistory = (entity is SearchHistoryAwarePoi) ? (entity as SearchHistoryAwarePoi).isHistory == true : false;
     return InkWell(
         onTap: () => handleSearch(entity),
         child: Padding(
@@ -232,7 +239,7 @@ class _SearchPageState extends State<SearchPage> {
             child: Stack(children: <Widget>[
               Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Icon(entity.isHistory != null && entity.isHistory ? Icons.history : Icons.location_on,
+                  child: Icon(isHistory ? Icons.history : Icons.location_on,
                       color: Colors.grey[600])),
               Positioned(
                   left: 72,
@@ -288,7 +295,9 @@ class _SearchPageState extends State<SearchPage> {
                   textInputAction: TextInputAction.search,
                   focusNode: _searchFocusNode,
                   decoration: InputDecoration(
-                      hintText: S.of(context).input_search_keyworod_or_cipher, border: InputBorder.none, hintStyle: TextStyle(color: Colors.grey)),
+                      hintText: S.of(context).input_search_keyworod_or_cipher,
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(color: Colors.grey)),
                   style: Theme.of(context).textTheme.body1),
             )),
             if (_visibleCloseIcon)
@@ -317,7 +326,11 @@ class _SearchPageState extends State<SearchPage> {
               )),
           Padding(
             padding: const EdgeInsets.only(left: 72, right: 16, top: 16, bottom: 16),
-            child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, ),
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ]));
   }
@@ -337,7 +350,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 0, bottom: 16,right: 8),
+                    padding: const EdgeInsets.only(top: 0, bottom: 16, right: 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -350,7 +363,11 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
-                          child: Text(S.of(context).decrypt_location_cipher_tips_context, style: TextStyle(color: Colors.grey, fontSize: 14),softWrap: true,),
+                          child: Text(
+                            S.of(context).decrypt_location_cipher_tips_context,
+                            style: TextStyle(color: Colors.grey, fontSize: 14),
+                            softWrap: true,
+                          ),
                         ),
 //                        Padding(
 //                          padding: const EdgeInsets.only(top: 16.0),

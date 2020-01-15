@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.30+31
+version: 2.2.3+38
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -103,6 +103,8 @@ dependencies:
   flutter_bugly: 0.2.7
   android_intent: 0.3.4+8
   app_settings: 3.0.0+1
+  #https://pub:dev/packages/image_pickers#-readme-tab-
+  image_pickers: ^1.0.7+1
 
   #https://pub.dev/packages/connectivity
   connectivity: ^0.4.5+3
@@ -215,18 +217,41 @@ flutter:
     - res/drawable/bluetooth_status_scan.png
     - res/drawable/basestation_status_scan.png
     - res/drawable/radar_scan.png
-    - res/drawable/data_contribution_wallet.png
     - res/drawable/data_contribution_position.png
     - res/drawable/data_contribution_signal.png
     - res/drawable/data_contribution_check.png
     - res/drawable/data_contribution_wallet_check.png
-    - res/drawable/radar_scan.png
     - res/drawable/wifi.png
     - res/drawable/wifi_bg.png
     - res/drawable/wifi_close.png
     - res/drawable/checkin_history_progress.png
     - res/drawable/invitation_bg.png
     - res/drawable/invitation_bg_en.png
+    - res/drawable/add_position_add.png
+    - res/drawable/add_position_address.png
+    - res/drawable/add_position_camera.png
+    - res/drawable/add_position_delete.png
+    - res/drawable/add_position_phone.png
+    - res/drawable/add_position_star.png
+    - res/drawable/add_position_time.png
+    - res/drawable/add_position_website.png
+    - res/drawable/add_position_category.png
+    - res/drawable/add_position_detail.png
+    - res/drawable/add_position_name.png
+    - res/drawable/ic_select_category_search_bar.png
+    - res/drawable/ic_select_category_search_bar_clear.png
+    - res/drawable/widget_checkbox_uncheck.png
+    - res/drawable/widget_checkbox_checked.png
+    - res/drawable/ic_business_time_switch_on.png
+    - res/drawable/ic_business_time_switch_off.png
+    - res/drawable/ic_business_time_add_custom.png
+    - res/drawable/ic_user_poi_category_name.png
+    - res/drawable/ic_user_poi_zip_code.png
+    - res/drawable/ic_user_poi_phone_num.png
+    - res/drawable/ic_user_poi_web_site.png
+    - res/drawable/ic_user_poi_business_time.png
+    - res/drawable/ic_confirm_button_right.png
+    - res/drawable/ic_confirm_button_error.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

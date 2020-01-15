@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/data/repository/repository.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/model/history_search.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
@@ -19,6 +21,15 @@ class SearchInteractor {
     return repository.searchHistoryDao.insertOrUpdate(entity);
   }
 
+  Future<HistorySearchEntity> addHistorySearchPoiByTitan(ConfirmPoiItem poiEntity) {
+    var entity = HistorySearchEntity(
+        searchText: json.encode(poiEntity.toJson()),
+        time: DateTime.now().millisecondsSinceEpoch,
+        type: poiEntity.runtimeType.toString());
+    return repository.searchHistoryDao.insertOrUpdate(entity);
+  }
+
+
   Future<HistorySearchEntity> addHistorySearchText(String text) async {
     HistorySearchEntity entity = HistorySearchEntity(
         searchText: text, type: ''.runtimeType.toString(), time: DateTime.now().millisecondsSinceEpoch);
@@ -33,6 +44,16 @@ class SearchInteractor {
             try {
               var parsedJson = json.decode(item.searchText);
               var entity = PoiEntity.fromJson(parsedJson);
+              entity.isHistory = true;
+              return entity;
+            } catch (err) {
+              print(err);
+              return null;
+            }
+          } else if(item.type == ConfirmPoiItem.empty().runtimeType.toString()) {
+            try {
+              var parsedJson = json.decode(item.searchText);
+              var entity = ConfirmPoiItem.fromJson(parsedJson);
               entity.isHistory = true;
               return entity;
             } catch (err) {
@@ -58,6 +79,22 @@ class SearchInteractor {
     List<PoiEntity> pois = [];
     for (var feature in features) {
       var entity = _featureToEntity(feature);
+      if (entity != null) {
+        pois.add(entity);
+      }
+    }
+    return pois;
+  }
+
+  Future<List<IPoi>> searchPoiByTitan(String keyword, LatLng center, String language,
+      {int radius = 2000}) async {
+    var language = (appLocale??defaultLocale).languageCode;
+    if (language.startsWith('zh')) language = "zh-Hans";
+    var ret = await repository.api.searchPoiByTitan(keyword, center.longitude.toString(), center.latitude.toString(), language: language, radius: radius);
+    List<dynamic> features = ret['data'];
+    List<ConfirmPoiItem> pois = [];
+    for (var feature in features) {
+      var entity = ConfirmPoiItem.fromJson(feature);
       if (entity != null) {
         pois.add(entity);
       }

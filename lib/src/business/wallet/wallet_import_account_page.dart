@@ -11,6 +11,7 @@ import 'package:titan/src/utils/validator_util.dart';
 import 'wallet_finish_import_page.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
+
 class ImportAccountPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {

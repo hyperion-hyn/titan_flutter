@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
+import 'search_history_aware_poi.dart';
 import 'converter/model_converter.dart';
 import 'poi_interface.dart';
 
@@ -9,7 +10,7 @@ import 'poi_interface.dart';
 part 'poi.g.dart';
 
 @JsonSerializable()
-class PoiEntity implements IPoi {
+class PoiEntity with SearchHistoryAwarePoi implements IPoi {
   String name;
   String address;
   String tags;
@@ -17,10 +18,10 @@ class PoiEntity implements IPoi {
   LatLng latLng;
   String phone;
   String remark;
-  @JsonKey(ignore: true)
-  bool isHistory;
 
-  PoiEntity({this.name, this.address, this.tags, this.latLng, this.phone, this.remark, this.isHistory});
+  PoiEntity({this.name, this.address, this.tags, this.latLng, this.phone, this.remark, bool isHistory}) {
+    this.isHistory = isHistory;
+  }
 
   factory PoiEntity.fromJson(Map<String, dynamic> json) => _$PoiEntityFromJson(json);
 

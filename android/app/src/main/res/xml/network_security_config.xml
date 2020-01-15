@@ -6,6 +6,7 @@
         </trust-anchors>
     </debug-overrides>
     <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.10.1.115</domain>
         <domain includeSubdomains="true">qq.com</domain>
         <domain includeSubdomains="true">dianping.com</domain>
     </domain-config>
