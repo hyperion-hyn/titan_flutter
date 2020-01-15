@@ -1498,7 +1498,7 @@ class $zh_CN extends S {
   @override
   String get click_again_to_exist_app => "再按一下退出程序";
   @override
-  String get get_poi_fail_please_again => "获取位置信息失败，请先定位地图到你所在位置。";
+  String get get_poi_fail_please_again => "获取位置信息失败，请先在首页地图定位到你所在位置。";
   @override
   String get supermarket => "超市";
   @override

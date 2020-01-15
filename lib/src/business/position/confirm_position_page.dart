@@ -29,7 +29,7 @@ class ConfirmPositionPage extends StatefulWidget {
 class _ConfirmPositionState extends State<ConfirmPositionPage> {
   PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
-  double defaultZoom = 15;
+  double defaultZoom = 17;
   String currentResult = S.of(globalContext).confirm_info_wrong;
   ConfirmPoiItem confirmPoiItem;
   bool _isPostData = false;

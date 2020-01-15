@@ -340,7 +340,7 @@
   "poi_confirm_title_error": "你认为这个地点是不存在或者描述有误的，确定提交吗？",
   "poi_upload_protocol": "上传协议",
   "select_position_please_again_hint": "选择位置失败，请重试",
-  "get_poi_fail_please_again": "获取位置信息失败，请先定位地图到你所在位置。",
+  "get_poi_fail_please_again": "获取位置信息失败，请先在首页地图定位到你所在位置。",
   "please_input_custom_time_hint": "请填写营业时间时间",
   "no_remark": "无备注",
   "post_my_check": "提交验证",
