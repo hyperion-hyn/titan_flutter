@@ -54,7 +54,7 @@
   "postscript_hint": "부언 입력(50자이내로)",
   "public_key_scan_fail_rescan": "공유키 오류가 발생했습니다.다시 스캔해 주십시오",
   "open_camera": "카메라 권한을 열어주십시오.",
-  "unknown_error": "Unknown error",
+  "unknown_error": "알수없는 오류",
   "share_invalid_public_key": "무효한 공유키",
   "encrypt_error": "암호화 실패",
   "label": "라벨",
