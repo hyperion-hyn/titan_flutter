@@ -1,15 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-part 'poi_collector.g.dart';
+import 'package:titan/src/model/converter/model_converter.dart';
 
+part 'poi_collector.g.dart';
 
 @JsonSerializable()
 class PoiCollector extends Object {
-
   @JsonKey(name: 'category_id')
   String categoryId;
 
   @JsonKey(name: 'location')
+  @JsonKey(fromJson: LocationConverter.latLngFromJson, toJson: LocationConverter.latLngToJson)
   LatLng location;
 
   @JsonKey(name: 'name')
@@ -51,14 +52,13 @@ class PoiCollector extends Object {
   @JsonKey(name: 'website')
   String website;
 
-  PoiCollector(this.categoryId,this.location,this.name, this.countryCode,this.country,this.state,this.city,this.county,this.road,this.address2,this.houseNumber,this.postCode,this.workTime,this.phone,this.website);
+  PoiCollector(this.categoryId, this.location, this.name, this.countryCode, this.country, this.state, this.city,
+      this.county, this.road, this.address2, this.houseNumber, this.postCode, this.workTime, this.phone, this.website);
 
   factory PoiCollector.fromJson(Map<String, dynamic> srcJson) => _$PoiCollectorFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$PoiCollectorToJson(this);
-
 }
-
 
 /*
     PoiCollector(
@@ -78,8 +78,3 @@ class PoiCollector extends Object {
         this.phone,
         this.website);
     */
-
-
-
-
-
