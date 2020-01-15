@@ -292,9 +292,6 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     if (latlng == null) {
       _showConfirmDialog(
         title: S.of(context).get_poi_fail_please_again,
-        func: () {
-          Navigator.of(context).pop();
-        },
       );
     }
     return latlng;
@@ -507,11 +504,10 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     return true;
   }
 
-  Widget _showConfirmDialog({String title, Function func}) {
+  Widget _showConfirmDialog({String title}) {
     _showConfirmDialogWidget(title: Text(title), actions: <Widget>[
       FlatButton(
           onPressed: () {
-            func();
             Navigator.pop(context);
           },
           child: Text(S.of(context).confirm))
