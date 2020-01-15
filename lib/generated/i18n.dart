@@ -144,7 +144,6 @@ class S implements WidgetsLocalizations {
   String get improvement_plan_message => "Tell us your suggestions about Titan by joining our user experience plan. Check for more details.\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">Titan Privacy Policy</a>\n        </b>";
   String get improvement_plan_refuse => "No";
   String get improvement_plan_title => "Titan improvement plan";
-  String get info_is_wrong_please_again_submit_hint => "Incorrect entry, please try again";
   String get information => "News";
   String get information_guide => "Guidance";
   String get information_video => "Video";
@@ -235,7 +234,6 @@ class S implements WidgetsLocalizations {
   String get poi_upload_protocol_not_accepted_hint => "I accept Privacy Policy";
   String get police_security_station => "Police Station";
   String get police_station_text => "Check nearby police stations";
-  String get position_info_confirm => " Confirm POI";
   String get post_my_check => "Submit verification";
   String get postal_code => "Postcode";
   String get postscript => "Notes";
@@ -355,8 +353,6 @@ class S implements WidgetsLocalizations {
   String get wechat_official_account => "Wechat Official Account";
   String get work_time => "Working hours";
   String get your_mnemonic => "Your Mnemonic phrases";
-  String confirm_position_func(String address) => "Address：${address}";
-  String confirm_position_name_func(String name) => "Name：${name}";
   String distance(String distance) => "$distance m";
   String get hynPriceUnitSymbol => "\$";
   String km(String km) => "$km km ";
@@ -484,7 +480,7 @@ class $ko extends S {
   @override
   String get open_camera => "카메라 권한을 열어주십시오.";
   @override
-  String get unknown_error => "Unknown error";
+  String get unknown_error => "알수없는 오류";
   @override
   String get confirm_info_wrong => "장소오류";
   @override
@@ -1190,7 +1186,7 @@ class $zh_CN extends S {
   @override
   String get open_camera => "请开启相机权限";
   @override
-  String get unknown_error => "Unknown error";
+  String get unknown_error => "未知错误";
   @override
   String get confirm_info_wrong => "地点有误";
   @override
