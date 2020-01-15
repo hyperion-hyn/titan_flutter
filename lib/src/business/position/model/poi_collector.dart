@@ -9,7 +9,6 @@ class PoiCollector extends Object {
   @JsonKey(name: 'category_id')
   String categoryId;
 
-  @JsonKey(name: 'location')
   @JsonKey(fromJson: LocationConverter.latLngFromJson, toJson: LocationConverter.latLngToJson)
   LatLng location;
 
