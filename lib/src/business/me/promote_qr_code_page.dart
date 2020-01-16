@@ -15,7 +15,7 @@ class PromoteQrCodePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('[QR] ---> build, url:$url, id:${LOGIN_USER_INFO.id}');
+    //print('[QR] ---> build, url:$url, id:${LOGIN_USER_INFO.id}');
 
     return Scaffold(
       appBar: AppBar(
