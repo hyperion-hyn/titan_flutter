@@ -137,7 +137,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      hashRateVo.title,
+                      hashRateVo.title + (hashRateVo.isFree ? '(${S.of(context).give_away})' : ''),
                       style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                     ),
                   ],
@@ -198,7 +198,8 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
         subTitle: "",
         validity: validity,
         validityColor: validityColor,
-        time: time);
+        time: time,
+        isFree: powerDetail.payType == 'SYSTEM_GIVING');
   }
 }
 
@@ -210,6 +211,15 @@ class HashRateVo {
   String validity;
   Color validityColor;
   String time;
+  bool isFree;
 
-  HashRateVo({this.iconData, this.iconColor, this.title, this.subTitle, this.validity, this.validityColor, this.time});
+  HashRateVo(
+      {this.iconData,
+      this.iconColor,
+      this.title,
+      this.subTitle,
+      this.validity,
+      this.validityColor,
+      this.time,
+      this.isFree});
 }

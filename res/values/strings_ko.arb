@@ -400,8 +400,8 @@
   "quantity": "수량",
   "please_input_withdrawal_quantity": "인출수량을입력해주세요.",
   "withdrawal_fee": "수수료(${fee}%)",
-  "amount_received": "입금수량",
-  "withdrawal_audit_message": "해당 HYN으로 환산하여 당신의 인출 주소에 표시합니다.자금의 안전을 보장하기 위해 우리는 화폐 인출에 대하여 인공적인 심사를 진행합니다.인출 처리시간:오전9:00-오후21:00 당일 입금합니다.비근무시간에 접수한 주문서는 다음날 바로 입금됩니다.",
+  "amount_received": "HYN 입금수량",
+  "withdrawal_audit_message": "해당 HYN으로 환산하여 당신의 인출 주소에 표시합니다.자금의 안전을 보장하기 위해 우리는 화폐 인출에 대하여 인공적인 심사를 진행합니다.인출 처리시간:오전10:00-오후21:00 당일 입금합니다.비근무시간에 접수한 주문서는 다음날 바로 입금됩니다.",
   "over_max_withdrawal": "최대 인출금액 한도를 초과하였습니다.",
   "below_min_withdrawal": "최소인출금액한도이하입니다.",
   "please_input_hyn_withdrawal_address": "HYN인출주소를입력해주세요.",
@@ -471,7 +471,7 @@
   "hashrate": "계산력",
   "scan_wifi_map_style_url": "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json",
   "maprich_intro_url": "${rich_domain}intro?lang=ko",
-  "actual_amount_received":"(수령 한 실제 금액을 기준으로)",
+  "actual_amount_received":"(입금거래소 실시간가 기준)",
   "get_current_position_fail_tips": "현재 위치를 얻을 수 없습니다",
   "open_location_service": "위치 서비스를 켜십시오",
   "apply_location_service": "포지셔닝 승인 신청",
@@ -507,5 +507,6 @@
   "scan_upload_signal_success_hint": "신호 데이터가 성공적으로 업로드되었습니다",
   "scan_thanks_contribution_signal_hint": "귀하의 데이터 기여에 감사드립니다！",
   "scan_confirm_upload" : "신호 데이터 업로드",
-  "scan_collect_signal_func": "${Num} 개의 신호 수집"
+  "scan_collect_signal_func": "${Num} 개의 신호 수집",
+  "give_away": "줘"
 }

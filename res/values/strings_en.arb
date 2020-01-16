@@ -375,8 +375,8 @@
   "quantity": "Quantity",
   "please_input_withdrawal_quantity": "Please input withdrawal amount ",
   "withdrawal_fee": "Fee(${fee}%)",
-  "amount_received": "Amount Received",
-  "withdrawal_audit_message": "Convert the corresponding HYN to your withdrawal address. In order to secure the funds, we will manually check the withdrawal. Withdrawal processing time: same day receipt during 9:00 am - 21:00 PM , next day receipt during non-working hours .",
+  "amount_received": "HYN received",
+  "withdrawal_audit_message": "Convert the corresponding HYN to your withdrawal address. In order to secure the funds, we will manually check the withdrawal. Withdrawal processing time: same day receipt during 10:00 am - 21:00 PM , next day receipt during non-working hours .",
   "over_max_withdrawal": "Exceeded the maximum withdrawal limit",
   "below_min_withdrawal": "Below the minimum withdrawal limit",
   "please_input_hyn_withdrawal_address": "Please enter the HYN address",
@@ -503,9 +503,10 @@
   "hashrate": "HashRate",
   "scan_wifi_map_style_url": "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json",
   "maprich_intro_url": "${rich_domain}intro?lang=en",
-  "actual_amount_received":"(Actual amount received shall prevail)",
+  "actual_amount_received":"(subject to HYN price fluctuations)",
   "get_current_position_fail_tips": "Could not get your current location",
   "apply_location_service": "Application for location authorization",
   "allow_location_service": "Please authorize the location function.",
-  "again_click_exit_app": "Click again to exit the program"
+  "again_click_exit_app": "Click again to exit the program",
+  "give_away": "Give away"
 }

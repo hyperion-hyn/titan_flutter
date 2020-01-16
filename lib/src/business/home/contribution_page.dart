@@ -191,17 +191,17 @@ class _ContributionState extends State<ContributionPage> {
 
     subscription = timerObservable.listen((t) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
-      var timeGap = nowTime - startTime;
+      var timePassed = nowTime - startTime;
 
-      var progress = timeGap / duration.toDouble();
+      var progress = timePassed / duration.toDouble();
       progressStreamController.add(progress);
       _setCurrentScanType(progress);
 
-      if (timeGap < duration) {
+      if (timePassed < duration) {
         //scan 30s
         if (nowTime - lastMoveTime > timeStep) {
           mapController.animateCameraWithTime(CameraUpdate.zoomTo(lastZoom--), 1000);
-          lastMoveTime = DateTime.now().millisecondsSinceEpoch;
+          lastMoveTime = nowTime;
         }
       } else {
         subscription?.cancel();
@@ -323,39 +323,43 @@ class _ContributionState extends State<ContributionPage> {
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
-      body: StreamBuilder<double>(
-          stream: progressStreamController.stream,
-          builder: (context, snapshot) {
-            return Center(
-              child: Stack(
-                fit: StackFit.expand,
-                alignment: Alignment.center,
-                children: <Widget>[
-                  _mapView(),
-                  RadarScan(),
-                  _buildStatusListView(),
-                  Positioned(
-                    child: SizedBox(
-                      height: 3,
-                      child: LinearProgressIndicator(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        value: snapshot?.data ?? 0.0,
-                        valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+      body: Stack(
+        children: <Widget>[
+          _mapView(),
+          StreamBuilder<double>(
+              stream: progressStreamController.stream,
+              builder: (context, snapshot) {
+                return Center(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      RadarScan(),
+                      _buildStatusListView(),
+                      Positioned(
+                        child: SizedBox(
+                          height: 3,
+                          child: LinearProgressIndicator(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            value: snapshot?.data ?? 0.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                          ),
+                        ),
+                        top: 0,
+                        left: 0,
+                        right: 0,
                       ),
-                    ),
-                    top: 0,
-                    left: 0,
-                    right: 0,
+                      Image.asset(
+                        'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
+                        scale: 2,
+                      ),
+                      _confirmView(),
+                    ],
                   ),
-                  Image.asset(
-                    'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
-                    scale: 2,
-                  ),
-                  _confirmView(),
-                ],
-              ),
-            );
-          }),
+                );
+              }),
+        ],
+      ),
     );
   }
 

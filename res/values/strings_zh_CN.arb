@@ -400,8 +400,8 @@
   "quantity": "数量",
   "please_input_withdrawal_quantity": "请输入提币数量",
   "withdrawal_fee": "手续费(${fee}%)",
-  "amount_received": "到账数量",
-  "withdrawal_audit_message": "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早9:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。",
+  "amount_received": "HYN到账数量",
+  "withdrawal_audit_message": "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早10:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。",
   "over_max_withdrawal": "超出最大提币额度",
   "below_min_withdrawal": "低于最小提币额度",
   "please_input_hyn_withdrawal_address": "请输入HYN提币地址",
@@ -472,7 +472,7 @@
   "scan_name_title" : "信号扫描",
   "scan_signal_upload_protocol" : "信号上传协议",
   "scan_exit_tips" : "正在扫描中，确认退出吗?",
-  "scan_hyn_is_empty" : "HYN wallet 为空",
+  "scan_hyn_is_empty" : "HYN钱包为空",
   "scan_finish" : "扫描完成",
   "scan_ing_func": "正在扫描${scanName}信号",
   "scan_upload_error" : "上传失败",
@@ -502,10 +502,11 @@
   "hashrate": "算力",
   "scan_wifi_map_style_url": "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json",
   "maprich_intro_url": "${rich_domain}intro?lang=zh_CN",
-  "actual_amount_received":"(以实际到账数量为准)",
+  "actual_amount_received":"(以到账交易所实时价为准)",
   "get_current_position_fail_tips": "获取不到你当前位置",
   "open_location_service": "请开启定位服务",
   "apply_location_service": "申请定位授权",
   "allow_location_service": "请你授权使用定位功能.",
-  "again_click_exit_app": "再按一下退出程序"
+  "again_click_exit_app": "再按一下退出程序",
+  "give_away": "赠送"
 }

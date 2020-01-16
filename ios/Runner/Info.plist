@@ -39,6 +39,10 @@
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Please allow obtain media library permission</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Please allow obtain bluetooth permission</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Please allow obtain bluetooth permission</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Please allow obtain calendars permission</string>
 	<key>NSCameraUsageDescription</key>

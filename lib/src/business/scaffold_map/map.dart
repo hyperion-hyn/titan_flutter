@@ -442,7 +442,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       } else {
         //single click
         if (latLng != null) {
-          mapboxMapController?.animateCamera(CameraUpdate.newLatLng(latLng));
+          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 500);
 
           eventBus.fire(OnMapMovedEvent(latLng: latLng));
         }

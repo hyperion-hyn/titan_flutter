@@ -21,10 +21,2576 @@ class S implements WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get Clean => "Clear history";
+  String get Hyperion => "Hyperion";
+  String get Insufficient_balance_hint => "Insufficient balance available for staking";
+  String get Next => "Next";
+  String get Tips => "Tips";
+  String get about_us => "About Us";
+  String get accept_share_pub_key => "p2p sharing";
+  String get account_backup_next_step_notice => "Next, you will see 12 recovery words in an order that allow you to recover your account";
+  String get account_backup_notice => "Back up your account now";
+  String get account_error => "Account Error";
+  String get account_exist_hint => "The account already exists, please login the account directly";
+  String get account_is_empty => "Account is empty";
+  String get account_new_password => "New password";
+  String get account_password => "account password";
+  String get action_success_hint => "Operated successfully";
+  String get actual_amount_received => "(subject to HYN price fluctuations)";
+  String get add_poi_item_title => "Add POI information";
+  String get add_share_options => "Sharing options";
+  String get address_copied => "Address copied";
+  String get address_copy_success_hint => "Address copied successfully";
+  String get again_click_exit_app => "Click again to exit the program";
+  String get all => "ALL";
+  String get allow_location_service => "Please authorize the location function.";
+  String get already_latest_version_hint => "latest version already installed";
+  String get amount => "Amount：";
+  String get amount_copy_success_hint => "Amount copied successfully";
+  String get amount_received => "HYN received";
+  String get app_area_setting => "Area";
+  String get app_name => "Star Rich";
+  String get app_version => "Version";
+  String get apply_location_service => "Application for location authorization";
+  String get area => "Area";
+  String get article => "Article";
+  String get attraction => "Travel";
+  String get audio => "Audio";
+  String get background_scan => "Background scan";
+  String get backup_finish => "Backup Finished";
+  String get backup_notice_label => "Backup Tips";
+  String get backup_offline_save_text => "Keep it in a safe place offline\nDo not share or store mnemonics online, such as emails, photo albums, social applications, etc.";
+  String get backup_offline_save_title => "Offline storage";
+  String get backup_option => "Backup Options";
+  String get backup_wallet_mnemonic_text => "Use paper and pen to copy mnemonics correctly\nIf your phone is lost, stolen or damaged, use mnemonics to recover your assets";
+  String get backup_wallet_mnemonic_title => "Backup mnemonics";
+  String get backup_wallet_notice_text1 => "Obtaining mnemonic words proves your ownership of wallet assets";
+  String get balance_lack => "Insufficient balance";
+  String get balance_with_unit => "Account Balance(USDT)";
+  String get bank => "Bank";
+  String get becharge_amount => "Top-up balane";
+  String get below_min_withdrawal => "Below the minimum withdrawal limit";
+  String get bill_flow => "Transactions";
+  String get by_hyn => "Use HYN";
+  String get by_hyn_transfer => "Transfer using HYN wallet";
+  String get by_mortgage => "Alternative staking measures";
+  String get cafe => "Cafe";
+  String get cancel => "Cancel";
+  String get check_in_completed => "Done";
+  String get check_poi_item_title => "Verify POI information";
+  String get check_update => "Check for updates";
+  String get ciphertext_exception_hint => "The ciphertext is invalid or expired";
+  String get city_recommendation => "City Recommend";
+  String get clean_search_history => "Clear History";
+  String get click_again_to_exist_app => "press again to exit app";
+  String get click_charge => "Click to top-up balance";
+  String get click_retry_hint => "Click to retry";
+  String get close => "Close";
+  String get collect_signal_require_telephone => "To collect signal data, you need to obtain phone permissions";
+  String get coming_soon => "Coming Soon";
+  String get commiting => "Commiting";
+  String get confirm => "Confirm";
+  String get confirm_mnemonic => "Confirm Mnemonic";
+  String get confirm_mnemonic_incorrect => "Your mnemonic is incorrect, please try again";
+  String get confirm_mnemonic_tips => "Click on the words to put them in the correct order";
+  String get confirm_mortgage => "Confirm staking";
+  String get confirm_new_fund_password => "Confirm fund password";
+  String get confirm_password_label => "Confirm new password";
+  String get confirm_snap_up => "Confirm";
+  String get contact_customer_service => "Contact Customer Service";
+  String get content_conflict_hint => "Content of the conflict";
+  String get continue_text => "Continue";
+  String get contract_call => "Call Smart contract";
+  String get copy => "Copy";
+  String get copy_wx_id_success_hint => "WeChat ID copied successfully";
+  String get copyed => "Copied";
+  String get create => "Create";
+  String get create_user_fail_hint => "Failed to create user";
+  String get create_wallet => "Create Wallet";
+  String get create_wallet_name_label => "Wallet Name";
+  String get create_wallet_password_label => "Wallet Password";
+  String get create_wallet_tips => "Create a private account";
+  String get current_grade => "Current Level";
+  String get cybersquatting => "Snap up";
+  String get cycling => "Cycling";
+  String get dapp_setting => "DApp Settings";
+  String get data_contrebution_with_hyn_wallet_tips => "Data contribution requires a HYN wallet address. Please create or import a HYN wallet first.";
+  String get data_contribute => "Data Contribution";
+  String get data_contribute_reward => "Contribute your map data";
+  String get data_exception_hint => "Data error, please try again later";
+  String get decrypt_location_cipher_tips => "How to decipher coded location information";
+  String get decrypt_location_cipher_tips_context => "Please paste the location code, and click enter to decode.";
+  String get delete => "Delete";
+  String get delete_wallet_fail => "Delete Failed";
+  String get delete_wallet_success => "Deleted Successfully";
+  String get department => "Department";
+  String get direct_star_numbers => "Direct";
+  String get discount_map => "Discount Map";
+  String get discover => "Discover";
+  String get dmap_document_title => "DMap Integration Document";
+  String get dmap_life => "Explore nearby";
+  String get dmap_setting => "DMap Settings";
+  String get dmap_tools => "Tools";
+  String get document_optimization => "optimizing document...";
+  String get domestic_video => "Domestic";
+  String get downloading_update_file => "Downloading update file";
+  String get driving => "Driving";
+  String get earnings_balance => "Earnings\nBalance";
+  String get effective => "Effective";
+  String get email_format_error_hint => "Wrong email format, please re-enter";
+  String get email_label => "Email";
+  String get embassy_guide => "Embassy Guide";
+  String get encrypt_error => "encryption denied";
+  String get enter => "Enter";
+  String get eth_balance_not_enough_for_gas_fee => "ETH balance is insufficient to pay network fees";
+  String get extract_mnemonic_fail => "Mnemonic extraction failed";
+  String get fail_get_user_recharge_address_hint => "Top-up address could not be found";
+  String get finish => "Finish";
+  String get finished => "Finished";
+  String get foods => "Foods";
+  String get foreign_video => "Foreign";
+  String get forget_password => "forgot your password";
+  String get forum => "Forum";
+  String get free_receive => "Free Receive";
+  String get fund_new_password => "New fund password";
+  String get fund_password => "Fund password";
+  String get fund_password_format_error_message => "Incorrect fund password format. Please enter at least 6 chars";
+  String get fund_password_length_error_message => "Enter a fund password (6 chars minimum)";
+  String get fund_password_not_equal_confirm_fund_password => "The two passwords don't match";
+  String get fund_pwd_error_hint => "Fund password error";
+  String get fundz_password => "fund security password";
+  String get gas_fee => "Transaction Fee";
+  String get gas_station => "Gas Station";
+  String get generating_key => "generating encrypted addr.…";
+  String get get_current_position_fail_tips => "Could not get your current location";
+  String get get_power => "Get HashRate";
+  String get get_powers => "Get HashRate";
+  String get give_away => "Give away";
+  String get global_embassies => "Global Embassies";
+  String get global_map_server_nodes => "View global data updates";
+  String get global_nodes => "Dashboard";
+  String get grade => "Level";
+  String get hashrate => "HashRate";
+  String get home_page => "Home";
+  String get hospital => "Hospital";
+  String get hot_area => "Hot spots";
+  String get hotel => "Hotel";
+  String get hynPriceUnit => "USD";
+  String get hyn_market => "HYN Market";
+  String get hyn_price => "HYN Price";
+  String get hyn_wallet_open_hint => "HYN wallet is about to open";
+  String get hyn_withdrawal_coin_address => "HYN withdrawal Address";
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
+  String get illegal_mnemonic => "illegal mnemonic";
+  String get import => "Import";
+  String get import_account => "Import Account";
+  String get import_account_fail => "Import Failed";
+  String get import_account_success => "The account was successfully imported ";
+  String get import_account_tips => "Congratulations, your private wallet has been successfully imported";
+  String get import_wallet => "Import Wallet";
+  String get improvement_plan_agree => "Yes";
+  String get improvement_plan_message => "Tell us your suggestions about Titan by joining our user experience plan. Check for more details.\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">Titan Privacy Policy</a>\n        </b>";
+  String get improvement_plan_refuse => "No";
+  String get improvement_plan_title => "Titan improvement plan";
+  String get income_amount => "Income balance";
+  String get information => "News";
+  String get information_guide => "Guidance";
+  String get information_video => "Video";
+  String get input_confirm_wallet_password_hint => "re-enter a wallet password of at least 6 chars";
+  String get input_corrent_count_hint => "Please enter the correct amount";
+  String get input_count_over_balance => "Exceed balance limit";
+  String get input_password_again_hint => "Re-enter the password";
+  String get input_resume_mnemonic => "Enter backup mnemonics separated by spaces";
+  String get input_search_keyworod_or_cipher => "Enter search keyword/ciphertext";
+  String get input_wallet_name_hint => "Input wallet name";
+  String get input_wallet_name_length_hint => "Name must be within 6 chars";
+  String get input_wallet_password_length_hint => "Wallet password must be at least 6 chars";
+  String get install_now => "Install now";
+  String get installation_update_package_failed => "Installation update package failed";
+  String get insufficient_permission_hint => "Insufficient permissions";
+  String get internet_bar => "Internet Cafe";
+  String get introduce => "Introduce";
+  String get invitate_qr => "Invitation QR Code";
+  String get invitation_code => "invitation code";
+  String get invite_code_error_hint => "Invitation code error";
+  String get invite_join => "Welcome to";
+  String get invite_link => "Share ink";
+  String get invite_link_copy_hint => "Share link copied";
+  String get invite_share => "Share";
+  String get kais_talk => "Kai's Talk";
+  String get key_manager_title => "My encrypted addr.";
+  String get label => "Label";
+  String get language => "Language";
+  String get later => "Later";
+  String get latest_news => "Article";
+  String get less_than_1_min => "Less than 1 minute";
+  String get load_fail_click_hint => "Loading failed, click to retry";
+  String get login => "Login";
+  String get login_out => "sign out";
+  String get logining => "Logging-in";
+  String get lossz_wallet_mnemonic_notice => "I understand that if I lose the recovery word, I will not be able to access my wallet";
+  String get main_my_public_key => "My encrypted key(public key)";
+  String get mainland_china => "Mainland China";
+  String get mall => "Mall";
+  String get manually_refresh => "Refresh Manually";
+  String get map3_global_nodes => "Dashboard";
+  String get map3_node_introduction => "Mp3 Node";
+  String get map_ai_verificate => "Map AI verification";
+  String get map_dmap => "DMap";
+  String get max_star_numbers => "Maximum";
+  String get medium => "Medium";
+  String get modify_account_password => "modify account password";
+  String get modify_fund_password => "modify fund password";
+  String get modify_success => "Successfully modified";
+  String get more_dmap => "Stay tuned for more DMap applications";
+  String get mortgage => "Mortgage";
+  String get mortgage_fail_hint => "Mortgage Failure";
+  String get mortgage_success_hint => "Staked successfully";
+  String get my_account_with_unit => "Account(USDT)";
+  String get my_location => "My Location";
+  String get my_node_mortgage => "My Node Staking";
+  String get my_page => "My";
+  String get my_position => "My Location";
+  String get my_power_with_unit => "HashRate(T)";
+  String get my_total_power => "My Total HashRate";
+  String get my_wallet_address => "My Wallet Address";
+  String get nav_about_us => "About us";
+  String get nav_my_privacy_map => "My Privacy Map";
+  String get nav_share_app => "Share Titan APP";
+  String get navigation => "Start";
+  String get need_transfer => "Need Transfer";
+  String get net_error_hint => "Network error";
+  String get network_exception_hint => "Network failed~";
+  String get new_update_available => "Latest Update Available";
+  String get next => "continue";
+  String get nightlife_guide => "Nightlife Guidance";
+  String get no_content_hint => "There is no content";
+  String get no_data => "No Data";
+  String get no_detail_address => "No detailed address";
+  String get no_eth_address => "Not ETH address ";
+  String get no_fill_in => "Not Filled";
+  String get no_grade => "No level";
+  String get no_invite_success_hint => "You haven't invited anyone yet~";
+  String get no_level => "No Level";
+  String get no_recommended_route => "No recommended route yet";
+  String get no_transfer_info_hint => "No transfer information found, please try again later";
+  String get no_wallet_hint => "You don't have a wallet yet.";
+  String get node_has_squat_hint => "Snap-up finished";
+  String get node_introduction => "Node introduction";
+  String get node_martgage => "Node Martgage";
+  String get node_mortgage => "Node Staking";
+  String get node_mortgage_in_out_hint => "Join or cancel staking at anytime。";
+  String get node_mortgage_with_unit => "Node(USDT)";
+  String get not_open_yet => "Coming Soon";
+  String get not_valid_public_key => "Not a valid public key";
+  String get official_announcement => "Announcement";
+  String get official_website => "Official Website";
+  String get online_exchange => "Online Exchanges";
+  String get open_bluetooth => "Turn on Bluetooth";
+  String get open_camera => "Please allow access to your camera";
+  String get open_location_service => "Turn on location services";
+  String get open_location_service_message => "Location services are off, please turn on";
+  String get open_wifi => "Turn on WIFI";
+  String get operating_hours => "Time";
+  String get other_area => "Others";
+  String get other_star_numbers => "Others";
+  String get out_wallet_transfer_hint => "I have transferred using an external wallet";
+  String get over_limit_amount_hint => "Reached the limit";
+  String get over_limit_hint => "exceed the limit";
+  String get over_limit_numbers => "Excess Quantity";
+  String get over_max_withdrawal => "Exceeded the maximum withdrawal limit";
+  String get paking => "Parking";
+  String get para_error_hint => "Parameter error";
+  String get password_format_error_message => "Incorrect password format. Please enter at least 6 chars";
+  String get password_incorrect => "incorrect password";
+  String get password_label => "Password";
+  String get password_length_error_message => "Enter a password (6 chars mini)";
+  String get password_not_equal_hint => "Inconsistent passwords";
+  String get paste => "paste";
+  String get pay_fail_hint => "Payment failed";
+  String get pay_success_hint => "payment successful";
+  String get personal_information => "Personal Information";
+  String get please_input_account_password => "Input account password";
+  String get please_input_email_hint => "please input your email";
+  String get please_input_fund_pwd_hint => "Please enter the fund password";
+  String get please_input_hyn_address => "Please input HYN address";
+  String get please_input_hyn_withdrawal_address => "Please enter the HYN address";
+  String get please_input_invitation_code => "Please enter the invitation code (6 chars minimum)";
+  String get please_input_mnemonic => "Please enter mnemonic";
+  String get please_input_password_hint => "Please enter the password";
+  String get please_input_verification_code => "Enter 6-digit valid code";
+  String get please_input_wallet_name => "Input wallet name";
+  String get please_input_wallet_password_hint => "Please enter wallet password";
+  String get please_input_withdrawal_quantity => "Please input withdrawal amount ";
+  String get please_mortgage => "Please stake";
+  String get please_open_bluetooth => "Bluetooth beacons can effectively assist positioning, please turn on the device Bluetooth";
+  String get please_open_wifi => "WIFI signal can assist triangle positioning, please turn on the device WIFI";
+  String get please_selecte_app_area => "Please set the region of the map";
+  String get please_waiting => "Please Wait";
+  String get police_security_station => "Police Station";
+  String get police_station_text => "Check nearby police stations";
+  String get postscript => "Notes";
+  String get postscript_hint => "within 50 characters";
+  String get power_martgage => "Get HashRate";
+  String get private_and_safety => "Private and Secure";
+  String get private_service => "Privacy Services";
+  String get private_share => "Private location Share";
+  String get private_sharing => "Private Location Share";
+  String get private_sharing_text => "Share encrypted location information to protect privacy";
+  String get private_wallet_tips => "Private key never leaves your device";
+  String get processing => "processing";
+  String get product => "Product：";
+  String get project_introduction => "Project Brief";
+  String get psw_reset_error_hint => "Password reset error";
+  String get public_key_copied => "Public key. copied";
+  String get public_key_scan_fail_rescan => "public key error, please re-scan";
+  String get quantity => "Quantity";
+  String get re_enter_fund_password => "Re-enter fund password";
+  String get receive_success_hint => "Receive Success";
+  String get received => "Received";
+  String get receiver => "Receive";
+  String get receiver_address => "Receiver Address";
+  String get receiver_address_not_empty_hint => "Receiver address is empty";
+  String get receiver_encrypted_address => "receiver encrypted address(public key)";
+  String get recharge => "Top-up";
+  String get recharge_balance => "Top-up\nBalance";
+  String get recharge_success_hint => "Top-up successful";
+  String get recommended_area => "Recommended Areas";
+  String get redemption_fail => "Redemption Error";
+  String get redemption_mortgage => "Redemption Staking";
+  String get redemption_success => "Redemption Successful";
+  String get refresh_keypaire_message => "Refreshing your public key address will fail to decrypt the received address, still continue to refresh?";
+  String get refresh_public_key_days_tips => "Automatically refresh in %d days";
+  String get refresh_public_key_hours_tips => "Automatically refresh in %d hrs %d mins";
+  String get refresh_public_key_minutes_tips => "Automatically refresh in %d mins";
+  String get refresh_public_key_seconds_tips => "Automatically refresh in %d secs";
+  String get register => "register";
+  String get register_account => "register";
+  String get register_email => "register email";
+  String get register_success => "registered successfully";
+  String get reinput_wallet_password_label => "Confirm Wallet Password";
+  String get remark => "Notes";
+  String get require_location => "Apply for positioning permission";
+  String get require_location_message => "Please authorize the use of positioning permissions";
+  String get require_permission => "Apply for permission";
+  String get reset_account_password => "Reset account password";
+  String get reset_fund_password => "reset fund password";
+  String get revenue_details => "Income details";
+  String get rmb => "CNY";
+  String get route => "Route";
+  String get safety_verification => "Safety Verification";
+  String get safety_verify => "Safety verification";
+  String get save_mnemonic_notice => "Write down or copy these words in the correct order and keep them safe.";
+  String get save_mnemonic_safe_notice => "Never share the mnemonic with anyone, store your backup securely!";
+  String get scan_confirm_upload => "Upload signal data";
+  String get scan_exit_tips => "Scanning, confirm exit?";
+  String get scan_finish => "Scan completed";
+  String get scan_hyn_is_empty => "HYN wallet is empty";
+  String get scan_name_bluetooth => "Bluetooth";
+  String get scan_name_cellular => "Cell Tower";
+  String get scan_name_gps => "GPS";
+  String get scan_name_start => "Start";
+  String get scan_name_title => "Signal scan";
+  String get scan_name_wifi => "WiFi";
+  String get scan_signal_item_title => "Scan nearby signal data";
+  String get scan_signal_upload_protocol => "Signal upload protocol";
+  String get scan_thanks_contribution_signal_hint => "Thank you for your data contribution！";
+  String get scan_upload_error => "Upload failed";
+  String get scan_upload_signal_success_hint => "Signal data uploaded successfully";
+  String get scan_wifi_map_style_url => "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+  String get search_empty_data => "No Data";
+  String get search_exception => "Search Exception";
+  String get search_history => "History";
+  String get search_or_decode => "Search / Decrypt";
+  String get search_title => "Search / Decrypt";
+  String get send => "Send";
+  String get send_verification_code => "Send";
+  String get sent => "Sent";
+  String get service_area => "Area";
+  String get service_description => "Description";
+  String get service_hours => "Time";
+  String get services => "Services";
+  String get setting => "Settings";
+  String get share => "Share";
+  String get share_app => "Share App";
+  String get share_encrypted_location => "Share encrypted location";
+  String get share_fail => "Error occurred";
+  String get share_invalid_public_key => "Invalid public key";
+  String get share_location => "Share Location";
+  String get share_qrcode => "Share public key QR Code";
+  String get show_mnemonic_label => "Show Mnemonic Phrases";
+  String get skip => "Skip";
+  String get snap_up => "Snap Up";
+  String get snap_up_fail => "Snap up failed";
+  String get snap_up_success_hint => "Successfully Snap up";
+  String get speed_fast => "Fast";
+  String get speed_normal => "Normal";
+  String get speed_slow => "Slow";
+  String get star_number => "Stars";
+  String get start_encryption => "Encrypt";
+  String get stay_tuned => "Stay tuned";
+  String get submit => "submit";
+  String get supermarket => "Supermarket";
+  String get sweep_qr_hint => "Scan the QR code above to add me on WeChat";
+  String get switch_contribute_address => "Switch";
+  String get task => "Task";
+  String get task_finish_day_hint => "Task completed for the day";
+  String get task_interval_below_limit => "Do task intervals below 30 minutes";
+  String get task_record => "Tasks";
+  String get telegram => "Telegram";
+  String get telegram_operator => "Telegram Operator";
+  String get telphone => "Phone No.";
+  String get thank_you_for_contribute_data => "Thank you for your data contribution。";
+  String get the_horizon_hint => "—— This is the horizon ——";
+  String get time => "Opening times";
+  String get time_f => "time:";
+  String get tip_node_mortgages_balances_hint => "Note: Only income balance is stakable";
+  String get tip_snap_up_balance_hint => "Tip: Snap up node can only stake with top-up balance";
+  String get tips => "Tips";
+  String get titan_encrypted_map_ecology => "Titan Cryptographic Map Ecology";
+  String get today_complete_hint => "Today's task is completed. Thank you for your data";
+  String get toilet => "Toilet";
+  String get transfer_address => "Transfer address";
+  String get transfer_exception_hint => "Transfer Error";
+  String get transfer_fail => "Transfer failed";
+  String get transfer_hyn_hint => "Confirm to transfer the specified HYN amount！";
+  String get transfer_submitted => "The transfer has been submitted";
+  String get transfer_warning_hint => "Do not transfer non-HYN assets to the above address, otherwise the assets will not be recovered. After you transfer-in, you need to wait for the entire network nodes to confirm, which takes about 10-30 minutes";
+  String get turn_on_wifi_hint => "Turn on WiFi to scan more accurate signal maps";
+  String get twitterhyperion => "Twitter-Hyperion";
+  String get twittertitan => "Twitter-Titan";
+  String get unauthorized => "unauthorized";
+  String get unknown_error => "Unknown error";
+  String get unknown_error_hint => "An unknown error";
+  String get update_now => "Update Now";
+  String get update_user_info_fail_hint => "Failed to update user information";
+  String get use_guide => "Tutorials";
+  String get user_this_account => "Use this private account";
+  String get username_pwd_not_match_hint => "The username and password do not match";
+  String get verification_code => "Verification code";
+  String get verify_code_error_hint => "Verification code error";
+  String get video => "Video";
+  String get view_all => "View All";
+  String get walking => "Walking";
+  String get wallet => "Wallet";
+  String get wallet_create_success => "Account has been created successfully";
+  String get wallet_create_success_tips => "Congratulations, your private account has been created successfully";
+  String get wallet_manage => "Wallet Management";
+  String get wallet_name => "Wallet Name";
+  String get wallet_name_label => "Wallet Name";
+  String get wallet_password_error => "incorrect password";
+  String get wallet_password_label => "Wallet password";
+  String get wallet_setting => "Wallet Settings";
+  String get wallet_setting_backup_notice => "If you cannot access this device, your funds will not be recovered unless you back it up!";
+  String get wechat => "Wechat";
+  String get wechat_cs => "Wechat Operator";
+  String get wechat_official_account => "Wechat Official Account";
+  String get withdrawal => "Withdraw";
+  String get withdrawal_apply_success => "Withdrawal application is successful";
+  String get withdrawal_audit_message => "Convert the corresponding HYN to your withdrawal address. In order to secure the funds, we will manually check the withdrawal. Withdrawal processing time: same day receipt during 10:00 am - 21:00 PM , next day receipt during non-working hours .";
+  String get withdrawal_fail => "Withdrawal error";
+  String get withdrawal_records => "Withdrawal record";
+  String get without_hyn_wallet => "You don't have a HYN wallet yet.";
+  String get wx_id => "WeChat ID：titan654321";
+  String get your_mnemonic => "Your Mnemonic phrases";
+  String all_powers_func(String totalPower) => "Total HashRate：${totalPower}";
+  String available_balance_usdt(String amount) => "Available Balance ${amount} USDT";
+  String available_mortgage_numbers(String number) => "mort：${number}";
+  String by_recommend(String getParentEmail) => "Recommended by ${getParentEmail}";
+  String contribute_reward_func(String award) => "Contribution Reward： ${award}";
+  String current_exchange_rate(String to, String currency) => "Current ${to} Exchange ${currency} Rate:";
+  String current_rate_func(String currency, String quotes, String rate) => "current ${currency} exchange ${quotes} rate is: 1${rate}";
+  String distance(String distance) => "$distance m";
+  String get_verification_code_again(String countdownTime) => "Resend ${countdownTime}";
+  String grade_require_func(String require) => "Level Requirements： ${require}";
+  String get hynPriceUnitSymbol => "\$";
+  String income_func(String incomeCycle) => "${incomeCycle} day income";
+  String km(String km) => "$km km ";
+  String maprich_intro_url(String rich_domain) => "${rich_domain}intro?lang=en";
+  String max_range_func(String maxMeter) => "Maximum range：${maxMeter} m";
+  String max_withdrawal_quantity(String maxWithdrawal) => "Max. Withdrawal ${maxWithdrawal} USDT";
+  String mortgage_id(String id) => "ID：${id}";
+  String mortgage_product_func(String name) => "Stakable products：${name}";
+  String mortgage_time(String time) => "Time：${time}";
+  String my_symbol_address(String symbol) => "My ${symbol} Address:";
+  String n_day(String day) => "$day day ";
+  String n_days_product(String days) => "${days} day produce";
+  String n_hour(String hour) => "$hour hour ";
+  String n_minute(String minute) => "$minute minute ";
+  String network_request_err(String code) => "Network request error, code: $code";
+  String poundage_with_quantity(String poundage) => "Fee：${poundage}";
+  String private_share_receive_address(String shortAddress) => "Receive Address : ${shortAddress}";
+  String receiver_symbol(String symbol) => "Receive ${symbol}";
+  String scan_collect_signal_func(String Num) => "${Num} signals collected";
+  String scan_ing_func(String scanName) => "Scanning ${scanName}";
+  String send_count_label(String symbol) => "$symbol Quantity";
+  String send_symbol(String symbol) => "Send $symbol";
+  String snap_up_product_fuc(String name) => "Snap Up Products：${name}";
+  String stay_func(String snapUpStocks) => "${snapUpStocks} left";
+  String task_finish_func(String total) => "Already completed ${total} tasks";
+  String total_invitation_func(String totalInvitations) => "${totalInvitations} invitee";
+  String withdrawal_fee(String fee) => "Fee(${fee}%)";
+  String withdrawal_with_quantity(String count) => "Withdraw：${count}";
+}
+
+class $ko extends S {
+  const $ko();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get cancel => "취소";
+  @override
+  String get update_now => "업데이트중입니다.";
+  @override
+  String get titan_encrypted_map_ecology => "Titan 암호화지도생태학";
+  @override
+  String get contract_call => "스마트 콘트랙트 호출";
+  @override
+  String get open_location_service => "위치 서비스를 켜십시오";
+  @override
+  String get contact_customer_service => "고객센터연락";
+  @override
+  String get project_introduction => "프로젝트 소개";
+  @override
+  String get please_input_fund_pwd_hint => "자금비밀번호를입력해주십시오.";
+  @override
+  String get verify_code_error_hint => "인증번호오류";
+  @override
+  String get out_wallet_transfer_hint => "외부지갑을사용하여이미전입하였습니다.";
+  @override
+  String get re_enter_fund_password => "자금비밀번호를다시입력해주십시오.";
+  @override
+  String get setting => "설정";
+  @override
+  String get fund_new_password => "새로운자금비밀번호";
+  @override
+  String get para_error_hint => "파라미터오류";
+  @override
+  String get app_area_setting => "지역";
+  @override
+  String get about_us => "우리에 대해서";
+  @override
+  String get please_input_wallet_password_hint => "지갑 비밀번호를 입력해주십시오.";
+  @override
+  String get wallet_setting => "지갑 설정";
+  @override
+  String get search_empty_data => "데이터가 없습니다.";
+  @override
+  String get dmap_document_title => "DMap 지도를문서에바인딩합니다.";
+  @override
+  String get create_wallet => "지갑 새로 만들기";
+  @override
+  String get password_label => "비밀번호";
+  @override
+  String get sweep_qr_hint => "화면의QR코드를스캔하여위챗을추가하십시오.";
+  @override
+  String get scan_name_bluetooth => "기지국";
+  @override
+  String get nav_my_privacy_map => "나의 개인정보 지도";
+  @override
+  String get click_retry_hint => "다시시도하려면클릭해주세요.";
+  @override
+  String get route => "루트";
+  @override
+  String get data_contribute_reward => "지도 데이터 기여로 HYN 인센티브 획득";
+  @override
+  String get my_power_with_unit => "나의계산력(T)";
+  @override
+  String get receiver_address_not_empty_hint => "접수주소가비어서는안됩니다.";
+  @override
+  String get user_this_account => "비밀 계정 사용";
+  @override
+  String get private_and_safety => "프라이버시와 안전";
+  @override
+  String get confirm_snap_up => "사이버 스쿼팅 확인";
+  @override
+  String get hyn_withdrawal_coin_address => "HYN인출주소";
+  @override
+  String get unknown_error => "Unknown error";
+  @override
+  String get other_star_numbers => "기타성간량";
+  @override
+  String get my_position => "나의위치";
+  @override
+  String get commiting => "제출중입니다.";
+  @override
+  String get register_account => "등록계정";
+  @override
+  String get hotel => "호텔";
+  @override
+  String get snap_up_success_hint => "사이버스쿼팅성공";
+  @override
+  String get close => "닫기";
+  @override
+  String get amount_copy_success_hint => "금액복사성공";
+  @override
+  String get input_wallet_name_hint => "지갑 명칭을 입력해주십시오.";
+  @override
+  String get get_powers => "계산력불러오기";
+  @override
+  String get apply_location_service => "포지셔닝 승인 신청";
+  @override
+  String get mortgage_success_hint => "저당성공";
+  @override
+  String get app_name => "어플이름";
+  @override
+  String get private_sharing => "프라이버시공유";
+  @override
+  String get forget_password => "비밀번호분실";
+  @override
+  String get receiver_address => "수신자주소";
+  @override
+  String get share_app => "app공유";
+  @override
+  String get information => "뉴스";
+  @override
+  String get input_count_over_balance => "잔액한도를초과하였습니다.";
+  @override
+  String get register => "등록";
+  @override
+  String get search_history => "검색 내역";
+  @override
+  String get improvement_plan_title => "체험 프로그램 개선";
+  @override
+  String get my_total_power => "나의총계산력";
+  @override
+  String get extract_mnemonic_fail => "도움말 불러오기 실패";
+  @override
+  String get fund_password_length_error_message => "6자리수 이상의 자금 비밀번호를 입력해 주십시오.";
+  @override
+  String get language => "언어";
+  @override
+  String get internet_bar => "PC방";
+  @override
+  String get mortgage_fail_hint => "저당 실패";
+  @override
+  String get later => "업데이트를 하지 않습니다.";
+  @override
+  String get time_f => "시간";
+  @override
+  String get finish => "완성";
+  @override
+  String get please_input_wallet_name => "지갑 명칭을 입력해주십시오.";
+  @override
+  String get area => "지역";
+  @override
+  String get my_wallet_address => "나의지갑주소";
+  @override
+  String get hyn_price => "HYN 지수";
+  @override
+  String get withdrawal_records => "인출기록";
+  @override
+  String get nav_share_app => "App 공유";
+  @override
+  String get recommended_area => "추천 지역";
+  @override
+  String get background_scan => "백그라운드 스캔";
+  @override
+  String get official_announcement => "공식 발표";
+  @override
+  String get article => "문장";
+  @override
+  String get my_page => "내페이지";
+  @override
+  String get email_format_error_hint => "메일주소 양식이 잘못되였습니다.정확한 메일주소를 입력해 주십시오.";
+  @override
+  String get account_is_empty => "계정이비어있습니다.";
+  @override
+  String get no_transfer_info_hint => "전입 정보를 발견하지 못했습니다.잠시후 재시도해주십시오.";
+  @override
+  String get please_input_invitation_code => "6자리수의초대코드번호를입력해주십시오.";
+  @override
+  String get delete_wallet_success => "삭제 성공";
+  @override
+  String get email_label => "메일주소";
+  @override
+  String get backup_wallet_notice_text1 => "도움말을 얻는것은 지갑 자산 소유권을 갖는것과 같습니다.";
+  @override
+  String get official_website => "공식 홈페이지";
+  @override
+  String get please_input_account_password => "계정비밀번호를입력하십시오.";
+  @override
+  String get medium => "중간";
+  @override
+  String get map3_global_nodes => "계기반";
+  @override
+  String get paste => "붙히기";
+  @override
+  String get again_click_exit_app => "프로그램을 종료하려면 다시 클릭하십시오";
+  @override
+  String get hyn_market => "HYN 시세";
+  @override
+  String get data_contribute => "데이터 기여";
+  @override
+  String get recharge_balance => "충전잔액";
+  @override
+  String get turn_on_wifi_hint => "보다 정확한 신호 맵을 스캔하려면 WiFi를 켜십시오.";
+  @override
+  String get private_wallet_tips => "프라이빗 계좌.";
+  @override
+  String get node_introduction => "노드소개";
+  @override
+  String get current_grade => "현재등급";
+  @override
+  String get label => "라벨";
+  @override
+  String get input_resume_mnemonic => "뛰여쓰기로 구분된 백업 도움말을 입력해주십시오.";
+  @override
+  String get nav_about_us => "우리에 대해서";
+  @override
+  String get create_wallet_tips => "프라이빗 계좌 새로반들기";
+  @override
+  String get forum => "포럼";
+  @override
+  String get revenue_details => "수익상세내역";
+  @override
+  String get login_out => "로그아웃";
+  @override
+  String get receive_success_hint => "수령성공";
+  @override
+  String get by_mortgage => "저당방식선택";
+  @override
+  String get account_backup_notice => "당신의 계좌를 백업중입니다.";
+  @override
+  String get reinput_wallet_password_label => "비밀번호 확인";
+  @override
+  String get collect_signal_require_telephone => "신호 데이터를 수집하기 위해서는 전화 권한이 필요합니다.";
+  @override
+  String get require_permission => "신청 권한";
+  @override
+  String get create_user_fail_hint => "새로운계정만들기실패";
+  @override
+  String get speed_fast => "빠른속도";
+  @override
+  String get dmap_setting => "DMap설정";
+  @override
+  String get import_wallet => "지갑 가져오기";
+  @override
+  String get dmap_life => "생활가이드";
+  @override
+  String get reset_account_password => "계정비밀번호재설정";
+  @override
+  String get start_encryption => "암호화시작";
+  @override
+  String get cycling => "사이클링";
+  @override
+  String get transfer_address => "전입 주소";
+  @override
+  String get password_not_equal_hint => "비밀번호가 불일치합니다.";
+  @override
+  String get please_input_mnemonic => "도움말을 입력해주십시오.";
+  @override
+  String get backup_wallet_mnemonic_title => "도움말 백업하기";
+  @override
+  String get decrypt_location_cipher_tips_context => "암호화 위치문서를 붙히기 하신후 검색을 클릭하시면 암호화 문서를 바로 해제할수 있습니다.";
+  @override
+  String get navigation => "네비게이션";
+  @override
+  String get thank_you_for_contribute_data => "데이터 기여에 감사드립니다.";
+  @override
+  String get node_has_squat_hint => "노드사이버스쿼팅완료";
+  @override
+  String get switch_contribute_address => "주소 전환";
+  @override
+  String get over_limit_hint => "제한초과";
+  @override
+  String get import_account_tips => "축하드립니다.당신의 비밀 지갑 가져오기에 성공하였습니다.";
+  @override
+  String get improvement_plan_refuse => "참여 안함";
+  @override
+  String get transfer_fail => "계좌 이체실패";
+  @override
+  String get transfer_hyn_hint => "반드시지정된HYN금액으로전입하여주십시오!";
+  @override
+  String get scan_signal_item_title => "인근 신호 데이터 검색";
+  @override
+  String get import_account_fail => "가져오기 실패";
+  @override
+  String get foreign_video => "국외동영상";
+  @override
+  String get document_optimization => "문서최적화중입니다.";
+  @override
+  String get invite_link => "초대링크";
+  @override
+  String get refresh_keypaire_message => "공유키 주소를 새로 고치기하면 이전에 받았던 위치의 암호화 문서는 영구적으로 복구할수 없습니다.새로 고치기를 계속하시겠습니까?";
+  @override
+  String get more_dmap => "더많은 DMap 애플리케이션들이지속적으로추가됩니다 ~";
+  @override
+  String get modify_success => "수정성공";
+  @override
+  String get key_manager_title => "나의 암호화 주소";
+  @override
+  String get create_wallet_name_label => "지갑 명칭";
+  @override
+  String get share_invalid_public_key => "무효한 공유키";
+  @override
+  String get account_password => "계정비밀번호";
+  @override
+  String get account_backup_next_step_notice => "다음 단계에서 당신은 당신의 계좌를 복원하도록 허용하는 12개의 단어를 보게 될것입니다.";
+  @override
+  String get backup_notice_label => "백업 제시";
+  @override
+  String get not_open_yet => "아직개방하지않았습니다.";
+  @override
+  String get other_area => "기타지역";
+  @override
+  String get postscript_hint => "부언 입력(50자이내로)";
+  @override
+  String get below_min_withdrawal => "최소인출금액한도이하입니다.";
+  @override
+  String get skip => "건너뛰기";
+  @override
+  String get no_grade => "무등급";
+  @override
+  String get address_copy_success_hint => "주소 복사 성공";
+  @override
+  String get login => "로그인";
+  @override
+  String get click_again_to_exist_app => "다시 누르면 앱이 종료됩니다";
+  @override
+  String get no_level => "무등급";
+  @override
+  String get recharge => "충전";
+  @override
+  String get today_complete_hint => "오늘임무는완료하였습니다.데이터를 기여해주셔서 감사합니다.";
+  @override
+  String get share => "공유";
+  @override
+  String get new_update_available => "새로운 버전을 발견하였습니다.";
+  @override
+  String get product => "제품";
+  @override
+  String get data_exception_hint => "데이터오류가발생하였습니다.재시도해주십시오.";
+  @override
+  String get get_current_position_fail_tips => "현재 위치를 얻을 수 없습니다";
+  @override
+  String get show_mnemonic_label => "복원 단어 보여주기";
+  @override
+  String get refresh_public_key_seconds_tips => "%d초후 자동으로 새로 고침합니다.";
+  @override
+  String get delete_wallet_fail => "삭제 실패";
+  @override
+  String get latest_news => "최신 뉴스";
+  @override
+  String get receiver_encrypted_address => "공유키";
+  @override
+  String get invitation_code => "초대코드번호";
+  @override
+  String get please_open_bluetooth => "블루투스 비콘은 효과적으로 포지셔닝을 지원할 수 있습니다. 블루투스를 켜십시오.";
+  @override
+  String get kais_talk => "케이시 스토리";
+  @override
+  String get rmb => "인민페";
+  @override
+  String get input_confirm_wallet_password_hint => "최소 6자리수이상의 지갑 비밀번호를 다시 한번 입력해 주십시오.";
+  @override
+  String get gas_fee => "네트워크비용";
+  @override
+  String get over_limit_numbers => "제한수량을초과하였습니다.";
+  @override
+  String get copyed => "복사 완료";
+  @override
+  String get share_encrypted_location => "암호화 위치 공유";
+  @override
+  String get discount_map => "할인지도";
+  @override
+  String get give_away => "줘";
+  @override
+  String get domestic_video => "국내동영상";
+  @override
+  String get fundz_password => "자금안전비밀번호";
+  @override
+  String get account_exist_hint => "사용중인계정이므로직접로그인하세요.";
+  @override
+  String get all => "전부";
+  @override
+  String get over_max_withdrawal => "최대 인출금액 한도를 초과하였습니다.";
+  @override
+  String get backup_offline_save_title => "오프라인 보관";
+  @override
+  String get scan_name_wifi => "와이파이";
+  @override
+  String get save_mnemonic_safe_notice => "복원 단어를 그 누구와도 공유하지 말고 안전하게 저장하십시오!";
+  @override
+  String get service_hours => "서비스시간";
+  @override
+  String get paking => "주차장";
+  @override
+  String get driving => "차량 운전";
+  @override
+  String get task => "임무";
+  @override
+  String get cafe => "커피숍";
+  @override
+  String get telphone => "전화";
+  @override
+  String get scan_name_start => "시작";
+  @override
+  String get max_star_numbers => "최대성간량";
+  @override
+  String get verification_code => "인증번호";
+  @override
+  String get transfer_submitted => "계좌이체신청제출완료";
+  @override
+  String get register_success => "등록성공";
+  @override
+  String get invite_link_copy_hint => "초대링크복사완료";
+  @override
+  String get Clean => "흔적 지우기";
+  @override
+  String get allow_location_service => "포지셔닝 사용을 승인하십시오.";
+  @override
+  String get fund_password_format_error_message => "비밀번호양식이잘못되였습니다.최소 6자리이상의비밀번호를입력해주십시오.";
+  @override
+  String get delete => "삭제";
+  @override
+  String get map3_node_introduction => "map3노드";
+  @override
+  String get continue_text => "계속";
+  @override
+  String get effective => "유효";
+  @override
+  String get accept_share_pub_key => "P2P 공유";
+  @override
+  String get map_ai_verificate => "지도 AI 체크";
+  @override
+  String get add_poi_item_title => "관찰 위치 정보 추가";
+  @override
+  String get account_new_password => "계정새비밀번호";
+  @override
+  String get star_number => "성간수";
+  @override
+  String get tip_snap_up_balance_hint => "~저당을 설정할 수 있습니다.";
+  @override
+  String get please_waiting => "잠시만기다려주십시오.";
+  @override
+  String get refresh_public_key_days_tips => "%d일후 자동으로 새로 고침합니다.";
+  @override
+  String get department => "부서";
+  @override
+  String get private_service => "프라이버시서비스";
+  @override
+  String get map_dmap => "지도DMap";
+  @override
+  String get scan_finish => "스캔 완료";
+  @override
+  String get hynPriceUnit => "USD";
+  @override
+  String get information_video => "동영상";
+  @override
+  String get cybersquatting => "사이버스쿼팅";
+  @override
+  String get please_input_verification_code => "6자리의인증번호를입력해주십시오.";
+  @override
+  String get snap_up_fail => "사이버스쿼팅실패";
+  @override
+  String get insufficient_permission_hint => "권한부족";
+  @override
+  String get node_martgage => "노드저당";
+  @override
+  String get backup_offline_save_text => "네트워크와 분리된 안전한 곳에 잘 보관하십시오.\n이메일, 포토 앨범, 소셜 어플리케이션 등 네트워크 환경에서 도움말을 공유하거나 저장하지 마십시오.";
+  @override
+  String get update_user_info_fail_hint => "사용자정보업데이트에실패하였습니다.";
+  @override
+  String get attraction => "관광지";
+  @override
+  String get unauthorized => "권한없슴";
+  @override
+  String get data_contrebution_with_hyn_wallet_tips => "데이터 기여는 HYN 주소가 필요합니다. 먼저 HYN 지갑을 만드거나 가져오십시오.";
+  @override
+  String get register_email => "등록메일주소";
+  @override
+  String get install_now => "바로 설치합니다.";
+  @override
+  String get decrypt_location_cipher_tips => "암호화 위치 문서를 어떻게 해제합니까?";
+  @override
+  String get already_latest_version_hint => "최신버전입니다.";
+  @override
+  String get wx_id => "윗챗ID：titan654321";
+  @override
+  String get hyn_wallet_open_hint => "HYN지갑이곧오픈됩니다.";
+  @override
+  String get redemption_fail => "환매오류";
+  @override
+  String get require_location => "위치 라이센스 신청";
+  @override
+  String get confirm_mortgage => "저당 확인";
+  @override
+  String get bill_flow => "판매액명세서";
+  @override
+  String get scan_upload_error => "업로드 실패";
+  @override
+  String get foods => "미식";
+  @override
+  String get police_station_text => "어려움이있으면경찰을찾아주십시오.";
+  @override
+  String get use_guide => "사용교과 과정";
+  @override
+  String get no_invite_success_hint => "당신은아직사람들을성공적으로초대하지못했습니다.";
+  @override
+  String get wallet_create_success => "계정 새로 만들기 성공";
+  @override
+  String get hashrate => "계산력";
+  @override
+  String get no_detail_address => "자세한주소가없습니다.";
+  @override
+  String get bank => "은행";
+  @override
+  String get my_node_mortgage => "나의노드저당";
+  @override
+  String get wallet_password_error => "잘못된 비밀번호입니다.";
+  @override
+  String get lossz_wallet_mnemonic_notice => "알겠습니다.만약 제가 복원 단어를 잃어버리면 돈을 액세스할수 없다는것을 알고있습니다.";
+  @override
+  String get confirm_mnemonic_incorrect => "복원 단어가 정확하지 않습니다.다시 시도하십시오.";
+  @override
+  String get share_fail => "공유 오류가 발생했습니다.";
+  @override
+  String get safety_verification => "보안 인증";
+  @override
+  String get node_mortgage_in_out_hint => "노드 저당은 반입이 병행되며 시간제한이 없습니다.";
+  @override
+  String get my_location => "나의위치";
+  @override
+  String get improvement_plan_agree => "프로그램 참여";
+  @override
+  String get receiver => "접수";
+  @override
+  String get my_account_with_unit => "나의계정(USDT)";
+  @override
+  String get mall => "쇼핑몰";
+  @override
+  String get modify_account_password => "계정비밀번호수정";
+  @override
+  String get ciphertext_exception_hint => "암호문이유효하지않거나만료되였습니다.";
+  @override
+  String get received => "접수하였습니다.";
+  @override
+  String get recharge_success_hint => "충전성공";
+  @override
+  String get copy_wx_id_success_hint => "위챗번호복사성공";
+  @override
+  String get toilet => "화장실";
+  @override
+  String get no_fill_in => "기록이없습니다.";
+  @override
+  String get grade => "등급";
+  @override
+  String get processing => "처리중";
+  @override
+  String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
+  @override
+  String get tip_node_mortgages_balances_hint => "수익잔액을 사용해야만 이 노드를 저당설정할 수 있습니다.";
+  @override
+  String get dapp_setting => "DApp설정";
+  @override
+  String get send_verification_code => "인증번호 발송";
+  @override
+  String get view_all => "전체 보기";
+  @override
+  String get nightlife_guide => "야간활동안내";
+  @override
+  String get open_camera => "카메라 권한을 열어주십시오.";
+  @override
+  String get actual_amount_received => "(입금거래소 실시간가 기준)";
+  @override
+  String get node_mortgage_with_unit => "노드저당(USDT)";
+  @override
+  String get audio => "오디오";
+  @override
+  String get action_success_hint => "작업성공";
+  @override
+  String get check_in_completed => "완성";
+  @override
+  String get refresh_public_key_minutes_tips => "%d분후 자동으로 새로 고침합니다.";
+  @override
+  String get global_map_server_nodes => "실시간 글로벌 데이터 업데이트보기";
+  @override
+  String get input_password_again_hint => "비밀번호를 다시 한번 입력해주십시오.";
+  @override
+  String get eth_balance_not_enough_for_gas_fee => "ETH잔액부족으로네트워크비용을지불할수없습니다.";
+  @override
+  String get invitate_qr => "초대QR코드";
+  @override
+  String get direct_star_numbers => "직연성간량";
+  @override
+  String get services => "서비스";
+  @override
+  String get withdrawal => "인출";
+  @override
+  String get confirm => "확정";
+  @override
+  String get please_input_email_hint => "메일주소를 입력해 주십시오.";
+  @override
+  String get app_version => "어플버전";
+  @override
+  String get pay_fail_hint => "지불실패";
+  @override
+  String get over_limit_amount_hint => "한도에도달하였습니다.";
+  @override
+  String get open_bluetooth => "블루투스 열림";
+  @override
+  String get scan_name_cellular => "셀 타워";
+  @override
+  String get withdrawal_audit_message => "해당 HYN으로 환산하여 당신의 인출 주소에 표시합니다.자금의 안전을 보장하기 위해 우리는 화폐 인출에 대하여 인공적인 심사를 진행합니다.인출 처리시간:오전10:00-오후21:00 당일 입금합니다.비근무시간에 접수한 주문서는 다음날 바로 입금됩니다.";
+  @override
+  String get search_title => "검색/디코딩";
+  @override
+  String get invite_share => "초대공유";
+  @override
+  String get confirm_mnemonic => "복원 단어를 입력해주십시오.";
+  @override
+  String get amount_received => "HYN 입금수량";
+  @override
+  String get no_data => "데이터가없습니다.";
+  @override
+  String get account_error => "계정오류";
+  @override
+  String get generating_key => "암호화 주소 생성중입니다.";
+  @override
+  String get password_length_error_message => "최소로 6자리이상의비밀번호를입력해주십시오.";
+  @override
+  String get scan_wifi_map_style_url => "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+  @override
+  String get no_wallet_hint => "지갑이없습니다.";
+  @override
+  String get input_search_keyworod_or_cipher => "검색 키워드/암호화 문서를 입력해주세요.";
+  @override
+  String get fail_get_user_recharge_address_hint => "사용자충전주소불러오기에실패하였습니다.";
+  @override
+  String get service_area => "지역";
+  @override
+  String get next => "계속";
+  @override
+  String get redemption_mortgage => "환매저당";
+  @override
+  String get safety_verify => "안전인증확인";
+  @override
+  String get import => "가져오기";
+  @override
+  String get submit => "제출";
+  @override
+  String get dmap_tools => "DMAP 도구";
+  @override
+  String get personal_information => "개인정보";
+  @override
+  String get without_hyn_wallet => "지갑이없습니다.";
+  @override
+  String get wallet_create_success_tips => "축하드립니다.당신의 비밀 계정이 성공적으로 만들어졌습니다.";
+  @override
+  String get video => "동영상";
+  @override
+  String get modify_fund_password => "자금비밀번호수정";
+  @override
+  String get private_sharing_text => "암호화위치를공유하시면절대로위치정보를누설하지않습니다.";
+  @override
+  String get wallet_setting_backup_notice => "이 장비에 액세스할수 없다면 백업할때까지 자금 회수가 불가능합니다!";
+  @override
+  String get input_wallet_name_length_hint => "6자리이내의 명칭을 입력해 주십시오.";
+  @override
+  String get wallet_manage => "지갑 관리";
+  @override
+  String get load_fail_click_hint => "불러오기를실패하였습니다.재시도하여주십시오.";
+  @override
+  String get service_description => "설명";
+  @override
+  String get introduce => "소개";
+  @override
+  String get search_or_decode => "암호화 문서 검색/해제";
+  @override
+  String get create_wallet_password_label => "지갑 비밀번호";
+  @override
+  String get please_input_hyn_withdrawal_address => "HYN인출주소를입력해주세요.";
+  @override
+  String get mainland_china => "중국대륙";
+  @override
+  String get scan_signal_upload_protocol => "신호 업로드 프로토콜";
+  @override
+  String get get_power => "계산력가져오기";
+  @override
+  String get add_share_options => "선택사항 공유";
+  @override
+  String get downloading_update_file => "업데이트 파일 다운로드중입니다.";
+  @override
+  String get time => "영업 시간";
+  @override
+  String get invite_join => "가입할수있도록당신을초대합니다.";
+  @override
+  String get pay_success_hint => "지불성공";
+  @override
+  String get the_horizon_hint => "—— 지평선입니다. ——";
+  @override
+  String get balance_lack => "잔액이부족합니다.";
+  @override
+  String get scan_confirm_upload => "신호 데이터 업로드";
+  @override
+  String get tips => "제시";
+  @override
+  String get coming_soon => "곧 오픈합니다.";
+  @override
+  String get wechat_official_account => "위쳇 서비스번호";
+  @override
+  String get fund_password_not_equal_confirm_fund_password => "자금비밀번호와확인자금비빌번호가불일치합니다.";
+  @override
+  String get enter => "들어가기";
+  @override
+  String get please_input_password_hint => "비밀번호를입력해주십시오.";
+  @override
+  String get embassy_guide => "대사관가이드";
+  @override
+  String get wallet_name => "지갑 명칭";
+  @override
+  String get please_open_wifi => "WIFI 신호는 삼각형 위치 결정을 지원할 수 있습니다. 장치를 켜십시오.";
+  @override
+  String get please_mortgage => "저당을 설정하여 주십시요";
+  @override
+  String get import_account => "계정 가져오기";
+  @override
+  String get income_amount => "수익 잔액";
+  @override
+  String get backup_option => "백업 선택사항";
+  @override
+  String get Hyperion => "하이페리온";
+  @override
+  String get Next => "다음";
+  @override
+  String get confirm_new_fund_password => "새로운자금비밀번호를확인해주세요.";
+  @override
+  String get installation_update_package_failed => "업데이트 패키지를 설치하지 못했습니다.";
+  @override
+  String get save_mnemonic_notice => "올바른 순서로 이 단어를 기록하거나 복사하여 안전한 곳에 보관하십시오.";
+  @override
+  String get require_location_message => "위치 확인 기능을 사용할 수 있는 권한을 부여해 주십시오.";
+  @override
+  String get postscript => "부언";
+  @override
+  String get network_exception_hint => "네트워크이상";
+  @override
+  String get logining => "로그인중입니다.";
+  @override
+  String get clean_search_history => "기록 삭제";
+  @override
+  String get invite_code_error_hint => "요청코드번호오류";
+  @override
+  String get scan_upload_signal_success_hint => "신호 데이터가 성공적으로 업로드되었습니다";
+  @override
+  String get task_record => "임무기록";
+  @override
+  String get supermarket => "슈퍼마켓";
+  @override
+  String get information_guide => "설명 및 안내";
+  @override
+  String get mortgage => "저당";
+  @override
+  String get speed_slow => "느린속도";
+  @override
+  String get by_hyn_transfer => "HYN지갑을 사용하여 전입";
+  @override
+  String get scan_hyn_is_empty => "HYN 지갑이 비어 있습니다";
+  @override
+  String get copy => "복사";
+  @override
+  String get confirm_password_label => "새로운비밀번화확인";
+  @override
+  String get online_exchange => "온라인 거래소";
+  @override
+  String get click_charge => "충전하시려면클릭해주십시오.";
+  @override
+  String get withdrawal_apply_success => "인출신청성공";
+  @override
+  String get wallet => "지갑";
+  @override
+  String get less_than_1_min => "1분이내";
+  @override
+  String get content_conflict_hint => "내용충돌";
+  @override
+  String get address_copied => "주소복사완료";
+  @override
+  String get improvement_plan_message => "Titan 사용 과정에서 고객님들께 더 나은 사용 환경을 제공하기 위하여 당신을 제품 품질 향상을 위한 개선된 사용자 경험 프로그램에 초대합니다상세한 내용은\n<b>\n<a href=\"https://www.hyn.space/titan/privacy_policy/\">프로그램 설명서를 참조하시기 바랍니다.</a>\n</b>";
+  @override
+  String get backup_finish => "백업완료";
+  @override
+  String get balance_with_unit => "계정잔액(USDT)";
+  @override
+  String get no_recommended_route => "추천 루트가 없습니다.";
+  @override
+  String get check_update => "업데이트검사";
+  @override
+  String get share_qrcode => "공유키 QR코드 공유";
+  @override
+  String get withdrawal_fail => "인출오류";
+  @override
+  String get Tips => "제시";
+  @override
+  String get need_transfer => "전입필요";
+  @override
+  String get open_location_service_message => "위치정보 서비스가 닫혔습니다. 켜주세요";
+  @override
+  String get please_input_withdrawal_quantity => "인출수량을입력해주세요.";
+  @override
+  String get by_hyn => "HYN 사용";
+  @override
+  String get confirm_mnemonic_tips => "단어를 클릭하여 정확한 순서로 맞추세요.";
+  @override
+  String get twitterhyperion => "트위트 하이페리온";
+  @override
+  String get wallet_password_label => "지갑 비밀번호";
+  @override
+  String get public_key_copied => "공유키 주소를 복사완료하였습니다.";
+  @override
+  String get not_valid_public_key => "정상적인 공유키가 아닙니다.";
+  @override
+  String get encrypt_error => "암호화 실패";
+  @override
+  String get twittertitan => "트위터-타이탄";
+  @override
+  String get task_finish_day_hint => "당일 임무를 완성하였습니다.";
+  @override
+  String get username_pwd_not_match_hint => "사용자명과비밀번호가불일치합니다.";
+  @override
+  String get hot_area => "인기 지역";
+  @override
+  String get create => "새로만들기";
+  @override
+  String get wallet_name_label => "지갑 명칭";
+  @override
+  String get fund_password => "자금비밀번호";
+  @override
+  String get snap_up => "사이버스쿼팅";
+  @override
+  String get net_error_hint => "네트워크오류";
+  @override
+  String get scan_name_gps => "GPS";
+  @override
+  String get wechat_cs => "위챗 고객센타";
+  @override
+  String get speed_normal => "정상속도";
+  @override
+  String get private_share => "프리이버시공유";
+  @override
+  String get manually_refresh => "수동으로 새로 고침";
+  @override
+  String get discover => "발견";
+  @override
+  String get your_mnemonic => "당신의 복원 단어";
+  @override
+  String get password_incorrect => "잘못된비밀번호입니다.";
+  @override
+  String get share_location => "위치 공유";
+  @override
+  String get public_key_scan_fail_rescan => "공유키 오류가 발생했습니다.다시 스캔해 주십시오";
+  @override
+  String get please_input_hyn_address => "HYN주소를입력해주세요.";
+  @override
+  String get transfer_exception_hint => "전입이상";
+  @override
+  String get reset_fund_password => "자금비밀번호재설정";
+  @override
+  String get finished => "종료";
+  @override
+  String get sent => "발송하였습니다.";
+  @override
+  String get no_eth_address => "이더리움주소가아닙니다.";
+  @override
+  String get psw_reset_error_hint => "비밀번호재설정오류";
+  @override
+  String get scan_name_title => "신호 스윕";
+  @override
+  String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
+  @override
+  String get free_receive => "무료수령";
+  @override
+  String get please_selecte_app_area => "지도사용영역을설정하십시오.";
+  @override
+  String get send => "발송";
+  @override
+  String get earnings_balance => "수익잔액";
+  @override
+  String get telegram_operator => "텔레그람 운영자";
+  @override
+  String get global_nodes => "계기반";
+  @override
+  String get open_wifi => "WIFI 시작하기";
+  @override
+  String get remark => "비고";
+  @override
+  String get city_recommendation => "도시추천";
+  @override
+  String get refresh_public_key_hours_tips => "%d시간%d분후 자동으로 새로 고침합니다.";
+  @override
+  String get home_page => "메인 페이지";
+  @override
+  String get transfer_warning_hint => "상기 주소로 비 HYN 자산을 전입하면 자산을 되찾을수 없으므로 절대로 전입해서는 안됩니다.";
+  @override
+  String get password_format_error_message => "비밀번호양식이잘못되였습니다.최소로 6자리이상의비밀번호를입력해주십시오.";
+  @override
+  String get walking => "보행";
+  @override
+  String get input_corrent_count_hint => "정확한수량을입력해주십시오.";
+  @override
+  String get becharge_amount => "충전 잔액";
+  @override
+  String get stay_tuned => "기대해주십시오.";
+  @override
+  String get hospital => "병원";
+  @override
+  String get unknown_error_hint => "알수없는오류";
+  @override
+  String get search_exception => "검색오류";
+  @override
+  String get gas_station => "주유소";
+  @override
+  String get amount => "금액";
+  @override
+  String get police_security_station => "경찰안전소";
+  @override
+  String get quantity => "수량";
+  @override
+  String get backup_wallet_mnemonic_text => "종이와 펜을 사용하여 도움말을 정확하게 기록하세요.\n 만일 휴대폰을 분실하거나 도난당하거나 혹은 파손됐을 경우 도움말을 통해 당신의 자산을 회복할수 있습니다.";
+  @override
+  String get scan_thanks_contribution_signal_hint => "귀하의 데이터 기여에 감사드립니다！";
+  @override
+  String get global_embassies => "글로벌대사관";
+  @override
+  String get wechat => "위쳇";
+  @override
+  String get telegram => "텔레그램";
+  @override
+  String get no_content_hint => "내용이없습니다.";
+  @override
+  String get check_poi_item_title => "지리적 위치 정보를 검사하다.";
+  @override
+  String get task_interval_below_limit => "임무수행간격이 30분미만입니다.";
+  @override
+  String get node_mortgage => "노드저당";
+  @override
+  String get illegal_mnemonic => "정상적인 기호가 아닙니다.";
+  @override
+  String get Insufficient_balance_hint => "저당에필요한잔액이부족합니다.";
+  @override
+  String get redemption_success => "환매성공";
+  @override
+  String get operating_hours => "업무시간";
+  @override
+  String get scan_exit_tips => "스캔 진행 중, 종료 확인?";
+  @override
+  String get import_account_success => "계정 가져오기 성공";
+  @override
+  String get main_my_public_key => "나의 암호화 주소(공유키)";
+  @override
+  String get fund_pwd_error_hint => "자금비밀번호오류";
+  @override
+  String get power_martgage => "계산력저당";
+  @override
+  String get hynPriceUnitSymbol => "\$";
+  @override
+  String available_balance_usdt(String amount) => "사용가능한잔액 ${amount} USDT";
+  @override
+  String current_exchange_rate(String to, String currency) => "${to} 를 ${currency}으로환산하는현재비율은";
+  @override
+  String network_request_err(String code) => "네트워크 요청 오류가 있습니다,상태 코드번호: $code";
+  @override
+  String scan_collect_signal_func(String Num) => "${Num} 개의 신호 수집";
+  @override
+  String get_verification_code_again(String countdownTime) => "${countdownTime}다시 받기";
+  @override
+  String all_powers_func(String totalPower) => "총계산력：${totalPower}";
+  @override
+  String scan_ing_func(String scanName) => "스캐닝 ${scanName}";
+  @override
+  String max_range_func(String maxMeter) => "최대범위는약：${maxMeter} 미터";
+  @override
+  String km(String km) => "${km}킬로미터";
+  @override
+  String mortgage_product_func(String name) => "저당제품：${name}";
+  @override
+  String withdrawal_with_quantity(String count) => "인출：${count}";
+  @override
+  String withdrawal_fee(String fee) => "수수료(${fee}%)";
+  @override
+  String mortgage_time(String time) => "저당시간：${time}";
+  @override
+  String total_invitation_func(String totalInvitations) => "이미 ${totalInvitations}명을 초대했습니다.";
+  @override
+  String income_func(String incomeCycle) => "${incomeCycle}일수익";
+  @override
+  String available_mortgage_numbers(String number) => "${number}저당가능수";
+  @override
+  String mortgage_id(String id) => "저당ID：${id}";
+  @override
+  String contribute_reward_func(String award) => "공헌장려${award}";
+  @override
+  String n_hour(String hour) => "${hour}시간";
+  @override
+  String poundage_with_quantity(String poundage) => "수수료：${poundage}";
+  @override
+  String n_day(String day) => "${day}일";
+  @override
+  String by_recommend(String getParentEmail) => "추천인 ${getParentEmail}";
+  @override
+  String receiver_symbol(String symbol) => "접수 ${symbol}";
+  @override
+  String n_days_product(String days) => "${days}일산출";
+  @override
+  String distance(String distance) => "${distance}미터";
+  @override
+  String grade_require_func(String require) => "등급요구 ${require}";
+  @override
+  String current_rate_func(String to, String currency, String rate) => "${to} 를 ${currency}으로환산하는현재비율은: 1${rate}";
+  @override
+  String private_share_receive_address(String shortAddress) => "접수주소:${shortAddress}";
+  @override
+  String stay_func(String snapUpStocks) => "나머지 ${snapUpStocks}";
+  @override
+  String my_symbol_address(String symbol) => "나의${symbol}접수주소:";
+  @override
+  String snap_up_product_fuc(String name) => "사이버스쿼팅제품：${name}";
+  @override
+  String n_minute(String minute) => "${minute}분";
+  @override
+  String maprich_intro_url(String rich_domain) => "${rich_domain}intro?lang=ko";
+  @override
+  String max_withdrawal_quantity(String maxWithdrawal) => "최대로${maxWithdrawal} USDT인출가능";
+  @override
+  String send_symbol(String symbol) => "발송 $symbol";
+  @override
+  String send_count_label(String symbol) => "$symbol 수량";
+  @override
+  String task_finish_func(String total) => "임무를${total}회완성하였습니다.";
 }
 
 class $en extends S {
   const $en();
+}
+
+class $zh_CN extends S {
+  const $zh_CN();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  @override
+  String get cancel => "取消";
+  @override
+  String get update_now => "现在更新";
+  @override
+  String get titan_encrypted_map_ecology => "Titan 加密地图生态";
+  @override
+  String get contract_call => "智能合约调用";
+  @override
+  String get open_location_service => "请开启定位服务";
+  @override
+  String get contact_customer_service => "联系客服";
+  @override
+  String get project_introduction => "项目介绍";
+  @override
+  String get please_input_fund_pwd_hint => "请输入资金密码";
+  @override
+  String get verify_code_error_hint => "验证码错误";
+  @override
+  String get out_wallet_transfer_hint => "我已使用外部钱包转入";
+  @override
+  String get re_enter_fund_password => "请再次输入资金密码";
+  @override
+  String get setting => "设置";
+  @override
+  String get fund_new_password => "资金新密码";
+  @override
+  String get para_error_hint => "参数错误";
+  @override
+  String get app_area_setting => "区域";
+  @override
+  String get about_us => "关于我们";
+  @override
+  String get please_input_wallet_password_hint => "请输入钱包密码";
+  @override
+  String get hynPriceUnitSymbol => "¥";
+  @override
+  String get wallet_setting => "钱包设置";
+  @override
+  String get search_empty_data => "暂无数据";
+  @override
+  String get dmap_document_title => "DMap地图应用接入文档";
+  @override
+  String get create_wallet => "创建钱包";
+  @override
+  String get password_label => "密码";
+  @override
+  String get sweep_qr_hint => "扫一扫上面的二维码图案，加我微信";
+  @override
+  String get scan_name_bluetooth => "蓝牙";
+  @override
+  String get nav_my_privacy_map => "我的隐私地图";
+  @override
+  String get click_retry_hint => "点击重试";
+  @override
+  String get route => "路线";
+  @override
+  String get data_contribute_reward => "已开放地图数据贡献";
+  @override
+  String get my_power_with_unit => "我的算力(T)";
+  @override
+  String get receiver_address_not_empty_hint => "接收地址不能为空";
+  @override
+  String get user_this_account => "使用该私密账户";
+  @override
+  String get private_and_safety => "私密和安全";
+  @override
+  String get confirm_snap_up => "确认抢注";
+  @override
+  String get hyn_withdrawal_coin_address => "HYN提币地址";
+  @override
+  String get unknown_error => "Unknown error";
+  @override
+  String get other_star_numbers => "其他星际量";
+  @override
+  String get my_position => "我的位置";
+  @override
+  String get commiting => "提交中";
+  @override
+  String get register_account => "注册账号";
+  @override
+  String get hotel => "酒店";
+  @override
+  String get snap_up_success_hint => "抢注成功";
+  @override
+  String get close => "关闭";
+  @override
+  String get amount_copy_success_hint => "金额复制成功";
+  @override
+  String get input_wallet_name_hint => "请输入钱包名称";
+  @override
+  String get get_powers => "获取算力";
+  @override
+  String get apply_location_service => "申请定位授权";
+  @override
+  String get mortgage_success_hint => "抵押成功";
+  @override
+  String get app_name => "星际掘金";
+  @override
+  String get private_sharing => "私密分享";
+  @override
+  String get forget_password => "忘记密码";
+  @override
+  String get receiver_address => "接收者地址";
+  @override
+  String get share_app => "分享app";
+  @override
+  String get information => "资讯";
+  @override
+  String get input_count_over_balance => "超过余额";
+  @override
+  String get register => "注册";
+  @override
+  String get search_history => "历史搜索";
+  @override
+  String get improvement_plan_title => "改进体验计划";
+  @override
+  String get my_total_power => "我的总算力";
+  @override
+  String get extract_mnemonic_fail => "提取助记词失败";
+  @override
+  String get fund_password_length_error_message => "请输入至少6位的资金密码";
+  @override
+  String get language => "语言";
+  @override
+  String get internet_bar => "网吧";
+  @override
+  String get mortgage_fail_hint => "抵押失败";
+  @override
+  String get later => "暂不更新";
+  @override
+  String get time_f => "时间:";
+  @override
+  String get finish => "完成";
+  @override
+  String get please_input_wallet_name => "请输入钱包名称";
+  @override
+  String get area => "区域";
+  @override
+  String get my_wallet_address => "我的钱包地址";
+  @override
+  String get hyn_price => "HYN指数";
+  @override
+  String get withdrawal_records => "提币记录";
+  @override
+  String get nav_share_app => "分享App";
+  @override
+  String get recommended_area => "推荐地区";
+  @override
+  String get background_scan => "后台扫描";
+  @override
+  String get official_announcement => "官方公告";
+  @override
+  String get article => "文章";
+  @override
+  String get my_page => "我的";
+  @override
+  String get email_format_error_hint => "邮箱格式有误，请输入正确的邮箱";
+  @override
+  String get account_is_empty => "账户为空";
+  @override
+  String get no_transfer_info_hint => "暂未发现转入信息，请稍后再试";
+  @override
+  String get please_input_invitation_code => "请输入6位邀请码";
+  @override
+  String get delete_wallet_success => "删除成功";
+  @override
+  String get email_label => "邮箱";
+  @override
+  String get backup_wallet_notice_text1 => "获得助记词等于拥有钱包资产所有权";
+  @override
+  String get official_website => "官网";
+  @override
+  String get please_input_account_password => "请输入账户密码";
+  @override
+  String get medium => "Medium";
+  @override
+  String get map3_global_nodes => "数据展示";
+  @override
+  String get paste => "粘贴";
+  @override
+  String get again_click_exit_app => "再按一下退出程序";
+  @override
+  String get hyn_market => "HYN行情";
+  @override
+  String get data_contribute => "数据贡献";
+  @override
+  String get recharge_balance => "充值余额";
+  @override
+  String get turn_on_wifi_hint => "打开WiFi扫描更精准的信号地图";
+  @override
+  String get private_wallet_tips => "账户私钥永远不会离开你的设备";
+  @override
+  String get node_introduction => "节点介绍";
+  @override
+  String get current_grade => "当前等级";
+  @override
+  String get label => "标签";
+  @override
+  String get input_resume_mnemonic => "输入用空格隔开的备份助记词";
+  @override
+  String get nav_about_us => "关于我们";
+  @override
+  String get create_wallet_tips => "创建一个私密账户";
+  @override
+  String get forum => "论坛";
+  @override
+  String get revenue_details => "收益详情";
+  @override
+  String get login_out => "登出";
+  @override
+  String get receive_success_hint => "领取成功";
+  @override
+  String get by_mortgage => "选择抵押方式";
+  @override
+  String get account_backup_notice => "现在备份你的账户";
+  @override
+  String get reinput_wallet_password_label => "确认密码";
+  @override
+  String get collect_signal_require_telephone => "采集信号数据，需要获取电话权限";
+  @override
+  String get require_permission => "申请权限";
+  @override
+  String get create_user_fail_hint => "创建用户失败";
+  @override
+  String get speed_fast => "快";
+  @override
+  String get dmap_setting => "DMap设置";
+  @override
+  String get import_wallet => "导入钱包";
+  @override
+  String get dmap_life => "生活指引";
+  @override
+  String get reset_account_password => "重置账户密码";
+  @override
+  String get start_encryption => "开始加密";
+  @override
+  String get cycling => "骑行";
+  @override
+  String get transfer_address => "转入地址";
+  @override
+  String get password_not_equal_hint => "密码不一致";
+  @override
+  String get please_input_mnemonic => "请输入助记词";
+  @override
+  String get backup_wallet_mnemonic_title => "备份助记次";
+  @override
+  String get decrypt_location_cipher_tips_context => "请粘贴位置密文，点击搜索即可解码密文。";
+  @override
+  String get navigation => "导航";
+  @override
+  String get thank_you_for_contribute_data => "感谢你贡献数据。";
+  @override
+  String get node_has_squat_hint => "节点已抢注完";
+  @override
+  String get switch_contribute_address => "切换地址";
+  @override
+  String get over_limit_hint => "超过限制";
+  @override
+  String get import_account_tips => "恭喜，您的私密钱包已经导入成功";
+  @override
+  String get improvement_plan_refuse => "不参与";
+  @override
+  String get transfer_fail => "转账失败";
+  @override
+  String get transfer_hyn_hint => "请务必转入指定的HYN金额！";
+  @override
+  String get scan_signal_item_title => "扫描附近信号数据";
+  @override
+  String get import_account_fail => "导入失败";
+  @override
+  String get foreign_video => "国外视频";
+  @override
+  String get document_optimization => "文档优化中...";
+  @override
+  String get invite_link => "邀请链接";
+  @override
+  String get refresh_keypaire_message => "刷新公钥地址后，之前的接收的位置密文将永久解密不了！确定继续刷新吗？";
+  @override
+  String get more_dmap => "更多DMap应用持续添加~";
+  @override
+  String get modify_success => "修改成功";
+  @override
+  String get key_manager_title => "我的加密地址";
+  @override
+  String get create_wallet_name_label => "钱包名称";
+  @override
+  String get share_invalid_public_key => "无效的公钥";
+  @override
+  String get account_password => "账户密码";
+  @override
+  String get account_backup_next_step_notice => "在下一步中，您将看到12个允许您恢复账户的单词";
+  @override
+  String get backup_notice_label => "备份提示";
+  @override
+  String get not_open_yet => "暂未开放";
+  @override
+  String get other_area => "其他地区";
+  @override
+  String get postscript_hint => "输入附言（50字内）";
+  @override
+  String get below_min_withdrawal => "低于最小提币额度";
+  @override
+  String get skip => "跳过";
+  @override
+  String get no_grade => "无等级";
+  @override
+  String get address_copy_success_hint => "地址复制成功";
+  @override
+  String get login => "登录";
+  @override
+  String get click_again_to_exist_app => "再按一下退出程序";
+  @override
+  String get no_level => "无等级";
+  @override
+  String get recharge => "充值";
+  @override
+  String get today_complete_hint => "今天任务已完成，感谢你贡献数据";
+  @override
+  String get share => "分享";
+  @override
+  String get new_update_available => "发现新版本";
+  @override
+  String get product => "产品：";
+  @override
+  String get data_exception_hint => "数据异常，请重试";
+  @override
+  String get get_current_position_fail_tips => "获取不到你当前位置";
+  @override
+  String get show_mnemonic_label => "显示恢复短语";
+  @override
+  String get refresh_public_key_seconds_tips => "%d秒后自动刷新";
+  @override
+  String get delete_wallet_fail => "删除失败";
+  @override
+  String get latest_news => "最新资讯";
+  @override
+  String get receiver_encrypted_address => "接收者加密地址（公钥）";
+  @override
+  String get invitation_code => "邀请码";
+  @override
+  String get please_open_bluetooth => "蓝牙信标可以有效辅助定位，请开启设备蓝牙";
+  @override
+  String get kais_talk => "凯氏物语";
+  @override
+  String get rmb => "人民币";
+  @override
+  String get input_confirm_wallet_password_hint => "请再次输入至少6位数的钱包密码";
+  @override
+  String get gas_fee => "网络费用";
+  @override
+  String get over_limit_numbers => "超过限制数量";
+  @override
+  String get copyed => "已拷贝";
+  @override
+  String get share_encrypted_location => "分享加密位置";
+  @override
+  String get discount_map => "折扣地图";
+  @override
+  String get give_away => "赠送";
+  @override
+  String get domestic_video => "国内视频";
+  @override
+  String get fundz_password => "资金安全密码";
+  @override
+  String get account_exist_hint => "账号已存在，请直接登录账号";
+  @override
+  String get all => "全部";
+  @override
+  String get over_max_withdrawal => "超出最大提币额度";
+  @override
+  String get backup_offline_save_title => "离线保管";
+  @override
+  String get scan_name_wifi => "WiFi";
+  @override
+  String get save_mnemonic_safe_notice => "永远不要与任何人共享恢复短语，安全的存储它！";
+  @override
+  String get service_hours => "服务时间";
+  @override
+  String get paking => "停车场";
+  @override
+  String get driving => "驾车";
+  @override
+  String get task => "任务";
+  @override
+  String get cafe => "咖啡馆";
+  @override
+  String get telphone => "电话";
+  @override
+  String get scan_name_start => "开始";
+  @override
+  String get max_star_numbers => "最大星际量";
+  @override
+  String get verification_code => "验证码";
+  @override
+  String get transfer_submitted => "转账已提交";
+  @override
+  String get register_success => "注册成功";
+  @override
+  String get invite_link_copy_hint => "邀请链接已复制";
+  @override
+  String get Clean => "清除痕迹";
+  @override
+  String get allow_location_service => "请你授权使用定位功能.";
+  @override
+  String get fund_password_format_error_message => "密码格式有误，请输入最少6位";
+  @override
+  String get delete => "删除";
+  @override
+  String get map3_node_introduction => "map3节点";
+  @override
+  String get continue_text => "继续";
+  @override
+  String get effective => "有效";
+  @override
+  String get accept_share_pub_key => "点对点分享";
+  @override
+  String get map_ai_verificate => "地图AI校验";
+  @override
+  String get add_poi_item_title => "添加地理位置信息";
+  @override
+  String get account_new_password => "账户新密码";
+  @override
+  String get star_number => "星际数";
+  @override
+  String get tip_snap_up_balance_hint => "提示：抢注节点只能使用充值余额进行抵押";
+  @override
+  String get please_waiting => "请稍后";
+  @override
+  String get refresh_public_key_days_tips => "%d天后自动刷新";
+  @override
+  String get department => "部门";
+  @override
+  String get private_service => "私密服务";
+  @override
+  String get map_dmap => "地图DMap";
+  @override
+  String get scan_finish => "扫描完成";
+  @override
+  String get hynPriceUnit => "CNY";
+  @override
+  String get information_video => "视频";
+  @override
+  String get cybersquatting => "抢注";
+  @override
+  String get please_input_verification_code => "请输入6位验证码";
+  @override
+  String get snap_up_fail => "抢注失败";
+  @override
+  String get insufficient_permission_hint => "权限不足";
+  @override
+  String get node_martgage => "节点抵押";
+  @override
+  String get backup_offline_save_text => "妥善保管至隔离网络的安全地方\n请勿将助记词在联网环境下分享和存储，比如邮件、相册、社交应用等";
+  @override
+  String get update_user_info_fail_hint => "更新用户信息失败";
+  @override
+  String get attraction => "景点";
+  @override
+  String get unauthorized => "未授权";
+  @override
+  String get data_contrebution_with_hyn_wallet_tips => "数据贡献需要有HYN地址，请先创建 或导入HYN钱包。";
+  @override
+  String get register_email => "注册邮箱";
+  @override
+  String get install_now => "马上安装";
+  @override
+  String get decrypt_location_cipher_tips => "怎么解码位置密文？";
+  @override
+  String get already_latest_version_hint => "已经是最新版本";
+  @override
+  String get wx_id => "微信ID：titan654321";
+  @override
+  String get hyn_wallet_open_hint => "HYN钱包即将开放";
+  @override
+  String get redemption_fail => "赎回出错";
+  @override
+  String get require_location => "申请定位授权";
+  @override
+  String get confirm_mortgage => "确认抵押";
+  @override
+  String get bill_flow => "账单流水";
+  @override
+  String get scan_upload_error => "上传失败";
+  @override
+  String get foods => "美食";
+  @override
+  String get police_station_text => "有困难，找警察";
+  @override
+  String get use_guide => "使用教程";
+  @override
+  String get no_invite_success_hint => "你还没成功邀请人~";
+  @override
+  String get wallet_create_success => "账户创建成功";
+  @override
+  String get hashrate => "算力";
+  @override
+  String get no_detail_address => "暂无详细地址";
+  @override
+  String get bank => "银行";
+  @override
+  String get my_node_mortgage => "我的节点抵押";
+  @override
+  String get wallet_password_error => "密码错误";
+  @override
+  String get lossz_wallet_mnemonic_notice => "我明白，如果我丢失了恢复单词，我将无法访问我的钱包";
+  @override
+  String get confirm_mnemonic_incorrect => "您的恢复短语不正确，请重新尝试";
+  @override
+  String get share_fail => "分享发生错误";
+  @override
+  String get safety_verification => "安全验证";
+  @override
+  String get node_mortgage_in_out_hint => "节点抵押，随进随出，不限时间。";
+  @override
+  String get my_location => "我的位置";
+  @override
+  String get improvement_plan_agree => "参与计划";
+  @override
+  String get receiver => "接收";
+  @override
+  String get my_account_with_unit => "我的账户(USDT)";
+  @override
+  String get mall => "商场";
+  @override
+  String get modify_account_password => "修改账户密码";
+  @override
+  String get ciphertext_exception_hint => "密文无效或已过期";
+  @override
+  String get received => "已收到";
+  @override
+  String get recharge_success_hint => "充值成功";
+  @override
+  String get copy_wx_id_success_hint => "复制微信号成功";
+  @override
+  String get toilet => "厕所";
+  @override
+  String get no_fill_in => "暂无填写";
+  @override
+  String get grade => "等级";
+  @override
+  String get processing => "处理中";
+  @override
+  String get input_wallet_password_length_hint => "请输入至少6位的密码";
+  @override
+  String get tip_node_mortgages_balances_hint => "提示：只能使用收益余额进行节点抵押";
+  @override
+  String get dapp_setting => "DApp设置";
+  @override
+  String get send_verification_code => "发送验证码";
+  @override
+  String get view_all => "查看全部";
+  @override
+  String get nightlife_guide => "夜生活指南";
+  @override
+  String get open_camera => "请开启相机权限";
+  @override
+  String get actual_amount_received => "(以到账交易所实时价为准)";
+  @override
+  String get node_mortgage_with_unit => "节点抵押(USDT)";
+  @override
+  String get audio => "音频";
+  @override
+  String get action_success_hint => "操作成功";
+  @override
+  String get check_in_completed => "完成";
+  @override
+  String get refresh_public_key_minutes_tips => "%d分后自动刷新";
+  @override
+  String get global_map_server_nodes => "实时查看全球数据更新情况";
+  @override
+  String get input_password_again_hint => "请再次输入密码";
+  @override
+  String get eth_balance_not_enough_for_gas_fee => "ETH余额不足支付网络费用";
+  @override
+  String get invitate_qr => "邀请二维码";
+  @override
+  String get direct_star_numbers => "直连星际量";
+  @override
+  String get services => "服务";
+  @override
+  String get withdrawal => "提币";
+  @override
+  String get confirm => "确定";
+  @override
+  String get please_input_email_hint => "请输入邮箱";
+  @override
+  String get app_version => "版本";
+  @override
+  String get pay_fail_hint => "支付失败";
+  @override
+  String get over_limit_amount_hint => "已到达上限";
+  @override
+  String get open_bluetooth => "开启蓝牙";
+  @override
+  String get scan_name_cellular => "基站";
+  @override
+  String get withdrawal_audit_message => "将换算成相应的HYN到你的提币地址上。为保障资金安全，我们会对提币进行人工审核。提币处理时间：早10:00点-晚21:00点当天到账，非工作时间收到的订单将在第二天到账。";
+  @override
+  String get search_title => "搜索 / 解码";
+  @override
+  String get invite_share => "邀请分享";
+  @override
+  String get confirm_mnemonic => "输入恢复短语";
+  @override
+  String get amount_received => "HYN到账数量";
+  @override
+  String get no_data => "暂无数据";
+  @override
+  String get account_error => "账户错误";
+  @override
+  String get generating_key => "正在生成加密地址…";
+  @override
+  String get password_length_error_message => "请输入至少6位的密码";
+  @override
+  String get scan_wifi_map_style_url => "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
+  @override
+  String get no_wallet_hint => "你还没有钱包.";
+  @override
+  String get input_search_keyworod_or_cipher => "输入搜索词 / 密文";
+  @override
+  String get fail_get_user_recharge_address_hint => "获取用户充值地址失败";
+  @override
+  String get service_area => "区域";
+  @override
+  String get next => "继续";
+  @override
+  String get redemption_mortgage => "赎回抵押";
+  @override
+  String get safety_verify => "安全验证";
+  @override
+  String get import => "导 入";
+  @override
+  String get submit => "提交";
+  @override
+  String get dmap_tools => "工具类";
+  @override
+  String get personal_information => "个人信息";
+  @override
+  String get without_hyn_wallet => "你还没有钱包.";
+  @override
+  String get wallet_create_success_tips => "恭喜，你的私密账户已经创建成功";
+  @override
+  String get video => "视频";
+  @override
+  String get modify_fund_password => "修改资金密码";
+  @override
+  String get private_sharing_text => "分享加密位置，绝不泄露位置信息";
+  @override
+  String get wallet_setting_backup_notice => "如果你无法访问这个设备，你的资金将无法找回，除非你备份了！";
+  @override
+  String get input_wallet_name_length_hint => "请输入6位以内的名称";
+  @override
+  String get wallet_manage => "钱包管理";
+  @override
+  String get load_fail_click_hint => "加载失败，点击重试";
+  @override
+  String get service_description => "描述";
+  @override
+  String get introduce => "介绍";
+  @override
+  String get search_or_decode => "搜索 / 解码位置密文";
+  @override
+  String get create_wallet_password_label => "钱包密码";
+  @override
+  String get please_input_hyn_withdrawal_address => "请输入HYN提币地址";
+  @override
+  String get mainland_china => "中国大陆";
+  @override
+  String get scan_signal_upload_protocol => "信号上传协议";
+  @override
+  String get get_power => "获取算力";
+  @override
+  String get add_share_options => "分享选项";
+  @override
+  String get downloading_update_file => "正在下载更新文件";
+  @override
+  String get time => "营业时间";
+  @override
+  String get invite_join => "邀请你加入";
+  @override
+  String get pay_success_hint => "支付成功";
+  @override
+  String get the_horizon_hint => "—— 这是地平线了 ——";
+  @override
+  String get balance_lack => "余额不足";
+  @override
+  String get scan_confirm_upload => "上传信号数据";
+  @override
+  String get tips => "提示";
+  @override
+  String get coming_soon => "即将开放";
+  @override
+  String get wechat_official_account => "服务号";
+  @override
+  String get fund_password_not_equal_confirm_fund_password => "资金密码与确认资金密码不一致";
+  @override
+  String get enter => "进入";
+  @override
+  String get please_input_password_hint => "请输入密码";
+  @override
+  String get embassy_guide => "大使馆指南";
+  @override
+  String get wallet_name => "钱包名称";
+  @override
+  String get please_open_wifi => "WIFI信号可以辅助三角定位，请开启设备WIFI";
+  @override
+  String get please_mortgage => "请抵押";
+  @override
+  String get import_account => "导入账户";
+  @override
+  String get income_amount => "收益余额";
+  @override
+  String get backup_option => "备份选项";
+  @override
+  String get Hyperion => "海伯利安";
+  @override
+  String get Next => "下一页";
+  @override
+  String get confirm_new_fund_password => "确认资金新密码";
+  @override
+  String get installation_update_package_failed => "安装更新包失败";
+  @override
+  String get save_mnemonic_notice => "按正确的顺序记下或复制这些单词，并将他们保存在安全的地方。";
+  @override
+  String get require_location_message => "请你授权使用定位功能.";
+  @override
+  String get postscript => "附言";
+  @override
+  String get network_exception_hint => "网络异常~";
+  @override
+  String get logining => "登录中";
+  @override
+  String get clean_search_history => "清除记录";
+  @override
+  String get scan_upload_signal_success_hint => "信号数据上传成功";
+  @override
+  String get invite_code_error_hint => "邀请码错误";
+  @override
+  String get task_record => "任务记录";
+  @override
+  String get supermarket => "超市";
+  @override
+  String get information_guide => "教程";
+  @override
+  String get mortgage => "抵押";
+  @override
+  String get speed_slow => "慢";
+  @override
+  String get by_hyn_transfer => "使用HYN钱包转入";
+  @override
+  String get scan_hyn_is_empty => "HYN钱包为空";
+  @override
+  String get copy => "复制";
+  @override
+  String get confirm_password_label => "确认新密码";
+  @override
+  String get online_exchange => "上线交易所";
+  @override
+  String get click_charge => "点击充值";
+  @override
+  String get withdrawal_apply_success => "提币申请成功";
+  @override
+  String get wallet => "钱包";
+  @override
+  String get less_than_1_min => "小于1分钟";
+  @override
+  String get content_conflict_hint => "内容冲突";
+  @override
+  String get address_copied => "地址已复制";
+  @override
+  String get improvement_plan_message => "为了让您在使用Titan过程中有更好的用户体验，邀请您参加用户体验改进计划来帮助提升产品品质。查看详细\n        <b>\n            <a href=\"https://www.hyn.space/titan/privacy_policy/\">计划说明</a>\n        </b>";
+  @override
+  String get backup_finish => "备份完成";
+  @override
+  String get balance_with_unit => "账户余额(USDT)";
+  @override
+  String get no_recommended_route => "暂无推荐路线";
+  @override
+  String get check_update => "检查更新";
+  @override
+  String get share_qrcode => "分享公钥二维码";
+  @override
+  String get withdrawal_fail => "提币出错";
+  @override
+  String get Tips => "提示";
+  @override
+  String get need_transfer => "需转入";
+  @override
+  String get open_location_service_message => "定位服务已关闭，请开启";
+  @override
+  String get please_input_withdrawal_quantity => "请输入提币数量";
+  @override
+  String get by_hyn => "使用HYN";
+  @override
+  String get confirm_mnemonic_tips => "点击单词，把他们按正确的顺序放在一起";
+  @override
+  String get twitterhyperion => "推特-海伯利安";
+  @override
+  String get wallet_password_label => "钱包密码";
+  @override
+  String get public_key_copied => "公钥地址已复制";
+  @override
+  String get not_valid_public_key => "不是合法的公钥";
+  @override
+  String get encrypt_error => "加密失败";
+  @override
+  String get twittertitan => "推特-泰坦";
+  @override
+  String get task_finish_day_hint => "当天任务已完成";
+  @override
+  String get username_pwd_not_match_hint => "用户名和密码不匹配";
+  @override
+  String get hot_area => "热门地区";
+  @override
+  String get create => "创建";
+  @override
+  String get wallet_name_label => "钱包名称";
+  @override
+  String get fund_password => "资金密码";
+  @override
+  String get snap_up => "抢注";
+  @override
+  String get scan_name_gps => "GPS";
+  @override
+  String get net_error_hint => "网络错误";
+  @override
+  String get wechat_cs => "微信客服";
+  @override
+  String get speed_normal => "平均值";
+  @override
+  String get private_share => "私密分享";
+  @override
+  String get manually_refresh => "手动刷新";
+  @override
+  String get discover => "发现";
+  @override
+  String get your_mnemonic => "您的恢复短语";
+  @override
+  String get password_incorrect => "密码错误";
+  @override
+  String get share_location => "位置分享";
+  @override
+  String get public_key_scan_fail_rescan => "公钥有误，请重新扫描";
+  @override
+  String get please_input_hyn_address => "请输入HYN地址";
+  @override
+  String get transfer_exception_hint => "转入异常";
+  @override
+  String get reset_fund_password => "重置资金密码";
+  @override
+  String get finished => "已结束";
+  @override
+  String get sent => "已发送";
+  @override
+  String get no_eth_address => "非以太坊地址";
+  @override
+  String get psw_reset_error_hint => "重置密码错误";
+  @override
+  String get scan_name_title => "信号扫描";
+  @override
+  String get hyperion_project_intro_url => "https://shimo.im/docs/GDp72cj3ATwEB7ke/read";
+  @override
+  String get free_receive => "免费领取";
+  @override
+  String get please_selecte_app_area => "请设置地图使用区域";
+  @override
+  String get send => "发送";
+  @override
+  String get earnings_balance => "收益余额";
+  @override
+  String get telegram_operator => "Telegram Operator";
+  @override
+  String get global_nodes => "数据展示";
+  @override
+  String get open_wifi => "开启WIFI";
+  @override
+  String get remark => "备注";
+  @override
+  String get city_recommendation => "城市推荐";
+  @override
+  String get refresh_public_key_hours_tips => "%d小时%d分后自动刷新";
+  @override
+  String get home_page => "首页";
+  @override
+  String get transfer_warning_hint => "勿往上述地址转入非HYN资产，否则资产将不可找回。您转入后，需要整个网络节点的确认，大约需要10-30分钟。";
+  @override
+  String get password_format_error_message => "密码格式有误，请输入最少6位";
+  @override
+  String get walking => "步行";
+  @override
+  String get input_corrent_count_hint => "请输入正确的数量";
+  @override
+  String get becharge_amount => "充值余额";
+  @override
+  String get stay_tuned => "敬请期待";
+  @override
+  String get hospital => "医院";
+  @override
+  String get unknown_error_hint => "未知错误";
+  @override
+  String get search_exception => "搜索异常";
+  @override
+  String get gas_station => "加油站";
+  @override
+  String get amount => "金额：";
+  @override
+  String get police_security_station => "警察安全站";
+  @override
+  String get quantity => "数量";
+  @override
+  String get backup_wallet_mnemonic_text => "使用纸和笔正确抄写助记词\n如果你的手机丢失、被盗。损坏，助记词将可以恢复你的资产";
+  @override
+  String get scan_thanks_contribution_signal_hint => "感谢您做的数据贡献！";
+  @override
+  String get global_embassies => "全球大使馆";
+  @override
+  String get wechat => "公众号";
+  @override
+  String get telegram => "电报群";
+  @override
+  String get no_content_hint => "无内容";
+  @override
+  String get check_poi_item_title => "校验地理位置信息";
+  @override
+  String get task_interval_below_limit => "做任务间隔低于30分钟";
+  @override
+  String get node_mortgage => "节点抵押";
+  @override
+  String get illegal_mnemonic => "不是合法的助记词";
+  @override
+  String get Insufficient_balance_hint => "可用于抵押的余额不足";
+  @override
+  String get redemption_success => "赎回成功";
+  @override
+  String get operating_hours => "工作时间";
+  @override
+  String get scan_exit_tips => "正在扫描中，确认退出吗?";
+  @override
+  String get import_account_success => "账户导入成功";
+  @override
+  String get main_my_public_key => "我的加密地址(公钥)";
+  @override
+  String get fund_pwd_error_hint => "资金密码错误";
+  @override
+  String get power_martgage => "算力抵押";
+  @override
+  String available_balance_usdt(String amount) => "可用余额 ${amount} USDT";
+  @override
+  String current_exchange_rate(String to, String currency) => "当前 ${to} 兑换 ${currency} 的比例为";
+  @override
+  String network_request_err(String code) => "网络请求错误,状态码: $code";
+  @override
+  String scan_collect_signal_func(String num) => "已收集到${num}个信号";
+  @override
+  String get_verification_code_again(String countdownTime) => "重新获取 ${countdownTime}";
+  @override
+  String all_powers_func(String totalPower) => "总算力：${totalPower}";
+  @override
+  String scan_ing_func(String scanName) => "正在扫描${scanName}信号";
+  @override
+  String max_range_func(String maxMeter) => "最大范围约：${maxMeter} 米";
+  @override
+  String km(String km) => "${km}公里";
+  @override
+  String mortgage_product_func(String name) => "抵押产品：${name}";
+  @override
+  String withdrawal_with_quantity(String count) => "提币：${count}";
+  @override
+  String withdrawal_fee(String fee) => "手续费(${fee}%)";
+  @override
+  String mortgage_time(String time) => "抵押时间：${time}";
+  @override
+  String total_invitation_func(String totalInvitations) => "已邀请${totalInvitations}人";
+  @override
+  String income_func(String incomeCycle) => "${incomeCycle}天收益";
+  @override
+  String available_mortgage_numbers(String number) => "可抵${number}份";
+  @override
+  String mortgage_id(String id) => "抵押ID：${id}";
+  @override
+  String contribute_reward_func(String award) => "贡献奖励： ${award}";
+  @override
+  String n_hour(String hour) => "${hour}小时";
+  @override
+  String poundage_with_quantity(String poundage) => "手续费：${poundage}";
+  @override
+  String n_day(String day) => "${day}天";
+  @override
+  String by_recommend(String getParentEmail) => "推荐人 ${getParentEmail}";
+  @override
+  String receiver_symbol(String symbol) => "接收 ${symbol}";
+  @override
+  String n_days_product(String days) => "${days}天产出";
+  @override
+  String distance(String distance) => "${distance}米";
+  @override
+  String grade_require_func(String require) => "等级要求： ${require}";
+  @override
+  String current_rate_func(String currency, String quotes, String rate) => "当前 ${currency} 兑换 ${quotes} 的汇率为: 1${rate}";
+  @override
+  String private_share_receive_address(String shortAddress) => "接收地址:${shortAddress}";
+  @override
+  String stay_func(String snapUpStocks) => "剩余 ${snapUpStocks}";
+  @override
+  String my_symbol_address(String symbol) => "我的${symbol}接收地址:";
+  @override
+  String snap_up_product_fuc(String name) => "抢注产品：${name}";
+  @override
+  String n_minute(String minute) => "${minute}分钟";
+  @override
+  String maprich_intro_url(String rich_domain) => "${rich_domain}intro?lang=zh_CN";
+  @override
+  String max_withdrawal_quantity(String maxWithdrawal) => "最多可提 ${maxWithdrawal} USDT";
+  @override
+  String send_symbol(String symbol) => "发送 $symbol";
+  @override
+  String send_count_label(String symbol) => "$symbol 数量";
+  @override
+  String task_finish_func(String total) => "已做任务${total}次";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
