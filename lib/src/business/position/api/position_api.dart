@@ -47,7 +47,7 @@ class PositionApi {
 
       FormData formData = FormData.fromMap(params);
 
-      print('[PositionApi] poiCollector, 2, params:$params, \naddress:$address');
+      print('[PositionApi] poiCollector, 2, params:$params, \naddress:$address, \nformDataLength:${formData.length}');
       var res = await HttpCore.instance.post("map-collector/poi/collector",
           data: formData,
           options: RequestOptions(headers: {
@@ -119,7 +119,6 @@ class PositionApi {
         }, contentType: "application/json"));
 
     return confirmPoiItem;
-
   }
 
   Future<List<ConfirmPoiItem>> mapGetConfirmData(String pid,{String lang = "zh-Hans"}) async {
@@ -130,9 +129,7 @@ class PositionApi {
         options: RequestOptions(headers: {
           "Lang": lang,
         }, contentType: "application/json"));
-
     return data;
-
   }
 
   Future<bool> postConfirmPoiData(int answer, ConfirmPoiItem confirmPoiItem,{String lang = "zh-Hans"}) async {
