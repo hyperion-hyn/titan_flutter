@@ -509,9 +509,9 @@
   "scan_confirm_upload" : "신호 데이터 업로드",
   "scan_collect_signal_func": "${Num} 개의 신호 수집",
   "give_away": "줘",
-  "recharge_has_submitted": "充值已提交",
-  "please_pay_attention_arrival_of_account": "请留意账户的到账情况",
-  "please_enter_recharge_amount": "请输入充值金额",
-  "please_enter_correct_amount": "请输入正确的金额",
-  "charge_usdt_to_balance": "充等值USDT到余额"
+  "recharge_has_submitted": "입금이 제출되었습니다",
+  "please_pay_attention_arrival_of_account": "계정 도착에주의하십시오",
+  "please_enter_recharge_amount": "충전량을 입력하십시오",
+  "please_enter_correct_amount": "정확한 금액을 입력하십시오",
+  "charge_usdt_to_balance": "잔액에 USDT 청구"
 }

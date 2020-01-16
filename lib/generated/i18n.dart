@@ -807,7 +807,7 @@ class $ko extends S {
   @override
   String get transfer_fail => "계좌 이체실패";
   @override
-  String get please_enter_correct_amount => "请输入正确的金额";
+  String get please_enter_correct_amount => "정확한 금액을 입력하십시오";
   @override
   String get transfer_hyn_hint => "반드시지정된HYN금액으로전입하여주십시오!";
   @override
@@ -881,7 +881,7 @@ class $ko extends S {
   @override
   String get latest_news => "최신 뉴스";
   @override
-  String get recharge_has_submitted => "充值已提交";
+  String get recharge_has_submitted => "입금이 제출되었습니다";
   @override
   String get receiver_encrypted_address => "공유키";
   @override
@@ -999,7 +999,7 @@ class $ko extends S {
   @override
   String get node_martgage => "노드저당";
   @override
-  String get please_pay_attention_arrival_of_account => "请留意账户的到账情况";
+  String get please_pay_attention_arrival_of_account => "계정 도착에주의하십시오";
   @override
   String get backup_offline_save_text => "네트워크와 분리된 안전한 곳에 잘 보관하십시오.\n이메일, 포토 앨범, 소셜 어플리케이션 등 네트워크 환경에서 도움말을 공유하거나 저장하지 마십시오.";
   @override
@@ -1029,7 +1029,7 @@ class $ko extends S {
   @override
   String get confirm_mortgage => "저당 확인";
   @override
-  String get please_enter_recharge_amount => "请输入充值金额";
+  String get please_enter_recharge_amount => "충전량을 입력하십시오";
   @override
   String get bill_flow => "판매액명세서";
   @override
@@ -1063,7 +1063,7 @@ class $ko extends S {
   @override
   String get safety_verification => "보안 인증";
   @override
-  String get charge_usdt_to_balance => "充等值USDT到余额";
+  String get charge_usdt_to_balance => "잔액에 USDT 청구";
   @override
   String get node_mortgage_in_out_hint => "노드 저당은 반입이 병행되며 시간제한이 없습니다.";
   @override
