@@ -87,6 +87,7 @@ class S implements WidgetsLocalizations {
   String get cancel => "Cancel";
   String get category => "Category";
   String get category_cannot_be_empty_hint => "Select an address category";
+  String get charge_usdt_to_balance => "Charge the equivalent USDT to the balance";
   String get check_in_completed => "Done";
   String get check_poi_item_title => "Verify POI information";
   String get check_update => "Check for updates";
@@ -339,9 +340,11 @@ class S implements WidgetsLocalizations {
   String get please_add_business_hours_hint => "Add opening hours";
   String get please_add_streets_hint => "Add street";
   String get please_enter_category_keywords_hint => "enter category keywords";
+  String get please_enter_correct_amount => "Please enter the correct amount";
   String get please_enter_door_number_hint => "Enter door number";
   String get please_enter_name_of_location_hint => "Enter a location name";
   String get please_enter_postal_code => "Enter postcode";
+  String get please_enter_recharge_amount => "Please enter the recharge amount";
   String get please_input_account_password => "Input account password";
   String get please_input_custom_time_hint => "Please enter a time";
   String get please_input_email_hint => "please input your email";
@@ -358,6 +361,7 @@ class S implements WidgetsLocalizations {
   String get please_mortgage => "Please stake";
   String get please_open_bluetooth => "Bluetooth beacons can effectively assist positioning, please turn on the device Bluetooth";
   String get please_open_wifi => "WIFI signal can assist triangle positioning, please turn on Wi-Fi";
+  String get please_pay_attention_arrival_of_account => "Please pay attention to the arrival of the account";
   String get please_select_app_area => "Please set the region of the map";
   String get please_select_business_hours_hint => "Select business hours";
   String get please_select_category_hint => "Select a category";
@@ -397,6 +401,7 @@ class S implements WidgetsLocalizations {
   String get receiver_encrypted_address => "receiver encrypted address(public key)";
   String get recharge => "Top-up";
   String get recharge_balance => "Top-up\nBalance";
+  String get recharge_has_submitted => "Recharge has been submitted";
   String get recharge_success_hint => "Top-up successful";
   String get recommended_area => "Recommended Areas";
   String get redemption_fail => "Redemption Error";
@@ -882,6 +887,8 @@ class $ko extends S {
   @override
   String get transfer_fail => "계좌 이체실패";
   @override
+  String get please_enter_correct_amount => "정확한 금액을 입력하십시오";
+  @override
   String get transfer_hyn_hint => "반드시지정된HYN금액으로전입하여주십시오!";
   @override
   String get scan_signal_item_title => "인근 신호 데이터 검색";
@@ -973,6 +980,8 @@ class $ko extends S {
   String get postal_code => "우편번호";
   @override
   String get latest_news => "최신 뉴스";
+  @override
+  String get recharge_has_submitted => "입금이 제출되었습니다";
   @override
   String get receiver_encrypted_address => "공유키";
   @override
@@ -1092,6 +1101,8 @@ class $ko extends S {
   @override
   String get node_martgage => "노드저당";
   @override
+  String get please_pay_attention_arrival_of_account => "계정 도착에주의하십시오";
+  @override
   String get poi_upload_protocol_not_accepted_hint => "장소 업로드 프로토콜 접수";
   @override
   String get click_auto_get_hint => "클릭하여 자동 취득";
@@ -1121,6 +1132,8 @@ class $ko extends S {
   String get require_location => "위치 라이센스 신청";
   @override
   String get confirm_mortgage => "저당 확인";
+  @override
+  String get please_enter_recharge_amount => "충전량을 입력하십시오";
   @override
   String get bill_flow => "판매액명세서";
   @override
@@ -1155,6 +1168,8 @@ class $ko extends S {
   String get share_fail => "공유 오류가 발생했습니다.";
   @override
   String get safety_verification => "보안 인증";
+  @override
+  String get charge_usdt_to_balance => "잔액에 USDT 청구";
   @override
   String get details_of_street => "도리 세부내역";
   @override
@@ -2024,6 +2039,8 @@ class $zh_CN extends S {
   @override
   String get transfer_fail => "转账失败";
   @override
+  String get please_enter_correct_amount => "请输入正确的金额";
+  @override
   String get transfer_hyn_hint => "请务必转入指定的HYN金额！";
   @override
   String get scan_signal_item_title => "扫描附近信号";
@@ -2115,6 +2132,8 @@ class $zh_CN extends S {
   String get postal_code => "邮编";
   @override
   String get latest_news => "最新资讯";
+  @override
+  String get recharge_has_submitted => "充值已提交";
   @override
   String get receiver_encrypted_address => "接收者加密地址（公钥）";
   @override
@@ -2234,6 +2253,8 @@ class $zh_CN extends S {
   @override
   String get node_martgage => "节点抵押";
   @override
+  String get please_pay_attention_arrival_of_account => "请留意账户的到账情况";
+  @override
   String get poi_upload_protocol_not_accepted_hint => "请接受地点上传协议";
   @override
   String get click_auto_get_hint => "点击自动获取";
@@ -2263,6 +2284,8 @@ class $zh_CN extends S {
   String get require_location => "申请定位授权";
   @override
   String get confirm_mortgage => "确认抵押";
+  @override
+  String get please_enter_recharge_amount => "请输入充值金额";
   @override
   String get bill_flow => "账单流水";
   @override
@@ -2297,6 +2320,8 @@ class $zh_CN extends S {
   String get share_fail => "分享发生错误";
   @override
   String get safety_verification => "安全验证";
+  @override
+  String get charge_usdt_to_balance => "充等值USDT到余额";
   @override
   String get details_of_street => "街道详情";
   @override

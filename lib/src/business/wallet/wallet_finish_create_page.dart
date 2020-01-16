@@ -52,8 +52,8 @@ class _FinishCreateState extends State<FinishCreatePage> {
                   padding: const EdgeInsets.symmetric(vertical: 32),
                   child: Image.asset(
                     "res/drawable/check_outline.png",
-                    width: 124,
                     height: 76,
+                    width: 124,
                   ),
                 ),
                 Padding(

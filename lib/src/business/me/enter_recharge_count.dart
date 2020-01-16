@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/util/validator_util.dart';
 
@@ -34,7 +35,7 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      "充值",
+                      S.of(context).recharge,
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
@@ -52,14 +53,14 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Text(
-                  "充等值USDT到余额",
+                  S.of(context).charge_usdt_to_balance,
                   style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.bold),
                 ),
               ),
               TextFormField(
                 validator: (value) {
                   if (!ValidatorUtil.validateMoney(value)) {
-                    return "请输入正确的金额";
+                    return S.of(context).please_enter_correct_amount;
                   } else {
                     return null;
                   }
@@ -67,7 +68,7 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
                 controller: _rechargeCountController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: "请输入充值金额",
+                  hintText: S.of(context).please_enter_recharge_amount,
                 ),
               ),
               Row(
@@ -87,7 +88,7 @@ class _EnterRechargeCountState extends State<EnterRechargeCount> {
                           color: Theme.of(context).primaryColor,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           child: Text(
-                            "确认",
+                            S.of(context).confirm,
                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                         ),
