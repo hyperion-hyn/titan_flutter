@@ -508,5 +508,10 @@
   "scan_thanks_contribution_signal_hint": "귀하의 데이터 기여에 감사드립니다！",
   "scan_confirm_upload" : "신호 데이터 업로드",
   "scan_collect_signal_func": "${Num} 개의 신호 수집",
-  "give_away": "줘"
+  "give_away": "줘",
+  "recharge_has_submitted": "充值已提交",
+  "please_pay_attention_arrival_of_account": "请留意账户的到账情况",
+  "please_enter_recharge_amount": "请输入充值金额",
+  "please_enter_correct_amount": "请输入正确的金额",
+  "charge_usdt_to_balance": "充等值USDT到余额"
 }

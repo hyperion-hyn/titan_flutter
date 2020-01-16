@@ -508,5 +508,10 @@
   "apply_location_service": "Application for location authorization",
   "allow_location_service": "Please authorize the location function.",
   "again_click_exit_app": "Click again to exit the program",
-  "give_away": "Give away"
+  "give_away": "Give away",
+  "recharge_has_submitted": "Recharge has been submitted",
+  "please_pay_attention_arrival_of_account": "Please pay attention to the arrival of the account",
+  "please_enter_recharge_amount": "Please enter the recharge amount",
+  "please_enter_correct_amount": "Please enter the correct amount",
+  "charge_usdt_to_balance": "Charge the equivalent USDT to the balance"
 }

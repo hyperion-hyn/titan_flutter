@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -36,7 +37,7 @@ class _RechargeByTitanFinishState extends State<RechargeByTitanFinishPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text(
-                    "充值已提交",
+                    S.of(context).recharge_has_submitted,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
@@ -44,7 +45,7 @@ class _RechargeByTitanFinishState extends State<RechargeByTitanFinishPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "请留意账户的到账情况",
+                    S.of(context).please_pay_attention_arrival_of_account,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Color(0xFF9B9B9B)),
                   ),
@@ -70,7 +71,7 @@ class _RechargeByTitanFinishState extends State<RechargeByTitanFinishPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "确定",
+                            S.of(context).confirm,
                             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],
