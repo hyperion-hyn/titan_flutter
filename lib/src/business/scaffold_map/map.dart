@@ -141,6 +141,8 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     _saveLastPositionSubject.debounceTime(Duration(milliseconds: 2000)).listen((position) {
       var saveStr = '${position.latitude},${position.longitude}';
       sprfs.setString(PrefsKey.lastPosition, saveStr);
+
+      eventBus.fire(OnMapMovedEvent(latLng: position));
     });
 
     _listenEventBus();
@@ -414,7 +416,6 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       var pid = firstFeature["properties"]["pid"];
       if (pid != null) {
         var l = position_model.Location.fromJson(firstFeature['geometry']);
-        print('xxx33 $l $firstFeature');
         ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid, l);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
       } else {

@@ -55,7 +55,6 @@ class _GuildState extends State<GuidePage> {
 
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
-      print("event:$event");
       if (event is ReloginBusEvent) {
         Navigator.popUntil(context, (r) => r.isFirst);
         await _userService.signOut();

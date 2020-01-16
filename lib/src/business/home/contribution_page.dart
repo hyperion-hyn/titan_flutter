@@ -20,13 +20,12 @@ import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/scan_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import '../../global.dart';
 import '../webview/webview.dart';
 import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
 import 'contribution_finish_page.dart';
-
-const _default_map_location = LatLng(23.106541, 113.324827);
 
 class ContributionPage extends StatefulWidget {
   final LatLng initLocation;
@@ -169,7 +168,6 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   void initScanner() async {
-//    userPosition = widget.initLocation ?? _default_map_location;
     await sensorPlugin.init();
   }
 
@@ -361,10 +359,11 @@ class _ContributionState extends State<ContributionPage> {
   Future<void> _onPressed() async {
     var isFinish = await uploadCollectData();
     //print('[Request] --> isFinish: ${isFinish}');
-    _finishCheckIn();
     if (isFinish) {
-      createWalletPopUtilName = '/data_contribution_page';
-      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+//      createWalletPopUtilName = '/data_contribution_page';
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+
+      _finishCheckIn();
     } else {
       Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
       setState(() {
@@ -376,13 +375,10 @@ class _ContributionState extends State<ContributionPage> {
   Future _finishCheckIn() async {
     try {
       await _userService.checkIn();
-      setState(() {});
-      Fluttertoast.showToast(msg: S.of(context).thank_you_for_contribute_data);
+      UtilUi.toast(S.of(context).thank_you_for_contribute_data);
     } catch (e) {
-      print('[me_page] --> e:$e');
-
-      ExceptionProcess.process(e);
-      throw e;
+      print('$runtimeType --> e:$e');
+      ExceptionProcess.process(e, isThrow: false);
     }
   }
 

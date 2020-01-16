@@ -49,7 +49,7 @@ dependencies:
   #https://pub.dev/packages/qr_flutter#-installing-tab-
   qr_flutter: ^2.0.0+51
   #https://pub.dev/packages/sqflite#-installing-tab-
-  sqflite: ^1.1.5
+  sqflite: ^1.2.0
   #https://pub.dev/packages/shared_preferences#-installing-tab-
   shared_preferences: ^0.5.3+1
   #https://pub.dev/packages/flutter_bloc

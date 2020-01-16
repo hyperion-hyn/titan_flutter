@@ -24,7 +24,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
     json['parent_user'] == null
         ? null
         : ParentUser.fromJson(json['parent_user'] as Map<String, dynamic>),
-      json["directly_power"] as int,
+    json['directly_power'] as int,
   );
 }
 

@@ -33,8 +33,6 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 
   @override
   Stream<ScaffoldMapState> mapEventToState(ScaffoldMapEvent event) async* {
-    print("currentEvent:$event");
-
     if (event is InitMapEvent) {
       ScaffoldMapStore.shared.clearAll();
       yield InitialScaffoldMapState();

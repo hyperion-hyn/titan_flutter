@@ -9,6 +9,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/contribution/vo/check_in_model.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/position/confirm_position_page.dart';
 import 'package:titan/src/business/position/select_position_page.dart';
@@ -36,6 +37,8 @@ class DataContributionPage extends StatefulWidget {
 
 class _DataContributionState extends State<DataContributionPage> with RouteAware {
   WalletBloc _walletBloc = WalletBloc();
+
+  CheckInModel checkInModel;// = CheckInModel(addPoiTimes: 1, scanTimes: 1, verifyPoiTimes: 2);
 
   StreamSubscription _eventbusSubcription;
   WalletService _walletService = WalletService();
@@ -69,6 +72,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     } else {
       _walletBloc.add(ScanWalletEvent());
     }
+
+    print('xxx did popNext');
   }
 
   @override
@@ -80,6 +85,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
 
   @override
   void initState() {
+    super.initState();
     _walletBloc.add(ScanWalletEvent());
 
     _eventbusSubcription = eventBus.on().listen((event) {
@@ -87,7 +93,15 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         _walletBloc.add(ScanWalletEvent());
       }
     });
-    super.initState();
+
+    //load check in history
+    CheckInModel.loadFromSharePrefs().then((model) {
+      if(model != null) {
+        setState(() {
+          checkInModel = model;
+        });
+      }
+    });
   }
 
   @override
@@ -241,7 +255,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           height: 8,
           color: Colors.grey[200],
         ),
-        _buildItem('signal', S.of(context).scan_signal_item_title, () async {
+        _buildItem('signal', S.of(context).scan_signal_item_title, checkInModel?.scanTimes ?? 0, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
 
@@ -258,7 +272,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', S.of(context).add_poi_item_title, () async {
+        _buildItem('position', S.of(context).add_poi_item_title, checkInModel?.addPoiTimes ?? 0, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -270,10 +284,10 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('check', S.of(context).check_poi_item_title, () async {
+        _buildItem('check', S.of(context).check_poi_item_title, checkInModel?.verifyPoiTimes ?? 0, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
-            Navigator.push(
+            var ret = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ConfirmPositionPage(userPosition: latlng),
@@ -282,6 +296,27 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('简化任务达标：', style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),),
+              Text('需完成3次数据贡献(数据贡献类型不限)。', style: TextStyle(fontSize: 13),),
+              SizedBox(height: 8,),
+              Text('正常任务达标:', style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),),
+              Text('需完成3次【信号扫描】、3次【添加附近地点】和3次【校验附近地点】。多出的贡献次数不影响达标。', style: TextStyle(fontSize: 13),),
+              SizedBox(height: 16,),
+              Text('任务规则：', style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),),
+              Text('1、没达标简化任务，当天不发放收益。', style: TextStyle(fontSize: 13),),
+              Text('2、已达标简化任务，没达标正常任务，只发放0.5天收益，剩下的0.5天收益顺延。', style: TextStyle(fontSize: 13),),
+              Text('3、达标正常任务的则正常发放当天收益。', style: TextStyle(fontSize: 13),),
+              Text('4、【扫描附近信号】需要间隔30分钟，其他数据贡献类型不限时间。', style: TextStyle(fontSize: 13),),
+              SizedBox(height: 4,),
+              Text('任务规则或会随着星际掘金版本升级在合理的范围内有所调整。', style: TextStyle(fontSize: 13, color: Colors.grey[600]),),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -370,7 +405,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     );
   }
 
-  Widget _buildItem(String iconName, String title, Function ontap, {bool isOpen = false}) {
+  Widget _buildItem(String iconName, String title, int todayTimes, Function ontap, {bool isOpen = false}) {
     return InkWell(
       onTap: ontap,
       child: Row(
@@ -389,24 +424,33 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: HexColor('#333333')),
           ),
           Spacer(),
-          _end(isOpen: isOpen),
+          _end(todayTimes, isOpen: isOpen),
         ],
       ),
     );
   }
 
-  Widget _end({bool isOpen = false}) {
+  Widget _end(int todayTimes, {bool isOpen = false}) {
     if (isOpen) {
       return Padding(
-        padding: const EdgeInsets.all(14),
-        child: Icon(
-          Icons.chevron_right,
-          color: HexColor('#E9E9E9'),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              '今日贡献$todayTimes次',
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: HexColor('#E9E9E9'),
+            ),
+          ],
         ),
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Text(
           S.of(context).coming_soon,
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#AAAAAA')),
@@ -465,8 +509,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         Map<PermissionGroup, PermissionStatus> permissions =
             await PermissionHandler().requestPermissions([PermissionGroup.phone]);
         if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
-          _showDialog(
-              S.of(context).require_permission, S.of(context).collect_signal_require_telephone, () {
+          _showDialog(S.of(context).require_permission, S.of(context).collect_signal_require_telephone, () {
             PermissionHandler().openAppSettings();
           });
           return false;
@@ -550,9 +593,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     );
   }
 
-
   void _showServceDialog() {
-    _showDialog(S.of(context).open_location_service, S.of(context).open_location_service_message, (){
+    _showDialog(S.of(context).open_location_service, S.of(context).open_location_service_message, () {
       if (Platform.isIOS) {
         PermissionHandler().openAppSettings();
       } else {
@@ -580,8 +622,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               Navigator.pop(context);
             },
           ),
-        ]
-    );
+        ]);
   }
 
   void _showDialog(String title, String content, Function func) {
@@ -603,6 +644,4 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       ],
     );
   }
-
-  
 }

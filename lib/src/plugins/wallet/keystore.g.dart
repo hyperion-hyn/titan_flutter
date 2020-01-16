@@ -6,7 +6,7 @@ part of 'keystore.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-KeyStore _$TrustWalletKeyStoreFromJson(Map<String, dynamic> json) {
+KeyStore _$KeyStoreFromJson(Map<String, dynamic> json) {
   return KeyStore(
     fileName: json['fileName'] as String,
   )
@@ -15,9 +15,7 @@ KeyStore _$TrustWalletKeyStoreFromJson(Map<String, dynamic> json) {
     ..identifier = json['identifier'] as String;
 }
 
-Map<String, dynamic> _$TrustWalletKeyStoreToJson(
-        KeyStore instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$KeyStoreToJson(KeyStore instance) => <String, dynamic>{
       'name': instance.name,
       'isMnemonic': instance.isMnemonic,
       'identifier': instance.identifier,

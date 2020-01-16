@@ -35,7 +35,7 @@ Map<String, dynamic> _$ContractInfoV2ToJson(ContractInfoV2 instance) =>
       'power': instance.power,
       'month_inc': instance.monthInc,
       'limit': instance.limit,
-      'limit': instance.remaining,
+      'remaining': instance.remaining,
       'mission_req': instance.missionReq,
       'time_cycle': instance.timeCycle,
       'total_income': instance.totalIncome,

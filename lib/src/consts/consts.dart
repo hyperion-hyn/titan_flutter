@@ -56,8 +56,10 @@ class Const {
 
   //white
   static const kWhiteMapStyleCn = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+
 //  static const kWhiteMapStyleCn = 'http://10.10.1.115:9999/titan-see-it-all.json';
   static const kWhiteMapStyle = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+
   //black
   static const kBlackMapStyleCn = "https://cn.tile.map3.network/fiord-color.json";
   static const kBlackMapStyle = "https://static.hyn.space/maptiles/fiord-color.json";
@@ -85,4 +87,6 @@ class PrefsKey {
   static final appArea = "app_area";
   static final mapboxCountryCode = "mapbox_countryCode";
   static final lastPosition = "last_map_position";
+
+  static final checkInModel = 'checkin_model';
 }

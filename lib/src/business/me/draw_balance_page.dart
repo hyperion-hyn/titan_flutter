@@ -275,8 +275,6 @@ class _DrawBalanceState extends State<DrawBalancePage> {
                                       var ls = barcode.split(':');
                                       barcode = ls[ls.length - 1];
                                     }
-                                    print('xxxxx $barcode');
-                                    print(barcode);
                                     if (barcode.length != 40 && barcode.length != 42) {
                                       Fluttertoast.showToast(msg: S.of(context).no_eth_address);
                                     } else {

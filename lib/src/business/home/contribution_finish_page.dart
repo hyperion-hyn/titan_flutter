@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/global.dart';
 
 class FinishUploadPage extends StatefulWidget {
 
@@ -24,12 +23,13 @@ class _FinishUploadState extends State<FinishUploadPage> {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: (){
-                  if (createWalletPopUtilName == null) {
-                    Navigator.of(context).popUntil((r) => r.isFirst);
-                  } else {
-                    Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                    createWalletPopUtilName = null;
-                  }
+                  Navigator.pop(context);
+//                  if (createWalletPopUtilName == null) {
+//                    Navigator.of(context).popUntil((r) => r.isFirst);
+//                  } else {
+//                    Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
+//                    createWalletPopUtilName = null;
+//                  }
                 },
               );
             },
@@ -78,13 +78,13 @@ class _FinishUploadState extends State<FinishUploadPage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () async {
-
-                      if (createWalletPopUtilName == null) {
-                        Navigator.of(context).popUntil((r) => r.isFirst);
-                      } else {
-                        Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                        createWalletPopUtilName = null;
-                      }
+                      Navigator.pop(context);
+//                      if (createWalletPopUtilName == null) {
+//                        Navigator.of(context).popUntil((r) => r.isFirst);
+//                      } else {
+//                        Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
+//                        createWalletPopUtilName = null;
+//                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

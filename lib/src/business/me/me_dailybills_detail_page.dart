@@ -135,7 +135,6 @@ class _MeDailyBillsDetail extends DataListState<MeDailyBillsDetail> {
 
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
-      print("event:$event");
       if (event is Refresh) {
         loadDataBloc.add(RefreshingEvent());
       }

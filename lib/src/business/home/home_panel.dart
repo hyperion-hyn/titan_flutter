@@ -74,16 +74,22 @@ class HomePanelState extends UserState<HomePanel> {
     }
   }
 
+  bool isLoadingRecommendCity = false;
+
   void loadCityRecommend(LatLng latLng) async {
-    if (/*nearPois.length == 0 && */ (lastPosition == null || lastPosition.distanceTo(latLng) > 5000)) {
+    if (/*nearPois.length == 0 && */ (lastPosition == null ||
+        lastPosition.distanceTo(latLng) > 5000 ||
+        (!isLoadingRecommendCity && nearPois == null))) {
       lastPosition = latLng;
       var latlng = CoordConvert.wgs84togcj02(Coords(latLng.latitude, latLng.longitude));
+      isLoadingRecommendCity = true;
       var pois = await Injector.of(context).repository.requestDianping(latlng.latitude, latlng.longitude);
       if (pois.length > 0) {
         setState(() {
           nearPois = pois;
         });
       }
+      isLoadingRecommendCity = false;
     }
   }
 

@@ -150,7 +150,6 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
 
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
-      print("event:$event");
       if (event is Refresh) {
         loadDataBloc.add(RefreshingEvent());
       }

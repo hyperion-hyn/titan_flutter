@@ -82,7 +82,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       if (searchResult is String) {
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(searchText: searchResult, center: center));
       } else if (searchResult is PoiEntity || searchResult is ConfirmPoiItem) {
-        print('xxx1 ${searchResult.latLng}');
         var poi = searchResult;
         if (searchResult.address == null) {
           //we need to full fil all properties
@@ -318,7 +317,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
         });
-//        print('xxx panelMax $panelMax, panelMin $panelMin, panelAnchor $panelAnchor, panelInitSize $panelInitSize');
 
         //---------------------------
         //set opt bar
