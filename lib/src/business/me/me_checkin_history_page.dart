@@ -109,18 +109,21 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
                   height: 10,
                 ),
                 Text(
-                  model.total < 3 ? S.of(context).task_finish_func('${model.total}'):S.of(context).task_finish_day_hint,
+                  model.total < 3 ? "任务未完成":"任务已完成",
+//                  model.total < 3 ? S.of(context).task_finish_func('${model.total}'):S.of(context).task_finish_day_hint,
                   style: TextStyle(color: model.total < 3 ? HexColor('#333333'):HexColor('##6DBA1A'), fontSize: 14),
                 ),
                 SizedBox(
                   height: 8,
                 ),
                 Text(
-                  "${_getTime(model.detail)}",
+//              "${_getTime(model.detail)}",
+                  "扫描信号2次，添加地点1次，验证地点2次",
                   style: TextStyle(color: HexColor('#777777'), fontSize: 12),
                 ),
               ],
             ),
+
           ],
         ),
       ),

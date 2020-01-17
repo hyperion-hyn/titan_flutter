@@ -145,6 +145,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                             'res/drawable/ic_me_page_use_edit.png',
                             width: 12,
                             height: 12,
+                            color: Colors.yellow,
                           ),
                         )
                       ],
@@ -252,65 +253,18 @@ class _MeState extends UserState<MePage> with RouteAware {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)}",
-                            style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 3,),
-                          Text(
-                            S.of(context).my_account_with_unit,
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.totalPower))}",
-                            style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 3,),
-                          Text(
-                            S.of(context).my_power_with_unit,
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)}",
-                            style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 3,),
-                          Text(
-                            S.of(context).node_mortgage_with_unit,
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildHeaderSectionItem(S.of(context).my_account_with_unit, LOGIN_USER_INFO.balance, (){
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => MyAssetPage()));
+                    }),
+                    _buildHeaderSectionItem(S.of(context).my_power_with_unit, LOGIN_USER_INFO.totalPower, (){
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                    }),
+                    _buildHeaderSectionItem(S.of(context).node_mortgage_with_unit, LOGIN_USER_INFO.mortgageNodes, (){
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
+                    }),
                   ],
                 ),
               ),
@@ -318,6 +272,26 @@ class _MeState extends UserState<MePage> with RouteAware {
           ),
         )
       ],
+    );
+  }
+
+  Widget _buildHeaderSectionItem(String title, dynamic count, void Function() onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "${Const.DOUBLE_NUMBER_FORMAT.format(count)}",
+            style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 3,),
+          Text(
+            title,
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 
