@@ -10,6 +10,8 @@ import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dar
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 import 'bloc/bloc.dart';
 import 'model/confirm_poi_item.dart';
@@ -145,9 +147,9 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   }
 
   Widget _buildView() {
-    return BlocBuilder<PositionBloc, PositionState>(
+    return BlocBuilder<PositionBloc, AllPageState>(
         bloc: _positionBloc,
-        builder: (BuildContext context, PositionState state) {
+        builder: (BuildContext context, AllPageState state) {
           if (state is ConfirmPositionLoadingState) {
             return LoadDataWidget(
               isLoading: true,
@@ -176,10 +178,10 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               );
             }
           } else {
-            return Container(
-              width: 0.0,
-              height: 0.0,
-            );
+            return AllPageStateContainer(state,(){
+              _positionBloc.add(ConfirmPositionLoadingEvent());
+              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+            });
           }
         });
   }
