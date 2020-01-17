@@ -158,6 +158,15 @@ class UserService {
     return pageResponse;
   }
 
+  Future<PageResponse<CheckinHistory>> getHistoryListV2(int page) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    PageResponse<CheckinHistory> pageResponse = await _mapRichApi.getHistoryListV2(userToken.token, userToken.userId, page);
+    return pageResponse;
+  }
+
   Future<PageResponse<PromotionInfo>> getPromotionList(int page) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
