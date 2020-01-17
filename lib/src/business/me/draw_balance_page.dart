@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/business/me/enter_fund_password.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
@@ -27,7 +28,7 @@ class DrawBalancePage extends StatefulWidget {
   }
 }
 
-class _DrawBalanceState extends State<DrawBalancePage> {
+class _DrawBalanceState extends BaseState<DrawBalancePage> {
   UserService _userService = UserService();
   WithdrawalInfo withdrawalInfo = WithdrawalInfo(0, 0, 0, 0, 0);
   WithdrawalInfo earningWithdrawalInfo;
@@ -66,6 +67,51 @@ class _DrawBalanceState extends State<DrawBalancePage> {
     });
 
     loadData(_selectedWithdrawalTypeString);
+  }
+
+  @override
+  void onCreated() {
+    Future.delayed(Duration(milliseconds: 500)).then((_) {
+      _showAlertDialog();
+    });
+  }
+
+  void _showAlertDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              '提币提示',
+              style: TextStyle(color: Colors.red[700]),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                RichText(
+                  text:
+                      TextSpan(text: '提币地址', style: TextStyle(fontSize: 16.0, color: Colors.black), children: <TextSpan>[
+                    TextSpan(
+                        text: '只接受HYN地址',
+                        style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.bold)),
+                    TextSpan(text: '，切勿提供其他资产地址，否则将无法找回！', style: TextStyle(fontSize: 16.0, color: Colors.black)),
+                  ]),
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('我已知晓'),
+              ),
+            ],
+          );
+        });
   }
 
   void loadData(String _typeString) async {

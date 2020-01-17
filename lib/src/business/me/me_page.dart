@@ -123,8 +123,8 @@ class _MeState extends UserState<MePage> with RouteAware {
               )),
         ),
         Positioned(
-          left: 32,
-          right: 28,
+          left: 16,
+          right: 16,
           bottom: 20,
           child: Column(
             children: <Widget>[
@@ -248,7 +248,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
-                    borderRadius: BorderRadius.circular(12)
+                    borderRadius: BorderRadius.circular(8)
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

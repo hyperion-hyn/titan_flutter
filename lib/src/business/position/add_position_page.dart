@@ -123,10 +123,10 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  Future _finishCheckIn() async {
+  Future _finishCheckIn(String successTip) async {
     try {
       await _userService.checkInV2('postPOI');
-      UtilUi.toast(S.of(context).thank_you_for_contribute_data);
+      UtilUi.toast(successTip);
     } catch (e) {
       print('$runtimeType --> e:$e');
       ExceptionProcess.process(e, isThrow: false);
@@ -141,7 +141,7 @@ class _AddPositionState extends State<AddPositionPage> {
         //print('[add] --> state:${fromState}, toState:${state}');
 
         if (state is SuccessPostPoiDataState) {
-          _finishCheckIn();
+          _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
           createWalletPopUtilName = '/data_contribution_page';
           Navigator.push(
