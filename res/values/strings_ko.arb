@@ -567,5 +567,8 @@
   "no_remark": "비고 무",
   "post_my_check": "인증 제출",
   "no_category": "해당 카테고리 무",
-  "hot_search": "인기 검색어："
+  "hot_search": "인기 검색어：",
+  "task_un_finished": "任务未完成",
+  "task_finished": "任务已完成",
+  "task_finished_func": "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次"
 }

@@ -567,5 +567,8 @@
   "no_remark": "No remarks",
   "post_my_check": "Submit verification",
   "no_category": "No such category",
-  "hot_search": "Popular searches："
+  "hot_search": "Popular searches：",
+  "task_un_finished": "任务未完成",
+  "task_finished": "任务已完成",
+  "task_finished_func": "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次"
 }

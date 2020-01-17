@@ -10,7 +10,9 @@ CheckinHistory _$CheckinHistoryFromJson(Map<String, dynamic> json) {
   return CheckinHistory(
     json['day'] as String,
     json['total'] as int,
-    (json['detail'] as List)?.map((e) => e as String)?.toList(),
+    json['detail'] == null
+        ? null
+        : CheckInDetail.fromJson(json['detail'] as Map<String, dynamic>),
   );
 }
 

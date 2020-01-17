@@ -109,7 +109,7 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
                   height: 10,
                 ),
                 Text(
-                  model.total < 3 ? "任务未完成":"任务已完成",
+                  model.total < 3 ? S.of(context).task_un_finished:S.of(context).task_finished,
 //                  model.total < 3 ? S.of(context).task_finish_func('${model.total}'):S.of(context).task_finish_day_hint,
                   style: TextStyle(color: model.total < 3 ? HexColor('#333333'):HexColor('##6DBA1A'), fontSize: 14),
                 ),
@@ -117,8 +117,11 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
                   height: 8,
                 ),
                 Text(
-//              "${_getTime(model.detail)}",
-                  "扫描信号2次，添加地点1次，验证地点2次",
+                  S.of(context).task_finished_func(
+                      (model.detail?.scanTimes??0).toString(),
+                      (model.detail?.addPoiTimes??0).toString(),
+                      (model.detail?.verifyPoiTimes??0).toString()
+                  ),
                   style: TextStyle(color: HexColor('#777777'), fontSize: 12),
                 ),
               ],
@@ -130,23 +133,10 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
     );
   }
 
-  String _getTime(List<String> list) {
-    print(list);
-
-    var time = S.of(context).time_f;
-    for (final item in list) {
-      time = time + ' ${item} ';
-    }
-
-    if (list.length == 0) {
-      time = '';
-    }
-    return time;
-  }
 
   @override
   Future<List> onLoadData(int page) async{
-    PageResponse<CheckinHistory> _pageResponse = await _userService.getHistoryList(page);
+    PageResponse<CheckinHistory> _pageResponse = await _userService.getHistoryListV2(page);
     var dataList = _pageResponse.data;
     return dataList;
   }

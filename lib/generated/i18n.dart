@@ -488,8 +488,10 @@ class S implements WidgetsLocalizations {
   String get take_pictures_must_not_be_empty_hint => "Add a POI photo";
   String get task => "Task";
   String get task_finish_day_hint => "Task completed for the day";
+  String get task_finished => "任务已完成";
   String get task_interval_below_limit => "Do task intervals below 30 minutes";
   String get task_record => "Tasks";
+  String get task_un_finished => "任务未完成";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
@@ -587,6 +589,7 @@ class S implements WidgetsLocalizations {
   String snap_up_product_fuc(String name) => "Snap Up Products：${name}";
   String stay_func(String snapUpStocks) => "${snapUpStocks} left";
   String task_finish_func(String total) => "Already completed ${total} tasks";
+  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次";
   String total_invitation_func(String totalInvitations) => "${totalInvitations} invitee";
   String withdrawal_fee(String fee) => "Fee(${fee}%)";
   String withdrawal_with_quantity(String count) => "Withdraw：${count}";
@@ -1037,6 +1040,8 @@ class $ko extends S {
   @override
   String get scan_name_start => "시작";
   @override
+  String get task_finished => "任务已完成";
+  @override
   String get max_star_numbers => "최대성간량";
   @override
   String get verification_code => "인증번호";
@@ -1210,6 +1215,8 @@ class $ko extends S {
   String get work_time => "작업시간";
   @override
   String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
+  @override
+  String get task_un_finished => "任务未完成";
   @override
   String get tip_node_mortgages_balances_hint => "수익잔액을 사용해야만 이 노드를 저당설정할 수 있습니다.";
   @override
@@ -1686,6 +1693,8 @@ class $ko extends S {
   String withdrawal_with_quantity(String count) => "인출：${count}";
   @override
   String withdrawal_fee(String fee) => "수수료(${fee}%)";
+  @override
+  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次";
   @override
   String mortgage_time(String time) => "저당시간：${time}";
   @override
@@ -2189,6 +2198,8 @@ class $zh_CN extends S {
   @override
   String get scan_name_start => "开始";
   @override
+  String get task_finished => "任务已完成";
+  @override
   String get max_star_numbers => "最大星际量";
   @override
   String get verification_code => "验证码";
@@ -2362,6 +2373,8 @@ class $zh_CN extends S {
   String get work_time => "工作时间";
   @override
   String get input_wallet_password_length_hint => "请输入至少6位的密码";
+  @override
+  String get task_un_finished => "任务未完成";
   @override
   String get tip_node_mortgages_balances_hint => "提示：只能使用收益余额进行节点抵押";
   @override
@@ -2836,6 +2849,8 @@ class $zh_CN extends S {
   String withdrawal_with_quantity(String count) => "提币：${count}";
   @override
   String withdrawal_fee(String fee) => "手续费(${fee}%)";
+  @override
+  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次";
   @override
   String mortgage_time(String time) => "抵押时间：${time}";
   @override

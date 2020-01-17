@@ -1,12 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
-
+import 'package:titan/src/business/contribution/vo/check_in_model.dart';
 part 'checkin_history.g.dart';
 
 @JsonSerializable()
 class CheckinHistory {
   String day;
   int total;
-  List<String> detail;
+  CheckInDetail detail;
 
   CheckinHistory(this.day, this.total, this.detail);
 
