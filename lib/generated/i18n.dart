@@ -268,6 +268,7 @@ class S implements WidgetsLocalizations {
   String get mortgage_fail_hint => "Mortgage Failure";
   String get mortgage_success_hint => "Staked successfully";
   String get my_account_with_unit => "Account(USDT)";
+  String get my_info => "My information";
   String get my_location => "My Location";
   String get my_node_mortgage => "My Node Staking";
   String get my_page => "My";
@@ -1264,6 +1265,8 @@ class $ko extends S {
   String get pay_fail_hint => "지불실패";
   @override
   String get over_limit_amount_hint => "한도에도달하였습니다.";
+  @override
+  String get my_info => "我的信息";
   @override
   String get open_bluetooth => "블루투스 열림";
   @override
@@ -2416,6 +2419,8 @@ class $zh_CN extends S {
   String get pay_fail_hint => "支付失败";
   @override
   String get over_limit_amount_hint => "已到达上限";
+  @override
+  String get my_info => "我的信息";
   @override
   String get open_bluetooth => "开启蓝牙";
   @override
