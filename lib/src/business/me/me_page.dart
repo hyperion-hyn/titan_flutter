@@ -301,21 +301,21 @@ class _MeState extends UserState<MePage> with RouteAware {
               child: Column(
                 children: <Widget>[
                   // todo: jison opened
-                  _buildMemuBar(S.of(context).task_record, ExtendsIconFont.check_in, () {
+                  _buildMemuBar(S.of(context).task_record, "ic_me_page_task_record", () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
                   }),
                   Divider(
                     height: 2,
                   ),
 
-                  _buildMemuBar(S.of(context).invite_share, ExtendsIconFont.mail_read, () {
+                  _buildMemuBar(S.of(context).invite_share, "ic_me_page_invite_share", () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
                   }),
                   Divider(
                     height: 2,
                   ),
 
-                  _buildMemuBar(S.of(context).use_guide, ExtendsIconFont.document, () {
+                  _buildMemuBar(S.of(context).use_guide, "ic_me_page_use_guide", () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -329,7 +329,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                     height: 2,
                   ),
 
-                  _buildMemuBar(S.of(context).setting, ExtendsIconFont.setting, () {
+                  _buildMemuBar(S.of(context).setting, "ic_me_page_setting", () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage()));
                   }),
 
@@ -337,7 +337,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                     height: 2,
                   ),
 
-                  _buildMemuBar(S.of(context).about_us, ExtendsIconFont.person, () {
+                  _buildMemuBar(S.of(context).about_us, "ic_me_page_about_us", () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
                   }),
                 ],
@@ -411,7 +411,7 @@ class _MeState extends UserState<MePage> with RouteAware {
     );
   }
 
-  Widget _buildMemuBar(String title, IconData iconData, Function onTap) {
+  Widget _buildMemuBar(String title, String iconData, Function onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -419,12 +419,10 @@ class _MeState extends UserState<MePage> with RouteAware {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Icon(
-                iconData,
-                color: HexColor("#B4B4B4"),
-              ),
+            Container(
+              width: 20,
+              height: 20,
+              child: Image.asset("res/drawable/$iconData.png",fit: BoxFit.contain,),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
