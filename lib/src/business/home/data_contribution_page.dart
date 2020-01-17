@@ -320,7 +320,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                 style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),
               ),
               Text(
-                '需完成1次【扫描附近信号】、1次【添加附近地点】和1次【验证附近地点】。多出的贡献次数不影响达标。',
+                '需完成$TAST_TIMES次【扫描附近信号】、$TAST_TIMES次【添加附近地点】和$TAST_TIMES次【验证附近地点】。多出的贡献次数不影响达标。',
                 style: TextStyle(fontSize: 13),
               ),
               SizedBox(

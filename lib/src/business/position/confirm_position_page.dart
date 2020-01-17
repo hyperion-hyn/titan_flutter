@@ -71,7 +71,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         }
       } else if (state is ConfirmPositionResultState) {
         if (state.confirmResult) {
-          _finishCheckIn();
+          _finishCheckIn(S.of(context).thank_you_for_contribute_data);
 
           Navigator.pushReplacement(
             context,
@@ -98,10 +98,10 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     super.initState();
   }
 
-  Future _finishCheckIn() async {
+  Future _finishCheckIn(String successTip) async {
     try {
       await _userService.checkInV2('confirmPOI');
-      UtilUi.toast(S.of(context).thank_you_for_contribute_data);
+      UtilUi.toast(successTip);
     } catch (e) {
       print('$runtimeType --> e:$e');
       ExceptionProcess.process(e, isThrow: false);
