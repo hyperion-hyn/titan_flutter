@@ -11,6 +11,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/RoundCheckBox.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'model/category_item.dart';
 
 class BusinessTimePage extends StatefulWidget {
@@ -134,9 +135,9 @@ class _BusinessTimeState extends State<BusinessTimePage> {
   }
 
   Widget _buildView(BuildContext context) {
-    return BlocBuilder<PositionBloc, PositionState>(
+    return BlocBuilder<PositionBloc, AllPageState>(
       bloc: _positionBloc,
-      builder: (BuildContext context, PositionState state) {
+      builder: (BuildContext context, AllPageState state) {
         if (state is InitialPositionState) {
           return _buildBody();
         } else {

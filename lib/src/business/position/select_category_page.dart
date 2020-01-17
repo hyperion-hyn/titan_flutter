@@ -4,6 +4,8 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/custom_input_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'model/category_item.dart';
@@ -91,9 +93,9 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   }
 
   Widget _buildView(BuildContext context) {
-    return BlocBuilder<PositionBloc, PositionState>(
+    return BlocBuilder<PositionBloc, AllPageState>(
       bloc: _positionBloc,
-      builder: (BuildContext context, PositionState state) {
+      builder: (BuildContext context, AllPageState state) {
         print('state: ${state}');
 
         if (state is InitialPositionState) {
@@ -121,10 +123,9 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
           categoryList.clear();
           return _buildBody(state);
         } else {
-          return Container(
-            width: 0.0,
-            height: 0.0,
-          );
+          return AllPageStateContainer(state,(){
+          _positionBloc.add(SelectCategoryInitEvent());
+          });
         }
       },
     );

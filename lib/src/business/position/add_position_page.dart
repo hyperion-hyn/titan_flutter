@@ -27,6 +27,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 
 class AddPositionPage extends StatefulWidget {
   final LatLng userPosition;
@@ -134,9 +135,9 @@ class _AddPositionState extends State<AddPositionPage> {
 
   // build view
   Widget _buildView(BuildContext context) {
-    return BlocBuilder<PositionBloc, PositionState>(
+    return BlocBuilder<PositionBloc, AllPageState>(
       bloc: _positionBloc,
-      condition: (PositionState fromState, PositionState state) {
+      condition: (AllPageState fromState, AllPageState state) {
         //print('[add] --> state:${fromState}, toState:${state}');
 
         if (state is SuccessPostPoiDataState) {
@@ -184,7 +185,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
         return true;
       },
-      builder: (BuildContext context, PositionState state) {
+      builder: (BuildContext context, AllPageState state) {
         return _buildBody();
       },
     );
