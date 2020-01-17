@@ -48,7 +48,6 @@ class _AddPositionState extends State<AddPositionPage> {
 
   double _inputHeight = 40.0;
   var _isAcceptSignalProtocol = true;
-  var _themeColor = HexColor("#0F95B0");
 
   String _categoryDefaultText = "";
   String _timeDefaultText = "";
@@ -575,16 +574,6 @@ class _AddPositionState extends State<AddPositionPage> {
                         });
                       },
                     ),
-                    /*Container(
-                      child: Text(
-                        S.of(context).geographical_position,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),*/
                     Padding(
                       padding: const EdgeInsets.only(left: 5),
                       child: Text(
@@ -816,9 +805,6 @@ class _AddPositionState extends State<AddPositionPage> {
     var state = _openCageData["state"];
     var city = _openCageData["county"];
     var county = _openCageData["city"];
-//    var city = _openCageData["city"];
-//    var county = _openCageData["county"];
-    //var postalCode = _openCageData["postcode"];
     var countryCode = _openCageData["country_code"] ?? "";
     var poiName = _maxLengthLimit(_addressNameController);
     var poiAddress = _maxLengthLimit(_addressController, isDetailAddress: true);
@@ -853,12 +839,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
 
   void _checkInputHeight() async {
-//    int count = _addressController.text.split('\n').length;
-    int length = _addressController.text.length;
     double count = _addressController.text.length / 20;
-
-    //print('[add] --> count:$count, length:$length');
-
     if (count < 1) {
       return;
     }
@@ -868,7 +849,6 @@ class _AddPositionState extends State<AddPositionPage> {
       var newHeight = count < 1 ? 40.0 : 28.0 + (count * 18.0);
       setState(() {
         _inputHeight = newHeight;
-        //print('[add] --> newHeight:$newHeight');
       });
     }
   }
