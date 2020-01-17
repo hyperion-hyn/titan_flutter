@@ -568,7 +568,7 @@ class _AddPositionState extends State<AddPositionPage> {
                   children: <Widget>[
                     Checkbox(
                       value: _isAcceptSignalProtocol,
-                      activeColor: _themeColor, //选中时的颜色
+                      activeColor: Theme.of(context).accentColor, //选中时的颜色
                       onChanged: (value) {
                         setState(() {
                           _isAcceptSignalProtocol = value;
@@ -700,7 +700,12 @@ class _AddPositionState extends State<AddPositionPage> {
       children: <Widget>[
         Padding(
           padding: isCategory ? const EdgeInsets.fromLTRB(15, 0, 10, 0) : const EdgeInsets.fromLTRB(15, 18, 10, 11),
-          child: Image.asset('res/drawable/add_position_$imageName.png', width: size.width, height: size.height),
+          child: Image.asset(
+              'res/drawable/add_position_$imageName.png',
+              width: size.width,
+              height: size.height,
+              //color: Theme.of(context).primaryColor,
+          ),
         ),
         Padding(
             padding: isCategory ? const EdgeInsets.only(right: 10) : const EdgeInsets.fromLTRB(0, 14, 10, 6),
@@ -732,7 +737,7 @@ class _AddPositionState extends State<AddPositionPage> {
       showCamera: true,
       cropConfig: null,
       compressSize: 500,
-      uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+      uiConfig: UIConfig(uiThemeColor: Theme.of(context).primaryColor),
     );
     setState(() {
       _listImagePaths.addAll(tempListImagePaths);
