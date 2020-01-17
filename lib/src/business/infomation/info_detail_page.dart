@@ -55,7 +55,7 @@ class _InfoDetailState extends State<InfoDetailPage> {
             widget.title,
             style: TextStyle(color: Colors.white),
           ),
-          actions: <Widget>[
+          actions: isLoadingContent ? null : <Widget>[
             IconButton(
               icon: Icon(Icons.share),
               color: Colors.white,
