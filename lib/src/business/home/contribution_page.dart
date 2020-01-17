@@ -361,9 +361,9 @@ class _ContributionState extends State<ContributionPage> {
     //print('[Request] --> isFinish: ${isFinish}');
     if (isFinish) {
 //      createWalletPopUtilName = '/data_contribution_page';
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
-
       _finishCheckIn();
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
     } else {
       Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
       setState(() {
@@ -374,7 +374,7 @@ class _ContributionState extends State<ContributionPage> {
 
   Future _finishCheckIn() async {
     try {
-      await _userService.checkIn();
+      await _userService.checkInV2('scanSignal');
       UtilUi.toast(S.of(context).thank_you_for_contribute_data);
     } catch (e) {
       print('$runtimeType --> e:$e');

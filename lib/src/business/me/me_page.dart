@@ -485,24 +485,13 @@ class _MeState extends UserState<MePage> with RouteAware {
 //    _finishCheckIn();
   }
 
-  Future _finishCheckIn() async {
-    try {
-      await _userService.checkIn();
-      checkInCount = await _userService.checkInCount();
-      setState(() {});
-      Fluttertoast.showToast(msg: S.of(context).thank_you_for_contribute_data);
-    } catch (e) {
-      print('[me_page] --> e:$e');
-
-      ExceptionProcess.process(e);
-      throw e;
-    }
-  }
-
   Future _updateCheckInCount() async {
     try {
-      checkInCount = await _userService.checkInCount();
-      setState(() {});
+      globalCheckInModel = await _userService.checkInCountV2();
+//      checkInCount = await _userService.checkInCount();
+      setState(() {
+        checkInCount = globalCheckInModel?.finishTaskNum ?? 0;
+      });
     } catch (_) {
       ExceptionProcess.process(_);
       throw _;

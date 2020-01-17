@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/business_time_page.dart';
 import 'package:titan/src/business/position/model/business_time.dart';
@@ -24,6 +25,8 @@ import 'package:flutter/services.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/exception_process.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class AddPositionPage extends StatefulWidget {
   final LatLng userPosition;
@@ -38,6 +41,8 @@ class AddPositionPage extends StatefulWidget {
 
 class _AddPositionState extends State<AddPositionPage> {
   PositionBloc _positionBloc = PositionBloc();
+
+  UserService _userService = UserService();
 
   TextEditingController _addressNameController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
@@ -118,6 +123,16 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
+  Future _finishCheckIn() async {
+    try {
+      await _userService.checkInV2('postPOI');
+      UtilUi.toast(S.of(context).thank_you_for_contribute_data);
+    } catch (e) {
+      print('$runtimeType --> e:$e');
+      ExceptionProcess.process(e, isThrow: false);
+    }
+  }
+
   // build view
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, PositionState>(
@@ -126,6 +141,8 @@ class _AddPositionState extends State<AddPositionPage> {
         //print('[add] --> state:${fromState}, toState:${state}');
 
         if (state is SuccessPostPoiDataState) {
+          _finishCheckIn();
+
           createWalletPopUtilName = '/data_contribution_page';
           Navigator.push(
             context,

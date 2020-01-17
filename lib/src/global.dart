@@ -6,6 +6,7 @@ import 'package:titan/src/business/me/model/user_info.dart';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'business/contribution/vo/check_in_model.dart';
 import 'business/wallet/model/wallet_vo.dart';
 
 /// The global [EventBus] object.
@@ -55,3 +56,5 @@ AppArea currentAppArea = AppArea.MAINLAND_CHINA_AREA;
 
 final String ROUTE_CONFIRM_POSITION_PAGE = "route_confirm_position_page";
 LatLng recentlyLocation = LatLng(23.10901,113.31799);
+
+CheckInModel globalCheckInModel = CheckInModel();

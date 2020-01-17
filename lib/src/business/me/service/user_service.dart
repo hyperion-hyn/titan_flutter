@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/business/contribution/vo/check_in_model.dart';
 import 'package:titan/src/business/me/api/map_rich_api.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/common_response.dart';
@@ -87,6 +88,14 @@ class UserService {
     await _mapRichApi.checkIn(userToken.token, userToken.userId);
   }
 
+  Future checkInV2(String type) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    await _mapRichApi.checkInV2(userToken.token, userToken.userId, type);
+  }
+
   Future<FundToken> getFundToken(String password) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
@@ -112,6 +121,15 @@ class UserService {
     return count;
   }
 
+  Future<CheckInModel> checkInCountV2() async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    CheckInModel checkInModel = await _mapRichApi.checkInCountV2(userToken.token, userToken.userId);
+    return checkInModel;
+  }
+
   Future<UserInfo> getUserInfo() async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
@@ -130,13 +148,13 @@ class UserService {
     return pageResponse;
   }
 
-
   Future<PageResponse<CheckinHistory>> getHistoryList(int page) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
-    PageResponse<CheckinHistory> pageResponse = await _mapRichApi.getHistoryList(userToken.token, userToken.userId, page);
+    PageResponse<CheckinHistory> pageResponse =
+        await _mapRichApi.getHistoryList(userToken.token, userToken.userId, page);
     return pageResponse;
   }
 

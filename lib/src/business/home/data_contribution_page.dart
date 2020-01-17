@@ -9,14 +9,15 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/contribution/vo/check_in_model.dart';
 import 'package:titan/src/business/home/contribution_page.dart';
+import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/position/confirm_position_page.dart';
 import 'package:titan/src/business/position/select_position_page.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,10 +39,11 @@ class DataContributionPage extends StatefulWidget {
 class _DataContributionState extends State<DataContributionPage> with RouteAware {
   WalletBloc _walletBloc = WalletBloc();
 
-  CheckInModel checkInModel;// = CheckInModel(addPoiTimes: 1, scanTimes: 1, verifyPoiTimes: 2);
-
   StreamSubscription _eventbusSubcription;
   WalletService _walletService = WalletService();
+  UserService _userService = UserService();
+
+  final int TAST_TIMES = 1;
 
   @override
   void didChangeDependencies() {
@@ -73,7 +75,18 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       _walletBloc.add(ScanWalletEvent());
     }
 
-    print('xxx did popNext');
+    //just for update ui if globalCheckInModel update
+    _updateCheckInCount();
+  }
+
+  Future _updateCheckInCount() async {
+    try {
+      globalCheckInModel = await _userService.checkInCountV2();
+      setState(() {
+      });
+    } catch (_) {
+      ExceptionProcess.process(_, isThrow: false);
+    }
   }
 
   @override
@@ -94,14 +107,15 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       }
     });
 
+    _updateCheckInCount();
     //load check in history
-    CheckInModel.loadFromSharePrefs().then((model) {
-      if(model != null) {
-        setState(() {
-          checkInModel = model;
-        });
-      }
-    });
+//    CheckInModel.loadFromSharePrefs().then((model) {
+//      if(model != null) {
+//        setState(() {
+//          checkInModel = model;
+//        });
+//      }
+//    });
   }
 
   @override
@@ -255,7 +269,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           height: 8,
           color: Colors.grey[200],
         ),
-        _buildItem('signal', S.of(context).scan_signal_item_title, checkInModel?.scanTimes ?? 0, () async {
+        _buildItem('signal', S.of(context).scan_signal_item_title, globalCheckInModel?.detail?.scanTimes ?? 0, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
 
@@ -272,7 +286,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', S.of(context).add_poi_item_title, checkInModel?.addPoiTimes ?? 0, () async {
+        _buildItem('position', S.of(context).add_poi_item_title, globalCheckInModel?.detail?.addPoiTimes ?? 0, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -284,7 +298,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('check', S.of(context).check_poi_item_title, checkInModel?.verifyPoiTimes ?? 0, () async {
+        _buildItem('check', S.of(context).check_poi_item_title, globalCheckInModel?.detail?.verifyPoiTimes ?? 0, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             var ret = await Navigator.push(
@@ -301,19 +315,21 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('简化任务达标：', style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),),
-              Text('需完成3次数据贡献(数据贡献类型不限)。', style: TextStyle(fontSize: 13),),
-              SizedBox(height: 8,),
-              Text('正常任务达标:', style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),),
-              Text('需完成3次【信号扫描】、3次【添加附近地点】和3次【校验附近地点】。多出的贡献次数不影响达标。', style: TextStyle(fontSize: 13),),
-              SizedBox(height: 16,),
-              Text('任务规则：', style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),),
-              Text('1、没达标简化任务，当天不发放收益。', style: TextStyle(fontSize: 13),),
-              Text('2、已达标简化任务，没达标正常任务，只发放0.5天收益，剩下的0.5天收益顺延。', style: TextStyle(fontSize: 13),),
-              Text('3、达标正常任务的则正常发放当天收益。', style: TextStyle(fontSize: 13),),
-              Text('4、【扫描附近信号】需要间隔30分钟，其他数据贡献类型不限时间。', style: TextStyle(fontSize: 13),),
-              SizedBox(height: 4,),
-              Text('任务规则或会随着星际掘金版本升级在合理的范围内有所调整。', style: TextStyle(fontSize: 13, color: Colors.grey[600]),),
+              Text(
+                '任务达标:',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                '需完成1次【扫描附近信号】、1次【添加附近地点】和1次【验证附近地点】。多出的贡献次数不影响达标。',
+                style: TextStyle(fontSize: 13),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                '任务达标规则将会在2020年春节元宵节后在合理的范围内有所调整。',
+                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              ),
             ],
           ),
         ),
@@ -437,10 +453,16 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
-              '今日贡献$todayTimes次',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
+            if (todayTimes < TAST_TIMES)
+              Text(
+                '$todayTimes/$TAST_TIMES次，未完成',
+                style: TextStyle(fontSize: 12, color: Colors.red[600]),
+              )
+            else
+              Text(
+                '$todayTimes/$TAST_TIMES次，已完成',
+                style: TextStyle(fontSize: 12, color: Colors.green[600]),
+              ),
             Icon(
               Icons.chevron_right,
               color: HexColor('#E9E9E9'),

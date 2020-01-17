@@ -5,11 +5,14 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/exception_process.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 import 'bloc/bloc.dart';
 import 'model/confirm_poi_item.dart';
@@ -27,6 +30,8 @@ class ConfirmPositionPage extends StatefulWidget {
 }
 
 class _ConfirmPositionState extends State<ConfirmPositionPage> {
+  UserService _userService = UserService();
+
   PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
   double defaultZoom = 17;
@@ -64,6 +69,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         }
       } else if (state is ConfirmPositionResultState) {
         if (state.confirmResult) {
+          _finishCheckIn();
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -87,6 +94,16 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     });
 
     super.initState();
+  }
+
+  Future _finishCheckIn() async {
+    try {
+      await _userService.checkInV2('confirmPOI');
+      UtilUi.toast(S.of(context).thank_you_for_contribute_data);
+    } catch (e) {
+      print('$runtimeType --> e:$e');
+      ExceptionProcess.process(e, isThrow: false);
+    }
   }
 
   var _addMarkerSubject = PublishSubject<dynamic>();

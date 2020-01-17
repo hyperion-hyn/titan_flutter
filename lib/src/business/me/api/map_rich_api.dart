@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/business/contribution/vo/check_in_model.dart';
 import 'package:titan/src/business/me/api/map_rich_http.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
@@ -78,9 +79,20 @@ class MapRichApi {
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
+  Future checkInV2(String token, String userId, String type) async {
+    await MapRichHttpCore.instance.postEntity("sign_in/$userId/v2", EntityFactory((json) => json),
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}), params: {'type': type});
+  }
+
   ///获取checkincount
   Future<int> checkInCount(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity("sign_in/$userId/stats", EntityFactory((json) => json as int),
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
+  }
+
+  Future<CheckInModel> checkInCountV2(String token, String userId) async {
+    return await MapRichHttpCore.instance.getEntity(
+        "sign_in/$userId/v2/stats", EntityFactory((json) => CheckInModel.fromJson(json)),
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
@@ -255,10 +267,10 @@ class MapRichApi {
 
   Future<dynamic> withdrawalApplyV2(
       {@required double amount,
-        @required String address,
-        @required String token,
-        @required String fundToken,
-        @required int type}) async {
+      @required String address,
+      @required String token,
+      @required String fundToken,
+      @required int type}) async {
     return await MapRichHttpCore.instance.postEntity('withdrawal/v2/apply', null,
         params: {"amount": amount, "address": address, "type": type},
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));

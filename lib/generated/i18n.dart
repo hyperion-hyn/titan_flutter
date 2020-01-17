@@ -2815,7 +2815,7 @@ class $zh_CN extends S {
   @override
   String available_balance_usdt(String amount) => "可用余额 ${amount} USDT";
   @override
-  String current_exchange_rate(String to, String currency) => "当前 ${to} 兑换 ${currency} 的比例为";
+  String current_exchange_rate(String to, String currency) => "当前 ${to} 兑换 ${currency} 的汇率为";
   @override
   String network_request_err(String code) => "网络请求错误,状态码: $code";
   @override

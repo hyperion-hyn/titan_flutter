@@ -37,7 +37,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 
   Quotes quotes;
 
-  UserInfo userInfo;
+//  UserInfo userInfo;
 
   UserEthAddress userEthAddress;
 
@@ -48,32 +48,90 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
   }
 
   void loadData() async {
-    try {
-      var data = await service.getUserEthAddress();
-      setState(() {
-        userEthAddress = data;
-      });
-    } catch (e) {
-      logger.e(e);
-      Fluttertoast.showToast(msg: S.of(context).fail_get_user_recharge_address_hint);
-    }
+//    try {
+//      var data = await service.getUserEthAddress();
+//      setState(() {
+//        userEthAddress = data;
+//      });
+//    } catch (e) {
+//      logger.e(e);
+//      Fluttertoast.showToast(msg: S.of(context).fail_get_user_recharge_address_hint);
+//    }
+//
+//    //行情
+//    var quotesData = await service.quotes();
+//    setState(() {
+//      quotes = quotesData;
+//    });
 
-    //行情
-    var quotesData = await service.quotes();
+    var datas = await Future.wait([service.getUserEthAddress(), service.quotes()]);
     setState(() {
-      quotes = quotesData;
+      userEthAddress = datas[0];
+      quotes = datas[1];
     });
+
+    _showAlertDialog();
 
     //用户余额等信息
-    var _userInfo = await service.getUserInfo();
-    setState(() {
-      userInfo = _userInfo;
-    });
+//    var _userInfo = await service.getUserInfo();
+//    setState(() {
+//      userInfo = _userInfo;
+//    });
+  }
+
+  void _showAlertDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              '充值提示',
+              style: TextStyle(color: Colors.red[700]),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                RichText(
+                  text: TextSpan(
+                      text: '此地址',
+                      style: TextStyle(fontSize: 16.0, color: Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: '只接受HYN资产',
+                            style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.bold)),
+                        TextSpan(text: '，请勿向此地址充值其他资产，否则将无法找回！', style: TextStyle(fontSize: 16.0, color: Colors.black)),
+                      ]),
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  S.of(context).current_exchange_rate('${quotes?.to}', '${quotes?.currency}'),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                Text(
+                  '1${quotes?.to} ≈ ${NumberFormat("#,###.####").format(quotes?.rate == null ? 0 : (1 / quotes?.rate))}${quotes?.currency}',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red),
+                )
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('我已知晓'),
+              ),
+            ],
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
-    var payTypeName = "";
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
@@ -293,9 +351,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                   onPressed: () async {
                     var ret = await service.confirmRechargeV2(LOGIN_USER_INFO.balance);
                     if (ret.code == 0) {
-                      //支付成功
                       Fluttertoast.showToast(msg: S.of(context).recharge_success_hint);
-//                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
                       Navigator.pop(context, true);
                     } else {
                       if (ret.code == -1007) {
