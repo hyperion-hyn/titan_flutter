@@ -47,8 +47,6 @@ class _HomeBuilderState extends State<HomeBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    print('[home] --> build, context:$context');
-
     return Builder(
       key: Keys.mainContextKey,
       builder: (context) {

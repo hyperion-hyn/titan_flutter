@@ -20,7 +20,6 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'me_check_in_page.dart';
 import 'contract/buy_hash_rate_page_v2.dart';
 import 'my_asset_page.dart';
 import 'my_promote_page.dart';
@@ -72,312 +71,327 @@ class _MeState extends UserState<MePage> with RouteAware {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Stack(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Container(
-                      height: 180,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    Container(
-                      height: 50,
-                      color: Colors.white,
-                    )
-                  ],
-                ),
-                Positioned(
-                  left: 20,
-                  right: 20,
-                  bottom: 20,
-                  child: Material(
-                    borderRadius: BorderRadius.circular(12),
-                    elevation: 6,
-                    color: Colors.transparent,
-                    shadowColor: Colors.black87,
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              GestureDetector(
-                                child: CircleAvatar(
-                                  radius: 32,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: AssetImage("res/drawable/default_avator.png"),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context, MaterialPageRoute(builder: (context) => PersonalSettingsPage()));
-                                },
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      "${shortEmail(LOGIN_USER_INFO.email)}",
-                                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => GradePage()));
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 4),
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(16),
-                                              border: Border.all(color: HexColor("#B4B4B4")),
-                                              shape: BoxShape.rectangle),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                            child: Text(
-                                              LOGIN_USER_INFO.level == ""
-                                                  ? S.of(context).no_level
-                                                  : LOGIN_USER_INFO.level,
-                                              style: TextStyle(fontSize: 10, color: HexColor("#B4B4B4")),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Spacer(),
-                              Column(
-                                children: <Widget>[
-                                  GestureDetector(
-                                    child: Container(
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            color: Theme.of(context).primaryColor,
-                                            borderRadius: BorderRadius.circular(16),
-                                            border: Border.all(color: Theme.of(context).primaryColor),
-                                            shape: BoxShape.rectangle),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Icon(
-                                                ExtendsIconFont.checkbox_outline,
-                                                color: Colors.white,
-                                                size: 14,
-                                              ),
-                                              Text(
-                                                checkInCount >= 3
-                                                    ? S.of(context).check_in_completed
-                                                    : S.of(context).task,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )),
-                                    onTap: _checkIn,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
-                                    child: Text(
-                                      "$checkInCount/3",
-                                      style: TextStyle(color: Theme.of(context).primaryColor),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 24,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)}",
-                                      style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      S.of(context).my_account_with_unit,
-                                      style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                color: Colors.white60,
-                                width: 1,
-                                height: 16,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(LOGIN_USER_INFO.totalPower))}",
-                                      style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      S.of(context).my_power_with_unit,
-                                      style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                color: Colors.white60,
-                                width: 1,
-                                height: 16,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.mortgageNodes)}",
-                                      style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      S.of(context).node_mortgage_with_unit,
-                                      style: TextStyle(color: HexColor("#B4B4B4"), fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0),
-                child: IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      _buildCenterBigButton(S.of(context).get_power, "res/drawable/get_power.png", () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
-                      }),
-                      VerticalDivider(),
-                      _buildCenterBigButton(S.of(context).node_mortgage, "res/drawable/node_mortgage.png", () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePageV2()));
-                      }),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
-              child: Column(
-                children: <Widget>[
-                  // todo: jison opened
-                  _buildMemuBar(S.of(context).task_record, ExtendsIconFont.check_in, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
-                  }),
-                  Divider(
-                    height: 2,
-                  ),
-
-                  _buildMemuBar(S.of(context).invite_share, ExtendsIconFont.mail_read, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
-                  }),
-                  Divider(
-                    height: 2,
-                  ),
-
-                  _buildMemuBar(S.of(context).use_guide, ExtendsIconFont.document, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => InAppWebViewContainer(
-                                  initUrl: S.of(context).maprich_intro_url(Const.MAP_RICH_DOMAIN_WEBSITE),
-                                  title: S.of(context).use_guide,
-                                )));
-                  }),
-
-                  Divider(
-                    height: 2,
-                  ),
-
-                  _buildMemuBar(S.of(context).setting, ExtendsIconFont.setting, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage()));
-                  }),
-
-                  Divider(
-                    height: 2,
-                  ),
-
-                  _buildMemuBar(S.of(context).about_us, ExtendsIconFont.person, () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
-                  }),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Divider(
-              height: 0,
-            ),
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0, bottom: 16),
-                    child: Text(
-                      S.of(context).dmap_setting,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  _buildDappItem(ExtendsIconFont.point, S.of(context).private_sharing,
-                      S.of(context).private_share_receive_address(shortEthAddress(_pubKey)), () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
-                  }),
-                ],
-              ),
-            ),
-            Divider(
-              height: 0,
-            ),
-            SizedBox(
-              height: 16,
-            ),
+            _buildHeaderSection(),
+            _buildPohNodeSection(),
+            _dividerView(isBottom: true),
+            _buildSettingSection(),
+            _dividerView(),
+            _buildShareSection(),
+            _dividerView(isBottom: true),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _dividerView({bool isBottom = false}) {
+    if (isBottom) {
+      return Column(
+        children: <Widget>[
+          Divider(
+            height: 0,
+          ),
+          SizedBox(
+            height: 16 * 1.0,
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 16,
+        ),
+        Divider(
+          height: 0,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeaderSection() {
+    return Stack(
+      children: <Widget>[
+        Container(
+          height: 230,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [HexColor('#CC941E'), HexColor('#E4B042'), HexColor('#FBE6BD')],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              )),
+        ),
+        Positioned(
+          left: 32,
+          right: 28,
+          bottom: 20,
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  GestureDetector(
+                    child: Stack(
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Colors.white,
+                          backgroundImage: AssetImage("res/drawable/default_avator.png"),
+                        ),
+                        Positioned(
+                          right: 8,
+                          bottom: 8,
+                          child: Image.asset(
+                            'res/drawable/ic_me_page_use_edit.png',
+                            width: 12,
+                            height: 12,
+                            color: Colors.yellow,
+                          ),
+                        )
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => PersonalSettingsPage()));
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "${shortEmail(LOGIN_USER_INFO.email)}",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => GradePage()));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: HexColor("#DADFE4")),
+                                  shape: BoxShape.rectangle),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                child: Text(
+                                  LOGIN_USER_INFO.level == ""
+                                      ? S.of(context).no_level
+                                      : LOGIN_USER_INFO.level,
+                                  style: TextStyle(fontSize: 10, color: HexColor("#F9F9F9")),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Spacer(),
+                  Column(
+                    children: <Widget>[
+                      GestureDetector(
+                        child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: HexColor('#F2C345'),
+                                borderRadius: BorderRadius.circular(16),
+                                //border: Border.all(color: Theme.of(context).primaryColor),
+                                shape: BoxShape.rectangle),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    ExtendsIconFont.checkbox_outline,
+                                    color: Colors.white,
+                                    size: 14,
+                                  ),
+                                  Text(
+                                    checkInCount >= 3
+                                        ? S.of(context).check_in_completed
+                                        : S.of(context).task,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                        onTap: _checkIn,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          "$checkInCount/3",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(8, 12, 8, 8),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [HexColor('#AC823A'), HexColor('#EDC67B'), HexColor('#CBAA69')],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12)
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    _buildHeaderSectionItem(S.of(context).my_account_with_unit, LOGIN_USER_INFO.balance, (){
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => MyAssetPage()));
+                    }),
+                    _buildHeaderSectionItem(S.of(context).my_power_with_unit, LOGIN_USER_INFO.totalPower, (){
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                    }),
+                    _buildHeaderSectionItem(S.of(context).node_mortgage_with_unit, LOGIN_USER_INFO.mortgageNodes, (){
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _buildHeaderSectionItem(String title, dynamic count, void Function() onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "${Const.DOUBLE_NUMBER_FORMAT.format(count)}",
+            style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 3,),
+          Text(
+            title,
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPohNodeSection() {
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0),
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              _buildCenterBigButton(S.of(context).get_power, "res/drawable/get_power.png", () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
+              }),
+              Padding(
+                padding: const EdgeInsets.only(top: 18),
+                child: VerticalDivider(width: 0.5, color: HexColor('#E9E9E9'),),
+              ),
+              _buildCenterBigButton(S.of(context).node_mortgage, "res/drawable/node_mortgage.png", () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePageV2()));
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingSection() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
+      child: Column(
+        children: <Widget>[
+          // todo: jison opened
+          _buildMemuBar(S.of(context).task_record, "ic_me_page_task_record", () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
+          }),
+          Divider(
+            height: 2,
+          ),
+
+          _buildMemuBar(S.of(context).invite_share, "ic_me_page_invite_share", () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MyPromotePage()));
+          }),
+          Divider(
+            height: 2,
+          ),
+
+          _buildMemuBar(S.of(context).use_guide, "ic_me_page_use_guide", () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => InAppWebViewContainer(
+                      initUrl: S.of(context).maprich_intro_url(Const.MAP_RICH_DOMAIN_WEBSITE),
+                      title: S.of(context).use_guide,
+                    )));
+          }),
+
+          Divider(
+            height: 2,
+          ),
+
+          _buildMemuBar(S.of(context).setting, "ic_me_page_setting", () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage()));
+          }),
+
+          Divider(
+            height: 2,
+          ),
+
+          _buildMemuBar(S.of(context).about_us, "ic_me_page_about_us", () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShareSection() {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 0, bottom: 16),
+            child: Text(
+              S.of(context).dmap_setting,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          _buildDappItem('ic_me_page_use_location', S.of(context).private_sharing,
+              S.of(context).private_share_receive_address(shortEthAddress(_pubKey)), () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
+              }),
+        ],
       ),
     );
   }
@@ -388,20 +402,20 @@ class _MeState extends UserState<MePage> with RouteAware {
       child: Container(
         alignment: Alignment.center,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 52),
+          padding: const EdgeInsets.only(top: 48, bottom: 29),
           child: Row(
             children: <Widget>[
               Image.asset(
                 imageAsset,
                 width: 42,
                 height: 42,
-                color: Theme.of(context).primaryColor,
+                //color: Theme.of(context).primaryColor,
               ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
                   title,
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: HexColor("#333333"), fontWeight: FontWeight.w500),
                 ),
               )
             ],
@@ -411,7 +425,7 @@ class _MeState extends UserState<MePage> with RouteAware {
     );
   }
 
-  Widget _buildMemuBar(String title, IconData iconData, Function onTap) {
+  Widget _buildMemuBar(String title, String iconData, Function onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -419,12 +433,10 @@ class _MeState extends UserState<MePage> with RouteAware {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Icon(
-                iconData,
-                color: HexColor("#B4B4B4"),
-              ),
+            Container(
+              width: 20,
+              height: 20,
+              child: Image.asset("res/drawable/$iconData.png",fit: BoxFit.contain,),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -444,7 +456,7 @@ class _MeState extends UserState<MePage> with RouteAware {
     );
   }
 
-  Widget _buildDappItem(IconData iconData, String title, String description, Function ontap) {
+  Widget _buildDappItem(String iconData, String title, String description, Function ontap) {
     return InkWell(
       onTap: ontap,
       child: Row(
@@ -453,7 +465,10 @@ class _MeState extends UserState<MePage> with RouteAware {
         children: <Widget>[
           Container(
               margin: EdgeInsets.only(top: 8, bottom: 8, right: 16),
-              child: Center(child: Icon(iconData, color: HexColor("#B4B4B4"), size: 24))),
+              width: 19,
+              height: 27,
+              child: Image.asset("res/drawable/$iconData.png",fit: BoxFit.contain,),
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

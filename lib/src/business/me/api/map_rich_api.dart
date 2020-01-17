@@ -110,6 +110,19 @@ class MapRichApi {
     }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
+  Future<PageResponse<CheckinHistory>> getHistoryListV2(String token, String userId, int page) async {
+    return await MapRichHttpCore.instance.getEntity("sign_in/$userId/v2/stats/history",
+        EntityFactory<PageResponse<CheckinHistory>>((json) {
+          var currentPage = json["page"] as int;
+          var totalPages = json["totalPages"] as int;
+          var dataList = json["history"] as List;
+          var historyList = dataList.map((itemMap) {
+            return CheckinHistory.fromJson(itemMap);
+          }).toList();
+          return PageResponse<CheckinHistory>(currentPage, totalPages, historyList);
+        }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
+  }
+
   ///获取用户Eth address
   Future<UserEthAddress> getUserEthAddress(String token, String userId) async {
     return await MapRichHttpCore.instance.getEntity(
@@ -155,7 +168,6 @@ class MapRichApi {
   }
 
   ///获取推广列表
-  // todo: jison edit_promotion
   Future<PageResponse<PromotionInfo>> getPrmotionsList(String token, String userId, int page) async {
     return MapRichHttpCore.instance.getEntity("v2/promotions/${userId}",
         EntityFactory<PageResponse<PromotionInfo>>((json) {

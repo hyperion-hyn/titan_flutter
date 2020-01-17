@@ -246,6 +246,7 @@ class HomePanelState extends UserState<HomePanel> {
     );
   }
 
+  /*
   Widget _mode(context) {
     return Padding(
       padding: const EdgeInsets.only(top: 32.0),
@@ -346,6 +347,7 @@ class HomePanelState extends UserState<HomePanel> {
       ),
     );
   }
+  */
 
   Widget focusArea(context) {
     return Container(
