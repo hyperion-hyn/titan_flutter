@@ -592,9 +592,9 @@ class S implements WidgetsLocalizations {
   String stay_func(String snapUpStocks) => "${snapUpStocks} left";
   String task_finish_func(String total) => "Already completed ${total} tasks";
   String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次";
-  String task_is_finished_func(String todayTimes, String TAST_TIMES次) => "$todayTimes/$TAST_TIMES次，已完成";
-  String task_to_standard_func(String TAST_TIMES次, String TAST_TIMES次, String TAST_TIMES次) => "需完成$TAST_TIMES次【扫描附近信号】、$TAST_TIMES次【添加附近地点】和$TAST_TIMES次【验证附近地点】。多出的贡献次数不影响达标。";
-  String task_un_finished_func(String todayTimes, String TAST_TIMES次) => "$todayTimes/$TAST_TIMES次，未完成";
+  String task_is_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，已完成";
+  String task_to_standard_func(String times1, String times2, String times3) => "需完成${times1}次【扫描附近信号】、${times2}次【添加附近地点】和${times3}次【验证附近地点】。多出的贡献次数不影响达标。";
+  String task_un_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，未完成";
   String total_invitation_func(String totalInvitations) => "${totalInvitations} invitee";
   String withdrawal_fee(String fee) => "Fee(${fee}%)";
   String withdrawal_with_quantity(String count) => "Withdraw：${count}";
@@ -1681,7 +1681,7 @@ class $ko extends S {
   @override
   String available_balance_usdt(String amount) => "사용가능한잔액 ${amount} USDT";
   @override
-  String task_to_standard_func(String TAST_TIMES次, String TAST_TIMES次, String TAST_TIMES次) => "需完成$TAST_TIMES次【扫描附近信号】、$TAST_TIMES次【添加附近地点】和$TAST_TIMES次【验证附近地点】。多出的贡献次数不影响达标。";
+  String task_to_standard_func(String times1, String times2, String times3) => "需完成${times1}次【扫描附近信号】、${times2}次【添加附近地点】和${times3}次【验证附近地点】。多出的贡献次数不影响达标。";
   @override
   String current_exchange_rate(String to, String currency) => "${to} 를 ${currency}으로환산하는현재비율은";
   @override
@@ -1715,7 +1715,7 @@ class $ko extends S {
   @override
   String available_mortgage_numbers(String number) => "${number}저당가능수";
   @override
-  String task_is_finished_func(String todayTimes, String TAST_TIMES次) => "$todayTimes/$TAST_TIMES次，已完成";
+  String task_is_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，已完成";
   @override
   String mortgage_id(String id) => "저당ID：${id}";
   @override
@@ -1735,7 +1735,7 @@ class $ko extends S {
   @override
   String distance(String distance) => "${distance}미터";
   @override
-  String task_un_finished_func(String todayTimes, String TAST_TIMES次) => "$todayTimes/$TAST_TIMES次，未完成";
+  String task_un_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，未完成";
   @override
   String grade_require_func(String require) => "등급요구 ${require}";
   @override
@@ -2847,7 +2847,7 @@ class $zh_CN extends S {
   @override
   String available_balance_usdt(String amount) => "可用余额 ${amount} USDT";
   @override
-  String task_to_standard_func(String TAST_TIMES, String TAST_TIMES, String TAST_TIMES) => "需完成${TAST_TIMES}次【扫描附近信号】、${TAST_TIMES}次【添加附近地点】和${TAST_TIMES}次【验证附近地点】。多出的贡献次数不影响达标。";
+  String task_to_standard_func(String times1, String times2, String times3) => "需完成${times1}次【扫描附近信号】、${times2}次【添加附近地点】和${times3}次【验证附近地点】。多出的贡献次数不影响达标。";
   @override
   String current_exchange_rate(String to, String currency) => "当前 ${to} 兑换 ${currency} 的汇率为";
   @override
@@ -2881,7 +2881,7 @@ class $zh_CN extends S {
   @override
   String available_mortgage_numbers(String number) => "可抵${number}份";
   @override
-  String task_is_finished_func(String todayTimes, String TAST_TIMES次) => "$todayTimes/$TAST_TIMES次，已完成";
+  String task_is_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，已完成";
   @override
   String mortgage_id(String id) => "抵押ID：${id}";
   @override
@@ -2901,7 +2901,7 @@ class $zh_CN extends S {
   @override
   String distance(String distance) => "${distance}米";
   @override
-  String task_un_finished_func(String todayTimes, String TAST_TIMES次) => "$todayTimes/$TAST_TIMES次，未完成";
+  String task_un_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，未完成";
   @override
   String grade_require_func(String require) => "等级要求： ${require}";
   @override

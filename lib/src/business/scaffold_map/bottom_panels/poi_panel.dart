@@ -101,9 +101,9 @@ class _PoiPanelState extends State<PoiPanel> {
                         SizedBox(
                           height: 8,
                         ),
-                        buildHeadItem(Icons.location_on, widget.selectedPoiEntity.address, hint: '暂无详细地址'),
+                        buildHeadItem(Icons.location_on, widget.selectedPoiEntity.address, hint: S.of(context).no_detail_address),
                         if (widget.selectedPoiEntity.remark != null && widget.selectedPoiEntity.remark.length > 0)
-                          buildHeadItem(Icons.message, widget.selectedPoiEntity.remark, hint: '无备注'),
+                          buildHeadItem(Icons.message, widget.selectedPoiEntity.remark, hint: S.of(context).no_remark),
                       ],
                     ),
                   ),
