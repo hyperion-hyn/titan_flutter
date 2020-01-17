@@ -570,5 +570,10 @@
   "hot_search": "Popular searches：",
   "task_un_finished": "任务未完成",
   "task_finished": "任务已完成",
-  "task_finished_func": "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次"
+  "task_finished_func": "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次",
+  "task_un_finished_func": "$todayTimes/$TAST_TIMES次，未完成",
+  "task_is_finished_func": "$todayTimes/$TAST_TIMES次，已完成",
+  "task_to_standard": "任务达标:",
+  "task_to_standard_rules": "任务达标规则将会在2020年春节元宵节后在合理的范围内有所调整。",
+  "task_to_standard_func": "需完成$TAST_TIMES次【扫描附近信号】、$TAST_TIMES次【添加附近地点】和$TAST_TIMES次【验证附近地点】。多出的贡献次数不影响达标。"
 }

@@ -316,18 +316,18 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                '任务达标:',
+                S.of(context).task_to_standard,
                 style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),
               ),
               Text(
-                '需完成$TAST_TIMES次【扫描附近信号】、$TAST_TIMES次【添加附近地点】和$TAST_TIMES次【验证附近地点】。多出的贡献次数不影响达标。',
+                S.of(context).task_to_standard_func(TAST_TIMES.toString(), TAST_TIMES.toString(), TAST_TIMES.toString()),
                 style: TextStyle(fontSize: 13),
               ),
               SizedBox(
                 height: 16,
               ),
               Text(
-                '任务达标规则将会在2020年春节元宵节后在合理的范围内有所调整。',
+                S.of(context).task_to_standard_rules,
                 style: TextStyle(fontSize: 13, color: Colors.grey[600]),
               ),
             ],
@@ -455,12 +455,12 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           children: <Widget>[
             if (todayTimes < TAST_TIMES)
               Text(
-                '$todayTimes/$TAST_TIMES次，未完成',
+                S.of(context).task_un_finished_func(todayTimes.toString(), TAST_TIMES.toString()),
                 style: TextStyle(fontSize: 12, color: Colors.red[600]),
               )
             else
               Text(
-                '$todayTimes/$TAST_TIMES次，已完成',
+                S.of(context).task_is_finished_func(todayTimes.toString(), TAST_TIMES.toString()),
                 style: TextStyle(fontSize: 12, color: Colors.green[600]),
               ),
             Icon(
