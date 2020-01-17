@@ -86,7 +86,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
         builder: (context) {
           return AlertDialog(
             title: Text(
-              '充值提示',
+              S.of(context).recharge_tips,
               style: TextStyle(color: Colors.red[700]),
             ),
             content: Column(
@@ -95,13 +95,13 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               children: <Widget>[
                 RichText(
                   text: TextSpan(
-                      text: '此地址',
+                      text: S.of(context).this_address,
                       style: TextStyle(fontSize: 16.0, color: Colors.black),
                       children: <TextSpan>[
                         TextSpan(
-                            text: '只接受HYN资产',
+                            text: S.of(context).only_accept_hyn_assets,
                             style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.bold)),
-                        TextSpan(text: '，请勿向此地址充值其他资产，否则将无法找回！', style: TextStyle(fontSize: 16.0, color: Colors.black)),
+                        TextSpan(text: S.of(context).do_deposit_other_asset, style: TextStyle(fontSize: 16.0, color: Colors.black)),
                       ]),
                   textAlign: TextAlign.left,
                 ),
@@ -123,7 +123,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('我已知晓'),
+                child: Text(S.of(context).i_already_know),
               ),
             ],
           );

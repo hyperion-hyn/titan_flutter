@@ -149,6 +149,8 @@ class S implements WidgetsLocalizations {
   String get dmap_life => "Explore nearby";
   String get dmap_setting => "DMap Settings";
   String get dmap_tools => "Tools";
+  String get do_deposit_other_asset => "，请勿向此地址充值其他资产，否则将无法找回！";
+  String get do_not_provide_other_address => "，切勿提供其他资产地址，否则将无法找回！";
   String get document_optimization => "optimizing document...";
   String get domestic_video => "Domestic";
   String get downloading_update_file => "Downloading update file";
@@ -202,6 +204,7 @@ class S implements WidgetsLocalizations {
   String get hyn_wallet_open_hint => "HYN wallet is about to open";
   String get hyn_withdrawal_coin_address => "HYN withdrawal Address";
   String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
+  String get i_already_know => "我已知晓";
   String get illegal_mnemonic => "illegal mnemonic";
   String get import => "Import";
   String get import_account => "Import Account";
@@ -311,6 +314,8 @@ class S implements WidgetsLocalizations {
   String get official_announcement => "Announcement";
   String get official_website => "Official Website";
   String get online_exchange => "Online Exchanges";
+  String get only_accept_hyn_addresses => "只接受HYN地址";
+  String get only_accept_hyn_assets => "只接受HYN资产";
   String get open_bluetooth => "Turn on Bluetooth";
   String get open_camera => "Please allow access to your camera";
   String get open_location_service => "Turn on location services";
@@ -403,6 +408,7 @@ class S implements WidgetsLocalizations {
   String get recharge_balance => "Top-up\nBalance";
   String get recharge_has_submitted => "Recharge has been submitted";
   String get recharge_success_hint => "Top-up successful";
+  String get recharge_tips => "充值提示";
   String get recommended_area => "Recommended Areas";
   String get redemption_fail => "Redemption Error";
   String get redemption_mortgage => "Redemption Staking";
@@ -499,6 +505,7 @@ class S implements WidgetsLocalizations {
   String get telphone => "Phone No.";
   String get thank_you_for_contribute_data => "Thank you for your data contribution。";
   String get the_horizon_hint => "—— This is the horizon ——";
+  String get this_address => "此地址";
   String get throughout_of_day => "All day（24 hours）";
   String get time => "Opening times";
   String get time_f => "time:";
@@ -548,10 +555,12 @@ class S implements WidgetsLocalizations {
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
   String get withdrawal => "Withdraw";
+  String get withdrawal_address => "提币地址";
   String get withdrawal_apply_success => "Withdrawal application is successful";
   String get withdrawal_audit_message => "Convert the corresponding HYN to your withdrawal address. In order to secure the funds, we will manually check the withdrawal. Withdrawal processing time: same day receipt during 10:00 am - 21:00 PM , next day receipt during non-working hours .";
   String get withdrawal_fail => "Withdrawal error";
   String get withdrawal_records => "Withdrawal record";
+  String get withdrawal_tips => "提币提示";
   String get without_hyn_wallet => "You don't have a HYN wallet yet.";
   String get work_time => "Working hours";
   String get wx_id => "WeChat ID：titan654321";
@@ -747,6 +756,8 @@ class $ko extends S {
   @override
   String get later => "업데이트를 하지 않습니다.";
   @override
+  String get only_accept_hyn_addresses => "只接受HYN地址";
+  @override
   String get time_f => "시간";
   @override
   String get finish => "완성";
@@ -770,6 +781,8 @@ class $ko extends S {
   String get official_announcement => "공식 발표";
   @override
   String get article => "문장";
+  @override
+  String get only_accept_hyn_assets => "只接受HYN资产";
   @override
   String get my_page => "내페이지";
   @override
@@ -893,6 +906,8 @@ class $ko extends S {
   @override
   String get import_account_tips => "축하드립니다.당신의 비밀 지갑 가져오기에 성공하였습니다.";
   @override
+  String get i_already_know => "我已知晓";
+  @override
   String get improvement_plan_refuse => "참여 안함";
   @override
   String get transfer_fail => "계좌 이체실패";
@@ -935,6 +950,8 @@ class $ko extends S {
   @override
   String get please_select_category_hint => "카테고리 선택";
   @override
+  String get this_address => "此地址";
+  @override
   String get post_my_check => "인증 제출";
   @override
   String get not_open_yet => "아직개방하지않았습니다.";
@@ -944,6 +961,8 @@ class $ko extends S {
   String get please_select_app_area => "지도사용영역을설정하십시오.";
   @override
   String get poi_confirm_title_error => "사실 존재하지 않거나 설명에 오류가 있는 장소임을 인정, 제출 확정?";
+  @override
+  String get withdrawal_address => "提币地址";
   @override
   String get data_contribution_with_hyn_wallet_tips => "데이터 기여는 HYN 주소가 필요합니다. 먼저 HYN 지갑을 만드거나 가져오십시오.";
   @override
@@ -962,6 +981,8 @@ class $ko extends S {
   String get click_again_to_exist_app => "다시 누르면 앱이 종료됩니다";
   @override
   String get get_poi_fail_please_again => "위치 정보 취득 실패, 우선 소재 위치로 맵 포지셔닝。";
+  @override
+  String get do_deposit_other_asset => "，请勿向此地址充值其他资产，否则将无法找回！";
   @override
   String get no_level => "무등급";
   @override
@@ -1002,6 +1023,8 @@ class $ko extends S {
   String get kais_talk => "케이시 스토리";
   @override
   String get rmb => "인민페";
+  @override
+  String get recharge_tips => "充值提示";
   @override
   String get input_confirm_wallet_password_hint => "최소 6자리수이상의 지갑 비밀번호를 다시 한번 입력해 주십시오.";
   @override
@@ -1359,6 +1382,8 @@ class $ko extends S {
   @override
   String get create_wallet_password_label => "지갑 비밀번호";
   @override
+  String get do_not_provide_other_address => "，切勿提供其他资产地址，否则将无法找回！";
+  @override
   String get please_input_hyn_withdrawal_address => "HYN인출주소를입력해주세요.";
   @override
   String get mainland_china => "중국대륙";
@@ -1546,6 +1571,8 @@ class $ko extends S {
   String get wechat_cs => "위챗 고객센타";
   @override
   String get speed_normal => "정상속도";
+  @override
+  String get withdrawal_tips => "提币提示";
   @override
   String get private_share => "프리이버시공유";
   @override
@@ -1915,6 +1942,8 @@ class $zh_CN extends S {
   @override
   String get later => "暂不更新";
   @override
+  String get only_accept_hyn_addresses => "只接受HYN地址";
+  @override
   String get time_f => "时间:";
   @override
   String get finish => "完成";
@@ -1938,6 +1967,8 @@ class $zh_CN extends S {
   String get official_announcement => "官方公告";
   @override
   String get article => "文章";
+  @override
+  String get only_accept_hyn_assets => "只接受HYN资产";
   @override
   String get my_page => "我的";
   @override
@@ -2061,6 +2092,8 @@ class $zh_CN extends S {
   @override
   String get import_account_tips => "恭喜，您的私密钱包已经导入成功";
   @override
+  String get i_already_know => "我已知晓";
+  @override
   String get improvement_plan_refuse => "不参与";
   @override
   String get transfer_fail => "转账失败";
@@ -2103,6 +2136,8 @@ class $zh_CN extends S {
   @override
   String get please_select_category_hint => "请选择类别";
   @override
+  String get this_address => "此地址";
+  @override
   String get post_my_check => "提交验证";
   @override
   String get not_open_yet => "暂未开放";
@@ -2112,6 +2147,8 @@ class $zh_CN extends S {
   String get please_select_app_area => "请设置地图使用区域";
   @override
   String get poi_confirm_title_error => "你认为这个地点是不存在或者描述有误的，确定提交吗？";
+  @override
+  String get withdrawal_address => "提币地址";
   @override
   String get data_contribution_with_hyn_wallet_tips => "数据贡献需要有HYN地址，请先创建 或导入HYN钱包。";
   @override
@@ -2130,6 +2167,8 @@ class $zh_CN extends S {
   String get click_again_to_exist_app => "再按一下退出程序";
   @override
   String get get_poi_fail_please_again => "获取位置信息失败，请先在首页地图定位到你所在位置。";
+  @override
+  String get do_deposit_other_asset => "，请勿向此地址充值其他资产，否则将无法找回！";
   @override
   String get no_level => "无等级";
   @override
@@ -2170,6 +2209,8 @@ class $zh_CN extends S {
   String get kais_talk => "凯氏物语";
   @override
   String get rmb => "人民币";
+  @override
+  String get recharge_tips => "充值提示";
   @override
   String get input_confirm_wallet_password_hint => "请再次输入至少6位数的钱包密码";
   @override
@@ -2527,6 +2568,8 @@ class $zh_CN extends S {
   @override
   String get create_wallet_password_label => "钱包密码";
   @override
+  String get do_not_provide_other_address => "，切勿提供其他资产地址，否则将无法找回！";
+  @override
   String get please_input_hyn_withdrawal_address => "请输入HYN提币地址";
   @override
   String get mainland_china => "中国大陆";
@@ -2714,6 +2757,8 @@ class $zh_CN extends S {
   String get wechat_cs => "微信客服";
   @override
   String get speed_normal => "平均值";
+  @override
+  String get withdrawal_tips => "提币提示";
   @override
   String get private_share => "私密分享";
   @override

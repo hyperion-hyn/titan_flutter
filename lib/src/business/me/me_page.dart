@@ -117,10 +117,10 @@ class _MeState extends UserState<MePage> with RouteAware {
           height: 230,
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [HexColor('#CC941E'), HexColor('#E4B042'), HexColor('#FBE6BD')],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              )),
+            colors: [HexColor('#CC941E'), HexColor('#E4B042'), HexColor('#FBE6BD')],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          )),
         ),
         Positioned(
           left: 16,
@@ -151,8 +151,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                       ],
                     ),
                     onTap: () {
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => PersonalSettingsPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PersonalSettingsPage()));
                     },
                   ),
                   Padding(
@@ -179,9 +178,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 child: Text(
-                                  LOGIN_USER_INFO.level == ""
-                                      ? S.of(context).no_level
-                                      : LOGIN_USER_INFO.level,
+                                  LOGIN_USER_INFO.level == "" ? S.of(context).no_level : LOGIN_USER_INFO.level,
                                   style: TextStyle(fontSize: 10, color: HexColor("#F9F9F9")),
                                 ),
                               ),
@@ -212,9 +209,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                                     size: 14,
                                   ),
                                   Text(
-                                    checkInCount >= 3
-                                        ? S.of(context).check_in_completed
-                                        : S.of(context).task,
+                                    checkInCount >= 3 ? S.of(context).check_in_completed : S.of(context).task,
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
@@ -248,22 +243,18 @@ class _MeState extends UserState<MePage> with RouteAware {
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
-                    borderRadius: BorderRadius.circular(8)
-                ),
+                    borderRadius: BorderRadius.circular(8)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    _buildHeaderSectionItem(S.of(context).my_account_with_unit, LOGIN_USER_INFO.balance, (){
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => MyAssetPage()));
+                    _buildHeaderSectionItem(S.of(context).my_account_with_unit, LOGIN_USER_INFO.balance, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
                     }),
-                    _buildHeaderSectionItem(S.of(context).my_power_with_unit, LOGIN_USER_INFO.totalPower, (){
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                    _buildHeaderSectionItem(S.of(context).my_power_with_unit, LOGIN_USER_INFO.totalPower, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                     }),
-                    _buildHeaderSectionItem(S.of(context).node_mortgage_with_unit, LOGIN_USER_INFO.mortgageNodes, (){
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
+                    _buildHeaderSectionItem(S.of(context).node_mortgage_with_unit, LOGIN_USER_INFO.mortgageNodes, () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
                     }),
                   ],
                 ),
@@ -285,7 +276,9 @@ class _MeState extends UserState<MePage> with RouteAware {
             "${Const.DOUBLE_NUMBER_FORMAT.format(count)}",
             style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 3,),
+          SizedBox(
+            height: 3,
+          ),
           Text(
             title,
             style: TextStyle(color: Colors.white, fontSize: 12),
@@ -309,7 +302,10 @@ class _MeState extends UserState<MePage> with RouteAware {
               }),
               Padding(
                 padding: const EdgeInsets.only(top: 18),
-                child: VerticalDivider(width: 0.5, color: HexColor('#E9E9E9'),),
+                child: VerticalDivider(
+                  width: 0.5,
+                  color: HexColor('#E9E9E9'),
+                ),
               ),
               _buildCenterBigButton(S.of(context).node_mortgage, "res/drawable/node_mortgage.png", () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => NodeMortgagePageV2()));
@@ -347,9 +343,9 @@ class _MeState extends UserState<MePage> with RouteAware {
                 context,
                 MaterialPageRoute(
                     builder: (context) => InAppWebViewContainer(
-                      initUrl: S.of(context).maprich_intro_url(Const.MAP_RICH_DOMAIN_WEBSITE),
-                      title: S.of(context).use_guide,
-                    )));
+                          initUrl: S.of(context).maprich_intro_url(Const.MAP_RICH_DOMAIN_WEBSITE),
+                          title: S.of(context).use_guide,
+                        )));
           }),
 
           Divider(
@@ -389,8 +385,8 @@ class _MeState extends UserState<MePage> with RouteAware {
           ),
           _buildDappItem('ic_me_page_use_location', S.of(context).private_sharing,
               S.of(context).private_share_receive_address(shortEthAddress(_pubKey)), () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
-              }),
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
+          }),
         ],
       ),
     );
@@ -436,7 +432,10 @@ class _MeState extends UserState<MePage> with RouteAware {
             Container(
               width: 20,
               height: 20,
-              child: Image.asset("res/drawable/$iconData.png",fit: BoxFit.contain,),
+              child: Image.asset(
+                "res/drawable/$iconData.png",
+                fit: BoxFit.contain,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -464,10 +463,13 @@ class _MeState extends UserState<MePage> with RouteAware {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-              margin: EdgeInsets.only(top: 8, bottom: 8, right: 16),
-              width: 19,
-              height: 27,
-              child: Image.asset("res/drawable/$iconData.png",fit: BoxFit.contain,),
+            margin: EdgeInsets.only(top: 8, bottom: 8, right: 16),
+            width: 19,
+            height: 27,
+            child: Image.asset(
+              "res/drawable/$iconData.png",
+              fit: BoxFit.contain,
+            ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -504,9 +506,11 @@ class _MeState extends UserState<MePage> with RouteAware {
     try {
       globalCheckInModel = await _userService.checkInCountV2();
 //      checkInCount = await _userService.checkInCount();
-      setState(() {
-        checkInCount = globalCheckInModel?.finishTaskNum ?? 0;
-      });
+      if (mounted) {
+        setState(() {
+          checkInCount = globalCheckInModel?.finishTaskNum ?? 0;
+        });
+      }
     } catch (_) {
       ExceptionProcess.process(_);
       throw _;
