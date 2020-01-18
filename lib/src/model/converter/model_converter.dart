@@ -13,13 +13,14 @@ class LatLngConverter {
 /// convert location: {"location": {"lat": 111, "lon": 111}} to Mapbox LatLng
 class LocationConverter {
   static LatLng latLngFromJson(dynamic json) {
-    return LatLng(json['location']['lat'], json['location']['lon']);
+    return LatLng(json['lat'], json['lon']);
   }
 
   static dynamic latLngToJson(LatLng latLng) {
-    var l = {
-      'location': {'lat': latLng.latitude, 'lon': latLng.longitude}
-    };
+//    var l = {
+//      'location': {'lat': latLng.latitude, 'lon': latLng.longitude}
+//    };
+   var l = {'lat': latLng.latitude, 'lon': latLng.longitude};
     return l;
   }
 }
