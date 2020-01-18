@@ -82,7 +82,7 @@
   "time": "营业时间",
   "services": "服务",
   "remark": "备注",
-  "search_or_decode": "搜索 / 解码位置密文",
+  "search_or_decode": "搜索附近 / 解码位置密文",
   "map3_global_nodes": "数据展示",
   "global_nodes": "数据展示",
   "global_map_server_nodes": "实时查看全球数据更新情况",

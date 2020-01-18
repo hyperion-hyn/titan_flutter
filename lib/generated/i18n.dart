@@ -456,7 +456,7 @@ class S implements WidgetsLocalizations {
   String get search_empty_data => "No Data";
   String get search_exception => "Search Exception";
   String get search_history => "History";
-  String get search_or_decode => "Search / Decrypt";
+  String get search_or_decode => "Search nearby / Decrypt";
   String get search_title => "Search / Decrypt";
   String get select_category => "Select category";
   String get select_position => "Select position";
@@ -2564,7 +2564,7 @@ class $zh_CN extends S {
   @override
   String get introduce => "介绍";
   @override
-  String get search_or_decode => "搜索 / 解码位置密文";
+  String get search_or_decode => "搜索附近 / 解码位置密文";
   @override
   String get create_wallet_password_label => "钱包密码";
   @override

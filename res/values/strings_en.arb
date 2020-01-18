@@ -82,7 +82,7 @@
   "time": "Opening times",
   "services": "Services",
   "remark": "Notes",
-  "search_or_decode": "Search / Decrypt",
+  "search_or_decode": "Search nearby / Decrypt",
   "map3_global_nodes": "Dashboard",
   "global_nodes": "Dashboard",
   "global_map_server_nodes": "View global data updates",
