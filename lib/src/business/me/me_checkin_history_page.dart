@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/webview/webview.dart';
-import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/business/me/model/checkin_history.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
@@ -80,6 +76,15 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
 
   Widget _buildItem(CheckinHistory model) {
 
+    String _detail = "";
+    int _scanTimes = model.detail?.scanTimes??0;
+    int _addPoiTimes = model.detail?.addPoiTimes??0;
+    int _verifyPoiTimes= model.detail?.verifyPoiTimes??0;
+    if ((model.detail != null) &&
+        (_scanTimes > 0 || _addPoiTimes > 0 || _verifyPoiTimes > 0)
+    ) {
+      _detail = S.of(context).task_finished_func(_scanTimes.toString(), _addPoiTimes.toString(), _verifyPoiTimes.toString());
+    }
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
@@ -117,11 +122,7 @@ class _MeCheckInHistory extends DataListState<MeCheckInHistory> {
                   height: 8,
                 ),
                 Text(
-                  S.of(context).task_finished_func(
-                      (model.detail?.scanTimes??0).toString(),
-                      (model.detail?.addPoiTimes??0).toString(),
-                      (model.detail?.verifyPoiTimes??0).toString()
-                  ),
+                  _detail,
                   style: TextStyle(color: HexColor('#777777'), fontSize: 12),
                 ),
               ],
