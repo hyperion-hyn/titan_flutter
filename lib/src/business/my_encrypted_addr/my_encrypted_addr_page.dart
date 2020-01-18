@@ -96,12 +96,18 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    _pubKeyAutoRefreshTip,
-                    style: TextStyle(color: Colors.black54),
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0, left: 8),
+                      child: Text(
+                        _pubKeyAutoRefreshTip,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                    ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+                    padding: const EdgeInsets.only(right: 8.0),
                     child: InkWell(
                       onTap: () => showRefreshDialog(context),
                       child: Text(

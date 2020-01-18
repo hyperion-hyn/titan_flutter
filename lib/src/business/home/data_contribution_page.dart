@@ -5,6 +5,7 @@ import 'package:android_intent/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
@@ -319,6 +320,9 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                 S.of(context).task_to_standard,
                 style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),
               ),
+              SizedBox(
+                height: 4,
+              ),
               Text(
                 S.of(context).task_to_standard_func(TAST_TIMES.toString(), TAST_TIMES.toString(), TAST_TIMES.toString()),
                 style: TextStyle(fontSize: 13),
@@ -439,8 +443,17 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
             title,
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: HexColor('#333333')),
           ),
-          Spacer(),
-          _end(todayTimes, isOpen: isOpen),
+          //Spacer(),
+          Flexible(
+            fit: FlexFit.loose,
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                _end(todayTimes, isOpen: isOpen),
+              ],
+            ),
+          ),
         ],
       ),
     );

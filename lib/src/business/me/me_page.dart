@@ -237,7 +237,7 @@ class _MeState extends UserState<MePage> with RouteAware {
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(8, 12, 8, 8),
-                margin: EdgeInsets.symmetric(horizontal: 18),
+                margin: EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [HexColor('#AC823A'), HexColor('#EDC67B'), HexColor('#CBAA69')],
@@ -464,6 +464,7 @@ class _MeState extends UserState<MePage> with RouteAware {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
+            //color: Colors.blue,
             margin: EdgeInsets.only(top: 8, bottom: 8, right: 16),
             width: 19,
             height: 27,
@@ -472,20 +473,27 @@ class _MeState extends UserState<MePage> with RouteAware {
               fit: BoxFit.contain,
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                title,
-                style: TextStyle(color: Colors.black, fontSize: 14),
-              ),
-              Text(
-                description,
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 14,color: Colors.black),
+                ),
+                Container(
+                  //padding: EdgeInsets.fromLTRB(0, 2, 4, 30),
+                  //color: Colors.red,
+                  child: Text(
+                    description,
+                    //maxLines: 2,
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ),
+              ],
+            ),
           ),
-          Spacer(),
+          //Spacer(),
           Icon(
             Icons.chevron_right,
             color: Colors.black54,

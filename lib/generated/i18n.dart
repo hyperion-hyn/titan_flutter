@@ -149,8 +149,8 @@ class S implements WidgetsLocalizations {
   String get dmap_life => "Explore nearby";
   String get dmap_setting => "DMap Settings";
   String get dmap_tools => "Tools";
-  String get do_deposit_other_asset => "，请勿向此地址充值其他资产，否则将无法找回！";
-  String get do_not_provide_other_address => "，切勿提供其他资产地址，否则将无法找回！";
+  String get do_deposit_other_asset => "，DO NOT deposit non-HYN tokens to the address, otherwise your asset will not be retrieved!";
+  String get do_not_provide_other_address => "，DO NOT provide non-HYN address, otherwise your asset will be retrieved!";
   String get document_optimization => "optimizing document...";
   String get domestic_video => "Domestic";
   String get downloading_update_file => "Downloading update file";
@@ -195,7 +195,7 @@ class S implements WidgetsLocalizations {
   String get home_page => "Home";
   String get hospital => "Hospital";
   String get hot_area => "Hot spots";
-  String get hot_search => "Popular searches：";
+  String get hot_search => "Trends：";
   String get hotel => "Hotel";
   String get house_number => "House no.";
   String get hynPriceUnit => "USD";
@@ -204,7 +204,7 @@ class S implements WidgetsLocalizations {
   String get hyn_wallet_open_hint => "HYN wallet is about to open";
   String get hyn_withdrawal_coin_address => "HYN withdrawal Address";
   String get hyperion_project_intro_url => "https://medium.com/@hyperionsgoffical/what-is-hyperion-mapchain-88c275c1412";
-  String get i_already_know => "我已知晓";
+  String get i_already_know => "I have acknowledged";
   String get illegal_mnemonic => "illegal mnemonic";
   String get import => "Import";
   String get import_account => "Import Account";
@@ -314,8 +314,8 @@ class S implements WidgetsLocalizations {
   String get official_announcement => "Announcement";
   String get official_website => "Official Website";
   String get online_exchange => "Online Exchanges";
-  String get only_accept_hyn_addresses => "只接受HYN地址";
-  String get only_accept_hyn_assets => "只接受HYN资产";
+  String get only_accept_hyn_addresses => " ONLY accepts HYN ";
+  String get only_accept_hyn_assets => "ONLY accepts HYN";
   String get open_bluetooth => "Turn on Bluetooth";
   String get open_camera => "Please allow access to your camera";
   String get open_location_service => "Turn on location services";
@@ -408,7 +408,7 @@ class S implements WidgetsLocalizations {
   String get recharge_balance => "Top-up\nBalance";
   String get recharge_has_submitted => "Recharge has been submitted";
   String get recharge_success_hint => "Top-up successful";
-  String get recharge_tips => "充值提示";
+  String get recharge_tips => "Top-up reminder";
   String get recommended_area => "Recommended Areas";
   String get redemption_fail => "Redemption Error";
   String get redemption_mortgage => "Redemption Staking";
@@ -494,18 +494,18 @@ class S implements WidgetsLocalizations {
   String get take_pictures_must_not_be_empty_hint => "Add a POI photo";
   String get task => "Task";
   String get task_finish_day_hint => "Task completed for the day";
-  String get task_finished => "任务已完成";
+  String get task_finished => "Task Completed";
   String get task_interval_below_limit => "Do task intervals below 30 minutes";
   String get task_record => "Tasks";
-  String get task_to_standard => "任务达标:";
-  String get task_to_standard_rules => "任务达标规则将会在2020年春节元宵节后在合理的范围内有所调整。";
-  String get task_un_finished => "任务未完成";
+  String get task_to_standard => "How to achieve your goals:";
+  String get task_to_standard_rules => "Reasonable revision of the task rules will be applied after the Lantern Festival in 2020。";
+  String get task_un_finished => "Unfinished Tasks";
   String get telegram => "Telegram";
   String get telegram_operator => "Telegram Operator";
   String get telphone => "Phone No.";
   String get thank_you_for_contribute_data => "Thank you for your data contribution。";
   String get the_horizon_hint => "—— This is the horizon ——";
-  String get this_address => "此地址";
+  String get this_address => "The wallet address";
   String get throughout_of_day => "All day（24 hours）";
   String get time => "Opening times";
   String get time_f => "time:";
@@ -555,12 +555,12 @@ class S implements WidgetsLocalizations {
   String get wechat_cs => "Wechat Operator";
   String get wechat_official_account => "Wechat Official Account";
   String get withdrawal => "Withdraw";
-  String get withdrawal_address => "提币地址";
+  String get withdrawal_address => "Withdrawal address";
   String get withdrawal_apply_success => "Withdrawal application is successful";
   String get withdrawal_audit_message => "Convert the corresponding HYN to your withdrawal address. In order to secure the funds, we will manually check the withdrawal. Withdrawal processing time: same day receipt during 10:00 am - 21:00 PM , next day receipt during non-working hours .";
   String get withdrawal_fail => "Withdrawal error";
   String get withdrawal_records => "Withdrawal record";
-  String get withdrawal_tips => "提币提示";
+  String get withdrawal_tips => "Withdrawal reminder";
   String get without_hyn_wallet => "You don't have a HYN wallet yet.";
   String get work_time => "Working hours";
   String get wx_id => "WeChat ID：titan654321";
@@ -600,10 +600,10 @@ class S implements WidgetsLocalizations {
   String snap_up_product_fuc(String name) => "Snap Up Products：${name}";
   String stay_func(String snapUpStocks) => "${snapUpStocks} left";
   String task_finish_func(String total) => "Already completed ${total} tasks";
-  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次";
-  String task_is_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，已完成";
-  String task_to_standard_func(String times1, String times2, String times3) => "需完成${times1}次【扫描附近信号】、${times2}次【添加附近地点】和${times3}次【验证附近地点】。多出的贡献次数不影响达标。";
-  String task_un_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，未完成";
+  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "Signal scan ${scanTimes}times，Add POI ${addPoiTimes}times，Verify POI ${verifyPoiTimes}times";
+  String task_is_finished_func(String todayTimes, String times) => "${todayTimes}/${times}times，completed";
+  String task_to_standard_func(String times1, String times2, String times3) => "Must complete ${times1}time【Signal Scan】,${times2}times【Add POI】,${times3}times【Verify POI】。Excessive contributions will not count in the final result。";
+  String task_un_finished_func(String todayTimes, String times) => "${todayTimes}/${times}times，unfinished";
   String total_invitation_func(String totalInvitations) => "${totalInvitations} invitee";
   String withdrawal_fee(String fee) => "Fee(${fee}%)";
   String withdrawal_with_quantity(String count) => "Withdraw：${count}";
@@ -2892,7 +2892,7 @@ class $zh_CN extends S {
   @override
   String available_balance_usdt(String amount) => "可用余额 ${amount} USDT";
   @override
-  String task_to_standard_func(String times1, String times2, String times3) => "需完成${times1}次【扫描附近信号】、${times2}次【添加附近地点】和${times3}次【验证附近地点】。多出的贡献次数不影响达标。";
+  String task_to_standard_func(String times1, String times2, String times3) => "需完成${times1}次【扫描附近信号】，${times2}次【添加附近地点】，${times3}次【验证附近地点】。多出的贡献次数不影响达标。";
   @override
   String current_exchange_rate(String to, String currency) => "当前 ${to} 兑换 ${currency} 的汇率为";
   @override
