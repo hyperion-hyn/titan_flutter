@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/routes.dart';
-import 'package:titan/src/pages/wallet/service/wallet_service.dart';
 import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
@@ -13,8 +15,6 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 
-import '../wallet_import_account_page.dart';
-
 class WalletManagerPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -22,18 +22,14 @@ class WalletManagerPage extends StatefulWidget {
   }
 }
 
-class _WalletManagerState extends State<WalletManagerPage> {
+class _WalletManagerState extends BaseState<WalletManagerPage> {
   WalletManagerBloc _walletManagerBloc;
 
   @override
-  void initState() {
-    super.initState();
-    _walletManagerBloc = WalletManagerBloc(context);
+  void onCreated() {
+    _walletManagerBloc = BlocProvider.of<WalletManagerBloc>(context);
     _walletManagerBloc.add(ScanWalletEvent());
-    initData();
   }
-
-  void initData() {}
 
   @override
   void dispose() {
@@ -43,7 +39,7 @@ class _WalletManagerState extends State<WalletManagerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( 
+    return Scaffold(
         appBar: AppBar(
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.white),
@@ -55,7 +51,6 @@ class _WalletManagerState extends State<WalletManagerPage> {
           actions: <Widget>[
             InkWell(
               onTap: () {
-//                Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                 var currentRouteName = ModalRoute.of(context).settings.name;
                 Application.router.navigateTo(
                     context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(currentRouteName)}');
@@ -70,7 +65,9 @@ class _WalletManagerState extends State<WalletManagerPage> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                var currentRouteName = ModalRoute.of(context).settings.name;
+                Application.router.navigateTo(
+                    context, Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(currentRouteName)}');
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -84,17 +81,20 @@ class _WalletManagerState extends State<WalletManagerPage> {
         ),
         body: BlocBuilder<WalletManagerBloc, WalletManagerState>(
           bloc: _walletManagerBloc,
-          builder: (context, walletManagerState) {
-            if (walletManagerState is ShowWalletState) {
-              var defaultWalletFileName = walletManagerState.defaultWalletFileName;
-              var walletList = walletManagerState.wallets;
+          builder: (context, state) {
+            if (state is ShowWalletState) {
+              var walletList = state.wallets;
               return ListView.builder(
                 primary: false,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
-                  return _buildWallet(walletList[index], defaultWalletFileName);
+                  return _buildWallet(walletList[index]);
                 },
                 itemCount: walletList.length,
+              );
+            } else if (state is WalletEmptyState) {
+              return Container(
+                child: Text('empty wallet TODO'),
               );
             } else {
               return Container();
@@ -103,11 +103,10 @@ class _WalletManagerState extends State<WalletManagerPage> {
         ));
   }
 
-  Widget _buildWallet(Wallet wallet, String defaultWalletFileName) {
-    Wallet trustWallet = wallet;
-    KeyStore walletKeyStore = trustWallet.keystore;
-    Account ethAccount = trustWallet.getEthAccount();
-    var isSelected = (wallet.keystore.fileName == defaultWalletFileName);
+  Widget _buildWallet(Wallet wallet) {
+    bool isSelected = wallet == WalletInheritedModel.of(context).activatedWallet?.wallet;
+    KeyStore walletKeyStore = wallet.keystore;
+    Account ethAccount = wallet.getEthAccount();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       child: Column(
@@ -122,7 +121,7 @@ class _WalletManagerState extends State<WalletManagerPage> {
                 child: InkWell(
                   onTap: () {
                     if (!isSelected) {
-                      _walletManagerBloc.add(SwitchWalletEvent(wallet));
+                      BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
                     }
                   },
                   child: Stack(
@@ -179,7 +178,7 @@ class _WalletManagerState extends State<WalletManagerPage> {
               Spacer(),
               InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(trustWallet)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
                 },
                 child: Icon(
                   Icons.info_outline,

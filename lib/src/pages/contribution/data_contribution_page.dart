@@ -24,7 +24,7 @@ import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
 import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
 import 'package:titan/src/global.dart';
 
-import '../wallet/wallet_manager/wallet_manager.dart';
+import '../wallet/wallet_manager/wallet_manager_page.dart';
 import '../wallet/wallet_create_new_account_page.dart';
 
 class DataContributionPage extends StatefulWidget {

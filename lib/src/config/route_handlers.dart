@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/routes.dart';
 import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_import_account_page.dart';
-import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/wallet_manager_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_confirm_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
@@ -51,7 +53,9 @@ var transferConfirmHandler = Handler(handlerFunc: (context, params) {
       backRouteName: params['backRouteName']?.first);
 });
 
-var managerWalletHandler = Handler(handlerFunc: (context, params) => WalletManagerPage());
+var managerWalletHandler = Handler(
+    handlerFunc: (context, params) =>
+        BlocProvider<WalletManagerBloc>(create: (context) => WalletManagerBloc(), child: WalletManagerPage()));
 
 //var demoRouteHandler = Handler(
 //    handlerFunc: (BuildContext context, Map<String, List<String>> params) {

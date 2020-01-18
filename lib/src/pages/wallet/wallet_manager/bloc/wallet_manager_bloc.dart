@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
@@ -7,12 +6,9 @@ import 'wallet_manager_event.dart';
 import 'wallet_manager_state.dart';
 
 class WalletManagerBloc extends Bloc<WalletManagerEvent, WalletManagerState> {
-  BuildContext context;
-
 //  WalletService _walletService;
 
-  WalletManagerBloc(BuildContext context) {
-    this.context = context;
+  WalletManagerBloc() {
 //    _walletService = WalletService(context: context);
   }
 

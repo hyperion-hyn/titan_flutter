@@ -10,6 +10,7 @@ import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dar
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/tools/empty_fail_loading_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
@@ -28,7 +29,7 @@ class ConfirmPositionPage extends StatefulWidget {
   }
 }
 
-class _ConfirmPositionState extends State<ConfirmPositionPage> {
+class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoadingState {
   PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
   double defaultZoom = 17;
@@ -178,10 +179,11 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               );
             }
           } else {
-            return AllPageStateContainer(state,(){
-              _positionBloc.add(ConfirmPositionLoadingEvent());
-              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
-            });
+            return buildWidgetByNormalState(context, state);
+//            return AllPageStateContainer(state,(){
+//              _positionBloc.add(ConfirmPositionLoadingEvent());
+//              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+//            });
           }
         });
   }
