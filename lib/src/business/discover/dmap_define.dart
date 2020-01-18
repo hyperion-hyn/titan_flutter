@@ -93,6 +93,7 @@ final embassyDMapConfigModel = DMapConfigModel(
       var poi;
       var feature = await _getFeature(point, coordinates, 'layer-heaven-c1b7c5102eca43029f0416892447e0ed');
       if (feature != null) {
+        print('【D-map] --> $feature');
         poi = EmbassyPoi.fromMapFeature(feature);
         if (poi != null) {
           BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));

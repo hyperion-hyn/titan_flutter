@@ -16,7 +16,7 @@ class ConfirmResumeWordPage extends StatefulWidget {
 class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
   List<CandidateWordVo> _candidateWords = [];
 
-  List<String> _selectedResumeWords = [];
+  List<CandidateWordVo> _selectedResumeWords = [];
 
   @override
   void initState() {
@@ -26,7 +26,12 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
 
   void initMnemonic() {
     logger.i("createWalletMnemonicTemp:$createWalletMnemonicTemp");
-    _candidateWords = createWalletMnemonicTemp.split(" ").map((word) => CandidateWordVo(word, false)).toList();
+    _candidateWords = createWalletMnemonicTemp
+        .split(" ")
+        .asMap()
+        .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
+        .values
+        .toList();
 
     _candidateWords.shuffle();
     setState(() {});
@@ -59,9 +64,9 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                   ),
                 ),
                 Container(
+                  constraints: BoxConstraints(minHeight: 230),
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(8),
-                  height: 230,
                   decoration: BoxDecoration(
                       border: Border.all(color: Color(0xFFB7B7B7)), borderRadius: BorderRadius.circular(16)),
                   child: GridView.builder(
@@ -81,7 +86,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                               decoration: BoxDecoration(
                                   border: Border.all(color: HexColor("#FFB7B7B7")),
                                   borderRadius: BorderRadius.circular(12)),
-                              child: Text("${index + 1} ${word}")),
+                              child: Text("${index + 1} ${word.text}")),
                         );
                       }),
                 ),
@@ -98,7 +103,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                       var candidateWordVo = _candidateWords[index];
                       return InkWell(
                         onTap: () {
-                          _candidateWordClick(candidateWordVo.text);
+                          _candidateWordClick(candidateWordVo);
                         },
                         child: Container(
                           alignment: Alignment.center,
@@ -145,9 +150,9 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
         ));
   }
 
-  void _candidateWordClick(String word) {
+  void _candidateWordClick(CandidateWordVo word) {
     _candidateWords.forEach((candidateWordVoTemp) {
-      if (candidateWordVoTemp.text == word) {
+      if (candidateWordVoTemp == word) {
         if (candidateWordVoTemp.selected == false) {
           candidateWordVoTemp.selected = true;
         }
@@ -159,12 +164,12 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
     setState(() {});
   }
 
-  void _selectedWordClick(String word) {
+  void _selectedWordClick(CandidateWordVo word) {
     if (_selectedResumeWords.contains(word)) {
       _selectedResumeWords.remove(word);
     }
     _candidateWords.forEach((candidateWordVoTemp) {
-      if (candidateWordVoTemp.text == word) {
+      if (candidateWordVoTemp == word) {
         if (candidateWordVoTemp.selected == true) {
           candidateWordVoTemp.selected = false;
         }
@@ -175,7 +180,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
 
   Future _submit() async {
     var selectedMnemonitc = "";
-    _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word + " ");
+    _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
 
     logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
     if (selectedMnemonitc.trim() == createWalletMnemonicTemp.trim()) {
@@ -189,8 +194,21 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
 }
 
 class CandidateWordVo {
+  String id;
   String text;
   bool selected;
 
-  CandidateWordVo(this.text, this.selected);
+  CandidateWordVo(this.id, this.text, this.selected);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CandidateWordVo &&
+          runtimeType == other.runtimeType &&
+          text == other.text &&
+          selected == other.selected &&
+          id == other.id;
+
+  @override
+  int get hashCode => text.hashCode ^ selected.hashCode ^ id.hashCode;
 }

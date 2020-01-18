@@ -79,8 +79,8 @@ class BaseHttpCore {
 
 
   //post method
-  Future<dynamic> post(String url, {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    return _request(url, method: POST, data: data, params: params, options: options, cancelToken: cancelToken);
+  Future<dynamic> post(String url, {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken, ProgressCallback onSendProgress}) async {
+    return _request(url, method: POST, data: data, params: params, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
   }
 
   //patch method
@@ -89,7 +89,7 @@ class BaseHttpCore {
   }
 
   Future<dynamic> _request(String url,
-      {String method, dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {String method, dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken, ProgressCallback onSendProgress}) async {
 //    dio.onHttpClientCreate = (HttpClient client) {
 //      client.findProxy = (uri) {
 //        //proxy all request to localhost:8888
@@ -114,9 +114,12 @@ class BaseHttpCore {
       response = await dio.get(url, options: options, cancelToken: cancelToken);
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
+        params.forEach((key,value){
+          print("[base_http] post params.key $key params.values $value");
+        });
         response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
       } else if (data != null) {
-        response = await dio.post(url, data: data, options: options, cancelToken: cancelToken);
+        response = await dio.post(url, data: data, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
       } else{
         response = await dio.post(url, options: options, cancelToken: cancelToken);
       }
@@ -142,12 +145,12 @@ class BaseHttpCore {
     try {
       map = json.decode(response.data);
     } catch (err) {
-      print('json decode 1 err $err');
-      String res2Json = json.encode(response.data);
+      print('[base_http] json decode 1 err $err');
+      //String res2Json = json.encode(response.data);
       try {
         map = json.decode(response.data);
       } catch (err) {
-        print('json decode 2 err $err');
+        print('[base_http] json decode 2 err $err');
       }
     }
 

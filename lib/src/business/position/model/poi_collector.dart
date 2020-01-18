@@ -1,15 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-part 'poi_collector.g.dart';
+import 'package:titan/src/model/converter/model_converter.dart';
 
+part 'poi_collector.g.dart';
 
 @JsonSerializable()
 class PoiCollector extends Object {
-
   @JsonKey(name: 'category_id')
   String categoryId;
 
-  @JsonKey(name: 'location')
+  @JsonKey(fromJson: LocationConverter.latLngFromJson, toJson: LocationConverter.latLngToJson)
   LatLng location;
 
   @JsonKey(name: 'name')
@@ -27,6 +27,9 @@ class PoiCollector extends Object {
   @JsonKey(name: 'city')
   String city;
 
+  @JsonKey(name: 'county')
+  String county;
+
   @JsonKey(name: 'road')
   String road;
 
@@ -36,8 +39,8 @@ class PoiCollector extends Object {
   @JsonKey(name: 'house_number')
   String houseNumber;
 
-  @JsonKey(name: 'postal_code')
-  String postalCode;
+  @JsonKey(name: 'postcode')
+  String postCode;
 
   @JsonKey(name: 'work_time')
   String workTime;
@@ -48,14 +51,29 @@ class PoiCollector extends Object {
   @JsonKey(name: 'website')
   String website;
 
-  PoiCollector(this.categoryId,this.location,this.name, this.countryCode,this.country,this.state,this.city,this.road,this.address2,this.houseNumber,this.postalCode,this.workTime,this.phone,this.website);
+  PoiCollector(this.categoryId, this.location, this.name, this.countryCode, this.country, this.state, this.city,
+      this.county, this.road, this.address2, this.houseNumber, this.postCode, this.workTime, this.phone, this.website);
 
   factory PoiCollector.fromJson(Map<String, dynamic> srcJson) => _$PoiCollectorFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$PoiCollectorToJson(this);
-
 }
 
-
-
-
+/*
+    PoiCollector(
+        this.categoryId,
+        this.location,
+        this.name,
+        this.countryCode,
+        this.country,
+        this.state,
+        this.city,
+        this.county,
+        this.road,
+        this.address2,
+        this.houseNumber,
+        this.postalCode,
+        this.workTime,
+        this.phone,
+        this.website);
+    */

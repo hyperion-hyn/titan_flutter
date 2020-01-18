@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/global.dart';
-
-import 'add_position_page.dart';
-import 'confirm_position_page.dart';
-import 'select_position_page.dart';
 
 class FinishAddPositionPage extends StatefulWidget {
   static const String FINISH_PAGE_TYPE_ADD = "finish_page_type_add";
   static const String FINISH_PAGE_TYPE_CONFIRM = "finish_page_type_confirm";
 
-  String pageType;
+  final String pageType;
 
   FinishAddPositionPage(this.pageType);
 
@@ -22,20 +17,28 @@ class FinishAddPositionPage extends StatefulWidget {
 }
 
 class _FinishAddPositionState extends State<FinishAddPositionPage> {
-  String posiInfoText = "位置信息添加成功";
-  String continueText = "继续添加";
+  String posiInfoText = "";
 
   @override
   void initState() {
-    if (widget.pageType == FinishAddPositionPage.FINISH_PAGE_TYPE_ADD) {
-      posiInfoText = "位置信息添加成功";
-      continueText = "继续添加";
-    } else if (widget.pageType ==
-        FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM) {
-      posiInfoText = "位置信息确认成功";
-      continueText = "继续确认";
-    }
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _setupData();
+    super.didChangeDependencies();
+  }
+
+  void _setupData() {
+
+    setState(() {
+      if (widget.pageType == FinishAddPositionPage.FINISH_PAGE_TYPE_ADD) {
+        posiInfoText = S.of(context).poi_add_success_hint;
+      } else if (widget.pageType == FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM) {
+        posiInfoText = S.of(context).poi_confirm_success_hint;
+      }
+    });
   }
 
   @override
@@ -47,15 +50,7 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
             builder: (BuildContext context) {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  if (createWalletPopUtilName == null) {
-                    Navigator.of(context).popUntil((r) => r.isFirst);
-                  } else {
-                    Navigator.of(context)
-                        .popUntil(ModalRoute.withName(createWalletPopUtilName));
-                    createWalletPopUtilName = null;
-                  }
-                },
+                onPressed: _popView,
               );
             },
           ),
@@ -95,72 +90,13 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     disabledColor: Colors.grey[600],
+//                    color: HexColor('#259D25'),
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
-                    onPressed: () async {
-                      if (widget.pageType ==
-                          FinishAddPositionPage.FINISH_PAGE_TYPE_ADD) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SelectPositionPage()),
-                        );
-                      } else if (widget.pageType ==
-                          FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ConfirmPositionPage()),
-                        );
-//                        Navigator.of(context).popUntil(
-//                            ModalRoute.withName(ROUTE_CONFIRM_POSITION_PAGE));
-                      }
-
-                      /*if (createWalletPopUtilName == null) {
-                        Navigator.of(context).popUntil((r) => r.isFirst);
-                      } else {
-                        Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                        createWalletPopUtilName = null;
-                      }*/
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            continueText,
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
-                  constraints: BoxConstraints.expand(height: 48),
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    disabledColor: Colors.grey[600],
-                    color: HexColor('#259D25'),
-                    textColor: Colors.white,
-                    disabledTextColor: Colors.white,
-                    onPressed: () async {
-                      if (createWalletPopUtilName == null) {
-                        Navigator.of(context).popUntil((r) => r.isFirst);
-                      } else {
-                        Navigator.of(context).popUntil(
-                            ModalRoute.withName(createWalletPopUtilName));
-                        createWalletPopUtilName = null;
-                      }
-                    },
+                    onPressed: _popView,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -168,8 +104,7 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
                         children: <Widget>[
                           Text(
                             S.of(context).finish,
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 16),
+                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],
                       ),
@@ -181,4 +116,14 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
           ),
         ));
   }
+
+  void _popView() {
+    if (createWalletPopUtilName == null) {
+      Navigator.of(context).pop();
+    } else {
+      Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
+      createWalletPopUtilName = null;
+    }
+  }
+
 }

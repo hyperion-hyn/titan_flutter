@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 
-typedef void TextFieldCallBack(String content);
+typedef void TextFieldCallBack(String content,{bool isForceSearch});
 
 class CustomInputText extends StatefulWidget {
   final String text;
@@ -25,7 +27,7 @@ class CustomInputText extends StatefulWidget {
 
   CustomInputText(
       {Key key,
-      this.text = "输入内容",
+      this.text = "",
       this.password = false,
       this.isShowClean = false,
       this.onChanged,
@@ -66,7 +68,6 @@ class _TextaState extends State<CustomInputText> {
 
   void searchTextChangeListener() {
     String currentText = widget.controller.text.trim();
-    widget.controller.selection = TextSelection(baseOffset:currentText.length , extentOffset:currentText.length);
     if(oldText != currentText){
       _filterSubject.sink.add(currentText);
       oldText = currentText;
@@ -99,67 +100,68 @@ class _TextaState extends State<CustomInputText> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 220,
-      height: 28,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        // // 主轴方向（横向）对齐方式
-        crossAxisAlignment: CrossAxisAlignment.center,
-        // 交叉轴（竖直）对其方式
-        children: <Widget>[
-          SizedBox(
-            height: 28,
-            width: 150,
-            child: TextFormField(
-              textInputAction: TextInputAction.search,
-              onFieldSubmitted: (value){
-                widget.fieldCallBack(value);
-              },
-              focusNode: _focusNode,
-              textAlign: TextAlign.left,
-              controller: widget.controller,
-              style: TextStyle(fontSize: 14),
-              onChanged: (value){
-                searchTextChangeListener();
-              },
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(10),
-                border: InputBorder.none,
-                hintText: '请输入搜索词',
-                hintStyle: TextStyle(fontSize: 14, color: Color(0xff777777)),
-              ),
-              keyboardType: TextInputType.text,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      // // 主轴方向（横向）对齐方式
+      crossAxisAlignment: CrossAxisAlignment.center,
+      // 交叉轴（竖直）对其方式
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+          child: Image.asset('res/drawable/ic_select_category_search_bar.png', width: 16, height: 16),
+        ),
+        Expanded(
+          child: TextFormField(
+//              inputFormatters: [LengthLimitingTextInputFormatter(9)],
+            textInputAction: TextInputAction.search,
+            onFieldSubmitted: (value){
+              widget.fieldCallBack(value,isForceSearch: true);
+            },
+//              focusNode: _focusNode,
+//              textAlign: TextAlign.left,
+            controller: widget.controller,
+            autofocus: false,
+            style: TextStyle(fontSize: 14),
+            onChanged: (value){
+              searchTextChangeListener();
+            },
+            maxLines: 1,
+            textAlign: TextAlign.left,
+            decoration: InputDecoration(
+//                contentPadding: EdgeInsets.all(10),
+              border: InputBorder.none,
+              hintText: S.of(context).please_enter_category_keywords_hint,
+              hintStyle: TextStyle(fontSize: 14, color: Color(0xff777777)),
             ),
+            keyboardType: TextInputType.text,
           ),
-          Spacer(),
-          Container(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+        ),
+        Container(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
 //                  mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                widget.isShowClean
-                    ? IconButton(
-                  icon: Image.asset(
-                    'res/drawable/ic_select_category_search_bar_clear.png',
-                    height: 13,
-                    width: 13,
-                  ),
-                  onPressed: onCancel,
-                )
-                    : Text(""),
-                widget.isRightBtn
-                    ? IconButton(
-                  icon: widget.rightIcon,
-                  onPressed: widget.onRightBtnClick,
-                )
-                    : Text(""),
-              ],
-            ),
-          )
-        ],
-      ),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              widget.isShowClean
+                  ? IconButton(
+                icon: Image.asset(
+                  'res/drawable/ic_select_category_search_bar_clear.png',
+                  height: 16,
+                  width: 16,
+                ),
+                onPressed: onCancel,
+              )
+                  : Text(""),
+              widget.isRightBtn
+                  ? IconButton(
+                icon: widget.rightIcon,
+                onPressed: widget.onRightBtnClick,
+              )
+                  : Text(""),
+            ],
+          ),
+        )
+      ],
     );
   }
 

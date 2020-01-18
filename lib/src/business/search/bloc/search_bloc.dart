@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/domain/domain.dart';
 import 'package:titan/src/model/poi.dart';
+import 'package:titan/src/model/poi_interface.dart';
 import 'bloc.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
@@ -18,7 +20,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     if (event is AddSearchItemEvent) {
       if (event.item is PoiEntity) {
         await searchInteractor.addHistorySearchPoi(event.item);
-      } else {
+      } else if (event.item is ConfirmPoiItem) {
+        await searchInteractor.addHistorySearchPoiByTitan(event.item);
+      }
+      else {
         await searchInteractor.addHistorySearchText(event.item.toString());
       }
     } else if (event is FetchSearchItemsEvent) {
@@ -29,7 +34,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       } else {
         //not support multi page currently
         try {
-          var items = await searchInteractor.searchPoiByMapbox(event.searchText, event.center, event.language);
+          var items = await _searchPoi(event);
           yield SearchLoadedState(isHistory: false, currentSearchText: event.searchText, items: items);
         } catch (err) {
           print(err.toString());
@@ -40,4 +45,26 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       yield SearchLoadedState(isHistory: true, items: [], currentSearchText: '');
     }
   }
+
+  Future<List<IPoi>> _searchPoiByMapbox(FetchSearchItemsEvent event) async {
+    var items = await searchInteractor.searchPoiByMapbox(event.searchText, event.center, event.language);
+    return items;
+  }
+
+  Future<List<IPoi>> _searchPoiByTitan(FetchSearchItemsEvent event) async {
+    var items = await searchInteractor.searchPoiByTitan(event.searchText, event.center, event.language);
+    return items;
+  }
+
+  Future<List<IPoi>>_searchPoi(FetchSearchItemsEvent event) async {
+    return Future.wait([_searchPoiByTitan(event), _searchPoiByMapbox(event)])
+        .then((List<List<IPoi>> list) {
+          List<IPoi> sum = [];
+          sum.addAll(list[0]);
+          sum.addAll(list[1]);
+          print('[search_bloc] --> sum:$sum, sumCount:${sum.length}');
+          return sum;
+    });
+  }
+
 }

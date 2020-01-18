@@ -1,6 +1,7 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'components/wallet/vo/wallet_vo.dart';
 
 ///// The global [EventBus] object.
@@ -23,6 +24,12 @@ String createWalletMnemonicTemp = "";
 //String QUOTE_UNIT = appLocale.languageCode == "zh" ? "CNY" : "USD";
 //String QUOTE_UNIT_SYMBOL = appLocale.languageCode == "zh" ? "¥" : "\$";
 
+WalletVo currentWalletVo;
+Locale appLocale;
+BuildContext globalContext = null;
+Locale defaultLocale = Locale("zh","CN");
+
+//AppArea currentAppArea = AppArea.MAINLAND_CHINA_AREA;
 //String get QUOTE_UNIT {
 //  return appLocale.languageCode == "zh" ? "CNY" : "USD";
 //}
@@ -36,3 +43,4 @@ String createWalletMnemonicTemp = "";
 //AppArea currentAppArea = AppArea.MAINLAND_CHINA_AREA;
 
 final String ROUTE_CONFIRM_POSITION_PAGE = "route_confirm_position_page";
+LatLng recentlyLocation = LatLng(23.10901,113.31799);

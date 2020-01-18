@@ -11,7 +11,6 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/contribution_finish_page.dart';
 import 'package:titan/src/business/my/app_area.dart';
-import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/wallet/model/wallet_vo.dart';
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -25,7 +24,7 @@ import 'package:titan/src/business/contribution/vo/signal_collector.dart';
 import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
 import 'contribution_finish_page.dart';
 
-const _default_map_location = LatLng(23.10904, 113.31904);
+const _default_map_location = LatLng(23.106541, 113.324827);
 
 class ContributionPage extends StatefulWidget {
   final LatLng initLocation;
@@ -83,7 +82,7 @@ class _ContributionState extends State<ContributionPage> {
   void initState() {
     super.initState();
 
-    userPosition = widget.initLocation ?? _default_map_location;
+    userPosition = widget.initLocation ?? recentlyLocation;
 
     sensorPlugin = SensorPlugin();
     initSensorChangeCallBack();
@@ -336,7 +335,7 @@ class _ContributionState extends State<ContributionPage> {
                       child: SizedBox(
                         height: 3,
                         child: LinearProgressIndicator(
-                          backgroundColor: _themeColor,
+                          backgroundColor: Theme.of(context).primaryColor,
                           value: snapshot?.data ?? 0.0,
                           valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
                         ),
@@ -405,7 +404,7 @@ class _ContributionState extends State<ContributionPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => WebViewContainer(
-                              initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
+                              initUrl: Const.PRIVACY_POLICY,
                               title: S.of(context).scan_signal_upload_protocol,
                             )));
               },
@@ -502,9 +501,9 @@ class _ContributionState extends State<ContributionPage> {
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/fiord-color.json";
+      style = Const.kBlackMapStyleCn;
     } else {
-      style = "https://static.hyn.space/maptiles/fiord-color.json";
+      style = Const.kBlackMapStyle;
     }
 
     return MapboxMap(

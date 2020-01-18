@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_pickers/Media.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
-import 'package:titan/src/widget/radio_checkbox_widget.dart';
-
 import 'bloc/bloc.dart';
+import 'model/confirm_poi_item.dart';
 import 'position_finish_page.dart';
 
 class ConfirmPositionPage extends StatefulWidget {
+  final LatLng userPosition;
+
+  ConfirmPositionPage({this.userPosition});
+
   @override
   State<StatefulWidget> createState() {
     return _ConfirmPositionState();
@@ -22,31 +31,71 @@ class ConfirmPositionPage extends StatefulWidget {
 class _ConfirmPositionState extends State<ConfirmPositionPage> {
   PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
-  LatLng userPosition;
-  double defaultZoom = 15;
-  bool _isLoading = false;
+  double defaultZoom = 17;
+  String currentResult = S.of(globalContext).confirm_info_wrong;
+  ConfirmPoiItem confirmPoiItem;
+  bool _isPostData = false;
 
-  List<Media> _listImagePaths = List();
-  final int _listImagePathsMaxLength = 9;
-  List<String> _detailTextList = List();
-  String currentResult = "信息有误";
 
   @override
   void initState() {
-    _detailTextList = [
-      "类别：中餐馆",
-      "邮编：510000",
-      "电话：13667510000",
-      "网址：www13667510000",
-      "工作时间：09:00-22:00"
-    ];
 
     _positionBloc.add(ConfirmPositionLoadingEvent());
-    Future.delayed(Duration(seconds: 1), (){
-      _positionBloc.add(ConfirmPositionResultEvent());
+    _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+    _positionBloc.listen((state) {
+      if (state is ConfirmPositionPageState) {
+        confirmPoiItem = state.confirmPoiItem;
+        if (confirmPoiItem?.name == null) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(S.of(context).no_verifiable_poi_around_hint),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context)..pop()..pop();
+                      },
+                      child: Text(S.of(context).confirm))
+                ],
+              );
+            },
+          );
+        } else {
+          addMarkerAndMoveToPoi();
+        }
+      } else if (state is ConfirmPositionResultState) {
+        if (state.confirmResult) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+          );
+        }
+      }
+    });
+
+    _addMarkerSubject.debounceTime(Duration(milliseconds: 500)).listen((_) {
+      var latlng = LatLng(confirmPoiItem.location.coordinates[1], confirmPoiItem.location.coordinates[0]);
+      mapController?.addSymbol(
+        SymbolOptions(
+          geometry: latlng,
+          iconImage: "hyn_marker_big",
+          iconAnchor: "bottom",
+          iconOffset: Offset(0.0, 3.0),
+        ),
+      );
+      mapController?.animateCamera(CameraUpdate.newLatLng(latlng));
     });
 
     super.initState();
+  }
+
+  var _addMarkerSubject = PublishSubject<dynamic>();
+  void addMarkerAndMoveToPoi() {
+    if (mapController != null && confirmPoiItem?.name != null) {
+      _addMarkerSubject.sink.add(1);
+    }
   }
 
   @override
@@ -55,58 +104,40 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          "位置信息确认",
+          S.of(context).check_poi_item_title,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        actions: <Widget>[
-          InkWell(
-            onTap: () {
-              showConfirmDialog();
-//              print('[add] --> 完成中。。。');
-//              Navigator.pop(context);
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                S.of(context).finish,
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          )
-        ],
       ),
       body: _buildView(),
     );
   }
 
-  void showConfirmDialog() {
-    showDialog(
+  Future<bool> showConfirmDialog(String content) {
+    return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("位置信息确认"),
-            content: Text("是否确认$currentResult"),
+            title: Text(S.of(context).post_my_check),
+            content: Text(content),
             actions: <Widget>[
               FlatButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(false);
                   },
                   child: Text(S.of(context).cancel)),
               FlatButton(
                   onPressed: () {
-                    createWalletPopUtilName = '/data_contribution_page';
-
-                    Navigator.of(context).pop();
-//                    Navigator.of(context).pop();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-                    );
-//                    genNewKeys();
+                    int answer;
+                    if (currentResult == S.of(context).confirm_info_wrong) {
+                      answer = 0;
+                    } else {
+                      answer = 1;
+                    }
+                    _isPostData = true;
+                    _positionBloc.add(ConfirmPositionResultLoadingEvent());
+                    Navigator.of(context).pop(true);
                   },
                   child: Text(S.of(context).confirm))
             ],
@@ -116,54 +147,128 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   }
 
   Widget _buildView() {
-    return BlocBuilder<PositionBloc, PositionState>(
+    return BlocBuilder<PositionBloc, AllPageState>(
         bloc: _positionBloc,
-        builder: (BuildContext context, PositionState state) {
+        builder: (BuildContext context, AllPageState state) {
           if (state is ConfirmPositionLoadingState) {
-            return LoadDataWidget(isLoading: true,);
-          } else if(state is ConfirmPositionResultState){
-            return _buildListBody();
-          } else {
-            return Container(
-              width: 0.0,
-              height: 0.0,
+            return LoadDataWidget(
+              isLoading: true,
             );
+          } else if (state is ConfirmPositionPageState) {
+            confirmPoiItem = state.confirmPoiItem;
+            if (confirmPoiItem?.name == null) {
+              return Container(
+                width: 0.0,
+                height: 0.0,
+              );
+            } else {
+              return _buildListBody();
+            }
+          } else if (state is ConfirmPositionResultLoadingState) {
+            return _buildListBody();
+          } else if (state is ConfirmPositionResultState) {
+            _isPostData = false;
+            if (!state.confirmResult) {
+              Fluttertoast.showToast(msg: state.errorMsg);
+              return _buildListBody();
+            } else {
+              return Container(
+                width: 0.0,
+                height: 0.0,
+              );
+            }
+          } else {
+            return AllPageStateContainer(state,(){
+              _positionBloc.add(ConfirmPositionLoadingEvent());
+              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+            });
           }
         });
   }
 
   Widget _buildListBody() {
-    return ListView(
+    var picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
+
+    return Stack(
       children: <Widget>[
-        _mapView(),
-        _nameView(),
-        _buildPhotosCell(),
-        _detailView(),
-        _confirmView(),
+        Column(children: <Widget>[
+          _mapView(),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 20.0,
+                  ),
+                ],
+              ),
+              child: ListView(
+                padding: EdgeInsets.only(bottom: 16),
+                children: <Widget>[
+                  _nameView(),
+                  if (confirmPoiItem.images != null) buildPicList(picItemWidth, 10, confirmPoiItem),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Divider(
+                      height: 1.0,
+                      color: HexColor('#E9E9E9'),
+                    ),
+                  ),
+                  buildBottomInfoList(context,confirmPoiItem),
+                ],
+              ),
+            ),
+          ),
+          Divider(
+            height: 0.5,
+            color: HexColor('#E9E9E9'),
+          ),
+          _confirmView(),
+        ]),
+        _buildLoading()
       ],
+    );
+  }
+
+  Widget _buildLoading() {
+    return Visibility(
+      visible: _isPostData,
+      child: Center(
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+          ),
+        ),
+      ),
     );
   }
 
   @override
   void dispose() {
     _positionBloc.close();
+    _addMarkerSubject.close();
     super.dispose();
   }
 
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyleCn;
     } else {
-      style = "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyle;
     }
+    var languageCode = Localizations.localeOf(context).languageCode;
 
     return SizedBox(
-      height: 220,
+      height: 150,
       child: MapboxMap(
         compassEnabled: false,
         initialCameraPosition: CameraPosition(
-          target: LatLng(23.12076, 113.322058),
+          target: recentlyLocation,
           zoom: defaultZoom,
         ),
         styleString: style,
@@ -177,159 +282,117 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         enableAttribution: false,
         minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
         myLocationEnabled: false,
+        languageCode: languageCode,
       ),
     );
   }
 
   void onStyleLoaded(MapboxMapController controller) {
     mapController = controller;
-    mapController.addSymbol(
-      SymbolOptions(
-        geometry: LatLng(23.12076, 113.322058),
-        iconImage: "hyn_marker_big",
-        iconAnchor: "bottom",
-        iconOffset: Offset(0.0, 3.0),
-      ),
-    );
+    addMarkerAndMoveToPoi();
   }
 
   Widget _nameView() {
     return Container(
-//      color: Colors.red,
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.only(left: 15,right: 15,top: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(bottom: 15),
-            child: Text(
-              "名称：中国好功夫-China gongfu",
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: HexColor('#333333'),
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  confirmPoiItem.name,
+                  style: TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w500),
+                ),
               ),
-            ),
+            ],
           ),
-          Text(
-            "位置：中国广州xxx",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: HexColor('#333333'),
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-            ),
+          SizedBox(
+            height: 16,
           ),
+          buildHeadItem(context,
+              Icons.location_on, confirmPoiItem.address,
+              hint: S.of(context).no_detail_address),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPhotosCell() {
-    var size = MediaQuery.of(context).size;
-    var itemWidth = (size.width - 16 * 2.0 - 15 * 2.0) / 3.0;
-    var childAspectRatio = (105.0 / 74.0);
-    var itemHeight = itemWidth / childAspectRatio;
-    var itemCount = 1;
-    if (_listImagePaths.length == 0) {
-      itemCount = 1;
-    } else if (_listImagePaths.length > 0 &&
-        _listImagePaths.length < _listImagePathsMaxLength) {
-      itemCount = 1 + _listImagePaths.length;
-    } else if (_listImagePaths.length >= _listImagePathsMaxLength) {
-      itemCount = _listImagePathsMaxLength;
-    }
-    double containerHeight = 2 + (10 + itemHeight) * ((itemCount / 3).ceil());
-    //print('[add] _buildPhotosCell, itemWidth:${itemWidth}, itemHeight:${itemHeight}, containerHeight:${containerHeight}');
-
-    return Container(
-      height: containerHeight,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.builder(
-        physics: new NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 15,
-          childAspectRatio: childAspectRatio,
-        ),
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {},
-            child: Container(
-              decoration: BoxDecoration(
-                color: HexColor('#D8D8D8'),
-                borderRadius: BorderRadius.circular(3.0),
-              ),
-              child: Center(
-                child: _isLoading
-                    ? CircularProgressIndicator()
-                    : FadeInImage.assetNetwork(
-                        placeholder: 'res/drawable/img_placeholder.jpg',
-                        image: "",
-                        fit: BoxFit.fill,
-                      ),
-              ),
-            ),
-          );
-        },
-        itemCount: 3,
-      ),
-    );
-  }
-
-  Widget _detailView() {
-    var itemCount = _detailTextList.length;
-    double padding = 15;
-    double height = (17.0 + 4.0) * itemCount + 10;
-    return Container(
-//      color: Colors.red,
-      height: height,
-      padding: EdgeInsets.symmetric(horizontal: padding),
-      child: ListView.builder(
-        physics: new NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 4),
-            child: Text(
-              _detailTextList[index],
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: HexColor('#333333'),
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          );
-        },
-        itemCount: itemCount,
       ),
     );
   }
 
   Widget _confirmView() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 52, left: 25, right: 25),
-      child: CustomRadioButton(
-        enableShape: true,
-        hight: 40,
-        width: 150,
-        buttonColor: Colors.white,
-        selectedColor: Theme.of(context).primaryColor,
-        buttonLables: [
-          '信息有误',
-          '信息正确',
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            child: RaisedButton(
+              color: HexColor('#DD4E41'),
+              onPressed: () async {
+                currentResult = S.of(context).confirm_info_wrong;
+                var option = await showConfirmDialog(S.of(context).poi_confirm_title_error);
+                if (option == true) {
+                  _positionBloc.add(ConfirmPositionResultEvent(0, confirmPoiItem));
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    "res/drawable/ic_confirm_button_error.png",
+                    width: 15,
+                    height: 14,
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 8, bottom: 2),
+                      child: Text(S.of(context).confirm_info_wrong, style: TextStyles.textCfffS14)),
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(22)),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 25,
+          ),
+          Container(
+            child: RaisedButton(
+              color: HexColor('#0F95B0'),
+              onPressed: () async {
+                currentResult = S.of(context).confirm_info_right;
+                var option = await showConfirmDialog(S.of(context).poi_confirm_title_hint);
+                if (option == true) {
+                  _positionBloc.add(ConfirmPositionResultEvent(1, confirmPoiItem));
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    "res/drawable/ic_confirm_button_right.png",
+                    width: 15,
+                    height: 14,
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 8, bottom: 2),
+                      child: Text(S.of(context).confirm_info_right, style: TextStyles.textCfffS14)),
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(22)),
+              ),
+            ),
+          ),
         ],
-        buttonValues: [
-          '信息有误',
-          '信息正确',
-        ],
-        radioButtonValue: (value) {
-          currentResult = value;
-          print(value);
-        },
       ),
     );
   }

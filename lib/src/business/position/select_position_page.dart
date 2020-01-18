@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/business/position/add_position_page.dart';
-
-const _default_map_location = LatLng(23.10904, 113.31904);
 
 class SelectPositionPage extends StatefulWidget {
   final LatLng initLocation;
@@ -30,7 +29,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
 
   @override
   void initState() {
-    userPosition = widget.initLocation ?? _default_map_location;
+    userPosition = widget.initLocation ?? recentlyLocation;
     super.initState();
   }
 
@@ -63,7 +62,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          "选择位置",
+          S.of(context).select_position,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -82,20 +81,26 @@ class _SelectPositionState extends State<SelectPositionPage> {
           InkWell(
             onTap: () {
               var latLng = mapController?.cameraPosition?.target;
-              print('[add] --> 确认中。。。 $latLng');
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPositionPage(latLng),
-                ),
-              );
-
-              /*Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPositionPage(latLng),
-                ),
-              );*/
+              print('[add] --> 确认中...,latLng: $latLng');
+              if (latLng == null) {
+                AlertDialog(
+                  title: Text(S.of(context).select_position_please_again_hint),
+                  actions: <Widget>[
+                    FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(S.of(context).confirm))
+                  ],
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPositionPage(latLng),
+                  ),
+                );
+              }
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -115,10 +120,11 @@ class _SelectPositionState extends State<SelectPositionPage> {
   Widget _mapView() {
     var style;
     if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = "https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyleCn;
     } else {
-      style = "https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json";
+      style = Const.kWhiteMapStyle;
     }
+    var languageCode = Localizations.localeOf(context).languageCode;
 
     return Stack(
       children: <Widget>[
@@ -142,6 +148,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
           enableLogo: false,
           enableAttribution: false,
           minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+          languageCode: languageCode,
         ),
         Center(
           child: Column(

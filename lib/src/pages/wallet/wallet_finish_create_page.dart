@@ -36,8 +36,8 @@ class FinishCreatePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 32),
                   child: Image.asset(
                     "res/drawable/check_outline.png",
-                    height: 60,
-                    width: 60,
+                    width: 124,
+                    height: 76,
                   ),
                 ),
                 Padding(

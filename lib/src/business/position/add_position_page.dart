@@ -1,29 +1,33 @@
-import 'dart:async';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_pickers/Media.dart';
+import 'package:image_pickers/UIConfig.dart';
+import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/position/api/position_api.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/business_time_page.dart';
 import 'package:titan/src/business/position/model/business_time.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/model/poi_collector.dart';
+import 'package:titan/src/business/position/model/poi_data.dart';
 import 'package:titan/src/business/position/position_finish_page.dart';
 import 'package:titan/src/business/position/select_category_page.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
-import 'package:image_pickers/image_pickers.dart';
 import 'package:flutter/services.dart';
-import 'package:image_pickers/Media.dart';
-import 'package:image_pickers/UIConfig.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 
 class AddPositionPage extends StatefulWidget {
-  LatLng userPosition;
+  final LatLng userPosition;
 
   AddPositionPage(this.userPosition);
 
@@ -34,9 +38,6 @@ class AddPositionPage extends StatefulWidget {
 }
 
 class _AddPositionState extends State<AddPositionPage> {
-
-  PositionApi _service = PositionApi();
-
   PositionBloc _positionBloc = PositionBloc();
 
   TextEditingController _addressNameController = TextEditingController();
@@ -46,31 +47,60 @@ class _AddPositionState extends State<AddPositionPage> {
   TextEditingController _detailPhoneNumController = TextEditingController();
   TextEditingController _detailWebsiteController = TextEditingController();
 
+  double _inputHeight = 40.0;
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
-
-  List<Media> _listImagePaths = List();
-  final int _listImagePathsMaxLength = 9;
-
-  CategoryItem _categoryItem;
-  String _timeText;
 
   String _categoryDefaultText = "";
   String _timeDefaultText = "";
 
+  List<Media> _listImagePaths = List();
+  final int _listImagePathsMaxLength = 9;
+  CategoryItem _categoryItem;
+  String _timeText;
+  String _addressText;
+
   Map<String, dynamic> _openCageData;
 
-  PoiCollector _poiCollector;
+  bool _isUploading = false;
+  final _addressNameKey = GlobalKey<FormState>();
+
+  bool _isOnPressed = false;
+
+  PublishSubject<int> _filterSubject = PublishSubject<int>();
+  int _requestOpenCageDataCount = 0;
 
   @override
   void initState() {
-    _positionBloc.add(AddPositionEvent());
-    _categoryDefaultText = "请选择类别";
-    _timeDefaultText = "请添加工作时间";
 
-    _getOpenCageData();
+    _addressController.addListener(_checkInputHeight);
 
+    _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+    _filterSubject.debounceTime(Duration(seconds: 1)).listen((count) {
+      //print('[add] ---> count:$count, _requestOpenCageDataCount:$_requestOpenCageDataCount');
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+    });
     super.initState();
+  }
+  @override
+  void didChangeDependencies() {
+    _setupData();
+    super.didChangeDependencies();
+  }
+
+  void _setupData() {
+
+    setState(() {
+      _categoryDefaultText = S.of(context).please_select_category_hint;
+      _timeDefaultText = S.of(context).please_add_business_hours_hint;
+    });
+  }
+
+  @override
+  void dispose() {
+    _positionBloc.close();
+    _filterSubject.close();
+    super.dispose();
   }
 
   @override
@@ -84,62 +114,85 @@ class _AddPositionState extends State<AddPositionPage> {
         ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        actions: <Widget>[
-          InkWell(
-            onTap: () {
-              _uploadPoiData();
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                S.of(context).data_save,
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          )
-        ],
       ),
       body: _buildView(context),
     );
   }
 
+  // build view
   Widget _buildView(BuildContext context) {
-    return BlocBuilder<PositionBloc, PositionState>(
+    return BlocBuilder<PositionBloc, AllPageState>(
       bloc: _positionBloc,
-      builder: (BuildContext context, PositionState state) {
-        if (state is InitialPositionState) {
-          return _buildLoading(context);
-        } else if (state is AddPositionState) {
-          return _buildBody();
-        } else if (state is ScanWalletLoadingState) {
-          return _buildLoading(context);
-        } else {
-          return Container(
-            width: 0.0,
-            height: 0.0,
+      condition: (AllPageState fromState, AllPageState state) {
+        //print('[add] --> state:${fromState}, toState:${state}');
+
+        if (state is SuccessPostPoiDataState) {
+          createWalletPopUtilName = '/data_contribution_page';
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
+            ),
           );
+        } else if (state is FailPostPoiDataState) {
+          setState(() {
+            _isUploading = false;
+          });
+          Fluttertoast.showToast(msg: S.of(context).add_failed_hint);
+        } else if (state is GetOpenCageState) {
+          _openCageData = state.openCageData;
+
+          var country = _openCageData["country"] ?? "";
+          var provinces = _openCageData["state"];
+          var city = _openCageData["city"];
+          var county = _openCageData["county"] ?? "";
+          String countryCode = _openCageData["country_code"] ?? "CN";
+          _saveCountryCode(countryCode: countryCode.toUpperCase());
+
+          setState(() {
+            //_addressText = country + " " + provinces + " " + city + " " + county;
+            _addressText = county + "，" + city + "，" + provinces + "，" + country;
+            //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
+          });
+
+          String road = _openCageData["road"] ?? "";
+          String building = _openCageData["building"] ?? "";
+          if (road.length > 0 || building.length > 0) {
+            _addressController.text = road + " " + building;
+          }
+
+          String postalCode = _openCageData["postcode"] ?? "";
+          if (postalCode.length > 0) {
+            _addressPostcodeController.text = postalCode;
+          }
         }
+
+        return true;
+      },
+      builder: (BuildContext context, AllPageState state) {
+        return _buildBody();
       },
     );
   }
 
-  Widget _buildLoading(context) {
-    return Center(
-      child: SizedBox(
-        height: 40,
-        width: 40,
-        child: CircularProgressIndicator(
-          strokeWidth: 3,
+  void _saveCountryCode({String countryCode = "CN"}) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(PrefsKey.mapboxCountryCode, countryCode);
+  }
+
+  Widget _buildLoading() {
+    return Visibility(
+      visible: _isUploading,
+      child: Center(
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+          ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _positionBloc.close();
-    super.dispose();
   }
 
   Widget _buildBody() {
@@ -148,22 +201,21 @@ class _AddPositionState extends State<AddPositionPage> {
       child: Stack(
         children: <Widget>[
           SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                _buildCategoryCell(),
-                _buildAddressNameCell(),
-                _buildPhotosCell(),
-                _buildAddressCell(),
-                _buildDetailCell(),
-              ],
+            child: Form(
+              key: _addressNameKey,
+              child: Column(
+                children: <Widget>[
+                  _buildCategoryCell(),
+                  _buildAddressNameCell(),
+                  _buildPhotosCell(),
+                  _buildAddressCell(),
+                  _buildDetailCell(),
+                  _buildSubmitView(),
+                ],
+              ),
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildProtocolCell(),
-          ),
+          _buildLoading(),
         ],
       ),
     );
@@ -179,11 +231,10 @@ class _AddPositionState extends State<AddPositionPage> {
 
     return InkWell(
       onTap: () {
-        _pushCategoryPage();
+        _pushCategory();
       },
       child: Container(
           height: 40,
-          padding: const EdgeInsets.only(left: 15, right: 14),
           decoration: new BoxDecoration(color: Colors.white),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -191,26 +242,18 @@ class _AddPositionState extends State<AddPositionPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             // 交叉轴（竖直）对其方式
             children: <Widget>[
-              Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Text(
-                    '类别',
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
-                  )),
-              Image.asset(
-                'res/drawable/add_position_star.png',
-                width: 8,
-                height: 9,
-              ),
+              _buildTitleRow('category', Size(18, 18), S.of(context).category, true, isCategory: true),
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Text(_categoryText,
-                      style: TextStyle(color: Color(0xff777777), fontSize: 14))),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: Colors.grey,
+                  child: Text(_categoryText, style: TextStyle(color: DefaultColors.color777, fontSize: 14))),
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: Colors.grey,
+                ),
               ),
             ],
           )),
@@ -220,35 +263,26 @@ class _AddPositionState extends State<AddPositionPage> {
   Widget _buildAddressNameCell() {
     return Column(
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // 交叉轴（竖直）对其方式
-          children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.fromLTRB(15, 16, 10, 6),
-                child: Text(
-                  '地点名',
-                  style: TextStyle(color: Color(0xff333333), fontWeight: FontWeight.normal, fontSize: 14),
-                )),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 16, 10, 6),
-              child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
-            ),
-          ],
-        ),
+        _buildTitleRow('name', Size(18, 18), S.of(context).name, true),
         Container(
-          height: 40,
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
           child: TextFormField(
             controller: _addressNameController,
-            style: TextStyle(fontSize: 14),
+            validator: (value) {
+              if (value == null || value.trim().length == 0) {
+                return S.of(context).place_name_cannot_be_empty_hint;
+              } else {
+                return null;
+              }
+            },
+            onChanged: (String inputText) {
+              //print('[add] --> inputText:${inputText}');
+            },
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: '该地点名称',
-              hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
+              hintText: S.of(context).please_enter_name_of_location_hint,
+              hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
             ),
             keyboardType: TextInputType.text,
           ),
@@ -275,28 +309,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
     return Column(
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // 交叉轴（竖直）对其方式
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
-              child: Image.asset('res/drawable/add_position_camera.png', width: 19, height: 15),
-            ),
-            Padding(
-                padding: const EdgeInsets.fromLTRB(0, 14, 10, 6),
-                child: Text(
-                  '拍摄图片',
-                  style: TextStyle(color: Color(0xff333333), fontWeight: FontWeight.normal, fontSize: 14),
-                )),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 14, 10, 6),
-              child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
-            ),
-          ],
-        ),
+        _buildTitleRow('camera', Size(19, 15), S.of(context).scene_photographed, true),
         Container(
           height: containerHeight,
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
@@ -320,7 +333,6 @@ class _AddPositionState extends State<AddPositionPage> {
                         'res/drawable/add_position_add.png',
                         width: 20,
                         height: 20,
-//                        fit: BoxFit.scaleDown,
                       ),
                     ),
                     decoration: BoxDecoration(
@@ -331,30 +343,37 @@ class _AddPositionState extends State<AddPositionPage> {
                 );
               }
               return InkWell(
-                onTap: () {
-//                  ImagePickers.previewImagesByMedia(_listImagePaths,index);
-                  setState(() {
-                    _listImagePaths.removeAt(index);
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: AssetImage(_listImagePaths[index].path), fit: BoxFit.fitWidth),
-                    color: HexColor('#D8D8D8'),
-                    borderRadius: BorderRadius.circular(3.0),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(0, 4, 4, 0),
-                    alignment: Alignment.topRight,
-                    child: Image.asset(
-                      'res/drawable/add_position_delete.png',
-                      width: 12,
-                      height: 12,
-                      fit: BoxFit.scaleDown,
-                    ),
-                  ),
-                ),
-              );
+                  onTap: () {
+                    ImagePickers.previewImagesByMedia(_listImagePaths, index);
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.file(File(_listImagePaths[index].path), width: itemWidth, fit: BoxFit.cover),
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: InkWell(
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            padding: EdgeInsets.all(6),
+                            child: Image.asset(
+                              'res/drawable/add_position_delete.png',
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              _listImagePaths.removeAt(index);
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ));
             },
             itemCount: itemCount,
           ),
@@ -367,113 +386,64 @@ class _AddPositionState extends State<AddPositionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-            padding: const EdgeInsets.fromLTRB(15, 16, 10, 6),
-            child: Text(
-              '地址',
-              style: TextStyle(color: Color(0xff333333), fontWeight: FontWeight.normal, fontSize: 14),
-            )),
+        SizedBox(
+          height: 8,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          // // 主轴方向（横向）对齐方式
+          crossAxisAlignment: CrossAxisAlignment.start,
+          // 交叉轴（竖直）对其方式
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
+              child: Image.asset('res/drawable/add_position_address.png', width: 17, height: 21),
+            ),
+            _openCageData == null
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 18, 4, 6),
+                    child: InkWell(
+                      child: Text(
+                        S.of(context).click_auto_get_hint,
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                      onTap: () {
+                        _requestOpenCageDataCount += 1;
+                        _filterSubject.sink.add(_requestOpenCageDataCount);
+                      },
+                    ))
+                : Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 18, 8, 6),
+                      child: Text(
+                        _addressText ?? "",
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                          color: DefaultColors.color333,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+          ],
+        ),
         Container(
-          height: 140,
-          width: 400,
+          height: 100+_inputHeight,
           decoration: new BoxDecoration(color: Colors.white),
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              InkWell(
-                onTap: () {
-                  //print('[add] --> 添加地址');
-                },
-                child: Container(
-                    height: 40,
-                    padding: const EdgeInsets.only(left: 15, right: 14),
-                    decoration: new BoxDecoration(color: Colors.white),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      // // 主轴方向（横向）对齐方式
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      // 交叉轴（竖直）对其方式
-                      children: <Widget>[
-                        Image.asset('res/drawable/add_position_address.png', width: 19, height: 19),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10, left: 28),
-                          child: SizedBox(
-                            width: 200,
-                            child: TextFormField(
-                              controller: _addressController,
-                              style: TextStyle(fontSize: 14),
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: '添加街道',
-                                hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
-                              ),
-                              keyboardType: TextInputType.text,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )),
-              ),
+              _buildAddressCellRow(S.of(context).details_of_street, S.of(context).please_add_streets_hint, _addressController, isDetailAddress: true),
               _divider(),
-              Container(
-                  height: 40,
-                  padding: const EdgeInsets.only(left: 15, right: 14),
-                  decoration: new BoxDecoration(color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    // // 主轴方向（横向）对齐方式
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    // 交叉轴（竖直）对其方式
-                    children: <Widget>[
-                      SizedBox(width: 19, height: 19),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 28),
-                        child: SizedBox(
-                          width: 200,
-                          child: TextFormField(
-                            controller: _addressHouseNumController,
-                            style: TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: '门牌号码',
-                              hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
-                            ),
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
+              _buildAddressCellRow(S.of(context).house_number, S.of(context).please_enter_door_number_hint, _addressHouseNumController),
               _divider(),
-              Container(
-                  height: 40,
-                  padding: const EdgeInsets.only(left: 15, right: 14),
-                  decoration: new BoxDecoration(color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    // // 主轴方向（横向）对齐方式
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    // 交叉轴（竖直）对其方式
-                    children: <Widget>[
-                      SizedBox(width: 19, height: 19),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 28),
-                        child: SizedBox(
-                          width: 200,
-                          child: TextFormField(
-                            controller: _addressPostcodeController,
-                            style: TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: '邮编',
-                              hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
-                            ),
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
+              _buildAddressCellRow(S.of(context).postal_code, S.of(context).please_enter_postal_code, _addressPostcodeController),
             ],
           ),
         ),
@@ -485,21 +455,16 @@ class _AddPositionState extends State<AddPositionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-            padding: const EdgeInsets.fromLTRB(15, 16, 10, 6),
-            child: Text(
-              '详情',
-              style: TextStyle(color: Color(0xff333333), fontWeight: FontWeight.normal, fontSize: 14),
-            )),
+        _buildTitleRow('detail', Size(18, 18), S.of(context).detail, false),
         Container(
-          height: 270,
+          height: 140,
           decoration: new BoxDecoration(color: Colors.white),
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  _pushTimePage();
+                  _pushTime();
                 },
                 child: Container(
                     height: 40,
@@ -511,18 +476,17 @@ class _AddPositionState extends State<AddPositionPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       // 交叉轴（竖直）对其方式
                       children: <Widget>[
-                        Image.asset('res/drawable/add_position_time.png', width: 19, height: 19),
+                        Image.asset('res/drawable/ic_user_poi_business_time.png', width: 19, height: 19),
                         Container(
-//                          color: Colors.red,
                           padding: const EdgeInsets.only(left: 28, right: 20),
                           child: Container(
-//                            color: Colors.green,
                             width: 230,
                             child: Text(
                               _timeText ?? _timeDefaultText,
                               textAlign: TextAlign.left,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: HexColor('#777777'), fontWeight: FontWeight.normal, fontSize: 13),
+                              overflow: TextOverflow.clip,
+                              style:
+                                  TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
                             ),
                           ),
                         ),
@@ -536,74 +500,114 @@ class _AddPositionState extends State<AddPositionPage> {
                     )),
               ),
               _divider(),
-              Container(
-                  height: 40,
-                  padding: const EdgeInsets.only(left: 15, right: 14),
-                  decoration: new BoxDecoration(color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    // // 主轴方向（横向）对齐方式
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    // 交叉轴（竖直）对其方式
-                    children: <Widget>[
-                      Image.asset('res/drawable/add_position_phone.png', width: 19, height: 19),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 28),
-                        child: SizedBox(
-                          width: 200,
-                          child: TextFormField(
-                            controller: _detailPhoneNumController,
-                            style: TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: '电话',
-                              hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
-                            ),
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
+              _buildDetailCellRow('ic_user_poi_phone_num', S.of(context).phone_number, TextInputType.number, _detailPhoneNumController),
               _divider(),
-              Container(
-                  height: 40,
-                  padding: const EdgeInsets.only(left: 15, right: 14),
-                  decoration: new BoxDecoration(color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    // // 主轴方向（横向）对齐方式
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    // 交叉轴（竖直）对其方式
-                    children: <Widget>[
-                      Image.asset('res/drawable/add_position_website.png', width: 19, height: 19),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 28),
-                        child: SizedBox(
-                          width: 200,
-                          child: TextFormField(
-                            controller: _detailWebsiteController,
-                            style: TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: '网址',
-                              hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
-                            ),
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-              _divider(),
-              Container(
-                height: 130,
-                color: Colors.white,
-              ),
+              _buildDetailCellRow('ic_user_poi_web_site', S.of(context).website, TextInputType.emailAddress, _detailWebsiteController),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSubmitView() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 18, 16, 30),
+      //color: Colors.red,
+      child: Column(
+        children: <Widget>[
+          Container(
+            //margin: EdgeInsets.symmetric(vertical: 16),
+            constraints: BoxConstraints.expand(height: 48),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              disabledColor: Colors.grey[600],
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              disabledTextColor: Colors.white,
+              onPressed: _isOnPressed
+                  ? null
+                  : () {
+                      setState(() {
+                        _isOnPressed = true;
+                      });
+                      Future.delayed(Duration(seconds: 1), () {
+                        setState(() {
+                          _isOnPressed = false;
+                        });
+                      });
+                      _uploadPoiData();
+                    },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      S.of(context).submit,
+                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => WebViewContainer(
+                            initUrl: Const.POI_POLICY,
+                            title: S.of(context).poi_upload_protocol,
+                          )));
+            },
+            child: SizedBox(
+                //width: 200,
+                height: 40,
+                child: Row(
+                  children: <Widget>[
+                    Checkbox(
+                      value: _isAcceptSignalProtocol,
+                      activeColor: _themeColor, //选中时的颜色
+                      onChanged: (value) {
+                        setState(() {
+                          _isAcceptSignalProtocol = value;
+                        });
+                      },
+                    ),
+                    /*Container(
+                      child: Text(
+                        S.of(context).geographical_position,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: HexColor('#333333'),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),*/
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        S.of(context).upload_protocol,
+                        style: TextStyle(
+                          color: HexColor('#333333'),
+                          fontSize: 11,
+                          decoration: TextDecoration.combine([
+                            TextDecoration.underline, // 下划线
+                          ]),
+                          decorationStyle: TextDecorationStyle.solid,
+                          // 装饰样式
+                          decorationColor: HexColor('#333333'),
+                        ),
+                      ),
+                    ),
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                )),
+          ),
+        ],
+      ),
     );
   }
 
@@ -617,203 +621,251 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  Widget _buildProtocolCell() {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => WebViewContainer(
-                      initUrl: 'https://api.hyn.space/map-collector/upload/privacy-policy',
-                      title: S.of(context).scan_signal_upload_protocol,
-                    )));
-      },
-      child: Container(
-        color: Color(0x88d8d8d8),
-        height: 44,
+  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller,{bool isDetailAddress = false}) {
+    return Container(
+        height: !isDetailAddress?40:_inputHeight,
+        padding: const EdgeInsets.only(left: 15, right: 14),
+        decoration: new BoxDecoration(color: Colors.white),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          // // 主轴方向（横向）对齐方式
           crossAxisAlignment: CrossAxisAlignment.center,
+          // 交叉轴（竖直）对其方式
           children: <Widget>[
-            Checkbox(
-              value: _isAcceptSignalProtocol,
-              activeColor: _themeColor, //选中时的颜色
-              onChanged: (value) {
-                setState(() {
-                  _isAcceptSignalProtocol = value;
-                });
-              },
-            ),
-            Text(
-              '地理位置',
-              style: TextStyle(
-                color: HexColor('#333333'),
-                fontSize: 11,
+            Expanded(
+              flex: 1,
+              child: Text(
+                title,
+                textAlign: TextAlign.left,
+                style: TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
               ),
             ),
-            Text(
-              '上传协议',
-              style: TextStyle(
-                color: HexColor('#333333'),
-                fontSize: 11,
-                decoration: TextDecoration.combine([
-                  TextDecoration.underline, // 下划线
-                ]),
-                decorationStyle: TextDecorationStyle.solid,
-                // 装饰样式
-                decorationColor: HexColor('#333333'),
+            Expanded(
+              flex: 3,
+              child: TextFormField(
+                controller: controller,
+                style: TextStyle(fontSize: 13),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: hintText,
+                  hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+                ),
+                keyboardType: TextInputType.text,
+                maxLines: !isDetailAddress?1:4,
+                //maxLength: !isDetailAddress?50:200,
               ),
             ),
           ],
+        ));
+  }
+
+  Widget _buildDetailCellRow(
+      String imageName, String hintText, TextInputType keyboardType, TextEditingController controller) {
+    return Container(
+        height: 40,
+        padding: const EdgeInsets.only(left: 15, right: 14),
+        decoration: new BoxDecoration(color: Colors.white),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          // // 主轴方向（横向）对齐方式
+          crossAxisAlignment: CrossAxisAlignment.center,
+          // 交叉轴（竖直）对其方式
+          children: <Widget>[
+            Image.asset('res/drawable/$imageName.png', width: 19, height: 19),
+            Padding(
+              padding: const EdgeInsets.only(right: 10, left: 28),
+              child: SizedBox(
+                width: 200,
+                child: TextFormField(
+                  controller: controller,
+                  style: TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: hintText,
+                    hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+                  ),
+                  keyboardType: keyboardType,
+                ),
+              ),
+            ),
+          ],
+        ));
+  }
+
+  Widget _buildTitleRow(String imageName, Size size, String title, bool isVisibleStar, {bool isCategory = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      // // 主轴方向（横向）对齐方式
+      crossAxisAlignment: CrossAxisAlignment.center,
+      // 交叉轴（竖直）对其方式
+      children: <Widget>[
+        Padding(
+          padding: isCategory ? const EdgeInsets.fromLTRB(15, 0, 10, 0) : const EdgeInsets.fromLTRB(15, 18, 10, 11),
+          child: Image.asset('res/drawable/add_position_$imageName.png', width: size.width, height: size.height),
         ),
-      ),
+        Padding(
+            padding: isCategory ? const EdgeInsets.only(right: 10) : const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            child: Text(
+              title,
+              overflow: TextOverflow.clip,
+              style: TextStyle(
+                color: DefaultColors.color333,
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+              ),
+            )),
+        Visibility(
+          visible: isVisibleStar,
+          child: Padding(
+            padding: isCategory ? const EdgeInsets.only(right: 10) : const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
+          ),
+        ),
+      ],
     );
   }
 
-  var galleryMode = GalleryMode.image;
+  // actions
   Future<void> _selectImages() async {
-    try {
-      var tempListImagePaths = await ImagePickers.pickerPaths(
-        galleryMode: galleryMode,
-        selectCount: _listImagePathsMaxLength - _listImagePaths.length,
-        showCamera: true,
-        cropConfig: null,
-        compressSize: 500,
-        uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
-      );
+    var tempListImagePaths = await ImagePickers.pickerPaths(
+      galleryMode: GalleryMode.image,
+      selectCount: _listImagePathsMaxLength - _listImagePaths.length,
+      showCamera: true,
+      cropConfig: null,
+      compressSize: 500,
+      uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+    );
+    setState(() {
       _listImagePaths.addAll(tempListImagePaths);
-      for (var path in _listImagePaths) {
-        print('[add] --> path:${path.path}');
-      }
-
-      setState(() {});
-    } on PlatformException {}
+    });
   }
 
-  void _pushTimePage() async {
-    final result = await Navigator.push(
+  _pushCategory() async {
+    var categoryItem = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectCategoryPage(),
+      ),
+    );
+    if (categoryItem is CategoryItem) {
+      setState(() {
+        _categoryItem = categoryItem;
+      });
+    }
+  }
+
+  _pushTime() async {
+    var _timeItem = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BusinessTimePage(),
       ),
     );
 
-    if (result is BusinessInfo) {
+    if (_timeItem is BusinessInfo) {
+      String dayText = "";
+      for (var item in _timeItem.dayList) {
+        if (!item.isCheck) continue;
+        dayText += "${item.label}、";
+      }
       setState(() {
-        print('[add] --> 添加时间, time:${result.timeStr}, dayCount:${result.dayList.length}');
-        String dayText = "";
-
-        for (var item in result.dayList) {
-          if (!item.isCheck) continue;
-          dayText += "${item.label}、";
-        }
-
-        _timeText = result.timeStr + " " + dayText;
+        _timeText = _timeItem.timeStr + " " + dayText;
       });
     }
   }
 
-  void _pushCategoryPage() async {
-    print('[add] --> 添加类目');
+  _uploadPoiData() {
+    //print('[add] --> 存储中。。。');
 
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SelectCategoryPage(),
-      ),
-    );
-
-    if (result is CategoryItem) {
-      setState(() {
-        _categoryItem = result;
-      });
+    // 0. 检测地点名称
+    if (!_addressNameKey.currentState.validate()) {
+      return;
     }
-  }
 
-  void _getOpenCageData() async {
-    //widget.userPosition = LatLng(23.12084, 113.32193);
-    var query = "${widget.userPosition.latitude},${widget.userPosition.longitude}";
-    _openCageData = await _service.getOpenCageData(query, 'zh');
-  }
+    // 2.检测网络数据
+    if (_openCageData == null) {
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+      return;
+    }
 
-  Future _uploadPoiData() async {
-
-    print('[add] --> 存储中。。。');
-
-    // 1.检测必须选项
-    var _isEmptyOfCatogory = (_categoryItem.title.length == 0 || _categoryItem.title == "");
-    var _isEmptyOfName = (_addressNameController.text.length == 0 || _addressNameController.text == "");
+    // 1.检测必须类别、图片
+    var _isEmptyOfCategory = (_categoryItem == null || _categoryItem.title.length == 0 || _categoryItem.title == "");
     var _isEmptyOfImages = (_listImagePaths.length == 0);
 
-    if (_isEmptyOfCatogory || _isEmptyOfName || _isEmptyOfImages) {
-      Fluttertoast.showToast(msg: "类别、地点名、拍摄图片不能为空");
+    if (_isEmptyOfCategory) {
+      Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
+      return;
+    }
+
+    if (_isEmptyOfImages) {
+      Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
       return;
     }
 
     if (!_isAcceptSignalProtocol) {
-      Fluttertoast.showToast(msg: "地理位置上传协议未接受");
-      return;
-    }
-
-    if (_openCageData == null) {
-      Fluttertoast.showToast(msg: "OpenCageData 为空");
+      Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
       return;
     }
 
     var categoryId = _categoryItem.id;
-    var location = widget.userPosition;
-    var name = _addressNameController.text;
     var country = _openCageData["country"] ?? "";
     var state = _openCageData["state"];
-    var city = _openCageData["city"] + _openCageData["county"];
-    var address1 = _addressController.text ?? "";
-    var address2 = "";
-    var number = _addressHouseNumController.text ?? "";
-    //var postalCode = _addressPostcodeController.text ?? "";
-    var postalCode = _openCageData["postcode"];
-    var workTime = _timeText ?? "";
-    var phone = _detailPhoneNumController.text ?? "";
-    var website = _detailWebsiteController.text ?? "";
-    var country_code = _openCageData["country_code"] ?? "";
-    _poiCollector = PoiCollector(
-        categoryId,
-        location,
-        name,
-        country_code,
-        country,
-        state,
-        city,
-        address1,
-        address2,
-        number,
-        postalCode,
-        workTime,
-        phone,
-        website
-    );
+    var city = _openCageData["county"];
+    var county = _openCageData["city"];
+//    var city = _openCageData["city"];
+//    var county = _openCageData["county"];
+    //var postalCode = _openCageData["postcode"];
+    var countryCode = _openCageData["country_code"] ?? "";
+    var poiName = _maxLengthLimit(_addressNameController);
+    var poiAddress = _maxLengthLimit(_addressController, isDetailAddress: true);
+    var poiHouseNum = _maxLengthLimit(_addressHouseNumController);
+    var poiPhoneNum = _maxLengthLimit(_detailPhoneNumController);
+    var poiWebsite = _maxLengthLimit(_detailWebsiteController);
+    var postalCode = _maxLengthLimit(_addressPostcodeController);
 
-    var address = currentWalletVo.accountList[0].account.address;
-    bool isFinish = await _service.postPoiCollector(_listImagePaths,address,_poiCollector);
+    var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city, county,
+        poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite);
 
-    if (isFinish) {
-      createWalletPopUtilName = '/data_contribution_page';
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
+    var model = PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
+    _positionBloc.add(StartPostPoiDataEvent(model));
+    setState(() {
+      _isUploading = true;
+    });
+  }
 
-          builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
-        ),
-      );
-
-      /*createWalletPopUtilName = '/data_contribution_page';
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FinishAddPositionPage(),
-        ),
-      );*/
+  String _maxLengthLimit(TextEditingController controller, {bool isDetailAddress = false}) {
+    String text = controller.text ?? "";
+    if (isDetailAddress) {
+      if (text.length > 200) {
+        text = text.substring(0, 200);
+      }
     } else {
-      Fluttertoast.showToast(msg: "存储失败!");
+      if (text.length > 50) {
+        text = text.substring(0, 50);
+      }
+    }
+    return text;
+  }
+
+
+  void _checkInputHeight() async {
+//    int count = _addressController.text.split('\n').length;
+    int length = _addressController.text.length;
+    double count = _addressController.text.length / 20;
+
+    //print('[add] --> count:$count, length:$length');
+
+    if (count < 1) {
+      return;
+    }
+
+    if (count <= 4) {  // use a maximum height of 6 rows
+      // height values can be adapted based on the font size
+      var newHeight = count < 1 ? 40.0 : 28.0 + (count * 18.0);
+      setState(() {
+        _inputHeight = newHeight;
+        //print('[add] --> newHeight:$newHeight');
+      });
     }
   }
 

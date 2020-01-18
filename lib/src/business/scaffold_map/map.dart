@@ -11,13 +11,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/model/heaven_map_poi_info.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import '../position/model/confirm_poi_item.dart' as position_model;
 
 import 'bloc/bloc.dart';
 
@@ -29,7 +32,8 @@ class MapContainer extends StatefulWidget {
   final RouteDataModel routeDataModel;
   final String style;
   final double defaultZoom;
-  final LatLng defaultCenter;
+
+//  final LatLng defaultCenter;
   final OnMapClickHandle mapClickHandle;
   final OnMapLongPressHandle mapLongPressHandle;
   final bool showCenterMarker;
@@ -42,8 +46,8 @@ class MapContainer extends StatefulWidget {
       this.heavenDataList,
       this.routeDataModel,
       this.style,
-      this.defaultZoom = 9.0,
-      this.defaultCenter = const LatLng(23.122592, 113.327356),
+      this.defaultZoom = 13,
+//      this.defaultCenter,
 //    this.bottomPanelController,
       this.mapClickHandle,
       this.mapLongPressHandle,
@@ -63,10 +67,11 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   MapboxMapController mapboxMapController;
 
   MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
-  bool myLocationEnabled = true;
+  bool myLocationEnabled;
 
 //  StreamSubscription _locationClickSubscription;
   PublishSubject<dynamic> _toLocationEventSubject = PublishSubject<dynamic>();
+  PublishSubject<LatLng> _saveLastPositionSubject = PublishSubject<LatLng>();
 
   StreamSubscription _eventBusSubscription;
 
@@ -79,9 +84,28 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   Map<String, IPoi> _currentGrayMarkerMap = Map();
   List<String> heavenMapLayers = [];
 
+//  PositionApi _positionApi = PositionApi();
+
+  SharedPreferences sprfs;
+
+  bool _hasRecoverRecentlyPosition = false;
+
   @override
   void initState() {
     super.initState();
+
+    SharedPreferences.getInstance().then((v) {
+      sprfs = v;
+      var posStr = sprfs.getString(PrefsKey.lastPosition);
+      if (posStr != null) {
+        var pos = posStr.split(',');
+        recentlyLocation = LatLng(double.parse(pos[0]), double.parse(pos[1]));
+      }
+      setState(() {
+        _hasRecoverRecentlyPosition = true;
+      });
+    });
+
     _mapPositionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       value: 1.0,
@@ -111,6 +135,11 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     _updateMapPositionSubject.debounceTime(Duration(milliseconds: 50)).listen((lastValue) {
 //      _mapPositionAnimationController.animateTo(lastValue, curve: Curves.linearToEaseOut);
       _mapPositionAnimationController.value = lastValue;
+    });
+
+    _saveLastPositionSubject.debounceTime(Duration(milliseconds: 2000)).listen((position) {
+      var saveStr = '${position.latitude},${position.longitude}';
+      sprfs.setString(PrefsKey.lastPosition, saveStr);
     });
 
     _listenEventBus();
@@ -212,7 +241,12 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         ),
       );
 
-      mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+      CameraPosition p = await mapboxMapController?.getCameraPosition();
+      if (p != null && p.zoom >= 17) {
+        mapboxMapController?.animateCamera(CameraUpdate.newLatLng(poi.latLng));
+      } else {
+        mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+      }
 
       currentPoi = poi;
     }
@@ -376,8 +410,16 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         return true;
       }
 
-      var poi = PoiEntity(name: name, latLng: coordinates);
-      BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+      var pid = firstFeature["properties"]["pid"];
+      if (pid != null) {
+        var l = position_model.Location.fromJson(firstFeature['geometry']);
+        print('xxx33 $l $firstFeature');
+        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid, l);
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
+      } else {
+        var poi = PoiEntity(name: name, latLng: coordinates);
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+      }
 
       return true;
     } else {
@@ -415,6 +457,11 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     if (mapboxMapController?.isGesture == true) {
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
     }
+
+    if (mapboxMapController.cameraPosition != null) {
+      _saveLastPositionSubject.sink.add(mapboxMapController.cameraPosition.target);
+    }
+//    sprfs?.setString(key, value)
   }
 
   int _clickTimes = 0;
@@ -545,6 +592,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   @override
   void dispose() {
     _updateMapPositionSubject.close();
+    _saveLastPositionSubject.close();
     _mapPositionAnimationController.dispose();
     mapboxMapController?.removeListener(_mapMoveListener);
 //    _locationClickSubscription?.cancel();
@@ -555,6 +603,10 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
   @override
   Widget build(BuildContext context) {
+    if (_hasRecoverRecentlyPosition != true) {
+      return Container(color: Colors.white);
+    }
+
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
       listener: (context, state) {
         if (state is SearchingPoiState || state is ShowPoiState) {
@@ -612,7 +664,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           styleString: widget.style,
                           onStyleLoaded: onStyleLoaded,
                           initialCameraPosition: CameraPosition(
-                            target: widget.defaultCenter,
+                            target: recentlyLocation,
                             zoom: widget.defaultZoom,
                           ),
                           rotateGesturesEnabled: false,

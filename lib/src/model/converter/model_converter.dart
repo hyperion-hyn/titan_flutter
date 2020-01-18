@@ -9,3 +9,17 @@ class LatLngConverter {
     return <double>[latLng.latitude, latLng.longitude];
   }
 }
+
+/// convert location: {"location": {"lat": 111, "lon": 111}} to Mapbox LatLng
+class LocationConverter {
+  static LatLng latLngFromJson(dynamic json) {
+    return LatLng(json['location']['lat'], json['location']['lon']);
+  }
+
+  static dynamic latLngToJson(LatLng latLng) {
+    var l = {
+      'location': {'lat': latLng.latitude, 'lon': latLng.longitude}
+    };
+    return l;
+  }
+}

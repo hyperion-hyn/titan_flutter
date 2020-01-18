@@ -1,29 +1,13 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:android_intent/android_intent.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/home/contribution_page.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
-import 'package:titan/src/business/wallet/service/wallet_service.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/custom_input_text.dart';
-import '../wallet/wallet_create_new_account_page.dart';
-import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
-import 'package:titan/src/global.dart';
-import '../wallet/wallet_manager/wallet_manager.dart';
 import 'model/category_item.dart';
 
 class SelectCategoryPage extends StatefulWidget {
@@ -40,24 +24,12 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   TextEditingController _searchTextController = TextEditingController();
   FocusNode _searchFocusNode = FocusNode();
   bool _visibleCloseIcon = false;
-  bool _isLoading = true;
   CustomInputText inputText;
-
-//  PublishSubject<String> _filterSubject = PublishSubject<String>();
   List<String> _tagList = [];
 
   @override
   void initState() {
-    _tagList.add("书店");
-    _tagList.add("西饼店");
-    _tagList.add("巧克力店");
-    _tagList.add("布艺店");
-    _tagList.add("健康食品店");
-    _tagList.add("美甲店");
-
-//    _searchTextController.addListener(searchTextChangeListener);
-
-//    _positionBloc.add(SelectCategoryLoadingEvent());
+    //print('[category] --> initState, $context');
 
     if (_searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
@@ -65,11 +37,11 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
     inputText = CustomInputText(
       controller: _searchTextController,
-      fieldCallBack: (textStr) {
+      fieldCallBack: (textStr,{isForceSearch = false}) {
         if (textStr.length == 0) {
           _positionBloc.add(SelectCategoryClearEvent());
-        }else{
-          handleSearch(textStr);
+        } else {
+          handleSearch(textStr,isForceSearch);
         }
         print("inputText = " + textStr);
       },
@@ -77,15 +49,19 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
     super.initState();
 
-    /*_filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
-      handleSearch(text);
-    });*/
+    _positionBloc.add(SelectCategoryInitEvent());
+
   }
 
-  void searchTextChangeListener() {
+  @override
+  void dispose() {
+    _positionBloc.close();
+    super.dispose();
+  }
+
+  /*void searchTextChangeListener() {
     String currentText = _searchTextController.text.trim();
     if (currentText.isNotEmpty) {
-//      _filterSubject.sink.add(currentText);
       if (!_visibleCloseIcon) {
         setState(() {
           _visibleCloseIcon = true;
@@ -98,7 +74,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         });
       }
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -106,70 +82,53 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          '选择类别',
+          S.of(context).select_category,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        /*actions: <Widget>[
-          InkWell(
-            onTap: () {
-              Navigator.pop(context,"");
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                '完成',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          )
-        ],*/
       ),
       body: _buildView(context),
     );
   }
 
   Widget _buildView(BuildContext context) {
-    return BlocBuilder<PositionBloc, PositionState>(
+    return BlocBuilder<PositionBloc, AllPageState>(
       bloc: _positionBloc,
-      builder: (BuildContext context, PositionState state) {
+      builder: (BuildContext context, AllPageState state) {
+        print('state: ${state}');
+
         if (state is InitialPositionState) {
           categoryList.clear();
-//          _searchTextController.text = "";
+//          return _buildBody(state);
+          return _buildBody(state);
+        } else if (state is SelectCategoryInitState) {
+          _tagList.clear();
+          _tagList = state.categoryList.map((categoryItem){
+            return categoryItem.title;
+          }).toList();
+//          categoryList.clear();
+//          categoryList.addAll(state.categoryList);
+
+          print("tagList ${_tagList[0]}");
           return _buildBody(state);
         } else if (state is SelectCategoryResultState) {
-          _isLoading = false;
           categoryList.clear();
           categoryList.addAll(state.categoryList);
 
           return _buildBody(state);
         } else if (state is SelectCategoryLoadingState) {
-          _isLoading = true;
-//          setState(() {
-//
-//          });
-          return _buildBody(state);
+          return _buildBody(state,isShowSearch: state.isShowSearch);
         } else if (state is SelectCategoryClearState) {
           categoryList.clear();
-//          _searchTextController.text = "";
           return _buildBody(state);
         } else {
-          return Container(
-            width: 0.0,
-            height: 0.0,
-          );
+          return AllPageStateContainer(state,(){
+          _positionBloc.add(SelectCategoryInitEvent());
+          });
         }
       },
     );
-  }
-
-  @override
-  void dispose() {
-    _positionBloc.close();
-//    _filterSubject.close();
-    super.dispose();
   }
 
   Widget _divider() {
@@ -186,14 +145,10 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     return InkWell(
       onTap: () {
         Navigator.pop(context, categoryItem);
-        /*setState(() {
-          selectCategory = categoryItem.title;
-        });*/
       },
       child: Container(
         height: 41,
         child: Row(
-//          mainAxisAlignment: MainAxisAlignment.left,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left: 16),
@@ -202,28 +157,20 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
                 style: TextStyle(color: HexColor("#333333"), fontSize: 16),
               ),
             ),
-            /*Spacer(),
-            Visibility(
-              visible: selectCategory == categoryItem.title,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Icon(
-                  Icons.check,
-                  color: Colors.green,
-                ),
-              ),
-            )*/
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBody(PositionState state) {
+  Widget _buildBody(PositionState state,{bool isShowSearch = true}) {
     return Container(
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[buildSearchBar(), Expanded(child: _buildBottomBody(state))]),
+          children: <Widget>[
+            if(isShowSearch) buildSearchBar(),
+            Expanded(child: _buildBottomBody(state))
+          ]),
     );
   }
 
@@ -239,29 +186,66 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
         ),
       );
     } else if (state is SelectCategoryResultState) {
-      return ListView.separated(
-          itemBuilder: (context, index) {
-            return _buildInfoContainer(categoryList[index]);
-          },
-          separatorBuilder: (context, index) {
-            return _divider();
-          },
-          itemCount: categoryList.length);
-    } else if (state is InitialPositionState || state is SelectCategoryClearState) {
-      return Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 10,
-          runSpacing: 5,
-          children: _tagList.map<Widget>((s) {
-            return InkWell(
-                onTap: () {
-                  _searchTextController.text = s;
-//                  handleSearch(s);
-                },
-                child: Chip(
-                  label: Text('$s'),
-                ));
-          }).toList());
+      if(categoryList.length == 0){
+        return Container(
+          child: Center(
+            child: Text(
+              S.of(context).no_category,
+              style: TextStyles.textC777S16,
+            ),
+          ),
+        );
+      }else{
+        return ListView.separated(
+            itemBuilder: (context, index) {
+              return _buildInfoContainer(categoryList[index]);
+            },
+            separatorBuilder: (context, index) {
+              return _divider();
+            },
+            itemCount: categoryList.length);
+      }
+    } else if (state is InitialPositionState ||
+        state is SelectCategoryClearState ||
+        state is SelectCategoryInitState) {
+      return SingleChildScrollView(
+        child: Padding(
+              padding: const EdgeInsets.only(top: 28.0, left: 8, right: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20,left: 10),
+                    child: Text(S.of(context).hot_search,style: TextStyles.textC777S16,),
+                  ),
+                  Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 10,
+                      runSpacing: 5,
+                      children: _tagList.map<Widget>((str) {
+                        return InkWell(
+                            onTap: () {
+//                    _searchTextController.text = str;
+                              _searchTextController.value = TextEditingValue(
+                                  // 设置内容
+                                  text: str,
+                                  // 保持光标在最后
+                                  selection: TextSelection.fromPosition(TextPosition(
+                                      affinity: TextAffinity.downstream,
+                                      offset: str.length)));
+                              handleSearch(str,true);
+                            },
+                            child: Chip(
+                              label: Text(
+                                '$str',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ));
+                      }).toList()),
+                ],
+              ),
+            ),
+      );
     }
     return Container(
       width: 0.0,
@@ -270,31 +254,31 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   }
 
   Widget buildSearchBar() {
-    double height = 43;
+//    double height = 43;
+    double height = 62;
     return Container(
       color: Theme.of(context).primaryColor,
-//      padding: EdgeInsets.only(top: 10, bottom: 10),
       height: height,
       child: Center(
         child: Container(
-            margin: EdgeInsets.only(left: 48, right: 48),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(height * 0.5)),
-            height: 29,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(17, 8, 11, 8),
-                    child: Image.asset('res/drawable/ic_select_category_search_bar.png', width: 13, height: 13),
-                  ),
-                  inputText,
-                ])),
+            margin: EdgeInsets.only(left: 32, right: 32, bottom: 8,top: 8),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(height * 0.5)),
+//            height: 29,
+            height: 46,
+            child: inputText),
       ),
     );
   }
 
-  void handleSearch(textOrPoi) async {
+  String _lastSearch;
+
+  void handleSearch(String textOrPoi,bool isForceSearch) {
+    if (_lastSearch == textOrPoi && !isForceSearch) {
+      return;
+    }
+
     if (textOrPoi is String) {
       textOrPoi = (textOrPoi as String).trim();
       if ((textOrPoi as String).isEmpty) {
@@ -303,6 +287,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
 
       _positionBloc.add(SelectCategoryLoadingEvent());
       _positionBloc.add(SelectCategoryResultEvent(searchText: textOrPoi));
+      _lastSearch = textOrPoi;
     }
   }
 }
