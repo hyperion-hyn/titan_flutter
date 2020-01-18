@@ -37,6 +37,7 @@ class S implements WidgetsLocalizations {
   String get account_password => "account password";
   String get action_success_hint => "Operated successfully";
   String get actual_amount_received => "(subject to HYN price fluctuations)";
+  String get add_failed_exist_hint => "This location already exists, please add another location";
   String get add_failed_hint => "Failed!";
   String get add_poi_item_title => "Add POI information";
   String get add_share_options => "Sharing options";
@@ -456,7 +457,7 @@ class S implements WidgetsLocalizations {
   String get search_empty_data => "No Data";
   String get search_exception => "Search Exception";
   String get search_history => "History";
-  String get search_or_decode => "Search / Decrypt";
+  String get search_or_decode => "Search nearby / Decrypt";
   String get search_title => "Search / Decrypt";
   String get select_category => "Select category";
   String get select_position => "Select position";
@@ -1295,6 +1296,8 @@ class $ko extends S {
   String get please_input_email_hint => "메일주소를 입력해 주십시오.";
   @override
   String get no_remark => "비고 무";
+  @override
+  String get add_failed_exist_hint => "이 위치는 이미 존재합니다. 다른 위치를 추가하십시오";
   @override
   String get app_version => "어플버전";
   @override
@@ -2482,6 +2485,8 @@ class $zh_CN extends S {
   @override
   String get no_remark => "无备注";
   @override
+  String get add_failed_exist_hint => "该地点已存在，请添加其他地点";
+  @override
   String get app_version => "版本";
   @override
   String get pay_fail_hint => "支付失败";
@@ -2564,7 +2569,7 @@ class $zh_CN extends S {
   @override
   String get introduce => "介绍";
   @override
-  String get search_or_decode => "搜索 / 解码位置密文";
+  String get search_or_decode => "搜索附近 / 解码位置密文";
   @override
   String get create_wallet_password_label => "钱包密码";
   @override

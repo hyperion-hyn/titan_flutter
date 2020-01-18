@@ -15,6 +15,9 @@ class AddPositionState extends PositionState {
 }
 
 // category
+//todo: bloc 纯function
+//todo: state 对应 UI展示
+
 class SelectCategoryInitState extends PositionState {
   List<CategoryItem> categoryList;
   SelectCategoryInitState(this.categoryList);
@@ -54,7 +57,8 @@ class SuccessPostPoiDataState extends PositionState {
 }
 
 class FailPostPoiDataState extends PositionState {
-
+  final int code;
+  FailPostPoiDataState(this.code);
 }
 
 // confirm
