@@ -20,7 +20,7 @@ class LocationConverter {
 //    var l = {
 //      'location': {'lat': latLng.latitude, 'lon': latLng.longitude}
 //    };
-   var l = {'lat': latLng.latitude, 'lon': latLng.longitude};
+    var l = {'lat': latLng.latitude, 'lon': latLng.longitude};
     return l;
   }
 }
