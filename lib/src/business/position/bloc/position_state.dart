@@ -1,8 +1,8 @@
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 
-abstract class PositionState {
-  const PositionState();
+abstract class PositionState extends AllPageState {
 }
 
 class InitialPositionState extends PositionState {
