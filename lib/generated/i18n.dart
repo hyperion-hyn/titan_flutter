@@ -127,6 +127,7 @@ class S implements WidgetsLocalizations {
   String get hospital => "Hospital";
   String get hot_area => "Hot spots";
   String get hot_search => "Popular searches：";
+  String get add_failed_exist_hint => "This location already exists, please add another location";
   String get hotel => "Hotel";
   String get house_number => "House no.";
   String get hynPriceUnit => "USD";
@@ -735,6 +736,8 @@ class $ko extends S {
   String get import_account => "계정 가져오기";
   @override
   String get hot_search => "인기 검색어：";
+  @override
+  String get add_failed_exist_hint => "이 위치는 이미 존재합니다. 다른 위치를 추가하십시오";
   @override
   String get key_manager_title => "나의 암호화 주소";
   @override
@@ -1441,6 +1444,8 @@ class $zh_CN extends S {
   String get import_account => "导入账户";
   @override
   String get hot_search => "热门搜索：";
+  @override
+  String get add_failed_exist_hint => "该地点已存在，请添加其他地点";
   @override
   String get key_manager_title => "我的加密地址";
   @override
