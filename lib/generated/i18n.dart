@@ -37,7 +37,7 @@ class S implements WidgetsLocalizations {
   String get account_password => "account password";
   String get action_success_hint => "Operated successfully";
   String get actual_amount_received => "(subject to HYN price fluctuations)";
-  String get add_failed_exist_hint => "This location already exists, please add another location";
+  String get add_failed_exist_hint => "This Poi already exists, please add another poi";
   String get add_failed_hint => "Failed!";
   String get add_poi_item_title => "Add POI information";
   String get add_share_options => "Sharing options";
