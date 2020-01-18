@@ -567,6 +567,7 @@
   "no_remark": "无备注",
   "post_my_check": "提交验证",
   "no_category": "暂无相关类别",
+  "add_failed_exist_hint": "该地点已存在，请添加其他地点",
   "hot_search": "热门搜索：",
   "task_un_finished": "任务未完成",
   "task_finished": "任务已完成",

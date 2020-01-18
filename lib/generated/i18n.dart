@@ -37,6 +37,7 @@ class S implements WidgetsLocalizations {
   String get account_password => "account password";
   String get action_success_hint => "Operated successfully";
   String get actual_amount_received => "(subject to HYN price fluctuations)";
+  String get add_failed_exist_hint => "This location already exists, please add another location";
   String get add_failed_hint => "Failed!";
   String get add_poi_item_title => "Add POI information";
   String get add_share_options => "Sharing options";
@@ -1296,6 +1297,8 @@ class $ko extends S {
   @override
   String get no_remark => "비고 무";
   @override
+  String get add_failed_exist_hint => "이 위치는 이미 존재합니다. 다른 위치를 추가하십시오";
+  @override
   String get app_version => "어플버전";
   @override
   String get pay_fail_hint => "지불실패";
@@ -2481,6 +2484,8 @@ class $zh_CN extends S {
   String get please_input_email_hint => "请输入邮箱";
   @override
   String get no_remark => "无备注";
+  @override
+  String get add_failed_exist_hint => "该地点已存在，请添加其他地点";
   @override
   String get app_version => "版本";
   @override

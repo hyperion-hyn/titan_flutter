@@ -64,7 +64,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
       } else if (event is SuccessPostPoiDataEvent) {
         yield SuccessPostPoiDataState();
       } else if (event is FailPostPoiDataEvent) {
-        yield FailPostPoiDataState();
+        yield FailPostPoiDataState(event.code);
       } else if (event is ConfirmPositionLoadingEvent) {
         yield ConfirmPositionLoadingState();
       } else if (event is ConfirmPositionPageEvent) {
@@ -90,7 +90,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
 
   Future _uploadPoiData(PoiDataModel model) async {
     var address = currentWalletVo.accountList[0].account.address;
-    bool isFinish = await _positionApi
+    int code = await _positionApi
         .postPoiCollector(model.listImagePaths, address, model.poiCollector,
             (int count, int total) {
       double progress = count * 100.0 / total;
@@ -98,10 +98,10 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
       add(LoadingPostPoiDataEvent(progress));
     });
 
-    if (isFinish) {
+    if (code == 0) {
       add(SuccessPostPoiDataEvent());
     } else {
-      add(FailPostPoiDataEvent());
+      add(FailPostPoiDataEvent(code));
     }
   }
 }
