@@ -672,7 +672,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           enableLogo: false,
                           enableAttribution: false,
                           compassMargins: CompassMargins(left: 0, top: 88, right: 16, bottom: 0),
-                          minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+                          minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
                           myLocationEnabled: myLocationEnabled,
                           myLocationTrackingMode: locationTrackingMode,
                           languageCode: widget.languageCode,
