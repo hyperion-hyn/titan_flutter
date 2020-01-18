@@ -237,6 +237,7 @@ class _MeState extends UserState<MePage> with RouteAware {
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(8, 12, 8, 8),
+                margin: EdgeInsets.symmetric(horizontal: 18),
                 decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [HexColor('#AC823A'), HexColor('#EDC67B'), HexColor('#CBAA69')],

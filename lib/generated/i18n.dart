@@ -1988,7 +1988,7 @@ class $zh_CN extends S {
   @override
   String get backup_wallet_notice_text1 => "获得助记词等于拥有钱包资产所有权";
   @override
-  String get task_to_standard_rules => "任务达标规则将会在2020年春节元宵节后在合理的范围内有所调整。";
+  String get task_to_standard_rules => "任务达标规则将会在2020年元宵节后在合理的范围内有所调整。";
   @override
   String get official_website => "官网";
   @override
