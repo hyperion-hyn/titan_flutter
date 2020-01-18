@@ -55,7 +55,8 @@ class SuccessPostPoiDataEvent extends PositionEvent {
 }
 
 class FailPostPoiDataEvent extends PositionEvent {
-
+  final int code;
+  FailPostPoiDataEvent(this.code);
 }
 
 // confirm

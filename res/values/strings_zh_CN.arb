@@ -344,5 +344,6 @@
   "no_remark": "无备注",
   "post_my_check": "提交验证",
   "no_category": "暂无相关类别",
-  "hot_search": "热门搜索："
+  "hot_search": "热门搜索：",
+  "add_failed_exist_hint": "该地点已存在，请添加其他地点"
 }

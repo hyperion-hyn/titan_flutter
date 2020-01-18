@@ -30,7 +30,7 @@ class PositionApi {
   }
 
   ///collect poi
-  Future<bool> postPoiCollector(List<Media> imagePaths, String address, PoiCollector poiCollector, ProgressCallback onSendProgress,{String lang = "zh-Hans"}) async {
+  Future<int> postPoiCollector(List<Media> imagePaths, String address, PoiCollector poiCollector, ProgressCallback onSendProgress,{String lang = "zh-Hans"}) async {
     try {
 
       Map<String, dynamic> params = {
@@ -61,13 +61,13 @@ class PositionApi {
       print("[PositionApi] , poiCollector,  responseEntity:${responseEntity}");
 
       if (responseEntity.code == 0) {
-        return true;
+        return 0;
       } else {
-        return false;
+        return responseEntity.code;
       }
     } catch (_) {
       logger.e(_);
-      return false;
+      return -1;
     }
   }
 

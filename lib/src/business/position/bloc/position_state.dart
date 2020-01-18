@@ -57,7 +57,8 @@ class SuccessPostPoiDataState extends PositionState {
 }
 
 class FailPostPoiDataState extends PositionState {
-
+  final int code;
+  FailPostPoiDataState(this.code);
 }
 
 // confirm
