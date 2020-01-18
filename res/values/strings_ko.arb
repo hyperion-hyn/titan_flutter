@@ -351,5 +351,6 @@
   "no_remark": "비고 무",
   "post_my_check": "인증 제출",
   "no_category": "해당 카테고리 무",
-  "hot_search": "인기 검색어："
+  "hot_search": "인기 검색어：",
+  "add_failed_exist_hint": "이 위치는 이미 존재합니다. 다른 위치를 추가하십시오"
 }

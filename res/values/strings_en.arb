@@ -351,5 +351,6 @@
   "no_remark": "No remarks",
   "post_my_check": "Submit verification",
   "no_category": "No such category",
-  "hot_search": "Popular searches："
+  "hot_search": "Popular searches：",
+  "add_failed_exist_hint": "This location already exists, please add another location"
 }

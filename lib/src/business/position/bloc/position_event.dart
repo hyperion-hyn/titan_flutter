@@ -11,17 +11,21 @@ abstract class PositionEvent extends Equatable {
 }
 
 class AddPositionEvent extends PositionEvent {
-
+//todo: delete
 }
 
 // category
 class SelectCategoryInitEvent extends PositionEvent {
+  //todo: 每个page 有个 bloc
+  //todo: delete
 }
 
 class SelectCategoryLoadingEvent extends PositionEvent {
+  //todo: delete
 }
 
 class SelectCategoryResultEvent extends PositionEvent {
+  //todo: 命名问题
   final String searchText;
 
   SelectCategoryResultEvent({this.searchText});
@@ -51,7 +55,8 @@ class SuccessPostPoiDataEvent extends PositionEvent {
 }
 
 class FailPostPoiDataEvent extends PositionEvent {
-
+  final int code;
+  FailPostPoiDataEvent(this.code);
 }
 
 // confirm
