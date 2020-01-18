@@ -297,7 +297,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
         tiltGesturesEnabled: false,
         enableLogo: false,
         enableAttribution: false,
-        minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
+        minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
         myLocationEnabled: false,
         languageCode: languageCode,
       ),

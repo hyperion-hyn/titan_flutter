@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/inject/injector.dart';
-import 'package:titan/src/model/history_search.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
