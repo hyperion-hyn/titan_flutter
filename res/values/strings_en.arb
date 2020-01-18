@@ -571,7 +571,7 @@
   "hot_search": "Trends：",
   "task_un_finished": "Unfinished Tasks",
   "task_finished": "Task Completed",
-  "task_finished_func": "Signal scan ${scanTimes}times，Add POI ${addPoiTimes}times，Verify POI ${verifyPoiTimes}times",
+  "task_finished_func": "Signal scan ${scanTimes} times，Add POI ${addPoiTimes} times，Verify POI ${verifyPoiTimes} times",
   "task_un_finished_func": "${todayTimes}/${times}times，unfinished",
   "task_is_finished_func": "${todayTimes}/${times}times，completed",
   "task_to_standard": "How to achieve your goals:",

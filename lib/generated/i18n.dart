@@ -601,7 +601,7 @@ class S implements WidgetsLocalizations {
   String snap_up_product_fuc(String name) => "Snap Up Products：${name}";
   String stay_func(String snapUpStocks) => "${snapUpStocks} left";
   String task_finish_func(String total) => "Already completed ${total} tasks";
-  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "Signal scan ${scanTimes}times，Add POI ${addPoiTimes}times，Verify POI ${verifyPoiTimes}times";
+  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "Signal scan ${scanTimes} times，Add POI ${addPoiTimes} times，Verify POI ${verifyPoiTimes} times";
   String task_is_finished_func(String todayTimes, String times) => "${todayTimes}/${times}times，completed";
   String task_to_standard_func(String times1, String times2, String times3) => "Must complete ${times1}time【Signal Scan】,${times2}times【Add POI】,${times3}times【Verify POI】。Excessive contributions will not count in the final result。";
   String task_un_finished_func(String todayTimes, String times) => "${todayTimes}/${times}times，unfinished";
@@ -757,7 +757,7 @@ class $ko extends S {
   @override
   String get later => "업데이트를 하지 않습니다.";
   @override
-  String get only_accept_hyn_addresses => "只接受HYN地址";
+  String get only_accept_hyn_addresses => "HYN 주소만 수락하다";
   @override
   String get time_f => "시간";
   @override
@@ -783,7 +783,7 @@ class $ko extends S {
   @override
   String get article => "문장";
   @override
-  String get only_accept_hyn_assets => "只接受HYN资产";
+  String get only_accept_hyn_assets => "HYN 자산만 수락하다";
   @override
   String get my_page => "내페이지";
   @override
@@ -803,7 +803,7 @@ class $ko extends S {
   @override
   String get backup_wallet_notice_text1 => "도움말을 얻는것은 지갑 자산 소유권을 갖는것과 같습니다.";
   @override
-  String get task_to_standard_rules => "任务达标规则将会在2020年春节元宵节后在合理的范围内有所调整。";
+  String get task_to_standard_rules => "임무 달성 기준 규칙은 2020년 설 정월대보름 이후 합리적인 범위에서 조정될 것이다.";
   @override
   String get official_website => "공식 홈페이지";
   @override
@@ -907,7 +907,7 @@ class $ko extends S {
   @override
   String get import_account_tips => "축하드립니다.당신의 비밀 지갑 가져오기에 성공하였습니다.";
   @override
-  String get i_already_know => "我已知晓";
+  String get i_already_know => "나는 이미 알고 있다";
   @override
   String get improvement_plan_refuse => "참여 안함";
   @override
@@ -951,7 +951,7 @@ class $ko extends S {
   @override
   String get please_select_category_hint => "카테고리 선택";
   @override
-  String get this_address => "此地址";
+  String get this_address => "이 주소";
   @override
   String get post_my_check => "인증 제출";
   @override
@@ -963,7 +963,7 @@ class $ko extends S {
   @override
   String get poi_confirm_title_error => "사실 존재하지 않거나 설명에 오류가 있는 장소임을 인정, 제출 확정?";
   @override
-  String get withdrawal_address => "提币地址";
+  String get withdrawal_address => "화폐 인출 주소";
   @override
   String get data_contribution_with_hyn_wallet_tips => "데이터 기여는 HYN 주소가 필요합니다. 먼저 HYN 지갑을 만드거나 가져오십시오.";
   @override
@@ -983,7 +983,7 @@ class $ko extends S {
   @override
   String get get_poi_fail_please_again => "위치 정보 취득 실패, 우선 소재 위치로 맵 포지셔닝。";
   @override
-  String get do_deposit_other_asset => "，请勿向此地址充值其他资产，否则将无法找回！";
+  String get do_deposit_other_asset => ",이 주소로 다른 자산에 충전하지 마십시오! 그렇지 않으면 되찾을 수 없습니다! ";
   @override
   String get no_level => "무등급";
   @override
@@ -1025,7 +1025,7 @@ class $ko extends S {
   @override
   String get rmb => "인민페";
   @override
-  String get recharge_tips => "充值提示";
+  String get recharge_tips => "충전 알림:";
   @override
   String get input_confirm_wallet_password_hint => "최소 6자리수이상의 지갑 비밀번호를 다시 한번 입력해 주십시오.";
   @override
@@ -1071,7 +1071,7 @@ class $ko extends S {
   @override
   String get scan_name_start => "시작";
   @override
-  String get task_finished => "任务已完成";
+  String get task_finished => "임무를 이미 완성하였다";
   @override
   String get max_star_numbers => "최대성간량";
   @override
@@ -1247,7 +1247,7 @@ class $ko extends S {
   @override
   String get input_wallet_password_length_hint => "최소 6자리수이상의 비밀번호를 입력해주십시오.";
   @override
-  String get task_un_finished => "任务未完成";
+  String get task_un_finished => "임무가 미완성되다";
   @override
   String get tip_node_mortgages_balances_hint => "수익잔액을 사용해야만 이 노드를 저당설정할 수 있습니다.";
   @override
@@ -1385,7 +1385,7 @@ class $ko extends S {
   @override
   String get create_wallet_password_label => "지갑 비밀번호";
   @override
-  String get do_not_provide_other_address => "，切勿提供其他资产地址，否则将无法找回！";
+  String get do_not_provide_other_address => ",다른 자산 주소를 절대 제공하지 마십시오! 그렇지 않으면 되찾을 수 없습니다! ";
   @override
   String get please_input_hyn_withdrawal_address => "HYN인출주소를입력해주세요.";
   @override
@@ -1575,7 +1575,7 @@ class $ko extends S {
   @override
   String get speed_normal => "정상속도";
   @override
-  String get withdrawal_tips => "提币提示";
+  String get withdrawal_tips => "화폐 인출 알림";
   @override
   String get private_share => "프리이버시공유";
   @override
@@ -1685,7 +1685,7 @@ class $ko extends S {
   @override
   String get illegal_mnemonic => "정상적인 기호가 아닙니다.";
   @override
-  String get task_to_standard => "任务达标:";
+  String get task_to_standard => "임무가 표준에 달하다:";
   @override
   String get Insufficient_balance_hint => "저당에필요한잔액이부족합니다.";
   @override
@@ -1711,7 +1711,7 @@ class $ko extends S {
   @override
   String available_balance_usdt(String amount) => "사용가능한잔액 ${amount} USDT";
   @override
-  String task_to_standard_func(String times1, String times2, String times3) => "需完成${times1}次【扫描附近信号】、${times2}次【添加附近地点】和${times3}次【验证附近地点】。多出的贡献次数不影响达标。";
+  String task_to_standard_func(String times1, String times2, String times3) => "${times1}회 [근처 신호를 스캔함], ${times2}회 [근처 지점을 추가함] 및${times3}회 [근처 지점을 검증함]을 완료해야 한다.더 많은 기여한 횟수는 기준 달성에 에 영향을 미치지 않는다.";
   @override
   String current_exchange_rate(String to, String currency) => "${to} 를 ${currency}으로환산하는현재비율은";
   @override
@@ -1735,7 +1735,7 @@ class $ko extends S {
   @override
   String withdrawal_fee(String fee) => "수수료(${fee}%)";
   @override
-  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "扫描信号${scanTimes}次，添加地点${addPoiTimes}次，验证地点${verifyPoiTimes}次";
+  String task_finished_func(String scanTimes, String addPoiTimes, String verifyPoiTimes) => "신호를 ${scanTimes}회 스캔하고, 지점을 ${addPoiTimes}회 추가하고 , 지점을 ${verifyPoiTimes}회 검증한다";
   @override
   String mortgage_time(String time) => "저당시간：${time}";
   @override
@@ -1745,7 +1745,7 @@ class $ko extends S {
   @override
   String available_mortgage_numbers(String number) => "${number}저당가능수";
   @override
-  String task_is_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，已完成";
+  String task_is_finished_func(String todayTimes, String times) => "${todayTimes}/${times}회를 완성했다";
   @override
   String mortgage_id(String id) => "저당ID：${id}";
   @override
@@ -1765,7 +1765,7 @@ class $ko extends S {
   @override
   String distance(String distance) => "${distance}미터";
   @override
-  String task_un_finished_func(String todayTimes, String times) => "${todayTimes}/${times}次，未完成";
+  String task_un_finished_func(String todayTimes, String times) => "${todayTimes}/${times}회를 미완성한다";
   @override
   String grade_require_func(String require) => "등급요구 ${require}";
   @override
