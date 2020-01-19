@@ -11,6 +11,7 @@ import 'package:titan/src/business/me/node_mortgage/node_bloc/bloc.dart';
 import 'package:titan/src/business/me/node_mortgage/snap_up_bloc/bloc.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 
+import '../../../global.dart';
 import '../model/mortgage_info_v2.dart';
 import '../mortgage_snap_up_page.dart';
 import 'snap_up_bloc/snap_up_state.dart';
@@ -287,7 +288,7 @@ class _NodeMortgagePageV2 extends State<NodeMortgagePageV2> {
                                                       S.of(context).stay_func('${_mortgageList[selectedIndex].snapUpStocks}'),
                                                       style: TextStyle(
                                                           color: Color(0xFFFFC500),
-                                                          fontSize: 12,
+                                                          fontSize: (appLocale ?? defaultLocale).languageCode.startsWith('ko')?8:12,
                                                           fontWeight: FontWeight.normal),
                                                     ),
                                                   ],
