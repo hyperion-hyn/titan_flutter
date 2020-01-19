@@ -163,7 +163,7 @@ class PositionApi {
         options: RequestOptions(headers: {
           "Lang": lang,
           "UUID": address,
-        }, contentType: "application/json"));
+        }, contentType: "application/x-www-form-urlencoded"));
 
     return data['data'];
   }
