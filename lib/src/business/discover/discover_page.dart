@@ -275,7 +275,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                             Fluttertoast.showToast(msg: S.of(context).stay_tuned);
                                           },
                                           child: Container(
-                                            padding: const EdgeInsets.all(16),
+                                            padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
                                             decoration: BoxDecoration(
                                                 border: Border.all(color: Color(0xFFE9E9E9)),
                                                 borderRadius: BorderRadius.all(Radius.circular(4))),
@@ -286,23 +286,29 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                   width: 28,
                                                   height: 28,
                                                 ),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(left: 8.0),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        S.of(context).discount_map,
-                                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                                                      ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 8.0),
-                                                        child: Text(
-                                                          S.of(context).not_open_yet,
-                                                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                Flexible(
+                                                  flex: 2,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          S.of(context).discount_map,
+                                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                                         ),
-                                                      ),
-                                                    ],
+                                                        Flexible(
+                                                          flex: 2,
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(top: 8.0),
+                                                            child: Text(
+                                                              S.of(context).not_open_yet,
+                                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 )
                                               ],
