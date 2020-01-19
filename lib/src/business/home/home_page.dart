@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       _updateStatusBar();
     } else {
       //other route set status text to white color
-      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
+//      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
     }
   }
 
@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       //status text black color
       FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     } else {
-//      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
     }
   }
 
