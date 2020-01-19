@@ -251,7 +251,8 @@ class _MeState extends UserState<MePage> with RouteAware {
                     _buildHeaderSectionItem(S.of(context).my_account_with_unit, LOGIN_USER_INFO.balance, () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
                     }),
-                    _buildHeaderSectionItem(S.of(context).my_power_with_unit, LOGIN_USER_INFO.totalPower, () {
+                    //显示算力，一定要要做转换显示  Utils.powerForShow
+                    _buildHeaderSectionItem(S.of(context).my_power_with_unit, Utils.powerForShow(LOGIN_USER_INFO.totalPower), () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                     }),
                     _buildHeaderSectionItem(S.of(context).node_mortgage_with_unit, LOGIN_USER_INFO.mortgageNodes, () {
