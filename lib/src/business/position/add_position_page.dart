@@ -153,12 +153,37 @@ class _AddPositionState extends State<AddPositionPage> {
         } else if (state is FailPostPoiDataState) {
           setState(() {
             _isUploading = false;
+            _isOnPressed = false;
           });
-          var hint = S.of(context).add_failed_exist_hint;
-          Fluttertoast.showToast(msg:state.code == -409?
-          hint:
-          S.of(context).add_failed_hint
-          );
+
+          String errorMsg = "";
+          switch (state.code) {
+            case -409:
+              errorMsg = S.of(context).add_failed_exist_hint;
+              break;
+
+            case -1:
+              errorMsg = S.of(context).add_failed_hint;
+              break;
+
+            case -2:
+              errorMsg = S.of(context).category_cannot_be_empty_hint;
+              break;
+
+            case -3:
+              errorMsg = S.of(context).take_pictures_must_not_be_empty_hint;
+              break;
+
+            case -4:
+              errorMsg = S.of(context).poi_upload_protocol_not_accepted_hint;
+              break;
+
+            case 0:
+              break;
+          }
+
+          Fluttertoast.showToast(msg:errorMsg);
+
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 
@@ -171,7 +196,24 @@ class _AddPositionState extends State<AddPositionPage> {
 
           setState(() {
             //_addressText = country + " " + provinces + " " + city + " " + county;
-            _addressText = county + "，" + city + "，" + provinces + "，" + country;
+            //_addressText = county + "，" + city + "，" + provinces + "，" + country;
+            var _address = "";
+            if (county.length > 0) {
+              _address += county + "，";
+            }
+
+            if (city.length > 0) {
+              _address += city + "，";
+            }
+
+            if (provinces.length > 0) {
+              _address += provinces + "，";
+            }
+
+            if (country.length > 0) {
+              _address += country;
+            }
+            _addressText = _address;
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
           });
 
@@ -548,14 +590,17 @@ class _AddPositionState extends State<AddPositionPage> {
               onPressed: _isOnPressed
                   ? null
                   : () {
-                      setState(() {
-                        _isOnPressed = true;
-                      });
+
+                    setState(() {
+                      _isOnPressed = true;
+                    });
+                      /*
                       Future.delayed(Duration(seconds: 1), () {
                         setState(() {
                           _isOnPressed = false;
                         });
-                      });
+                      });*/
+
                       _uploadPoiData();
                     },
               child: Padding(
@@ -794,12 +839,18 @@ class _AddPositionState extends State<AddPositionPage> {
 
     // 0. 检测地点名称
     if (!_addressNameKey.currentState.validate()) {
+      setState(() {
+        _isOnPressed = false;
+      });
       return;
     }
 
     // 2.检测网络数据
     if (_openCageData == null) {
       _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+      setState(() {
+        _isOnPressed = false;
+      });
       return;
     }
 
@@ -808,17 +859,20 @@ class _AddPositionState extends State<AddPositionPage> {
     var _isEmptyOfImages = (_listImagePaths.length == 0);
 
     if (_isEmptyOfCategory) {
-      Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
+      //Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
+      _positionBloc.add(FailPostPoiDataEvent(-2));
       return;
     }
 
     if (_isEmptyOfImages) {
-      Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
+      //Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
+      _positionBloc.add(FailPostPoiDataEvent(-3));
       return;
     }
 
     if (!_isAcceptSignalProtocol) {
       Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
+      _positionBloc.add(FailPostPoiDataEvent(-4));
       return;
     }
 

@@ -147,7 +147,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
           tiltGesturesEnabled: false,
           enableLogo: false,
           enableAttribution: false,
-          minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
+          minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
           languageCode: languageCode,
         ),
         Center(
