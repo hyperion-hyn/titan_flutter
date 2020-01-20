@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/business/login/login_bus_event.dart';
 import 'package:titan/src/business/login/login_page.dart';
+import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 import 'package:titan/src/home_build.dart';
 
