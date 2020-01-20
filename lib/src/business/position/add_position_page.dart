@@ -153,22 +153,8 @@ class _AddPositionState extends State<AddPositionPage> {
         } else if (state is FailPostPoiDataState) {
           setState(() {
             _isUploading = false;
+            _isOnPressed = false;
           });
-
-          /*if (_isEmptyOfCategory) {
-            Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
-            return;
-          }
-
-          if (_isEmptyOfImages) {
-            Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
-            return;
-          }
-
-          if (!_isAcceptSignalProtocol) {
-            Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
-            return;
-          }*/
 
           String errorMsg = "";
           switch (state.code) {
@@ -210,7 +196,24 @@ class _AddPositionState extends State<AddPositionPage> {
 
           setState(() {
             //_addressText = country + " " + provinces + " " + city + " " + county;
-            _addressText = county + "，" + city + "，" + provinces + "，" + country;
+            //_addressText = county + "，" + city + "，" + provinces + "，" + country;
+            var _address = "";
+            if (county.length > 0) {
+              _address += county + "，";
+            }
+
+            if (city.length > 0) {
+              _address += city + "，";
+            }
+
+            if (provinces.length > 0) {
+              _address += provinces + "，";
+            }
+
+            if (country.length > 0) {
+              _address += country;
+            }
+            _addressText = _address;
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
           });
 
@@ -836,12 +839,18 @@ class _AddPositionState extends State<AddPositionPage> {
 
     // 0. 检测地点名称
     if (!_addressNameKey.currentState.validate()) {
+      setState(() {
+        _isOnPressed = false;
+      });
       return;
     }
 
     // 2.检测网络数据
     if (_openCageData == null) {
       _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+      setState(() {
+        _isOnPressed = false;
+      });
       return;
     }
 
