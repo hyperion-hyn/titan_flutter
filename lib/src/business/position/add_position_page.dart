@@ -154,11 +154,50 @@ class _AddPositionState extends State<AddPositionPage> {
           setState(() {
             _isUploading = false;
           });
-          var hint = S.of(context).add_failed_exist_hint;
-          Fluttertoast.showToast(msg:state.code == -409?
-          hint:
-          S.of(context).add_failed_hint
-          );
+
+          /*if (_isEmptyOfCategory) {
+            Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
+            return;
+          }
+
+          if (_isEmptyOfImages) {
+            Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
+            return;
+          }
+
+          if (!_isAcceptSignalProtocol) {
+            Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
+            return;
+          }*/
+
+          String errorMsg = "";
+          switch (state.code) {
+            case -409:
+              errorMsg = S.of(context).add_failed_exist_hint;
+              break;
+
+            case -1:
+              errorMsg = S.of(context).add_failed_hint;
+              break;
+
+            case -2:
+              errorMsg = S.of(context).category_cannot_be_empty_hint;
+              break;
+
+            case -3:
+              errorMsg = S.of(context).take_pictures_must_not_be_empty_hint;
+              break;
+
+            case -4:
+              errorMsg = S.of(context).poi_upload_protocol_not_accepted_hint;
+              break;
+
+            case 0:
+              break;
+          }
+
+          Fluttertoast.showToast(msg:errorMsg);
+
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 
@@ -548,14 +587,17 @@ class _AddPositionState extends State<AddPositionPage> {
               onPressed: _isOnPressed
                   ? null
                   : () {
-                      setState(() {
-                        _isOnPressed = true;
-                      });
+
+                    setState(() {
+                      _isOnPressed = true;
+                    });
+                      /*
                       Future.delayed(Duration(seconds: 1), () {
                         setState(() {
                           _isOnPressed = false;
                         });
-                      });
+                      });*/
+
                       _uploadPoiData();
                     },
               child: Padding(
@@ -808,17 +850,20 @@ class _AddPositionState extends State<AddPositionPage> {
     var _isEmptyOfImages = (_listImagePaths.length == 0);
 
     if (_isEmptyOfCategory) {
-      Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
+      //Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
+      _positionBloc.add(FailPostPoiDataEvent(-2));
       return;
     }
 
     if (_isEmptyOfImages) {
-      Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
+      //Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
+      _positionBloc.add(FailPostPoiDataEvent(-3));
       return;
     }
 
     if (!_isAcceptSignalProtocol) {
       Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
+      _positionBloc.add(FailPostPoiDataEvent(-4));
       return;
     }
 

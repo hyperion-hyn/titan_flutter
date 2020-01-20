@@ -41,8 +41,10 @@ class MapRichApi {
   ///
   /// 发送验证码
   Future<int> verificationCode(String email) async {
-    return await MapRichHttpCore.instance
+    int code = await MapRichHttpCore.instance
         .postEntity("verification", EntityFactory((json) => json), params: {"email": email});
+    //print('[Map_rich] --> verificationCode, code:$code');
+    return code;
   }
 
   ///注册
