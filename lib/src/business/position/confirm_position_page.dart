@@ -281,7 +281,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     var languageCode = Localizations.localeOf(context).languageCode;
 
     return SizedBox(
-      height: 150,
+      height: 240,
       child: MapboxMap(
         compassEnabled: false,
         initialCameraPosition: CameraPosition(

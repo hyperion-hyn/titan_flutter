@@ -15,9 +15,9 @@ class HttpCore extends BaseHttpCore {
   static HttpCore _getInstance() {
     if (_instance == null) {
       _instance = HttpCore._internal();
-//      if (env.buildType == BuildType.DEV) {
+      if (env.buildType == BuildType.DEV) {
         _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
-//      }
+      }
     }
     return _instance;
   }
