@@ -128,7 +128,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       enableLogo: false,
       enableAttribution: false,
       minMaxZoomPreference: MinMaxZoomPreference(1.1, 7.0),
-      languageCode: Localizations.localeOf(context).languageCode,
+      languageEnable: false,
     );
   }
 
@@ -175,7 +175,7 @@ class NcovMapPageState extends State<NcovMapPage> {
 
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
-      print('[ncov] -->o');
+//      print('[ncov] -->o');
 
       if (event is ToMyLocationEvent) {
         //check location service
