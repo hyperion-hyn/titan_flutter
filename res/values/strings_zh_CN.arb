@@ -345,5 +345,7 @@
   "post_my_check": "提交验证",
   "no_category": "暂无相关类别",
   "hot_search": "热门搜索：",
-  "add_failed_exist_hint": "该地点已存在，请添加其他地点"
+  "add_failed_exist_hint": "该地点已存在，请添加其他地点",
+  "epidemic_map": "疫情地图",
+  "epidemic_map_desc": "新型肺炎疫情"
 }

@@ -473,6 +473,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
+
       if (event is ToMyLocationEvent) {
         //check location service
 
@@ -503,91 +504,71 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   }
 
   void _showGoToOpenAppSettingsDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: Text(S.of(context).require_location),
-                  content: Text(S.of(context).require_location_message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        PermissionHandler().openAppSettings();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  title: Text(S.of(context).require_location),
-                  content: Text(S.of(context).require_location_message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        PermissionHandler().openAppSettings();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-        });
+    _showDialogWidget(
+        title: Text(S.of(context).require_location),
+        content: Text(S.of(context).require_location_message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(S.of(context).cancel),
+            onPressed: () => Navigator.pop(context),
+          ),
+          FlatButton(
+            child: Text(S.of(context).setting),
+            onPressed: () {
+              PermissionHandler().openAppSettings();
+              Navigator.pop(context);
+            },
+          ),
+        ]
+    );
   }
 
   void _showGoToOpenLocationServceDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: Text(S.of(context).open_location_service),
-                  content: Text(S.of(context).open_location_service_message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        PermissionHandler().openAppSettings();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  title: Text(S.of(context).open_location_service),
-                  content: Text(S.of(context).open_location_service_message),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(S.of(context).cancel),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text(S.of(context).setting),
-                      onPressed: () {
-                        AndroidIntent intent = new AndroidIntent(
-                          action: 'action_location_source_settings',
-                        );
-                        intent.launch();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                );
-        });
+    _showDialogWidget(
+      title: Text(S.of(context).open_location_service),
+      content: Text(S.of(context).open_location_service_message),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(S.of(context).cancel),
+          onPressed: () => Navigator.pop(context),
+        ),
+        FlatButton(
+          child: Text(S.of(context).setting),
+          onPressed: () {
+            if (Platform.isIOS) {
+              PermissionHandler().openAppSettings();
+            } else {
+              AndroidIntent intent = new AndroidIntent(
+                action: 'action_location_source_settings',
+              );
+              intent.launch();
+            }
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
   }
+
+  Widget _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Platform.isIOS
+            ? CupertinoAlertDialog(
+          title: title,
+          content: content,
+          actions: actions,
+        )
+            : AlertDialog(
+          title: title,
+          content: content,
+          actions: actions,
+        );
+      },
+    );
+  }
+
 
   @override
   void dispose() {

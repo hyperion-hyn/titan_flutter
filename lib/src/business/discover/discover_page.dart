@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/discover/dapp/ncov/ncov_map_page.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
 import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
@@ -266,16 +267,16 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                       SizedBox(
                                         height: 12,
                                       ),
-                                      //夜生活指南
+                                      //疫情指南
                                       Expanded(
                                         child: InkWell(
                                           borderRadius: BorderRadius.all(Radius.circular(4)),
                                           onTap: () {
-//                                                activeDMap('nightlife');
-                                            Fluttertoast.showToast(msg: S.of(context).stay_tuned);
+                                            // todo: 疫情
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => NcovMapPage()));
                                           },
                                           child: Container(
-                                            padding: const EdgeInsets.all(16),
+                                            padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
                                             decoration: BoxDecoration(
                                                 border: Border.all(color: Color(0xFFE9E9E9)),
                                                 borderRadius: BorderRadius.all(Radius.circular(4))),
@@ -286,25 +287,31 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                   width: 28,
                                                   height: 28,
                                                 ),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(left: 8.0),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        S.of(context).discount_map,
-                                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                                                      ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 8.0),
-                                                        child: Text(
-                                                          S.of(context).not_open_yet,
-                                                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                Flexible(
+                                                  flex: 2,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 8.0),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          S.of(context).epidemic_map,
+                                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                                         ),
-                                                      ),
-                                                    ],
+                                                        Flexible(
+                                                          flex: 2,
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(top: 8.0),
+                                                            child: Text(
+                                                              S.of(context).epidemic_map_desc,
+                                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                )
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -381,6 +388,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
   }
 
   Future activeDMap(String dMapName) async {
+
     BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
 
     var model = DMapDefine.kMapList[dMapName];
