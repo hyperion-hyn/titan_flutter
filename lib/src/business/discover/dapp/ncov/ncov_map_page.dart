@@ -9,9 +9,8 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/consts/consts.dart';
-import '../../../../global.dart';
 
 class NcovMapPage extends StatefulWidget {
   @override
@@ -26,6 +25,7 @@ class NcovMapPageState extends State<NcovMapPage> {
   bool myLocationEnabled = false;
   MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
   int _clickTimes = 0;
+  List<NcovCountLevelModel> levelList= List();
 
   @override
   void initState() {
@@ -49,7 +49,38 @@ class NcovMapPageState extends State<NcovMapPage> {
       _clickTimes = 0;
     });
 
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _setupLevelList();
+
+    super.didChangeDependencies();
+  }
+
+  void _setupLevelList() {
+    var level_1 = NcovCountLevelModel('> 1000', '7c0000');
+    levelList.add(level_1);
+
+    var level_2 = NcovCountLevelModel('500 - 1000', 'd52f30');
+    levelList.add(level_2);
+
+    var level_3 = NcovCountLevelModel('100 - 499', 'f3664c');
+    levelList.add(level_3);
+
+    var level_4 = NcovCountLevelModel('10 - 99', 'ffa477');
+    levelList.add(level_4);
+
+    var level_5 = NcovCountLevelModel('1 - 9', 'ffd5c0');
+    levelList.add(level_5);
+
+    var level_6 = NcovCountLevelModel('0', 'ffffff');
+    levelList.add(level_6);
+
+    var level_7 = NcovCountLevelModel(S.of(context).suspected, 'fffde7');
+    levelList.add(level_7);
   }
 
   @override
@@ -85,7 +116,58 @@ class NcovMapPageState extends State<NcovMapPage> {
               ),
             ),
           ),
+          Positioned(
+            bottom: -16,
+            left: 16,
+            child: Container(
+              height: 200,
+              width: 250,
+              child: ListView.separated(
+                physics: new NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.only(top: 0, bottom: 0),
+                itemBuilder: (context, index) {
+                  return _buildItem(levelList[index]);
+                },
+                separatorBuilder: (context, index) {
+                  return Container(
+                    height: 6,
+                  );
+                },
+                itemCount: levelList.length,
+              ),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildItem(NcovCountLevelModel model) {
+    return Container(
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: 10,
+            height: 10,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: HexColor(model.hexColor),
+                  border: Border.all(color: HexColor(model.hexColor)),
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 0.25)],
+              ),
+            ),
+          ),
+          SizedBox(width: 16,),
+          Text(
+            model.levelTitle,
+            textAlign: TextAlign.left,
+            style: TextStyle(color: HexColor("#000000"), fontSize: 12),
+          ),
+        ],
+      ),
+      margin: EdgeInsets.only(
+        bottom: 4,
       ),
     );
   }
@@ -248,4 +330,11 @@ class NcovMapPageState extends State<NcovMapPage> {
       },
     );
   }
+}
+
+class NcovCountLevelModel {
+
+  String levelTitle = "";
+  String hexColor = "";
+  NcovCountLevelModel(this.levelTitle, this.hexColor);
 }

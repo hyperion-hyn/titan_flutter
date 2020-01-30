@@ -267,13 +267,12 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                       SizedBox(
                                         height: 12,
                                       ),
-                                      //疫情指南
+                                      //警察服务站
                                       Expanded(
                                         child: InkWell(
                                           borderRadius: BorderRadius.all(Radius.circular(4)),
                                           onTap: () {
-                                            // todo: 疫情
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) => NcovMapPage()));
+                                            activeDMap('policeStation');
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
@@ -283,7 +282,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                             child: Row(
                                               children: <Widget>[
                                                 Image.asset(
-                                                  'res/drawable/ic_dmap_bar.png',
+                                                  'res/drawable/ic_dmap_police.png',
                                                   width: 28,
                                                   height: 28,
                                                 ),
@@ -295,7 +294,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: <Widget>[
                                                         Text(
-                                                          S.of(context).epidemic_map,
+                                                          S.of(context).police_security_station,
                                                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                                         ),
                                                         Flexible(
@@ -303,7 +302,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                           child: Padding(
                                                             padding: const EdgeInsets.only(top: 8.0),
                                                             child: Text(
-                                                              S.of(context).epidemic_map_desc,
+                                                              S.of(context).police_station_text,
                                                               style: TextStyle(color: Colors.grey, fontSize: 12),
                                                             ),
                                                           ),
@@ -323,12 +322,12 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                 SizedBox(
                                   width: 12,
                                 ),
-                                //警察服务站
+                                //疫情
                                 Expanded(
                                   child: InkWell(
                                     borderRadius: BorderRadius.all(Radius.circular(4)),
                                     onTap: () {
-                                      activeDMap('policeStation');
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => NcovMapPage()));
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.all(16),
@@ -339,21 +338,21 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Image.asset(
-                                            'res/drawable/ic_dmap_police.png',
+                                            'res/drawable/ic_dmap_bar.png',
                                             width: 32,
                                             height: 32,
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 16.0),
                                             child: Text(
-                                              S.of(context).police_security_station,
+                                              S.of(context).epidemic_map,
                                               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 8.0),
                                             child: Text(
-                                              S.of(context).police_station_text,
+                                              S.of(context).epidemic_map_desc,
                                               style: TextStyle(color: Colors.grey, fontSize: 12),
                                             ),
                                           ),
