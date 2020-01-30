@@ -9,9 +9,8 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/consts/consts.dart';
-import '../../../../global.dart';
 
 class NcovMapPage extends StatefulWidget {
   @override
@@ -26,7 +25,7 @@ class NcovMapPageState extends State<NcovMapPage> {
   bool myLocationEnabled = false;
   MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
   int _clickTimes = 0;
-  StreamSubscription _eventBusSubscription;
+  List<NcovCountLevelModel> levelList= List();
 
   @override
   void initState() {
@@ -39,9 +38,9 @@ class NcovMapPageState extends State<NcovMapPage> {
       }
 
       var latLng = await mapboxMapController?.lastKnownLocation();
-      double doubleClickZoom = 6;
+      double doubleClickZoom = 7;
       if (latLng != null) {
-        if (_clickTimes > 0) {
+        if (_clickTimes > 1) {
           mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
         } else if (!trackModeChange) {
           mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
@@ -50,64 +49,126 @@ class NcovMapPageState extends State<NcovMapPage> {
       _clickTimes = 0;
     });
 
-    _listenEventBus();
-
-    Future.delayed(Duration(milliseconds: 2000)).then((value) {
-      eventBus.fire(ToMyLocationEvent());
-    });
 
     super.initState();
   }
 
   @override
+  void didChangeDependencies() {
+    _setupLevelList();
+
+    super.didChangeDependencies();
+  }
+
+  void _setupLevelList() {
+    var level_1 = NcovCountLevelModel('> 1000', '7c0000');
+    levelList.add(level_1);
+
+    var level_2 = NcovCountLevelModel('500 - 1000', 'd52f30');
+    levelList.add(level_2);
+
+    var level_3 = NcovCountLevelModel('100 - 499', 'f3664c');
+    levelList.add(level_3);
+
+    var level_4 = NcovCountLevelModel('10 - 99', 'ffa477');
+    levelList.add(level_4);
+
+    var level_5 = NcovCountLevelModel('1 - 9', 'ffd5c0');
+    levelList.add(level_5);
+
+    var level_6 = NcovCountLevelModel('0', 'ffffff');
+    levelList.add(level_6);
+
+    var level_7 = NcovCountLevelModel(S.of(context).suspected, 'fffde7');
+    levelList.add(level_7);
+  }
+
+  @override
   void dispose() {
     _toLocationEventSubject.close();
-    _eventBusSubscription?.cancel();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.loose,
-      children: <Widget>[
-        _mapView(), //need a container to expand.
-        //top bar
-        Material(
-          elevation: 2,
-          child: Container(
-            color: Theme.of(context).primaryColor,
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).padding.top + 56,
-            child: Stack(
-              children: <Widget>[
-                Center(
-                    child: Text(
-                  S.of(context).epidemic_map,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
-                )),
-                Align(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Ink(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        S.of(context).close,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  alignment: Alignment.centerLeft,
-                ),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(S.of(context).epidemic_map),
+      ),
+      body: Stack(
+        fit: StackFit.loose,
+        children: <Widget>[
+          _mapView(), //need a container to expand.
+          Positioned(
+            bottom: 32,
+            right: 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                _fireToMyLocation();
+              },
+              mini: true,
+              heroTag: 'myLocation',
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.my_location,
+                color: Colors.black87,
+              ),
             ),
           ),
-        ),
-      ],
+          Positioned(
+            bottom: -16,
+            left: 16,
+            child: Container(
+              height: 200,
+              width: 250,
+              child: ListView.separated(
+                physics: new NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.only(top: 0, bottom: 0),
+                itemBuilder: (context, index) {
+                  return _buildItem(levelList[index]);
+                },
+                separatorBuilder: (context, index) {
+                  return Container(
+                    height: 6,
+                  );
+                },
+                itemCount: levelList.length,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItem(NcovCountLevelModel model) {
+    return Container(
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: 10,
+            height: 10,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: HexColor(model.hexColor),
+                  border: Border.all(color: HexColor(model.hexColor)),
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 0.25)],
+              ),
+            ),
+          ),
+          SizedBox(width: 16,),
+          Text(
+            model.levelTitle,
+            textAlign: TextAlign.left,
+            style: TextStyle(color: HexColor("#000000"), fontSize: 12),
+          ),
+        ],
+      ),
+      margin: EdgeInsets.only(
+        bottom: 4,
+      ),
     );
   }
 
@@ -115,7 +176,7 @@ class NcovMapPageState extends State<NcovMapPage> {
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(
-        target: recentlyLocation,
+        target: LatLng(39.919730, 116.399345),
         zoom: 3,
       ),
       styleString: Const.kNcovMapStyleCn,
@@ -127,7 +188,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       tiltGesturesEnabled: false,
       enableLogo: false,
       enableAttribution: false,
-      minMaxZoomPreference: MinMaxZoomPreference(1.1, 7.0),
+      minMaxZoomPreference: MinMaxZoomPreference(2, 9.0),
       languageEnable: false,
     );
   }
@@ -139,6 +200,13 @@ class NcovMapPageState extends State<NcovMapPage> {
       controller.removeListener(_mapMoveListener);
       controller.addListener(_mapMoveListener);
     });
+
+    Future.delayed(Duration(milliseconds: 500)).then((value) {
+      //cheat double click
+      _clickTimes = 2;
+      _fireToMyLocation();
+    });
+
   }
 
   bool updateMyLocationTrackingMode(MyLocationTrackingMode mode) {
@@ -161,7 +229,7 @@ class NcovMapPageState extends State<NcovMapPage> {
     return false;
   }
 
-  Future _toMyLocation() async {
+  Future _toMyLocationSink() async {
     _clickTimes++;
     _toLocationEventSubject.sink.add(1);
   }
@@ -173,37 +241,29 @@ class NcovMapPageState extends State<NcovMapPage> {
     }
   }
 
-  void _listenEventBus() {
-    _eventBusSubscription = eventBus.on().listen((event) async {
-//      print('[ncov] -->o');
+  void _fireToMyLocation() async {
+    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
 
-      if (event is ToMyLocationEvent) {
-        //check location service
+    if (serviceStatus == ServiceStatus.disabled) {
+      _showGoToOpenLocationServceDialog();
+      return;
+    }
 
-        ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
-
-        if (serviceStatus == ServiceStatus.disabled) {
-          _showGoToOpenLocationServceDialog();
-          return;
-        }
-
-        PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
-        if (permission == PermissionStatus.granted) {
-          _toMyLocation();
-        } else {
-          Map<PermissionGroup, PermissionStatus> permissions =
-              await PermissionHandler().requestPermissions([PermissionGroup.location]);
-          if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
-            _toMyLocation();
-            Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
-              _toMyLocation(); //hack, location not auto move
-            });
-          } else {
-            _showGoToOpenAppSettingsDialog();
-          }
-        }
+    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+    if (permission == PermissionStatus.granted) {
+      _toMyLocationSink();
+    } else {
+      Map<PermissionGroup, PermissionStatus> permissions =
+          await PermissionHandler().requestPermissions([PermissionGroup.location]);
+      if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
+        _toMyLocationSink();
+        Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
+          _toMyLocationSink(); //hack, location not auto move
+        });
+      } else {
+        _showGoToOpenAppSettingsDialog();
       }
-    });
+    }
   }
 
   void _showGoToOpenAppSettingsDialog() {
@@ -270,4 +330,11 @@ class NcovMapPageState extends State<NcovMapPage> {
       },
     );
   }
+}
+
+class NcovCountLevelModel {
+
+  String levelTitle = "";
+  String hexColor = "";
+  NcovCountLevelModel(this.levelTitle, this.hexColor);
 }

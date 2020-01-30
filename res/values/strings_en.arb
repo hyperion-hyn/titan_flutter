@@ -346,6 +346,7 @@
   "no_category": "No such category",
   "hot_search": "Popular searches：",
   "add_failed_exist_hint": "This location already exists, please add another location",
-  "epidemic_map": "Epidemic Map",
-  "epidemic_map_desc": "New pneumonia outbreak"
+  "epidemic_map": "Ncov Map",
+  "epidemic_map_desc": "New pneumonia outbreak",
+  "suspected": "suspected"
 }
