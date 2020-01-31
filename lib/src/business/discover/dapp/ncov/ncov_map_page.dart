@@ -25,7 +25,7 @@ class NcovMapPageState extends State<NcovMapPage> {
   bool myLocationEnabled = false;
   MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
   int _clickTimes = 0;
-  List<NcovCountLevelModel> levelList= List();
+  List<NcovCountLevelModel> levelList = List();
 
   @override
   void initState() {
@@ -48,7 +48,6 @@ class NcovMapPageState extends State<NcovMapPage> {
       }
       _clickTimes = 0;
     });
-
 
     super.initState();
   }
@@ -117,23 +116,27 @@ class NcovMapPageState extends State<NcovMapPage> {
             ),
           ),
           Positioned(
-            bottom: -16,
+            bottom: 16,
             left: 16,
-            child: Container(
-              height: 200,
-              width: 250,
-              child: ListView.separated(
-                physics: new NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.only(top: 0, bottom: 0),
-                itemBuilder: (context, index) {
-                  return _buildItem(levelList[index]);
-                },
-                separatorBuilder: (context, index) {
-                  return Container(
-                    height: 6,
-                  );
-                },
-                itemCount: levelList.length,
+            child: IgnorePointer(
+              child: Container(
+                height: 180,
+                width: 120,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(color: Colors.white54, borderRadius: BorderRadius.circular(4)),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: new NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return _buildItem(levelList[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return Container(
+                      height: 6,
+                    );
+                  },
+                  itemCount: levelList.length,
+                ),
               ),
             ),
           ),
@@ -151,14 +154,16 @@ class NcovMapPageState extends State<NcovMapPage> {
             height: 10,
             child: Container(
               decoration: BoxDecoration(
-                  color: HexColor(model.hexColor),
-                  border: Border.all(color: HexColor(model.hexColor)),
-                  borderRadius: BorderRadius.all(Radius.circular(2)),
-                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 0.25)],
+                color: HexColor(model.hexColor),
+                border: Border.all(color: HexColor(model.hexColor)),
+                borderRadius: BorderRadius.all(Radius.circular(2)),
+                boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 0.25)],
               ),
             ),
           ),
-          SizedBox(width: 16,),
+          SizedBox(
+            width: 16,
+          ),
           Text(
             model.levelTitle,
             textAlign: TextAlign.left,
@@ -206,7 +211,6 @@ class NcovMapPageState extends State<NcovMapPage> {
       _clickTimes = 2;
       _fireToMyLocation();
     });
-
   }
 
   bool updateMyLocationTrackingMode(MyLocationTrackingMode mode) {
@@ -333,8 +337,8 @@ class NcovMapPageState extends State<NcovMapPage> {
 }
 
 class NcovCountLevelModel {
-
   String levelTitle = "";
   String hexColor = "";
+
   NcovCountLevelModel(this.levelTitle, this.hexColor);
 }
