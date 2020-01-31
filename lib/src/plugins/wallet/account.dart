@@ -29,7 +29,7 @@ class Account {
       //active erc20 tokens
       if (isMainNet) {
         erc20Tokens.add(SupportedTokens.HYN);
-//        erc20Tokens.add(SupportedTokens.USDT_ERC20);
+        erc20Tokens.add(SupportedTokens.USDT_ERC20);
       } else {
         erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
       }

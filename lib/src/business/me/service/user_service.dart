@@ -254,7 +254,7 @@ class UserService {
       throw new Exception("not login");
     }
 
-    return await _mapRichApi.createOrder(contractId: contractId, token: userToken.token);
+    return await _mapRichApi.createOrderV2(contractId: contractId, token: userToken.token);
   }
 
   ///订单免费创建
@@ -285,7 +285,7 @@ class UserService {
       throw new Exception("not login");
     }
 
-    return await _mapRichApi.confirmPay(
+    return await _mapRichApi.confirmPayV2(
         orderId: orderId, payType: payType, token: userToken.token, fundToken: fundToken);
   }
 

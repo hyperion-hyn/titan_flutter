@@ -337,7 +337,7 @@
   "no_wallet_hint": "你还没有钱包.",
   "create": "创建",
   "recharge_success_hint": "充值成功",
-  "transfer_warning_hint": "勿往上述地址转入非HYN资产，否则资产将不可找回。您转入后，需要整个网络节点的确认，大约需要10-30分钟。",
+  "transfer_warning_hint": "上述地址仅接受USDT ERC20或HYN资产，切勿充入其他资产，否则将无法找回！您转入后，需要整个网络节点的确认，大约需要10-30分钟。",
   "task_finish_day_hint": "当天任务已完成",
   "task_finish_func": "已做任务${total}次",
   "time_f": "时间:",

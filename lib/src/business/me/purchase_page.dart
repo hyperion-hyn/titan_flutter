@@ -387,7 +387,8 @@ class _PurchaseState extends State<PurchasePage> {
               ),
               Expanded(
                 child: Text(
-                  S.of(context).current_rate_func(quotes.currency.toString(), quotes.to.toString(), '${quotes?.currency}${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}'),
+                  S.of(context).current_rate_func(quotes.currency.toString(), quotes.to.toString(),
+                      '${quotes?.currency}${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}'),
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                   softWrap: true,
                 ),
@@ -399,24 +400,29 @@ class _PurchaseState extends State<PurchasePage> {
     );
   }
 
-  double getBalanceByType(String type) {
-
+  double getBalanceByType(String type, [String chargeType = 'hyn']) {
     if (userInfo == null) return 0.0;
 
     //print('balance: ${userInfo.balance}, chargeBalance: ${userInfo.chargeBalance})');
 
     double balance = 0;
     if (type == PAY_BALANCE_TYPE_INCOME) {
-      balance = (userInfo?.balance ?? 0) - (userInfo?.chargeBalance ?? 0);
+      balance = (userInfo?.balance ?? 0) - (userInfo?.totalChargeBalance ?? 0);
     } else if (type == PAY_BALANCE_TYPE_RECHARGE) {
-      balance = userInfo?.chargeBalance ?? 0;
+      if (chargeType == 'hyn') {
+        balance = userInfo?.chargeHynBalance ?? 0;
+      } else if (chargeType == 'usdt') {
+        balance = userInfo?.chargeUsdtBalance ?? 0;
+      } else {
+        balance = userInfo?.totalChargeBalance ?? 0;
+      }
     }
 
     int decimals = 2;
     int fac = pow(10, decimals);
     //print('fac: $fac');
     double d = balance;
-    d = (d * fac).floor()/fac;
+    d = (d * fac).floor() / fac;
     //print("d: $d");
 
     return d;
@@ -491,15 +497,27 @@ class _PurchaseState extends State<PurchasePage> {
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    S.of(context).available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
-                    style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
-                  ),
-                ],
-              ),
+              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE)
+                Column(
+                  children: <Widget>[
+                    Text(
+                        '需：HYN等额 ${Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--'}，USDT直充 ${Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--'}'),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        '可用余额 HYN等额 ${Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'hyn'))}，USDT直充 ${Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'usdt'))}',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Text(
+                  S
+                      .of(context)
+                      .available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
+                  style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                ),
               Padding(
                 padding: const EdgeInsets.only(top: 32),
                 child: RaisedButton(
@@ -507,7 +525,11 @@ class _PurchaseState extends State<PurchasePage> {
                   color: Color(0xFFD6A734),
                   onPressed: () async {
                     if (userInfo != null && widget.payOrder != null) {
-                      if (getBalanceByType(payBalanceType) < widget.payOrder.amount) {
+                      if ((payBalanceType == PAY_BALANCE_TYPE_INCOME &&
+                              getBalanceByType(payBalanceType) < widget.payOrder.amount) ||
+                          (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
+                              (getBalanceByType(payBalanceType, 'hyn') < widget.payOrder.hynUSDTAmount ||
+                                  getBalanceByType(payBalanceType, 'usdt') < widget.payOrder.erc20USDTAmount))) {
                         Fluttertoast.showToast(msg: S.of(context).balance_lack);
                       } else {
                         try {
@@ -530,6 +552,8 @@ class _PurchaseState extends State<PurchasePage> {
                             } else {
                               if (ret.code == -1007) {
                                 Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
+                              } else if (ret.code == -1004) {
+                                Fluttertoast.showToast(msg: S.of(context).balance_lack);
                               } else {
                                 Fluttertoast.showToast(msg: S.of(context).pay_fail_hint);
                               }

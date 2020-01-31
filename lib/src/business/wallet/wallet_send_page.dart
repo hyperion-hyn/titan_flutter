@@ -19,10 +19,10 @@ class WalletSendPage extends StatefulWidget {
   final String receiverAddress;
   final double count;
   final String symbol;
-  final String currencyUnit = "CNY";
+  final String currencyUnit;
   final String backRouteName;
 
-  WalletSendPage(this.walletAccountVo, {this.receiverAddress, this.count, this.symbol = "HYN", this.backRouteName});
+  WalletSendPage(this.walletAccountVo, {this.receiverAddress, this.count, this.symbol = "HYN", this.currencyUnit = 'CNY', this.backRouteName});
 
   @override
   State<StatefulWidget> createState() {
@@ -275,15 +275,16 @@ class _WalletSendState extends State<WalletSendPage> {
         Fluttertoast.showToast(msg: S.of(context).account_is_empty);
         return;
       }
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => WalletSendConfirmPage(
-                    walletAccountVo,
-                    double.parse(_countController.text),
-                    _receiverAddressController.text,
-                    backRouteName: widget.backRouteName,
-                  )));
+      print('xxx ${walletAccountVo.amount} ${walletAccountVo.symbol}');
+//      Navigator.push(
+//          context,
+//          MaterialPageRoute(
+//              builder: (context) => WalletSendConfirmPage(
+//                    walletAccountVo,
+//                    double.parse(_countController.text),
+//                    _receiverAddressController.text,
+//                    backRouteName: widget.backRouteName,
+//                  )));
     }
   }
 

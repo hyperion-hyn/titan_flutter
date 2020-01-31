@@ -8,12 +8,15 @@ part of 'pay_order.dart';
 
 PayOrder _$PayOrderFromJson(Map<String, dynamic> json) {
   return PayOrder(
-    json['address'] as String,
-    json['amount'] as int,
-    json['order_id'] as int,
-    json['qr_code'] as String,
-    json['state'] as int,
-    json['hyn_amount'] as String,
+    address: json['address'] as String,
+    amount: json['amount'] as int,
+    order_id: json['order_id'] as int,
+    qr_code: json['qr_code'] as String,
+    state: json['state'] as int,
+    hyn_amount: json['hyn_amount'] as String,
+    erc20USDTAmount: (json['erc20USDTAmount'] as num)?.toDouble(),
+    hynUSDTAmount: (json['hynUSDTAmount'] as num)?.toDouble(),
+    is_free: json['is_free'] as int,
   );
 }
 
@@ -24,4 +27,7 @@ Map<String, dynamic> _$PayOrderToJson(PayOrder instance) => <String, dynamic>{
       'qr_code': instance.qr_code,
       'state': instance.state,
       'hyn_amount': instance.hyn_amount,
+      'is_free': instance.is_free,
+      'erc20USDTAmount': instance.erc20USDTAmount,
+      'hynUSDTAmount': instance.hynUSDTAmount,
     };

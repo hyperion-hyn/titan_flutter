@@ -223,6 +223,14 @@ class MapRichApi {
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
+  ///订单创建V2  support usdt.
+  Future<PayOrder> createOrderV2({@required int contractId, @required String token}) async {
+    return await MapRichHttpCore.instance.postEntity(
+        'order/v2/create', EntityFactory<PayOrder>((json) => PayOrder.fromJson(json)),
+        params: {"contractId": contractId},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
+  }
+
   ///订单创建
   Future<PayOrder> createFreeOrder({@required int contractId, @required String token}) async {
     return await MapRichHttpCore.instance.postEntity(
@@ -243,6 +251,14 @@ class MapRichApi {
   Future<ResponseEntity<dynamic>> confirmPay(
       {@required int orderId, @required String payType, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postResponseEntity('order/pay', null,
+        params: {"orderId": orderId, "payType": payType},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
+  }
+
+  ///确认支付订单V2
+  Future<ResponseEntity<dynamic>> confirmPayV2(
+      {@required int orderId, @required String payType, @required String token, @required String fundToken}) async {
+    return await MapRichHttpCore.instance.postResponseEntity('order/v2/pay', null,
         params: {"orderId": orderId, "payType": payType},
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }

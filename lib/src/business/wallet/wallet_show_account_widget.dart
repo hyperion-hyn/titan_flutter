@@ -276,11 +276,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     var hynContractAddress = "";
 
     if (WalletConfig.isMainNet) {
-      hynContractAddress = "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07";
+      //hyn usdt
+      hynContractAddress = "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07,0xdac17f958d2ee523a2206206994597c13d831ec7";
     } else {
       hynContractAddress = "0xaebbada2bece10c84cbeac637c438cb63e1446c9";
     }
-    if (transtionDetail.toAddress.toLowerCase() == hynContractAddress.toLowerCase()) {
+    if (hynContractAddress.toLowerCase().split(',').contains(transtionDetail.toAddress.toLowerCase())) {
       title = S.of(context).contract_call;
     }
 

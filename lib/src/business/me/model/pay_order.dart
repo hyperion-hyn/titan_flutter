@@ -10,9 +10,20 @@ class PayOrder {
   String qr_code;
   int state;
   String hyn_amount;
+  int is_free;
+  double erc20USDTAmount;
+  double hynUSDTAmount;
 
-
-  PayOrder(this.address, this.amount, this.order_id, this.qr_code, this.state, this.hyn_amount);
+  PayOrder(
+      {this.address,
+      this.amount,
+      this.order_id,
+      this.qr_code,
+      this.state,
+      this.hyn_amount,
+      this.erc20USDTAmount,
+      this.hynUSDTAmount,
+      this.is_free});
 
   factory PayOrder.fromJson(Map<String, dynamic> json) => _$PayOrderFromJson(json);
 

@@ -15,7 +15,11 @@ class UserInfo {
   @JsonKey(name: "balance")
   double balance;
   @JsonKey(name: "charge_balance")
-  double chargeBalance;
+  double chargeHynBalance;
+  @JsonKey(name: "charge_usdt_balance")
+  double chargeUsdtBalance;
+  @JsonKey(name: "total_charge_balance")
+  double totalChargeBalance;
   @JsonKey(name: "total_power")
   int totalPower;
   @JsonKey(name: "mortgage_nodes")
@@ -38,11 +42,11 @@ class UserInfo {
   int directlyPower;
 
   UserInfo(
-      this.id,
+      {this.id,
       this.email,
       this.parentId,
       this.balance,
-      this.chargeBalance,
+      this.chargeHynBalance,
       this.totalPower,
       this.mortgageNodes,
       this.highestPower,
@@ -53,10 +57,10 @@ class UserInfo {
       this.numOfTeamMember,
       this.parentUser,
       this.directlyPower,
-      );
+      this.chargeUsdtBalance,
+      this.totalChargeBalance});
 
-  factory UserInfo.fromJson(Map<String, dynamic> json) =>
-      _$UserInfoFromJson(json);
+  factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserInfoToJson(this);
 }

@@ -70,7 +70,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
       quotes = datas[1];
     });
 
-    _showAlertDialog();
+//    _showAlertDialog();
 
     //用户余额等信息
 //    var _userInfo = await service.getUserInfo();
@@ -101,7 +101,9 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                         TextSpan(
                             text: S.of(context).only_accept_hyn_assets,
                             style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.bold)),
-                        TextSpan(text: S.of(context).do_deposit_other_asset, style: TextStyle(fontSize: 16.0, color: Colors.black)),
+                        TextSpan(
+                            text: S.of(context).do_deposit_other_asset,
+                            style: TextStyle(fontSize: 16.0, color: Colors.black)),
                       ]),
                   textAlign: TextAlign.left,
                 ),
@@ -318,17 +320,49 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                           });
                     } else {
                       isRechargeByTianWalletFinish = false;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WalletSendPage(null,
-                                  receiverAddress: userEthAddress.address,
-                                  backRouteName: "/recharge_purchase_page"))).then((value) {
-                        if (isRechargeByTianWalletFinish) {
-                          Navigator.pushReplacement(
-                              context, MaterialPageRoute(builder: (context) => RechargeByTitanFinishPage()));
-                        }
-                      });
+
+                      showModalBottomSheet(
+                          context: context,
+//                          backgroundColor: Color(0xffefefef),
+                          builder: (ctx) {
+                            return Wrap(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: Image(
+                                    image: AssetImage('res/drawable/hyn_logo.png'),
+                                    height: 24,
+                                    width: 24,
+                                  ),
+                                  title: Text('转入HYN'),
+                                  onTap: () {
+                                    Navigator.pop(ctx);
+                                    _transferToken(ctx, 'HYN');
+                                  },
+                                ),
+                                ListTile(
+                                  leading: Image(
+                                    image: AssetImage('res/drawable/usdt_logo.png'),
+                                    height: 24,
+                                    width: 24,
+                                  ),
+                                  title: Text('转入USDT'),
+                                  onTap: () {
+                                    Navigator.pop(ctx);
+                                    _transferToken(ctx, 'USDT');
+                                  },
+                                ),
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.close,
+                                  ),
+                                  title: Text('关闭'),
+                                  onTap: () {
+                                    Navigator.pop(ctx);
+                                  },
+                                ),
+                              ],
+                            );
+                          });
                     }
                   },
                   child: SizedBox(
@@ -387,7 +421,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   Icons.notification_important,
-                  color: Colors.grey,
+                  color: Color(0xFFCE9D40),
                   size: 20,
                 ),
               ),
@@ -403,5 +437,20 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
         )
       ],
     );
+  }
+
+  void _transferToken(BuildContext context, String symbol) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WalletSendPage(null,
+                receiverAddress: userEthAddress.address,
+                symbol: symbol,
+//                                  currencyUnit: 'USD',
+                backRouteName: "/recharge_purchase_page"))).then((value) {
+      if (isRechargeByTianWalletFinish) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RechargeByTitanFinishPage()));
+      }
+    });
   }
 }

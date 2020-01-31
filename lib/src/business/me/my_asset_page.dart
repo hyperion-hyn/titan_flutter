@@ -136,10 +136,11 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(bottom: 0),
@@ -147,21 +148,25 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                             S.of(context).earnings_balance,
                             style: TextStyle(
                               color: Colors.white70,
+                              fontSize: 14,
                             ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
-                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance - LOGIN_USER_INFO.chargeBalance)} ",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance - LOGIN_USER_INFO.totalChargeBalance)} ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
                           ),
                         )
                       ],
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(bottom: 0),
@@ -169,14 +174,52 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                             S.of(context).recharge_balance,
                             style: TextStyle(
                               color: Colors.white70,
+                              fontSize: 14,
                             ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 8),
-                          child: Text(
-                            "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.chargeBalance)} ",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'HYN等额',
+                                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 4.0),
+                                    child: Text(
+                                      '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.chargeHynBalance)}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'USDT直充 ',
+                                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 4.0),
+                                    child: Text(
+                                      '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.chargeUsdtBalance)}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         )
                       ],

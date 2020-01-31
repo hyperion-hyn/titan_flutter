@@ -134,7 +134,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                         style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
                       ),
                       Text(
-                        "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO?.chargeBalance ?? 0)} USDT",
+                        "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO?.chargeHynBalance ?? 0)} USDT",
                         style: TextStyle(fontSize: 16, color: Color(0xFF9B9B9B)),
                       ),
                     ],
@@ -147,7 +147,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
         SizedBox(
           height: 32,
         ),
-        if (LOGIN_USER_INFO.chargeBalance < widget.mortgageInfo.amount)
+        if (LOGIN_USER_INFO.chargeHynBalance < widget.mortgageInfo.amount)
           Container(
             padding: EdgeInsets.only(bottom: 16),
             child: Row(
@@ -188,7 +188,7 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
           color: Theme.of(context).primaryColor,
           onPressed: () async {
             if (widget.mortgageInfo != null && LOGIN_USER_INFO != null) {
-              if (LOGIN_USER_INFO.chargeBalance < widget.mortgageInfo.amount) {
+              if (LOGIN_USER_INFO.chargeHynBalance < widget.mortgageInfo.amount) {
                 Fluttertoast.showToast(msg: S.of(context).balance_lack);
               } else {
                 showModalBottomSheet(

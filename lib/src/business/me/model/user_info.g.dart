@@ -8,23 +8,25 @@ part of 'user_info.dart';
 
 UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
   return UserInfo(
-    json['id'] as String,
-    json['email'] as String,
-    json['parent_id'] as String,
-    (json['balance'] as num)?.toDouble(),
-    (json['charge_balance'] as num)?.toDouble(),
-    json['total_power'] as int,
-    json['mortgage_nodes'] as int,
-    json['highest_power'] as int,
-    json['second_highest_power'] as int,
-    json['low_power'] as int,
-    json['total_invitations'] as int,
-    json['level'] as String,
-    json['num_of_team_member'] as int,
-    json['parent_user'] == null
+    id: json['id'] as String,
+    email: json['email'] as String,
+    parentId: json['parent_id'] as String,
+    balance: (json['balance'] as num)?.toDouble(),
+    chargeHynBalance: (json['charge_balance'] as num)?.toDouble(),
+    totalPower: json['total_power'] as int,
+    mortgageNodes: json['mortgage_nodes'] as int,
+    highestPower: json['highest_power'] as int,
+    secondHighestPower: json['second_highest_power'] as int,
+    lowPower: json['low_power'] as int,
+    totalInvitations: json['total_invitations'] as int,
+    level: json['level'] as String,
+    numOfTeamMember: json['num_of_team_member'] as int,
+    parentUser: json['parent_user'] == null
         ? null
         : ParentUser.fromJson(json['parent_user'] as Map<String, dynamic>),
-    json['directly_power'] as int,
+    directlyPower: json['directly_power'] as int,
+    chargeUsdtBalance: (json['charge_usdt_balance'] as num)?.toDouble(),
+    totalChargeBalance: (json['total_charge_balance'] as num)?.toDouble(),
   );
 }
 
@@ -33,7 +35,9 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'email': instance.email,
       'parent_id': instance.parentId,
       'balance': instance.balance,
-      'charge_balance': instance.chargeBalance,
+      'charge_balance': instance.chargeHynBalance,
+      'charge_usdt_balance': instance.chargeUsdtBalance,
+      'total_charge_balance': instance.totalChargeBalance,
       'total_power': instance.totalPower,
       'mortgage_nodes': instance.mortgageNodes,
       'highest_power': instance.highestPower,
