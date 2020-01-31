@@ -335,10 +335,11 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                           border: Border.all(color: Color(0xFFE9E9E9)),
                                           borderRadius: BorderRadius.all(Radius.circular(4))),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image.asset(
-                                            'res/drawable/ic_dmap_bar.png',
+                                            'res/drawable/ic_dmap_ncov.png',
                                             width: 32,
                                             height: 32,
                                           ),
