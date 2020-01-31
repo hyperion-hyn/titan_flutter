@@ -567,7 +567,6 @@
   "no_remark": "无备注",
   "post_my_check": "提交验证",
   "no_category": "暂无相关类别",
-  "add_failed_exist_hint": "该地点已存在，请添加其他地点",
   "hot_search": "热门搜索：",
   "task_un_finished": "任务未完成",
   "task_finished": "任务已完成",
@@ -585,5 +584,15 @@
   "withdrawal_tips": "提币提示",
   "withdrawal_address": "提币地址",
   "only_accept_hyn_addresses": "只接受HYN地址",
-  "do_not_provide_other_address": "，切勿提供其他资产地址，否则将无法找回！"
+  "do_not_provide_other_address": "，切勿提供其他资产地址，否则将无法找回！",
+  "add_failed_exist_hint": "该地点已存在，请添加其他地点",
+  "epidemic_map": "新型肺炎疫情地图",
+  "epidemic_map_desc": "新型肺炎疫情",
+  "suspected": "疑似",
+  "buy_need_hyn_usdt_hint": "需：HYN等额 ${hyn}，USDT直充 ${usdt}",
+  "balance_hyn_usdt": "可用余额 HYN等额 ${hyn}，USDT直充 ${usdt}",
+  "hyn_eq_u": "HYN等额",
+  "usdt_direct": "USDT直充",
+  "transfer_in_hyn": "转入HYN",
+  "transfer_in_usdt": "转入USDT"
 }

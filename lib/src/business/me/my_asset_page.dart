@@ -186,7 +186,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                               Row(
                                 children: <Widget>[
                                   Text(
-                                    'HYN等额',
+                                    S.of(context).hyn_eq_u,
                                     style: TextStyle(color: Colors.white70, fontSize: 12),
                                   ),
                                   Padding(
@@ -204,7 +204,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                               Row(
                                 children: <Widget>[
                                   Text(
-                                    'USDT直充 ',
+                                    S.of(context).usdt_direct,
                                     style: TextStyle(color: Colors.white70, fontSize: 12),
                                   ),
                                   Padding(

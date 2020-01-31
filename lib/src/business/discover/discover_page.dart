@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/discover/dapp/ncov/ncov_map_page.dart';
 import 'package:titan/src/business/discover/dmap_define.dart';
 import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
@@ -266,13 +267,12 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                       SizedBox(
                                         height: 12,
                                       ),
-                                      //夜生活指南
+                                      //警察服务站
                                       Expanded(
                                         child: InkWell(
                                           borderRadius: BorderRadius.all(Radius.circular(4)),
                                           onTap: () {
-//                                                activeDMap('nightlife');
-                                            Fluttertoast.showToast(msg: S.of(context).stay_tuned);
+                                            activeDMap('policeStation');
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
@@ -282,7 +282,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                             child: Row(
                                               children: <Widget>[
                                                 Image.asset(
-                                                  'res/drawable/ic_dmap_bar.png',
+                                                  'res/drawable/ic_dmap_police.png',
                                                   width: 28,
                                                   height: 28,
                                                 ),
@@ -294,7 +294,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: <Widget>[
                                                         Text(
-                                                          S.of(context).discount_map,
+                                                          S.of(context).police_security_station,
                                                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                                         ),
                                                         Flexible(
@@ -302,7 +302,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                           child: Padding(
                                                             padding: const EdgeInsets.only(top: 8.0),
                                                             child: Text(
-                                                              S.of(context).not_open_yet,
+                                                              S.of(context).police_station_text,
                                                               style: TextStyle(color: Colors.grey, fontSize: 12),
                                                             ),
                                                           ),
@@ -310,7 +310,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                                       ],
                                                     ),
                                                   ),
-                                                )
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -322,12 +322,12 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                 SizedBox(
                                   width: 12,
                                 ),
-                                //警察服务站
+                                //疫情
                                 Expanded(
                                   child: InkWell(
                                     borderRadius: BorderRadius.all(Radius.circular(4)),
                                     onTap: () {
-                                      activeDMap('policeStation');
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => NcovMapPage()));
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.all(16),
@@ -335,24 +335,25 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
                                           border: Border.all(color: Color(0xFFE9E9E9)),
                                           borderRadius: BorderRadius.all(Radius.circular(4))),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image.asset(
-                                            'res/drawable/ic_dmap_police.png',
+                                            'res/drawable/ic_dmap_ncov.png',
                                             width: 32,
                                             height: 32,
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 16.0),
                                             child: Text(
-                                              S.of(context).police_security_station,
+                                              S.of(context).epidemic_map,
                                               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(top: 8.0),
                                             child: Text(
-                                              S.of(context).police_station_text,
+                                              S.of(context).epidemic_map_desc,
                                               style: TextStyle(color: Colors.grey, fontSize: 12),
                                             ),
                                           ),
@@ -387,6 +388,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
   }
 
   Future activeDMap(String dMapName) async {
+
     BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
 
     var model = DMapDefine.kMapList[dMapName];

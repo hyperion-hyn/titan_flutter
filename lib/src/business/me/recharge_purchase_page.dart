@@ -333,7 +333,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                     height: 24,
                                     width: 24,
                                   ),
-                                  title: Text('转入HYN'),
+                                  title: Text(S.of(context).transfer_in_hyn),
                                   onTap: () {
                                     Navigator.pop(ctx);
                                     _transferToken(ctx, 'HYN');
@@ -345,7 +345,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                     height: 24,
                                     width: 24,
                                   ),
-                                  title: Text('转入USDT'),
+                                  title: Text(S.of(context).transfer_in_usdt),
                                   onTap: () {
                                     Navigator.pop(ctx);
                                     _transferToken(ctx, 'USDT');
@@ -355,7 +355,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                   leading: Icon(
                                     Icons.close,
                                   ),
-                                  title: Text('关闭'),
+                                  title: Text(S.of(context).close),
                                   onTap: () {
                                     Navigator.pop(ctx);
                                   },

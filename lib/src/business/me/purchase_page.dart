@@ -500,12 +500,15 @@ class _PurchaseState extends State<PurchasePage> {
               if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE)
                 Column(
                   children: <Widget>[
-                    Text(
-                        '需：HYN等额 ${Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--'}，USDT直充 ${Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--'}'),
+                    Text(S.of(context).buy_need_hyn_usdt_hint(
+                        Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--',
+                        Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--')),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        '可用余额 HYN等额 ${Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'hyn'))}，USDT直充 ${Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'usdt'))}',
+                        S.of(context).balance_hyn_usdt(
+                            Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'hyn')),
+                            Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'usdt'))),
                         style: TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                     ),

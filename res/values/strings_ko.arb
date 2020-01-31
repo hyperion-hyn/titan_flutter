@@ -567,7 +567,6 @@
   "no_remark": "비고 무",
   "post_my_check": "인증 제출",
   "no_category": "해당 카테고리 무",
-  "add_failed_exist_hint": "이 위치는 이미 존재합니다. 다른 위치를 추가하십시오",
   "hot_search": "인기 검색어：",
   "task_un_finished": "임무가 미완성되다",
   "task_finished": "임무를 이미 완성하였다",
@@ -576,8 +575,7 @@
   "task_is_finished_func": "${todayTimes}/${times}회를 완성했다",
   "task_to_standard": "임무가 표준에 달하다:",
   "task_to_standard_rules": "임무 달성 기준 규칙은 2020년 설 정월대보름 이후 합리적인 범위에서 조정될 것이다.",
-  "task_to_standard_func":
-  "${times1}회 [근처 신호를 스캔함], ${times2}회 [근처 지점을 추가함] 및${times3}회 [근처 지점을 검증함]을 완료해야 한다.더 많은 기여한 횟수는 기준 달성에 에 영향을 미치지 않는다.",
+  "task_to_standard_func": "${times1}회 [근처 신호를 스캔함], ${times2}회 [근처 지점을 추가함] 및${times3}회 [근처 지점을 검증함]을 완료해야 한다.더 많은 기여한 횟수는 기준 달성에 에 영향을 미치지 않는다.",
   "recharge_tips": "충전 알림:",
   "this_address": "이 주소",
   "only_accept_hyn_assets": "HYN 자산만 수락하다",
@@ -586,6 +584,15 @@
   "withdrawal_tips": "화폐 인출 알림",
   "withdrawal_address": "화폐 인출 주소",
   "only_accept_hyn_addresses": "HYN 주소만 수락하다",
-  "do_not_provide_other_address":
-  ",다른 자산 주소를 절대 제공하지 마십시오! 그렇지 않으면 되찾을 수 없습니다! "
+  "do_not_provide_other_address": ",다른 자산 주소를 절대 제공하지 마십시오! 그렇지 않으면 되찾을 수 없습니다! ",
+  "add_failed_exist_hint": "이 위치는 이미 존재합니다. 다른 위치를 추가하십시오",
+  "epidemic_map": "疫情地图",
+  "epidemic_map_desc": "新型肺炎疫情",
+  "suspected": "疑似",
+  "buy_need_hyn_usdt_hint": "需：HYN等额 ${hyn}，USDT直充 ${usdt}",
+  "balance_hyn_usdt": "可用余额 HYN等额 ${hyn}，USDT直充 ${usdt}",
+  "hyn_eq_u": "HYN等额",
+  "usdt_direct": "USDT直充",
+  "transfer_in_hyn": "转入HYN",
+  "transfer_in_usdt": "转入USDT"
 }
