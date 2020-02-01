@@ -8,6 +8,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
@@ -312,7 +313,7 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     var wallet = widget.walletAccountVo.wallet;
     var toAddress = widget.receiverAddress;
     var contract = widget.walletAccountVo.assetToken.erc20ContractAddress;
-    var decimals = widget.walletAccountVo.assetToken.decimals;
+    var etherDecimals = SupportedTokens.ETHEREUM.decimals;// widget.walletAccountVo.assetToken.decimals;
     var amount = widget.count;
 
     var ethCurrencyRate = widget.walletAccountVo.ethCurrencyRate;
@@ -333,8 +334,8 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
       data: erc20FunAbi,
     );
 
-    ethFee = ConvertTokenUnit.weiToDecimal(ret, decimals).toDouble();
-    currencyFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
+    ethFee = ConvertTokenUnit.weiToDecimal(ret, etherDecimals).toDouble();
+    currencyFee = (ConvertTokenUnit.weiToDecimal(ret, etherDecimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
 
     logger.i('费率是 $ethFee eth');
     logger.i('费率是 $currencyFee usd');
@@ -363,7 +364,9 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
         if (widget.walletAccountVo.symbol == "ETH") {
           await _transferEth(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
         } else {
-          await _transferErc20(walletPassword, widget.count, widget.receiverAddress, widget.walletAccountVo.wallet);
+          var amount = ConvertTokenUnit.numToWei(widget.count, widget.walletAccountVo.assetToken.decimals);
+//          var amount = ConvertTokenUnit.etherToWei(etherDouble: transferAmount);
+          await _transferErc20(walletPassword, amount, widget.receiverAddress, widget.walletAccountVo.wallet);
         }
         Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
         if (widget.backRouteName == null) {
@@ -408,18 +411,18 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
     logger.i('ETH交易已提交，交易hash $txHash');
   }
 
-  Future _transferErc20(String password, double etherDouble, String toAddress, Wallet wallet) async {
-    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
+  Future _transferErc20(String password, BigInt transferAmount, String toAddress, Wallet wallet) async {
+//    var amount = ConvertTokenUnit.etherToWei(etherDouble: transferAmount);
     var contractAddress = widget.walletAccountVo.assetToken.erc20ContractAddress;
 
     final txHash = await wallet.sendErc20Transaction(
       contractAddress: contractAddress,
       password: password,
       gasPrice: BigInt.from(speed),
-      value: amount,
+      value: transferAmount,
       toAddress: toAddress,
     );
 
-    logger.i('HYN交易已提交，交易hash $txHash ');
+    logger.i('交易已提交，交易hash $txHash ');
   }
 }

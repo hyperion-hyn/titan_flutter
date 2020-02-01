@@ -15,6 +15,7 @@ import 'package:titan/src/business/wallet/service/account_transfer_service.dart'
 import 'package:titan/src/business/wallet/service/wallet_service.dart';
 import 'package:titan/src/business/wallet/wallet_receive_page.dart';
 import 'package:titan/src/business/wallet/wallet_send_page.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
@@ -276,11 +277,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     var hynContractAddress = "";
 
     if (WalletConfig.isMainNet) {
-      hynContractAddress = "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07";
+      //hyn usdt
+      hynContractAddress = "0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07,0xdac17f958d2ee523a2206206994597c13d831ec7";
     } else {
       hynContractAddress = "0xaebbada2bece10c84cbeac637c438cb63e1446c9";
     }
-    if (transtionDetail.toAddress.toLowerCase() == hynContractAddress.toLowerCase()) {
+    if (hynContractAddress.toLowerCase().split(',').contains(transtionDetail.toAddress.toLowerCase())) {
       title = S.of(context).contract_call;
     }
 
@@ -306,15 +308,15 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
               )),
         InkWell(
           onTap: () {
-//            var url = EtherscanApi.getTxDetailUrl(transtionDetail.hash);
-//            print("txUrl:$url");
-//            Navigator.push(
-//                context,
-//                MaterialPageRoute(
-//                    builder: (context) => InfoDetailPage(
-//                          url: url,
-//                          title: "交易详情",
-//                        )));
+            var url = EtherscanApi.getTxDetailUrl(transtionDetail.hash);
+            print("txUrl:$url");
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => WebViewContainer(
+                          initUrl: url,
+                          title: S.of(context).detail,
+                        )));
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),

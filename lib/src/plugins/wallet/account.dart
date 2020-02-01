@@ -29,9 +29,10 @@ class Account {
       //active erc20 tokens
       if (isMainNet) {
         erc20Tokens.add(SupportedTokens.HYN);
-//        erc20Tokens.add(SupportedTokens.USDT_ERC20);
+        erc20Tokens.add(SupportedTokens.USDT_ERC20);
       } else {
         erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
+        erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
       }
     } else if (json['coinType'] == CoinType.BITCOIN) {
       token = SupportedTokens.BTC;
