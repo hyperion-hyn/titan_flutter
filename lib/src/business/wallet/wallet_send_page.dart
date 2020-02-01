@@ -275,16 +275,15 @@ class _WalletSendState extends State<WalletSendPage> {
         Fluttertoast.showToast(msg: S.of(context).account_is_empty);
         return;
       }
-      print('xxx ${walletAccountVo.amount} ${walletAccountVo.symbol}');
-//      Navigator.push(
-//          context,
-//          MaterialPageRoute(
-//              builder: (context) => WalletSendConfirmPage(
-//                    walletAccountVo,
-//                    double.parse(_countController.text),
-//                    _receiverAddressController.text,
-//                    backRouteName: widget.backRouteName,
-//                  )));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WalletSendConfirmPage(
+                    walletAccountVo,
+                    double.parse(_countController.text),
+                    _receiverAddressController.text,
+                    backRouteName: widget.backRouteName,
+                  )));
     }
   }
 

@@ -336,7 +336,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                   title: Text(S.of(context).transfer_in_hyn),
                                   onTap: () {
                                     Navigator.pop(ctx);
-                                    _transferToken(ctx, 'HYN');
+                                    _transferToken(context, 'HYN');
                                   },
                                 ),
                                 ListTile(
@@ -348,7 +348,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                   title: Text(S.of(context).transfer_in_usdt),
                                   onTap: () {
                                     Navigator.pop(ctx);
-                                    _transferToken(ctx, 'USDT');
+                                    _transferToken(context, 'USDT');
                                   },
                                 ),
                                 ListTile(

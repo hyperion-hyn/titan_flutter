@@ -132,9 +132,9 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   ],
                 ),
                 SizedBox(
-                  height: 24,
+                  height: 16,
                 ),
-                Row(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
