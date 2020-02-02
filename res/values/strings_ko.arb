@@ -346,7 +346,6 @@
   "no_category": "해당 카테고리 무",
   "hot_search": "인기 검색어：",
   "add_failed_exist_hint": "이 위치는 이미 존재합니다. 다른 위치를 추가하십시오",
-  "epidemic_map": "疫情地图",
-  "epidemic_map_desc": "新型肺炎疫情",
-  "suspected": "疑似"
+  "epidemic_map": "전염병 발생 상황 지도",
+  "epidemic_map_desc": "신종 폐렴의 전염병 발생 상황"
 }

@@ -347,6 +347,5 @@
   "hot_search": "热门搜索：",
   "add_failed_exist_hint": "该地点已存在，请添加其他地点",
   "epidemic_map": "新型肺炎疫情地图",
-  "epidemic_map_desc": "新型肺炎疫情",
-  "suspected": "疑似"
+  "epidemic_map_desc": "新型肺炎疫情"
 }

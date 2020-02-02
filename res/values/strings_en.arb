@@ -347,6 +347,5 @@
   "hot_search": "Popular searches：",
   "add_failed_exist_hint": "This location already exists, please add another location",
   "epidemic_map": "nCoV Map",
-  "epidemic_map_desc": "Wuhan Virus Cases Tracking Map",
-  "suspected": "pending"
+  "epidemic_map_desc": "Wuhan Virus Cases Tracking Map"
 }

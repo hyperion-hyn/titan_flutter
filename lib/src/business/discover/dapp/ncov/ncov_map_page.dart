@@ -78,8 +78,8 @@ class NcovMapPageState extends State<NcovMapPage> {
     var level_6 = NcovCountLevelModel('0', 'ffffff');
     levelList.add(level_6);
 
-    var level_7 = NcovCountLevelModel(S.of(context).suspected, 'fffde7');
-    levelList.add(level_7);
+//    var level_7 = NcovCountLevelModel(S.of(context).suspected, 'fffde7');
+//    levelList.add(level_7);
   }
 
   @override
@@ -120,8 +120,8 @@ class NcovMapPageState extends State<NcovMapPage> {
             left: 16,
             child: IgnorePointer(
               child: Container(
-                height: 180,
-                width: 120,
+                height: 150,
+                width: 100,
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(color: Colors.white54, borderRadius: BorderRadius.circular(4)),
                 child: ListView.separated(
@@ -193,7 +193,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       tiltGesturesEnabled: false,
       enableLogo: false,
       enableAttribution: false,
-      minMaxZoomPreference: MinMaxZoomPreference(2, 9.0),
+      minMaxZoomPreference: MinMaxZoomPreference(1.1, 9.0),
       languageEnable: false,
     );
   }
