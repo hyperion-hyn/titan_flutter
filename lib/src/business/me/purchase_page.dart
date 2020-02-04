@@ -501,8 +501,8 @@ class _PurchaseState extends State<PurchasePage> {
                 Column(
                   children: <Widget>[
                     Text(S.of(context).buy_need_hyn_usdt_hint(
-                        Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--',
-                        Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--')),
+                        Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--',
+                        Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--')),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
@@ -514,6 +514,11 @@ class _PurchaseState extends State<PurchasePage> {
                     ),
                   ],
                 )
+//                Text(
+//                  S.of(context).available_balance_usdt(
+//                      Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'total'))),
+//                  style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+//                )
               else
                 Text(
                   S
@@ -528,11 +533,7 @@ class _PurchaseState extends State<PurchasePage> {
                   color: Color(0xFFD6A734),
                   onPressed: () async {
                     if (userInfo != null && widget.payOrder != null) {
-                      if ((payBalanceType == PAY_BALANCE_TYPE_INCOME &&
-                              getBalanceByType(payBalanceType) < widget.payOrder.amount) ||
-                          (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
-                              (getBalanceByType(payBalanceType, 'hyn') < widget.payOrder.hynUSDTAmount ||
-                                  getBalanceByType(payBalanceType, 'usdt') < widget.payOrder.erc20USDTAmount))) {
+                      if (isInsufficientBalance()) {
                         Fluttertoast.showToast(msg: S.of(context).balance_lack);
                       } else {
                         try {
@@ -558,7 +559,7 @@ class _PurchaseState extends State<PurchasePage> {
                               } else if (ret.code == -1004) {
                                 Fluttertoast.showToast(msg: S.of(context).balance_lack);
                               } else {
-                                Fluttertoast.showToast(msg: S.of(context).pay_fail_hint);
+                                Fluttertoast.showToast(msg: ret.msg ?? S.of(context).pay_fail_hint);
                               }
                             }
                           });
@@ -585,7 +586,7 @@ class _PurchaseState extends State<PurchasePage> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               ),
-              if (getBalanceByType(payBalanceType) < widget.payOrder.amount)
+              if (isInsufficientBalance())
                 Container(
                   padding: EdgeInsets.only(top: 16),
                   child: Row(
@@ -634,5 +635,18 @@ class _PurchaseState extends State<PurchasePage> {
         ),
       ],
     );
+  }
+
+  bool isInsufficientBalance() {
+    if ((payBalanceType == PAY_BALANCE_TYPE_INCOME && getBalanceByType(payBalanceType) < widget.payOrder.amount) ||
+            (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
+                getBalanceByType(payBalanceType, 'total') < widget.payOrder.amount)
+        /*(payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
+                              (getBalanceByType(payBalanceType, 'hyn') < widget.payOrder.hynUSDTAmount ||
+                                  getBalanceByType(payBalanceType, 'usdt') < widget.payOrder.erc20USDTAmount))*/
+        ) {
+      return true;
+    }
+    return false;
   }
 }

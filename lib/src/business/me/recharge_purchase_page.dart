@@ -70,7 +70,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
       quotes = datas[1];
     });
 
-//    _showAlertDialog();
+    _showAlertDialog();
 
     //用户余额等信息
 //    var _userInfo = await service.getUserInfo();
@@ -93,31 +93,32 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                RichText(
-                  text: TextSpan(
-                      text: S.of(context).this_address,
-                      style: TextStyle(fontSize: 16.0, color: Colors.black),
-                      children: <TextSpan>[
-                        TextSpan(
-                            text: S.of(context).only_accept_hyn_assets,
-                            style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.bold)),
-                        TextSpan(
-                            text: S.of(context).do_deposit_other_asset,
-                            style: TextStyle(fontSize: 16.0, color: Colors.black)),
-                      ]),
-                  textAlign: TextAlign.left,
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  S.of(context).current_exchange_rate('${quotes?.to}', '${quotes?.currency}'),
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-                Text(
-                  '1${quotes?.to} ≈ ${NumberFormat("#,###.####").format(quotes?.rate == null ? 0 : (1 / quotes?.rate))}${quotes?.currency}',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red),
-                )
+                Text(S.of(context).transfer_warning_hint),
+//                RichText(
+//                  text: TextSpan(
+//                      text: S.of(context).this_address,
+//                      style: TextStyle(fontSize: 16.0, color: Colors.black),
+//                      children: <TextSpan>[
+//                        TextSpan(
+//                            text: S.of(context).only_accept_hyn_assets,
+//                            style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.bold)),
+//                        TextSpan(
+//                            text: S.of(context).do_deposit_other_asset,
+//                            style: TextStyle(fontSize: 16.0, color: Colors.black)),
+//                      ]),
+//                  textAlign: TextAlign.left,
+//                ),
+//                SizedBox(
+//                  height: 8,
+//                ),
+//                Text(
+//                  S.of(context).current_exchange_rate('${quotes?.to}', '${quotes?.currency}'),
+//                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+//                ),
+//                Text(
+//                  '1${quotes?.to} ≈ ${NumberFormat("#,###.####").format(quotes?.rate == null ? 0 : (1 / quotes?.rate))}${quotes?.currency}',
+//                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red),
+//                )
               ],
             ),
             actions: <Widget>[
@@ -320,6 +321,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                           });
                     } else {
                       isRechargeByTianWalletFinish = false;
+//                      _transferToken(context, 'HYN');
 
                       showModalBottomSheet(
                           context: context,

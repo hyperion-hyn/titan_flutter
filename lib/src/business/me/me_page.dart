@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/about/about_me_page.dart';
@@ -178,7 +177,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 child: Text(
-                                  LOGIN_USER_INFO.level == "" ? S.of(context).no_level : LOGIN_USER_INFO.level,
+                                  LOGIN_USER_INFO?.level ?? S.of(context).no_level,
                                   style: TextStyle(fontSize: 10, color: HexColor("#F9F9F9")),
                                 ),
                               ),
@@ -252,7 +251,7 @@ class _MeState extends UserState<MePage> with RouteAware {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyAssetPage()));
                     }),
                     //显示算力，一定要要做转换显示  Utils.powerForShow
-                    _buildHeaderSectionItem(S.of(context).my_power_with_unit, Utils.powerForShow(LOGIN_USER_INFO.totalPower), () {
+                    _buildHeaderSectionItem(S.of(context).my_power_with_unit, Utils.powerForShow(LOGIN_USER_INFO?.totalPower??0), () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                     }),
                     _buildHeaderSectionItem(S.of(context).node_mortgage_with_unit, LOGIN_USER_INFO.mortgageNodes, () {
@@ -275,7 +274,7 @@ class _MeState extends UserState<MePage> with RouteAware {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            "${Const.DOUBLE_NUMBER_FORMAT.format(count)}",
+            "${Const.DOUBLE_NUMBER_FORMAT.format(count??0)}",
             style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
           ),
           SizedBox(

@@ -424,6 +424,6 @@ class _WalletSendConfirmState extends State<WalletSendConfirmPage> {
       toAddress: toAddress,
     );
 
-    logger.i('HYN交易已提交，交易hash $txHash ');
+    logger.i('交易已提交，交易hash $txHash ');
   }
 }

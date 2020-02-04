@@ -142,23 +142,20 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 0),
-                          child: Text(
-                            S.of(context).earnings_balance,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
+                        Text(
+                          S.of(context).earnings_balance,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.only(left: 4),
                           child: Text(
                             "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance - LOGIN_USER_INFO.totalChargeBalance)} ",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 12,
+                              fontSize: 14,
                             ),
                           ),
                         )
@@ -168,16 +165,23 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 0),
-                          child: Text(
-                            S.of(context).recharge_balance,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
+                        Text(
+                          S.of(context).recharge_balance,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
                           ),
                         ),
+//                        Padding(
+//                          padding: const EdgeInsets.only(left: 4.0),
+//                          child: Text(
+//                            '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalChargeBalance)}',
+//                            style: TextStyle(
+//                              color: Colors.white,
+//                              fontSize: 14,
+//                            ),
+//                          ),
+//                        ),
                         Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: Column(
@@ -221,7 +225,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     )
                   ],
@@ -555,23 +559,24 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  S.of(context).withdrawal_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.amount)),
-                  style: TextStyle(fontSize: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    S.of(context).withdrawal_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.amount)),
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
-              ),
-              Text(
-                S.of(context).poundage_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.fee)),
-                style: TextStyle(fontSize: 12, color: Colors.black54),
-              )
-            ],
+                Text(
+                  S.of(context).poundage_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.fee)),
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                )
+              ],
+            ),
           ),
-          Spacer(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[

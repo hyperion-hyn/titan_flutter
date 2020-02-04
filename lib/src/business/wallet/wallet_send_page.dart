@@ -239,7 +239,7 @@ class _WalletSendState extends State<WalletSendPage> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
+                margin: EdgeInsets.symmetric(vertical: 36, horizontal: 8),
                 constraints: BoxConstraints.expand(height: 48),
                 child: RaisedButton(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

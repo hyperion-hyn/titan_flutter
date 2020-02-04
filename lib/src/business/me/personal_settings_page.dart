@@ -58,7 +58,7 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
                       height: 8,
                     ),
                     Text(
-                      LOGIN_USER_INFO.email,
+                      LOGIN_USER_INFO?.email??'',
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
                   ],
@@ -86,9 +86,9 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
               ],
             ),
           ),
-          Spacer(),
+//          Spacer(),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
+            padding: const EdgeInsets.symmetric(vertical: 48),
             child: RaisedButton(
               elevation: 1,
               color: Color(0xFFBCC1C7),
@@ -96,7 +96,7 @@ class _PersonalSettingsState extends UserState<PersonalSettingsPage> {
                 eventBus.fire(ReloginBusEvent());
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
                 child: SizedBox(
                     height: 40,
                     width: 192,

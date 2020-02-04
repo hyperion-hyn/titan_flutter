@@ -1,8 +1,11 @@
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/business/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+
+import '../../global.dart';
 
 class EtherscanApi {
   String host = "";
@@ -17,7 +20,11 @@ class EtherscanApi {
 
   static String getTxDetailUrl(String txHash) {
     if (WalletConfig.isMainNet) {
-      return "https://etherscan.io/tx/$txHash";
+      if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+        return 'https://cn.etherscan.com/tx/$txHash';
+      } else {
+        return "https://etherscan.io/tx/$txHash";
+      }
     } else {
       return "https://ropsten.etherscan.io/tx/$txHash";
     }
