@@ -258,7 +258,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       _toMyLocationSink();
     } else {
       Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler().requestPermissions([PermissionGroup.location]);
+      await PermissionHandler().requestPermissions([PermissionGroup.location]);
       if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
         _toMyLocationSink();
         Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
@@ -322,15 +322,15 @@ class NcovMapPageState extends State<NcovMapPage> {
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              )
+          title: title,
+          content: content,
+          actions: actions,
+        )
             : AlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              );
+          title: title,
+          content: content,
+          actions: actions,
+        );
       },
     );
   }

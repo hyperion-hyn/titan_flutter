@@ -92,10 +92,11 @@ class _UpdaterState extends State<Updater> {
                 title: Text(title),
                 content: Text(message),
                 actions: <Widget>[
-                  FlatButton(
-                    child: Text(btnLabelCancel),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                  if (updateEntity.forceUpdate != 1)
+                    FlatButton(
+                      child: Text(btnLabelCancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   FlatButton(
                     child: Text(S.of(context).update_now),
                     onPressed: () => _launch(updateEntity),
@@ -106,10 +107,11 @@ class _UpdaterState extends State<Updater> {
                 title: Text(title),
                 content: Text(message),
                 actions: <Widget>[
-                  FlatButton(
-                    child: Text(btnLabelCancel),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                  if (updateEntity.forceUpdate != 1)
+                    FlatButton(
+                      child: Text(btnLabelCancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   FlatButton(
                     child: Text(S.of(context).update_now),
                     onPressed: () => _launch(updateEntity),

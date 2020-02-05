@@ -279,11 +279,11 @@ class _WalletSendState extends State<WalletSendPage> {
           context,
           MaterialPageRoute(
               builder: (context) => WalletSendConfirmPage(
-                    walletAccountVo,
-                    double.parse(_countController.text),
-                    _receiverAddressController.text,
-                    backRouteName: widget.backRouteName,
-                  )));
+                walletAccountVo,
+                double.parse(_countController.text),
+                _receiverAddressController.text,
+                backRouteName: widget.backRouteName,
+              )));
     }
   }
 
