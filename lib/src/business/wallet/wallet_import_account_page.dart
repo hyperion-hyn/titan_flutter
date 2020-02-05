@@ -78,7 +78,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   height: 12,
                 ),
                 Container(
-                  constraints: BoxConstraints.expand(height: 160),
+                  constraints: BoxConstraints.expand(height: 120),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -86,7 +86,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   child: Stack(
                     children: <Widget>[
                       Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(left:8.0, right:8),
                           child: TextFormField(
                             validator: (value) {
                               if (value.isEmpty) {
@@ -104,7 +104,11 @@ class _ImportAccountState extends State<ImportAccountPage> {
                         alignment: Alignment(1, 1),
                         child: InkWell(
                           onTap: () async {
-                            var mnemonicWords = (await Clipboard.getData(Clipboard.kTextPlain)).text;
+                            var mnemonicWords = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
+                            if(mnemonicWords == null || mnemonicWords == '') {
+                              print('no clipboard word');
+                              return ;
+                            }
                             if (!bip39.validateMnemonic(mnemonicWords)) {
                               Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
                               return;

@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
+
 //import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/env.dart';
@@ -91,10 +92,11 @@ class _UpdaterState extends State<Updater> {
                 title: Text(title),
                 content: Text(message),
                 actions: <Widget>[
-                  FlatButton(
-                    child: Text(btnLabelCancel),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                  if (updateEntity.forceUpdate != 1)
+                    FlatButton(
+                      child: Text(btnLabelCancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   FlatButton(
                     child: Text(S.of(context).update_now),
                     onPressed: () => _launch(updateEntity),
@@ -105,10 +107,11 @@ class _UpdaterState extends State<Updater> {
                 title: Text(title),
                 content: Text(message),
                 actions: <Widget>[
-                  FlatButton(
-                    child: Text(btnLabelCancel),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                  if (updateEntity.forceUpdate != 1)
+                    FlatButton(
+                      child: Text(btnLabelCancel),
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   FlatButton(
                     child: Text(S.of(context).update_now),
                     onPressed: () => _launch(updateEntity),
@@ -136,7 +139,9 @@ class _UpdaterState extends State<Updater> {
 
     launchUrl(versionModel.downloadUrl);
 
-    Navigator.pop(context);
+    if (versionModel.forceUpdate != 1) {
+      Navigator.pop(context);
+    }
   }
 
   Future<bool> _hasDownloaded(UpdateEntity versionModel) async {

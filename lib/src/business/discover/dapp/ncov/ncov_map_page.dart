@@ -38,7 +38,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       }
 
       var latLng = await mapboxMapController?.lastKnownLocation();
-      double doubleClickZoom = 7;
+      double doubleClickZoom = 10;
       if (latLng != null) {
         if (_clickTimes > 1) {
           mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
@@ -75,8 +75,8 @@ class NcovMapPageState extends State<NcovMapPage> {
     var level_5 = NcovCountLevelModel('1 - 9', 'ffd5c0');
     levelList.add(level_5);
 
-    var level_6 = NcovCountLevelModel('0', 'ffffff');
-    levelList.add(level_6);
+//    var level_6 = NcovCountLevelModel('0', 'ffffff');
+//    levelList.add(level_6);
 
 //    var level_7 = NcovCountLevelModel(S.of(context).suspected, 'fffde7');
 //    levelList.add(level_7);
@@ -120,8 +120,8 @@ class NcovMapPageState extends State<NcovMapPage> {
             left: 16,
             child: IgnorePointer(
               child: Container(
-                height: 150,
-                width: 100,
+                height: 130,
+                width: 108,
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(color: Colors.white54, borderRadius: BorderRadius.circular(4)),
                 child: ListView.separated(
@@ -182,7 +182,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       compassEnabled: false,
       initialCameraPosition: CameraPosition(
         target: LatLng(39.919730, 116.399345),
-        zoom: 3,
+        zoom: 7,
       ),
       styleString: Const.kNcovMapStyleCn,
       onStyleLoaded: onStyleLoaded,
@@ -193,7 +193,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       tiltGesturesEnabled: false,
       enableLogo: false,
       enableAttribution: false,
-      minMaxZoomPreference: MinMaxZoomPreference(1.1, 9.0),
+      minMaxZoomPreference: MinMaxZoomPreference(1.1, 18.0),
       languageEnable: false,
     );
   }
@@ -208,7 +208,7 @@ class NcovMapPageState extends State<NcovMapPage> {
 
     Future.delayed(Duration(milliseconds: 500)).then((value) {
       //cheat double click
-      _clickTimes = 2;
+//      _clickTimes = 2;
       _fireToMyLocation();
     });
   }
@@ -258,7 +258,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       _toMyLocationSink();
     } else {
       Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler().requestPermissions([PermissionGroup.location]);
+      await PermissionHandler().requestPermissions([PermissionGroup.location]);
       if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
         _toMyLocationSink();
         Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
@@ -322,15 +322,15 @@ class NcovMapPageState extends State<NcovMapPage> {
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              )
+          title: title,
+          content: content,
+          actions: actions,
+        )
             : AlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              );
+          title: title,
+          content: content,
+          actions: actions,
+        );
       },
     );
   }
