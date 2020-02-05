@@ -59,6 +59,7 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
             if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
               _showUpdateDialog(state.appData.updateEntity);
             } else {
+              print('已经是最新版本');
               if (state.isManual) {
                 Fluttertoast.showToast(msg: S.of(context).latest_version_tip);
               }
@@ -84,10 +85,11 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                 title: Text(title),
                 content: Text(message),
                 actions: <Widget>[
-                  FlatButton(
-                    child: Text(btnLabelCancel),
-                    onPressed: () => Navigator.maybePop(context),
-                  ),
+                  if (updateEntity.forceUpdate != 1)
+                    FlatButton(
+                      child: Text(btnLabelCancel),
+                      onPressed: () => Navigator.maybePop(context),
+                    ),
                   FlatButton(
                     child: Text(S.of(context).update_now),
                     onPressed: () => _launch(updateEntity),
@@ -98,10 +100,11 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                 title: Text(title),
                 content: Text(message),
                 actions: <Widget>[
-                  FlatButton(
-                    child: Text(btnLabelCancel),
-                    onPressed: () => Navigator.maybePop(context),
-                  ),
+                  if (updateEntity.forceUpdate != 1)
+                    FlatButton(
+                      child: Text(btnLabelCancel),
+                      onPressed: () => Navigator.maybePop(context),
+                    ),
                   FlatButton(
                     child: Text(S.of(context).update_now),
                     onPressed: () => _launch(updateEntity),
@@ -130,7 +133,12 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
     Navigator.maybePop(context);
 
     launchUrl(versionModel.downloadUrl);
+
+    if (versionModel.forceUpdate != 1) {
+      Navigator.pop(context);
+    }
   }
+
 
 //  Future<bool> _hasDownloaded(UpdateEntity versionModel) async {
 //    var apkPath = await _getApkPath();

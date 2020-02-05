@@ -311,7 +311,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
         InkWell(
           onTap: () {
             var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-            var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+            var url = EtherscanApi.getTxDetailUrl(context, transactionDetail.hash, isChinaMainland);
             print("txUrl:$url");
             Navigator.push(
                 context,

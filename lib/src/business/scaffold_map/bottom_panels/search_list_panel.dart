@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/poi.dart';
@@ -132,12 +133,14 @@ class SearchListPanel extends StatelessWidget {
       return buildCommonPoiItem(context, poi);
     } else if (poi is GaodePoi) {
       return buildGaodePoiItem(context, poi);
+    } else if (poi is ConfirmPoiItem) {
+      return buildCommonPoiItem(context, poi);
     } else {
       return Text('not implemented');
     }
   }
 
-  Widget buildCommonPoiItem(context, PoiEntity poi) {
+  Widget buildCommonPoiItem(context, IPoi poi) {
     return InkWell(
       onTap: () {
         onTapPoi(context, poi);

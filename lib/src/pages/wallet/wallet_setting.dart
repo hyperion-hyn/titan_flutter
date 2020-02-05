@@ -7,12 +7,10 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/pages/wallet/service/wallet_service.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 
-import 'event_bus_event.dart';
 
 class WalletSettingPage extends StatefulWidget {
   final Wallet wallet;
@@ -30,14 +28,14 @@ class _WalletSettingState extends State<WalletSettingPage> {
 
   KeyStore _walletKeyStore;
 
-  WalletService _walletService;
+//  WalletService _walletService;
 
   @override
   void initState() {
     super.initState();
     _walletKeyStore = widget.wallet.keystore;
     _walletNameController.text = _walletKeyStore.name;
-    _walletService = WalletService(context: context);
+//    _walletService = WalletService(context: context);
   }
 
   @override
@@ -186,12 +184,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
                       var result = await widget.wallet.delete(walletPassword);
                       print("del result ${widget.wallet.keystore.fileName} $result");
                       if (result) {
-                        if (await _walletService.isDefaultWallet(widget.wallet)) {
-                          _walletService.saveDefaultWalletFileName(null);
-                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
-                        }
+                        //TODO if there is no wallet any more, back to root page. else active a new wallet and back to pre page.
+
                         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
-//                        eventBus.fire(ReScanWalletEvent());
                         Navigator.of(context).popUntil((r) => r.isFirst);
                       } else {
                         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);

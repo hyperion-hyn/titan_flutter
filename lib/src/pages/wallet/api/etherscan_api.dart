@@ -1,5 +1,7 @@
+import 'package:flutter/widgets.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -15,13 +17,17 @@ class EtherscanApi {
     }
   }
 
-  static String getTxDetailUrl(String txHash, bool isChinaMainland) {
+  static String getTxDetailUrl(BuildContext context, String txHash, bool isChinaMainland) {
     if (isChinaMainland && WalletConfig.isMainNet) {
       return "https://cn.etherscan.com/tx/$txHash";
     }
 
     if (WalletConfig.isMainNet) {
-      return "https://cn.etherscan.io/tx/$txHash";
+      if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+        return 'https://cn.etherscan.com/tx/$txHash';
+      } else {
+        return "https://etherscan.io/tx/$txHash";
+      }
     } else {
       return "https://ropsten.etherscan.io/tx/$txHash";
     }

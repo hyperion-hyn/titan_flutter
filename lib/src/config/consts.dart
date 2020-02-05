@@ -18,6 +18,9 @@ class Const {
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
 
+  //ncov
+  static const kNcovMapStyleCn = 'https://cn.tile.map3.network/ncov.json';
+
   //white
   static const kWhiteMapStyleCn = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
 //  static const kWhiteMapStyleCn = 'http://10.10.1.115:9999/titan-see-it-all.json';

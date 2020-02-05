@@ -80,33 +80,36 @@ class WebViewContainerState extends State<WebViewContainer> {
               Expanded(
                 child: _body(),
               ),
-              Column(
-                children: <Widget>[
-                  Divider(
-                    height: 0,
-                  ),
-                  Container(
-                    height: 48,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        IconButton(
-                          onPressed: onBackPress,
-                          icon: Icon(Icons.chevron_left),
-                          disabledColor: Colors.grey[200],
-                        ),
-                        SizedBox(
-                          width: 40,
-                        ),
-                        IconButton(
-                          onPressed: onForwardPress,
-                          icon: Icon(Icons.chevron_right),
-                          disabledColor: Colors.grey[200],
-                        )
-                      ],
+              Visibility(
+                visible: onBackPress != null || onForwardPress != null,
+                child: Column(
+                  children: <Widget>[
+                    Divider(
+                      height: 0,
                     ),
-                  ),
-                ],
+                    Container(
+                      height: 48,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          IconButton(
+                            onPressed: onBackPress,
+                            icon: Icon(Icons.chevron_left),
+                            disabledColor: Colors.grey[200],
+                          ),
+                          SizedBox(
+                            width: 40,
+                          ),
+                          IconButton(
+                            onPressed: onForwardPress,
+                            icon: Icon(Icons.chevron_right),
+                            disabledColor: Colors.grey[200],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

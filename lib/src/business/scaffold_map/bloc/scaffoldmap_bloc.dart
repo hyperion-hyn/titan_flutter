@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/position/api/position_api.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
@@ -47,8 +46,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     else if (event is SearchPoiEvent) {
       IPoi poi = event.poi;
 
-
-      if(poi is ConfirmPoiItem) {
+      if (poi is ConfirmPoiItem) {
         yield SearchingPoiState(searchingPoi: poi);
 
         var _confirmDataList = await _positionApi.mapGetConfirmData(poi.id);
@@ -107,10 +105,15 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       try {
         if (event.isGaodeSearch != true) {
           var searchInteractor = Injector.of(context).searchInteractor;
-          var pois = await searchInteractor.searchPoiByMapbox(
-              event.searchText, event.center, Localizations.localeOf(context).languageCode);
-
-          yield SearchPoiByTextSuccessState(list: pois);
+          var languageCode = Localizations.localeOf(context).languageCode;
+          var poiList = await Future.wait([
+            searchInteractor.searchPoiByTitan(event.searchText, event.center, languageCode),
+            searchInteractor.searchPoiByMapbox(event.searchText, event.center, languageCode)
+          ]);
+          List<IPoi> sum = [];
+          sum.addAll(poiList[0]);
+          sum.addAll(poiList[1]);
+          yield SearchPoiByTextSuccessState(list: sum);
         } else {
           //gaode search
           var _api = Api();
