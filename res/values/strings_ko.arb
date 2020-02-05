@@ -347,5 +347,6 @@
   "hot_search": "인기 검색어：",
   "add_failed_exist_hint": "이 위치는 이미 존재합니다. 다른 위치를 추가하십시오",
   "epidemic_map": "전염병 발생 상황 지도",
-  "epidemic_map_desc": "신종 폐렴의 전염병 발생 상황"
+  "epidemic_map_desc": "신종 폐렴의 전염병 발생 상황",
+  "ncov_guide": "발발 안내서"
 }

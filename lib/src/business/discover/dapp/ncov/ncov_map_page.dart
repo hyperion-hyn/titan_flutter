@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/infomation/news_nConv_page.dart';
 import 'package:titan/src/consts/consts.dart';
 
 class NcovMapPage extends StatefulWidget {
@@ -94,6 +95,21 @@ class NcovMapPageState extends State<NcovMapPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).epidemic_map),
+          actions: <Widget>[
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NewsNcovPage()));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  S.of(context).ncov_guide,
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            )
+          ],
       ),
       body: Stack(
         fit: StackFit.loose,
