@@ -126,7 +126,7 @@ class NewsNcovState extends InfoState<NewsNcovPage> {
   }
 
   Future _getPowerList(String categories, int tags, int page) async {
-    print('[news_ncov] --> getPowerList, page:$page');
+    //print('[news_ncov] --> getPowerList, page:$page');
 
     var newsResponseList = await _newsApi.getNewsList(CATEGORY, "$NCOV_TAG", page);
     var newsVoList = newsResponseList.map((newsResponse) {
