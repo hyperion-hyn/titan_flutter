@@ -39,7 +39,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       }
 
       var latLng = await mapboxMapController?.lastKnownLocation();
-      double doubleClickZoom = 10;
+      double doubleClickZoom = 16;
       if (latLng != null) {
         if (_clickTimes > 1) {
           mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
