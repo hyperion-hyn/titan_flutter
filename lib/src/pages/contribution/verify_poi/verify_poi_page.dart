@@ -5,42 +5,47 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
-import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/global.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/tools/empty_fail_loading_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
-import 'bloc/bloc.dart';
-import 'model/confirm_poi_item.dart';
-import 'position_finish_page.dart';
+import '../add_poi/position_finish_page.dart';
+import 'entity/confirm_poi_item.dart';
 
-class ConfirmPositionPage extends StatefulWidget {
+class VerifyPoiPage extends StatefulWidget {
   final LatLng userPosition;
 
-  ConfirmPositionPage({this.userPosition});
+  VerifyPoiPage({this.userPosition});
 
   @override
   State<StatefulWidget> createState() {
-    return _ConfirmPositionState();
+    return _VerifyPoiPageState();
   }
 }
 
-class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoadingState {
-  PositionBloc _positionBloc = PositionBloc();
+class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
+  PositionApi _positionApi = PositionApi();
+
+//  PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
   double defaultZoom = 17;
-  String currentResult = S.of(globalContext).confirm_info_wrong;
-  ConfirmPoiItem confirmPoiItem;
-  bool _isPostData = false;
 
+  ConfirmPoiItem confirmPoiItem;
+  bool _isLoadingPageData = true;
+  bool _isPostingData = false;
+
+  @override
+  void onCreated() {
+    _loadOnePoiNeedToBeVerify(widget.userPosition);
+  }
 
   @override
   void initState() {
-
     _positionBloc.add(ConfirmPositionLoadingEvent());
     _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
     _positionBloc.listen((state) {
@@ -92,7 +97,21 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
     super.initState();
   }
 
+  void _loadOnePoiNeedToBeVerify(LatLng position) async {
+    var userPosition = position;
+    var language = SettingInheritedModel.of(context).languageCode;
+    if (language.startsWith('zh')) language = "zh-Hans";
+
+    var activatedHynAddress = WalletInheritedModel.of(context).activatedHynAddress();
+    var _confirmPoiItem = await _positionApi
+        .getConfirmData(activatedHynAddress, userPosition.longitude, userPosition.latitude, lang: language);
+    setState(() {
+      confirmPoiItem = _confirmPoiItem;
+    });
+  }
+
   var _addMarkerSubject = PublishSubject<dynamic>();
+
   void addMarkerAndMoveToPoi() {
     if (mapController != null && confirmPoiItem?.name != null) {
       _addMarkerSubject.sink.add(1);
@@ -130,13 +149,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
                   child: Text(S.of(context).cancel)),
               FlatButton(
                   onPressed: () {
-                    int answer;
-                    if (currentResult == S.of(context).confirm_info_wrong) {
-                      answer = 0;
-                    } else {
-                      answer = 1;
-                    }
-                    _isPostData = true;
+                    _isPostingData = true;
                     _positionBloc.add(ConfirmPositionResultLoadingEvent());
                     Navigator.of(context).pop(true);
                   },
@@ -148,6 +161,21 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
   }
 
   Widget _buildView() {
+//    if (_isLoadingPageData) {
+//      return LoadDataWidget(
+//        isLoading: true,
+//      );
+//    } else {
+//      if (confirmPoiItem?.name == null) {
+//        return Container(
+//          width: 0.0,
+//          height: 0.0,
+//        );
+//      } else {
+//        return _buildListBody();
+//      }
+//    }
+
     return BlocBuilder<PositionBloc, AllPageState>(
         bloc: _positionBloc,
         builder: (BuildContext context, AllPageState state) {
@@ -168,7 +196,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
           } else if (state is ConfirmPositionResultLoadingState) {
             return _buildListBody();
           } else if (state is ConfirmPositionResultState) {
-            _isPostData = false;
+            _isPostingData = false;
             if (!state.confirmResult) {
               Fluttertoast.showToast(msg: state.errorMsg);
               return _buildListBody();
@@ -179,11 +207,11 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
               );
             }
           } else {
-            return buildWidgetByNormalState(context, state);
-//            return AllPageStateContainer(state,(){
-//              _positionBloc.add(ConfirmPositionLoadingEvent());
-//              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
-//            });
+//            return buildWidgetByNormalState(context, state);
+            return AllPageStateContainer(state,(){
+              _positionBloc.add(ConfirmPositionLoadingEvent());
+              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+            });
           }
         });
   }
@@ -218,7 +246,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
                       color: HexColor('#E9E9E9'),
                     ),
                   ),
-                  buildBottomInfoList(context,confirmPoiItem),
+                  buildBottomInfoList(context, confirmPoiItem),
                 ],
               ),
             ),
@@ -236,7 +264,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
 
   Widget _buildLoading() {
     return Visibility(
-      visible: _isPostData,
+      visible: _isPostingData,
       child: Center(
         child: SizedBox(
           height: 40,
@@ -296,7 +324,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
 
   Widget _nameView() {
     return Container(
-      padding: EdgeInsets.only(left: 15,right: 15,top: 15),
+      padding: EdgeInsets.only(left: 15, right: 15, top: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -309,8 +337,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
               Expanded(
                 child: Text(
                   confirmPoiItem.name,
-                  style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 ),
               ),
             ],
@@ -318,9 +345,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
           SizedBox(
             height: 16,
           ),
-          buildHeadItem(context,
-              Icons.location_on, confirmPoiItem.address,
-              hint: S.of(context).no_detail_address),
+          buildHeadItem(context, Icons.location_on, confirmPoiItem.address, hint: S.of(context).no_detail_address),
         ],
       ),
     );
@@ -337,7 +362,6 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
             child: RaisedButton(
               color: HexColor('#DD4E41'),
               onPressed: () async {
-                currentResult = S.of(context).confirm_info_wrong;
                 var option = await showConfirmDialog(S.of(context).poi_confirm_title_error);
                 if (option == true) {
                   _positionBloc.add(ConfirmPositionResultEvent(0, confirmPoiItem));
@@ -369,7 +393,6 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> with EmptyFailLoa
             child: RaisedButton(
               color: HexColor('#0F95B0'),
               onPressed: () async {
-                currentResult = S.of(context).confirm_info_right;
                 var option = await showConfirmDialog(S.of(context).poi_confirm_title_hint);
                 if (option == true) {
                   _positionBloc.add(ConfirmPositionResultEvent(1, confirmPoiItem));

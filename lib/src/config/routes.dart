@@ -8,12 +8,21 @@ import 'route_handlers.dart';
 class Routes {
   static const String root = "/";
 
+  //wallet
   static const String wallet_create = '/wallet/create';
   static const String wallet_import = '/wallet/import';
   static const String wallet_account_detail = '/wallet/account/detail';
   static const String wallet_account_send_transaction = '/wallet/account/send_transaction';
   static const String wallet_transfer_token_confirm = '/wallet/account/confirm_transfer';
   static const String wallet_manager = '/wallet/manager';
+
+  //contribution
+  static const String contribute_tasks_list = '/contribution/tasks';
+  static const String contribute_done = '/contribution/done';
+  static const String contribute_scan_signal = '/contribution/tasks/signal_scan';
+  static const String contribute_add_poi = '/contribution/tasks/add_poi';
+  static const String contribute_verify_poi = '/contribution/tasks/verify_poi';
+  static const String contribute_add_nCov_poi = '/contribution/tasks/add_nCov_poi';
 
   static String createOrImportWalletEntryRouteName;
 
@@ -30,11 +39,7 @@ class Routes {
   static void configureRoutes(Router router) {
     router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       print("ROUTE WAS NOT FOUND !!!");
-      return Scaffold(
-          appBar: AppBar(
-            title: Text('404'),
-          ),
-          body: Center(child: Text('page not found')));
+      return unknownPage();
     });
 
     //home
@@ -50,7 +55,18 @@ class Routes {
     router.define(wallet_transfer_token_confirm,
         handler: transferConfirmHandler, transitionType: TransitionType.inFromRight);
     router.define(wallet_manager, handler: managerWalletHandler, transitionType: TransitionType.inFromRight);
+
+    //contribution
+    router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: TransitionType.inFromRight);
+    router.define(contribute_done, handler: contributionDoneHandler, transitionType: TransitionType.inFromRight);
+    router.define(contribute_scan_signal, handler: contributionScanSignalHandler, transitionType: TransitionType.inFromRight);
   }
+
+  static Widget unknownPage() => Scaffold(
+      appBar: AppBar(
+        title: Text('404'),
+      ),
+      body: Center(child: Text('page not found')));
 }
 
 class MyRouter extends Router {

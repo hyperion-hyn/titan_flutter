@@ -8,7 +8,7 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/custom_input_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'model/category_item.dart';
+import '../../../business/position/model/category_item.dart';
 
 class SelectCategoryPage extends StatefulWidget {
   @override

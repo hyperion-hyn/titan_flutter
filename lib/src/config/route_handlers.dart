@@ -6,6 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
+import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
+import 'package:titan/src/pages/contribution/signal_scan/scan_signal_contribution_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_import_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
@@ -56,6 +59,19 @@ var transferConfirmHandler = Handler(handlerFunc: (context, params) {
 var managerWalletHandler = Handler(
     handlerFunc: (context, params) =>
         BlocProvider<WalletManagerBloc>(create: (context) => WalletManagerBloc(), child: WalletManagerPage()));
+
+//contribution
+var contributionTasksHandler = Handler(handlerFunc: (context, params) {
+  return ContributionTasksPage();
+});
+
+var contributionDoneHandler = Handler(handlerFunc: (context, params) {
+  return ContributionFinishUploadPage(backRouteName: params['backRouteName']?.first);
+});
+
+var contributionScanSignalHandler = Handler(handlerFunc: (context, params) {
+  return ScanSignalContributionPage(latLng: params['latLng']?.first);
+});
 
 //var demoRouteHandler = Handler(
 //    handlerFunc: (BuildContext context, Map<String, List<String>> params) {

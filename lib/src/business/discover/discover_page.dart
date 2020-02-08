@@ -24,7 +24,7 @@ class DiscoverPageWidget extends StatefulWidget {
 }
 
 class DiscoverPageState extends State<DiscoverPageWidget> {
-  List<FocusImage> focusImages = [FocusImage('res/drawable/discover_first_image.jpeg', "https://www.hyn.space")];
+  List<FocusImage> focusImages = [FocusImage('https://news.hyn.space/wp-content/uploads/2019/10/经济模型.jpeg', "https://www.hyn.space")];
 
   @override
   void initState() {

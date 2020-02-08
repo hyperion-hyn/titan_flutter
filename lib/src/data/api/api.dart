@@ -6,7 +6,7 @@ import 'package:titan/src/model/gaode_model.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/update.dart';
-import 'package:titan/src/business/contribution/vo/signal_collector.dart';
+import 'package:titan/src/pages/contribution/vo/signal_collector.dart';
 
 class Api {
   ///附近可以分享的位置

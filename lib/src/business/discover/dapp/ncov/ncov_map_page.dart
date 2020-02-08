@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/infomation/news_nConv_page.dart';
 import 'package:titan/src/consts/consts.dart';
 
 class NcovMapPage extends StatefulWidget {
@@ -38,7 +39,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       }
 
       var latLng = await mapboxMapController?.lastKnownLocation();
-      double doubleClickZoom = 10;
+      double doubleClickZoom = 16;
       if (latLng != null) {
         if (_clickTimes > 1) {
           mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
@@ -94,6 +95,21 @@ class NcovMapPageState extends State<NcovMapPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).epidemic_map),
+          actions: <Widget>[
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NewsNcovPage()));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  S.of(context).ncov_guide,
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            )
+          ],
       ),
       body: Stack(
         fit: StackFit.loose,
@@ -261,7 +277,7 @@ class NcovMapPageState extends State<NcovMapPage> {
       await PermissionHandler().requestPermissions([PermissionGroup.location]);
       if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
         _toMyLocationSink();
-        Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
+        Rx.timer('', Duration(milliseconds: 1500)).listen((d) {
           _toMyLocationSink(); //hack, location not auto move
         });
       } else {

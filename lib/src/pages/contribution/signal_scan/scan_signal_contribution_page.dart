@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -6,30 +7,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/home/contribution_finish_page.dart';
-import 'package:titan/src/business/my/app_area.dart';
-import 'package:titan/src/business/wallet/model/wallet_vo.dart';
-import 'package:titan/src/business/wallet/service/wallet_service.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/config/routes.dart';
 import 'package:titan/src/data/api/api.dart';
+import 'package:titan/src/model/converter/model_converter.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/scan_util.dart';
-import '../../global.dart';
-import '../webview/webview.dart';
-import 'package:titan/src/business/contribution/vo/signal_collector.dart';
-import 'package:titan/src/business/contribution/vo/latlng.dart' as contributionLatlng;
-import 'contribution_finish_page.dart';
 
-const _default_map_location = LatLng(23.106541, 113.324827);
+import 'vo/latlng.dart' as contributionLatlng;
+import 'vo/signal_collector.dart';
 
-class ContributionPage extends StatefulWidget {
+//const _default_map_location = LatLng(23.106541, 113.324827);
+
+class ScanSignalContributionPage extends StatefulWidget {
   final LatLng initLocation;
 
-  ContributionPage({this.initLocation});
+  ScanSignalContributionPage({String latLng})
+      : this.initLocation =
+            (latLng != null && latLng != '') ? LocationConverter.latLngFromJson(json.decode(latLng)) : null;
 
   @override
   State<StatefulWidget> createState() {
@@ -37,26 +40,25 @@ class ContributionPage extends StatefulWidget {
   }
 }
 
-class _ContributionState extends State<ContributionPage> {
+class _ContributionState extends State<ScanSignalContributionPage> {
   MapboxMapController mapController;
 
   Api _api = Api();
 
-  WalletService _walletService = WalletService();
+//  WalletService _walletService = WalletService();
 
   StreamSubscription subscription;
 
-  LatLng userPosition;
-  double defaultZoom = 18;
+  LatLng _userPosition;
+  double _defaultZoom = 18;
 
   StreamController<double> progressStreamController = StreamController.broadcast();
 
-  double minZoom = 13;
-  int maxMeter = 5000;
+  double _minZoom = 13;
 
-  SensorPlugin sensorPlugin;
+  SensorPlugin _sensorPlugin;
 
-  Map<String, List> collectData = new Map();
+  Map<String, List> _collectData = new Map();
 
   SensorChangeCallBack _sensorChangeCallBack;
 
@@ -82,9 +84,9 @@ class _ContributionState extends State<ContributionPage> {
   void initState() {
     super.initState();
 
-    userPosition = widget.initLocation ?? recentlyLocation;
+    _userPosition = widget.initLocation ?? Application.recentlyLocation;
 
-    sensorPlugin = SensorPlugin();
+    _sensorPlugin = SensorPlugin();
     initSensorChangeCallBack();
     initScanner();
   }
@@ -95,14 +97,14 @@ class _ContributionState extends State<ContributionPage> {
 
     subscription?.cancel();
     progressStreamController.close();
-    sensorPlugin.destory();
+    _sensorPlugin.destory();
   }
 
   void initSensorChangeCallBack() {
     _sensorChangeCallBack = (Map values) {
       _saveAllScanData(values);
     };
-    sensorPlugin.sensorChangeCallBack = _sensorChangeCallBack;
+    _sensorPlugin.sensorChangeCallBack = _sensorChangeCallBack;
   }
 
   void _saveAllScanData(Map values) {
@@ -110,10 +112,10 @@ class _ContributionState extends State<ContributionPage> {
 
     // 1.for upload
     var typeString = SensorType.getTypeString(sensorType);
-    var dataList = collectData[typeString];
+    var dataList = _collectData[typeString];
     if (dataList == null) {
       dataList = List();
-      collectData[typeString] = dataList;
+      _collectData[typeString] = dataList;
     }
     dataList.add(values);
 
@@ -142,9 +144,9 @@ class _ContributionState extends State<ContributionPage> {
       case SensorType.GPS:
         {
           var newLatLng = LatLng(values['lat'], values['lon']);
-          if (userPosition.distanceTo(newLatLng) > 5) {
-            userPosition = newLatLng;
-            mapController?.animateCamera(CameraUpdate.newLatLng(userPosition));
+          if (_userPosition.distanceTo(newLatLng) > 5) {
+            _userPosition = newLatLng;
+            mapController?.animateCamera(CameraUpdate.newLatLng(_userPosition));
           }
           gpsList.add(values);
 
@@ -169,16 +171,16 @@ class _ContributionState extends State<ContributionPage> {
 
   void initScanner() async {
 //    userPosition = widget.initLocation ?? _default_map_location;
-    await sensorPlugin.init();
+    await _sensorPlugin.init();
   }
 
   void startScan() async {
     progressStreamController.add(0);
 
-    duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
-    var timeStep = duration / (defaultZoom - minZoom + 1);
-    var timerObservable = Observable.periodic(Duration(milliseconds: 500), (x) => x);
-    lastZoom = defaultZoom;
+    duration = max<int>((_defaultZoom - _minZoom).toInt() * 3000, duration);
+    var timeStep = duration / (_defaultZoom - _minZoom + 1);
+    var timerObservable = Stream.periodic(Duration(milliseconds: 500), (x) => x);
+    lastZoom = _defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
 
 //    if (userPosition != null) {
@@ -202,11 +204,11 @@ class _ContributionState extends State<ContributionPage> {
       } else {
         subscription?.cancel();
         _isFinishScan = true;
-        sensorPlugin.stopScan();
+        _sensorPlugin.stopScan();
       }
     });
 
-    sensorPlugin.startScan();
+    _sensorPlugin.startScan();
   }
 
   List _getCurrentScanList() {
@@ -262,7 +264,7 @@ class _ContributionState extends State<ContributionPage> {
 
   List _getStatusDataList() {
     var dataList = List();
-    String signalName = S.of(context).scan_ing_func(SensorType.getScanName(_currentScanType));
+    String signalName = S.of(context).scan_ing_func(SensorType.getScanName(context, _currentScanType));
 
     if (_isFinishScan) {
       signalName = S.of(context).scan_finish;
@@ -358,11 +360,12 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   Future<void> _onPressed() async {
-    var isFinish = await uploadCollectData();
+    var isFinish = await _uploadCollectData();
     //print('[Request] --> isFinish: ${isFinish}');
     if (isFinish) {
-      createWalletPopUtilName = '/data_contribution_page';
-      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+//      createWalletPopUtilName = '/data_contribution_page';
+//      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+      Application.router.navigateTo(context, Routes.contribute_done, replace: true);
     } else {
       Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
       setState(() {
@@ -499,18 +502,14 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   Widget _mapView() {
-    var style;
-    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = Const.kBlackMapStyleCn;
-    } else {
-      style = Const.kBlackMapStyle;
-    }
+    var style =
+        SettingInheritedModel.of(context).areaModel.isChinaMainland ? Const.kBlackMapStyleCn : Const.kBlackMapStyle;
 
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(
-        target: userPosition,
-        zoom: defaultZoom,
+        target: _userPosition,
+        zoom: _defaultZoom,
       ),
       styleString: style,
       onStyleLoaded: (mapboxController) {
@@ -529,20 +528,30 @@ class _ContributionState extends State<ContributionPage> {
     );
   }
 
-  Future<bool> uploadCollectData() async {
-    var uploadPosition = userPosition;
+  Future<bool> _uploadCollectData() async {
+    var uploadPosition = _userPosition;
     contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(uploadPosition.latitude, uploadPosition.longitude);
-    SignalCollector _signalCollector = SignalCollector(_latlng, collectData);
-    WalletVo _walletVo = await _walletService.getDefaultWalletVo();
-    if (_walletVo == null) {
+    SignalCollector _signalCollector = SignalCollector(_latlng, _collectData);
+
+    var activatedWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    var hynAddress;
+    if (activatedWalletVo != null) {
+      for (var coin in activatedWalletVo?.coins) {
+        if (coin.symbol == SupportedTokens.HYN.symbol) {
+          hynAddress = coin.address;
+          break;
+        }
+      }
+    }
+
+    if (hynAddress == null) {
       Fluttertoast.showToast(msg: S.of(context).scan_hyn_is_empty);
       return false;
     }
 
-    var address = _walletVo.accountList[0].account.address;
     var platform = Platform.isIOS ? "iOS" : "android";
 
-    var uploadStatus = await _api.signalCollector(platform, address, _signalCollector);
+    var uploadStatus = await _api.signalCollector(platform, hynAddress, _signalCollector);
     return uploadStatus;
   }
 
@@ -572,7 +581,7 @@ class _ContributionState extends State<ContributionPage> {
                         style: TextStyle(color: Colors.blue),
                       ),
                       onPressed: () {
-                        sensorPlugin.stopScan();
+                        _sensorPlugin.stopScan();
                         Navigator.pop(context);
                         Navigator.of(context).pop();
                       },
@@ -589,7 +598,7 @@ class _ContributionState extends State<ContributionPage> {
                     FlatButton(
                       child: Text(S.of(context).confirm),
                       onPressed: () {
-                        sensorPlugin.stopScan();
+                        _sensorPlugin.stopScan();
                         Navigator.pop(context);
                         Navigator.of(context).pop();
                       },

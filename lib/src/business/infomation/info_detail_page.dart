@@ -39,6 +39,9 @@ class _InfoDetailState extends State<InfoDetailPage> {
     if (widget.url.isEmpty) {
       _getInfoDetail();
     }
+
+    print('[info_detail] --> url:${widget.url}, userAgent:${widget.userAgent}');
+    super.initState();
   }
 
   @override
@@ -47,6 +50,7 @@ class _InfoDetailState extends State<InfoDetailPage> {
     if (widget.url.isEmpty) {
       isLoadingContent = true;
     }
+
     return Scaffold(
         appBar: AppBar(
 //          backgroundColor: Colors.white,
@@ -56,7 +60,7 @@ class _InfoDetailState extends State<InfoDetailPage> {
             widget.title,
             style: TextStyle(color: Colors.white),
           ),
-          actions: <Widget>[
+          actions: isLoadingContent?null:<Widget>[
             IconButton(
               icon: Icon(Icons.share),
               color: Colors.white,
@@ -65,7 +69,7 @@ class _InfoDetailState extends State<InfoDetailPage> {
                 _shareQr(context);
               },
             ),
-          ],
+          ]
         ),
         body: isLoadingContent ? _loadContent() : _loadUrl());
   }

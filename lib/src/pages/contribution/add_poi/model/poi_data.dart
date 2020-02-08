@@ -1,5 +1,5 @@
 import 'package:image_pickers/Media.dart';
-import 'package:titan/src/business/position/model/poi_collector.dart';
+import 'package:titan/src/pages/contribution/add_poi/model/poi_collector.dart';
 
 class PoiDataModel {
 

@@ -12,7 +12,7 @@ import 'package:titan/src/widget/drag_tick.dart';
 
 import '../../global.dart';
 import '../scaffold_map/bloc/bloc.dart';
-import '../../pages/contribution/data_contribution_page.dart';
+import '../../pages/contribution/contribution_tasks_page.dart';
 
 class HomePanel extends StatefulWidget {
   final ScrollController scrollController;
@@ -248,7 +248,7 @@ class HomePanelState extends State<HomePanel> {
                   context,
                   MaterialPageRoute(
                     settings: RouteSettings(name: '/data_contribution_page'),
-                    builder: (context) => DataContributionPage(),
+                    builder: (context) => ContributionTasksPage(),
                   ),
                 );
               },

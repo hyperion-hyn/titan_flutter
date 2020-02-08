@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
@@ -9,41 +10,36 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/home/contribution_page.dart';
-import 'package:titan/src/business/position/confirm_position_page.dart';
-import 'package:titan/src/business/position/select_position_page.dart';
+import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
-import 'package:titan/src/business/wallet/service/wallet_service.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/model/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/business/wallet/wallet_import_account_page.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_bloc.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_event.dart';
-import 'package:titan/src/business/wallet/wallet_bloc/wallet_state.dart';
-import 'package:titan/src/global.dart';
 
 import '../wallet/wallet_manager/wallet_manager_page.dart';
-import '../wallet/wallet_create_new_account_page.dart';
+import 'add_poi/select_position_page.dart';
 
-class DataContributionPage extends StatefulWidget {
+class ContributionTasksPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _DataContributionState();
   }
 }
 
-class _DataContributionState extends State<DataContributionPage> with RouteAware {
-  WalletBloc _walletBloc = WalletBloc();
-
-  StreamSubscription _eventbusSubcription;
-  WalletService _walletService = WalletService();
+class _DataContributionState extends State<ContributionTasksPage> with RouteAware {
+//  WalletBloc _walletBloc = WalletBloc();
+//
+//  StreamSubscription _eventbusSubcription;
+//  WalletService _walletService = WalletService();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context));
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
@@ -53,41 +49,41 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
   }
 
   Future doDidPopNext() async {
-    if (currentWalletVo != null) {
-      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
-      //logger.i("defaultWalletFileName:$defaultWalletFileName");
-      logger.i("defaultWalletFileName:$defaultWalletFileName");
-      String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
-      //logger.i("updateWalletFileName:$updateWalletFileName");
-      if (defaultWalletFileName == updateWalletFileName) {
-        //logger.i("do UpdateWalletEvent");
-        _walletBloc.add(UpdateWalletEvent(currentWalletVo));
-      } else {
-        currentWalletVo = null;
-        //logger.i("do ScanWalletEvent");
-        _walletBloc.add(ScanWalletEvent());
-      }
-    } else {
-      _walletBloc.add(ScanWalletEvent());
-    }
+//    if (currentWalletVo != null) {
+//      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
+//      //logger.i("defaultWalletFileName:$defaultWalletFileName");
+//      logger.i("defaultWalletFileName:$defaultWalletFileName");
+//      String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
+//      //logger.i("updateWalletFileName:$updateWalletFileName");
+//      if (defaultWalletFileName == updateWalletFileName) {
+//        //logger.i("do UpdateWalletEvent");
+//        _walletBloc.add(UpdateWalletEvent(currentWalletVo));
+//      } else {
+//        currentWalletVo = null;
+//        //logger.i("do ScanWalletEvent");
+//        _walletBloc.add(ScanWalletEvent());
+//      }
+//    } else {
+//      _walletBloc.add(ScanWalletEvent());
+//    }
   }
 
   @override
   void dispose() {
-    _eventbusSubcription?.cancel();
-    routeObserver.unsubscribe(this);
+//    _eventbusSubcription?.cancel();
+//    routeObserver.unsubscribe(this);
     super.dispose();
   }
 
   @override
   void initState() {
-    _walletBloc.add(ScanWalletEvent());
-
-    _eventbusSubcription = eventBus.on().listen((event) {
-      if (event is ScanWalletEvent) {
-        _walletBloc.add(ScanWalletEvent());
-      }
-    });
+//    _walletBloc.add(ScanWalletEvent());
+//
+//    _eventbusSubcription = eventBus.on().listen((event) {
+//      if (event is ScanWalletEvent) {
+//        _walletBloc.add(ScanWalletEvent());
+//      }
+//    });
     super.initState();
   }
 
@@ -108,41 +104,47 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
   }
 
   Widget _buildView(BuildContext context) {
-    return BlocBuilder<WalletBloc, WalletState>(
-      bloc: _walletBloc,
-      builder: (BuildContext context, WalletState state) {
-        if (state is WalletEmptyState) {
-          return _walletTipsView();
+    var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    if (activeWalletVo == null) {
+      return _makeWalletGuideView();
+    } else {
+      return _taskListView();
+    }
+//    return BlocBuilder<WalletBloc, WalletState>(
+//      bloc: _walletBloc,
+//      builder: (BuildContext context, WalletState state) {
+//        if (state is WalletEmptyState) {
+//          return _makeWalletGuideView();
+////          return _listView();
+//        } else if (state is ShowWalletState) {
+//          currentWalletVo = state.wallet;
+////          return _walletTipsView();
 //          return _listView();
-        } else if (state is ShowWalletState) {
-          currentWalletVo = state.wallet;
-//          return _walletTipsView();
-          return _listView();
-        } else if (state is ScanWalletLoadingState) {
-          return _buildLoading(context);
-        } else {
-          return Container(
-            width: 0.0,
-            height: 0.0,
-          );
-        }
-      },
-    );
+//        } else if (state is ScanWalletLoadingState) {
+//          return _buildLoading(context);
+//        } else {
+//          return Container(
+//            width: 0.0,
+//            height: 0.0,
+//          );
+//        }
+//      },
+//    );
   }
 
-  Widget _buildLoading(context) {
-    return Center(
-      child: SizedBox(
-        height: 40,
-        width: 40,
-        child: CircularProgressIndicator(
-          strokeWidth: 3,
-        ),
-      ),
-    );
-  }
+//  Widget _buildLoading(context) {
+//    return Center(
+//      child: SizedBox(
+//        height: 40,
+//        width: 40,
+//        child: CircularProgressIndicator(
+//          strokeWidth: 3,
+//        ),
+//      ),
+//    );
+//  }
 
-  Widget _walletTipsView() {
+  Widget _makeWalletGuideView() {
     return Center(
       child: Container(
         child: Column(
@@ -181,8 +183,9 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
-                    createWalletPopUtilName = '/data_contribution_page';
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+                    print('TODO');
+//                    createWalletPopUtilName = '/data_contribution_page';
+//                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                   },
                   child: Container(
                     child: Padding(
@@ -207,8 +210,9 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
-                    createWalletPopUtilName = '/data_contribution_page';
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+//                    createWalletPopUtilName = '/data_contribution_page';
+//                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
+                    print('TODO');
                   },
                   child: Container(
                     child: Padding(
@@ -230,36 +234,38 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     );
   }
 
-  Widget _listView() {
+  Widget _taskListView() {
     return ListView(
       children: <Widget>[
         Container(
           height: 8,
           color: Colors.grey[200],
         ),
-        _wallet(),
+        _activatedWalletWidget(),
         Container(
           height: 8,
           color: Colors.grey[200],
         ),
-        _buildItem('signal', S.of(context).scan_signal_item_title, () async {
+        _buildTaskItem('signal', S.of(context).scan_signal_item_title, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
 
           if (status) {
-            var latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
-                ?.mapboxMapController
-                ?.lastKnownLocation();
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ContributionPage(initLocation: latlng),
-              ),
-            );
+            var latLng = await getLatlng();
+            if (latLng != null) {
+              var latLngStr = json.encode(LocationConverter.latLngToJson(latLng));
+              Application.router.navigateTo(context, Routes.contribute_scan_signal + '?latLng=$latLngStr');
+//              Navigator.push(
+//                context,
+//                MaterialPageRoute(
+//                  builder: (context) => ScanSignalContributionPage(initLocation: latLng),
+//                ),
+//              );
+            }
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', S.of(context).add_poi_item_title, () async {
+        _buildTaskItem('position', S.of(context).add_poi_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -271,13 +277,13 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('check', S.of(context).check_poi_item_title, () async {
+        _buildTaskItem('check', S.of(context).check_poi_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ConfirmPositionPage(userPosition: latlng),
+                builder: (context) => VerifyPoiPage(userPosition: latlng),
               ),
             );
           }
@@ -298,16 +304,20 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     return latlng;
   }
 
-  Widget _wallet() {
-    if (currentWalletVo == null) {
+  Widget _activatedWalletWidget() {
+    var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    if (activeWalletVo == null) {
       return Container();
     }
+
     return InkWell(
       onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => WalletManagerPage(), settings: RouteSettings(name: "/wallet_manager_page")));
+              builder: (context) => WalletManagerPage(),
+              settings: RouteSettings(name: "/wallet_manager_page"),
+            ));
       },
       child: SizedBox(
         height: 64,
@@ -337,7 +347,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  currentWalletVo.wallet.keystore.name ?? "",
+                  activeWalletVo?.wallet?.keystore?.name ?? "",
                   textAlign: TextAlign.left,
                   style: TextStyle(fontWeight: FontWeight.w500, color: HexColor('#333333')),
                 ),
@@ -347,7 +357,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortBlockChainAddress(currentWalletVo.wallet.getEthAccount().address) ?? "",
+                    shortBlockChainAddress(activeWalletVo?.wallet?.getEthAccount()?.address) ?? "",
                     style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )
@@ -371,7 +381,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     );
   }
 
-  Widget _buildItem(String iconName, String title, Function ontap, {bool isOpen = false}) {
+  Widget _buildTaskItem(String iconName, String title, Function ontap, {bool isOpen = false}) {
     return InkWell(
       onTap: ontap,
       child: Row(
@@ -466,8 +476,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         Map<PermissionGroup, PermissionStatus> permissions =
             await PermissionHandler().requestPermissions([PermissionGroup.phone]);
         if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
-          _showDialog(
-              S.of(context).require_permission, S.of(context).collect_signal_require_telephone, () {
+          _showDialog(S.of(context).require_permission, S.of(context).collect_signal_require_telephone, () {
             PermissionHandler().openAppSettings();
           });
           return false;
@@ -551,9 +560,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     );
   }
 
-
   void _showServceDialog() {
-    _showDialog(S.of(context).open_location_service, S.of(context).open_location_service_message, (){
+    _showDialog(S.of(context).open_location_service, S.of(context).open_location_service_message, () {
       if (Platform.isIOS) {
         PermissionHandler().openAppSettings();
       } else {
@@ -581,8 +589,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               Navigator.pop(context);
             },
           ),
-        ]
-    );
+        ]);
   }
 
   void _showDialog(String title, String content, Function func) {
@@ -604,6 +611,4 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       ],
     );
   }
-
-
 }

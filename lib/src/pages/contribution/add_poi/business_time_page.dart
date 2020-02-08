@@ -12,7 +12,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/RoundCheckBox.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import 'model/category_item.dart';
+import '../../../business/position/model/category_item.dart';
 
 class BusinessTimePage extends StatefulWidget {
   @override

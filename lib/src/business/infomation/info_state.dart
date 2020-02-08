@@ -20,49 +20,52 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
                     )));
       },
       child: IntrinsicHeight(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              flex: 4,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Container(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                flex: 4,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Container(
 //                  alignment: Alignment.center,
-                  child: FadeInImage.assetNetwork(
-                    image: infoItemVo.photoUrl,
-                    placeholder: 'res/drawable/img_placeholder.jpg',
-                    width: 112,
-                    height: 84,
-                    fit: BoxFit.cover,
+                    child: FadeInImage.assetNetwork(
+                      image: infoItemVo.photoUrl,
+                      placeholder: 'res/drawable/img_placeholder.jpg',
+                      width: 112,
+                      height: 84,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              flex: 6,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      infoItemVo.title,
-                      style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
-                    ),
-                    Spacer(),
-                    Text(
-                      DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(infoItemVo.publishTime)),
-                      style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
-                    ),
-                  ],
+              Expanded(
+                flex: 6,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        infoItemVo.title,
+                        style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
+                      ),
+                      Spacer(),
+                      Text(
+                        DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(infoItemVo.publishTime)),
+                        style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

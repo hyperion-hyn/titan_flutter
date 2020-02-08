@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/global.dart';
 
-class FinishUploadPage extends StatefulWidget {
+import '../../extension/navigator_ext.dart';
 
-  FinishUploadPage();
+class ContributionFinishUploadPage extends StatefulWidget {
+  final String backRouteName;
+
+  ContributionFinishUploadPage({this.backRouteName});
 
   @override
   State<StatefulWidget> createState() {
@@ -12,8 +14,7 @@ class FinishUploadPage extends StatefulWidget {
   }
 }
 
-class _FinishUploadState extends State<FinishUploadPage> {
-
+class _FinishUploadState extends State<ContributionFinishUploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,13 +24,8 @@ class _FinishUploadState extends State<FinishUploadPage> {
             builder: (BuildContext context) {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: (){
-                  if (createWalletPopUtilName == null) {
-                    Navigator.of(context).popUntil((r) => r.isFirst);
-                  } else {
-                    Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                    createWalletPopUtilName = null;
-                  }
+                onPressed: () {
+                  _doneAndBack();
                 },
               );
             },
@@ -78,13 +74,7 @@ class _FinishUploadState extends State<FinishUploadPage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () async {
-
-                      if (createWalletPopUtilName == null) {
-                        Navigator.of(context).popUntil((r) => r.isFirst);
-                      } else {
-                        Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-                        createWalletPopUtilName = null;
-                      }
+                      _doneAndBack();
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -104,5 +94,13 @@ class _FinishUploadState extends State<FinishUploadPage> {
             ),
           ),
         ));
+  }
+
+  void _doneAndBack() {
+    if (widget.backRouteName == null) {
+      Navigator.pop(context);
+    } else {
+      Navigator.of(context).popUntilRouteName(Uri.decodeComponent(widget.backRouteName));
+    }
   }
 }

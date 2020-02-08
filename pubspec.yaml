@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.2.5+40
+version: 2.2.6+41
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -102,7 +102,6 @@ dependencies:
   android_intent: ^0.3.4
   app_settings: ^3.0.0
   fluro: ^1.5.1
-
   #https://pub:dev/packages/image_pickers#-readme-tab-
   image_pickers: ^1.0.7+1
 

@@ -7,14 +7,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/business/position/api/position_api.dart';
-import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
+import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
 
 import './bloc.dart';
 import '../../../global.dart';
@@ -70,7 +70,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           logger.e(err);
 
           PoiEntity poi = PoiEntity();
-          poi.name = event.poi.name ?? S.of(globalContext).unknown_locations;
+          poi.name = event.poi.name ?? S.of(context).unknown_locations;
           poi.address = event.poi.address ?? '${event.poi.latLng.latitude},${event.poi.latLng.longitude}';
           poi.remark = event.poi.remark;
           poi.latLng = event.poi.latLng;

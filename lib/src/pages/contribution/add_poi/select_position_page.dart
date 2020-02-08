@@ -5,7 +5,7 @@ import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/business/position/add_position_page.dart';
+import 'package:titan/src/pages/contribution/add_poi/add_position_page.dart';
 
 class SelectPositionPage extends StatefulWidget {
   final LatLng initLocation;

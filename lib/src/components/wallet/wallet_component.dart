@@ -5,6 +5,7 @@ import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 
 import 'bloc/bloc.dart';
 import 'wallet_repository.dart';
@@ -126,6 +127,17 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
 
   static WalletInheritedModel of(BuildContext context, {WalletAspect aspect}) {
     return InheritedModel.inheritFrom<WalletInheritedModel>(context, aspect: aspect);
+  }
+
+  String activatedHynAddress() {
+    if (this.activatedWallet != null) {
+      for (var coin in this.activatedWallet.coins) {
+        if (coin.symbol == SupportedTokens.HYN.symbol) {
+          return coin.address;
+        }
+      }
+    }
+    return null;
   }
 
   @override

@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:titan/src/business/position/api/position_api.dart';
-import 'package:titan/src/business/position/model/poi_data.dart';
-import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import './bloc.dart';
+import 'bloc.dart';
 
 class PositionBloc extends Bloc<PositionEvent, AllPageState> {
   PositionApi _positionApi = PositionApi();
@@ -65,7 +62,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         yield SuccessPostPoiDataState();
       } else if (event is FailPostPoiDataEvent) {
         yield FailPostPoiDataState(event.code);
-      } else if (event is ConfirmPositionLoadingEvent) {
+      } /*else if (event is ConfirmPositionLoadingEvent) {
         yield ConfirmPositionLoadingState();
       } else if (event is ConfirmPositionPageEvent) {
         var userPosition = event.userPosition;
@@ -75,7 +72,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
             userPosition.longitude, userPosition.latitude,
             lang: language);
         yield ConfirmPositionPageState(_confirmPoiItem);
-      } else if (event is ConfirmPositionResultEvent) {
+      }*/ else if (event is ConfirmPositionResultEvent) {
         var confirmResult = await _positionApi.postConfirmPoiData(
             event.answer, event.confirmPoiItem);
         print("[PositionBloc] poi confirm result = $confirmResult");
