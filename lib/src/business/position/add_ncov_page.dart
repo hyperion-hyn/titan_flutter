@@ -25,6 +25,7 @@ import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/grouped_buttons/grouped_buttons.dart';
 
 class AddNcovPage extends StatefulWidget {
   final LatLng userPosition;
@@ -49,13 +50,14 @@ class _AddNcovState extends State<AddNcovPage> {
   TextEditingController _tripController = TextEditingController();
   TextEditingController _recordController = TextEditingController();
   TextEditingController _safeController = TextEditingController();
+  TextEditingController _descController = TextEditingController();
 
   double _inputHeight = 40.0;
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
 
-  String _categoryDefaultText = "";
-  String _timeDefaultText = "";
+  String _propertyText = "";
+  String _symptomsText = "";
 
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
@@ -93,10 +95,7 @@ class _AddNcovState extends State<AddNcovPage> {
 
   void _setupData() {
 
-    setState(() {
-      _categoryDefaultText = S.of(context).please_select_category_hint;
-      _timeDefaultText = S.of(context).please_add_business_hours_hint;
-    });
+
   }
 
   @override
@@ -402,7 +401,22 @@ class _AddNcovState extends State<AddNcovPage> {
     return Column(
       children: <Widget>[
         _buildDetailTitleRow("是否居家/在医院隔离"),
-
+        RadioButtonGroup(
+          orientation: GroupedButtonsOrientation.HORIZONTAL,
+          labels: [
+            "是",
+            "否",
+            "未知",
+          ],
+          labelStyle: TextStyle(
+            color: DefaultColors.color333,
+            fontWeight: FontWeight.w400,
+            fontSize: 12,
+          ),
+          activeColor: Theme.of(context).primaryColor,
+          onChange: (String label, int index) => print("label: $label index: $index"),
+          onSelected: (String label) => print(label),
+        ),
       ],
     );
   }
@@ -412,7 +426,23 @@ class _AddNcovState extends State<AddNcovPage> {
     return Column(
       children: <Widget>[
         _buildDetailTitleRow("居家属性"),
-
+        RadioButtonGroup(
+          labels: [
+            "居家自主",
+            "租住",
+            "投靠借住",
+            "酒店旅店",
+            "其他",
+          ],
+          labelStyle: TextStyle(
+            color: DefaultColors.color333,
+            fontWeight: FontWeight.w400,
+            fontSize: 12,
+          ),
+          activeColor: Theme.of(context).primaryColor,
+          onChange: (String label, int index) => print("label: $label index: $index"),
+          onSelected: (String label) => print(label),
+        ),
       ],
     );
   }
@@ -421,7 +451,47 @@ class _AddNcovState extends State<AddNcovPage> {
     return Column(
       children: <Widget>[
         _buildDetailTitleRow("是否有如下症状"),
-
+        CheckboxGroup(
+          labels: <String>[
+            "乏力",
+            "发热",
+            "干咳",
+            "鼻塞",
+            "流涕",
+            "腹泻",
+            "呼吸困难",
+          ],
+          labelStyle: TextStyle(
+            color: DefaultColors.color333,
+            fontWeight: FontWeight.w400,
+            fontSize: 12,
+          ),
+          onChange: (bool isChecked, String label, int index) => print("isChecked: $isChecked   label: $label  index: $index"),
+          onSelected: (List<String> checked) => print("checked: ${checked.toString()}"),
+        ),
+        _buildDetailDescRow("详细描述"),
+        Container(
+          margin: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Theme.of(context).primaryColor, width: 1.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12, top: 0, bottom: 8),
+            child: TextFormField(
+              controller: _descController,
+              keyboardType: TextInputType.multiline,
+              maxLength: null,
+              maxLines: null,
+              style: TextStyle(fontSize: 11),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "请输入症状详细描述",
+                hintStyle: TextStyle(fontSize: 11, color: DefaultColors.color777),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -691,6 +761,31 @@ class _AddNcovState extends State<AddNcovPage> {
                 color: DefaultColors.color333,
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
+              ),
+            )),
+      ],
+    );
+  }
+
+  Widget _buildDetailDescRow(String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      // // 主轴方向（横向）对齐方式
+      crossAxisAlignment: CrossAxisAlignment.center,
+      // 交叉轴（竖直）对其方式
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
+        ),
+        Padding(
+            padding: const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            child: Text(
+              title,
+              overflow: TextOverflow.clip,
+              style: TextStyle(
+                color: DefaultColors.color333,
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
               ),
             )),
       ],
