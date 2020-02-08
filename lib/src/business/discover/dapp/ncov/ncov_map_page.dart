@@ -262,7 +262,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
               target: LatLng(39.919730, 116.399345),
               zoom: 7,
             ),
-            styleString: Const.kNcovMapStyleCn,
+            styleString: "https://cn.tile.map3.network/ncov_test.json",
+//            styleString: Const.kNcovMapStyleCn,
             onStyleLoaded: onStyleLoaded,
             myLocationEnabled: myLocationEnabled,
             myLocationTrackingMode: locationTrackingMode,
@@ -590,22 +591,22 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                     height: 14,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: buildHeadItem(context, Icons.location_on, "小区地址", hint: S.of(context).no_detail_address),
+                    padding: const EdgeInsets.only(left:16.0,bottom: 5),
+                    child: buildHeadItem(context,
+                        Icons.location_on, "小区地址",
+                        hint: S.of(context).no_detail_address),
                   ),
                   Divider(
                     height: 0,
                   ),
 //                                      if (widget.selectedPoiEntity.images != null &&
 //                                          widget.selectedPoiEntity.images.length > 0)
-                  buildPicList(picItemWidth, 29, [
-                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                  ]),
+                                      buildPicList(picItemWidth, 16, ['http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',]),
 
                   _buildInfoItem("确诊人数：", "1"),
                   _buildInfoItem("人员类型：", "本地人"),
