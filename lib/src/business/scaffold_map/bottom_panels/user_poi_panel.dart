@@ -132,7 +132,7 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                   ),
                   if (widget.selectedPoiEntity.images != null &&
                       widget.selectedPoiEntity.images.length > 0)
-                    buildPicList(picItemWidth, 29, widget.selectedPoiEntity),
+                    buildPicList(picItemWidth, 29, widget.selectedPoiEntity.images),
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: Divider(
@@ -328,7 +328,7 @@ Widget buildHeadItem(BuildContext context,IconData icon, String info, {String hi
 }
 
 Widget buildPicList(
-    double itemWidth, double topValue, ConfirmPoiItem confirmPoiItem) {
+    double itemWidth, double topValue, List<String> images) {
   //print("image = hahaha");
   //print("image = " + confirmPoiItem.images.toString());
   return Container(
@@ -341,7 +341,7 @@ Widget buildPicList(
             padding: const EdgeInsets.only(right: 15.0),
             child: InkWell(
               onTap: () {
-                ImagePickers.previewImages(confirmPoiItem.images,index);
+                ImagePickers.previewImages(images,index);
               },
               child: Container(
                 width: itemWidth,
@@ -353,7 +353,7 @@ Widget buildPicList(
                   borderRadius: BorderRadius.circular(3.0),
                   child: FadeInImage.assetNetwork(
                     placeholder: 'res/drawable/img_placeholder.jpg',
-                    image: confirmPoiItem.images[index],
+                    image: images[index],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -361,7 +361,7 @@ Widget buildPicList(
             ),
           );
         },
-        itemCount: confirmPoiItem.images.length),
+        itemCount: images.length),
   );
 }
 

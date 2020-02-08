@@ -15,6 +15,10 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/discover/dapp/ncov/bloc/bloc.dart';
 import 'package:titan/src/business/infomation/news_nConv_page.dart';
+import 'package:titan/src/business/position/model/confirm_poi_item.dart';
+import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
+import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/widget/drag_tick.dart';
 import '../../../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import 'package:titan/src/consts/consts.dart';
@@ -28,6 +32,7 @@ class NcovMapPage extends StatefulWidget {
 
 class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderStateMixin {
   NcovBloc _ncovBloc = NcovBloc();
+  var picItemWidth;
   MapboxMapController mapboxMapController;
   PublishSubject<dynamic> _toLocationEventSubject = PublishSubject<dynamic>();
   bool myLocationEnabled = false;
@@ -109,6 +114,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
+    picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
+
     return BlocBuilder<NcovBloc, NcovState>(
         bloc: _ncovBloc,
         builder: (context, state) {
@@ -147,46 +154,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                         },
                         child: Text('显示bottom sheet'),
                       ),
-                      NotificationListener<myWidget.DraggableScrollableNotification>(
-                        onNotification: (notification) {
-                          if (notification.extent <= notification.anchorExtent) {
-                            print('xxx ${notification.extent}');
-                            _mapPositionAnimationController.value = notification.extent;
-                          }
-                          return false;
-                        },
-                        child: myWidget.DraggableScrollableSheet(
-                          key: _poiDraggablePanelKey,
-                          maxChildSize: 1.0,
-                          anchorSize: 0.66,
-                          minChildSize: 0.3,
-                          initialChildSize: 0.3,
-                          draggable: true,
-                          expand: true,
-                          builder: (BuildContext ctx, ScrollController scrollController) {
-                            //TODO 设置选中POI的panel view
-                            return Container(
-                              color: Colors.white70,
-                              child: SingleChildScrollView(
-                                controller: scrollController,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Text('hello, this is demo'),
-                                    RaisedButton(
-                                      onPressed: () {
-                                        myWidget.DraggableScrollableActuator.setHide(context);
-                                        _mapPositionAnimationController.value = 0;
-                                      },
-                                      child: Text('隐藏bottom sheet'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      _buildPanelView(),
                     ],
                   );
                 },
@@ -545,6 +513,126 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                 actions: actions,
               );
       },
+    );
+  }
+
+  Widget _buildPanelView() {
+    return NotificationListener<myWidget.DraggableScrollableNotification>(
+      onNotification: (notification) {
+        if (notification.extent <= notification.anchorExtent) {
+          print('xxx ${notification.extent}');
+          _mapPositionAnimationController.value = notification.extent;
+        }
+        return false;
+      },
+      child: myWidget.DraggableScrollableSheet(
+        key: _poiDraggablePanelKey,
+        maxChildSize: 1.0,
+        anchorSize: 0.66,
+        minChildSize: 0.3,
+        initialChildSize: 0.3,
+        draggable: true,
+        expand: true,
+        builder: (BuildContext ctx, ScrollController scrollController) {
+          //TODO 设置选中POI的panel view
+          return Container(
+            padding: const EdgeInsets.only(top: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+              color: Colors.white70,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 20.0,
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Stack(
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8, bottom: 8),
+                          child: DragTick(),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: InkWell(
+                          onTap: () {
+                            myWidget.DraggableScrollableActuator.setHide(context);
+//                                            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right:10.0,top: 6),
+                            child: Icon(
+                              Icons.cancel,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left:16.0),
+                    child: Text(
+                      "hello, this is demo",
+                      style: TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 14,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left:16.0),
+                    child: buildHeadItem(context,
+                        Icons.location_on, "小区地址",
+                        hint: S.of(context).no_detail_address),
+                  ),
+                  Divider(
+                    height: 0,
+                  ),
+//                                      if (widget.selectedPoiEntity.images != null &&
+//                                          widget.selectedPoiEntity.images.length > 0)
+                                      buildPicList(picItemWidth, 29, ['http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',]),
+
+                  _buildInfoItem("确诊人数：","1"),
+                  _buildInfoItem("人员类型：","本地人"),
+                  _buildInfoItem("是否居家/在医院隔离：","是"),
+                  _buildInfoItem("居住属性：","租住"),
+                  _buildInfoItem("症状：","发热、腹泻、浑身乏力"),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(String title,String content) {
+    return Padding(
+      padding: const EdgeInsets.only(left:16,bottom:8.0),
+      child: Row(
+        children: <Widget>[
+          Text(title,style: TextStyles.textC777S14,),
+          Expanded(child: Text(content,style: TextStyles.textC333S14,))
+        ],
+      ),
     );
   }
 }
