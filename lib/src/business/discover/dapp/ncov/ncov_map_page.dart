@@ -41,6 +41,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   List<NcovCountLevelModel> levelList = List();
 
   AnimationController _mapPositionAnimationController;
+  final PublishSubject<double> _updateMapPositionSubject = PublishSubject<double>();
   final GlobalKey _poiDraggablePanelKey = GlobalKey(debugLabel: 'nCovPoiDraggablePanelKey');
 
   @override
@@ -70,6 +71,11 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
       value: 0,
       vsync: this,
     );
+
+    _updateMapPositionSubject.debounceTime(Duration(milliseconds: 50)).listen((lastValue) {
+//      _mapPositionAnimationController.animateTo(lastValue, curve: Curves.linearToEaseOut);
+      _mapPositionAnimationController.value = lastValue;
+    });
 
     super.initState();
   }
@@ -107,6 +113,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   @override
   void dispose() {
     _ncovBloc.close();
+    _updateMapPositionSubject.close();
     _toLocationEventSubject.close();
     _mapPositionAnimationController.dispose();
 
@@ -506,8 +513,9 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     return NotificationListener<myWidget.DraggableScrollableNotification>(
       onNotification: (notification) {
         if (notification.extent <= notification.anchorExtent) {
-          print('xxx ${notification.extent}');
-          _mapPositionAnimationController.value = notification.extent;
+//          print('xxx ${notification.extent}');
+//          _mapPositionAnimationController.value = notification.extent;
+          _updateMapPositionSubject.sink.add(notification.extent);
         }
         return false;
       },
@@ -554,6 +562,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                         child: InkWell(
                           onTap: () {
                             myWidget.DraggableScrollableActuator.setHide(context);
+                            _updateMapPositionSubject.sink.add(0);
 //                                            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
                           },
                           child: Padding(
