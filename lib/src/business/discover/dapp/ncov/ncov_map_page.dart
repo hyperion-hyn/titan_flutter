@@ -158,7 +158,6 @@ class NcovMapPageState extends State<NcovMapPage> {
                     ),
                   ),
                 ),
-                _ncovPanel(),
                 Positioned(
                   bottom: 32,
                   right: 16,
@@ -471,9 +470,6 @@ class NcovMapPageState extends State<NcovMapPage> {
     );
   }
 
-  Widget _ncovPanel() {
-
-  }
 }
 
 class NcovCountLevelModel {
