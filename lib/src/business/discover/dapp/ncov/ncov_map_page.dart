@@ -151,7 +151,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                         onNotification: (notification) {
                           if (notification.extent <= notification.anchorExtent) {
                             print('xxx ${notification.extent}');
-                      _mapPositionAnimationController.value = notification.extent;
+                            _mapPositionAnimationController.value = notification.extent;
                           }
                           return false;
                         },
@@ -176,6 +176,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                                     RaisedButton(
                                       onPressed: () {
                                         myWidget.DraggableScrollableActuator.setHide(context);
+                                        _mapPositionAnimationController.value = 0;
                                       },
                                       child: Text('隐藏bottom sheet'),
                                     ),
