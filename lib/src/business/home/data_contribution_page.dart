@@ -262,7 +262,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SelectPositionPage(initLocation: latlng),
+                builder: (context) => SelectPositionPage(initLocation: latlng, type: SelectPositionPage.SELECT_PAGE_TYPE_POI,),
               ),
             );
           }
@@ -286,7 +286,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SelectPositionPage(initLocation: latlng),
+                builder: (context) => SelectPositionPage(initLocation: latlng, type: SelectPositionPage.SELECT_PAGE_TYPE_NCOV,),
               ),
             );
           }

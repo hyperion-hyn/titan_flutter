@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/business/position/add_ncov_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/global.dart';
@@ -9,8 +10,11 @@ import 'package:titan/src/business/position/add_position_page.dart';
 
 class SelectPositionPage extends StatefulWidget {
   final LatLng initLocation;
+  final String type;
+  static const String SELECT_PAGE_TYPE_POI = "select_page_type_poi";
+  static const String SELECT_PAGE_TYPE_NCOV = "select_page_type_ncov";
 
-  SelectPositionPage({this.initLocation});
+  SelectPositionPage({this.initLocation, this.type});
 
   @override
   State<StatefulWidget> createState() {
@@ -94,12 +98,21 @@ class _SelectPositionState extends State<SelectPositionPage> {
                   ],
                 );
               } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddPositionPage(latLng),
-                  ),
-                );
+                if (widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddNcovPage(latLng),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddPositionPage(latLng),
+                    ),
+                  );
+                }
               }
             },
             child: Container(

@@ -44,8 +44,11 @@ class _AddNcovState extends State<AddNcovPage> {
   TextEditingController _addressController = TextEditingController();
   TextEditingController _addressHouseNumController = TextEditingController();
   TextEditingController _addressPostcodeController = TextEditingController();
-  TextEditingController _detailPhoneNumController = TextEditingController();
-  TextEditingController _detailWebsiteController = TextEditingController();
+  TextEditingController _numbersController = TextEditingController();
+  TextEditingController _categoryController = TextEditingController();
+  TextEditingController _tripController = TextEditingController();
+  TextEditingController _recordController = TextEditingController();
+  TextEditingController _safeController = TextEditingController();
 
   double _inputHeight = 40.0;
   var _isAcceptSignalProtocol = true;
@@ -109,7 +112,7 @@ class _AddNcovState extends State<AddNcovPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          "",
+          "添加确诊信息",
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -201,7 +204,7 @@ class _AddNcovState extends State<AddNcovPage> {
 
   Widget _buildBody() {
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.only(top: 8),
       child: Stack(
         children: <Widget>[
           SingleChildScrollView(
@@ -209,11 +212,17 @@ class _AddNcovState extends State<AddNcovPage> {
               key: _addressNameKey,
               child: Column(
                 children: <Widget>[
-                  _buildCategoryCell(),
                   _buildAddressNameCell(),
-                  _buildPhotosCell(),
                   _buildAddressCell(),
-                  _buildDetailCell(),
+                  _buildPhotosCell(),
+                  _buildNumbersCell(),
+                  _buildCategoryCell(),
+                  _buildIsolationCell(),
+                  _buildPropertyCell(),
+                  _buildSymptomsCell(),
+                  _buildTripCell(),
+                  _buildRecordCell(),
+                  _buildSafeCell(),
                   _buildSubmitView(),
                 ],
               ),
@@ -225,49 +234,10 @@ class _AddNcovState extends State<AddNcovPage> {
     );
   }
 
-  Widget _buildCategoryCell() {
-    String _categoryText = "";
-    if (_categoryItem == null || _categoryItem.title == null) {
-      _categoryText = _categoryDefaultText;
-    } else {
-      _categoryText = _categoryItem.title;
-    }
-
-    return InkWell(
-      onTap: () {
-        _pushCategory();
-      },
-      child: Container(
-          height: 40,
-          decoration: new BoxDecoration(color: Colors.white),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            // // 主轴方向（横向）对齐方式
-            crossAxisAlignment: CrossAxisAlignment.center,
-            // 交叉轴（竖直）对其方式
-            children: <Widget>[
-              _buildTitleRow('category', Size(18, 18), S.of(context).category, true, isCategory: true),
-              Spacer(),
-              Padding(
-                  padding: const EdgeInsets.only(right: 4),
-                  child: Text(_categoryText, style: TextStyle(color: DefaultColors.color777, fontSize: 14))),
-              Padding(
-                padding: const EdgeInsets.only(right: 14),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          )),
-    );
-  }
-
   Widget _buildAddressNameCell() {
     return Column(
       children: <Widget>[
-        _buildTitleRow('name', Size(18, 18), S.of(context).name, true),
+        _buildTitleRow('landmark', Size(20, 13), "地标名称", true),
         Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
@@ -275,7 +245,7 @@ class _AddNcovState extends State<AddNcovPage> {
             controller: _addressNameController,
             validator: (value) {
               if (value == null || value.trim().length == 0) {
-                return S.of(context).place_name_cannot_be_empty_hint;
+                return "小区/地标名称不能为空";
               } else {
                 return null;
               }
@@ -285,7 +255,7 @@ class _AddNcovState extends State<AddNcovPage> {
             },
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: S.of(context).please_enter_name_of_location_hint,
+              hintText: "请输入小区/地标名称",
               hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
             ),
             keyboardType: TextInputType.text,
@@ -313,7 +283,7 @@ class _AddNcovState extends State<AddNcovPage> {
 
     return Column(
       children: <Widget>[
-        _buildTitleRow('camera', Size(19, 15), S.of(context).scene_photographed, true),
+        _buildTitleRow('camera', Size(19, 15), "情景图片", true),
         Container(
           height: containerHeight,
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
@@ -386,6 +356,88 @@ class _AddNcovState extends State<AddNcovPage> {
     );
   }
 
+  Widget _buildNumbersCell() {
+    return Column(
+      children: <Widget>[
+        _buildTitleRow('numbers', Size(18, 18), "确诊人数", false),
+        Container(
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          decoration: new BoxDecoration(color: Colors.white),
+          child: TextFormField(
+            controller: _numbersController,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "请输入确诊人数",
+              hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+            ),
+            keyboardType: TextInputType.text,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryCell() {
+    return Column(
+      children: <Widget>[
+        _buildTitleRow('category', Size(18, 18), "人员类型", false),
+        Container(
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          decoration: new BoxDecoration(color: Colors.white),
+          child: TextFormField(
+            controller: _categoryController,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "本地人/湖北来穗工程师/来穗出差办公等",
+              hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+            ),
+            keyboardType: TextInputType.text,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIsolationCell() {
+    return Column(
+      children: <Widget>[
+        _buildDetailTitleRow("是否居家/在医院隔离"),
+
+      ],
+    );
+  }
+
+
+  Widget _buildPropertyCell() {
+    return Column(
+      children: <Widget>[
+        _buildDetailTitleRow("居家属性"),
+
+      ],
+    );
+  }
+
+  Widget _buildSymptomsCell() {
+    return Column(
+      children: <Widget>[
+        _buildDetailTitleRow("是否有如下症状"),
+
+      ],
+    );
+  }
+
+  Widget _buildTripCell() {
+    return _buildDetailCellRow("人员行程", "如：1月1号从家到菜市场买菜，1月3号医院就诊。", _tripController);
+  }
+
+  Widget _buildRecordCell() {
+    return _buildDetailCellRow("接触记录", "如：1月1号跟黄某某打牌2个小时。1月2号跟蒋某某喝茶谈笑1小时。1月4号去超市买菜。", _recordController);
+  }
+
+  Widget _buildSafeCell() {
+    return _buildDetailCellRow("安全防疫", "如：小区已经封锁，只允许本小区人员出入。进入小区需要做健康检查小区楼道电梯每隔2小时消毒一次。", _safeController);
+  }
+
   Widget _buildAddressCell() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,65 +500,6 @@ class _AddNcovState extends State<AddNcovPage> {
               _buildAddressCellRow(S.of(context).house_number, S.of(context).please_enter_door_number_hint, _addressHouseNumController),
               _divider(),
               _buildAddressCellRow(S.of(context).postal_code, S.of(context).please_enter_postal_code, _addressPostcodeController),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDetailCell() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        _buildTitleRow('detail', Size(18, 18), S.of(context).detail, false),
-        Container(
-          height: 140,
-          decoration: new BoxDecoration(color: Colors.white),
-          child: ListView(
-            physics: NeverScrollableScrollPhysics(),
-            children: <Widget>[
-              InkWell(
-                onTap: () {
-                  _pushTime();
-                },
-                child: Container(
-                    height: 40,
-                    padding: const EdgeInsets.only(left: 15, right: 14),
-                    decoration: new BoxDecoration(color: Colors.white),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      // // 主轴方向（横向）对齐方式
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      // 交叉轴（竖直）对其方式
-                      children: <Widget>[
-                        Image.asset('res/drawable/ic_user_poi_business_time.png', width: 19, height: 19),
-                        Container(
-                          padding: const EdgeInsets.only(left: 28, right: 20),
-                          child: Container(
-                            width: 230,
-                            child: Text(
-                              _timeText ?? _timeDefaultText,
-                              textAlign: TextAlign.left,
-                              overflow: TextOverflow.clip,
-                              style:
-                                  TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 14,
-                          color: Colors.grey,
-                        ),
-                      ],
-                    )),
-              ),
-              _divider(),
-              _buildDetailCellRow('ic_user_poi_phone_num', S.of(context).phone_number, TextInputType.number, _detailPhoneNumController),
-              _divider(),
-              _buildDetailCellRow('ic_user_poi_web_site', S.of(context).website, TextInputType.emailAddress, _detailWebsiteController),
             ],
           ),
         ),
@@ -580,16 +573,6 @@ class _AddNcovState extends State<AddNcovPage> {
                         });
                       },
                     ),
-                    /*Container(
-                      child: Text(
-                        S.of(context).geographical_position,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),*/
                     Padding(
                       padding: const EdgeInsets.only(left: 5),
                       child: Text(
@@ -663,37 +646,55 @@ class _AddNcovState extends State<AddNcovPage> {
         ));
   }
 
-  Widget _buildDetailCellRow(
-      String imageName, String hintText, TextInputType keyboardType, TextEditingController controller) {
-    return Container(
-        height: 40,
-        padding: const EdgeInsets.only(left: 15, right: 14),
-        decoration: new BoxDecoration(color: Colors.white),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // // 主轴方向（横向）对齐方式
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // 交叉轴（竖直）对其方式
-          children: <Widget>[
-            Image.asset('res/drawable/$imageName.png', width: 19, height: 19),
-            Padding(
-              padding: const EdgeInsets.only(right: 10, left: 28),
-              child: SizedBox(
-                width: 200,
-                child: TextFormField(
-                  controller: controller,
-                  style: TextStyle(fontSize: 14),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: hintText,
-                    hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
-                  ),
-                  keyboardType: keyboardType,
-                ),
-              ),
+
+  Widget _buildDetailCellRow(String title, String hintText, TextEditingController controller) {
+    return Column(
+      children: <Widget>[
+        _buildDetailTitleRow(title),
+        Container(
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          decoration: new BoxDecoration(color: Colors.white),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.multiline,
+            maxLength: null,
+            maxLines: null,
+            style: TextStyle(fontSize: 13),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: hintText,
+              hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+              hintMaxLines: 3
             ),
-          ],
-        ));
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailTitleRow(String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      // // 主轴方向（横向）对齐方式
+      crossAxisAlignment: CrossAxisAlignment.center,
+      // 交叉轴（竖直）对其方式
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
+        ),
+        Padding(
+            padding: const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            child: Text(
+              title,
+              overflow: TextOverflow.clip,
+              style: TextStyle(
+                color: DefaultColors.color333,
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+              ),
+            )),
+      ],
+    );
   }
 
   Widget _buildTitleRow(String imageName, Size size, String title, bool isVisibleStar, {bool isCategory = false}) {
@@ -744,39 +745,6 @@ class _AddNcovState extends State<AddNcovPage> {
     });
   }
 
-  _pushCategory() async {
-    var categoryItem = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SelectCategoryPage(),
-      ),
-    );
-    if (categoryItem is CategoryItem) {
-      setState(() {
-        _categoryItem = categoryItem;
-      });
-    }
-  }
-
-  _pushTime() async {
-    var _timeItem = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BusinessTimePage(),
-      ),
-    );
-
-    if (_timeItem is BusinessInfo) {
-      String dayText = "";
-      for (var item in _timeItem.dayList) {
-        if (!item.isCheck) continue;
-        dayText += "${item.label}、";
-      }
-      setState(() {
-        _timeText = _timeItem.timeStr + " " + dayText;
-      });
-    }
-  }
 
   _uploadPoiData() {
     //print('[add] --> 存储中。。。');
@@ -823,12 +791,12 @@ class _AddNcovState extends State<AddNcovPage> {
     var poiName = _maxLengthLimit(_addressNameController);
     var poiAddress = _maxLengthLimit(_addressController, isDetailAddress: true);
     var poiHouseNum = _maxLengthLimit(_addressHouseNumController);
-    var poiPhoneNum = _maxLengthLimit(_detailPhoneNumController);
-    var poiWebsite = _maxLengthLimit(_detailWebsiteController);
+    var poiNumberNum = _maxLengthLimit(_numbersController);
+    var poiCategory = _maxLengthLimit(_categoryController);
     var postalCode = _maxLengthLimit(_addressPostcodeController);
 
     var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city, county,
-        poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite);
+        poiAddress, "", poiHouseNum, postalCode, _timeText, poiNumberNum, poiCategory);
 
     var model = PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
     _positionBloc.add(StartPostPoiDataEvent(model));
