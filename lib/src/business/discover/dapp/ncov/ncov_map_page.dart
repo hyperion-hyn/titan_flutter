@@ -15,6 +15,8 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/discover/dapp/ncov/bloc/bloc.dart';
 import 'package:titan/src/business/infomation/news_nConv_page.dart';
+import '../../../../widget/draggable_scrollable_sheet.dart' as myWidget;
+
 import 'package:titan/src/consts/consts.dart';
 
 class NcovMapPage extends StatefulWidget {
@@ -24,7 +26,7 @@ class NcovMapPage extends StatefulWidget {
   }
 }
 
-class NcovMapPageState extends State<NcovMapPage> {
+class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderStateMixin {
   NcovBloc _ncovBloc = NcovBloc();
   MapboxMapController mapboxMapController;
   PublishSubject<dynamic> _toLocationEventSubject = PublishSubject<dynamic>();
@@ -33,15 +35,15 @@ class NcovMapPageState extends State<NcovMapPage> {
   int _clickTimes = 0;
   List<NcovCountLevelModel> levelList = List();
 
+  AnimationController _mapPositionAnimationController;
+  final GlobalKey _poiDraggablePanelKey = GlobalKey(debugLabel: 'nCovPoiDraggablePanelKey');
+
   @override
   void initState() {
     //to my location
-    _toLocationEventSubject
-        .debounceTime(Duration(milliseconds: 500))
-        .listen((_) async {
+    _toLocationEventSubject.debounceTime(Duration(milliseconds: 500)).listen((_) async {
       bool needUpdate = enableMyLocation(true);
-      bool trackModeChange =
-          updateMyLocationTrackingMode(MyLocationTrackingMode.Tracking);
+      bool trackModeChange = updateMyLocationTrackingMode(MyLocationTrackingMode.Tracking);
       if (needUpdate || trackModeChange) {
         await Future.delayed(Duration(milliseconds: 300));
       }
@@ -50,15 +52,19 @@ class NcovMapPageState extends State<NcovMapPage> {
       double doubleClickZoom = 16;
       if (latLng != null) {
         if (_clickTimes > 1) {
-          mapboxMapController?.animateCameraWithTime(
-              CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
+          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
         } else if (!trackModeChange) {
-          mapboxMapController?.animateCameraWithTime(
-              CameraUpdate.newLatLng(latLng), 700);
+          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
         }
       }
       _clickTimes = 0;
     });
+
+    _mapPositionAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      value: 0,
+      vsync: this,
+    );
 
     super.initState();
   }
@@ -96,6 +102,7 @@ class NcovMapPageState extends State<NcovMapPage> {
   @override
   void dispose() {
     _toLocationEventSubject.close();
+    _mapPositionAnimationController.dispose();
 
     super.dispose();
   }
@@ -106,15 +113,13 @@ class NcovMapPageState extends State<NcovMapPage> {
         bloc: _ncovBloc,
         builder: (context, state) {
           return Scaffold(
+            backgroundColor: Color(0xff2B344A),
             appBar: AppBar(
               title: Text(S.of(context).epidemic_map),
               actions: <Widget>[
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NewsNcovPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => NewsNcovPage()));
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -127,57 +132,114 @@ class NcovMapPageState extends State<NcovMapPage> {
                 )
               ],
             ),
-            body: Stack(
-              fit: StackFit.loose,
-              children: <Widget>[
-                _mapView(), //need a container to expand.
-                Positioned(
-                  bottom: 16,
-                  left: 16,
-                  child: IgnorePointer(
-                    child: Container(
-                      height: 130,
-                      width: 108,
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          color: Colors.white54,
-                          borderRadius: BorderRadius.circular(4)),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: new NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return _buildItem(levelList[index]);
+            body: myWidget.DraggableScrollableActuator(
+              child: Builder(
+                builder: (context) {
+                  return Stack(
+                    children: <Widget>[
+                      _mapView(), //need a container to expand.
+                      _buildNorm(),
+                      _buildMyLocation(),
+
+                      RaisedButton(
+                        onPressed: () {
+                          myWidget.DraggableScrollableActuator.setMin(context);
                         },
-                        separatorBuilder: (context, index) {
-                          return Container(
-                            height: 6,
-                          );
-                        },
-                        itemCount: levelList.length,
+                        child: Text('显示bottom sheet'),
                       ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 32,
-                  right: 16,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      _fireToMyLocation();
-                    },
-                    mini: true,
-                    heroTag: 'myLocation',
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.my_location,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-              ],
+                      NotificationListener<myWidget.DraggableScrollableNotification>(
+                        onNotification: (notification) {
+                          if (notification.extent <= notification.anchorExtent) {
+                            print('xxx ${notification.extent}');
+                      _mapPositionAnimationController.value = notification.extent;
+                          }
+                          return false;
+                        },
+                        child: myWidget.DraggableScrollableSheet(
+                          key: _poiDraggablePanelKey,
+                          maxChildSize: 1.0,
+                          anchorSize: 0.66,
+                          minChildSize: 0.3,
+                          initialChildSize: 0.3,
+                          draggable: true,
+                          expand: true,
+                          builder: (BuildContext ctx, ScrollController scrollController) {
+                            //TODO 设置选中POI的panel view
+                            return Container(
+                              color: Colors.white70,
+                              child: SingleChildScrollView(
+                                controller: scrollController,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Text('hello, this is demo'),
+                                    RaisedButton(
+                                      onPressed: () {
+                                        myWidget.DraggableScrollableActuator.setHide(context);
+                                      },
+                                      child: Text('隐藏bottom sheet'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           );
         });
+  }
+
+  Widget _buildNorm() {
+    return Positioned(
+      bottom: 16,
+      left: 16,
+      child: IgnorePointer(
+        child: Container(
+          height: 130,
+          width: 108,
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(color: Colors.white54, borderRadius: BorderRadius.circular(4)),
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: new NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return _buildItem(levelList[index]);
+            },
+            separatorBuilder: (context, index) {
+              return Container(
+                height: 6,
+              );
+            },
+            itemCount: levelList.length,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMyLocation() {
+    return Positioned(
+      bottom: 32,
+      right: 16,
+      child: FloatingActionButton(
+        onPressed: () {
+          _fireToMyLocation();
+        },
+        mini: true,
+        heroTag: 'myLocation',
+        backgroundColor: Colors.white,
+        child: Icon(
+          Icons.my_location,
+          color: Colors.black87,
+        ),
+      ),
+    );
   }
 
   Widget _buildItem(NcovCountLevelModel model) {
@@ -213,25 +275,46 @@ class NcovMapPageState extends State<NcovMapPage> {
   }
 
   Widget _mapView() {
-    return MapboxMap(
-      compassEnabled: false,
-      initialCameraPosition: CameraPosition(
-        target: LatLng(39.919730, 116.399345),
-        zoom: 7,
-      ),
-      styleString: Const.kNcovMapStyleCn,
-      onStyleLoaded: onStyleLoaded,
-      myLocationEnabled: myLocationEnabled,
-      myLocationTrackingMode: locationTrackingMode,
-      trackCameraPosition: true,
-      rotateGesturesEnabled: false,
-      tiltGesturesEnabled: false,
-      enableLogo: false,
-      enableAttribution: false,
-      minMaxZoomPreference: MinMaxZoomPreference(1.1, 18.0),
-      languageEnable: false,
-      onMapClick: (point, coordinates) {
-        _onMapClick(point, coordinates);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        double minSize = 0.45 * constraints.biggest.height;
+        var expandedRelative = RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
+        var topRelative = RelativeRect.fromLTRB(0.0, -minSize, 0.0, minSize);
+        final Animation<RelativeRect> panelAnimation = _mapPositionAnimationController.drive(
+          RelativeRectTween(
+            begin: expandedRelative,
+            end: topRelative,
+          ),
+        );
+
+        return Stack(
+          children: <Widget>[
+            PositionedTransition(
+              rect: panelAnimation,
+              child: MapboxMap(
+                compassEnabled: false,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(39.919730, 116.399345),
+                  zoom: 7,
+                ),
+                styleString: Const.kNcovMapStyleCn,
+                onStyleLoaded: onStyleLoaded,
+                myLocationEnabled: myLocationEnabled,
+                myLocationTrackingMode: locationTrackingMode,
+                trackCameraPosition: true,
+                rotateGesturesEnabled: false,
+                tiltGesturesEnabled: false,
+                enableLogo: false,
+                enableAttribution: false,
+                minMaxZoomPreference: MinMaxZoomPreference(1.1, 18.0),
+                languageEnable: false,
+                onMapClick: (point, coordinates) {
+                  _onMapClick(point, coordinates);
+                },
+              ),
+            ),
+          ],
+        );
       },
     );
     /*return MapContainer(
@@ -249,8 +332,7 @@ class NcovMapPageState extends State<NcovMapPage> {
     }*/
 
     var range = 10;
-    Rect rect = Rect.fromLTRB(
-        point.x - range, point.y - range, point.x + range, point.y + range);
+    Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
     /*if (await _clickOnMarkerLayer(rect)) {
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
       return;
@@ -274,8 +356,7 @@ class NcovMapPageState extends State<NcovMapPage> {
     if (Platform.isIOS) {
       filter = "name != NIL";
     }
-    List features = await mapboxMapController?.queryRenderedFeaturesInRect(
-        rect, [], filter);
+    List features = await mapboxMapController?.queryRenderedFeaturesInRect(rect, [], filter);
 
     print("query features :$features");
     var filterFeatureList = features.where((featureString) {
@@ -377,22 +458,19 @@ class NcovMapPageState extends State<NcovMapPage> {
   }
 
   void _fireToMyLocation() async {
-    ServiceStatus serviceStatus =
-        await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
 
     if (serviceStatus == ServiceStatus.disabled) {
       _showGoToOpenLocationServceDialog();
       return;
     }
 
-    PermissionStatus permission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.location);
+    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
     if (permission == PermissionStatus.granted) {
       _toMyLocationSink();
     } else {
       Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler()
-              .requestPermissions([PermissionGroup.location]);
+          await PermissionHandler().requestPermissions([PermissionGroup.location]);
       if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
         _toMyLocationSink();
         Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
@@ -450,8 +528,7 @@ class NcovMapPageState extends State<NcovMapPage> {
     );
   }
 
-  Widget _showDialogWidget(
-      {Widget title, Widget content, List<Widget> actions}) {
+  Widget _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -469,7 +546,6 @@ class NcovMapPageState extends State<NcovMapPage> {
       },
     );
   }
-
 }
 
 class NcovCountLevelModel {
