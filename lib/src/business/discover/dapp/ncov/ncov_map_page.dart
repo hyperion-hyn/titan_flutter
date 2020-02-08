@@ -106,6 +106,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
 
   @override
   void dispose() {
+    _ncovBloc.close();
     _toLocationEventSubject.close();
     _mapPositionAnimationController.dispose();
 
@@ -154,7 +155,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                         },
                         child: Text('显示bottom sheet'),
                       ),
-                      _buildPanelView(),
+                      _buildPanelView(context),
                     ],
                   );
                 },
@@ -193,22 +194,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   }
 
   Widget _buildMyLocation() {
-    return Positioned(
-      bottom: 32,
-      right: 16,
-      child: FloatingActionButton(
-        onPressed: () {
-          _fireToMyLocation();
-        },
-        mini: true,
-        heroTag: 'myLocation',
-        backgroundColor: Colors.white,
-        child: Icon(
-          Icons.my_location,
-          color: Colors.black87,
-        ),
-      ),
-    );
+    return LocationWidget(onTap: _fireToMyLocation);
   }
 
   Widget _buildItem(NcovCountLevelModel model) {
@@ -246,7 +232,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   Widget _mapView() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        double minSize = 0.45 * constraints.biggest.height;
+        double minSize = 0.55 * constraints.biggest.height;
         var expandedRelative = RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
         var topRelative = RelativeRect.fromLTRB(0.0, -minSize, 0.0, minSize);
         final Animation<RelativeRect> panelAnimation = _mapPositionAnimationController.drive(
@@ -516,7 +502,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     );
   }
 
-  Widget _buildPanelView() {
+  Widget _buildPanelView(BuildContext context) {
     return NotificationListener<myWidget.DraggableScrollableNotification>(
       onNotification: (notification) {
         if (notification.extent <= notification.anchorExtent) {
@@ -632,6 +618,37 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
           Text(title,style: TextStyles.textC777S14,),
           Expanded(child: Text(content,style: TextStyles.textC333S14,))
         ],
+      ),
+    );
+  }
+}
+
+class LocationWidget extends StatefulWidget {
+  final Function onTap;
+
+  LocationWidget({this.onTap});
+
+  @override
+  State<StatefulWidget> createState() {
+    return LocationWidgetState();
+  }
+}
+
+class LocationWidgetState extends State<LocationWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 32,
+      right: 16,
+      child: FloatingActionButton(
+        onPressed: widget.onTap,
+        mini: true,
+        heroTag: 'myLocation',
+        backgroundColor: Colors.white,
+        child: Icon(
+          Icons.my_location,
+          color: Colors.black87,
+        ),
       ),
     );
   }
