@@ -131,7 +131,7 @@ class _AddNcovState extends State<AddNcovPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FinishAddNcovPage(FinishAddNcovPage.FINISH_PAGE_TYPE_ADD),
+              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
             ),
           );
         } else if (state is FailPostPoiDataState) {
