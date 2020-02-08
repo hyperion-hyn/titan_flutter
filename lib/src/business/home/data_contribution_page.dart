@@ -112,10 +112,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       builder: (BuildContext context, WalletState state) {
         if (state is WalletEmptyState) {
           return _walletTipsView();
-//          return _listView();
         } else if (state is ShowWalletState) {
           currentWalletVo = state.wallet;
-//          return _walletTipsView();
           return _listView();
         } else if (state is ScanWalletLoadingState) {
           return _buildLoading(context);
@@ -277,6 +275,18 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               context,
               MaterialPageRoute(
                 builder: (context) => ConfirmPositionPage(userPosition: latlng),
+              ),
+            );
+          }
+        }, isOpen: true),
+        _divider(),
+        _buildItem('position', "添加新冠病毒疫情信息", () async {
+          var latlng = await getLatlng();
+          if (latlng != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectPositionPage(initLocation: latlng),
               ),
             );
           }
