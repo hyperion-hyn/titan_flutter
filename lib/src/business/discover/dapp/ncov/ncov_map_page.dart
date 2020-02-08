@@ -42,7 +42,9 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
 
   AnimationController _mapPositionAnimationController;
   final PublishSubject<double> _updateMapPositionSubject = PublishSubject<double>();
+
   final GlobalKey _poiDraggablePanelKey = GlobalKey(debugLabel: 'nCovPoiDraggablePanelKey');
+  final GlobalKey _fabsContainerKey = GlobalKey(debugLabel: 'locationFabsContainerKey');
 
   @override
   void initState() {
@@ -148,11 +150,11 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
               ],
             ),
             body: myWidget.DraggableScrollableActuator(
-              child: Builder(
-                builder: (context) {
+              child: LayoutBuilder(
+                builder: (context, BoxConstraints constraints) {
                   return Stack(
                     children: <Widget>[
-                      _mapView(), //need a container to expand.
+                      _mapView(constraints), //need a container to expand.
                       _buildNorm(),
                       _buildMyLocation(),
 
@@ -162,7 +164,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                         },
                         child: Text('显示bottom sheet'),
                       ),
-                      _buildPanelView(context),
+                      _buildPanelView(context, constraints),
                     ],
                   );
                 },
@@ -201,7 +203,10 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   }
 
   Widget _buildMyLocation() {
-    return LocationWidget(onTap: _fireToMyLocation);
+    return LocationWidget(
+      onTap: _fireToMyLocation,
+      key: _fabsContainerKey,
+    );
   }
 
   Widget _buildItem(NcovCountLevelModel model) {
@@ -236,48 +241,44 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     );
   }
 
-  Widget _mapView() {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        double minSize = 0.55 * constraints.biggest.height;
-        var expandedRelative = RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
-        var topRelative = RelativeRect.fromLTRB(0.0, -minSize, 0.0, minSize);
-        final Animation<RelativeRect> panelAnimation = _mapPositionAnimationController.drive(
-          RelativeRectTween(
-            begin: expandedRelative,
-            end: topRelative,
-          ),
-        );
+  Widget _mapView(BoxConstraints constraints) {
+    double minSize = 0.50 * constraints.biggest.height;
+    var expandedRelative = RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
+    var topRelative = RelativeRect.fromLTRB(0.0, -minSize, 0.0, minSize);
+    final Animation<RelativeRect> panelAnimation = _mapPositionAnimationController.drive(
+      RelativeRectTween(
+        begin: expandedRelative,
+        end: topRelative,
+      ),
+    );
 
-        return Stack(
-          children: <Widget>[
-            PositionedTransition(
-              rect: panelAnimation,
-              child: MapboxMap(
-                compassEnabled: false,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(39.919730, 116.399345),
-                  zoom: 7,
-                ),
-                styleString: Const.kNcovMapStyleCn,
-                onStyleLoaded: onStyleLoaded,
-                myLocationEnabled: myLocationEnabled,
-                myLocationTrackingMode: locationTrackingMode,
-                trackCameraPosition: true,
-                rotateGesturesEnabled: false,
-                tiltGesturesEnabled: false,
-                enableLogo: false,
-                enableAttribution: false,
-                minMaxZoomPreference: MinMaxZoomPreference(1.1, 18.0),
-                languageEnable: false,
-                onMapClick: (point, coordinates) {
-                  _onMapClick(point, coordinates);
-                },
-              ),
+    return Stack(
+      children: <Widget>[
+        PositionedTransition(
+          rect: panelAnimation,
+          child: MapboxMap(
+            compassEnabled: false,
+            initialCameraPosition: CameraPosition(
+              target: LatLng(39.919730, 116.399345),
+              zoom: 7,
             ),
-          ],
-        );
-      },
+            styleString: Const.kNcovMapStyleCn,
+            onStyleLoaded: onStyleLoaded,
+            myLocationEnabled: myLocationEnabled,
+            myLocationTrackingMode: locationTrackingMode,
+            trackCameraPosition: true,
+            rotateGesturesEnabled: false,
+            tiltGesturesEnabled: false,
+            enableLogo: false,
+            enableAttribution: false,
+            minMaxZoomPreference: MinMaxZoomPreference(1.1, 18.0),
+            languageEnable: false,
+            onMapClick: (point, coordinates) {
+              _onMapClick(point, coordinates);
+            },
+          ),
+        ),
+      ],
     );
     /*return MapContainer(
       key: GlobalKey(debugLabel: '__mapffa__'),
@@ -490,7 +491,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     );
   }
 
-  Widget _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {
+  void _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -509,7 +510,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     );
   }
 
-  Widget _buildPanelView(BuildContext context) {
+  Widget _buildPanelView(BuildContext context, BoxConstraints constraints) {
     return NotificationListener<myWidget.DraggableScrollableNotification>(
       onNotification: (notification) {
         if (notification.extent <= notification.anchorExtent) {
@@ -517,6 +518,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
 //          _mapPositionAnimationController.value = notification.extent;
           _updateMapPositionSubject.sink.add(notification.extent);
         }
+        var maxHeight = constraints.biggest.height;
+        updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
         return false;
       },
       child: myWidget.DraggableScrollableSheet(
@@ -532,9 +535,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
           return Container(
             padding: const EdgeInsets.only(top: 4),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-              color: Colors.white70,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black26,
@@ -563,10 +565,11 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                           onTap: () {
                             myWidget.DraggableScrollableActuator.setHide(context);
                             _updateMapPositionSubject.sink.add(0);
+                            updateFabsPosition(0, constraints.biggest.height);
 //                                            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
                           },
                           child: Padding(
-                            padding: const EdgeInsets.only(right:10.0,top: 6),
+                            padding: const EdgeInsets.only(right: 10.0, top: 6),
                             child: Icon(
                               Icons.cancel,
                               color: Colors.grey,
@@ -577,39 +580,38 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left:16.0),
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Text(
                       "hello, this is demo",
-                      style: TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.w500),
+                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
                     ),
                   ),
                   SizedBox(
                     height: 14,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left:16.0),
-                    child: buildHeadItem(context,
-                        Icons.location_on, "小区地址",
-                        hint: S.of(context).no_detail_address),
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: buildHeadItem(context, Icons.location_on, "小区地址", hint: S.of(context).no_detail_address),
                   ),
                   Divider(
                     height: 0,
                   ),
 //                                      if (widget.selectedPoiEntity.images != null &&
 //                                          widget.selectedPoiEntity.images.length > 0)
-                                      buildPicList(picItemWidth, 29, ['http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',]),
+                  buildPicList(picItemWidth, 29, [
+                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                    'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
+                  ]),
 
-                  _buildInfoItem("确诊人数：","1"),
-                  _buildInfoItem("人员类型：","本地人"),
-                  _buildInfoItem("是否居家/在医院隔离：","是"),
-                  _buildInfoItem("居住属性：","租住"),
-                  _buildInfoItem("症状：","发热、腹泻、浑身乏力"),
+                  _buildInfoItem("确诊人数：", "1"),
+                  _buildInfoItem("人员类型：", "本地人"),
+                  _buildInfoItem("是否居家/在医院隔离：", "是"),
+                  _buildInfoItem("居住属性：", "租住"),
+                  _buildInfoItem("症状：", "发热、腹泻、浑身乏力"),
                 ],
               ),
             ),
@@ -619,23 +621,37 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     );
   }
 
-  Widget _buildInfoItem(String title,String content) {
+  Widget _buildInfoItem(String title, String content) {
     return Padding(
-      padding: const EdgeInsets.only(left:16,bottom:8.0),
+      padding: const EdgeInsets.only(left: 16, bottom: 8.0),
       child: Row(
         children: <Widget>[
-          Text(title,style: TextStyles.textC777S14,),
-          Expanded(child: Text(content,style: TextStyles.textC333S14,))
+          Text(
+            title,
+            style: TextStyles.textC777S14,
+          ),
+          Expanded(
+              child: Text(
+            content,
+            style: TextStyles.textC333S14,
+          ))
         ],
       ),
     );
+  }
+
+  void updateFabsPosition(double bottom, double anchorHeight) {
+    var state = (_fabsContainerKey.currentState is LocationWidgetState)
+        ? _fabsContainerKey.currentState as LocationWidgetState
+        : null;
+    WidgetsBinding.instance.addPostFrameCallback((_) => state?.updateBottomPadding(bottom, anchorHeight));
   }
 }
 
 class LocationWidget extends StatefulWidget {
   final Function onTap;
 
-  LocationWidget({this.onTap});
+  LocationWidget({this.onTap, Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -644,19 +660,49 @@ class LocationWidget extends StatefulWidget {
 }
 
 class LocationWidgetState extends State<LocationWidget> {
+  double _fabsBottom = 16;
+  double _opacity = 1;
+
+  void updateBottomPadding(double bottom, double anchorHeight) {
+    if (bottom >= 0 && bottom <= anchorHeight) {
+      setState(() {
+        _fabsBottom = bottom;
+        _opacity = 1;
+      });
+    }
+    if (bottom > anchorHeight) {
+      double dy = _fabsBottom + 50 - bottom;
+      if (dy > 0) {
+        setState(() {
+          _opacity = dy / 50;
+        });
+      } else if (_opacity != 0) {
+        setState(() {
+          _opacity = 0;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 32,
+      bottom: _fabsBottom + 16,
       right: 16,
-      child: FloatingActionButton(
-        onPressed: widget.onTap,
-        mini: true,
-        heroTag: 'myLocation',
-        backgroundColor: Colors.white,
-        child: Icon(
-          Icons.my_location,
-          color: Colors.black87,
+      child: IgnorePointer(
+        ignoring: _opacity == 0,
+        child: Opacity(
+          opacity: _opacity,
+          child: FloatingActionButton(
+            onPressed: widget.onTap,
+            mini: true,
+            heroTag: 'myLocation',
+            backgroundColor: Colors.white,
+            child: Icon(
+              Icons.my_location,
+              color: Colors.black87,
+            ),
+          ),
         ),
       ),
     );
