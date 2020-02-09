@@ -239,6 +239,7 @@ class _AddNcovState extends State<AddNcovPage> {
       child: Stack(
         children: <Widget>[
           SingleChildScrollView(
+            controller: _scrollController,
             child: Form(
               key: _addressNameKey,
               child: Column(
