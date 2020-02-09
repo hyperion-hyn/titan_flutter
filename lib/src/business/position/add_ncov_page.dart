@@ -922,7 +922,10 @@ class _AddNcovState extends State<AddNcovPage> {
     var road = address;
     var houseNumber = _maxLengthLimit(_addressHouseNumController);
     var postCode = _maxLengthLimit(_addressPostcodeController);
-    int confirmedCount = int.parse(_numbersController.text);
+    int confirmedCount = 0;
+    if(_numbersController.text.length > 0) {
+      confirmedCount = int.parse(_numbersController.text);
+    }
     var confirmedType = _maxLengthLimit(_categoryController);
     var isolation = _isolationText;
     var isolationHouseType = _isolationHouseTypeText;
