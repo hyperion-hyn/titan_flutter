@@ -290,7 +290,7 @@ class NcovMapPageState extends State<NcovMapPage>
               target: LatLng(39.919730, 116.399345),
               zoom: 7,
             ),
-            styleString: "https://cn.tile.map3.network/ncov_test.json",
+            styleString: Const.kNCovMapStyle,
 //            styleString: Const.kNcovMapStyleCn,
             onStyleLoaded: onStyleLoaded,
             myLocationEnabled: myLocationEnabled,

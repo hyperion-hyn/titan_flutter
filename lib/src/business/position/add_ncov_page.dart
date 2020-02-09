@@ -125,7 +125,7 @@ class _AddNcovState extends State<AddNcovPage> {
       S.of(context).symptoms_diarrhea,
       S.of(context).symptoms_breathing_difficult,
     ];
-    _symptomsList = _symptomsDefaultList.sublist(0, 1);
+//    _symptomsList = _symptomsDefaultList.sublist(0, 1);
   }
 
   @override
