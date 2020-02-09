@@ -567,7 +567,6 @@ class NcovMapPageState extends State<NcovMapPage>
     return NotificationListener<myWidget.DraggableScrollableNotification>(
       onNotification: (notification) {
         if (notification.extent <= notification.anchorExtent) {
-//          print('xxx ${notification.extent}');
 //          _mapPositionAnimationController.value = notification.extent;
           _updateMapPositionSubject.sink.add(notification.extent);
         }
@@ -678,7 +677,7 @@ class NcovMapPageState extends State<NcovMapPage>
                       _buildInfoItem(S.of(context).ncov_cell_title_category, ncovPoiEntity.confirmedType),
                       _buildInfoItem(S.of(context).ncov_cell_title_isolation, ncovPoiEntity.isolation),
                       _buildInfoItem(S.of(context).ncov_cell_title_property, ncovPoiEntity.isolationHouseType),
-                      _buildInfoItem(S.of(context).ncov_cell_title_symptoms, symptomsText+ncovPoiEntity.symptomsDetail.trim()),
+                      _buildInfoItem(S.of(context).symptoms, symptomsText+ncovPoiEntity.symptomsDetail.trim()),
                       _buildInfoItem(S.of(context).ncov_cell_title_trip, ncovPoiEntity.trip),
                       _buildInfoItem(S.of(context).ncov_cell_title_records, ncovPoiEntity.contactRecords),
                       _buildInfoItem(S.of(context).ncov_cell_title_safe, ncovPoiEntity.securityMeasures),

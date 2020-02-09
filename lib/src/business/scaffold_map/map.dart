@@ -413,7 +413,6 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       var pid = firstFeature["properties"]["pid"];
       if (pid != null) {
         var l = position_model.Location.fromJson(firstFeature['geometry']);
-        print('xxx33 $l $firstFeature');
         ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid, l);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
       } else {

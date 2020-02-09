@@ -317,7 +317,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
         });
-//        print('xxx panelMax $panelMax, panelMin $panelMin, panelAnchor $panelAnchor, panelInitSize $panelInitSize');
 
         //---------------------------
         //set opt bar
