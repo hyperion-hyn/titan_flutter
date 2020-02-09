@@ -373,7 +373,7 @@
   "ncov_cell_title_desc": "详细描述",
   "ncov_cell_hint_input_desc": "请输入症状详细描述",
   "ncov_cell_title_property": "居家属性",
-  "ncov_cell_title_isolation": "是否居家/在医院隔离",
+  "ncov_cell_title_isolation": "是否居家/医院隔离",
   "ncov_cell_title_category": "人员类型",
   "ncov_cell_hint_category": "如：本地人/湖北来穗工程师/来穗出差办公等",
   "ncov_cell_title_numbers": "确诊人数",
@@ -385,5 +385,6 @@
   "add_ncov_confirmed_info": "添加确诊信息",
   "add_ncov_others": "其他",
   "selecte_confirmed_position": "选择确诊位置",
-  "add_ncov_item_title": "添加新冠病毒疫情信息"
+  "add_ncov_item_title": "添加新冠病毒疫情信息",
+  "symptoms": "出现症状"
 }
