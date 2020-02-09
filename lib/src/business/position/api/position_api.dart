@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/business/discover/dapp/ncov/model/ncov_poi_entity.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/position/model/confirm_poi_network_item.dart';
@@ -166,6 +167,17 @@ class PositionApi {
         }, contentType: "application/json"));
 
     return data['data'];
+  }
+
+  Future<List<NcovPoiEntity>> mapGetNcovUserPoiData(String pid,{String lang = "zh-Hans"}) async {
+    var data = await HttpCore.instance.getEntity(
+        "/map-collector/ncov/poi/detail/$pid",
+        EntityFactory<List<NcovPoiEntity>>((list) =>
+            (list as List).map((item) => NcovPoiEntity.fromJson(item)).toList()),
+        options: RequestOptions(headers: {
+          "Lang": lang,
+        }, contentType: "application/json"));
+    return data;
   }
 
 }
