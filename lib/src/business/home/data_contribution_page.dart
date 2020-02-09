@@ -280,7 +280,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', S.of(context).add_ncov_item_title, () async {
+        _buildItem('ncov', S.of(context).add_ncov_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -381,6 +381,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
   }
 
   Widget _buildItem(String iconName, String title, Function ontap, {bool isOpen = false}) {
+    print('xxx res/drawable/data_contribution_$iconName.png');
     return InkWell(
       onTap: ontap,
       child: Row(
