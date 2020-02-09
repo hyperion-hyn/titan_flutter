@@ -81,6 +81,34 @@ class NcovPoiEntity extends Object {
   factory NcovPoiEntity.fromJson(Map<String, dynamic> srcJson) => _$NcovPoiEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$NcovPoiEntityToJson(this);
+
+  static NcovPoiEntity setPid(String pid, Location location) {
+    var ncovPoiEntity = NcovPoiEntity(
+        pid,
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        location,
+        [""],
+        "",
+        "",
+        "",
+        -1,
+        "",
+        "",
+        "",
+        [""],
+        "",
+        "",
+        "",
+        ""
+    );
+    return ncovPoiEntity;
+  }
+
 }
 
 @JsonSerializable()

@@ -427,6 +427,8 @@ class NcovMapPageState extends State<NcovMapPage>
       var pid = firstFeature["properties"]["pid"];
       var type = firstFeature["properties"]["type"];
       if ("ncov_community_user" == type) {
+        // todo: location
+        print('[ncov_map] --> pid:$pid');
         var location =
             position_model.Location.fromJson(firstFeature['geometry']);
         NcovPoiEntity ncovPoiEntity =
