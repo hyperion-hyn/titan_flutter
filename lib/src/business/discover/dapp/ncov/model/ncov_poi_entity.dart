@@ -1,12 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-  
+
 part 'ncov_poi_entity.g.dart';
 
-
 @JsonSerializable()
-  class NcovPoiEntity extends Object {
-
+class NcovPoiEntity extends Object {
   @JsonKey(name: 'id')
   String id;
 
@@ -71,7 +69,7 @@ part 'ncov_poi_entity.g.dart';
   String contactRecords;
 
   LatLng get latLng {
-    if(location?.coordinates != null) {
+    if (location?.coordinates != null) {
       return LatLng(location.coordinates[1], location.coordinates[0]);
     }
     return null;
@@ -83,25 +81,23 @@ part 'ncov_poi_entity.g.dart';
   factory NcovPoiEntity.fromJson(Map<String, dynamic> srcJson) => _$NcovPoiEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$NcovPoiEntityToJson(this);
-
 }
 
-  
 @JsonSerializable()
-  class Location extends Object {
-
+class Location extends Object {
   @JsonKey(name: 'coordinates')
   List<double> coordinates;
 
   @JsonKey(name: 'type')
   String type;
 
-  Location(this.coordinates,this.type,);
+  Location(
+    this.coordinates,
+    this.type,
+  );
 
-  factory Location.fromJson(Map<String, dynamic> srcJson) => _$LocationFromJson(srcJson);
+  factory Location.fromJson(Map<String, dynamic> srcJson) =>
+      _$LocationFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$LocationToJson(this);
-
 }
-
-  

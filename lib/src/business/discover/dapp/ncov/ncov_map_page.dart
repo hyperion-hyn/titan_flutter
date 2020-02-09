@@ -15,13 +15,16 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/discover/dapp/ncov/bloc/bloc.dart';
 import 'package:titan/src/business/infomation/news_nConv_page.dart';
-import 'package:titan/src/business/position/model/confirm_poi_item.dart';
+import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import '../../../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import 'package:titan/src/consts/consts.dart';
+
+import 'model/ncov_poi_entity.dart';
+import 'model/ncov_poi_entity.dart' as position_model;
 
 class NcovMapPage extends StatefulWidget {
   @override
@@ -30,7 +33,8 @@ class NcovMapPage extends StatefulWidget {
   }
 }
 
-class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderStateMixin {
+class NcovMapPageState extends State<NcovMapPage>
+    with SingleTickerProviderStateMixin {
   NcovBloc _ncovBloc = NcovBloc();
   var picItemWidth;
   MapboxMapController mapboxMapController;
@@ -39,19 +43,28 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   MyLocationTrackingMode locationTrackingMode = MyLocationTrackingMode.None;
   int _clickTimes = 0;
   List<NcovCountLevelModel> levelList = List();
+  Symbol showingSymbol;
+  NcovPoiEntity currentPoi;
+  BuildContext layoutBuilderContext;
 
   AnimationController _mapPositionAnimationController;
-  final PublishSubject<double> _updateMapPositionSubject = PublishSubject<double>();
+  final PublishSubject<double> _updateMapPositionSubject =
+      PublishSubject<double>();
 
-  final GlobalKey _poiDraggablePanelKey = GlobalKey(debugLabel: 'nCovPoiDraggablePanelKey');
-  final GlobalKey _fabsContainerKey = GlobalKey(debugLabel: 'locationFabsContainerKey');
+  final GlobalKey _poiDraggablePanelKey =
+      GlobalKey(debugLabel: 'nCovPoiDraggablePanelKey');
+  final GlobalKey _fabsContainerKey =
+      GlobalKey(debugLabel: 'locationFabsContainerKey');
 
   @override
   void initState() {
     //to my location
-    _toLocationEventSubject.debounceTime(Duration(milliseconds: 500)).listen((_) async {
+    _toLocationEventSubject
+        .debounceTime(Duration(milliseconds: 500))
+        .listen((_) async {
       bool needUpdate = enableMyLocation(true);
-      bool trackModeChange = updateMyLocationTrackingMode(MyLocationTrackingMode.Tracking);
+      bool trackModeChange =
+          updateMyLocationTrackingMode(MyLocationTrackingMode.Tracking);
       if (needUpdate || trackModeChange) {
         await Future.delayed(Duration(milliseconds: 300));
       }
@@ -60,9 +73,11 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
       double doubleClickZoom = 16;
       if (latLng != null) {
         if (_clickTimes > 1) {
-          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
+          mapboxMapController?.animateCameraWithTime(
+              CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
         } else if (!trackModeChange) {
-          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
+          mapboxMapController?.animateCameraWithTime(
+              CameraUpdate.newLatLng(latLng), 700);
         }
       }
       _clickTimes = 0;
@@ -74,9 +89,23 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
       vsync: this,
     );
 
-    _updateMapPositionSubject.debounceTime(Duration(milliseconds: 50)).listen((lastValue) {
+    _updateMapPositionSubject
+        .debounceTime(Duration(milliseconds: 50))
+        .listen((lastValue) {
 //      _mapPositionAnimationController.animateTo(lastValue, curve: Curves.linearToEaseOut);
       _mapPositionAnimationController.value = lastValue;
+    });
+
+    _ncovBloc.listen((state) {
+      if (state is LoadPoiPanelState) {
+        addMarker(state.ncovPoiEntity);
+      } else if (state is ShowPoiPanelState) {
+        myWidget.DraggableScrollableActuator.setMin(context);
+      } else if (state is ClearSelectPoiState) {
+        if (layoutBuilderContext != null) {
+          hidePoiPanel(layoutBuilderContext, 0);
+        }
+      }
     });
 
     super.initState();
@@ -168,10 +197,47 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                     ],
                   );
                 },
-              ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    S.of(context).ncov_guide,
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
+          body: myWidget.DraggableScrollableActuator(
+            child: LayoutBuilder(
+              builder: (context, BoxConstraints constraints) {
+                layoutBuilderContext = context;
+                return Stack(
+                  children: <Widget>[
+                    _mapView(constraints), //need a container to expand.
+                    _buildNorm(),
+                    _buildMyLocation(),
+
+                    /*RaisedButton(
+                          onPressed: () {
+                            myWidget.DraggableScrollableActuator.setMin(
+                                context);
+                          },
+                          child: Text('显示bottom sheet'),
+                        ),*/
+                    if (state is ShowPoiPanelState ||
+                        state is LoadPoiPanelState)
+                      _buildPanelView(context, constraints, state),
+//                    if(state is LoadPoiPanelState)
+//                      LoadingPanel(scrollController: controller)
+                  ],
+                );
+              },
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildNorm() {
@@ -183,7 +249,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
           height: 130,
           width: 108,
           padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(color: Colors.white54, borderRadius: BorderRadius.circular(4)),
+          decoration: BoxDecoration(
+              color: Colors.white54, borderRadius: BorderRadius.circular(4)),
           child: ListView.separated(
             shrinkWrap: true,
             physics: new NeverScrollableScrollPhysics(),
@@ -245,7 +312,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     double minSize = 0.50 * constraints.biggest.height;
     var expandedRelative = RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
     var topRelative = RelativeRect.fromLTRB(0.0, -minSize, 0.0, minSize);
-    final Animation<RelativeRect> panelAnimation = _mapPositionAnimationController.drive(
+    final Animation<RelativeRect> panelAnimation =
+        _mapPositionAnimationController.drive(
       RelativeRectTween(
         begin: expandedRelative,
         end: topRelative,
@@ -288,6 +356,49 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     );*/
   }
 
+  void addMarker(NcovPoiEntity poi) async {
+    bool shouldNeedAddSymbol = true;
+
+    if (currentPoi != null) {
+      if (currentPoi.latLng != poi.latLng) {
+        //位置不同，先删除再添加新的Marker
+        removeMarker();
+      } else {
+        //位置相同，不需要再添加Marker
+        shouldNeedAddSymbol = false;
+      }
+    }
+
+    if (shouldNeedAddSymbol) {
+      showingSymbol = await mapboxMapController?.addSymbol(
+        SymbolOptions(
+          geometry: poi.latLng,
+          iconImage: "hyn_marker_big",
+          iconAnchor: "bottom",
+          iconOffset: Offset(0.0, 3.0),
+        ),
+      );
+
+      CameraPosition p = await mapboxMapController?.getCameraPosition();
+      if (p != null && p.zoom >= 17) {
+        mapboxMapController?.animateCamera(CameraUpdate.newLatLng(poi.latLng));
+      } else {
+        mapboxMapController
+            ?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+      }
+
+      currentPoi = poi;
+    }
+  }
+
+  void removeMarker() {
+    if (showingSymbol != null) {
+      mapboxMapController?.removeSymbol(showingSymbol);
+    }
+    showingSymbol = null;
+    currentPoi = null;
+  }
+
   void _onMapClick(Point<double> point, LatLng coordinates) async {
     /*if (widget.mapClickHandle != null) {
       if (await widget.mapClickHandle(context, point, coordinates)) {
@@ -296,7 +407,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     }*/
 
     var range = 10;
-    Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
+    Rect rect = Rect.fromLTRB(
+        point.x - range, point.y - range, point.x + range, point.y + range);
     /*if (await _clickOnMarkerLayer(rect)) {
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
       return;
@@ -307,9 +419,9 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     }
 
     //if click nothing on the map
-//    if (this.currentPoi != null) {
-//      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-//    }
+    if (this.currentPoi != null) {
+      _ncovBloc.add(ClearSelectPoiEvent());
+    }
   }
 
   Future<bool> _clickOnCommonSymbolLayer(Rect rect) async {
@@ -320,7 +432,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     if (Platform.isIOS) {
       filter = "name != NIL";
     }
-    List features = await mapboxMapController?.queryRenderedFeaturesInRect(rect, [], filter);
+    List features = await mapboxMapController?.queryRenderedFeaturesInRect(
+        rect, [], filter);
 
     print("query features :$features");
     var filterFeatureList = features.where((featureString) {
@@ -351,6 +464,15 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
         name = firstFeature["properties"]["name"];
       }
 
+      var pid = firstFeature["properties"]["pid"];
+      var type = firstFeature["properties"]["type"];
+      if ("ncov_community_user" == type) {
+        var location =
+            position_model.Location.fromJson(firstFeature['geometry']);
+        NcovPoiEntity ncovPoiEntity =
+            NcovPoiEntity.setPid(pid, location);
+        _ncovBloc.add(ShowPoiPanelEvent(ncovPoiEntity));
+      }
       //the same poi
       /*if (currentPoi?.latLng == coordinates) {
         print('click the same poi');
@@ -422,19 +544,22 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   }
 
   void _fireToMyLocation() async {
-    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+    ServiceStatus serviceStatus =
+        await PermissionHandler().checkServiceStatus(PermissionGroup.location);
 
     if (serviceStatus == ServiceStatus.disabled) {
       _showGoToOpenLocationServceDialog();
       return;
     }
 
-    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+    PermissionStatus permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.location);
     if (permission == PermissionStatus.granted) {
       _toMyLocationSink();
     } else {
       Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler().requestPermissions([PermissionGroup.location]);
+          await PermissionHandler()
+              .requestPermissions([PermissionGroup.location]);
       if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
         _toMyLocationSink();
         Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
@@ -511,7 +636,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     );
   }
 
-  Widget _buildPanelView(BuildContext context, BoxConstraints constraints) {
+  Widget _buildPanelView(
+      BuildContext context, BoxConstraints constraints, NcovState state) {
     return NotificationListener<myWidget.DraggableScrollableNotification>(
       onNotification: (notification) {
         if (notification.extent <= notification.anchorExtent) {
@@ -520,113 +646,127 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
           _updateMapPositionSubject.sink.add(notification.extent);
         }
         var maxHeight = constraints.biggest.height;
-        updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
+        updateFabsPosition(notification.extent * maxHeight,
+            notification.anchorExtent * maxHeight);
         return false;
       },
       child: myWidget.DraggableScrollableSheet(
-        key: _poiDraggablePanelKey,
-        maxChildSize: 1.0,
-        anchorSize: 0.66,
-        minChildSize: 0.3,
-        initialChildSize: 0.3,
-        draggable: true,
-        expand: true,
-        builder: (BuildContext ctx, ScrollController scrollController) {
-          //TODO 设置选中POI的panel view
-          return Container(
-            padding: const EdgeInsets.only(top: 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 20.0,
+          key: _poiDraggablePanelKey,
+          maxChildSize: 1.0,
+          anchorSize: 0.66,
+          minChildSize: 0.3,
+          initialChildSize: 0.3,
+          draggable: true,
+          expand: true,
+          builder: (BuildContext ctx, ScrollController scrollController) {
+            if (state is LoadPoiPanelState) {
+              if(state.ncovPoiEntity == null){
+                return FailPanel(scrollController: scrollController);
+              }
+              return LoadingPanel(scrollController: scrollController);
+            } else {
+              var ncovPoiEntity = (state as ShowPoiPanelState).ncovPoiEntity;
+              return Container(
+                padding: const EdgeInsets.only(top: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16)),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 20.0,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Stack(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8, bottom: 8),
-                          child: DragTick(),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: InkWell(
-                          onTap: () {
-                            myWidget.DraggableScrollableActuator.setHide(context);
-                            _updateMapPositionSubject.sink.add(0);
-                            updateFabsPosition(0, constraints.biggest.height);
-//                                            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 10.0, top: 6),
-                            child: Icon(
-                              Icons.cancel,
-                              color: Colors.grey,
+                      Stack(
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8, bottom: 8),
+                              child: DragTick(),
                             ),
                           ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: InkWell(
+                              onTap: () {
+                                hidePoiPanel(
+                                    context, constraints.biggest.height);
+//                            myWidget.DraggableScrollableActuator.setHide(
+//                                context);
+//                            _updateMapPositionSubject.sink.add(0);
+//                            updateFabsPosition(0, constraints.biggest.height);
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(right: 10.0, top: 6),
+                                child: Icon(
+                                  Icons.cancel,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          ncovPoiEntity.name,
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w500),
                         ),
-                      )
+                      ),
+                      SizedBox(
+                        height: 14,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, bottom: 5),
+                        child: buildHeadItem(
+                            context, Icons.location_on, ncovPoiEntity.address,
+                            hint: S.of(context).no_detail_address),
+                      ),
+                      Divider(
+                        height: 0,
+                      ),
+                      if (ncovPoiEntity.images != null &&
+                          ncovPoiEntity.images.length > 0)
+                        buildPicList(picItemWidth, 16, ncovPoiEntity.images),
+                      _buildInfoItem(
+                          "确诊人数：", ncovPoiEntity.confirmedCount.toString()),
+                      _buildInfoItem("人员类型：", ncovPoiEntity.confirmedType),
+                      _buildInfoItem("是否居家/在医院隔离：", ncovPoiEntity.isolation),
+                      _buildInfoItem("居住属性：", ncovPoiEntity.isolationHouseType),
+                      _buildInfoItem("症状：", ncovPoiEntity.symptomsDetail),
+                      _buildInfoItem("人员行程：", ncovPoiEntity.trip),
+                      _buildInfoItem("接触记录：", ncovPoiEntity.contactRecords),
+                      _buildInfoItem("安全防疫：", ncovPoiEntity.securityMeasures),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      "hello, this is demo",
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 14,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left:16.0,bottom: 5),
-                    child: buildHeadItem(context,
-                        Icons.location_on, "小区地址",
-                        hint: S.of(context).no_detail_address),
-                  ),
-                  // Todo: 测试数据
-                  Divider(
-                    height: 0,
-                  ),
-//                                      if (widget.selectedPoiEntity.images != null &&
-//                                          widget.selectedPoiEntity.images.length > 0)
-                                      buildPicList(picItemWidth, 16, ['http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
-                                        'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',]),
-
-                  _buildInfoItem(S.of(context).ncov_cell_title_numbers + "：", "1"),
-                  _buildInfoItem(S.of(context).ncov_cell_title_category + "：", "本地人"),
-                  _buildInfoItem(S.of(context).ncov_cell_title_isolation + "：", "是"),
-                  _buildInfoItem(S.of(context).ncov_cell_title_property + "：", "租住"),
-                  _buildInfoItem(S.of(context).ncov_cell_title_symptoms + "：", "发热、腹泻、浑身乏力"),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+                ),
+              );
+            }
+          }),
     );
   }
 
   Widget _buildInfoItem(String title, String content) {
+    if (content == null || content.isEmpty) {
+      content = S.of(context).search_empty_data;
+    }
     return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 8.0),
+      padding: const EdgeInsets.only(left: 16, bottom: 8.0, right: 16),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             title,
@@ -646,7 +786,16 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     var state = (_fabsContainerKey.currentState is LocationWidgetState)
         ? _fabsContainerKey.currentState as LocationWidgetState
         : null;
-    WidgetsBinding.instance.addPostFrameCallback((_) => state?.updateBottomPadding(bottom, anchorHeight));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => state?.updateBottomPadding(bottom, anchorHeight));
+  }
+
+  void hidePoiPanel(BuildContext context, double anchorHeight) {
+    myWidget.DraggableScrollableActuator.setHide(context);
+    _updateMapPositionSubject.sink.add(0);
+    updateFabsPosition(0, anchorHeight);
+    removeMarker();
+    layoutBuilderContext = null;
   }
 }
 

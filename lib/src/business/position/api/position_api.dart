@@ -209,6 +209,16 @@ class PositionApi {
       logger.e(_);
       return -1;
     }
+
+  Future<List<NcovPoiEntity>> mapGetNcovUserPoiData(String pid,{String lang = "zh-Hans"}) async {
+    var data = await HttpCore.instance.getEntity(
+        "/map-collector/ncov/poi/detail/$pid",
+        EntityFactory<List<NcovPoiEntity>>((list) =>
+            (list as List).map((item) => NcovPoiEntity.fromJson(item)).toList()),
+        options: RequestOptions(headers: {
+          "Lang": lang,
+        }, contentType: "application/json"));
+    return data;
   }
 
 }
