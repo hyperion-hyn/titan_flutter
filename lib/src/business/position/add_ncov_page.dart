@@ -81,6 +81,8 @@ class _AddNcovState extends State<AddNcovPage> {
   PublishSubject<int> _filterSubject = PublishSubject<int>();
   int _requestOpenCageDataCount = 0;
 
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
 
@@ -538,9 +540,6 @@ class _AddNcovState extends State<AddNcovPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        SizedBox(
-          height: 8,
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           // // 主轴方向（横向）对齐方式
@@ -872,6 +871,7 @@ class _AddNcovState extends State<AddNcovPage> {
 
     // 0. 检测地点名称
     if (!_addressNameKey.currentState.validate()) {
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
       return;
     }
 
@@ -962,7 +962,7 @@ class _AddNcovState extends State<AddNcovPage> {
   }
 
   String _maxLengthLimit(TextEditingController controller, {bool isDetailAddress = false}) {
-    String text = controller.text ?? "";
+    String text = controller.text.trim() ?? "";
     if (isDetailAddress) {
       if (text.length > 200) {
         text = text.substring(0, 200);

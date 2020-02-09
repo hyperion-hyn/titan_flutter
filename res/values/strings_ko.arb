@@ -385,6 +385,5 @@
   "add_ncov_confirmed_info": "添加确诊信息",
   "add_ncov_others": "其他",
   "selecte_confirmed_position": "选择确诊位置",
-  "add_ncov_item_title": "添加新冠病毒疫情信息",
-  "show": "显示"
+  "add_ncov_item_title": "添加新冠病毒疫情信息"
 }

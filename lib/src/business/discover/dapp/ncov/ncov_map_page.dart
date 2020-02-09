@@ -21,7 +21,6 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import '../../../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
-import 'package:titan/src/consts/consts.dart';
 
 import 'model/ncov_poi_entity.dart';
 import 'model/ncov_poi_entity.dart' as position_model;
@@ -592,6 +591,17 @@ class NcovMapPageState extends State<NcovMapPage>
               return LoadingPanel(scrollController: scrollController);
             } else {
               var ncovPoiEntity = (state as ShowPoiPanelState).ncovPoiEntity;
+              var symptoms = ncovPoiEntity.symptoms;
+              var length = symptoms.length;
+              var symptomsText = "";
+              for(int i=0; i<length; i++){
+                if (i==length-1){
+                  symptomsText += symptoms[i]+"。";
+                } else {
+                  symptomsText += symptoms[i]+"，";
+                }
+              }
+
               return Container(
                 padding: const EdgeInsets.only(top: 4),
                 decoration: BoxDecoration(
@@ -667,7 +677,7 @@ class NcovMapPageState extends State<NcovMapPage>
                       _buildInfoItem(S.of(context).ncov_cell_title_category, ncovPoiEntity.confirmedType),
                       _buildInfoItem(S.of(context).ncov_cell_title_isolation, ncovPoiEntity.isolation),
                       _buildInfoItem(S.of(context).ncov_cell_title_property, ncovPoiEntity.isolationHouseType),
-                      _buildInfoItem(S.of(context).ncov_cell_title_symptoms, ncovPoiEntity.symptomsDetail),
+                      _buildInfoItem(S.of(context).ncov_cell_title_symptoms, symptomsText+ncovPoiEntity.symptomsDetail.trim()),
                       _buildInfoItem(S.of(context).ncov_cell_title_trip, ncovPoiEntity.trip),
                       _buildInfoItem(S.of(context).ncov_cell_title_records, ncovPoiEntity.contactRecords),
                       _buildInfoItem(S.of(context).ncov_cell_title_safe, ncovPoiEntity.securityMeasures),
