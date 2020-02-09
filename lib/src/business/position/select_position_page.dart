@@ -66,7 +66,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          S.of(context).select_position,
+          widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV?S.of(context).selecte_confirmed_position:S.of(context).select_position,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),

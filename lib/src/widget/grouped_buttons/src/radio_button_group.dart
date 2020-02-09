@@ -83,7 +83,7 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
   @override
   Widget build(BuildContext context) {
     //set the selected to the picked (if not null)
-    _selected = widget.picked ?? _selected;
+    //_selected = widget.picked ?? _selected;
 
     List<Widget> content = [];
     for (int i = 0; i < widget.labels.length; i++) {

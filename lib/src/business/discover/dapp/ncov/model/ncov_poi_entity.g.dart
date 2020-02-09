@@ -9,12 +9,18 @@ part of 'ncov_poi_entity.dart';
 NcovPoiEntity _$NcovPoiEntityFromJson(Map<String, dynamic> json) {
   return NcovPoiEntity(
     json['id'] as String,
+    json['country'] as String,
+    json['state'] as String,
+    json['city'] as String,
+    json['county'] as String,
     json['name'] as String,
     json['address'] as String,
     json['location'] == null
         ? null
         : Location.fromJson(json['location'] as Map<String, dynamic>),
     (json['images'] as List)?.map((e) => e as String)?.toList(),
+    json['road'] as String,
+    json['house_number'] as String,
     json['postcode'] as String,
     json['confirmed_count'] as int,
     json['confirmed_type'] as String,
@@ -31,10 +37,16 @@ NcovPoiEntity _$NcovPoiEntityFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$NcovPoiEntityToJson(NcovPoiEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'country': instance.country,
+      'state': instance.state,
+      'city': instance.city,
+      'county': instance.county,
       'name': instance.name,
       'address': instance.address,
       'location': instance.location,
       'images': instance.images,
+      'road': instance.road,
+      'house_number': instance.houseNumber,
       'postcode': instance.postcode,
       'confirmed_count': instance.confirmedCount,
       'confirmed_type': instance.confirmedType,
@@ -54,7 +66,12 @@ Location _$LocationFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
+/*Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
       'coordinates': instance.coordinates,
       'type': instance.type,
-    };
+    };*/
+
+Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
+ 'lat': instance.coordinates[0],
+  'lon': instance.coordinates[1],
+};

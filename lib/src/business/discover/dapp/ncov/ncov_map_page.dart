@@ -162,7 +162,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                         onPressed: () {
                           myWidget.DraggableScrollableActuator.setMin(context);
                         },
-                        child: Text('显示bottom sheet'),
+                        child: Text(S.of(context).show + " bottom sheet"),
                       ),
                       _buildPanelView(context, constraints),
                     ],
@@ -596,6 +596,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                         Icons.location_on, "小区地址",
                         hint: S.of(context).no_detail_address),
                   ),
+                  // Todo: 测试数据
                   Divider(
                     height: 0,
                   ),
@@ -608,11 +609,11 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                                         'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',
                                         'http://a4.att.hudong.com/03/25/20300001045622130690259454464.jpg',]),
 
-                  _buildInfoItem("确诊人数：", "1"),
-                  _buildInfoItem("人员类型：", "本地人"),
-                  _buildInfoItem("是否居家/在医院隔离：", "是"),
-                  _buildInfoItem("居住属性：", "租住"),
-                  _buildInfoItem("症状：", "发热、腹泻、浑身乏力"),
+                  _buildInfoItem(S.of(context).ncov_cell_title_numbers + "：", "1"),
+                  _buildInfoItem(S.of(context).ncov_cell_title_category + "：", "本地人"),
+                  _buildInfoItem(S.of(context).ncov_cell_title_isolation + "：", "是"),
+                  _buildInfoItem(S.of(context).ncov_cell_title_property + "：", "租住"),
+                  _buildInfoItem(S.of(context).ncov_cell_title_symptoms + "：", "发热、腹泻、浑身乏力"),
                 ],
               ),
             ),

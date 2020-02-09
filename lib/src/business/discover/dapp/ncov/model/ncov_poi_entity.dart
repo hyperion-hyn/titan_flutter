@@ -10,6 +10,18 @@ part 'ncov_poi_entity.g.dart';
   @JsonKey(name: 'id')
   String id;
 
+  @JsonKey(name: 'country')
+  String country;
+
+  @JsonKey(name: 'state')
+  String state;
+
+  @JsonKey(name: 'city')
+  String city;
+
+  @JsonKey(name: 'county')
+  String county;
+
   @JsonKey(name: 'name')
   String name;
 
@@ -21,6 +33,12 @@ part 'ncov_poi_entity.g.dart';
 
   @JsonKey(name: 'images')
   List<String> images;
+
+  @JsonKey(name: 'road')
+  String road;
+
+  @JsonKey(name: 'house_number')
+  String houseNumber;
 
   @JsonKey(name: 'postcode')
   String postcode;
@@ -59,7 +77,8 @@ part 'ncov_poi_entity.g.dart';
     return null;
   }
 
-  NcovPoiEntity(this.id,this.name,this.address,this.location,this.images,this.postcode,this.confirmedCount,this.confirmedType,this.isolation,this.isolationHouseType,this.symptoms,this.symptomsDetail,this.trip,this.securityMeasures,this.contactRecords,);
+  NcovPoiEntity(this.id, this.country, this.state, this.city,
+      this.county,this.name,this.address,this.location,this.images, this.road, this.houseNumber,this.postcode,this.confirmedCount,this.confirmedType,this.isolation,this.isolationHouseType,this.symptoms,this.symptomsDetail,this.trip,this.securityMeasures,this.contactRecords,);
 
   factory NcovPoiEntity.fromJson(Map<String, dynamic> srcJson) => _$NcovPoiEntityFromJson(srcJson);
 

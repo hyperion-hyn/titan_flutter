@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/discover/dapp/ncov/model/ncov_poi_entity.dart';
 import 'package:titan/src/business/position/bloc/bloc.dart';
 import 'package:titan/src/business/position/business_time_page.dart';
 import 'package:titan/src/business/position/model/business_time.dart';
@@ -56,13 +57,18 @@ class _AddNcovState extends State<AddNcovPage> {
   var _isAcceptSignalProtocol = true;
   var _themeColor = HexColor("#0F95B0");
 
-  String _propertyText = "";
-  String _symptomsText = "";
+  List<String> _isolationTextList = [];
+  String _isolationText = "";
+
+  List<String> _isolationHouseTypeTextList = [];
+  String _isolationHouseTypeText = "";
+
+  List<String> _symptomsDefaultList = [];
+  List<String> _symptomsList = [];
 
   List<Media> _listImagePaths = List();
   final int _listImagePathsMaxLength = 9;
-  CategoryItem _categoryItem;
-  String _timeText;
+
   String _addressText;
 
   Map<String, dynamic> _openCageData;
@@ -94,8 +100,32 @@ class _AddNcovState extends State<AddNcovPage> {
   }
 
   void _setupData() {
+    _isolationTextList = [
+      S.of(context).isolation_yes,
+      S.of(context).isolation_no,
+      S.of(context).isolation_unknown,
+    ];
+    _isolationText = _isolationTextList.first;
 
+    _isolationHouseTypeTextList = [
+      S.of(context).isolation_type_home,
+      S.of(context).isolation_type_rent,
+      S.of(context).isolation_type_stay,
+      S.of(context).isolation_type_hotel,
+      S.of(context).add_ncov_others,
+    ];
+    _isolationHouseTypeText = _isolationHouseTypeTextList.first;
 
+    _symptomsDefaultList = <String>[
+      S.of(context).symptoms_weak,
+      S.of(context).symptoms_hots,
+      S.of(context).symptoms_cough,
+      S.of(context).symptoms_stuffy,
+      S.of(context).symptoms_nose_running,
+      S.of(context).symptoms_diarrhea,
+      S.of(context).symptoms_breathing_difficult,
+    ];
+    _symptomsList = _symptomsDefaultList.sublist(0, 1);
   }
 
   @override
@@ -111,7 +141,7 @@ class _AddNcovState extends State<AddNcovPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          "添加确诊信息",
+          S.of(context).add_ncov_confirmed_info,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -128,7 +158,7 @@ class _AddNcovState extends State<AddNcovPage> {
       condition: (AllPageState fromState, AllPageState state) {
         //print('[add] --> state:${fromState}, toState:${state}');
 
-        if (state is SuccessPostPoiDataState) {
+        if (state is SuccessPostPoiNcovDataState) {
           createWalletPopUtilName = '/data_contribution_page';
           Navigator.push(
             context,
@@ -136,7 +166,7 @@ class _AddNcovState extends State<AddNcovPage> {
               builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
             ),
           );
-        } else if (state is FailPostPoiDataState) {
+        } else if (state is FailPostPoiNcovDataState) {
           setState(() {
             _isUploading = false;
           });
@@ -236,7 +266,7 @@ class _AddNcovState extends State<AddNcovPage> {
   Widget _buildAddressNameCell() {
     return Column(
       children: <Widget>[
-        _buildTitleRow('landmark', Size(20, 13), "地标名称", true),
+        _buildTitleRow('landmark', Size(20, 13), S.of(context).ncov_cell_title_name, true),
         Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
@@ -244,7 +274,7 @@ class _AddNcovState extends State<AddNcovPage> {
             controller: _addressNameController,
             validator: (value) {
               if (value == null || value.trim().length == 0) {
-                return "小区/地标名称不能为空";
+                return S.of(context).ncov_cell_hint_name_not_empty;
               } else {
                 return null;
               }
@@ -252,9 +282,10 @@ class _AddNcovState extends State<AddNcovPage> {
             onChanged: (String inputText) {
               //print('[add] --> inputText:${inputText}');
             },
+            style:  TextStyle(fontSize: 13),
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: "请输入小区/地标名称",
+              hintText: S.of(context).ncov_cell_hint_name,
               hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
             ),
             keyboardType: TextInputType.text,
@@ -282,7 +313,7 @@ class _AddNcovState extends State<AddNcovPage> {
 
     return Column(
       children: <Widget>[
-        _buildTitleRow('camera', Size(19, 15), "情景图片", true),
+        _buildTitleRow('camera', Size(19, 15), S.of(context).ncov_cell_title_scene_images, false),
         Container(
           height: containerHeight,
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
@@ -358,18 +389,19 @@ class _AddNcovState extends State<AddNcovPage> {
   Widget _buildNumbersCell() {
     return Column(
       children: <Widget>[
-        _buildTitleRow('numbers', Size(18, 18), "确诊人数", false),
+        _buildTitleRow('numbers', Size(18, 18), S.of(context).ncov_cell_title_numbers, false),
         Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
           child: TextFormField(
             controller: _numbersController,
+            //style:  TextStyle(fontSize: 13),
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: "请输入确诊人数",
+              hintText: S.of(context).ncov_cell_hint_numbers,
               hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
             ),
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.number,
           ),
         ),
       ],
@@ -379,15 +411,16 @@ class _AddNcovState extends State<AddNcovPage> {
   Widget _buildCategoryCell() {
     return Column(
       children: <Widget>[
-        _buildTitleRow('category', Size(18, 18), "人员类型", false),
+        _buildTitleRow('category', Size(18, 18), S.of(context).ncov_cell_title_category, false),
         Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
           decoration: new BoxDecoration(color: Colors.white),
           child: TextFormField(
             controller: _categoryController,
+            style:  TextStyle(fontSize: 13),
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: "本地人/湖北来穗工程师/来穗出差办公等",
+              hintText: S.of(context).ncov_cell_hint_category,
               hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
             ),
             keyboardType: TextInputType.text,
@@ -400,14 +433,11 @@ class _AddNcovState extends State<AddNcovPage> {
   Widget _buildIsolationCell() {
     return Column(
       children: <Widget>[
-        _buildDetailTitleRow("是否居家/在医院隔离"),
+        _buildDetailTitleRow(S.of(context).ncov_cell_title_isolation),
         RadioButtonGroup(
           orientation: GroupedButtonsOrientation.HORIZONTAL,
-          labels: [
-            "是",
-            "否",
-            "未知",
-          ],
+          picked: _isolationText,
+          labels: _isolationTextList,
           labelStyle: TextStyle(
             color: DefaultColors.color333,
             fontWeight: FontWeight.w400,
@@ -415,7 +445,9 @@ class _AddNcovState extends State<AddNcovPage> {
           ),
           activeColor: Theme.of(context).primaryColor,
           onChange: (String label, int index) => print("label: $label index: $index"),
-          onSelected: (String label) => print(label),
+          onSelected: (String label) {
+            _isolationText = label;
+          },
         ),
       ],
     );
@@ -425,15 +457,10 @@ class _AddNcovState extends State<AddNcovPage> {
   Widget _buildPropertyCell() {
     return Column(
       children: <Widget>[
-        _buildDetailTitleRow("居家属性"),
+        _buildDetailTitleRow(S.of(context).ncov_cell_title_property),
         RadioButtonGroup(
-          labels: [
-            "居家自主",
-            "租住",
-            "投靠借住",
-            "酒店旅店",
-            "其他",
-          ],
+          picked: _isolationHouseTypeText,
+          labels: _isolationHouseTypeTextList,
           labelStyle: TextStyle(
             color: DefaultColors.color333,
             fontWeight: FontWeight.w400,
@@ -441,7 +468,9 @@ class _AddNcovState extends State<AddNcovPage> {
           ),
           activeColor: Theme.of(context).primaryColor,
           onChange: (String label, int index) => print("label: $label index: $index"),
-          onSelected: (String label) => print(label),
+          onSelected: (String label) {
+            _isolationHouseTypeText = label;
+          },
         ),
       ],
     );
@@ -450,26 +479,23 @@ class _AddNcovState extends State<AddNcovPage> {
   Widget _buildSymptomsCell() {
     return Column(
       children: <Widget>[
-        _buildDetailTitleRow("是否有如下症状"),
+        _buildDetailTitleRow(S.of(context).ncov_cell_title_symptoms),
         CheckboxGroup(
-          labels: <String>[
-            "乏力",
-            "发热",
-            "干咳",
-            "鼻塞",
-            "流涕",
-            "腹泻",
-            "呼吸困难",
-          ],
+          checked: _symptomsList,
+          labels: _symptomsDefaultList,
           labelStyle: TextStyle(
             color: DefaultColors.color333,
             fontWeight: FontWeight.w400,
             fontSize: 12,
           ),
           onChange: (bool isChecked, String label, int index) => print("isChecked: $isChecked   label: $label  index: $index"),
-          onSelected: (List<String> checked) => print("checked: ${checked.toString()}"),
+          onSelected: (List<String> checked) {
+            _symptomsList = checked;
+            var _symptomsText = checked.toString();
+            print("checked: ${_symptomsText}");
+          },
         ),
-        _buildDetailDescRow("详细描述"),
+        _buildDetailDescRow(S.of(context).ncov_cell_title_desc),
         Container(
           margin: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
           decoration: BoxDecoration(
@@ -486,7 +512,7 @@ class _AddNcovState extends State<AddNcovPage> {
               style: TextStyle(fontSize: 11),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: "请输入症状详细描述",
+                hintText: S.of(context).ncov_cell_hint_input_desc,
                 hintStyle: TextStyle(fontSize: 11, color: DefaultColors.color777),
               ),
             ),
@@ -497,15 +523,15 @@ class _AddNcovState extends State<AddNcovPage> {
   }
 
   Widget _buildTripCell() {
-    return _buildDetailCellRow("人员行程", "如：1月1号从家到菜市场买菜，1月3号医院就诊。", _tripController);
+    return _buildDetailCellRow(S.of(context).ncov_cell_title_trip, S.of(context).ncov_cell_hint_trip, _tripController);
   }
 
   Widget _buildRecordCell() {
-    return _buildDetailCellRow("接触记录", "如：1月1号跟黄某某打牌2个小时。1月2号跟蒋某某喝茶谈笑1小时。1月4号去超市买菜。", _recordController);
+    return _buildDetailCellRow(S.of(context).ncov_cell_title_records, S.of(context).ncov_cell_hint_records, _recordController);
   }
 
   Widget _buildSafeCell() {
-    return _buildDetailCellRow("安全防疫", "如：小区已经封锁，只允许本小区人员出入。进入小区需要做健康检查小区楼道电梯每隔2小时消毒一次。", _safeController);
+    return _buildDetailCellRow(S.of(context).ncov_cell_title_safe, S.of(context).ncov_cell_hint_safe, _safeController);
   }
 
   Widget _buildAddressCell() {
@@ -734,7 +760,7 @@ class _AddNcovState extends State<AddNcovPage> {
               border: InputBorder.none,
               hintText: hintText,
               hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
-              hintMaxLines: 3
+              hintMaxLines: 4
             ),
           ),
         ),
@@ -856,45 +882,80 @@ class _AddNcovState extends State<AddNcovPage> {
     }
 
     // 1.检测必须类别、图片
-    var _isEmptyOfCategory = (_categoryItem == null || _categoryItem.title.length == 0 || _categoryItem.title == "");
-    var _isEmptyOfImages = (_listImagePaths.length == 0);
-
-    if (_isEmptyOfCategory) {
-      Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
-      return;
-    }
-
-    if (_isEmptyOfImages) {
-      Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
-      return;
-    }
 
     if (!_isAcceptSignalProtocol) {
       Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
       return;
     }
 
-    var categoryId = _categoryItem.id;
+    /*{
+      "location":{"lat":23.1208435,"lon":113.32207890000001},
+    "name":"嘉德公管",
+    "country":"China",
+    "county":"广州",
+    "state":"广东省",
+    "city":"天河区",
+    "road":"花城大道环球都会广场",
+    "house_number":"3楼",
+    "postcode":"510066",
+    "confirmed_count":5,
+    "confirmed_type":"本地人",
+    "isolation":"是",
+    "isolation_house_type":"居家自主",
+    "symptoms":["发热","呼吸轻困难"],
+    "symptoms_detail":"全身无力，呼吸轻困难，头疼",
+    "trip":"1月20号从武汉出差回来，先回去天河科韵路公司开会，下班后乘坐地铁3号回家，休息两日后出现症状",
+    "security_measures":"居家隔离，所有楼全栋消毒",
+    "contact_records":"地铁3号线大概6: 50分去番禺广场"
+    }*/
+
+    var id = "";
+    Location location = Location([widget.userPosition.latitude, widget.userPosition.longitude], "ncov");
+    var name = _maxLengthLimit(_addressNameController);
     var country = _openCageData["country"] ?? "";
+    var county = _openCageData["city"];
     var state = _openCageData["state"];
     var city = _openCageData["county"];
-    var county = _openCageData["city"];
-//    var city = _openCageData["city"];
-//    var county = _openCageData["county"];
-    //var postalCode = _openCageData["postcode"];
-    var countryCode = _openCageData["country_code"] ?? "";
-    var poiName = _maxLengthLimit(_addressNameController);
-    var poiAddress = _maxLengthLimit(_addressController, isDetailAddress: true);
-    var poiHouseNum = _maxLengthLimit(_addressHouseNumController);
-    var poiNumberNum = _maxLengthLimit(_numbersController);
-    var poiCategory = _maxLengthLimit(_categoryController);
-    var postalCode = _maxLengthLimit(_addressPostcodeController);
+    var address = _maxLengthLimit(_addressController, isDetailAddress: true);
+    List<String> images = [];
+    var road = address;
+    var houseNumber = _maxLengthLimit(_addressHouseNumController);
+    var postCode = _maxLengthLimit(_addressPostcodeController);
+    int confirmedCount = int.parse(_numbersController.text);
+    var confirmedType = _maxLengthLimit(_categoryController);
+    var isolation = _isolationText;
+    var isolationHouseType = _isolationHouseTypeText;
+    var symptoms = _symptomsList;
+    var symptomsDetail = _maxLengthLimit(_descController, isDetailAddress: true);
+    var trip = _maxLengthLimit(_tripController, isDetailAddress: true);
+    var securityMeasures = _maxLengthLimit(_safeController, isDetailAddress: true);
+    var contactRecords = _maxLengthLimit(_recordController, isDetailAddress: true);
 
-    var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city, county,
-        poiAddress, "", poiHouseNum, postalCode, _timeText, poiNumberNum, poiCategory);
-
-    var model = PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
-    _positionBloc.add(StartPostPoiDataEvent(model));
+    var collector = NcovPoiEntity(
+      id,
+      country,
+      county,
+      state,
+      city,
+      name,
+      address,
+      location,
+      images,
+      road,
+      houseNumber,
+      postCode,
+      confirmedCount,
+      confirmedType,
+      isolation,
+      isolationHouseType,
+      symptoms,
+      symptomsDetail,
+      trip,
+      securityMeasures,
+      contactRecords
+    );
+    var model = PoiNcovDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
+    _positionBloc.add(StartPostPoiNcovDataEvent(model));
     setState(() {
       _isUploading = true;
     });

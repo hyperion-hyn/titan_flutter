@@ -280,7 +280,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('position', "添加新冠病毒疫情信息", () async {
+        _buildItem('position', S.of(context).add_ncov_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(

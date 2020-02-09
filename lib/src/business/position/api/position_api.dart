@@ -3,10 +3,12 @@ import 'package:dio/dio.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/business/discover/dapp/ncov/model/ncov_poi_entity.dart';
 import 'package:titan/src/business/position/model/category_item.dart';
 import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/business/position/model/confirm_poi_network_item.dart';
 import 'package:titan/src/business/position/model/poi_collector.dart';
+import 'package:titan/src/business/position/model/poi_data.dart';
 import 'package:titan/src/global.dart';
 
 
@@ -70,7 +72,6 @@ class PositionApi {
       return -1;
     }
   }
-
 
   Future<Map<String, dynamic>> getOpenCageData(String query,{String lang = "zh-Hans"}) async {
     var json = await HttpCore.instance.get(
@@ -166,6 +167,48 @@ class PositionApi {
         }, contentType: "application/json"));
 
     return data['data'];
+  }
+
+  ///collect poi ncov
+  Future<int> postPoiNcovCollector(List<Media> imagePaths, String address, NcovPoiEntity poiCollector, ProgressCallback onSendProgress,{String lang = "zh-Hans"}) async {
+    try {
+
+      Map<String, dynamic> params = {
+        "poi": json.encode(poiCollector.toJson()),
+      };
+
+      print('[PositionApi] postNcovCollector, 1, params:${params}');
+
+      for (var i = 0; i < imagePaths.length; i += 1) {
+        var index = i + 1;
+        String key = "img$index";
+        params[key] = MultipartFile.fromFileSync(imagePaths[i].path);
+      }
+
+      FormData formData = FormData.fromMap(params);
+
+      print('[PositionApi] postNcovCollector, 2, params:$params, \naddress:$address, \nformDataLength:${formData.length}');
+      var res = await HttpCore.instance.post("map-collector/ncov/poi/collector",
+          data: formData,
+          options: RequestOptions(headers: {
+            "Lang": lang,
+            "UUID": address
+          }, contentType: "multipart/form-data"
+          ),
+          onSendProgress: onSendProgress
+      );
+      var responseEntity = ResponseEntity<String>.fromJson(res, factory: EntityFactory((json) => json));
+      print("[PositionApi] , postNcovCollector,  responseEntity:${responseEntity}");
+
+      if (responseEntity.code == 0) {
+        return 0;
+      } else {
+        return responseEntity.code;
+      }
+    } catch (_) {
+      logger.e(_);
+      return -1;
+    }
   }
 
 }
