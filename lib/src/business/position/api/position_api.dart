@@ -172,7 +172,6 @@ class PositionApi {
   ///collect poi ncov
   Future<int> postPoiNcovCollector(List<Media> imagePaths, String address, NcovPoiEntity poiCollector, ProgressCallback onSendProgress,{String lang = "zh-Hans"}) async {
     try {
-
       Map<String, dynamic> params = {
         "poi": json.encode(poiCollector.toJson()),
       };
@@ -187,7 +186,8 @@ class PositionApi {
 
       FormData formData = FormData.fromMap(params);
 
-      print('[PositionApi] postNcovCollector, 2, params:$params, \naddress:$address, \nformDataLength:${formData.length}');
+      print('[PositionApi] postNcovCollector, 2, params:$params, \naddress:$address, \nformDataLength:${formData
+          .length}');
       var res = await HttpCore.instance.post("map-collector/ncov/poi/collector",
           data: formData,
           options: RequestOptions(headers: {
@@ -209,6 +209,7 @@ class PositionApi {
       logger.e(_);
       return -1;
     }
+  }
 
   Future<List<NcovPoiEntity>> mapGetNcovUserPoiData(String pid,{String lang = "zh-Hans"}) async {
     var data = await HttpCore.instance.getEntity(

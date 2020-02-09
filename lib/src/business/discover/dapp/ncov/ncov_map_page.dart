@@ -178,36 +178,6 @@ class NcovMapPageState extends State<NcovMapPage>
                 )
               ],
             ),
-            body: myWidget.DraggableScrollableActuator(
-              child: LayoutBuilder(
-                builder: (context, BoxConstraints constraints) {
-                  return Stack(
-                    children: <Widget>[
-                      _mapView(constraints), //need a container to expand.
-                      _buildNorm(),
-                      _buildMyLocation(),
-
-                      RaisedButton(
-                        onPressed: () {
-                          myWidget.DraggableScrollableActuator.setMin(context);
-                        },
-                        child: Text(S.of(context).show + " bottom sheet"),
-                      ),
-                      _buildPanelView(context, constraints),
-                    ],
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    S.of(context).ncov_guide,
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-              )
-            ],
-          ),
           body: myWidget.DraggableScrollableActuator(
             child: LayoutBuilder(
               builder: (context, BoxConstraints constraints) {
@@ -217,19 +187,9 @@ class NcovMapPageState extends State<NcovMapPage>
                     _mapView(constraints), //need a container to expand.
                     _buildNorm(),
                     _buildMyLocation(),
-
-                    /*RaisedButton(
-                          onPressed: () {
-                            myWidget.DraggableScrollableActuator.setMin(
-                                context);
-                          },
-                          child: Text('显示bottom sheet'),
-                        ),*/
                     if (state is ShowPoiPanelState ||
                         state is LoadPoiPanelState)
                       _buildPanelView(context, constraints, state),
-//                    if(state is LoadPoiPanelState)
-//                      LoadingPanel(scrollController: controller)
                   ],
                 );
               },
@@ -473,22 +433,6 @@ class NcovMapPageState extends State<NcovMapPage>
             NcovPoiEntity.setPid(pid, location);
         _ncovBloc.add(ShowPoiPanelEvent(ncovPoiEntity));
       }
-      //the same poi
-      /*if (currentPoi?.latLng == coordinates) {
-        print('click the same poi');
-        return true;
-      }
-
-      var pid = firstFeature["properties"]["pid"];
-      if (pid != null) {
-        var l = position_model.Location.fromJson(firstFeature['geometry']);
-        print('xxx33 $l $firstFeature');
-        ConfirmPoiItem confirmPoiItem = ConfirmPoiItem.setPid(pid, l);
-        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
-      } else {
-        var poi = PoiEntity(name: name, latLng: coordinates);
-        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
-      }*/
 
       return true;
     } else {
