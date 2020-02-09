@@ -17,6 +17,7 @@ import 'package:titan/src/business/discover/dapp/ncov/bloc/bloc.dart';
 import 'package:titan/src/business/infomation/news_nConv_page.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import '../../../../widget/draggable_scrollable_sheet.dart' as myWidget;
