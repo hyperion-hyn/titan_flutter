@@ -375,7 +375,7 @@
   "ncov_cell_title_property": "居家属性",
   "ncov_cell_title_isolation": "是否居家/在医院隔离",
   "ncov_cell_title_category": "人员类型",
-  "ncov_cell_hint_category": "本地人/湖北来穗工程师/来穗出差办公等",
+  "ncov_cell_hint_category": "如：本地人/湖北来穗工程师/来穗出差办公等",
   "ncov_cell_title_numbers": "确诊人数",
   "ncov_cell_hint_numbers": "请输入确诊人数",
   "ncov_cell_title_scene_images": "情景图片",

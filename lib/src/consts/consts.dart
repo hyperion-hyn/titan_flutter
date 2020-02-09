@@ -28,6 +28,7 @@ class Const {
   //black
   static const kBlackMapStyleCn = "https://cn.tile.map3.network/fiord-color.json";
   static const kBlackMapStyle = "https://static.hyn.space/maptiles/fiord-color.json";
+  static const kNCovMapStyle = 'https://cn.tile.map3.network/ncov_v1.json';
 
   static const Map LANGUAGE_NAME_MAP = {
     "zh_CN": "简体中文",

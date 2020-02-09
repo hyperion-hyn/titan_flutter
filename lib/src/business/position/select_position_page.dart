@@ -23,7 +23,6 @@ class SelectPositionPage extends StatefulWidget {
 }
 
 class _SelectPositionState extends State<SelectPositionPage> {
-
   MapboxMapController mapController;
   LatLng userPosition;
   double defaultZoom = 18;
@@ -66,7 +65,9 @@ class _SelectPositionState extends State<SelectPositionPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV?S.of(context).selecte_confirmed_position:S.of(context).select_position,
+          widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV
+              ? S.of(context).selecte_confirmed_position
+              : S.of(context).select_position,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -132,11 +133,16 @@ class _SelectPositionState extends State<SelectPositionPage> {
 
   Widget _mapView() {
     var style;
-    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = Const.kWhiteMapStyleCn;
+    if (widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV) {
+      style = Const.kNCovMapStyle;
     } else {
-      style = Const.kWhiteMapStyle;
+      if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+        style = Const.kWhiteMapStyleCn;
+      } else {
+        style = Const.kWhiteMapStyle;
+      }
     }
+
     var languageCode = Localizations.localeOf(context).languageCode;
 
     return Stack(
