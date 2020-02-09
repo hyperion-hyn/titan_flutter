@@ -686,14 +686,14 @@ class NcovMapPageState extends State<NcovMapPage>
                           ncovPoiEntity.images.length > 0)
                         buildPicList(picItemWidth, 16, ncovPoiEntity.images),
                       _buildInfoItem(
-                          "确诊人数：", ncovPoiEntity.confirmedCount.toString()),
-                      _buildInfoItem("人员类型：", ncovPoiEntity.confirmedType),
-                      _buildInfoItem("是否居家/在医院隔离：", ncovPoiEntity.isolation),
-                      _buildInfoItem("居住属性：", ncovPoiEntity.isolationHouseType),
-                      _buildInfoItem("症状：", ncovPoiEntity.symptomsDetail),
-                      _buildInfoItem("人员行程：", ncovPoiEntity.trip),
-                      _buildInfoItem("接触记录：", ncovPoiEntity.contactRecords),
-                      _buildInfoItem("安全防疫：", ncovPoiEntity.securityMeasures),
+                          S.of(context).ncov_cell_title_numbers, ncovPoiEntity.confirmedCount.toString()),
+                      _buildInfoItem(S.of(context).ncov_cell_title_category, ncovPoiEntity.confirmedType),
+                      _buildInfoItem(S.of(context).ncov_cell_title_isolation, ncovPoiEntity.isolation),
+                      _buildInfoItem(S.of(context).ncov_cell_title_property, ncovPoiEntity.isolationHouseType),
+                      _buildInfoItem(S.of(context).ncov_cell_title_symptoms, ncovPoiEntity.symptomsDetail),
+                      _buildInfoItem(S.of(context).ncov_cell_title_trip, ncovPoiEntity.trip),
+                      _buildInfoItem(S.of(context).ncov_cell_title_records, ncovPoiEntity.contactRecords),
+                      _buildInfoItem(S.of(context).ncov_cell_title_safe, ncovPoiEntity.securityMeasures),
                     ],
                   ),
                 ),
@@ -713,7 +713,7 @@ class NcovMapPageState extends State<NcovMapPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            title,
+            title + "：",
             style: TextStyles.textC777S14,
           ),
           Expanded(
