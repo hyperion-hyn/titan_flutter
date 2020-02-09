@@ -100,11 +100,9 @@ class NcovMapPageState extends State<NcovMapPage>
       if (state is LoadPoiPanelState) {
         addMarker(state.ncovPoiEntity);
       } else if (state is ShowPoiPanelState) {
-        myWidget.DraggableScrollableActuator.setMin(context);
+        myWidget.DraggableScrollableActuator.setMin(layoutBuilderContext);
       } else if (state is ClearSelectPoiState) {
-        if (layoutBuilderContext != null) {
-          hidePoiPanel(layoutBuilderContext, 0);
-        }
+        hidePoiPanel(layoutBuilderContext, 0);
       }
     });
 
@@ -181,7 +179,9 @@ class NcovMapPageState extends State<NcovMapPage>
           body: myWidget.DraggableScrollableActuator(
             child: LayoutBuilder(
               builder: (context, BoxConstraints constraints) {
-                layoutBuilderContext = context;
+                if(layoutBuilderContext == null){
+                  layoutBuilderContext = context;
+                }
                 return Stack(
                   children: <Widget>[
                     _mapView(constraints), //need a container to expand.
@@ -189,7 +189,7 @@ class NcovMapPageState extends State<NcovMapPage>
                     _buildMyLocation(),
                     if (state is ShowPoiPanelState ||
                         state is LoadPoiPanelState)
-                      _buildPanelView(context, constraints, state),
+                      _buildPanelView(layoutBuilderContext, constraints, state),
                   ],
                 );
               },
@@ -309,11 +309,6 @@ class NcovMapPageState extends State<NcovMapPage>
         ),
       ],
     );
-    /*return MapContainer(
-      key: GlobalKey(debugLabel: '__mapffa__'),
-      style: Const.kNcovMapStyleCn,
-      showCenterMarker: false,
-    );*/
   }
 
   void addMarker(NcovPoiEntity poi) async {
@@ -360,19 +355,10 @@ class NcovMapPageState extends State<NcovMapPage>
   }
 
   void _onMapClick(Point<double> point, LatLng coordinates) async {
-    /*if (widget.mapClickHandle != null) {
-      if (await widget.mapClickHandle(context, point, coordinates)) {
-        return;
-      }
-    }*/
 
     var range = 10;
     Rect rect = Rect.fromLTRB(
         point.x - range, point.y - range, point.x + range, point.y + range);
-    /*if (await _clickOnMarkerLayer(rect)) {
-      updateMyLocationTrackingMode(MyLocationTrackingMode.None);
-      return;
-    }*/
     if (await _clickOnCommonSymbolLayer(rect)) {
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
       return;
@@ -413,26 +399,20 @@ class NcovMapPageState extends State<NcovMapPage>
       var coordinatesArray = firstFeature["geometry"]["coordinates"];
       var coordinates = LatLng(coordinatesArray[1], coordinatesArray[0]);
       print("coordinates:$coordinates");
-      var languageCode = Localizations.localeOf(context).languageCode;
-      var name = "";
-      if (languageCode == "zh") {
-        name = firstFeature["properties"]["name:zh"];
-        if (name == null) {
-          name = firstFeature["properties"]["name"];
-        }
-      } else {
-        name = firstFeature["properties"]["name"];
+
+      //the same poi
+      if (currentPoi?.latLng == coordinates) {
+        print('click the same poi');
+        return true;
       }
 
       var pid = firstFeature["properties"]["pid"];
       var type = firstFeature["properties"]["type"];
       if ("ncov_community_user" == type) {
-        // todo: location
         print('[ncov_map] --> pid:$pid');
         var location =
             position_model.Location.fromJson(firstFeature['geometry']);
-        NcovPoiEntity ncovPoiEntity =
-            NcovPoiEntity.setPid(pid, location);
+        NcovPoiEntity ncovPoiEntity = NcovPoiEntity.setPid(pid, location);
         _ncovBloc.add(ShowPoiPanelEvent(ncovPoiEntity));
       }
 
@@ -606,7 +586,7 @@ class NcovMapPageState extends State<NcovMapPage>
           expand: true,
           builder: (BuildContext ctx, ScrollController scrollController) {
             if (state is LoadPoiPanelState) {
-              if(state.ncovPoiEntity == null){
+              if (state.ncovPoiEntity == null) {
                 return FailPanel(scrollController: scrollController);
               }
               return LoadingPanel(scrollController: scrollController);
@@ -645,16 +625,11 @@ class NcovMapPageState extends State<NcovMapPage>
                             alignment: Alignment.topRight,
                             child: InkWell(
                               onTap: () {
-                                hidePoiPanel(
-                                    context, constraints.biggest.height);
-//                            myWidget.DraggableScrollableActuator.setHide(
-//                                context);
-//                            _updateMapPositionSubject.sink.add(0);
-//                            updateFabsPosition(0, constraints.biggest.height);
+                                  _ncovBloc.add(ClearSelectPoiEvent());
                               },
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.only(right: 10.0, top: 6),
+                                    const EdgeInsets.only(left:10,bottom:6,right: 10.0, top: 6),
                                 child: Icon(
                                   Icons.cancel,
                                   color: Colors.grey,
@@ -676,7 +651,7 @@ class NcovMapPageState extends State<NcovMapPage>
                         height: 14,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 16.0, bottom: 5),
+                        padding: const EdgeInsets.only(left: 16.0,right: 16, bottom: 5),
                         child: buildHeadItem(
                             context, Icons.location_on, ncovPoiEntity.address,
                             hint: S.of(context).no_detail_address),

@@ -309,18 +309,19 @@ Widget buildHeadItem(BuildContext context,IconData icon, String info, {String hi
     padding: const EdgeInsets.only(bottom: 8),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Icon(
           icon,
           color: Colors.grey[600],
           size: 18,
         ),
+        SizedBox(
+          width: 8,
+        ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(info != null && info.isNotEmpty ? info : hint,
-                style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-          ),
+          child: Text(info != null && info.isNotEmpty ? info : hint,
+              style: TextStyle(color: Colors.grey[600], fontSize: 14)),
         )
       ],
     ),
