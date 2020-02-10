@@ -352,7 +352,7 @@
   "isolation_yes": "是",
   "isolation_no": "否",
   "isolation_unknown": "未知",
-  "isolation_type_home": "居家自主",
+  "isolation_type_home": "居家自住",
   "isolation_type_rent": "租住",
   "isolation_type_stay": "投靠借住",
   "isolation_type_hotel": "酒店旅店",
@@ -386,5 +386,8 @@
   "add_ncov_others": "其他",
   "selecte_confirmed_position": "选择确诊位置",
   "add_ncov_item_title": "添加新冠病毒疫情信息",
-  "symptoms": "出现症状"
+  "symptoms": "出现症状",
+  "data_source_explain": "红色POI点数据来源于中国国家及各省市卫健委&腾讯新闻等官方数据。黄色POI点数据来源于泰坦用户的贡献。",
+  "source_desc_title": "数据源说明",
+  "epidemic_map_short": "新冠病毒地图"
 }

@@ -381,7 +381,6 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
   }
 
   Widget _buildItem(String iconName, String title, Function ontap, {bool isOpen = false}) {
-    print('xxx res/drawable/data_contribution_$iconName.png');
     return InkWell(
       onTap: ontap,
       child: Row(

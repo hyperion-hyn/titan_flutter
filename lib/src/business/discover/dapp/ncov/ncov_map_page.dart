@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:android_intent/android_intent.dart';
+import 'package:bordered_text/bordered_text.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,13 +17,15 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/discover/dapp/ncov/bloc/bloc.dart';
 import 'package:titan/src/business/infomation/news_nConv_page.dart';
+import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/drag_tick.dart';
+import '../../../../global.dart';
 import '../../../../widget/draggable_scrollable_sheet.dart' as myWidget;
-
 
 import 'model/ncov_poi_entity.dart';
 import 'model/ncov_poi_entity.dart' as position_model;
@@ -33,8 +37,7 @@ class NcovMapPage extends StatefulWidget {
   }
 }
 
-class NcovMapPageState extends State<NcovMapPage>
-    with SingleTickerProviderStateMixin {
+class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderStateMixin {
   NcovBloc _ncovBloc = NcovBloc();
   var picItemWidth;
   MapboxMapController mapboxMapController;
@@ -48,23 +51,19 @@ class NcovMapPageState extends State<NcovMapPage>
   BuildContext layoutBuilderContext;
 
   AnimationController _mapPositionAnimationController;
-  final PublishSubject<double> _updateMapPositionSubject =
-      PublishSubject<double>();
+  final PublishSubject<double> _updateMapPositionSubject = PublishSubject<double>();
 
-  final GlobalKey _poiDraggablePanelKey =
-      GlobalKey(debugLabel: 'nCovPoiDraggablePanelKey');
-  final GlobalKey _fabsContainerKey =
-      GlobalKey(debugLabel: 'locationFabsContainerKey');
+  final GlobalKey _poiDraggablePanelKey = GlobalKey(debugLabel: 'nCovPoiDraggablePanelKey');
+  final GlobalKey _fabsContainerKey = GlobalKey(debugLabel: 'locationFabsContainerKey');
+
+  bool _shouldShowNorm = true;
 
   @override
   void initState() {
     //to my location
-    _toLocationEventSubject
-        .debounceTime(Duration(milliseconds: 500))
-        .listen((_) async {
+    _toLocationEventSubject.debounceTime(Duration(milliseconds: 500)).listen((_) async {
       bool needUpdate = enableMyLocation(true);
-      bool trackModeChange =
-          updateMyLocationTrackingMode(MyLocationTrackingMode.Tracking);
+      bool trackModeChange = updateMyLocationTrackingMode(MyLocationTrackingMode.Tracking);
       if (needUpdate || trackModeChange) {
         await Future.delayed(Duration(milliseconds: 300));
       }
@@ -73,11 +72,9 @@ class NcovMapPageState extends State<NcovMapPage>
       double doubleClickZoom = 16;
       if (latLng != null) {
         if (_clickTimes > 1) {
-          mapboxMapController?.animateCameraWithTime(
-              CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
+          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
         } else if (!trackModeChange) {
-          mapboxMapController?.animateCameraWithTime(
-              CameraUpdate.newLatLng(latLng), 700);
+          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
         }
       }
       _clickTimes = 0;
@@ -89,9 +86,7 @@ class NcovMapPageState extends State<NcovMapPage>
       vsync: this,
     );
 
-    _updateMapPositionSubject
-        .debounceTime(Duration(milliseconds: 50))
-        .listen((lastValue) {
+    _updateMapPositionSubject.debounceTime(Duration(milliseconds: 50)).listen((lastValue) {
 //      _mapPositionAnimationController.animateTo(lastValue, curve: Curves.linearToEaseOut);
       _mapPositionAnimationController.value = lastValue;
     });
@@ -154,41 +149,78 @@ class NcovMapPageState extends State<NcovMapPage>
     picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
 
     return BlocBuilder<NcovBloc, NcovState>(
-        bloc: _ncovBloc,
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: Color(0xff2B344A),
-            appBar: AppBar(
-              title: Text(S.of(context).epidemic_map),
-              actions: <Widget>[
-                InkWell(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => NewsNcovPage()));
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      S.of(context).ncov_guide,
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
+      bloc: _ncovBloc,
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Color(0xff2B344A),
+          appBar: AppBar(
+            title: Text(S.of(context).epidemic_map_short),
+            actions: <Widget>[
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => NewsNcovPage()));
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    S.of(context).ncov_guide,
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
-                )
-              ],
-            ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.share),
+                color: Colors.white,
+                tooltip: S.of(context).share,
+                onPressed: () {
+                  if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+                    Share.text(S.of(context).share, 'https://www.hyn.mobi/ncov.html', 'text/plain');
+                  } else {
+                    Share.text(S.of(context).share, 'https://www.hyn.space/ncov-en.html', 'text/plain');
+                  }
+                },
+              ),
+            ],
+          ),
           body: myWidget.DraggableScrollableActuator(
             child: LayoutBuilder(
               builder: (context, BoxConstraints constraints) {
-                if(layoutBuilderContext == null){
+                if (layoutBuilderContext == null) {
                   layoutBuilderContext = context;
                 }
                 return Stack(
                   children: <Widget>[
                     _mapView(constraints), //need a container to expand.
-                    _buildNorm(),
+                    if (_shouldShowNorm)
+                      _buildNorm(),
                     _buildMyLocation(),
-                    if (state is ShowPoiPanelState ||
-                        state is LoadPoiPanelState)
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      child: InkWell(
+                        onTap: () {
+                          print('TODO xxx');
+                          if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+                            launchUrl('https://www.hyn.mobi/cn/titan/ncov-data-source/');
+                          } else {
+                            launchUrl('https://www.hyn.space/titan/ncov-data-source/');
+                          }
+                        },
+                        child: BorderedText(
+                          strokeWidth: 1.0,
+                          strokeColor: Colors.white,
+                          child: Text(S.of(context).source_desc_title,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.lightBlue,
+                                decoration: TextDecoration.none,
+                                decorationColor: Colors.red,
+                              )),
+                        ),
+                      ),
+                    ),
+                    if (state is ShowPoiPanelState || state is LoadPoiPanelState)
                       _buildPanelView(layoutBuilderContext, constraints, state),
                   ],
                 );
@@ -209,8 +241,7 @@ class NcovMapPageState extends State<NcovMapPage>
           height: 130,
           width: 108,
           padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-              color: Colors.white54, borderRadius: BorderRadius.circular(4)),
+          decoration: BoxDecoration(color: Colors.white54, borderRadius: BorderRadius.circular(4)),
           child: ListView.separated(
             shrinkWrap: true,
             physics: new NeverScrollableScrollPhysics(),
@@ -272,8 +303,7 @@ class NcovMapPageState extends State<NcovMapPage>
     double minSize = 0.50 * constraints.biggest.height;
     var expandedRelative = RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
     var topRelative = RelativeRect.fromLTRB(0.0, -minSize, 0.0, minSize);
-    final Animation<RelativeRect> panelAnimation =
-        _mapPositionAnimationController.drive(
+    final Animation<RelativeRect> panelAnimation = _mapPositionAnimationController.drive(
       RelativeRectTween(
         begin: expandedRelative,
         end: topRelative,
@@ -338,8 +368,7 @@ class NcovMapPageState extends State<NcovMapPage>
       if (p != null && p.zoom >= 17) {
         mapboxMapController?.animateCamera(CameraUpdate.newLatLng(poi.latLng));
       } else {
-        mapboxMapController
-            ?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
+        mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(poi.latLng, 17));
       }
 
       currentPoi = poi;
@@ -355,10 +384,8 @@ class NcovMapPageState extends State<NcovMapPage>
   }
 
   void _onMapClick(Point<double> point, LatLng coordinates) async {
-
     var range = 10;
-    Rect rect = Rect.fromLTRB(
-        point.x - range, point.y - range, point.x + range, point.y + range);
+    Rect rect = Rect.fromLTRB(point.x - range, point.y - range, point.x + range, point.y + range);
     if (await _clickOnCommonSymbolLayer(rect)) {
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
       return;
@@ -378,8 +405,7 @@ class NcovMapPageState extends State<NcovMapPage>
     if (Platform.isIOS) {
       filter = "name != NIL";
     }
-    List features = await mapboxMapController?.queryRenderedFeaturesInRect(
-        rect, [], filter);
+    List features = await mapboxMapController?.queryRenderedFeaturesInRect(rect, [], filter);
 
     print("query features :$features");
     var filterFeatureList = features.where((featureString) {
@@ -410,8 +436,7 @@ class NcovMapPageState extends State<NcovMapPage>
       var type = firstFeature["properties"]["type"];
       if ("ncov_community_user" == type) {
         print('[ncov_map] --> pid:$pid');
-        var location =
-            position_model.Location.fromJson(firstFeature['geometry']);
+        var location = position_model.Location.fromJson(firstFeature['geometry']);
         NcovPoiEntity ncovPoiEntity = NcovPoiEntity.setPid(pid, location);
         _ncovBloc.add(ShowPoiPanelEvent(ncovPoiEntity));
       }
@@ -463,6 +488,21 @@ class NcovMapPageState extends State<NcovMapPage>
   }
 
   void _mapMoveListener() {
+    mapboxMapController.getCameraPosition().then((position) {
+      if (position.zoom >= 8) {
+        if (_shouldShowNorm) {
+          setState(() {
+            _shouldShowNorm = false;
+          });
+        }
+      } else {
+        if (!_shouldShowNorm) {
+          setState(() {
+            _shouldShowNorm = true;
+          });
+        }
+      }
+    });
     //change tracking mode to none if user drag the map
     if (mapboxMapController?.isGesture == true) {
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
@@ -470,22 +510,19 @@ class NcovMapPageState extends State<NcovMapPage>
   }
 
   void _fireToMyLocation() async {
-    ServiceStatus serviceStatus =
-        await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
 
     if (serviceStatus == ServiceStatus.disabled) {
       _showGoToOpenLocationServceDialog();
       return;
     }
 
-    PermissionStatus permission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.location);
+    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
     if (permission == PermissionStatus.granted) {
       _toMyLocationSink();
     } else {
       Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler()
-              .requestPermissions([PermissionGroup.location]);
+          await PermissionHandler().requestPermissions([PermissionGroup.location]);
       if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
         _toMyLocationSink();
         Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
@@ -562,8 +599,7 @@ class NcovMapPageState extends State<NcovMapPage>
     );
   }
 
-  Widget _buildPanelView(
-      BuildContext context, BoxConstraints constraints, NcovState state) {
+  Widget _buildPanelView(BuildContext context, BoxConstraints constraints, NcovState state) {
     return NotificationListener<myWidget.DraggableScrollableNotification>(
       onNotification: (notification) {
         if (notification.extent <= notification.anchorExtent) {
@@ -571,8 +607,7 @@ class NcovMapPageState extends State<NcovMapPage>
           _updateMapPositionSubject.sink.add(notification.extent);
         }
         var maxHeight = constraints.biggest.height;
-        updateFabsPosition(notification.extent * maxHeight,
-            notification.anchorExtent * maxHeight);
+        updateFabsPosition(notification.extent * maxHeight, notification.anchorExtent * maxHeight);
         return false;
       },
       child: myWidget.DraggableScrollableSheet(
@@ -594,20 +629,18 @@ class NcovMapPageState extends State<NcovMapPage>
               var symptoms = ncovPoiEntity.symptoms;
               var length = symptoms.length;
               var symptomsText = "";
-              for(int i=0; i<length; i++){
-                if (i==length-1){
-                  symptomsText += symptoms[i]+"。";
+              for (int i = 0; i < length; i++) {
+                if (i == length - 1) {
+                  symptomsText += symptoms[i] + "。";
                 } else {
-                  symptomsText += symptoms[i]+"，";
+                  symptomsText += symptoms[i] + "，";
                 }
               }
 
               return Container(
                 padding: const EdgeInsets.only(top: 4),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16)),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
@@ -635,11 +668,10 @@ class NcovMapPageState extends State<NcovMapPage>
                             alignment: Alignment.topRight,
                             child: InkWell(
                               onTap: () {
-                                  _ncovBloc.add(ClearSelectPoiEvent());
+                                _ncovBloc.add(ClearSelectPoiEvent());
                               },
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left:10,bottom:6,right: 10.0, top: 6),
+                                padding: const EdgeInsets.only(left: 10, bottom: 6, right: 10.0, top: 6),
                                 child: Icon(
                                   Icons.cancel,
                                   color: Colors.grey,
@@ -653,31 +685,27 @@ class NcovMapPageState extends State<NcovMapPage>
                         padding: const EdgeInsets.only(left: 16.0),
                         child: Text(
                           ncovPoiEntity.name,
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w500),
+                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
                         ),
                       ),
                       SizedBox(
                         height: 14,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 16.0,right: 16, bottom: 5),
-                        child: buildHeadItem(
-                            context, Icons.location_on, ncovPoiEntity.address,
+                        padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 5),
+                        child: buildHeadItem(context, Icons.location_on, ncovPoiEntity.address,
                             hint: S.of(context).no_detail_address),
                       ),
                       Divider(
                         height: 0,
                       ),
-                      if (ncovPoiEntity.images != null &&
-                          ncovPoiEntity.images.length > 0)
+                      if (ncovPoiEntity.images != null && ncovPoiEntity.images.length > 0)
                         buildPicList(picItemWidth, 16, ncovPoiEntity.images),
-                      _buildInfoItem(
-                          S.of(context).ncov_cell_title_numbers, ncovPoiEntity.confirmedCount.toString()),
+                      _buildInfoItem(S.of(context).ncov_cell_title_numbers, ncovPoiEntity.confirmedCount.toString()),
                       _buildInfoItem(S.of(context).ncov_cell_title_category, ncovPoiEntity.confirmedType),
                       _buildInfoItem(S.of(context).ncov_cell_title_isolation, ncovPoiEntity.isolation),
                       _buildInfoItem(S.of(context).ncov_cell_title_property, ncovPoiEntity.isolationHouseType),
-                      _buildInfoItem(S.of(context).symptoms, symptomsText+ncovPoiEntity.symptomsDetail.trim()),
+                      _buildInfoItem(S.of(context).symptoms, symptomsText + ncovPoiEntity.symptomsDetail.trim()),
                       _buildInfoItem(S.of(context).ncov_cell_title_trip, ncovPoiEntity.trip),
                       _buildInfoItem(S.of(context).ncov_cell_title_records, ncovPoiEntity.contactRecords),
                       _buildInfoItem(S.of(context).ncov_cell_title_safe, ncovPoiEntity.securityMeasures),
@@ -717,8 +745,7 @@ class NcovMapPageState extends State<NcovMapPage>
     var state = (_fabsContainerKey.currentState is LocationWidgetState)
         ? _fabsContainerKey.currentState as LocationWidgetState
         : null;
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => state?.updateBottomPadding(bottom, anchorHeight));
+    WidgetsBinding.instance.addPostFrameCallback((_) => state?.updateBottomPadding(bottom, anchorHeight));
   }
 
   void hidePoiPanel(BuildContext context, double anchorHeight) {
