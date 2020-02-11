@@ -19,8 +19,8 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
 
   @override
   void initState() {
-    getMnemonic();
     super.initState();
+    getMnemonic();
   }
 
   Future getMnemonic() async {

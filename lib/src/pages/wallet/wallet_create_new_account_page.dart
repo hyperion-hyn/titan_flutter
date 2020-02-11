@@ -166,8 +166,8 @@ class _CreateAccountState extends State<CreateAccountPage> {
                           var walletName = _walletNameController.text;
                           var password = _walletPasswordController.text;
 
-                          createWalletNameTemp = walletName;
-                          createWalletPasswordTemp = password;
+//                          createWalletNameTemp = walletName;
+//                          createWalletPasswordTemp = password;
                           Navigator.push(
                               context, MaterialPageRoute(builder: (context) => CreateWalletBackupNoticePage()));
                         }

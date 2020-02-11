@@ -93,7 +93,7 @@ class _CreateWalletBackupNoticePageState extends State<CreateWalletBackupNoticeP
         ));
   }
 
-  Function _next() {
+  void _next() {
     Navigator.push(context, MaterialPageRoute(builder: (context) => ShowResumeWordPage()));
   }
 }
