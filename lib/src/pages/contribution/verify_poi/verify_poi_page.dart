@@ -36,7 +36,11 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
   double defaultZoom = 17;
 
   ConfirmPoiItem confirmPoiItem;
+
   bool _isLoadingPageData = true;
+  bool _isLoadPageDataEmpty = false;
+  bool _isLoadPageDataFail = false;
+
   bool _isPostingData = false;
 
   @override
@@ -161,59 +165,48 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
   }
 
   Widget _buildView() {
-//    if (_isLoadingPageData) {
-//      return LoadDataWidget(
-//        isLoading: true,
-//      );
-//    } else {
-//      if (confirmPoiItem?.name == null) {
-//        return Container(
-//          width: 0.0,
-//          height: 0.0,
-//        );
-//      } else {
-//        return _buildListBody();
-//      }
-//    }
-
-    return BlocBuilder<PositionBloc, AllPageState>(
-        bloc: _positionBloc,
-        builder: (BuildContext context, AllPageState state) {
-          if (state is ConfirmPositionLoadingState) {
-            return LoadDataWidget(
-              isLoading: true,
-            );
-          } else if (state is ConfirmPositionPageState) {
-            confirmPoiItem = state.confirmPoiItem;
-            if (confirmPoiItem?.name == null) {
-              return Container(
-                width: 0.0,
-                height: 0.0,
-              );
-            } else {
-              return _buildListBody();
-            }
-          } else if (state is ConfirmPositionResultLoadingState) {
-            return _buildListBody();
-          } else if (state is ConfirmPositionResultState) {
-            _isPostingData = false;
-            if (!state.confirmResult) {
-              Fluttertoast.showToast(msg: state.errorMsg);
-              return _buildListBody();
-            } else {
-              return Container(
-                width: 0.0,
-                height: 0.0,
-              );
-            }
-          } else {
-//            return buildWidgetByNormalState(context, state);
-            return AllPageStateContainer(state,(){
-              _positionBloc.add(ConfirmPositionLoadingEvent());
-              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
-            });
-          }
-        });
+    return LoadDataWidget(
+      isLoading: _isLoadingPageData,
+      child: _buildListBody(),
+    );
+//    return BlocBuilder<PositionBloc, AllPageState>(
+//        bloc: _positionBloc,
+//        builder: (BuildContext context, AllPageState state) {
+//          if (state is ConfirmPositionLoadingState) {
+//            return LoadDataWidget(
+//              isLoading: true,
+//            );
+//          } else if (state is ConfirmPositionPageState) {
+//            confirmPoiItem = state.confirmPoiItem;
+//            if (confirmPoiItem?.name == null) {
+//              return Container(
+//                width: 0.0,
+//                height: 0.0,
+//              );
+//            } else {
+//              return _buildListBody();
+//            }
+//          } else if (state is ConfirmPositionResultLoadingState) {
+//            return _buildListBody();
+//          } else if (state is ConfirmPositionResultState) {
+//            _isPostingData = false;
+//            if (!state.confirmResult) {
+//              Fluttertoast.showToast(msg: state.errorMsg);
+//              return _buildListBody();
+//            } else {
+//              return Container(
+//                width: 0.0,
+//                height: 0.0,
+//              );
+//            }
+//          } else {
+////            return buildWidgetByNormalState(context, state);
+//            return AllPageStateContainer(state,(){
+//              _positionBloc.add(ConfirmPositionLoadingEvent());
+//              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+//            });
+//          }
+//        });
   }
 
   Widget _buildListBody() {
