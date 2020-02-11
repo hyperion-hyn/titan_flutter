@@ -44,7 +44,7 @@ class GetOpenCageState extends PositionState {
   GetOpenCageState(this.openCageData);
 }
 
-// uploading
+// uploading poi
 class StartPostPoiDataState extends PositionState {
 }
 
@@ -79,4 +79,21 @@ class ConfirmPositionResultState extends PositionState {
   bool confirmResult;
   String errorMsg;
   ConfirmPositionResultState(this.confirmResult,this.errorMsg);
+}
+
+// uploading poi ncov
+class StartPostPoiNcovDataState extends PositionState {
+}
+
+class LoadingPostPoiNcovDataState extends PositionState {
+  double progress;
+  LoadingPostPoiNcovDataState(this.progress);
+}
+
+class SuccessPostPoiNcovDataState extends PositionState {
+}
+
+class FailPostPoiNcovDataState extends PositionState {
+  final int code;
+  FailPostPoiNcovDataState(this.code);
 }

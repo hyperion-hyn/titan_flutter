@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/business/position/add_ncov_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/consts/extends_icon_font.dart';
 import 'package:titan/src/global.dart';
@@ -9,8 +10,11 @@ import 'package:titan/src/pages/contribution/add_poi/add_position_page.dart';
 
 class SelectPositionPage extends StatefulWidget {
   final LatLng initLocation;
+  final String type;
+  static const String SELECT_PAGE_TYPE_POI = "select_page_type_poi";
+  static const String SELECT_PAGE_TYPE_NCOV = "select_page_type_ncov";
 
-  SelectPositionPage({this.initLocation});
+  SelectPositionPage({this.initLocation, this.type});
 
   @override
   State<StatefulWidget> createState() {
@@ -19,7 +23,6 @@ class SelectPositionPage extends StatefulWidget {
 }
 
 class _SelectPositionState extends State<SelectPositionPage> {
-
   MapboxMapController mapController;
   LatLng userPosition;
   double defaultZoom = 18;
@@ -62,7 +65,9 @@ class _SelectPositionState extends State<SelectPositionPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          S.of(context).select_position,
+          widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV
+              ? S.of(context).selecte_confirmed_position
+              : S.of(context).select_position,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -94,12 +99,21 @@ class _SelectPositionState extends State<SelectPositionPage> {
                   ],
                 );
               } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddPositionPage(latLng),
-                  ),
-                );
+                if (widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddNcovPage(latLng),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddPositionPage(latLng),
+                    ),
+                  );
+                }
               }
             },
             child: Container(
@@ -119,11 +133,16 @@ class _SelectPositionState extends State<SelectPositionPage> {
 
   Widget _mapView() {
     var style;
-    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = Const.kWhiteMapStyleCn;
+    if (widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV) {
+      style = Const.kNCovMapStyle;
     } else {
-      style = Const.kWhiteMapStyle;
+      if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+        style = Const.kWhiteMapStyleCn;
+      } else {
+        style = Const.kWhiteMapStyle;
+      }
     }
+
     var languageCode = Localizations.localeOf(context).languageCode;
 
     return Stack(

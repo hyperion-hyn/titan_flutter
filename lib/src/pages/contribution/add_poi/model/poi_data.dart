@@ -9,3 +9,12 @@ class PoiDataModel {
 
   PoiDataModel({this.listImagePaths, this.poiCollector});
 }
+
+class PoiNcovDataModel {
+
+  List<Media> listImagePaths = List();
+
+  NcovPoiEntity poiCollector;
+
+  PoiNcovDataModel({this.listImagePaths, this.poiCollector});
+}

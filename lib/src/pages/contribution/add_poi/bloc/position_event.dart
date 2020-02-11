@@ -40,7 +40,7 @@ class GetOpenCageEvent extends PositionEvent {
   GetOpenCageEvent(this.userPosition);
 }
 
-// uploading
+// uploading poi
 class StartPostPoiDataEvent extends PositionEvent {
   final PoiDataModel poiDataModel;
   StartPostPoiDataEvent(this.poiDataModel);
@@ -76,4 +76,24 @@ class ConfirmPositionResultEvent extends PositionEvent {
   int answer;
   ConfirmPoiItem confirmPoiItem;
   ConfirmPositionResultEvent(this.answer,this.confirmPoiItem);
+}
+
+
+// uploading poi ncvo
+class StartPostPoiNcovDataEvent extends PositionEvent {
+  final PoiNcovDataModel poiDataModel;
+  StartPostPoiNcovDataEvent(this.poiDataModel);
+}
+
+class LoadingPostPoiNcovDataEvent extends PositionEvent {
+  final double progress;
+  LoadingPostPoiNcovDataEvent(this.progress);
+}
+
+class SuccessPostPoiNcovDataEvent extends PositionEvent {
+}
+
+class FailPostPoiNcovDataEvent extends PositionEvent {
+  final int code;
+  FailPostPoiNcovDataEvent(this.code);
 }

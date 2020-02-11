@@ -271,7 +271,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SelectPositionPage(initLocation: latlng),
+                builder: (context) => SelectPositionPage(initLocation: latlng, type: SelectPositionPage.SELECT_PAGE_TYPE_POI,),
               ),
             );
           }
@@ -284,6 +284,18 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
               context,
               MaterialPageRoute(
                 builder: (context) => VerifyPoiPage(userPosition: latlng),
+              ),
+            );
+          }
+        }, isOpen: true),
+        _divider(),
+        _buildItem('ncov', S.of(context).add_ncov_item_title, () async {
+          var latlng = await getLatlng();
+          if (latlng != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectPositionPage(initLocation: latlng, type: SelectPositionPage.SELECT_PAGE_TYPE_NCOV,),
               ),
             );
           }

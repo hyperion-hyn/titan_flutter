@@ -238,7 +238,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
                 padding: EdgeInsets.only(bottom: 16),
                 children: <Widget>[
                   _nameView(),
-                  if (confirmPoiItem.images != null) buildPicList(picItemWidth, 10, confirmPoiItem),
+                  if (confirmPoiItem.images != null) buildPicList(picItemWidth, 10, confirmPoiItem.images),
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: Divider(

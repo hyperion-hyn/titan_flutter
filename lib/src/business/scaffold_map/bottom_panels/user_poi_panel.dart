@@ -133,7 +133,7 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                   ),
                   if (widget.selectedPoiEntity.images != null &&
                       widget.selectedPoiEntity.images.length > 0)
-                    buildPicList(picItemWidth, 29, widget.selectedPoiEntity),
+                    buildPicList(picItemWidth, 29, widget.selectedPoiEntity.images),
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: Divider(
@@ -310,18 +310,19 @@ Widget buildHeadItem(BuildContext context,IconData icon, String info, {String hi
     padding: const EdgeInsets.only(bottom: 8),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Icon(
           icon,
           color: Colors.grey[600],
           size: 18,
         ),
+        SizedBox(
+          width: 8,
+        ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(info != null && info.isNotEmpty ? info : hint,
-                style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-          ),
+          child: Text(info != null && info.isNotEmpty ? info : hint,
+              style: TextStyle(color: Colors.grey[600], fontSize: 14)),
         )
       ],
     ),
@@ -329,7 +330,7 @@ Widget buildHeadItem(BuildContext context,IconData icon, String info, {String hi
 }
 
 Widget buildPicList(
-    double itemWidth, double topValue, ConfirmPoiItem confirmPoiItem) {
+    double itemWidth, double topValue, List<String> images) {
   //print("image = hahaha");
   //print("image = " + confirmPoiItem.images.toString());
   return Container(
@@ -342,7 +343,7 @@ Widget buildPicList(
             padding: const EdgeInsets.only(right: 15.0),
             child: InkWell(
               onTap: () {
-                ImagePickers.previewImages(confirmPoiItem.images,index);
+                ImagePickers.previewImages(images,index);
               },
               child: Container(
                 width: itemWidth,
@@ -354,7 +355,7 @@ Widget buildPicList(
                   borderRadius: BorderRadius.circular(3.0),
                   child: FadeInImage.assetNetwork(
                     placeholder: 'res/drawable/img_placeholder.jpg',
-                    image: confirmPoiItem.images[index],
+                    image: images[index],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -362,7 +363,7 @@ Widget buildPicList(
             ),
           );
         },
-        itemCount: confirmPoiItem.images.length),
+        itemCount: images.length),
   );
 }
 
