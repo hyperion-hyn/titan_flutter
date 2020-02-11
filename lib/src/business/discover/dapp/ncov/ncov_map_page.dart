@@ -174,7 +174,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                 color: Colors.white,
                 tooltip: S.of(context).share,
                 onPressed: () {
-                  if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+                  if (appLocale.languageCode == "zh") {
                     Share.text(S.of(context).share, 'https://www.hyn.mobi/ncov.html', 'text/plain');
                   } else {
                     Share.text(S.of(context).share, 'https://www.hyn.space/ncov-en.html', 'text/plain');
@@ -200,8 +200,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                       left: 16,
                       child: InkWell(
                         onTap: () {
-                          print('TODO xxx');
-                          if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+                          if (appLocale.languageCode == "zh") {
                             launchUrl('https://www.hyn.mobi/cn/titan/ncov-data-source/');
                           } else {
                             launchUrl('https://www.hyn.space/titan/ncov-data-source/');
