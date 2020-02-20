@@ -270,17 +270,36 @@ class _WalletSendState extends State<WalletSendPage> {
   }
 
   void submit() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WalletSendConfirmPage(
+              walletAccountVo,
+              0,
+              _receiverAddressController.text,
+              backRouteName: widget.backRouteName,
+            )));
+  
+  return;
+
     if (_fromKey.currentState.validate()) {
       if (walletAccountVo == null) {
         Fluttertoast.showToast(msg: S.of(context).account_is_empty);
         return;
       }
+
+      var count = double.parse(_countController.text);
+      if (count <= 0) {
+        Fluttertoast.showToast(msg: S.of(context).account_is_empty);
+        return;
+      }
+
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => WalletSendConfirmPage(
                 walletAccountVo,
-                double.parse(_countController.text),
+                count,
                 _receiverAddressController.text,
                 backRouteName: widget.backRouteName,
               )));

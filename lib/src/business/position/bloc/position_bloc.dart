@@ -21,7 +21,9 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
     try {
       if (event is AddPositionEvent) {
         yield AddPositionState();
-      } else if (event is SelectCategoryInitEvent) {
+      }
+      // category
+      else if (event is SelectCategoryInitEvent) {
         yield SelectCategoryLoadingState(isShowSearch: false);
         var address = currentWalletVo.accountList[0].account.address;
         var language = (appLocale ?? defaultLocale).languageCode;
@@ -56,7 +58,9 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         var _openCageData =
             await _positionApi.getOpenCageData(query, lang: language);
         yield GetOpenCageState(_openCageData);
-      } else if (event is StartPostPoiDataEvent) {
+      }
+      // poi
+      else if (event is StartPostPoiDataEvent) {
         await _uploadPoiData(event.poiDataModel);
         yield StartPostPoiDataState();
       } else if (event is LoadingPostPoiDataEvent) {
@@ -65,7 +69,9 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         yield SuccessPostPoiDataState();
       } else if (event is FailPostPoiDataEvent) {
         yield FailPostPoiDataState(event.code);
-      } else if (event is ConfirmPositionLoadingEvent) {
+      }
+      // confirm
+      else if (event is ConfirmPositionLoadingEvent) {
         yield ConfirmPositionLoadingState();
       } else if (event is ConfirmPositionPageEvent) {
         var userPosition = event.userPosition;
@@ -82,6 +88,17 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         yield ConfirmPositionResultState(true, "");
       } else if (event is ConfirmPositionResultLoadingEvent) {
         yield ConfirmPositionResultLoadingState();
+      }
+      // poi ncov
+      else if (event is StartPostPoiNcovDataEvent) {
+        await _uploadPoiNcovData(event.poiDataModel);
+        yield StartPostPoiNcovDataState();
+      } else if (event is LoadingPostPoiNcovDataEvent) {
+        yield LoadingPostPoiNcovDataState(event.progress);
+      } else if (event is SuccessPostPoiNcovDataEvent) {
+        yield SuccessPostPoiNcovDataState();
+      } else if (event is FailPostPoiNcovDataEvent) {
+        yield FailPostPoiNcovDataState(event.code);
       }
     } catch (code, message) {
       yield LoadFailState();
@@ -104,4 +121,22 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
       add(FailPostPoiDataEvent(code));
     }
   }
+
+  Future _uploadPoiNcovData(PoiNcovDataModel model) async {
+    var address = currentWalletVo.accountList[0].account.address;
+    int code = await _positionApi
+        .postPoiNcovCollector(model.listImagePaths, address, model.poiCollector,
+            (int count, int total) {
+          double progress = count * 100.0 / total;
+          //print('[upload] total:$total, count:$count, progress:$progress%');
+          add(LoadingPostPoiNcovDataEvent(progress));
+        });
+
+    if (code == 0) {
+      add(SuccessPostPoiNcovDataEvent());
+    } else {
+      add(FailPostPoiNcovDataEvent(code));
+    }
+  }
+
 }

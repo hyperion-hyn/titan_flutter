@@ -141,10 +141,8 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
       builder: (BuildContext context, WalletState state) {
         if (state is WalletEmptyState) {
           return _walletTipsView();
-//          return _listView();
         } else if (state is ShowWalletState) {
           currentWalletVo = state.wallet;
-//          return _walletTipsView();
           return _listView();
         } else if (state is ScanWalletLoadingState) {
           return _buildLoading(context);
@@ -293,7 +291,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SelectPositionPage(initLocation: latlng),
+                builder: (context) => SelectPositionPage(initLocation: latlng, type: SelectPositionPage.SELECT_PAGE_TYPE_POI,),
               ),
             );
           }
@@ -306,6 +304,18 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
               context,
               MaterialPageRoute(
                 builder: (context) => ConfirmPositionPage(userPosition: latlng),
+              ),
+            );
+          }
+        }, isOpen: true),
+        _divider(),
+        _buildItem('ncov', S.of(context).add_ncov_item_title, -1, () async {
+          var latlng = await getLatlng();
+          if (latlng != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectPositionPage(initLocation: latlng, type: SelectPositionPage.SELECT_PAGE_TYPE_NCOV,),
               ),
             );
           }
@@ -466,7 +476,9 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            if (todayTimes < TAST_TIMES)
+            if(todayTimes < 0)
+              Container()
+            else if (todayTimes < TAST_TIMES)
               Text(
                 S.of(context).task_un_finished_func(todayTimes.toString(), TAST_TIMES.toString()),
                 style: TextStyle(fontSize: 12, color: Colors.red[600]),
