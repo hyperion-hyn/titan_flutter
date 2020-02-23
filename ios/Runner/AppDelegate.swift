@@ -104,11 +104,11 @@ import CoreBluetooth
         }
         
         // 3.log
-        UMCommonLogManager.setUp()
+        //UMCommonLogManager.setUp()
     }
     
     
-    /*
+     
     //MARK: UNUserNotificationCenterDelegate
 
         
@@ -122,7 +122,7 @@ import CoreBluetooth
     // The method will be called on the delegate when the user responded to the notification by opening the application, dismissing the notification or choosing a UNNotificationAction. The delegate must be set before the application returns from application:didFinishLaunchingWithOptions:.
     @available(iOS 10.0, *)
     override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        print("[UNUserNotificationCenterDelegate] --> didReceive")
+        print("[UNUserNotificationCenterDelegate] --> didReceive, response:\(response)")
     }
 
         
@@ -131,16 +131,16 @@ import CoreBluetooth
     override func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
         print("[UNUserNotificationCenterDelegate] --> openSettingsFor")
     }
-    */
-    
+     
+    //MARK: Appdelegate
     override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("[Appdelegate] -->didFailToRegisterForRemoteNotificationsWithError:\(error)")
+        print("[Appdelegate] -->didFailToRegisterForRemoteNotifications, Error:\(error)")
     }
     
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
            let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
            let token = tokenParts.joined()
-        print("[Appdelegate] -->didRegisterForRemoteNotificationsWithDeviceToken:\(token)")
+        print("[Appdelegate] -->didRegisterForRemoteNotifications, DeviceToken:\(token)")
 
         UMessage.registerDeviceToken(deviceToken)
     }
