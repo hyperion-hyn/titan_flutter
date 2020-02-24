@@ -34,4 +34,9 @@ class ContractInfoV2 {
   factory ContractInfoV2.fromJson(Map<String, dynamic> json) => _$ContractInfoV2FromJson(json);
 
   Map<String, dynamic> toJson() => _$ContractInfoV2ToJson(this);
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

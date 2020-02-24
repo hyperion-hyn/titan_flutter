@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/business/me/model/experience_info_v2.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -56,7 +57,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
   }
 
   void loadData() async {
-
     //用户余额等信息
     userInfo = await service.getUserInfo();
 
@@ -172,8 +172,22 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                       return;
                     }
 
-                    payOrder = await service.createExperienceOrder(
-                        contractId: widget.contractInfo.id, count: int.parse(countText));
+                    try {
+                      payOrder = await service.createExperienceOrder(
+                          contractId: widget.contractInfo.id, count: int.parse(countText));
+                    } catch (e) {
+                      logger.e(e);
+                      if (e is HttpResponseCodeNotSuccess) {
+                        if (e.code == -1007) {
+                          Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
+                        } else if (e.code == -1004) {
+                          Fluttertoast.showToast(msg: S.of(context).balance_lack);
+                        } else {
+                          Fluttertoast.showToast(msg: e.message ?? S.of(context).pay_fail_hint);
+                        }
+                        return ;
+                      }
+                    }
 
                     if (userInfo != null && payOrder != null) {
                       if (isInsufficientBalance()) {

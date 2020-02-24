@@ -13,6 +13,7 @@ import 'package:titan/src/business/me/contract/order_contract/order_contract_sta
 import 'package:titan/src/business/me/purchase_contract_page.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
+import 'package:titan/src/global.dart';
 
 import '../model/contract_info_v2.dart';
 import '../my_hash_rate_page.dart';
