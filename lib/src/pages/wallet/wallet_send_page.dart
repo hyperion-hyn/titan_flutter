@@ -222,6 +222,12 @@ class _WalletSendState extends State<WalletSendPage> {
 
   void submit() {
     if (_fromKey.currentState.validate()) {
+      var count = double.parse(_countController.text);
+      if (count <= 0) {
+        Fluttertoast.showToast(msg: S.of(context).account_is_empty);
+        return;
+      }
+
       var voStr = json.encode(widget.coinVo.toJson());
       Application.router.navigateTo(
           context,

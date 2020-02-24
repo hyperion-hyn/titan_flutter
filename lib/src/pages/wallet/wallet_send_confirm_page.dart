@@ -74,7 +74,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: Column(
+        body: SingleChildScrollView(
+          child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -308,7 +309,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               ),
             ),
           ],
-        ));
+        ),),);
   }
 
   void _updateSpeed(int newSpeed, double price) {
