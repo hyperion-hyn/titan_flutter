@@ -49,6 +49,13 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    //print('-----111');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
