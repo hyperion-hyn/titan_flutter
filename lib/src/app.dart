@@ -14,7 +14,7 @@ import 'components/setting/setting_component.dart';
 import 'components/updater/bloc/bloc.dart';
 import 'components/wallet/wallet_component.dart';
 import 'config/application.dart';
-import 'config/routes.dart';
+import 'routes/routes.dart';
 
 class App extends StatefulWidget {
   @override

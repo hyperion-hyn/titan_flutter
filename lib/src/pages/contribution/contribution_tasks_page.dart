@@ -15,7 +15,7 @@ import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/model/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';

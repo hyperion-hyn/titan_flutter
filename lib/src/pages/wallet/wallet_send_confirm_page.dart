@@ -10,7 +10,8 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -28,7 +29,7 @@ class WalletSendConfirmPage extends StatefulWidget {
   final String backRouteName;
 
   WalletSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress, {this.backRouteName})
-      : coinVo = CoinVo.fromJson(json.decode(coinVo));
+      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {

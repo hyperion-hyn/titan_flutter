@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class FinishImportPage extends StatelessWidget {

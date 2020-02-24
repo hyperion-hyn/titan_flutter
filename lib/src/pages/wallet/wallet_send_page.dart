@@ -9,7 +9,8 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 
 import '../../global.dart';
@@ -18,7 +19,7 @@ class WalletSendPage extends StatefulWidget {
   final CoinVo coinVo;
   final String backRouteName;
 
-  WalletSendPage(String coinVo, this.backRouteName) : coinVo = CoinVo.fromJson(json.decode(coinVo));
+  WalletSendPage(String coinVo, this.backRouteName) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -222,13 +223,13 @@ class _WalletSendState extends State<WalletSendPage> {
 
   void submit() {
     if (_fromKey.currentState.validate()) {
-      var count = double.parse(_countController.text);
+      var count = double.parse(_amountController.text);
       if (count <= 0) {
-        Fluttertoast.showToast(msg: S.of(context).account_is_empty);
+        Fluttertoast.showToast(msg: '转账数目必须大于0');
         return;
       }
 
-      var voStr = json.encode(widget.coinVo.toJson());
+      var voStr = FluroConvertUtils.object2string(widget.coinVo.toJson());
       Application.router.navigateTo(
           context,
           Routes.wallet_transfer_token_confirm +

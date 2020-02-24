@@ -19,7 +19,8 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_page.dart';
@@ -35,7 +36,7 @@ import 'api/etherscan_api.dart';
 class ShowAccountPage extends StatefulWidget {
   final CoinVo coinVo;
 
-  ShowAccountPage(String coinVo) : coinVo = CoinVo.fromJson(json.decode(coinVo));
+  ShowAccountPage(String coinVo) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -131,7 +132,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                     Application.router.navigateTo(
                                         context,
                                         Routes.wallet_account_send_transaction +
-                                            '?coinVo=${json.encode(widget.coinVo.toJson())}&backRouteName=${Uri.encodeComponent(backRouteName)}');
+                                            '?coinVo=${FluroConvertUtils.object2string(widget.coinVo.toJson())}&backRouteName=${Uri.encodeComponent(backRouteName)}');
                                   },
                                   child: Row(
                                     children: <Widget>[

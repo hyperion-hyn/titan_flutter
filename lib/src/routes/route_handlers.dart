@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
 import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
 import 'package:titan/src/pages/contribution/signal_scan/scan_signal_contribution_page.dart';
@@ -17,7 +17,7 @@ import 'package:titan/src/pages/wallet/wallet_send_confirm_page.dart';
 import 'package:titan/src/pages/wallet/wallet_send_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 
-import 'consts.dart';
+import '../config/consts.dart';
 
 var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return RootPageControlComponent(key: Keys.homePageKey);

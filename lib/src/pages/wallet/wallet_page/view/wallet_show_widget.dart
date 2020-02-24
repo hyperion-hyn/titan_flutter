@@ -7,7 +7,8 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/config/routes.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 
 class ShowWalletView extends StatelessWidget {
@@ -100,7 +101,7 @@ class ShowWalletView extends StatelessWidget {
                 return InkWell(
                     onTap: () {
                       var coinVo = walletVo.coins[index];
-                      var coinVoJsonStr = json.encode(coinVo.toJson());
+                      var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
                       Application.router.navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr}');
                     },
                     child: _buildAccountItem(context, walletVo.coins[index]));
