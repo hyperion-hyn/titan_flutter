@@ -36,10 +36,8 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   ConfirmPoiItem confirmPoiItem;
   bool _isPostData = false;
 
-
   @override
   void initState() {
-
     _positionBloc.add(ConfirmPositionLoadingEvent());
     _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
     _positionBloc.listen((state) {
@@ -92,6 +90,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
   }
 
   var _addMarkerSubject = PublishSubject<dynamic>();
+
   void addMarkerAndMoveToPoi() {
     if (mapController != null && confirmPoiItem?.name != null) {
       _addMarkerSubject.sink.add(1);
@@ -178,7 +177,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               );
             }
           } else {
-            return AllPageStateContainer(state,(){
+            return AllPageStateContainer(state, () {
               _positionBloc.add(ConfirmPositionLoadingEvent());
               _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
             });
@@ -216,7 +215,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
                       color: HexColor('#E9E9E9'),
                     ),
                   ),
-                  buildBottomInfoList(context,confirmPoiItem),
+                  buildBottomInfoList(context, confirmPoiItem),
                 ],
               ),
             ),
@@ -272,8 +271,11 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           zoom: defaultZoom,
         ),
         styleString: style,
-        onStyleLoaded: (mapboxController) {
-          onStyleLoaded(mapboxController);
+        onMapCreated: (mapboxController) {
+          mapController = mapboxController;
+        },
+        onStyleLoadedCallback: () {
+          onStyleLoaded();
         },
         myLocationTrackingMode: MyLocationTrackingMode.None,
         rotateGesturesEnabled: false,
@@ -287,14 +289,13 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     );
   }
 
-  void onStyleLoaded(MapboxMapController controller) {
-    mapController = controller;
+  void onStyleLoaded() {
     addMarkerAndMoveToPoi();
   }
 
   Widget _nameView() {
     return Container(
-      padding: EdgeInsets.only(left: 15,right: 15,top: 15),
+      padding: EdgeInsets.only(left: 15, right: 15, top: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -307,8 +308,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
               Expanded(
                 child: Text(
                   confirmPoiItem.name,
-                  style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 ),
               ),
             ],
@@ -316,9 +316,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           SizedBox(
             height: 16,
           ),
-          buildHeadItem(context,
-              Icons.location_on, confirmPoiItem.address,
-              hint: S.of(context).no_detail_address),
+          buildHeadItem(context, Icons.location_on, confirmPoiItem.address, hint: S.of(context).no_detail_address),
         ],
       ),
     );

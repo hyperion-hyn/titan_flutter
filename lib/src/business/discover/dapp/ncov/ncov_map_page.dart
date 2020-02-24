@@ -321,7 +321,10 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
             ),
             styleString: Const.kNCovMapStyle,
 //            styleString: Const.kNcovMapStyleCn,
-            onStyleLoaded: onStyleLoaded,
+            onMapCreated: (controller) {
+              mapboxMapController = controller;
+            },
+            onStyleLoadedCallback: onStyleLoaded,
             myLocationEnabled: myLocationEnabled,
             myLocationTrackingMode: locationTrackingMode,
             trackCameraPosition: true,
@@ -446,12 +449,10 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     }
   }
 
-  void onStyleLoaded(MapboxMapController controller) async {
+  void onStyleLoaded() async {
     setState(() {
-      mapboxMapController = controller;
-
-      controller.removeListener(_mapMoveListener);
-      controller.addListener(_mapMoveListener);
+      mapboxMapController.removeListener(_mapMoveListener);
+      mapboxMapController.addListener(_mapMoveListener);
     });
 
     Future.delayed(Duration(milliseconds: 500)).then((value) {

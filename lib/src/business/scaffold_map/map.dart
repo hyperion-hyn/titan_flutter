@@ -442,13 +442,11 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     return heavenMapPoiInfo;
   }
 
-  void onStyleLoaded(MapboxMapController controller) async {
-    setState(() {
-      mapboxMapController = controller;
-    });
+  void onStyleLoaded() async {
+    setState(() {});
 
-    controller.removeListener(_mapMoveListener);
-    controller.addListener(_mapMoveListener);
+    mapboxMapController.removeListener(_mapMoveListener);
+    mapboxMapController.addListener(_mapMoveListener);
   }
 
   void _mapMoveListener() {
@@ -472,7 +470,6 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
-
       if (event is ToMyLocationEvent) {
         //check location service
 
@@ -518,8 +515,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
               Navigator.pop(context);
             },
           ),
-        ]
-    );
+        ]);
   }
 
   void _showGoToOpenLocationServceDialog() {
@@ -555,19 +551,18 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        )
+                title: title,
+                content: content,
+                actions: actions,
+              )
             : AlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        );
+                title: title,
+                content: content,
+                actions: actions,
+              );
       },
     );
   }
-
 
   @override
   void dispose() {
@@ -642,7 +637,10 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           },
                           trackCameraPosition: true,
                           styleString: widget.style,
-                          onStyleLoaded: onStyleLoaded,
+                          onMapCreated: (controller) {
+                            mapboxMapController = controller;
+                          },
+                          onStyleLoadedCallback: onStyleLoaded,
                           initialCameraPosition: CameraPosition(
                             target: recentlyLocation,
                             zoom: widget.defaultZoom,

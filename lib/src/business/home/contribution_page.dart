@@ -512,11 +512,13 @@ class _ContributionState extends State<ContributionPage> {
         zoom: defaultZoom,
       ),
       styleString: style,
-      onStyleLoaded: (mapboxController) {
-        mapController = mapboxController;
+      onStyleLoadedCallback: () {
         Future.delayed(Duration(milliseconds: 1000)).then((v) {
           startScan();
         });
+      },
+      onMapCreated: (mapboxController) {
+        mapController = mapboxController;
       },
       myLocationTrackingMode: MyLocationTrackingMode.Tracking,
       rotateGesturesEnabled: false,
