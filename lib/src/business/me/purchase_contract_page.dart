@@ -93,9 +93,7 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(2)), shape: BoxShape.rectangle),
               child: Column(
-                children: <Widget>[
-
-                ],
+                children: <Widget>[],
               ),
             ),
             Container(
@@ -374,9 +372,7 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-
               _buildInputCell(),
-
 
               Padding(
                 padding: const EdgeInsets.only(top: 32),
@@ -495,48 +491,42 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-
         Padding(
           padding: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
           child: Text(
-
-
             "输入合约数量",
             style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
           ),
         ),
-
         Container(
-          margin: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
+          margin: const EdgeInsets.only(left: 15, right: 45, top: 6, bottom: 10),
+          height: 45,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Theme.of(context).primaryColor, width: 1.0),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12, top: 0, bottom: 8),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
             child: TextFormField(
               controller: _descController,
               keyboardType: TextInputType.number,
               maxLength: null,
               maxLines: null,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 14),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: "上限100份",
-                hintStyle: TextStyle(fontSize: 18, color: DefaultColors.color777),
+                hintStyle: TextStyle(fontSize: 14, color: DefaultColors.color777),
               ),
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
           child: Text(
-            S
-                .of(context)
-                .available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
+            S.of(context).available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
             style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
           ),
         ),
