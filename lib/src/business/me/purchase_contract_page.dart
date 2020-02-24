@@ -169,6 +169,9 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                     if (countText.isEmpty) {
                       Fluttertoast.showToast(
                           msg: S.of(context).experience_numbers_not_empty, gravity: ToastGravity.CENTER);
+                      setState(() {
+
+                      });
                       return;
                     }
 
@@ -178,6 +181,9 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                     if (userInfo != null && payOrder != null) {
                       if (isInsufficientBalance()) {
                         Fluttertoast.showToast(msg: S.of(context).balance_lack);
+                        setState(() {
+
+                        });
                       } else {
                         try {
                           showModalBottomSheet(
@@ -328,13 +334,15 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
   }
 
   bool isInsufficientBalance() {
-    var count = 0;
+    var count = -1;
     if (_descController.text.isNotEmpty) {
       count = int.parse(_descController.text);
     }
-    if (getBalanceByType(payBalanceType, 'total') < count * 10) {
+    var total = getBalanceByType(payBalanceType, 'total');
+    if (total < count * 10 || total <= 0) {
       return true;
     }
+
     return false;
   }
 }
