@@ -636,7 +636,7 @@
   "usdt_direct": "USDT deposit",
   "transfer_in_hyn": "transfer to HYN",
   "transfer_in_usdt": "transfer to USDT(ERC20)",
-  "experience_contract_mortgage": "House economy experience contract mortgage",
+  "experience_contract_mortgage": "Experience contract mortgage",
   "select_contract_quantity": "Select contract quantity",
   "input_contract_quantity": "Enter contract quantity",
   "experience_upper_func": "Cap ${canBuy}",

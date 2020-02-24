@@ -152,6 +152,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                               Center(
                                                 child: Text(
                                                   itemTitle,
+                                                  textAlign: TextAlign.center,
                                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                                                 ),
                                               ) : Container(),

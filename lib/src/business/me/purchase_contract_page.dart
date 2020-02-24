@@ -19,7 +19,7 @@ import 'dart:math';
 
 class PurchaseContractPage extends StatefulWidget {
   final ContractInfoV2 contractInfo;
-  
+
   PurchaseContractPage({@required this.contractInfo});
 
   @override
@@ -41,7 +41,7 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
 //  PayOrder payOrder;
   Quotes quotes;
   UserInfo userInfo;
-  ExperienceInfoV2 experienceInfo = ExperienceInfoV2(0,0);
+  ExperienceInfoV2 experienceInfo = ExperienceInfoV2(0, 0);
   PayOrder payOrder;
 
   TextEditingController _descController = TextEditingController();
@@ -73,7 +73,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
@@ -130,7 +129,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
     );
   }
 
-
   double getBalanceByType(String type, [String chargeType = 'hyn']) {
     if (userInfo == null) return 0.0;
 
@@ -166,7 +164,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               _buildInputCell(),
-
               Padding(
                 padding: const EdgeInsets.only(top: 32),
                 child: RaisedButton(
@@ -175,11 +172,13 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                   onPressed: () async {
                     var countText = _descController.text;
                     if (countText.isEmpty) {
-                      Fluttertoast.showToast(msg: S.of(context).experience_numbers_not_empty, gravity: ToastGravity.CENTER);
+                      Fluttertoast.showToast(
+                          msg: S.of(context).experience_numbers_not_empty, gravity: ToastGravity.CENTER);
                       return;
                     }
-                    
-                    payOrder = await service.createExperienceOrder(contractId: widget.contractInfo.id, count: int.parse(countText));
+
+                    payOrder = await service.createExperienceOrder(
+                        contractId: widget.contractInfo.id, count: int.parse(countText));
 
                     if (userInfo != null && payOrder != null) {
                       if (isInsufficientBalance()) {
@@ -249,8 +248,7 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                         width: 16,
                       ),
                       GestureDetector(
-                        onTap: ()  {
-
+                        onTap: () {
                           Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -323,7 +321,9 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
         Padding(
           padding: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
           child: Text(
-            S.of(context).experience_avaliable_func(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
+            S
+                .of(context)
+                .experience_avaliable_func(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
             //S.of(context).available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
             style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
           ),
