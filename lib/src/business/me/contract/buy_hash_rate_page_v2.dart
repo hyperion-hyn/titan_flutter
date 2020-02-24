@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/me/contract/contract_bloc/bloc.dart';
 import 'package:titan/src/business/me/contract/order_contract/order_contract_state.dart';
+import 'package:titan/src/business/me/purchase_contract_page.dart';
 import 'package:titan/src/business/me/purchase_page.dart';
 import 'package:titan/src/business/me/service/user_service.dart';
 
@@ -28,9 +29,9 @@ class BuyHashRatePageV2 extends StatefulWidget {
 class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   UserService _userService = UserService();
 
-  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0)];
+  List<ContractInfoV2> contractList = [ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)];
 
-  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  ContractInfoV2 _selectedContractInfo = ContractInfoV2(0, "", "", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.#####");
 
@@ -72,18 +73,24 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                 bloc: _orderContractBloc,
                 builder: (context, orderContractState) {
                   if (orderContractState is OrderSuccessState) {
+                    print("test_1111");
+
                     _orderContractBloc.add(ResetToInit());
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PurchasePage(
-                                    contractInfo: _selectedContractInfo,
-                                    payOrder: orderContractState.payOrder,
-                                  )));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PurchasePage(
+                                  contractInfo: _selectedContractInfo,
+                                  payOrder: orderContractState.payOrder,
+                                )));
+
+
                       return;
                     });
                   } else if (orderContractState is OrderFreeSuccessState) {
+                    print("222");
+
                     Fluttertoast.showToast(msg: S.of(context).receive_success_hint);
                     _orderContractBloc.add(ResetToInit());
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -122,6 +129,14 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                 height: 280.0,
                                 enlargeCenterPage: true,
                                 items: contractList.map((_contractInfoTemp) {
+                                  // todo: test_宅经济
+                                  String itemTitle = "";
+                                  if (_contractInfoTemp.type == 3) {
+                                    itemTitle = S.of(context).experience_contract_mortgage;
+                                    //_contractInfoTemp.description = "宅经济体验合约为体验合约，10USDT一份，统一使用HYN进行抵押，体验上限100份，达到上限后不可重复参与。\nAI自动巡检范围：约30m² \n\nPOH算力旨在...";
+                                  }
+                                  //print('[buy] --> name:${_contractInfoTemp.name}, type:${_contractInfoTemp.type}');
+
                                   return Builder(
                                     builder: (BuildContext context) {
                                       return Container(
@@ -133,6 +148,13 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
+                                              _contractInfoTemp.type == 3 ?
+                                              Center(
+                                                child: Text(
+                                                  itemTitle,
+                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                                ),
+                                              ) : Container(),
                                               Expanded(
                                                   child: Center(
                                                 child: Image.network(_contractInfoTemp.icon),
@@ -294,11 +316,22 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
     _contractBloc.add(SwtichContract(index));
   }
 
-  Function _orderSubmit() {
-    if (_selectedContractInfo.amount > 0) {
-      _orderContractBloc.add(OrderContract(_selectedContractInfo.id));
+  void _orderSubmit() {
+    if (_selectedContractInfo.type == 3) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PurchaseContractPage(
+                contractInfo: _selectedContractInfo,
+              )));
+      return;
     } else {
-      _orderContractBloc.add(OrderFreeContract(_selectedContractInfo.id));
+      if (_selectedContractInfo.amount > 0) {
+        _orderContractBloc.add(OrderContract(_selectedContractInfo.id));
+      } else {
+        _orderContractBloc.add(OrderFreeContract(_selectedContractInfo.id));
+      }
     }
   }
+
 }

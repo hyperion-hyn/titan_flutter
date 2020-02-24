@@ -4,7 +4,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/about/about_me_page.dart';
 import 'package:titan/src/business/home/data_contribution_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
-import 'package:titan/src/business/me/home_contract/home_contract_page.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
 import 'package:titan/src/business/me/node_mortgage/node_mortgage_page_v2.dart';
@@ -300,8 +299,7 @@ class _MeState extends UserState<MePage> with RouteAware {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               _buildCenterBigButton(S.of(context).get_power, "res/drawable/get_power.png", () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HomeContractPage()));
-                //Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
               }),
               Padding(
                 padding: const EdgeInsets.only(top: 18),

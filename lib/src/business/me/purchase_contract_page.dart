@@ -1,21 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/app.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/me/model/experience_info_v2.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
 import 'enter_fund_password.dart';
-import 'model/contract_info.dart';
 import 'model/contract_info_v2.dart';
 import 'model/pay_order.dart';
 import 'model/quotes.dart';
@@ -26,10 +19,8 @@ import 'dart:math';
 
 class PurchaseContractPage extends StatefulWidget {
   final ContractInfoV2 contractInfo;
-
-  final PayOrder payOrder;
-
-  PurchaseContractPage({@required this.contractInfo, @required this.payOrder});
+  
+  PurchaseContractPage({@required this.contractInfo});
 
   @override
   State<StatefulWidget> createState() {
@@ -43,8 +34,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
   ///直充余额类型支付
   static const String PAY_BALANCE_TYPE_RECHARGE = "RB_HYN";
 
-  ///收益余额类型支付
-  static const String PAY_BALANCE_TYPE_INCOME = "B_HYN";
   String payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
 
   var service = UserService();
@@ -52,6 +41,10 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
 //  PayOrder payOrder;
   Quotes quotes;
   UserInfo userInfo;
+  ExperienceInfoV2 experienceInfo = ExperienceInfoV2(0,0);
+  PayOrder payOrder;
+
+  TextEditingController _descController = TextEditingController();
 
   @override
   void initState() {
@@ -59,27 +52,34 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
     loadData();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _descController.dispose();
+  }
+
   void loadData() async {
     //行情
     quotes = await service.quotes();
+
     //用户余额等信息
     userInfo = await service.getUserInfo();
+
+    //体验信息
+    experienceInfo = await service.experience(widget.contractInfo.id);
 
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    // todo: jison edit_抵押方式
-    //var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
-    var payTypeName = payType == 0 ? S.of(context).by_hyn : S.of(context).by_mortgage;
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "宅经济合约抵押",
+          S.of(context).experience_contract_mortgage,
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
@@ -116,12 +116,11 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                           )),
                       child: Row(
                         children: <Widget>[
-                          Text("选择合约数量"),
+                          Text(S.of(context).select_contract_quantity),
                           Spacer(),
                         ],
                       )),
-                  if (payType == 0) _buildHynPayBox(),
-                  if (payType == 1) _buildHynBalancePayBox(),
+                  _buildHynBalancePayBox(),
                 ],
               ),
             )
@@ -131,208 +130,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
     );
   }
 
-  RelativeRect _getPosition(BuildContext context) {
-    final RenderBox bar = context.findRenderObject();
-    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
-    final RelativeRect position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        bar.localToGlobal(bar.size.bottomRight(Offset.zero), ancestor: overlay),
-        bar.localToGlobal(bar.size.bottomRight(Offset.zero), ancestor: overlay),
-      ),
-      Offset.zero & overlay.size,
-    );
-    return position;
-  }
-
-  Widget _buildHynPayBox() {
-    return Column(
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 0),
-          alignment: Alignment.topCenter,
-          decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              InkWell(
-                onTap: () {
-                  if (widget.payOrder?.hyn_amount != null) {
-                    Clipboard.setData(ClipboardData(text: widget.payOrder?.hyn_amount));
-                    Fluttertoast.showToast(msg: S.of(context).amount_copy_success_hint);
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        S.of(context).please_mortgage,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Container(
-                        constraints: BoxConstraints(maxWidth: 220),
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          '${widget.payOrder?.hyn_amount}',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
-                          softWrap: true,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          'HYN',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Icon(
-                          Icons.content_copy,
-                          size: 16,
-                          color: Colors.black54,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                S.of(context).transfer_hyn_hint,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
-              ),
-              if (widget.payOrder?.qr_code != null)
-                Image.memory(
-                  Base64Decoder().convert(widget.payOrder?.qr_code),
-                  height: 240,
-                  width: 240,
-                )
-              else
-                Container(
-                  color: Colors.white,
-                  height: 240,
-                  width: 240,
-                ),
-              InkWell(
-                onTap: () {
-                  if (widget.payOrder?.address != null) {
-                    Clipboard.setData(ClipboardData(text: widget.payOrder?.address));
-                    Fluttertoast.showToast(msg: S.of(context).address_copy_success_hint);
-                  }
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      S.of(context).transfer_address,
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    Text('${shortEthAddress(widget.payOrder?.address)}', style: TextStyle(fontSize: 14)),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Icon(
-                        Icons.content_copy,
-                        size: 16,
-                        color: Colors.black54,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-
-//              Text(
-//                '推荐使用imToken扫码支付',
-//                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
-//              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 22.0),
-                child: RaisedButton(
-                  color: Color(0xFFD6A734),
-                  onPressed: () {
-                    Fluttertoast.showToast(msg: S.of(context).hyn_wallet_open_hint);
-                  },
-                  child: SizedBox(
-                    height: 48,
-                    width: 192,
-                    child: Center(
-                      child: Text(
-                        S.of(context).by_hyn_transfer,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: RaisedButton(
-                  color: Color(0xFF73C42D),
-                  onPressed: () async {
-                    var ret =
-                        await service.confirmPay(orderId: widget.payOrder.order_id, payType: 'HYN', fundToken: " ");
-                    if (ret.code == 0) {
-                      //支付成功
-                      Fluttertoast.showToast(msg: S.of(context).pay_success_hint);
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                    } else {
-                      if (ret.code == -1007) {
-                        Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
-                      } else {
-                        Fluttertoast.showToast(msg: S.of(context).no_transfer_info_hint);
-                      }
-                    }
-                  },
-                  child: SizedBox(
-                    height: 48,
-                    width: 192,
-                    child: Center(
-                      child: Text(
-                        S.of(context).out_wallet_transfer_hint,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-              )
-            ],
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 8),
-          padding: EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.notification_important,
-                  color: Colors.grey,
-                  size: 20,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  S.of(context).current_rate_func(quotes.currency.toString(), quotes.to.toString(),
-                      '${quotes?.currency}${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}'),
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                  softWrap: true,
-                ),
-              )
-            ],
-          ),
-        )
-      ],
-    );
-  }
 
   double getBalanceByType(String type, [String chargeType = 'hyn']) {
     if (userInfo == null) return 0.0;
@@ -340,16 +137,12 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
     //print('balance: ${userInfo.balance}, chargeBalance: ${userInfo.chargeBalance})');
 
     double balance = 0;
-    if (type == PAY_BALANCE_TYPE_INCOME) {
-      balance = (userInfo?.balance ?? 0) - (userInfo?.totalChargeBalance ?? 0);
-    } else if (type == PAY_BALANCE_TYPE_RECHARGE) {
-      if (chargeType == 'hyn') {
-        balance = userInfo?.chargeHynBalance ?? 0;
-      } else if (chargeType == 'usdt') {
-        balance = userInfo?.chargeUsdtBalance ?? 0;
-      } else {
-        balance = userInfo?.totalChargeBalance ?? 0;
-      }
+    if (chargeType == 'hyn') {
+      balance = userInfo?.chargeHynBalance ?? 0;
+    } else if (chargeType == 'usdt') {
+      balance = userInfo?.chargeUsdtBalance ?? 0;
+    } else {
+      balance = userInfo?.totalChargeBalance ?? 0;
     }
 
     int decimals = 2;
@@ -380,7 +173,15 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                   elevation: 1,
                   color: Color(0xFFD6A734),
                   onPressed: () async {
-                    if (userInfo != null && widget.payOrder != null) {
+                    var countText = _descController.text;
+                    if (countText.isEmpty) {
+                      Fluttertoast.showToast(msg: S.of(context).experience_numbers_not_empty, gravity: ToastGravity.CENTER);
+                      return;
+                    }
+                    
+                    payOrder = await service.createExperienceOrder(contractId: widget.contractInfo.id, count: int.parse(countText));
+
+                    if (userInfo != null && payOrder != null) {
                       if (isInsufficientBalance()) {
                         Fluttertoast.showToast(msg: S.of(context).balance_lack);
                       } else {
@@ -394,8 +195,8 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                             if (fundToken == null) {
                               return;
                             }
-                            var ret = await service.confirmPay(
-                                orderId: widget.payOrder.order_id, payType: payBalanceType, fundToken: fundToken);
+                            var ret = await service.confirmExperiencePay(
+                                orderId: payOrder.order_id, payType: payBalanceType, fundToken: fundToken);
                             if (ret.code == 0) {
                               //支付成功
                               Fluttertoast.showToast(msg: S.of(context).action_success_hint);
@@ -448,16 +249,14 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                         width: 16,
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: ()  {
+
                           Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => RechargePurchasePage(),
                                       settings: RouteSettings(name: "/recharge_purchase_page")))
                               .then((value) async {
-//                            if (value == null || value == false) {
-//                              return;
-//                            }
                             userInfo = await service.getUserInfo();
                             payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
                             setState(() {});
@@ -471,21 +270,12 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                     ],
                   ),
                 ),
-//              Padding(
-//                padding: const EdgeInsets.symmetric(vertical: 64.0),
-//                child: Text(
-//                  '提示：算力抵押只能使用收益余额进行抵押',
-//                  style: TextStyle(color: Colors.grey),
-//                ),
-//              ),
             ],
           ),
         ),
       ],
     );
   }
-
-  TextEditingController _descController = TextEditingController();
 
   Widget _buildInputCell() {
     return Column(
@@ -494,7 +284,7 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
         Padding(
           padding: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
           child: Text(
-            "输入合约数量",
+            S.of(context).input_contract_quantity,
             style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
           ),
         ),
@@ -510,6 +300,13 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
             padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
             child: TextFormField(
               controller: _descController,
+              validator: (value) {
+                if (value == null || value.trim().length == 0) {
+                  return S.of(context).experience_numbers_not_empty;
+                } else {
+                  return null;
+                }
+              },
               keyboardType: TextInputType.number,
               maxLength: null,
               maxLines: null,
@@ -517,7 +314,7 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
               style: TextStyle(fontSize: 14),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: "上限100份",
+                hintText: S.of(context).experience_upper_func(experienceInfo.canBuy.toString()),
                 hintStyle: TextStyle(fontSize: 14, color: DefaultColors.color777),
               ),
             ),
@@ -526,7 +323,8 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
         Padding(
           padding: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
           child: Text(
-            S.of(context).available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
+            S.of(context).experience_avaliable_func(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
+            //S.of(context).available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
             style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
           ),
         ),
@@ -535,13 +333,11 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
   }
 
   bool isInsufficientBalance() {
-    if ((payBalanceType == PAY_BALANCE_TYPE_INCOME && getBalanceByType(payBalanceType) < widget.payOrder.amount) ||
-            (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
-                getBalanceByType(payBalanceType, 'total') < widget.payOrder.amount)
-        /*(payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
-                              (getBalanceByType(payBalanceType, 'hyn') < widget.payOrder.hynUSDTAmount ||
-                                  getBalanceByType(payBalanceType, 'usdt') < widget.payOrder.erc20USDTAmount))*/
-        ) {
+    var count = 0;
+    if (_descController.text.isNotEmpty) {
+      count = int.parse(_descController.text);
+    }
+    if (getBalanceByType(payBalanceType, 'total') < count * 10) {
       return true;
     }
     return false;

@@ -635,5 +635,11 @@
   "hyn_eq_u": "HYN等额U",
   "usdt_direct": "USDT直充",
   "transfer_in_hyn": "转入HYN",
-  "transfer_in_usdt": "转入USDT（ERC20）"
+  "transfer_in_usdt": "转入USDT（ERC20）",
+  "experience_contract_mortgage": "宅经济合约抵押",
+  "select_contract_quantity": "选择合约数量",
+  "input_contract_quantity": "输入合约数量",
+  "experience_upper_func": "上限${canBuy}份",
+  "experience_avaliable_func": "可用余额 HYN等额 ${numbers}",
+  "experience_numbers_not_empty": "合约数量不能为空"
 }
