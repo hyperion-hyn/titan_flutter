@@ -641,5 +641,5 @@
   "input_contract_quantity": "Enter contract quantity",
   "experience_upper_func": "Cap ${canBuy}",
   "experience_avaliable_func": "Available balance HYN ${hyn}",
-  "experience_numbers_not_empty": "合约数量不能为空"
+  "experience_numbers_not_empty": "The contract quantity cannot be empty"
 }

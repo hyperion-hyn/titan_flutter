@@ -641,5 +641,5 @@
   "input_contract_quantity": "계약 수량을 입력",
   "experience_upper_func": "상한${canBuy}분",
   "experience_avaliable_func": "가용 잔금 HYN와 액수가 같은 ${numbers}",
-  "experience_numbers_not_empty": "合约数量不能为空"
+  "experience_numbers_not_empty": "계약 수량은 비워 둘 수 없습니다"
 }
