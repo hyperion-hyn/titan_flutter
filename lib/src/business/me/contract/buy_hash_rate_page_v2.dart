@@ -73,24 +73,19 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                 bloc: _orderContractBloc,
                 builder: (context, orderContractState) {
                   if (orderContractState is OrderSuccessState) {
-                    print("test_1111");
-
                     _orderContractBloc.add(ResetToInit());
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PurchasePage(
-                                  contractInfo: _selectedContractInfo,
-                                  payOrder: orderContractState.payOrder,
-                                )));
-
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PurchasePage(
+                                    contractInfo: _selectedContractInfo,
+                                    payOrder: orderContractState.payOrder,
+                                  )));
 
                       return;
                     });
                   } else if (orderContractState is OrderFreeSuccessState) {
-                    print("222");
-
                     Fluttertoast.showToast(msg: S.of(context).receive_success_hint);
                     _orderContractBloc.add(ResetToInit());
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -148,14 +143,15 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              _contractInfoTemp.type == 3 ?
-                                              Center(
-                                                child: Text(
-                                                  itemTitle,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                                ),
-                                              ) : Container(),
+                                              _contractInfoTemp.type == 3
+                                                  ? Center(
+                                                      child: Text(
+                                                        itemTitle,
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                                      ),
+                                                    )
+                                                  : Container(),
                                               Expanded(
                                                   child: Center(
                                                 child: Image.network(_contractInfoTemp.icon),
@@ -201,7 +197,9 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                                   Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: <Widget>[
-                                                      Text(S.of(context).n_days_product("${_contractInfoTemp.timeCycle}")),
+                                                      Text(S
+                                                          .of(context)
+                                                          .n_days_product("${_contractInfoTemp.timeCycle}")),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
@@ -284,7 +282,9 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                             Text(
                                               orderContractState is OrderingState
                                                   ? S.of(context).commiting
-                                                  : (_selectedContractInfo.amount != 0 ? S.of(context).mortgage : S.of(context).free_receive),
+                                                  : (_selectedContractInfo.amount != 0
+                                                      ? S.of(context).mortgage
+                                                      : S.of(context).free_receive),
                                               style: TextStyle(
                                                   color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
                                             ),
@@ -292,7 +292,8 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                               width: 4,
                                             ),
                                             Text(
-                                              S.of(context).available_mortgage_numbers('${_selectedContractInfo.remaining??0}'),
+                                              S.of(context).available_mortgage_numbers(
+                                                  '${_selectedContractInfo.remaining ?? 0}'),
                                               style: TextStyle(color: Colors.white70),
                                             ),
                                           ],
@@ -323,8 +324,8 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
           context,
           MaterialPageRoute(
               builder: (context) => PurchaseContractPage(
-                contractInfo: _selectedContractInfo,
-              )));
+                    contractInfo: _selectedContractInfo,
+                  )));
       return;
     } else {
       if (_selectedContractInfo.amount > 0) {
@@ -334,5 +335,4 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
       }
     }
   }
-
 }

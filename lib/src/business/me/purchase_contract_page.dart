@@ -11,7 +11,6 @@ import '../../global.dart';
 import 'enter_fund_password.dart';
 import 'model/contract_info_v2.dart';
 import 'model/pay_order.dart';
-import 'model/quotes.dart';
 import 'my_hash_rate_page.dart';
 import 'recharge_purchase_page.dart';
 import 'service/user_service.dart';
@@ -38,8 +37,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
 
   var service = UserService();
 
-//  PayOrder payOrder;
-  Quotes quotes;
   UserInfo userInfo;
   ExperienceInfoV2 experienceInfo = ExperienceInfoV2(0, 0);
   PayOrder payOrder;
@@ -59,8 +56,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
   }
 
   void loadData() async {
-    //行情
-    quotes = await service.quotes();
 
     //用户余额等信息
     userInfo = await service.getUserInfo();
