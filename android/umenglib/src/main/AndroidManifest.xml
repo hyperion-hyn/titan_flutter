@@ -1,15 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.hyn.titan.umenglib" >
+    package="org.maprich.app.umenglib" >
     <application
         android:allowBackup="true"
         tools:replace="android:allowBackup"
         >
         <meta-data
             android:name="com.huawei.hms.client.appid"
-            android:value="appid=101755081" />
+            android:value="appid=101765295" />
         <activity
-            android:name="org.hyn.titan.umenglib.xiaomi.MipushActivity"
+            android:name="org.maprich.app.umenglib.xiaomi.MipushActivity"
             android:launchMode="singleTask"
             android:exported="true" />
     </application>

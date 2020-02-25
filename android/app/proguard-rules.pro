@@ -210,9 +210,9 @@
 -dontwarn rx.**
 
 #保留模型  不然json解析出错
--keep class org.hyn.titan.**.entity.** {*;}
--keep class org.hyn.titan.**.model.** {*;}
--keep class org.hyn.titan.**.vo.** {*;}
+-keep class org.maprich.app.**.entity.** {*;}
+-keep class org.maprich.app.**.model.** {*;}
+-keep class org.maprich.app.**.vo.** {*;}
 
 # Retrofit2
 -dontnote retrofit2.Platform
