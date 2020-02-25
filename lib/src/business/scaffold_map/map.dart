@@ -238,6 +238,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
           iconImage: "hyn_marker_big",
           iconAnchor: "bottom",
           iconOffset: Offset(0.0, 3.0),
+          symbolSortKey:11
         ),
       );
 
