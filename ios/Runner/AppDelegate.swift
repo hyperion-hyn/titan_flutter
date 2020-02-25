@@ -80,7 +80,7 @@ import CoreBluetooth
     private func setupUM(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         
         // 1.init
-        UMConfigure.initWithAppkey("5e4ca6d74ca3574666000287", channel: "App Store")
+        UMConfigure.initWithAppkey("5e548a8f0cafb268be00007f", channel: "App Store")
         UMConfigure.setLogEnabled(true)
         UMConfigure.setEncryptEnabled(false)
         
