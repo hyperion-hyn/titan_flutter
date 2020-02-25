@@ -22,7 +22,8 @@ class WalletSendPage extends StatefulWidget {
   final String currencyUnit;
   final String backRouteName;
 
-  WalletSendPage(this.walletAccountVo, {this.receiverAddress, this.count, this.symbol = "HYN", this.currencyUnit = 'CNY', this.backRouteName});
+  WalletSendPage(this.walletAccountVo,
+      {this.receiverAddress, this.count, this.symbol = "HYN", this.currencyUnit = 'CNY', this.backRouteName});
 
   @override
   State<StatefulWidget> createState() {
@@ -270,17 +271,17 @@ class _WalletSendState extends State<WalletSendPage> {
   }
 
   void submit() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => WalletSendConfirmPage(
-              walletAccountVo,
-              0,
-              _receiverAddressController.text,
-              backRouteName: widget.backRouteName,
-            )));
-  
-  return;
+//    Navigator.push(
+//        context,
+//        MaterialPageRoute(
+//            builder: (context) => WalletSendConfirmPage(
+//              walletAccountVo,
+//              0,
+//              _receiverAddressController.text,
+//              backRouteName: widget.backRouteName,
+//            )));
+//
+//  return;
 
     if (_fromKey.currentState.validate()) {
       if (walletAccountVo == null) {
@@ -298,11 +299,11 @@ class _WalletSendState extends State<WalletSendPage> {
           context,
           MaterialPageRoute(
               builder: (context) => WalletSendConfirmPage(
-                walletAccountVo,
-                count,
-                _receiverAddressController.text,
-                backRouteName: widget.backRouteName,
-              )));
+                    walletAccountVo,
+                    count,
+                    _receiverAddressController.text,
+                    backRouteName: widget.backRouteName,
+                  )));
     }
   }
 
