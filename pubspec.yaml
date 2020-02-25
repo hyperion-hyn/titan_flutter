@@ -104,7 +104,7 @@ dependencies:
   android_intent: 0.3.4+8
   app_settings: 3.0.0+1
   #https://pub:dev/packages/image_pickers#-readme-tab-
-  image_pickers: ^1.0.7+1
+  image_pickers: ^1.0.7
   bordered_text: ^1.0.0
 
   #https://pub.dev/packages/connectivity
