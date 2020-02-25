@@ -26,11 +26,17 @@ class ContractInfoV2 {
   int timeCycle;
   @JsonKey(name: "total_income")
   double totalIncome;
-
+  @JsonKey(name: "type")
+  int type;
   ContractInfoV2(this.id, this.name, this.icon, this.description, this.amount, this.hynAmount, this.power,
-      this.monthInc, this.limit, this.remaining, this.missionReq, this.timeCycle, this.totalIncome);
+      this.monthInc, this.limit, this.remaining, this.missionReq, this.timeCycle, this.totalIncome, this.type);
 
   factory ContractInfoV2.fromJson(Map<String, dynamic> json) => _$ContractInfoV2FromJson(json);
 
   Map<String, dynamic> toJson() => _$ContractInfoV2ToJson(this);
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

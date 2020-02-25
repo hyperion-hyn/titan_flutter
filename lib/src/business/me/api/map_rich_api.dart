@@ -7,6 +7,7 @@ import 'package:titan/src/business/me/api/map_rich_http.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/model/contract_info_v2.dart';
+import 'package:titan/src/business/me/model/experience_info_v2.dart';
 import 'package:titan/src/business/me/model/fund_token.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
 import 'package:titan/src/business/me/model/mortgage_info_v2.dart';
@@ -231,6 +232,14 @@ class MapRichApi {
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
+  ///订单 体验-创建 V2  support usdt.
+  Future<PayOrder> createExperienceOrderV2({@required int contractId, @required int count, @required String token}) async {
+    return await MapRichHttpCore.instance.postEntity(
+        'order/v2/experience/create', EntityFactory<PayOrder>((json) => PayOrder.fromJson(json)),
+        params: {"contractId": contractId, "count": count},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
+  }
+
   ///订单创建
   Future<PayOrder> createFreeOrder({@required int contractId, @required String token}) async {
     return await MapRichHttpCore.instance.postEntity(
@@ -263,6 +272,13 @@ class MapRichApi {
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }
 
+  Future<ResponseEntity<dynamic>> confirmExperiencePayV2(
+      {@required int orderId, @required String payType, @required String token, @required String fundToken}) async {
+    return await MapRichHttpCore.instance.postResponseEntity('order/v2/experience/paid', null,
+        params: {"orderId": orderId, "payType": payType},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
+  }
+
   ///确认支付订单
   Future<ResponseEntity<dynamic>> confirmRecharge({@required int orderId, @required String token}) async {
     return await MapRichHttpCore.instance.postResponseEntity('recharge/pay', null,
@@ -276,11 +292,20 @@ class MapRichApi {
         .getEntity('exchange_rate', EntityFactory<Quotes>((json) => Quotes.fromJson(json)));
   }
 
+  ///体验详情
+  Future<ExperienceInfoV2> experience(@required int contractId, @required String token) async {
+    return await MapRichHttpCore.instance.getEntity(
+        'order/v2/experience/info', EntityFactory<ExperienceInfoV2>((json) => ExperienceInfoV2.fromJson(json)),
+        params: {"contractId": contractId},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
+  }
+
   ///提币信息
   Future<WithdrawalInfo> withdrawalInfo({@required String token, @required String type}) async {
     return await MapRichHttpCore.instance.getEntity(
         'withdrawal/info', EntityFactory<WithdrawalInfo>((json) => WithdrawalInfo.fromJson(json)),
-        params: {"type": type}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
+        params: {"type": type},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   ///提币

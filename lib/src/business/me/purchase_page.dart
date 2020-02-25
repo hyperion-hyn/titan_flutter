@@ -641,9 +641,6 @@ class _PurchaseState extends State<PurchasePage> {
     if ((payBalanceType == PAY_BALANCE_TYPE_INCOME && getBalanceByType(payBalanceType) < widget.payOrder.amount) ||
             (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
                 getBalanceByType(payBalanceType, 'total') < widget.payOrder.amount)
-        /*(payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
-                              (getBalanceByType(payBalanceType, 'hyn') < widget.payOrder.hynUSDTAmount ||
-                                  getBalanceByType(payBalanceType, 'usdt') < widget.payOrder.erc20USDTAmount))*/
         ) {
       return true;
     }

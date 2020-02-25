@@ -10,6 +10,7 @@ import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/common_response.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/model/contract_info_v2.dart';
+import 'package:titan/src/business/me/model/experience_info_v2.dart';
 import 'package:titan/src/business/me/model/fund_token.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
 import 'package:titan/src/business/me/model/mortgage_info_v2.dart';
@@ -257,6 +258,16 @@ class UserService {
     return await _mapRichApi.createOrderV2(contractId: contractId, token: userToken.token);
   }
 
+  ///订单体验创建
+  Future<PayOrder> createExperienceOrder({@required int contractId, @required int count}) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+
+    return await _mapRichApi.createExperienceOrderV2(contractId: contractId, count: count, token: userToken.token);
+  }
+
   ///订单免费创建
   Future<PayOrder> createFreeOrder({@required int contractId}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
@@ -289,6 +300,18 @@ class UserService {
         orderId: orderId, payType: payType, token: userToken.token, fundToken: fundToken);
   }
 
+  ///体验支付确认
+  Future<ResponseEntity<dynamic>> confirmExperiencePay(
+      {@required int orderId, @required String payType, @required String fundToken}) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+
+    return await _mapRichApi.confirmExperiencePayV2(
+        orderId: orderId, payType: payType, token: userToken.token, fundToken: fundToken);
+  }
+
   ///充值支付确认
   Future<ResponseEntity<dynamic>> confirmRecharge({@required int orderId}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
@@ -301,6 +324,15 @@ class UserService {
   ///行情
   Future<Quotes> quotes() async {
     return await _mapRichApi.quotes();
+  }
+
+  ///体验详情
+  Future<ExperienceInfoV2> experience(@required int contractId) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    return await _mapRichApi.experience(contractId, userToken.token);
   }
 
   ///提币信息

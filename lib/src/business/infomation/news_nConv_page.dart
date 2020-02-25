@@ -49,7 +49,12 @@ class NewsNcovState extends InfoState<NewsNcovPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).ncov_guide),
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
+        title: Text(
+          S.of(context).ncov_guide,
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 8.0),

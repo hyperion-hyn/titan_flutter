@@ -635,5 +635,11 @@
   "hyn_eq_u": "HYN등액 U",
   "usdt_direct": "USDT직접 충전",
   "transfer_in_hyn": "입금HYN",
-  "transfer_in_usdt": "입금USDT（ERC20）"
+  "transfer_in_usdt": "입금USDT（ERC20）",
+  "experience_contract_mortgage": "주택경제 계약 저당",
+  "select_contract_quantity": "계약 수량을 선택",
+  "input_contract_quantity": "계약 수량을 입력",
+  "experience_upper_func": "상한${canBuy}분",
+  "experience_avaliable_func": "가용 잔금 HYN와 액수가 같은 ${numbers}",
+  "experience_numbers_not_empty": "계약 수량은 비워 둘 수 없습니다"
 }
