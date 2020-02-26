@@ -38,11 +38,21 @@ import CoreBluetooth
         
         setupUM(launchOptions: launchOptions)
         
+        if let userInfo = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] {
+            msgPushAction(userInfo: userInfo as! [AnyHashable : Any])
+        }
+
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
     func printLog(_ log: String) {
         self.callChannel.invokeMethod("printLog", arguments: "\(log)")
+    }
+    
+    private func msgPushAction(userInfo: [AnyHashable : Any]) {
+        printLog("[Appdelegate] -->msgPushAction, notification:\(userInfo)")
+
+        self.callChannel.invokeMethod("msgPush", arguments: userInfo)
     }
     
     private func flutterMethodCallHandler() {
@@ -127,7 +137,23 @@ import CoreBluetooth
     // The method will be called on the delegate when the user responded to the notification by opening the application, dismissing the notification or choosing a UNNotificationAction. The delegate must be set before the application returns from application:didFinishLaunchingWithOptions:.
     @available(iOS 10.0, *)
     override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        printLog("[UNUserNotificationCenterDelegate] --> didReceive, response:\(response)")
+        //printLog("[UNUserNotificationCenterDelegate] --> didReceive, response:\(response)")
+        
+        let title = response.notification.request.content.title;
+        let userInfoDict = response.notification.request.content.userInfo;
+        printLog("[UNUserNotificationCenterDelegate] --> didReceive, userInfo:\(userInfoDict)")
+
+        if let apsDict = userInfoDict["aps"] as? [AnyHashable : Any], let url = apsDict["out_link"] {
+            printLog("[UNUserNotificationCenterDelegate] --> didReceive, url:\(url)")
+
+            let userInfo:[AnyHashable : Any] = [
+                "title": title,
+                "out_link": url,
+            ]
+            msgPushAction(userInfo: userInfo)
+        }
+
+        completionHandler()
     }
 
         
@@ -152,6 +178,14 @@ import CoreBluetooth
     
     override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         printLog("[Appdelegate] -->didReceiveRemoteNotification:\(userInfo)")
+        
+        if application.applicationState == .active {
+            printLog("[Appdelegate] -->fetchCompletionHandler， 前台")
+        } else {
+            UMessage.didReceiveRemoteNotification(userInfo);
+            
+            msgPushAction(userInfo: userInfo)
+        }
     }
 
 }
