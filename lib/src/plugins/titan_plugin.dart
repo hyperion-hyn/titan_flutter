@@ -24,9 +24,9 @@ class TitanPlugin {
         break;
 
       case "printLog":
-        String result = "";
+        String result = call.arguments;
         String platform = Platform.operatingSystem.toUpperCase();
-        print("[${platform}] ${call.method} :${result}");
+        print("[${platform}] :${result}");
     }
   }
 

@@ -41,11 +41,13 @@ import CoreBluetooth
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
+    func printLog(_ log: String) {
+        self.callChannel.invokeMethod("printLog", arguments: "\(log)")
+    }
+    
     private func flutterMethodCallHandler() {
         callChannel.setMethodCallHandler { (methodCall, result) in
             
-            self.callChannel.invokeMethod("printLog", arguments: "\(methodCall.method)")
-
             let wallet = self.walletPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
             let encrytion = self.encrytionPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
             if(!wallet && !encrytion) {
@@ -97,7 +99,7 @@ import CoreBluetooth
         UNUserNotificationCenter.current().delegate = self
 
         UMessage.registerForRemoteNotifications(launchOptions: launchOptions, entity: entity) { (granted: Bool, error: Error?) in
-            print("[Appdelegate] --> setupUM, granted:\(granted), error:\(String(describing: error))")
+            self.printLog("[Appdelegate] --> setupUM, granted:\(granted), error:\(String(describing: error))")
             
             if granted {
                 
@@ -118,38 +120,38 @@ import CoreBluetooth
     // The method will be called on the delegate only if the application is in the foreground. If the method is not implemented or the handler is not called in a timely manner then the notification will not be presented. The application can choose to have the notification presented as a sound, badge, alert and/or in the notification list. This decision should be based on whether the information in the notification is otherwise visible to the user.
     @available(iOS 10.0, *)
     override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        print("[UNUserNotificationCenterDelegate] --> willPresent")
+        printLog("[UNUserNotificationCenterDelegate] --> willPresent")
     }
 
         
     // The method will be called on the delegate when the user responded to the notification by opening the application, dismissing the notification or choosing a UNNotificationAction. The delegate must be set before the application returns from application:didFinishLaunchingWithOptions:.
     @available(iOS 10.0, *)
     override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        print("[UNUserNotificationCenterDelegate] --> didReceive, response:\(response)")
+        printLog("[UNUserNotificationCenterDelegate] --> didReceive, response:\(response)")
     }
 
         
     // The method will be called on the delegate when the application is launched in response to the user's request to view in-app notification settings. Add UNAuthorizationOptionProvidesAppNotificationSettings as an option in requestAuthorizationWithOptions:completionHandler: to add a button to inline notification settings view and the notification settings view in Settings. The notification will be nil when opened from Settings.
         @available(iOS 12.0, *)
     override func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
-        print("[UNUserNotificationCenterDelegate] --> openSettingsFor")
+        printLog("[UNUserNotificationCenterDelegate] --> openSettingsFor")
     }
      
     //MARK: Appdelegate
     override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("[Appdelegate] -->didFailToRegisterForRemoteNotifications, Error:\(error)")
+        printLog("[Appdelegate] -->didFailToRegisterForRemoteNotifications, Error:\(error)")
     }
     
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
            let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
            let token = tokenParts.joined()
-        print("[Appdelegate] -->didRegisterForRemoteNotifications, DeviceToken:\(token)")
+        printLog("[Appdelegate] -->didRegisterForRemoteNotifications, DeviceToken:\(token)")
 
         UMessage.registerDeviceToken(deviceToken)
     }
     
     override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("[Appdelegate] -->didReceiveRemoteNotification:\(userInfo)")
+        printLog("[Appdelegate] -->didReceiveRemoteNotification:\(userInfo)")
     }
 
 }
