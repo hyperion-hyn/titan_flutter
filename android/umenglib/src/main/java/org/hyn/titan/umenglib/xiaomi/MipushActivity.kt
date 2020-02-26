@@ -1,11 +1,11 @@
-package org.maprich.app.umenglib.xiaomi
+package org.hyn.titan.umenglib.xiaomi
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import org.android.agoo.common.AgooConstants
 import com.umeng.message.UmengNotifyClickActivity
-import org.maprich.app.umenglib.R
+import org.hyn.titan.umenglib.R
 
 
 class MipushActivity : UmengNotifyClickActivity() {

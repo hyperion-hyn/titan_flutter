@@ -1,4 +1,4 @@
-package org.maprich.app.umenglib.push
+package org.hyn.titan.umenglib.push
 
 object UMengConstants{
     const val UMENG_APPKEY = "5e548ae54ca3578e9300019a"

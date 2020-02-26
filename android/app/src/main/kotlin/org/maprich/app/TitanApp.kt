@@ -5,10 +5,10 @@ import io.flutter.app.FlutterApplication
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.functions.Consumer
 import io.reactivex.plugins.RxJavaPlugins
-import org.maprich.app.umenglib.BuildConfig
-import org.maprich.app.umenglib.interfaces.IUMengPush
-import org.maprich.app.umenglib.interfaces.OnPushChangeListener
-import org.maprich.app.umenglib.push.UMengPushImpl
+import org.hyn.titan.umenglib.BuildConfig
+import org.hyn.titan.umenglib.interfaces.IUMengPush
+import org.hyn.titan.umenglib.interfaces.OnPushChangeListener
+import org.hyn.titan.umenglib.push.UMengPushImpl
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.toast
 import timber.log.Timber

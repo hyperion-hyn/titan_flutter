@@ -1,4 +1,4 @@
-package org.maprich.app.umenglib.interfaces
+package org.hyn.titan.umenglib.interfaces
 
 import android.content.Context
 

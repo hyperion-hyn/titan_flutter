@@ -1,4 +1,4 @@
-package org.maprich.app.umenglib.push
+package org.hyn.titan.umenglib.push
 
 import android.app.Application
 import android.content.Context
@@ -6,12 +6,12 @@ import android.util.Log
 import android.widget.Toast
 import com.taobao.accs.utl.ALog
 import com.umeng.commonsdk.UMConfigure
-import org.maprich.app.umenglib.interfaces.IUMengPush
+import org.hyn.titan.umenglib.interfaces.IUMengPush
 import com.umeng.message.IUmengRegisterCallback
 import com.umeng.message.PushAgent
 import org.android.agoo.huawei.HuaWeiRegister
 import org.android.agoo.xiaomi.MiPushRegistar
-import org.maprich.app.umenglib.interfaces.OnPushChangeListener
+import org.hyn.titan.umenglib.interfaces.OnPushChangeListener
 
 
 class UMengPushImpl : IUMengPush{

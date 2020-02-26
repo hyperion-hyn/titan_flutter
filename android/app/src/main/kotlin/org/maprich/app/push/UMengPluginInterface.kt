@@ -6,8 +6,8 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.maprich.app.TitanApp
-import org.maprich.app.umenglib.interfaces.OnPushChangeListener
-import org.maprich.app.umenglib.push.UMengPushImpl
+import org.hyn.titan.umenglib.interfaces.OnPushChangeListener
+import org.hyn.titan.umenglib.push.UMengPushImpl
 import org.jetbrains.anko.runOnUiThread
 
 class UMengPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
