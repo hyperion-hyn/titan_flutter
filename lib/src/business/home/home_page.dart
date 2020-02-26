@@ -22,10 +22,12 @@ import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/business/updater/updater.dart';
+import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/selecte_app_area_dialog.dart';
@@ -67,10 +69,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     initUniLinks();
 
-//    _loadAppArea();
-
     SchedulerBinding.instance.addPostFrameCallback((_) {
-//      bottomBarHeight = UtilUi.getRenderObjectHeight(_bottomBarKey);
       if (isShowSetAppAreaDialog == false) {
         _loadAppArea();
       }
@@ -79,6 +78,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
       eventBus.fire(ToMyLocationEvent());
     });
+
+    TitanPlugin.msgPushChangeCallBack = (Map values) {
+      _pushWebView(values);
+    };
+  }
+
+  void _pushWebView(Map values) {
+    var url = values["out_link"];
+    var title = values["title"];
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WebViewContainer(
+              initUrl: url,
+              title: title,
+            )));
   }
 
   void _showSetAreaAppDialog() {

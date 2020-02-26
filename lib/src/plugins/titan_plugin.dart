@@ -4,9 +4,12 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
+typedef MessagePushCallBack = void Function(Map values);
+
 class TitanPlugin {
   static final MethodChannel callChannel = MethodChannel('org.hyn.titan/call_channel');
   static final EventChannel keyPairChangeChannel = EventChannel('org.hyn.titan/event_stream');
+  static MessagePushCallBack msgPushChangeCallBack;
 
   static void initFlutterMethodCall() {
     callChannel.setMethodCallHandler(_platformCallHandler);
@@ -27,6 +30,21 @@ class TitanPlugin {
         String result = call.arguments;
         String platform = Platform.operatingSystem.toUpperCase();
         print("[${platform}] :${result}");
+
+        /*
+        Map values = {
+          "title": "新增“宅经济体验合约",
+          "out_link": "https://www.github.com/",
+        };
+        msgPushChangeCallBack(values);
+        */
+
+        break;
+
+      case "msgPush":
+        Map result = call.arguments;
+        msgPushChangeCallBack(result);
+        break;
     }
   }
 
