@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -21,6 +22,11 @@ class TitanPlugin {
         });
         return result;
         break;
+
+      case "printLog":
+        String result = "";
+        String platform = Platform.operatingSystem.toUpperCase();
+        print("[${platform}] ${call.method} :${result}");
     }
   }
 
@@ -119,4 +125,15 @@ class TitanPlugin {
   static Future<bool> bluetoothEnable() async {
     return await callChannel.invokeMethod('bluetoothEnable');
   }
+
+  // printLog
+  static Future<dynamic> printLog() {
+    return callChannel.invokeMethod("printLog");
+  }
+
+  // msgPush
+  static Future<String> msgPush() {
+    return callChannel.invokeMethod("msgPush");
+  }
+
 }

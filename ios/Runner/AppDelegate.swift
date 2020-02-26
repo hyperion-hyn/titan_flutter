@@ -43,6 +43,9 @@ import CoreBluetooth
     
     private func flutterMethodCallHandler() {
         callChannel.setMethodCallHandler { (methodCall, result) in
+            
+            self.callChannel.invokeMethod("printLog", arguments: "\(methodCall.method)")
+
             let wallet = self.walletPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
             let encrytion = self.encrytionPlugin.setMethodCallHandler(methodCall: methodCall, result: result)
             if(!wallet && !encrytion) {
