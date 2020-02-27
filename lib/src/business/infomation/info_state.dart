@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/infomation/info_detail_page.dart';
 
 typedef OnActiveTag = void Function(int tagId);
@@ -53,8 +54,7 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
                     children: <Widget>[
                       Text(
                         infoItemVo.title,
-                        style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
-                      ),
+                        style: TextStyle(fontSize: 16, color: Color(0xFF252525))),
                       Spacer(),
                       Text(
                         DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(infoItemVo.publishTime)),
@@ -63,7 +63,7 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -71,23 +71,43 @@ abstract class InfoState<T extends StatefulWidget> extends State<T> {
     );
   }
 
-  Widget buildTag(String text, int value, bool isActive, OnActiveTag onActiveTag) {
+  Widget buildTag(String text, int value, bool isActive, OnActiveTag onActiveTag, {bool isUpdate = false}) {
     Color textColor = isActive ? Theme.of(context).primaryColor : Color(0xFF252525);
     Color borderColor = isActive ? Theme.of(context).primaryColor : Color(0xFFB7B7B7);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: GestureDetector(
         onTap: () {
-          if(onActiveTag != null) {
+          if (onActiveTag != null) {
             onActiveTag(value);
           }
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 13, color: textColor),
-          ),
+          child: !isUpdate
+              ? Text(
+                  text,
+                  style: TextStyle(fontSize: 13, color: textColor),
+                )
+              : Row(
+                  children: <Widget>[
+                    Text(
+                      text,
+                      style: TextStyle(fontSize: 13, color: textColor),
+                    ),
+                    Padding(
+                            padding: const EdgeInsets.only(left: 4),
+                            child: Container(
+                              height: 6,
+                              width: 6,
+                              decoration: BoxDecoration(
+                                  color: HexColor("#DA3B2A"),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: HexColor("#DA3B2A"))),
+                            ),
+                          ),
+                  ],
+                ),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), border: Border.all(color: borderColor)),
         ),
       ),
@@ -102,6 +122,7 @@ class InfoItemVo {
   String publisher;
   String url;
   int publishTime;
+  bool isUpdate;
 
-  InfoItemVo({this.id, this.photoUrl, this.title, this.publisher, this.url, this.publishTime});
+  InfoItemVo({this.id, this.photoUrl, this.title, this.publisher, this.url, this.publishTime, this.isUpdate=true});
 }

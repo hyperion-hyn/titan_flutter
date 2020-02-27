@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/discover_content.dart';
 import 'package:titan/src/business/home/home_panel.dart';
@@ -211,9 +212,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
                           BottomNavigationBarItem(
                               title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
-                          BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
                           BottomNavigationBarItem(
-                              title: Text(S.of(context).information), icon: Icon(Icons.description)),
+                              title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
+                          BottomNavigationBarItem(title: Text(S.of(context).information), icon: Stack(
+                            children: <Widget>[
+                              Icon(Icons.description),
+                              if (true)Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                                child: Container(
+                                  height: 8,
+                                  width: 8,
+                                  decoration: BoxDecoration(
+                                      color: HexColor("#DA3B2A"),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: HexColor("#DA3B2A"))),
+                                ),
+                              ),
+                            ],
+                          )),
                           BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
                         ]),
                   );

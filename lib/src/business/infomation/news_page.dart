@@ -145,7 +145,8 @@ class NewsState extends InfoState<NewsPage> {
   }
 
   Widget _buildTag(String text, int value) {
-    return super.buildTag(text, value, selectedTag == value, activeTag);
+    var isUpdate = value == OFFICIAL_ANNOUNCEMENT_TAG;
+    return super.buildTag(text, value, selectedTag == value, activeTag, isUpdate: isUpdate);
   }
 
   void activeTag(int tagId) {
