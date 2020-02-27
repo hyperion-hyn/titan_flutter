@@ -88,7 +88,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _pushWebView(Map values) {
     var url = values["out_link"];
     var title = values["title"];
-    var text = values["text"];
+    var content = values["content"];
+    print("[dd] content:${content}");
 
     Navigator.push(
         context,
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               id: 0,
               url: url,
               title: title,
-              text: text,
+              content: content,
             )));
 
 /*    Navigator.push(
