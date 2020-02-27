@@ -194,6 +194,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           builder: (context, state) {
             if(state is InitialHomeState && state.announcement != null){
               print("!!!! isShowAnnounceDialog");
+              //todo 掘金 isShowAnnounceDialog 这里为 true
               isShowAnnounceDialog = false;
               isUpdateAnnounce = true;
             }
