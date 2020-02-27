@@ -93,8 +93,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     };
 
     _clearBadgeSubcription = eventBus.on().listen((event) {
+      print('[home] --> clear badge');
       if (event is ClearBadgeEvent) {
-        setState(() {});
+        BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
       }
     });
 

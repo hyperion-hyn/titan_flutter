@@ -156,9 +156,13 @@ class NewsState extends InfoState<NewsPage> {
 
     setState(() {
       var isUpdate = tagId == OFFICIAL_ANNOUNCEMENT_TAG && isUpdateAnnounce;
+      print('[home] --> fire badge, ready');
+
       if (isUpdate) {
-        eventBus.fire(ClearBadgeEvent());
+        print('[home] --> fire badge, ...ing');
+
         isUpdateAnnounce = false;
+        eventBus.fire(ClearBadgeEvent());
       }
 
       selectedTag = tagId;
