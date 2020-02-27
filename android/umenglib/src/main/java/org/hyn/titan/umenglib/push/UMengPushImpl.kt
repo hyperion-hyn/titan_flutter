@@ -5,6 +5,7 @@ import android.app.Notification
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.google.gson.Gson
 import com.hyn.titan.tools.AppPrintTools
 import com.taobao.accs.utl.ALog
 import com.umeng.commonsdk.UMConfigure
@@ -66,10 +67,11 @@ class UMengPushImpl : IUMengPush{
 
     private val notificationClickHandler = object : UmengNotificationClickHandler() {
         override fun dealWithCustomAction(p0: Context?, p1: UMessage?) {
-            onPushListener?.onPushClick(p1?.title,p1?.extra?.get("out_link"),p1?.text)
+            AppPrintTools.printLog("notificationClickHandler")
+            onPushListener?.onPushClick(p1?.title,p1?.extra?.get("out_link") ?: "",p1?.extra?.get("content") ?: "")
             AppPrintTools.printLog("notificationClickHandler = " + p1?.title + " "
-                    + p1?.extra?.get("out_link")+ " " + p1?.text)
-            AppPrintTools.printLog("notificationClickHandler = " + p1.toString())
+                    + p1?.extra?.get("out_link")+ " " + p1?.extra?.get("content"))
+            AppPrintTools.printLog("notificationClickHandler = " + Gson().toJson(p1))
 //            super.dealWithCustomAction(p0, p1)
         }
     }

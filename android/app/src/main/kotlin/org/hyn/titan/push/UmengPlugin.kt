@@ -19,7 +19,7 @@ class UmengPlugin : MethodChannel.MethodCallHandler {
         }
 
         fun openWebView(title: String?, out_link: String?,text: String?){
-            var map = mapOf("title" to title,"out_link" to out_link,"text" to text)
+            var map = mapOf("title" to title,"out_link" to out_link,"content" to text)
             methodChannel.invokeMethod("msgPush",map)
         }
     }
