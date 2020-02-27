@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   var isLoadAppArea = false;
   var isShowSetAppAreaDialog = false;
+  var isShowAnnounceDialog = false;
 
   @override
   void initState() {
@@ -183,6 +184,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           builder: (context, state) {
             if(state is InitialHomeState && state.announcement != null){
               print("!!!! isShowAnnounceDialog");
+              isShowAnnounceDialog = false;
               isUpdateAnnounce = true;
             }
             return Scaffold(
@@ -262,12 +264,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                   //tab views
                   _getContent(_currentIndex),
-                  if(isUpdateAnnounce && state is InitialHomeState) AnnouncementDialog(
+                  if(isShowAnnounceDialog && state is InitialHomeState) AnnouncementDialog(
                       state.announcement,(){
-                    isUpdateAnnounce = false;
+                    isShowAnnounceDialog = false;
                     BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
-                  }
-                  ),
+                  }),
                 ],
               ),
             );
