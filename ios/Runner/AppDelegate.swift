@@ -143,13 +143,17 @@ import CoreBluetooth
         let userInfoDict = response.notification.request.content.userInfo;
         printLog("[UNUserNotificationCenterDelegate] --> didReceive, userInfo:\(userInfoDict)")
 
-        if let apsDict = userInfoDict["aps"] as? [AnyHashable : Any], let url = apsDict["out_link"] {
-            printLog("[UNUserNotificationCenterDelegate] --> didReceive, url:\(url)")
+        if let apsDict = userInfoDict["aps"] as? [AnyHashable : Any] {
 
+            let url = apsDict["out_link"] ?? ""
+            let content = apsDict["content"] ?? ""
             let userInfo:[AnyHashable : Any] = [
                 "title": title,
                 "out_link": url,
+                "content": content,
             ]
+            printLog("[UNUserNotificationCenterDelegate] --> didReceive, url:\(url)")
+
             msgPushAction(userInfo: userInfo)
         }
 
