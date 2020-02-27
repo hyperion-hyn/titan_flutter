@@ -37,6 +37,7 @@ import 'package:uni_links/uni_links.dart';
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 import '../../../env.dart';
 import '../../global.dart';
+import 'announcement_dialog.dart';
 import 'bloc/bloc.dart';
 import 'bottom_fabs_widget.dart';
 import 'drawer/drawer_scenes.dart';
@@ -62,6 +63,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   var isLoadAppArea = false;
   var isShowSetAppAreaDialog = false;
+  var isShowAnnounceDialog = false;
 
   @override
   void initState() {
@@ -78,11 +80,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
       eventBus.fire(ToMyLocationEvent());
+      BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
     });
 
     TitanPlugin.msgPushChangeCallBack = (Map values) {
       _pushWebView(values);
     };
+
+
   }
 
   void _pushWebView(Map values) {
@@ -174,7 +179,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             //while listener trigger before build, the panelKey is not set, so call after build
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (state is InitialHomeState) {
-                myWidget.DraggableScrollableActuator.setMin(panelKey.currentContext);
+//                myWidget.DraggableScrollableActuator.setMin(panelKey.currentContext);
               } else if (state is home.MapOperatingState) {
                 myWidget.DraggableScrollableActuator.setHide(panelKey.currentContext);
               }
@@ -185,6 +190,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Updater(
         child: BlocBuilder<home.HomeBloc, home.HomeState>(
           builder: (context, state) {
+            if(state is InitialHomeState && state.announcement != null){
+              print("!!!! isShowAnnounceDialog");
+              isShowAnnounceDialog = true;
+            }
             return Scaffold(
               resizeToAvoidBottomPadding: false,
               drawer: isDebug ? DrawerScenes() : null,
@@ -247,6 +256,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                   //tab views
                   _getContent(_currentIndex),
+                  if(isShowAnnounceDialog && state is InitialHomeState) AnnouncementDialog(
+                      state.announcement,(){
+                    isShowAnnounceDialog = false;
+                    BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
+                  }
+                  ),
                 ],
               ),
             );
