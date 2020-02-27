@@ -31,14 +31,14 @@ class TitanPlugin {
         String platform = Platform.operatingSystem.toUpperCase();
         print("[${platform}] :${result}");
 
-        // todo: test
+        /*// todo: test
         Map values = {
           "title": "新增“宅经济体验合约",
           "text": "<!-- wp:image {\"id\":1346,\"align\":\"center\"} -->\n<div class=\"wp-block-image\"><figure class=\"aligncenter\"><img src=\"https:\/\/news.hyn.space\/wp-content\/uploads\/2020\/02\/signal-attachment-2020-02-24-231552-650x1024.jpeg\" alt=\"\" class=\"wp-image-1346\"\/><\/figure><\/div>\n<!-- \/wp:image -->",
-          "out_link": "https://www.github.com/",
+          "out_link": "",
         };
         msgPushChangeCallBack(values);
-
+        */
 
         break;
 
