@@ -10,6 +10,7 @@ import org.hyn.titan.umenglib.interfaces.IUMengPush
 import com.umeng.message.IUmengRegisterCallback
 import com.umeng.message.PushAgent
 import org.android.agoo.huawei.HuaWeiRegister
+import org.android.agoo.mezu.MeizuRegister
 import org.android.agoo.xiaomi.MiPushRegistar
 import org.hyn.titan.umenglib.interfaces.OnPushChangeListener
 
@@ -42,6 +43,8 @@ class UMengPushImpl : IUMengPush{
         MiPushRegistar.register(context, UMengConstants.UMENG_XIAOMI_APPID, UMengConstants.UMENG_XIAOMI_SECRET)
 
         HuaWeiRegister.register(context as Application)
+
+        MeizuRegister.register(context, UMengConstants.UMENG_MEIZU_APPID, UMengConstants.UMENG_MEIZU_APPKEY)
     }
 
     override fun getUMengToken() : String {
