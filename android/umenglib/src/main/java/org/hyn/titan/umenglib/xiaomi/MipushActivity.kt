@@ -19,6 +19,7 @@ class MipushActivity : UmengNotifyClickActivity() {
     fun onMessage(intent: Intent) {
         super.onMessage(intent)  //此方法必须调用，否则无法统计打开数
         val body = intent.getStringExtra(AgooConstants.MESSAGE_BODY)
+        Log.i(TAG, "register success：deviceToken：-------->clickclick")
         Log.i(TAG, body)
     }
 

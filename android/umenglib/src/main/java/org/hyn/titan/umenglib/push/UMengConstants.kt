@@ -14,4 +14,6 @@ object UMengConstants{
     const val UMENG_MEIZU_APPID = "128062"
     const val UMENG_MEIZU_APPKEY = "a446881639344dfc9c2652efa0d8eff2"
     const val UMENG_MEIZU_SECRET = "5399157a934547e08cea74809a8b1600"
+
+    /**消息类型**/
 }
