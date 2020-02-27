@@ -87,7 +87,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       _pushWebView(values);
     };
 
-
   }
 
   void _pushWebView(Map values) {
@@ -179,7 +178,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             //while listener trigger before build, the panelKey is not set, so call after build
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (state is InitialHomeState) {
-//                myWidget.DraggableScrollableActuator.setMin(panelKey.currentContext);
+                myWidget.DraggableScrollableActuator.setMin(panelKey.currentContext);
               } else if (state is home.MapOperatingState) {
                 myWidget.DraggableScrollableActuator.setHide(panelKey.currentContext);
               }
@@ -191,8 +190,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: BlocBuilder<home.HomeBloc, home.HomeState>(
           builder: (context, state) {
             if(state is InitialHomeState && state.announcement != null){
-              print("!!!! isShowAnnounceDialog");
-              isShowAnnounceDialog = true;
+              isShowAnnounceDialog = false;
             }
             return Scaffold(
               resizeToAvoidBottomPadding: false,
