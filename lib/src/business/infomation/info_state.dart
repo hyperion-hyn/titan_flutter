@@ -122,7 +122,6 @@ class InfoItemVo {
   String publisher;
   String url;
   int publishTime;
-  bool isUpdate;
 
-  InfoItemVo({this.id, this.photoUrl, this.title, this.publisher, this.url, this.publishTime, this.isUpdate=true});
+  InfoItemVo({this.id, this.photoUrl, this.title, this.publisher, this.url, this.publishTime});
 }

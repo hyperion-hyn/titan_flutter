@@ -24,6 +24,7 @@ import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/business/updater/updater.dart';
+import 'package:titan/src/business/wallet/event_bus_event.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
@@ -56,7 +57,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
 
   StreamSubscription _appLinkSubscription;
+
   var selectedAppArea = AppArea.MAINLAND_CHINA_AREA.key;
+
+  StreamSubscription _clearBadgeSubcription;
 
   var _currentIndex = 0;
 
@@ -87,6 +91,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     TitanPlugin.msgPushChangeCallBack = (Map values) {
       _pushWebView(values);
     };
+
+    _clearBadgeSubcription = eventBus.on().listen((event) {
+      if (event is ClearBadgeEvent) {
+        setState(() {});
+      }
+    });
 
   }
 
@@ -267,6 +277,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   if(isShowAnnounceDialog && state is InitialHomeState) AnnouncementDialog(
                       state.announcement,(){
                     isShowAnnounceDialog = false;
+                    isUpdateAnnounce = false;
                     BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
                   }),
                 ],
@@ -280,6 +291,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _clearBadgeSubcription?.cancel();
     _appLinkSubscription?.cancel();
     animationController.dispose();
     super.dispose();

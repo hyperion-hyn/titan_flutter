@@ -6,6 +6,7 @@ import 'package:titan/src/business/infomation/api/news_api.dart';
 import 'package:titan/src/business/infomation/info_state.dart';
 import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
+import 'package:titan/src/business/wallet/event_bus_event.dart';
 
 import '../../global.dart';
 import 'news_tag_utils.dart';
@@ -69,7 +70,7 @@ class NewsState extends InfoState<NewsPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       _buildTag(S.of(context).latest_news, LAST_NEWS_TAG),
-                      _buildTag(S.of(context).official_announcement, OFFICIAL_ANNOUNCEMENT_TAG),
+                      _buildTag(S.of(context).official_announcement, OFFICIAL_ANNOUNCEMENT_TAG, isUpdate: isUpdateAnnounce),
                       _buildTag(S.of(context).information_guide, TUTORIAL_TAG),
                       _buildTag(S.of(context).information_video, VIDEO_TAG),
                     ],
@@ -144,8 +145,7 @@ class NewsState extends InfoState<NewsPage> {
     );
   }
 
-  Widget _buildTag(String text, int value) {
-    var isUpdate = value == OFFICIAL_ANNOUNCEMENT_TAG && isUpdateAnnounce;
+  Widget _buildTag(String text, int value, {bool isUpdate = false}) {
     return super.buildTag(text, value, selectedTag == value, activeTag, isUpdate: isUpdate);
   }
 
@@ -153,8 +153,14 @@ class NewsState extends InfoState<NewsPage> {
     if (selectedTag == tagId) {
       return;
     }
-//      isLoading = true;
+
     setState(() {
+      var isUpdate = tagId == OFFICIAL_ANNOUNCEMENT_TAG && isUpdateAnnounce;
+      if (isUpdate) {
+        eventBus.fire(ClearBadgeEvent());
+        isUpdateAnnounce = false;
+      }
+
       selectedTag = tagId;
       currentPage = FIRST_PAGE;
     });
