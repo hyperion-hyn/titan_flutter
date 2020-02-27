@@ -87,7 +87,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       _pushWebView(values);
     };
 
-
   }
 
   void _pushWebView(Map values) {
@@ -171,7 +170,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             //while listener trigger before build, the panelKey is not set, so call after build
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (state is InitialHomeState) {
-//                myWidget.DraggableScrollableActuator.setMin(panelKey.currentContext);
+                myWidget.DraggableScrollableActuator.setMin(panelKey.currentContext);
               } else if (state is home.MapOperatingState) {
                 myWidget.DraggableScrollableActuator.setHide(panelKey.currentContext);
               }

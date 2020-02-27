@@ -23,7 +23,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if(event is HomeInitEvent) {
       var announcement = await _newsApi.getAnnouncement();
       var isShowDialog = false;
-      SharedPreferences.getInstance().then((sharePre){
+      await SharedPreferences.getInstance().then((sharePre){
         var lastData = sharePre.getString(PrefsKey.lastAnnouncement);
         if(lastData != null){
           var storeData = NewsDetail.fromJson(json.decode(lastData));
