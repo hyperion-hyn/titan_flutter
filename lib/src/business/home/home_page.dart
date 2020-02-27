@@ -64,7 +64,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   var isLoadAppArea = false;
   var isShowSetAppAreaDialog = false;
-  var isShowAnnounceDialog = false;
 
   @override
   void initState() {
@@ -106,14 +105,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               title: title,
               content: content,
             )));
-
-/*    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => WebViewContainer(
-              initUrl: url,
-              title: title,
-            )));*/
   }
 
   void _showSetAreaAppDialog() {
@@ -193,7 +184,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           builder: (context, state) {
             if(state is InitialHomeState && state.announcement != null){
               print("!!!! isShowAnnounceDialog");
-              isShowAnnounceDialog = true;
+              isUpdateAnnounce = true;
             }
             return Scaffold(
               resizeToAvoidBottomPadding: false,
@@ -226,7 +217,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           BottomNavigationBarItem(title: Text(S.of(context).information), icon: Stack(
                             children: <Widget>[
                               Icon(Icons.description),
-                              if (true)Padding(
+                              if (isUpdateAnnounce)Padding(
                                 padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                                 child: Container(
                                   height: 8,
@@ -272,9 +263,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                   //tab views
                   _getContent(_currentIndex),
-                  if(isShowAnnounceDialog && state is InitialHomeState) AnnouncementDialog(
+                  if(isUpdateAnnounce && state is InitialHomeState) AnnouncementDialog(
                       state.announcement,(){
-                    isShowAnnounceDialog = false;
+                    isUpdateAnnounce = false;
                     BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
                   }
                   ),

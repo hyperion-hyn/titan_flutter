@@ -34,6 +34,8 @@ String get QUOTE_UNIT_SYMBOL {
   return appLocale.languageCode == "zh" ? "¥" : "\$";
 }
 
+var isUpdateAnnounce = false;
+
 WalletVo currentWalletVo;
 Locale appLocale;
 BuildContext globalContext = null;
