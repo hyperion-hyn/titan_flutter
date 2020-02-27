@@ -3,6 +3,8 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 
 class CreateWalletBackupNoticePage extends StatefulWidget {
+  String mnemoic;
+
   @override
   State<StatefulWidget> createState() {
     return _CreateWalletBackupNoticePageState();
