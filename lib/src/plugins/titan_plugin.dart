@@ -31,13 +31,14 @@ class TitanPlugin {
         String platform = Platform.operatingSystem.toUpperCase();
         print("[${platform}] :${result}");
 
-        /*
+        // todo: test
         Map values = {
           "title": "新增“宅经济体验合约",
+          "text": "<!-- wp:image {\"id\":1346,\"align\":\"center\"} -->\n<div class=\"wp-block-image\"><figure class=\"aligncenter\"><img src=\"https:\/\/news.hyn.space\/wp-content\/uploads\/2020\/02\/signal-attachment-2020-02-24-231552-650x1024.jpeg\" alt=\"\" class=\"wp-image-1346\"\/><\/figure><\/div>\n<!-- \/wp:image -->",
           "out_link": "https://www.github.com/",
         };
         msgPushChangeCallBack(values);
-        */
+
 
         break;
 
@@ -142,16 +143,6 @@ class TitanPlugin {
 
   static Future<bool> bluetoothEnable() async {
     return await callChannel.invokeMethod('bluetoothEnable');
-  }
-
-  // printLog
-  static Future<dynamic> printLog() {
-    return callChannel.invokeMethod("printLog");
-  }
-
-  // msgPush
-  static Future<String> msgPush() {
-    return callChannel.invokeMethod("msgPush");
   }
 
 }

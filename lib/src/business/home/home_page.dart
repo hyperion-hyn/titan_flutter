@@ -18,6 +18,7 @@ import 'package:titan/src/business/home/home_panel.dart';
 import 'package:titan/src/business/home/information_content.dart';
 import 'package:titan/src/business/home/my_content.dart';
 import 'package:titan/src/business/home/wallet_content.dart';
+import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
@@ -87,13 +88,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _pushWebView(Map values) {
     var url = values["out_link"];
     var title = values["title"];
+    var text = values["text"];
+
     Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => InfoDetailPage(
+              id: 0,
+              url: url,
+              title: title,
+              text: text,
+            )));
+
+/*    Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => WebViewContainer(
               initUrl: url,
               title: title,
-            )));
+            )));*/
   }
 
   void _showSetAreaAppDialog() {
