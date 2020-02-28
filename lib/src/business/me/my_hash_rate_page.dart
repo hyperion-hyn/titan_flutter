@@ -89,7 +89,9 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
             child: Container(
               decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -105,7 +107,8 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
                             itemBuilder: (BuildContext context, int index) {
                               return _buildHashRateItem(dataList[index]);
                             },
-                            separatorBuilder: (BuildContext context, int index) {
+                            separatorBuilder:
+                                (BuildContext context, int index) {
                               return Divider(
                                 thickness: 0.5,
                                 color: Colors.black12,
@@ -137,7 +140,10 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      hashRateVo.title + (hashRateVo.isFree ? '(${S.of(context).give_away})' : ''),
+                      hashRateVo.title +
+                          (hashRateVo.isFree
+                              ? '(${S.of(context).give_away})'
+                              : ''),
                       style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                     ),
                   ],
@@ -158,7 +164,8 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   hashRateVo.validity,
-                  style: TextStyle(fontSize: 14, color: hashRateVo.validityColor),
+                  style:
+                      TextStyle(fontSize: 14, color: hashRateVo.validityColor),
                 ),
               ),
               Text(
@@ -174,7 +181,8 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
 
   @override
   Future<List<dynamic>> onLoadData(int page) async {
-    PageResponse<PowerDetail> powerPageResponse = await _userService.getPowerList(page);
+    PageResponse<PowerDetail> powerPageResponse =
+        await _userService.getPowerList(page);
 
     return powerPageResponse.data.map((powerDetail) {
       return _convertPowerDetailToHashRateVo(powerDetail);
@@ -183,11 +191,27 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
 
   HashRateVo _convertPowerDetailToHashRateVo(PowerDetail powerDetail) {
     var iconColor = powerDetail.expire ? Color(0xFF6D6D6D) : Color(0xFF6DBA1A);
-    var validity = powerDetail.expire ? S.of(context).finished : S.of(context).effective;
-    var validityColor = powerDetail.expire ? Color(0xFF6D6D6D) : Color(0xFF6DBA1A);
+    var validity =
+        powerDetail.expire ? S.of(context).finished : S.of(context).effective;
+    var validityColor =
+        powerDetail.expire ? Color(0xFF6D6D6D) : Color(0xFF6DBA1A);
 
-    var createAt = DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(powerDetail.createdAt * 1000));
-    var expiredAt = DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(powerDetail.expiredAt * 1000));
+    var createAt = DATE_FORMAT.format(
+        DateTime.fromMillisecondsSinceEpoch(powerDetail.createdAt * 1000));
+    var expiredAt = DATE_FORMAT.format(
+        DateTime.fromMillisecondsSinceEpoch(powerDetail.expiredAt * 1000));
+    var contract = "";
+    switch (powerDetail.contractId) {
+      case 7:
+        contract = "免费合约";
+        break;
+      case 8:
+        contract = "赠送合约";
+        break;
+      case 9:
+        contract = "宅经济合约";
+        break;
+    }
 
     var time = "$createAt ~ $expiredAt";
     return HashRateVo(
@@ -195,7 +219,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
         iconColor: iconColor,
         title:
             "${Const.DOUBLE_NUMBER_FORMAT.format(Utils.powerForShow(powerDetail.power))} T ${S.of(context).hashrate}",
-        subTitle: "",
+        subTitle: contract,
         validity: validity,
         validityColor: validityColor,
         time: time,
