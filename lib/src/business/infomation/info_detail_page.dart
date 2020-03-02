@@ -11,12 +11,14 @@ class InfoDetailPage extends StatefulWidget {
   final String title;
   final int id;
   final String userAgent;
+  final String content;
 
   InfoDetailPage({
     this.id,
     @required this.url,
     @required this.title,
     this.userAgent,
+    this.content,
   });
 
   @override
@@ -135,7 +137,12 @@ class _InfoDetailState extends State<InfoDetailPage> {
   }
 
   Future _getInfoDetail() async {
-    newsDetail = await _newsApi.getNewsDetai(widget.id);
+    if (widget.id == 0) {
+      newsDetail.title = widget.title;
+      newsDetail.content = widget.content;
+    } else {
+      newsDetail = await _newsApi.getNewsDetai(widget.id);
+    }
     setState(() {});
   }
 

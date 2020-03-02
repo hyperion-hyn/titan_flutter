@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.net.wifi.WifiManager
 import androidx.core.content.FileProvider
+import com.hyn.titan.tools.AppPrintTools
 import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
@@ -17,10 +18,18 @@ import org.maprich.app.encryption.EncryptionPluginInterface
 import org.maprich.app.push.UMengPluginInterface
 import org.maprich.app.sensor.SensorPluginInterface
 import org.maprich.app.wallet.WalletPluginInterface
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.hyn.titan.push.UmengPlugin
+import org.hyn.titan.umenglib.push.UMengPushImpl
+import org.hyn.titan.utils.AppPrintPlugin
 import java.io.File
 
+
 class MainActivity : FlutterActivity() {
-    private val callChannel by lazy { MethodChannel(flutterView, "org.maprich.app/call_channel") }
+    private val callChannel by lazy { MethodChannel(flutterView, "org.hyn.titan/call_channel") }
 
     private val QRCODE_SCAN_REQUEST_CODE = 1
     private val MANAGE_UNKNOWN_APP_SOURCES = 2
@@ -31,6 +40,14 @@ class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         GeneratedPluginRegistrant.registerWith(this)
+        AppPrintPlugin.registerWith(this)
+        UmengPlugin.registerWith(this)
+        GlobalScope.launch {
+            Thread.sleep(10000)
+            withContext(Dispatchers.Main){
+                AppPrintTools.printLog(UMengPushImpl.umengToken)
+            }
+        }
 
         val encryptionPluginInterface = EncryptionPluginInterface(this, flutterView)
         val walletPluginInterface = WalletPluginInterface(this, flutterView)

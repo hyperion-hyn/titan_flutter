@@ -14,4 +14,6 @@ object UMengConstants{
     /**华为需要修改manifest的meta-data**/
     const val UMENG_HUAWEI_APPID = "101765295"
     const val UMENG_HUAWEI_SECRET = "5d9b88d83d68e5ce6f3fdd5391c3868af344e3a2747e48ea8874dd93b957af7f"
+
+    /**消息类型**/
 }
