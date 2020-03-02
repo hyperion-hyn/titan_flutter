@@ -29,7 +29,7 @@ import java.io.File
 
 
 class MainActivity : FlutterActivity() {
-    private val callChannel by lazy { MethodChannel(flutterView, "org.maprich.app/call_channel") }
+    private val callChannel by lazy { MethodChannel(flutterView, "org.hyn.titan/call_channel") }
 
     private val QRCODE_SCAN_REQUEST_CODE = 1
     private val MANAGE_UNKNOWN_APP_SOURCES = 2
