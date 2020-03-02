@@ -195,7 +195,9 @@ class _PurchaseState extends State<PurchasePage> {
     return Column(
       children: <Widget>[
         Container(
-          margin: EdgeInsets.all(16),
+          margin: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+
+          //margin: EdgeInsets.all(16),
           padding: EdgeInsets.symmetric(vertical: 12),
           alignment: Alignment.topCenter,
           child: Column(
@@ -298,8 +300,10 @@ class _PurchaseState extends State<PurchasePage> {
                   title: S.of(context).income_amount,
                   groupValue: payBalanceType,
                   value: PAY_BALANCE_TYPE_INCOME,
-                  child: Text(S.of(context).purchase_title_input_func(input),
-                      style: TextStyle(fontSize: 12, color: Color(0xFF9B9B9B))), onTap: (){
+                  child: Expanded(
+                    child: Text(S.of(context).purchase_title_input_func(input),
+                        style: TextStyle(fontSize: 12, color: Color(0xFF9B9B9B))),
+                  ), onTap: (){
                 setState(() {
                   payBalanceType = PAY_BALANCE_TYPE_INCOME;
                   payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_0;
@@ -455,7 +459,7 @@ class _PurchaseState extends State<PurchasePage> {
                 },
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 2),
+                padding: const EdgeInsets.only(right: 5),
                 child: Text(title),
               ),
             ],

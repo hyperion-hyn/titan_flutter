@@ -642,8 +642,8 @@
   "experience_upper_func": "Cap ${canBuy}",
   "experience_avaliable_func": "Available balance HYN ${hyn}",
   "experience_numbers_not_empty": "The contract quantity cannot be empty",
-  "purchase_title_recharge_usdt_hyn": "Use hybrid direct charge USDT + HYN balance",
-  "purchase_title_recharge_only_hyn": "Use direct charge HYN balance",
+  "purchase_title_recharge_usdt_hyn": "By direct charge USDT + HYN ",
+  "purchase_title_recharge_only_hyn": "By direct charge HYN ",
   "purchase_title_recharge_func": "(Available USDT: HYN deposit ${hyn}U，USDT deposit ${usdt}U)",
   "purchase_title_input_func": "(Available USDT: HYN deposit ${balance}U)"
 }
