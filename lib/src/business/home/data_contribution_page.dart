@@ -139,12 +139,16 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     return BlocBuilder<WalletBloc, WalletState>(
       bloc: _walletBloc,
       builder: (BuildContext context, WalletState state) {
+        print('[[[data] --> state: ${state}');
+
         if (state is WalletEmptyState) {
           return _walletTipsView();
         } else if (state is ShowWalletState) {
           currentWalletVo = state.wallet;
           return _listView();
         } else if (state is ScanWalletLoadingState) {
+//          return _listView();
+
           return _buildLoading(context);
         } else {
           return Container(

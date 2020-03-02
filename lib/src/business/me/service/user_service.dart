@@ -255,6 +255,16 @@ class UserService {
       throw new Exception("not login");
     }
 
+    return await _mapRichApi.createOrder(contractId: contractId, token: userToken.token);
+  }
+
+  // V2
+  Future<PayOrder> createOrderV2({@required int contractId}) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+
     return await _mapRichApi.createOrderV2(contractId: contractId, token: userToken.token);
   }
 
@@ -290,6 +300,18 @@ class UserService {
 
   ///支付确认
   Future<ResponseEntity<dynamic>> confirmPay(
+      {@required int orderId, @required String payType, @required String fundToken}) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+
+    return await _mapRichApi.confirmPay(
+        orderId: orderId, payType: payType, token: userToken.token, fundToken: fundToken);
+  }
+
+  // V2
+  Future<ResponseEntity<dynamic>> confirmPayV2(
       {@required int orderId, @required String payType, @required String fundToken}) async {
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {

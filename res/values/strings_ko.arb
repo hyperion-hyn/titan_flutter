@@ -641,5 +641,9 @@
   "input_contract_quantity": "계약 수량을 입력",
   "experience_upper_func": "상한${canBuy}분",
   "experience_avaliable_func": "가용 잔금 HYN와 액수가 같은 ${numbers}",
-  "experience_numbers_not_empty": "계약 수량은 비워 둘 수 없습니다"
+  "experience_numbers_not_empty": "계약 수량은 비워 둘 수 없습니다",
+  "purchase_title_recharge_usdt_hyn": "하이브리드 직접 청구 USDT + HYN 잔액 사용",
+  "purchase_title_recharge_only_hyn": "직접 충전 HYN 저울 사용",
+  "purchase_title_recharge_func": "사용 가능한 잔액 HYN 등액 ${hyn}, USDT 직접 충전 ${usdt}",
+  "purchase_title_input_func": "사용 가능한 잔액 HYN 등액 ${hyn}"
 }

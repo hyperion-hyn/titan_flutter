@@ -48,7 +48,7 @@ class OrderContractBloc extends Bloc<OrderContractEvent, OrderContractState> {
     yield OrderingState();
 
     try {
-      PayOrder _payOrder = await _userService.createOrder(contractId: event.contractId);
+      PayOrder _payOrder = await _userService.createOrderV2(contractId: event.contractId);
 
       yield OrderSuccessState(_payOrder);
     } on HttpResponseCodeNotSuccess catch (_) {

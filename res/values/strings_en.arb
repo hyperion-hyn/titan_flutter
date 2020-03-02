@@ -630,7 +630,7 @@
   "source_desc_title": "Data source desc",
   "epidemic_map_short": "NCP MAP",
   "epidemic_map_desc": "Wuhan Virus Cases Tracking Map",
-  "buy_need_hyn_usdt_hint": "USDT Deposit：from HYN ${hyn}，from USDT ${USDT}",
+  "buy_need_hyn_usdt_hint": "USDT Deposit：from HYN ${hyn}U，from USDT ${USDT}U",
   "balance_hyn_usdt": "Available USDT: HYN deposit ${hyn}，USDT deposit ${usdt}",
   "hyn_eq_u": "HYN deposit",
   "usdt_direct": "USDT deposit",
@@ -641,5 +641,9 @@
   "input_contract_quantity": "Enter contract quantity",
   "experience_upper_func": "Cap ${canBuy}",
   "experience_avaliable_func": "Available balance HYN ${hyn}",
-  "experience_numbers_not_empty": "The contract quantity cannot be empty"
+  "experience_numbers_not_empty": "The contract quantity cannot be empty",
+  "purchase_title_recharge_usdt_hyn": "Use hybrid direct charge USDT + HYN balance",
+  "purchase_title_recharge_only_hyn": "Use direct charge HYN balance",
+  "purchase_title_recharge_func": "(Available USDT: HYN deposit ${hyn}U，USDT deposit ${usdt}U)",
+  "purchase_title_input_func": "(Available USDT: HYN deposit ${balance}U)"
 }

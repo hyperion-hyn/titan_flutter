@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
 import 'package:titan/src/consts/consts.dart';
@@ -37,14 +38,17 @@ class PurchasePage extends StatefulWidget {
 }
 
 class _PurchaseState extends State<PurchasePage> {
-  int payType = 1; //0: HYN 1：HYN余额
 
   ///直充余额类型支付
   static const String PAY_BALANCE_TYPE_RECHARGE = "RB_HYN";
-
   ///收益余额类型支付
   static const String PAY_BALANCE_TYPE_INCOME = "B_HYN";
   String payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+
+  static const String PAY_BALANCE_TYPE_RECHARGE_100 = "RB_HYN_100";
+  static const String PAY_BALANCE_TYPE_RECHARGE_37 = "RB_HYN_37";
+  static const String PAY_BALANCE_TYPE_RECHARGE_0 = "RB_HYN_0";
+  String payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
 
   var service = UserService();
 
@@ -61,6 +65,7 @@ class _PurchaseState extends State<PurchasePage> {
   void loadData() async {
     //行情
     quotes = await service.quotes();
+
     //用户余额等信息
     userInfo = await service.getUserInfo();
 
@@ -69,16 +74,13 @@ class _PurchaseState extends State<PurchasePage> {
 
   @override
   Widget build(BuildContext context) {
-    // todo: jison edit_抵押方式
-    //var payTypeName = payType == 0 ? "使用HYN" : "使用余额";
-    var payTypeName = payType == 0 ? S.of(context).by_hyn : S.of(context).by_mortgage;
-
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
           S.of(context).power_martgage,
+          //"ddd",
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
@@ -132,7 +134,7 @@ class _PurchaseState extends State<PurchasePage> {
               child: Column(
                 children: <Widget>[
                   Container(
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -141,262 +143,19 @@ class _PurchaseState extends State<PurchasePage> {
                             topLeft: Radius.circular(12),
                             topRight: Radius.circular(12),
                           )),
-                      child: Row(
+                      /*child: Row(
                         children: <Widget>[
-                          Text(payTypeName),
+                          Text(S.of(context).by_mortgage),
                           Spacer(),
-// todo: jison edit_抵押方式
-//                          GestureDetector(
-//                            onTapUp: (detail) {
-//                              RenderBox overlay = Overlay.of(context).context.findRenderObject();
-//                              var position = RelativeRect.fromRect(
-//                                  detail.globalPosition & Size(80, 80), // smaller rect, the touch area
-//                                  Offset.zero & overlay.size // Bigger rect, the entire screen
-//                                  );
-//                              showMenu(
-//                                      context: context,
-//                                      position: position,
-//                                      items: <PopupMenuEntry>[
-//                                        PopupMenuItem(
-//                                          value: 0,
-//                                          child: Text(
-//                                            "HYN",
-//                                            style: TextStyle(fontSize: 14),
-//                                          ),
-//                                        ),
-//                                        PopupMenuItem(
-//                                          value: 1,
-//                                          child: Text("使用余额", style: TextStyle(fontSize: 14)),
-//                                        ),
-//                                      ],
-//                                      initialValue: payType)
-//                                  .then((selected) {
-//                                print("selected:$selected ");
-//                                if (selected == null) {
-//                                  return;
-//                                }
-//                                payType = selected;
-//                                setState(() {});
-//                              });
-//                            },
-//                            child: Text(
-//                              "切换方式>",
-//                              style: TextStyle(fontSize: 14, color: HexColor("#9E101010")),
-//                            ),
-//                          )
                         ],
-                      )),
-                  if (payType == 0) _buildHynPayBox(),
-                  if (payType == 1) _buildHynBalancePayBox(),
+                      )*/),
+                   _buildHynBalancePayBox(),
                 ],
               ),
             )
           ],
         ),
       ),
-    );
-  }
-
-  RelativeRect _getPosition(BuildContext context) {
-    final RenderBox bar = context.findRenderObject();
-    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
-    final RelativeRect position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        bar.localToGlobal(bar.size.bottomRight(Offset.zero), ancestor: overlay),
-        bar.localToGlobal(bar.size.bottomRight(Offset.zero), ancestor: overlay),
-      ),
-      Offset.zero & overlay.size,
-    );
-    return position;
-  }
-
-  Widget _buildHynPayBox() {
-    return Column(
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 0),
-          alignment: Alignment.topCenter,
-          decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              InkWell(
-                onTap: () {
-                  if (widget.payOrder?.hyn_amount != null) {
-                    Clipboard.setData(ClipboardData(text: widget.payOrder?.hyn_amount));
-                    Fluttertoast.showToast(msg: S.of(context).amount_copy_success_hint);
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        S.of(context).please_mortgage,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Container(
-                        constraints: BoxConstraints(maxWidth: 220),
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          '${widget.payOrder?.hyn_amount}',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
-                          softWrap: true,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          'HYN',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFCE9D40)),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Icon(
-                          Icons.content_copy,
-                          size: 16,
-                          color: Colors.black54,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                S.of(context).transfer_hyn_hint,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red[800]),
-              ),
-              if (widget.payOrder?.qr_code != null)
-                Image.memory(
-                  Base64Decoder().convert(widget.payOrder?.qr_code),
-                  height: 240,
-                  width: 240,
-                )
-              else
-                Container(
-                  color: Colors.white,
-                  height: 240,
-                  width: 240,
-                ),
-              InkWell(
-                onTap: () {
-                  if (widget.payOrder?.address != null) {
-                    Clipboard.setData(ClipboardData(text: widget.payOrder?.address));
-                    Fluttertoast.showToast(msg: S.of(context).address_copy_success_hint);
-                  }
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      S.of(context).transfer_address,
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    Text('${shortEthAddress(widget.payOrder?.address)}', style: TextStyle(fontSize: 14)),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Icon(
-                        Icons.content_copy,
-                        size: 16,
-                        color: Colors.black54,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-
-//              Text(
-//                '推荐使用imToken扫码支付',
-//                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
-//              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 22.0),
-                child: RaisedButton(
-                  color: Color(0xFFD6A734),
-                  onPressed: () {
-                    Fluttertoast.showToast(msg: S.of(context).hyn_wallet_open_hint);
-                  },
-                  child: SizedBox(
-                    height: 48,
-                    width: 192,
-                    child: Center(
-                      child: Text(
-                        S.of(context).by_hyn_transfer,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: RaisedButton(
-                  color: Color(0xFF73C42D),
-                  onPressed: () async {
-                    var ret =
-                        await service.confirmPay(orderId: widget.payOrder.order_id, payType: 'HYN', fundToken: " ");
-                    if (ret.code == 0) {
-                      //支付成功
-                      Fluttertoast.showToast(msg: S.of(context).pay_success_hint);
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                    } else {
-                      if (ret.code == -1007) {
-                        Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
-                      } else {
-                        Fluttertoast.showToast(msg: S.of(context).no_transfer_info_hint);
-                      }
-                    }
-                  },
-                  child: SizedBox(
-                    height: 48,
-                    width: 192,
-                    child: Center(
-                      child: Text(
-                        S.of(context).out_wallet_transfer_hint,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-              )
-            ],
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 8),
-          padding: EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.notification_important,
-                  color: Colors.grey,
-                  size: 20,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  S.of(context).current_rate_func(quotes.currency.toString(), quotes.to.toString(),
-                      '${quotes?.currency}${NumberFormat("#,###.####").format(quotes?.rate ?? 0)}${quotes?.to}'),
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                  softWrap: true,
-                ),
-              )
-            ],
-          ),
-        )
-      ],
     );
   }
 
@@ -429,6 +188,10 @@ class _PurchaseState extends State<PurchasePage> {
   }
 
   Widget _buildHynBalancePayBox() {
+    var hyn = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, 'hyn'));
+    var usdt = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, 'usdt'));
+    var input = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_BALANCE_TYPE_INCOME));
+
     return Column(
       children: <Widget>[
         Container(
@@ -436,154 +199,198 @@ class _PurchaseState extends State<PurchasePage> {
           padding: EdgeInsets.symmetric(vertical: 12),
           alignment: Alignment.topCenter,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                mainAxisSize: MainAxisSize.max,
-//                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: RadioListTile(
-                      groupValue: payBalanceType,
-                      onChanged: (value) {
-                        setState(() {
-                          payBalanceType = value;
-                        });
-                      },
-                      activeColor: Theme.of(context).primaryColor,
-                      value: PAY_BALANCE_TYPE_RECHARGE,
-                      title: Text(S.of(context).becharge_amount),
-                    ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        S.of(context).please_mortgage,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          '${widget.payOrder?.amount ?? 0}',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFFCE9D40)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          'USDT',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFFCE9D40)),
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: RadioListTile(
-                      groupValue: payBalanceType,
-                      onChanged: (value) {
-                        setState(() {
-                          payBalanceType = value;
-                        });
-                      },
-                      activeColor: Theme.of(context).primaryColor,
-                      value: PAY_BALANCE_TYPE_INCOME,
-                      title: Text(S.of(context).income_amount),
-                    ),
-                  ),
-                ],
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
+                child: Text(S.of(context).by_mortgage),
+              ),
+
+              _radioButton(
+                       title: S.of(context).becharge_amount,
+                  groupValue: payBalanceType,
+                        value: PAY_BALANCE_TYPE_RECHARGE,
+              child: Expanded(
+                child: Text(
+                  S.of(context).purchase_title_recharge_func(hyn, usdt),
+                 style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ), onTap: (){
+                setState(() {
+                  payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                  payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
+                });
+              }),
+
+
+              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE) Padding(
+                padding: const EdgeInsets.only(left: 38.0),
+                child: Column(
                   children: <Widget>[
-                    Text(
-                      S.of(context).please_mortgage,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        '${widget.payOrder?.amount ?? 0}',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFFCE9D40)),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        'USDT',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Color(0xFFCE9D40)),
-                      ),
-                    ),
+                    _radioButton(
+                        title: S.of(context).purchase_title_recharge_only_hyn,
+                        groupValue: payBalanceType_recharge,
+                        value: PAY_BALANCE_TYPE_RECHARGE_100,
+                        isVertical: true,
+                        child: Text(
+                          "(${S.of(context).buy_need_hyn_usdt_hint(
+                              Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.amount) ?? '--',
+                              Const.DOUBLE_NUMBER_FORMAT.format(0) ?? '--')})",
+                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
+                        ), onTap: (){
+                      setState(() {
+                        payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                        payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
+                      });
+                    }),
+
+                    _radioButton(
+                        title: S.of(context).purchase_title_recharge_usdt_hyn,
+                        groupValue: payBalanceType_recharge,
+                        value: PAY_BALANCE_TYPE_RECHARGE_37,
+                        isVertical: true,
+                        child: Text(
+                          "(${S.of(context).buy_need_hyn_usdt_hint(
+                              Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--',
+                              Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--')})",
+                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
+                        ), onTap: (){
+                      setState(() {
+                        payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                        payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_37;
+                      });
+                    }),
+
+
                   ],
                 ),
               ),
-              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE)
-                Column(
-                  children: <Widget>[
-                    Text(S.of(context).buy_need_hyn_usdt_hint(
-                        Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--',
-                        Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--')),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        S.of(context).balance_hyn_usdt(
-                            Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'hyn')),
-                            Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'usdt'))),
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ),
-                  ],
-                )
-//                Text(
-//                  S.of(context).available_balance_usdt(
-//                      Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType, 'total'))),
-//                  style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
-//                )
-              else
-                Text(
-                  S
-                      .of(context)
-                      .available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
-                  style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
-                ),
-              Padding(
-                padding: const EdgeInsets.only(top: 32),
-                child: RaisedButton(
-                  elevation: 1,
-                  color: Color(0xFFD6A734),
-                  onPressed: () async {
-                    if (userInfo != null && widget.payOrder != null) {
-                      if (isInsufficientBalance()) {
-                        Fluttertoast.showToast(msg: S.of(context).balance_lack);
-                      } else {
-                        try {
-                          showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return EnterFundPasswordWidget();
-                              }).then((fundToken) async {
-                            if (fundToken == null) {
-                              return;
-                            }
-                            var ret = await service.confirmPay(
-                                orderId: widget.payOrder.order_id, payType: payBalanceType, fundToken: fundToken);
-                            if (ret.code == 0) {
-                              //支付成功
-                              Fluttertoast.showToast(msg: S.of(context).action_success_hint);
-                              Navigator.pushReplacement(
-                                  context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                            } else {
-                              if (ret.code == -1007) {
-                                Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
-                              } else if (ret.code == -1004) {
-                                Fluttertoast.showToast(msg: S.of(context).balance_lack);
-                              } else {
-                                Fluttertoast.showToast(msg: ret.msg ?? S.of(context).pay_fail_hint);
+              
+              _radioButton(
+                  title: S.of(context).income_amount,
+                  groupValue: payBalanceType,
+                  value: PAY_BALANCE_TYPE_INCOME,
+                  child: Text(S.of(context).purchase_title_input_func(input),
+                      style: TextStyle(fontSize: 12, color: Color(0xFF9B9B9B))), onTap: (){
+                setState(() {
+                  payBalanceType = PAY_BALANCE_TYPE_INCOME;
+                  payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_0;
+                });
+              }),
+
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 32),
+                  child: RaisedButton(
+                    elevation: 1,
+                    color: Color(0xFFD6A734),
+                    onPressed: () async {
+                      if (userInfo != null && widget.payOrder != null) {
+                        if (isInsufficientBalance()) {
+                          Fluttertoast.showToast(msg: S.of(context).balance_lack);
+                        } else {
+                          try {
+                            showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return EnterFundPasswordWidget();
+                                }).then((fundToken) async {
+                              if (fundToken == null) {
+                                return;
                               }
-                            }
-                          });
-                        } catch (e) {
-                          logger.e(e);
-                          Fluttertoast.showToast(msg: S.of(context).transfer_exception_hint);
+
+                              // todo: jison_HYN
+                              var code = -1;
+                              var msg = "";
+                              var payType = payBalanceType;
+                              var orderId = widget.payOrder.order_id;
+                              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE && payBalanceType_recharge == PAY_BALANCE_TYPE_RECHARGE_100) {
+                                 payType = PAY_BALANCE_TYPE_RECHARGE;
+                                  PayOrder _payOrder = await service.createOrder(contractId: widget.contractInfo.id);
+                                  orderId = _payOrder.order_id;
+                                  var ret = await service.confirmPay(
+                                      orderId: orderId, payType: payType, fundToken: fundToken);
+                                  code = ret.code;
+                                  msg = ret.msg;
+                              }
+                              else {
+                                payType = PAY_BALANCE_TYPE_INCOME;
+                                PayOrder _payOrder = await service.createOrderV2(contractId: widget.contractInfo.id);
+                                //orderId = widget.payOrder.order_id;
+                                orderId = _payOrder.order_id;
+                                var ret = await service.confirmPayV2(
+                                    orderId: orderId, payType: payType, fundToken: fundToken);
+                                code = ret.code;
+                                msg = ret.msg;
+                              }
+                              print('[xxxx] code:${code}, msg:${msg}');
+
+                              if (code == 0) {
+                                //支付成功
+                                Fluttertoast.showToast(msg: S.of(context).action_success_hint);
+                                Navigator.pushReplacement(
+                                    context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                              } else {
+                                if (code == -1007) {
+                                  Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
+                                } else if (code == -1004) {
+                                  Fluttertoast.showToast(msg: S.of(context).balance_lack);
+                                } else {
+                                  Fluttertoast.showToast(msg: msg ?? S.of(context).pay_fail_hint);
+                                }
+                              }
+                            });
+                          } catch (e) {
+                            logger.e(e);
+                            Fluttertoast.showToast(msg: S.of(context).transfer_exception_hint);
+                          }
                         }
+                      } else {
+                        Fluttertoast.showToast(msg: S.of(context).data_exception_hint);
                       }
-                    } else {
-                      Fluttertoast.showToast(msg: S.of(context).data_exception_hint);
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                    child: SizedBox(
-                        height: 40,
-                        width: 192,
-                        child: Center(
-                            child: Text(
-                          S.of(context).confirm_mortgage,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                        ))),
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                      child: SizedBox(
+                          height: 40,
+                          width: 192,
+                          child: Center(
+                              child: Text(
+                            S.of(context).confirm_mortgage,
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ))),
+                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                   ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
               ),
               if (isInsufficientBalance())
@@ -607,9 +414,6 @@ class _PurchaseState extends State<PurchasePage> {
                                       builder: (context) => RechargePurchasePage(),
                                       settings: RouteSettings(name: "/recharge_purchase_page")))
                               .then((value) async {
-//                            if (value == null || value == false) {
-//                              return;
-//                            }
                             userInfo = await service.getUserInfo();
                             payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
                             setState(() {});
@@ -623,13 +427,6 @@ class _PurchaseState extends State<PurchasePage> {
                     ],
                   ),
                 ),
-//              Padding(
-//                padding: const EdgeInsets.symmetric(vertical: 64.0),
-//                child: Text(
-//                  '提示：算力抵押只能使用收益余额进行抵押',
-//                  style: TextStyle(color: Colors.grey),
-//                ),
-//              ),
             ],
           ),
         ),
@@ -637,11 +434,65 @@ class _PurchaseState extends State<PurchasePage> {
     );
   }
 
+
+  Widget _radioButton({String title, String groupValue, String value, Widget child, bool isVertical = false, void Function() onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: isVertical?Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Radio(
+                activeColor: Theme.of(context).primaryColor,
+                value: value,
+                groupValue: groupValue,
+                onChanged: (value){
+                  onTap();
+                  setState(() {
+                    value = 0;
+                  });
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 2),
+                child: Text(title),
+              ),
+            ],
+          ),
+          if (child != null) Padding(
+            padding: const EdgeInsets.only(left:48.0, bottom: 0),
+            child: child,
+          ),
+        ],
+      ):Row(
+        children: <Widget>[
+          Radio(
+            activeColor: Theme.of(context).primaryColor,
+            value: value,
+            groupValue: groupValue,
+            onChanged: (value){
+              onTap();
+              setState(() {
+                value = 0;
+              });
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: Text(title),
+          ),
+          if (child != null) child,
+
+        ],
+      ),
+    );
+  }
+
   bool isInsufficientBalance() {
-    if ((payBalanceType == PAY_BALANCE_TYPE_INCOME && getBalanceByType(payBalanceType) < widget.payOrder.amount) ||
-            (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
-                getBalanceByType(payBalanceType, 'total') < widget.payOrder.amount)
-        ) {
+    if ((payBalanceType == PAY_BALANCE_TYPE_INCOME && getBalanceByType(PAY_BALANCE_TYPE_INCOME) < widget.payOrder.amount) ||
+        (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
+            getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, 'total') < widget.payOrder.amount)) {
       return true;
     }
     return false;
