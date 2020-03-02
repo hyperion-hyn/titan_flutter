@@ -645,5 +645,8 @@
   "purchase_title_recharge_usdt_hyn": "Use hybrid direct charge USDT + HYN balance",
   "purchase_title_recharge_only_hyn": "Use direct charge HYN balance",
   "purchase_title_recharge_func": "(Available USDT: HYN deposit ${hyn}U，USDT deposit ${usdt}U)",
-  "purchase_title_input_func": "(Available USDT: HYN deposit ${balance}U)"
+  "purchase_title_input_func": "(Available USDT: HYN deposit ${balance}U)",
+  "my_hash_free_contract": "Free contract",
+  "my_hash_gift_contract": "Gift contGract",
+  "my_hash_home_economic_contract": "Home economic contract"
 }

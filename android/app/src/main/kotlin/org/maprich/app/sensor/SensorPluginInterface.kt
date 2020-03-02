@@ -9,7 +9,7 @@ import timber.log.Timber
 class SensorPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
 
 
-    val methodChannel = MethodChannel(binaryMessenger, "org.maprich.app/sensor_call_channel")
+    val methodChannel = MethodChannel(binaryMessenger, "org.hyn.titan/sensor_call_channel")
 
     init {
         methodChannel.setMethodCallHandler { call, result ->

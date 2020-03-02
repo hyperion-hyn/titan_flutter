@@ -7,7 +7,7 @@ import io.flutter.plugin.common.MethodChannel
 import org.maprich.app.TitanApp
 
 class UMengPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
-    val methodChannel = MethodChannel(binaryMessenger, "org.maprich.app/push_call_channel")
+    val methodChannel = MethodChannel(binaryMessenger, "org.hyn.titan/push_call_channel")
     val iUMengPush = (context.applicationContext as TitanApp).iUMengPush
 
     init {

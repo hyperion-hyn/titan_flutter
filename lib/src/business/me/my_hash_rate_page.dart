@@ -203,13 +203,13 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
     var contract = "";
     switch (powerDetail.contractId) {
       case 7:
-        contract = "免费合约";
+        contract = S.of(context).my_hash_free_contract;
         break;
       case 8:
-        contract = "赠送合约";
+        contract = S.of(context).my_hash_gift_contract;
         break;
       case 9:
-        contract = "宅经济合约";
+        contract = S.of(context).my_hash_home_economic_contract;
         break;
     }
 

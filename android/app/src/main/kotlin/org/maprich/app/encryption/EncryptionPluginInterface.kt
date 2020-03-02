@@ -9,7 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 import timber.log.Timber
 
 class EncryptionPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
-    private val keyPairChangeChannel by lazy { EventChannel(binaryMessenger, "org.maprich.app/event_stream") }
+    private val keyPairChangeChannel by lazy { EventChannel(binaryMessenger, "org.hyn.titan/event_stream") }
     private val encryptionService by lazy { EncryptionProvider.getDefaultEncryption(context) }
     private var cipherEventSink: EventChannel.EventSink? = null
 
