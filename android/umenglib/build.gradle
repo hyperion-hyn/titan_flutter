@@ -13,8 +13,8 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
@@ -54,4 +54,7 @@ dependencies {
     //魅族Push通道
     implementation 'com.umeng.umsdk:meizu-push:3.8.1'
     implementation 'com.umeng.umsdk:meizu-umengaccs:1.0.6'
+
+    api project(':tools')
+
 }

@@ -1,14 +1,10 @@
 package org.maprich.app.push
 
 import android.content.Context
-import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.maprich.app.TitanApp
-import org.hyn.titan.umenglib.interfaces.OnPushChangeListener
-import org.hyn.titan.umenglib.push.UMengPushImpl
-import org.jetbrains.anko.runOnUiThread
 
 class UMengPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
     val methodChannel = MethodChannel(binaryMessenger, "org.maprich.app/push_call_channel")
@@ -26,7 +22,7 @@ class UMengPluginInterface(private val context: Context, private val binaryMesse
             "push#getUMengToken" -> {
 
                 print("push#getUMengToken")
-                var token = iUMengPush.getUMengToken()
+                val token = iUMengPush.getUMengToken()
                 result.success(token)
 //                iUMengPush.initUMeng(context.applicationContext,onPushChangeListener)
 

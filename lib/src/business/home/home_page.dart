@@ -12,16 +12,19 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/home/bloc/bloc.dart' as home;
 import 'package:titan/src/business/home/discover_content.dart';
 import 'package:titan/src/business/home/home_panel.dart';
 import 'package:titan/src/business/home/information_content.dart';
 import 'package:titan/src/business/home/my_content.dart';
 import 'package:titan/src/business/home/wallet_content.dart';
+import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/business/updater/updater.dart';
+import 'package:titan/src/business/wallet/event_bus_event.dart';
 import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
@@ -36,6 +39,7 @@ import 'package:uni_links/uni_links.dart';
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 import '../../../env.dart';
 import '../../global.dart';
+import 'announcement_dialog.dart';
 import 'bloc/bloc.dart';
 import 'bottom_fabs_widget.dart';
 import 'drawer/drawer_scenes.dart';
@@ -53,7 +57,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
 
   StreamSubscription _appLinkSubscription;
+
   var selectedAppArea = AppArea.MAINLAND_CHINA_AREA.key;
+
+  StreamSubscription _clearBadgeSubcription;
 
   var _currentIndex = 0;
 
@@ -61,6 +68,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   var isLoadAppArea = false;
   var isShowSetAppAreaDialog = false;
+  var isShowAnnounceDialog = false;
 
   @override
   void initState() {
@@ -77,22 +85,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
       eventBus.fire(ToMyLocationEvent());
+      BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
     });
 
     TitanPlugin.msgPushChangeCallBack = (Map values) {
       _pushWebView(values);
     };
+
+    _clearBadgeSubcription = eventBus.on().listen((event) {
+      print('[home] --> clear badge');
+      if (event is ClearBadgeEvent) {
+        BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
+      }
+    });
+
   }
 
   void _pushWebView(Map values) {
     var url = values["out_link"];
     var title = values["title"];
+    var content = values["content"];
+    print("[dd] content:${content}");
+
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => WebViewContainer(
-              initUrl: url,
+            builder: (context) => InfoDetailPage(
+              id: 0,
+              url: url,
               title: title,
+              content: content,
             )));
   }
 
@@ -171,6 +193,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Updater(
         child: BlocBuilder<home.HomeBloc, home.HomeState>(
           builder: (context, state) {
+            if(state is InitialHomeState && state.announcement != null){
+              print("!!!! isShowAnnounceDialog");
+              //todo 掘金 isShowAnnounceDialog 这里为 true
+              isShowAnnounceDialog = false;
+              isUpdateAnnounce = true;
+            }
             return Scaffold(
               resizeToAvoidBottomPadding: false,
               drawer: isDebug ? DrawerScenes() : null,
@@ -197,9 +225,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
                           BottomNavigationBarItem(
                               title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
-                          BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
                           BottomNavigationBarItem(
-                              title: Text(S.of(context).information), icon: Icon(Icons.description)),
+                              title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
+                          BottomNavigationBarItem(title: Text(S.of(context).information), icon: Stack(
+                            children: <Widget>[
+                              Icon(Icons.description),
+                              if (isUpdateAnnounce)Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                                child: Container(
+                                  height: 8,
+                                  width: 8,
+                                  decoration: BoxDecoration(
+                                      color: HexColor("#DA3B2A"),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: HexColor("#DA3B2A"))),
+                                ),
+                              ),
+                            ],
+                          )),
                           BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
                         ]),
                   );
@@ -233,6 +276,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                   //tab views
                   _getContent(_currentIndex),
+                  if(isShowAnnounceDialog && state is InitialHomeState) AnnouncementDialog(
+                      state.announcement,(){
+                    isShowAnnounceDialog = false;
+                    isUpdateAnnounce = false;
+                    BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
+                  }),
                 ],
               ),
             );
@@ -244,6 +293,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _clearBadgeSubcription?.cancel();
     _appLinkSubscription?.cancel();
     animationController.dispose();
     super.dispose();

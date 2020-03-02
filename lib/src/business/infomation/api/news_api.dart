@@ -1,3 +1,4 @@
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/business/infomation/model/focus_response.dart';
 import 'package:titan/src/business/infomation/model/news_detail.dart';
 import 'package:titan/src/business/infomation/model/news_response.dart';
@@ -40,5 +41,12 @@ class NewsApi {
     ) as List;
 
     return dataList.map((json) => FocusImage.fromJson(json["focus"])).toList();
+  }
+
+  Future<NewsDetail> getAnnouncement() async {
+    var announcement = await NewsHttpCore.instance.getEntity(
+        "wp-json/sr/news/last",EntityFactory<NewsDetail>((data) => NewsDetail.fromJson(data)));
+
+    return announcement;
   }
 }

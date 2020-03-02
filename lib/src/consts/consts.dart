@@ -93,5 +93,7 @@ class PrefsKey {
   static final mapboxCountryCode = "mapbox_countryCode";
   static final lastPosition = "last_map_position";
 
+  static final lastAnnouncement = 'last_announcement';
+
   static final checkInModel = 'checkin_model';
 }

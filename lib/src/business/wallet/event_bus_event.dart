@@ -1,1 +1,3 @@
 class ReScanWalletEvent {}
+
+class ClearBadgeEvent {}
