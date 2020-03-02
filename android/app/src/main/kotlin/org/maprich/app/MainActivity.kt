@@ -42,12 +42,12 @@ class MainActivity : FlutterActivity() {
         GeneratedPluginRegistrant.registerWith(this)
         AppPrintPlugin.registerWith(this)
         UmengPlugin.registerWith(this)
-        GlobalScope.launch {
-            Thread.sleep(10000)
-            withContext(Dispatchers.Main){
-                AppPrintTools.printLog(UMengPushImpl.umengToken)
-            }
-        }
+//        GlobalScope.launch {
+//            Thread.sleep(10000)
+//            withContext(Dispatchers.Main){
+//                AppPrintTools.printLog(UMengPushImpl.umengToken)
+//            }
+//        }
 
         val encryptionPluginInterface = EncryptionPluginInterface(this, flutterView)
         val walletPluginInterface = WalletPluginInterface(this, flutterView)

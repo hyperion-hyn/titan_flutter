@@ -645,5 +645,8 @@
   "purchase_title_recharge_usdt_hyn": "使用混合直充USDT+HYN余额",
   "purchase_title_recharge_only_hyn": "使用直充HYN余额",
   "purchase_title_recharge_func": "(我的余额 HYN等额 ${hyn}U, USDT直充 ${usdt}U)",
-  "purchase_title_input_func": "(我的余额HYN等额 ${balance}U)"
+  "purchase_title_input_func": "(我的余额HYN等额 ${balance}U)",
+  "my_hash_free_contract": "免费合约",
+  "my_hash_gift_contract": "赠送合约",
+  "my_hash_home_economic_contract": "宅经济合约"
 }
