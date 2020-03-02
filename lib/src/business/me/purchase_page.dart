@@ -143,12 +143,7 @@ class _PurchaseState extends State<PurchasePage> {
                             topLeft: Radius.circular(12),
                             topRight: Radius.circular(12),
                           )),
-                      /*child: Row(
-                        children: <Widget>[
-                          Text(S.of(context).by_mortgage),
-                          Spacer(),
-                        ],
-                      )*/),
+                      ),
                    _buildHynBalancePayBox(),
                 ],
               ),
@@ -195,7 +190,7 @@ class _PurchaseState extends State<PurchasePage> {
     return Column(
       children: <Widget>[
         Container(
-          margin: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+          margin: const EdgeInsets.fromLTRB(8, 16, 8, 16),
 
           //margin: EdgeInsets.all(16),
           padding: EdgeInsets.symmetric(vertical: 12),
@@ -356,7 +351,7 @@ class _PurchaseState extends State<PurchasePage> {
                                 code = ret.code;
                                 msg = ret.msg;
                               }
-                              print('[xxxx] code:${code}, msg:${msg}');
+                              //print('[xxxx] code:${code}, msg:${msg}');
 
                               if (code == 0) {
                                 //支付成功
@@ -420,6 +415,7 @@ class _PurchaseState extends State<PurchasePage> {
                               .then((value) async {
                             userInfo = await service.getUserInfo();
                             payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                            payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
                             setState(() {});
                           });
                         },
