@@ -38,9 +38,9 @@ class PurchasePage extends StatefulWidget {
 }
 
 class _PurchaseState extends State<PurchasePage> {
-
   ///直充余额类型支付
   static const String PAY_BALANCE_TYPE_RECHARGE = "RB_HYN";
+
   ///收益余额类型支付
   static const String PAY_BALANCE_TYPE_INCOME = "B_HYN";
   String payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
@@ -134,17 +134,17 @@ class _PurchaseState extends State<PurchasePage> {
               child: Column(
                 children: <Widget>[
                   Container(
-                      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          color: Color(0xFFF2F2F2),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          )),
-                      ),
-                   _buildHynBalancePayBox(),
+                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: Color(0xFFF2F2F2),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        )),
+                  ),
+                  _buildHynBalancePayBox(),
                 ],
               ),
             )
@@ -230,67 +230,60 @@ class _PurchaseState extends State<PurchasePage> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
                 child: Text(S.of(context).by_mortgage),
               ),
-
               _radioButton(
-                       title: S.of(context).becharge_amount,
+                  title: S.of(context).becharge_amount,
                   groupValue: payBalanceType,
-                        value: PAY_BALANCE_TYPE_RECHARGE,
-              child: Expanded(
-                child: Text(
-                  S.of(context).purchase_title_recharge_func(hyn, usdt),
-                 style: TextStyle(color: Colors.grey, fontSize: 12),
+                  value: PAY_BALANCE_TYPE_RECHARGE,
+                  child: Expanded(
+                    child: Text(
+                      S.of(context).purchase_title_recharge_func(hyn, usdt),
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                      payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
+                    });
+                  }),
+              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE)
+                Padding(
+                  padding: const EdgeInsets.only(left: 38.0),
+                  child: Column(
+                    children: <Widget>[
+                      _radioButton(
+                          title: S.of(context).purchase_title_recharge_only_hyn,
+                          groupValue: payBalanceType_recharge,
+                          value: PAY_BALANCE_TYPE_RECHARGE_100,
+                          isVertical: true,
+                          child: Text(
+                            S.of(context).buy_need_hyn_only_func(Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.amount) ?? '--'),
+                            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                              payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
+                            });
+                          }),
+                      _radioButton(
+                          title: S.of(context).purchase_title_recharge_usdt_hyn,
+                          groupValue: payBalanceType_recharge,
+                          value: PAY_BALANCE_TYPE_RECHARGE_37,
+                          isVertical: true,
+                          child: Text(
+                            S.of(context).buy_need_hyn_usdt_func(Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--', Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--'),
+                            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                              payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_37;
+                            });
+                          }),
+                    ],
+                  ),
                 ),
-              ), onTap: (){
-                setState(() {
-                  payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                  payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
-                });
-              }),
-
-
-              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE) Padding(
-                padding: const EdgeInsets.only(left: 38.0),
-                child: Column(
-                  children: <Widget>[
-                    _radioButton(
-                        title: S.of(context).purchase_title_recharge_only_hyn,
-                        groupValue: payBalanceType_recharge,
-                        value: PAY_BALANCE_TYPE_RECHARGE_100,
-                        isVertical: true,
-                        child: Text(
-                          "(${S.of(context).buy_need_hyn_usdt_hint(
-                              Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.amount) ?? '--',
-                              Const.DOUBLE_NUMBER_FORMAT.format(0) ?? '--')})",
-                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
-                        ), onTap: (){
-                      setState(() {
-                        payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                        payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
-                      });
-                    }),
-
-                    _radioButton(
-                        title: S.of(context).purchase_title_recharge_usdt_hyn,
-                        groupValue: payBalanceType_recharge,
-                        value: PAY_BALANCE_TYPE_RECHARGE_37,
-                        isVertical: true,
-                        child: Text(
-                          "(${S.of(context).buy_need_hyn_usdt_hint(
-                              Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--',
-                              Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--')})",
-                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
-                        ), onTap: (){
-                      setState(() {
-                        payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                        payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_37;
-                      });
-                    }),
-
-
-                  ],
-                ),
-              ),
-              
               _radioButton(
                   title: S.of(context).income_amount,
                   groupValue: payBalanceType,
@@ -298,13 +291,13 @@ class _PurchaseState extends State<PurchasePage> {
                   child: Expanded(
                     child: Text(S.of(context).purchase_title_input_func(input),
                         style: TextStyle(fontSize: 12, color: Color(0xFF9B9B9B))),
-                  ), onTap: (){
-                setState(() {
-                  payBalanceType = PAY_BALANCE_TYPE_INCOME;
-                  payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_0;
-                });
-              }),
-
+                  ),
+                  onTap: () {
+                    setState(() {
+                      payBalanceType = PAY_BALANCE_TYPE_INCOME;
+                      payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_0;
+                    });
+                  }),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 32),
@@ -333,15 +326,15 @@ class _PurchaseState extends State<PurchasePage> {
                               var orderId = widget.payOrder.order_id;
                               print("[puchase] ---> payBalanceType:${payBalanceType}");
 
-                              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE && payBalanceType_recharge == PAY_BALANCE_TYPE_RECHARGE_100) {
-                                  PayOrder _payOrder = await service.createOrder(contractId: widget.contractInfo.id);
-                                  orderId = _payOrder.order_id;
-                                  var ret = await service.confirmPay(
-                                      orderId: orderId, payType: payBalanceType, fundToken: fundToken);
-                                  code = ret.code;
-                                  msg = ret.msg;
-                              }
-                              else {
+                              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
+                                  payBalanceType_recharge == PAY_BALANCE_TYPE_RECHARGE_100) {
+                                PayOrder _payOrder = await service.createOrder(contractId: widget.contractInfo.id);
+                                orderId = _payOrder.order_id;
+                                var ret = await service.confirmPay(
+                                    orderId: orderId, payType: payBalanceType, fundToken: fundToken);
+                                code = ret.code;
+                                msg = ret.msg;
+                              } else {
                                 PayOrder _payOrder = await service.createOrderV2(contractId: widget.contractInfo.id);
                                 orderId = _payOrder.order_id;
                                 var ret = await service.confirmPayV2(
@@ -431,63 +424,60 @@ class _PurchaseState extends State<PurchasePage> {
     );
   }
 
-
-  Widget _radioButton({String title, String groupValue, String value, Widget child, bool isVertical = false, void Function() onTap}) {
+  Widget _radioButton(
+      {String title, String groupValue, String value, Widget child, bool isVertical = false, void Function() onTap}) {
     return InkWell(
       onTap: onTap,
-      child: isVertical?Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Radio(
-                activeColor: Theme.of(context).primaryColor,
-                value: value,
-                groupValue: groupValue,
-                onChanged: (value){
-                  onTap();
-                  setState(() {
-                    value = 0;
-                  });
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 5),
-                child: Text(title),
-              ),
-            ],
-          ),
-          if (child != null) Padding(
-            padding: const EdgeInsets.only(left:48.0, bottom: 0),
-            child: child,
-          ),
-        ],
-      ):Row(
-        children: <Widget>[
-          Radio(
-            activeColor: Theme.of(context).primaryColor,
-            value: value,
-            groupValue: groupValue,
-            onChanged: (value){
-              onTap();
-              setState(() {
-                value = 0;
-              });
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: Text(title),
-          ),
-          if (child != null) child,
-
-        ],
-      ),
+      child: isVertical
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Radio(
+                      activeColor: Theme.of(context).primaryColor,
+                      value: value,
+                      groupValue: groupValue,
+                      onChanged: (value) {
+                        onTap();
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Text(title),
+                    ),
+                  ],
+                ),
+                if (child != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 48.0, bottom: 0),
+                    child: child,
+                  ),
+              ],
+            )
+          : Row(
+              children: <Widget>[
+                Radio(
+                  activeColor: Theme.of(context).primaryColor,
+                  value: value,
+                  groupValue: groupValue,
+                  onChanged: (value) {
+                    onTap();
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Text(title),
+                ),
+                if (child != null) child,
+              ],
+            ),
     );
   }
 
   bool isInsufficientBalance() {
-    if ((payBalanceType == PAY_BALANCE_TYPE_INCOME && getBalanceByType(PAY_BALANCE_TYPE_INCOME) < widget.payOrder.amount) ||
+    if ((payBalanceType == PAY_BALANCE_TYPE_INCOME &&
+            getBalanceByType(PAY_BALANCE_TYPE_INCOME) < widget.payOrder.amount) ||
         (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
             getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, 'total') < widget.payOrder.amount)) {
       return true;

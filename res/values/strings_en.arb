@@ -630,7 +630,7 @@
   "source_desc_title": "Data source desc",
   "epidemic_map_short": "NCP MAP",
   "epidemic_map_desc": "Wuhan Virus Cases Tracking Map",
-  "buy_need_hyn_usdt_hint": "USDT Deposit：from HYN ${hyn}U，from USDT ${USDT}U",
+  "buy_need_hyn_usdt_func": "(USDT Deposit：from HYN ${hyn}U + from USDT ${USDT}U)",
   "balance_hyn_usdt": "Available USDT: HYN deposit ${hyn}，USDT deposit ${usdt}",
   "hyn_eq_u": "HYN deposit",
   "usdt_direct": "USDT deposit",
@@ -645,8 +645,9 @@
   "purchase_title_recharge_usdt_hyn": "By direct charge USDT + HYN ",
   "purchase_title_recharge_only_hyn": "By direct charge HYN ",
   "purchase_title_recharge_func": "(Available USDT: HYN deposit ${hyn}U，USDT deposit ${usdt}U)",
-  "purchase_title_input_func": "(Available USDT: HYN deposit ${balance}U)",
+  "purchase_title_input_func": "(Available USDT: ${balance}U)",
   "my_hash_free_contract": "Free contract",
   "my_hash_gift_contract": "Gift contGract",
-  "my_hash_home_economic_contract": "Home economic contract"
+  "my_hash_home_economic_contract": "Home economic contract",
+  "buy_need_hyn_only_func": "(USDT Deposit：from HYN ${hyn}U)"
 }

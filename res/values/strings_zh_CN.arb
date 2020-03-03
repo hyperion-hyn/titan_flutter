@@ -630,7 +630,7 @@
   "epidemic_map_short": "新冠病毒地图",
   "epidemic_map": "新型肺炎疫情地图",
   "epidemic_map_desc": "新型肺炎疫情",
-  "buy_need_hyn_usdt_hint": "需：HYN等额 ${hyn}U，USDT直充 ${usdt}U",
+  "buy_need_hyn_usdt_func": "(需：HYN等额 ${hyn}U + USDT直充 ${usdt}U)",
   "balance_hyn_usdt": "可用余额 HYN等额 ${hyn}，USDT直充 ${usdt}",
   "hyn_eq_u": "HYN等额U",
   "usdt_direct": "USDT直充",
@@ -644,9 +644,10 @@
   "experience_numbers_not_empty": "合约数量不能为空",
   "purchase_title_recharge_usdt_hyn": "使用混合直充USDT+HYN余额",
   "purchase_title_recharge_only_hyn": "使用直充HYN余额",
-  "purchase_title_recharge_func": "(我的余额 HYN等额 ${hyn}U, USDT直充 ${usdt}U)",
-  "purchase_title_input_func": "(我的余额HYN等额 ${balance}U)",
+  "purchase_title_recharge_func": "(我的余额 HYN等额 ${hyn}U , USDT直充 ${usdt}U)",
+  "purchase_title_input_func": "(我的余额 ${balance}U)",
   "my_hash_free_contract": "免费合约",
   "my_hash_gift_contract": "赠送合约",
-  "my_hash_home_economic_contract": "宅经济合约"
+  "my_hash_home_economic_contract": "宅经济合约",
+  "buy_need_hyn_only_func": "(需：HYN等额 ${hyn}U)"
 }

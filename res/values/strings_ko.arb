@@ -630,7 +630,7 @@
   "source_desc_title": "데이터 소스 설명",
   "epidemic_map_short": "NCP 지도",
   "epidemic_map_desc": "신종 폐렴의 전염병 발생 상황",
-  "buy_need_hyn_usdt_hint": "HYN등액 ${hyn}, USDT직접 충전 ${usdt}을 필요합니다",
+  "buy_need_hyn_usdt_func": "(HYN등액 ${hyn}, USDT직접 충전 ${usdt}을 필요합니다)",
   "balance_hyn_usdt": "사용 가능한 잔액 HYN 등액 ${hyn}, USDT 직접 충전 ${usdt}",
   "hyn_eq_u": "HYN등액 U",
   "usdt_direct": "USDT직접 충전",
@@ -644,9 +644,10 @@
   "experience_numbers_not_empty": "계약 수량은 비워 둘 수 없습니다",
   "purchase_title_recharge_usdt_hyn": "하이브리드 직접 청구 USDT + HYN ",
   "purchase_title_recharge_only_hyn": "직접 충전 HYN 저울 사용",
-  "purchase_title_recharge_func": "사용 가능한 잔액 HYN 등액 ${hyn}, USDT 직접 충전 ${usdt}",
-  "purchase_title_input_func": "사용 가능한 잔액 HYN 등액 ${hyn}",
+  "purchase_title_recharge_func": "(사용 가능한 잔액 HYN 등액 ${hyn} + USDT 직접 충전 ${usdt})",
+  "purchase_title_input_func": "(사용 가능한 잔액 ${balance})",
   "my_hash_free_contract": "무료 계약",
   "my_hash_gift_contract": "선물 계약",
-  "my_hash_home_economic_contract": "가정 경제 계약"
+  "my_hash_home_economic_contract": "가정 경제 계약",
+  "buy_need_hyn_only_func": "(HYN등액 ${hyn})"
 }
