@@ -278,7 +278,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   if(isShowAnnounceDialog && state is InitialHomeState) AnnouncementDialog(
                       state.announcement,(){
                     isShowAnnounceDialog = false;
-                    isUpdateAnnounce = false;
+                    //isUpdateAnnounce = false;
                     BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
                   }),
                 ],
