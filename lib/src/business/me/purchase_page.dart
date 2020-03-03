@@ -330,28 +330,25 @@ class _PurchaseState extends State<PurchasePage> {
                               // todo: jison_HYN
                               var code = -1;
                               var msg = "";
-                              var payType = payBalanceType;
                               var orderId = widget.payOrder.order_id;
+                              print("[puchase] ---> payBalanceType:${payBalanceType}");
+
                               if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE && payBalanceType_recharge == PAY_BALANCE_TYPE_RECHARGE_100) {
-                                 payType = PAY_BALANCE_TYPE_RECHARGE;
                                   PayOrder _payOrder = await service.createOrder(contractId: widget.contractInfo.id);
                                   orderId = _payOrder.order_id;
                                   var ret = await service.confirmPay(
-                                      orderId: orderId, payType: payType, fundToken: fundToken);
+                                      orderId: orderId, payType: payBalanceType, fundToken: fundToken);
                                   code = ret.code;
                                   msg = ret.msg;
                               }
                               else {
-                                payType = PAY_BALANCE_TYPE_INCOME;
                                 PayOrder _payOrder = await service.createOrderV2(contractId: widget.contractInfo.id);
-                                //orderId = widget.payOrder.order_id;
                                 orderId = _payOrder.order_id;
                                 var ret = await service.confirmPayV2(
-                                    orderId: orderId, payType: payType, fundToken: fundToken);
+                                    orderId: orderId, payType: payBalanceType, fundToken: fundToken);
                                 code = ret.code;
                                 msg = ret.msg;
                               }
-                              //print('[xxxx] code:${code}, msg:${msg}');
 
                               if (code == 0) {
                                 //支付成功
