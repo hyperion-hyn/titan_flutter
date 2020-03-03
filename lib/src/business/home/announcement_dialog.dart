@@ -7,44 +7,54 @@ class AnnouncementDialog extends StatelessWidget {
   void Function() onCancel;
   NewsDetail announcement;
 
-  AnnouncementDialog(this.announcement,this.onCancel);
+  AnnouncementDialog(this.announcement, this.onCancel);
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Align(
-          alignment: FractionalOffset(0.5, 0.6),
-          child: Container(
-            height: 510,
-            width: 370,
-            child: SingleChildScrollView(
-              child: Html(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                data: announcement.content,
-              ),
+    return Container(
+      margin: EdgeInsets.only(top: 48),
+      child: Center(
+        child: FractionallySizedBox(
+          widthFactor: 0.88,
+          heightFactor: 0.88,
+          child: Center(
+            child: Stack(
+              children: <Widget>[
+                ClipRRect(
+//            decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), border: Border.all(color: Colors.red)),
+//            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+//            height: 540,
+//            width: 370,
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                  child: SingleChildScrollView(
+                    child: Html(
+                      data: announcement.content,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: InkWell(
+                    onTap: () {
+                      onCancel();
+                    },
+                    child: Icon(
+                      Icons.cancel,
+                      size: 28,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
         ),
-        Align(
-          alignment: FractionalOffset(0.5, 0.93),
-          child: InkWell(
-            onTap: () {
-              onCancel();
-            },
-            child: Image.asset(
-              "res/drawable/ic_select_category_search_bar_clear.png",
-              fit: BoxFit.fill,
-              width: 32,
-              height: 32,
-            ),
-          ),
-        )
-      ],
+      ),
     );
   }
 
-  /*@override
+/*@override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[

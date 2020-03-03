@@ -72,10 +72,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
       double doubleClickZoom = 16;
       if (latLng != null) {
         if (_clickTimes > 1) {
-          print('xxx 1');
           mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
         } else if (!trackModeChange) {
-          print('xxx 2');
           mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
         }
       }
@@ -148,11 +146,13 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
+    print('xxx 111');
     picItemWidth = (MediaQuery.of(context).size.width - 15 * 3.0) / 2.6;
 
     return BlocBuilder<NcovBloc, NcovState>(
       bloc: _ncovBloc,
       builder: (context, state) {
+        print('xxx state $state');
         return Scaffold(
           backgroundColor: Color(0xff2B344A),
           appBar: AppBar(
@@ -324,6 +324,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
       ),
     );
 
+    print('xxx mapview');
+
     return Stack(
       children: <Widget>[
         PositionedTransition(
@@ -332,7 +334,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
             compassEnabled: false,
             initialCameraPosition: CameraPosition(
               target: LatLng(39.919730, 116.399345),
-              zoom: 7.1,
+              zoom: 7.6,
             ),
             styleString: Const.kNCovMapStyle,
 //            styleString: Const.kNcovMapStyleCn,
@@ -502,21 +504,21 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   }
 
   void _mapMoveListener() {
-    mapboxMapController.getCameraPosition().then((position) {
-      if (position.zoom >= 8) {
-        if (_shouldShowNorm) {
-          setState(() {
-            _shouldShowNorm = false;
-          });
-        }
-      } else {
-        if (!_shouldShowNorm) {
-          setState(() {
-            _shouldShowNorm = true;
-          });
-        }
-      }
-    });
+//    mapboxMapController.getCameraPosition().then((position) {
+//      if (position.zoom >= 8) {
+//        if (_shouldShowNorm) {
+//          setState(() {
+//            _shouldShowNorm = false;
+//          });
+//        }
+//      } else {
+//        if (!_shouldShowNorm) {
+//          setState(() {
+//            _shouldShowNorm = true;
+//          });
+//        }
+//      }
+//    });
     //change tracking mode to none if user drag the map
     if (mapboxMapController?.isGesture == true) {
       updateMyLocationTrackingMode(MyLocationTrackingMode.None);
@@ -819,7 +821,7 @@ class LocationWidgetState extends State<LocationWidget> {
           child: FloatingActionButton(
             onPressed: widget.onTap,
             mini: true,
-            heroTag: 'myLocation',
+//            heroTag: 'myLocation',
             backgroundColor: Colors.white,
             child: Icon(
               Icons.my_location,
