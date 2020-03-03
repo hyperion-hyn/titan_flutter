@@ -648,5 +648,6 @@
   "purchase_title_input_func": "(Available USDT: HYN deposit ${balance}U)",
   "my_hash_free_contract": "Free contract",
   "my_hash_gift_contract": "Gift contGract",
-  "my_hash_home_economic_contract": "Home economic contract"
+  "my_hash_home_economic_contract": "Home economic contract",
+  "hashrate_contract": "HashRate contract"
 }

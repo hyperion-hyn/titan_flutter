@@ -648,5 +648,6 @@
   "purchase_title_input_func": "사용 가능한 잔액 HYN 등액 ${hyn}",
   "my_hash_free_contract": "무료 계약",
   "my_hash_gift_contract": "선물 계약",
-  "my_hash_home_economic_contract": "가정 경제 계약"
+  "my_hash_home_economic_contract": "가정 경제 계약",
+  "hashrate_contract": "계산력 계약"
 }
