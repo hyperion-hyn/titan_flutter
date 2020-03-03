@@ -649,5 +649,6 @@
   "my_hash_free_contract": "무료 계약",
   "my_hash_gift_contract": "선물 계약",
   "my_hash_home_economic_contract": "가정 경제 계약",
-  "buy_need_hyn_only_func": "(HYN등액 ${hyn})"
+  "buy_need_hyn_only_func": "(HYN등액 ${hyn})",
+  "hashrate_contract": "계산력 계약"
 }

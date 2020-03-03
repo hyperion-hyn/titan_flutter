@@ -200,7 +200,7 @@ class _MyHashRateState extends DataListState<MyHashRatePage> {
         DateTime.fromMillisecondsSinceEpoch(powerDetail.createdAt * 1000));
     var expiredAt = DATE_FORMAT.format(
         DateTime.fromMillisecondsSinceEpoch(powerDetail.expiredAt * 1000));
-    var contract = "";
+    var contract = S.of(context).hashrate_contract;
     switch (powerDetail.contractId) {
       case 7:
         contract = S.of(context).my_hash_free_contract;

@@ -649,5 +649,6 @@
   "my_hash_free_contract": "免费合约",
   "my_hash_gift_contract": "赠送合约",
   "my_hash_home_economic_contract": "宅经济合约",
-  "buy_need_hyn_only_func": "(需：HYN等额 ${hyn}U)"
+  "buy_need_hyn_only_func": "(需：HYN等额 ${hyn}U)",
+  "hashrate_contract": "算力合约"
 }

@@ -649,5 +649,6 @@
   "my_hash_free_contract": "Free contract",
   "my_hash_gift_contract": "Gift contGract",
   "my_hash_home_economic_contract": "Home economic contract",
-  "buy_need_hyn_only_func": "(USDT Deposit：from HYN ${hyn}U)"
+  "buy_need_hyn_only_func": "(USDT Deposit：from HYN ${hyn}U)",
+  "hashrate_contract": "HashRate contract"
 }
