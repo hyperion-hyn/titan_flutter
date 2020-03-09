@@ -1,13 +1,17 @@
 import 'package:equatable/equatable.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
-import 'package:titan/src/business/position/model/confirm_poi_item.dart';
-import 'package:titan/src/business/position/model/poi_data.dart';
+import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
+import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
 
 @immutable
 abstract class PositionEvent extends Equatable {
 //  const PositionEvent();
-  PositionEvent([List props = const []]) : super(props);
+  PositionEvent();
+
+  @override
+  // TODO: implement props
+  List<Object> get props => null;
 }
 
 class AddPositionEvent extends PositionEvent {
@@ -31,31 +35,33 @@ class SelectCategoryResultEvent extends PositionEvent {
   SelectCategoryResultEvent({this.searchText});
 }
 
-class SelectCategoryClearEvent extends PositionEvent {
-}
+class SelectCategoryClearEvent extends PositionEvent {}
 
 // get
 class GetOpenCageEvent extends PositionEvent {
   final LatLng userPosition;
+
   GetOpenCageEvent(this.userPosition);
 }
 
 // uploading poi
 class StartPostPoiDataEvent extends PositionEvent {
   final PoiDataModel poiDataModel;
+
   StartPostPoiDataEvent(this.poiDataModel);
 }
 
 class LoadingPostPoiDataEvent extends PositionEvent {
   final double progress;
+
   LoadingPostPoiDataEvent(this.progress);
 }
 
-class SuccessPostPoiDataEvent extends PositionEvent {
-}
+class SuccessPostPoiDataEvent extends PositionEvent {}
 
 class FailPostPoiDataEvent extends PositionEvent {
   final int code;
+
   FailPostPoiDataEvent(this.code);
 }
 
@@ -63,37 +69,38 @@ class FailPostPoiDataEvent extends PositionEvent {
 //class ConfirmPositionLoadingEvent extends PositionEvent {
 //}
 
-
 class ConfirmPositionPageEvent extends PositionEvent {
   LatLng userPosition;
-  ConfirmPositionPageEvent (this.userPosition);
+
+  ConfirmPositionPageEvent(this.userPosition);
 }
 
-class ConfirmPositionResultLoadingEvent extends PositionEvent {
-}
+class ConfirmPositionResultLoadingEvent extends PositionEvent {}
 
 class ConfirmPositionResultEvent extends PositionEvent {
   int answer;
   ConfirmPoiItem confirmPoiItem;
-  ConfirmPositionResultEvent(this.answer,this.confirmPoiItem);
-}
 
+  ConfirmPositionResultEvent(this.answer, this.confirmPoiItem);
+}
 
 // uploading poi ncvo
 class StartPostPoiNcovDataEvent extends PositionEvent {
   final PoiNcovDataModel poiDataModel;
+
   StartPostPoiNcovDataEvent(this.poiDataModel);
 }
 
 class LoadingPostPoiNcovDataEvent extends PositionEvent {
   final double progress;
+
   LoadingPostPoiNcovDataEvent(this.progress);
 }
 
-class SuccessPostPoiNcovDataEvent extends PositionEvent {
-}
+class SuccessPostPoiNcovDataEvent extends PositionEvent {}
 
 class FailPostPoiNcovDataEvent extends PositionEvent {
   final int code;
+
   FailPostPoiNcovDataEvent(this.code);
 }

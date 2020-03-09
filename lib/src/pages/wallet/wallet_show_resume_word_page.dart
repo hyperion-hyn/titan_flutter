@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -27,12 +25,12 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
     var mnemonic = await WalletUtil.makeMnemonic();
 
     logger.i("mnemonic:$mnemonic");
-
-    if (mnemonic != null && mnemonic.isNotEmpty) {
-      _resumeWords = mnemonic.split(" ");
-      createWalletMnemonicTemp = mnemonic;
-      setState(() {});
-    }
+    logger.w('TODO');
+//    if (mnemonic != null && mnemonic.isNotEmpty) {
+//      _resumeWords = mnemonic.split(" ");
+//      createWalletMnemonicTemp = mnemonic;
+//      setState(() {});
+//    }
   }
 
   @override

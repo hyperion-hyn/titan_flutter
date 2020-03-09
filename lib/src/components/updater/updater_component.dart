@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/updater/bloc/bloc.dart';
-import 'package:titan/src/model/update.dart';
+import 'package:titan/src/data/entity/update.dart';
 import 'package:titan/src/utils/utils.dart';
 
 //const APK_NAME = 'titan.apk';

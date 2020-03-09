@@ -2,12 +2,10 @@ import 'dart:math';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/entity/poi.dart';
+import 'package:titan/src/data/entity/poi_interface.dart';
 import 'package:titan/src/data/repository/repository.dart';
-import 'package:titan/src/model/poi.dart';
-import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
-
-import 'package:titan/src/utils/open_location_code.dart' as locationCode;
 
 import '../global.dart';
 

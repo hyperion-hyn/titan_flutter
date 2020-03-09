@@ -16,7 +16,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/api/api.dart';
-import 'package:titan/src/model/converter/model_converter.dart';
+import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import 'package:titan/src/plugins/wallet/token.dart';

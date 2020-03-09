@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:titan/src/model/update.dart';
+import 'package:titan/src/data/entity/update.dart';
 
 AppData kAppData = AppData();
 

@@ -16,7 +16,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/model/converter/model_converter.dart';
+import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -271,7 +271,10 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SelectPositionPage(initLocation: latlng, type: SelectPositionPage.SELECT_PAGE_TYPE_POI,),
+                builder: (context) => SelectPositionPage(
+                  initLocation: latlng,
+                  type: SelectPositionPage.SELECT_PAGE_TYPE_POI,
+                ),
               ),
             );
           }
@@ -289,13 +292,16 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
-        _buildItem('ncov', S.of(context).add_ncov_item_title, () async {
+        _buildTaskItem('ncov', S.of(context).add_ncov_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SelectPositionPage(initLocation: latlng, type: SelectPositionPage.SELECT_PAGE_TYPE_NCOV,),
+                builder: (context) => SelectPositionPage(
+                  initLocation: latlng,
+                  type: SelectPositionPage.SELECT_PAGE_TYPE_NCOV,
+                ),
               ),
             );
           }

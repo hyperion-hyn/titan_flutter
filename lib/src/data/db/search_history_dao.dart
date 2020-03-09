@@ -1,5 +1,5 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:titan/src/model/history_search.dart';
+import '../entity/history_search.dart';
 
 import 'db_provider.dart';
 
@@ -11,7 +11,8 @@ class SearchHistoryDao {
   static const String kColumnType = 'type';
 
   Future<HistorySearchEntity> insertOrUpdate(HistorySearchEntity entity) async {
-    entity.id = await (await _db).rawInsert('INSERT OR REPLACE INTO $kTable($kColumnTime, $kColumnSearchText, $kColumnType) VALUES(?,?,?)',
+    entity.id = await (await _db).rawInsert(
+        'INSERT OR REPLACE INTO $kTable($kColumnTime, $kColumnSearchText, $kColumnType) VALUES(?,?,?)',
         [entity.time, entity.searchText, entity.type]);
 //    entity.id = await (await _db).insert(kTable, entity.toJson());
     return entity;

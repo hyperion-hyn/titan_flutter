@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
+
+import './load_data_container/bloc/bloc.dart';
 
 import '../../global.dart';
 import 'base_state.dart';

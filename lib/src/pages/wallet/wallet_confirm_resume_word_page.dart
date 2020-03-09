@@ -25,16 +25,16 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
   }
 
   void initMnemonic() {
-    logger.i("createWalletMnemonicTemp:$createWalletMnemonicTemp");
-    _candidateWords = createWalletMnemonicTemp
-        .split(" ")
-        .asMap()
-        .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
-        .values
-        .toList();
-
-    _candidateWords.shuffle();
-    setState(() {});
+    logger.i("createWalletMnemonicTemp: TODO!!");
+//    _candidateWords = createWalletMnemonicTemp
+//        .split(" ")
+//        .asMap()
+//        .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
+//        .values
+//        .toList();
+//
+//    _candidateWords.shuffle();
+//    setState(() {});
   }
 
   @override
@@ -179,17 +179,18 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
   }
 
   Future _submit() async {
-    var selectedMnemonitc = "";
-    _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
-
-    logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
-    if (selectedMnemonitc.trim() == createWalletMnemonicTemp.trim()) {
-      var wallet = await WalletUtil.storeByMnemonic(
-          name: createWalletNameTemp, password: createWalletPasswordTemp, mnemonic: createWalletMnemonicTemp.trim());
-      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage(wallet)));
-    } else {
-      Fluttertoast.showToast(msg: S.of(context).confirm_mnemonic_incorrect);
-    }
+    logger.w('TODO');
+//    var selectedMnemonitc = "";
+//    _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
+//
+//    logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
+//    if (selectedMnemonitc.trim() == createWalletMnemonicTemp.trim()) {
+//      var wallet = await WalletUtil.storeByMnemonic(
+//          name: createWalletNameTemp, password: createWalletPasswordTemp, mnemonic: createWalletMnemonicTemp.trim());
+//      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage(wallet)));
+//    } else {
+//      Fluttertoast.showToast(msg: S.of(context).confirm_mnemonic_incorrect);
+//    }
   }
 }
 

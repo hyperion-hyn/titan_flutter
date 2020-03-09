@@ -9,7 +9,7 @@ var logger = Logger();
 //double bottomBarHeight = 65;
 
 /////some const
-//const safeAreaBottomPadding = 24.0;
+const safeAreaBottomPadding = 24.0;
 //const saveAreaTopPadding = 32.0;
 
 //String createWalletPopUtilName;

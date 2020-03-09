@@ -14,7 +14,7 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
 
-import 'package:titan/src/business/my/about_me_page.dart';
+import 'package:titan/src/pages/mine/about_me_page.dart';
 
 class DrawerComponent extends StatefulWidget {
   @override

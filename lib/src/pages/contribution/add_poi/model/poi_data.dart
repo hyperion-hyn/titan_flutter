@@ -1,8 +1,8 @@
 import 'package:image_pickers/Media.dart';
+import 'package:titan/src/business/discover/dapp/ncov/model/ncov_poi_entity.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/poi_collector.dart';
 
 class PoiDataModel {
-
   List<Media> listImagePaths = List();
 
   PoiCollector poiCollector;
@@ -11,7 +11,6 @@ class PoiDataModel {
 }
 
 class PoiNcovDataModel {
-
   List<Media> listImagePaths = List();
 
   NcovPoiEntity poiCollector;

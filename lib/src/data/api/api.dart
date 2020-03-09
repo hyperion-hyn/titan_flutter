@@ -2,11 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/model/gaode_model.dart';
+import '../entity/gaode_model.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/model/gaode_poi.dart';
-import 'package:titan/src/model/update.dart';
-import 'package:titan/src/pages/contribution/vo/signal_collector.dart';
+import '../entity/gaode_poi.dart';
+import '../entity/update.dart';
+import 'package:titan/src/pages/contribution/signal_scan/vo/signal_collector.dart';
 
 class Api {
   ///附近可以分享的位置
@@ -81,7 +81,7 @@ class Api {
     return data;
   }
 
-  Future<Map<String, dynamic>> searchPoiByTitan(String keyword, String lon , String lat,
+  Future<Map<String, dynamic>> searchPoiByTitan(String keyword, String lon, String lat,
       {String language = "zh-Hans", int radius = 500}) async {
     var data = await HttpCore.instance.get('map-collector/poi/search',
 //        params: {'lon': 113.322201, 'lat': 23.121072, 'language': 'zh-Hans', 'keyword': "高地", 'radius': "500"});
@@ -132,6 +132,4 @@ class Api {
       return false;
     }
   }
-
-
 }

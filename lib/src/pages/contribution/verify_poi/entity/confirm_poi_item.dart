@@ -1,15 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/model/converter/model_converter.dart';
-import 'package:titan/src/model/poi_interface.dart';
-import 'package:titan/src/model/search_history_aware_poi.dart';
+import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/search_history_aware_poi.dart';
 
 part 'confirm_poi_item.g.dart';
 
-
 @JsonSerializable()
-class ConfirmPoiItem with SearchHistoryAwarePoi implements IPoi{
-
+class ConfirmPoiItem with SearchHistoryAwarePoi implements IPoi {
   @JsonKey(name: 'id')
   String id;
 
@@ -48,7 +45,8 @@ class ConfirmPoiItem with SearchHistoryAwarePoi implements IPoi{
 
   ConfirmPoiItem.empty();
 
-  ConfirmPoiItem(this.id,this.name,this.address,this.category,this.location,this.ext,this.state,this.phone,this.workTime,this.images,this.postcode,this.website);
+  ConfirmPoiItem(this.id, this.name, this.address, this.category, this.location, this.ext, this.state, this.phone,
+      this.workTime, this.images, this.postcode, this.website);
 
   factory ConfirmPoiItem.fromJson(Map<String, dynamic> srcJson) => _$ConfirmPoiItemFromJson(srcJson);
 
@@ -59,27 +57,27 @@ class ConfirmPoiItem with SearchHistoryAwarePoi implements IPoi{
 
   @override
   LatLng get latLng {
-    if(location?.coordinates != null) {
+    if (location?.coordinates != null) {
       return LatLng(location.coordinates[1], location.coordinates[0]);
     }
     return null;
   }
 
   ConfirmPoiItem.setPid(this.id, this.location);
-
 }
-
 
 @JsonSerializable()
 class Location extends Object {
-
   @JsonKey(name: 'coordinates')
   List<double> coordinates;
 
   @JsonKey(name: 'type')
   String type;
 
-  Location(this.coordinates,this.type,);
+  Location(
+    this.coordinates,
+    this.type,
+  );
 
   factory Location.fromJson(Map<String, dynamic> srcJson) => _$LocationFromJson(srcJson);
 
@@ -90,4 +88,3 @@ class Location extends Object {
     return toJson().toString();
   }
 }
-

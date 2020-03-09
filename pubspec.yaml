@@ -55,7 +55,7 @@ dependencies:
   #https://pub.dev/packages/flutter_bloc
   flutter_bloc: ^3.0.0
   #https://pub.dev/packages/equatable#-readme-tab-
-  equatable: ^1.0.1
+  equatable: ^1.1.1
   #https://pub.dev/packages/logger#-installing-tab-
   logger: ^0.7.0+2
   #https://pub.dev/packages/flutter_statusbarcolor#-installing-tab-

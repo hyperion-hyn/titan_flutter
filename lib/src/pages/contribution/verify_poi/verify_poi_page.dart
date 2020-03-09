@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
@@ -11,8 +9,6 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 import '../add_poi/position_finish_page.dart';
 import 'entity/confirm_poi_item.dart';
@@ -50,53 +46,53 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
 
   @override
   void initState() {
-    _positionBloc.add(ConfirmPositionLoadingEvent());
-    _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
-    _positionBloc.listen((state) {
-      if (state is ConfirmPositionPageState) {
-        confirmPoiItem = state.confirmPoiItem;
-        if (confirmPoiItem?.name == null) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text(S.of(context).no_verifiable_poi_around_hint),
-                actions: <Widget>[
-                  FlatButton(
-                      onPressed: () {
-                        Navigator.of(context)..pop()..pop();
-                      },
-                      child: Text(S.of(context).confirm))
-                ],
-              );
-            },
-          );
-        } else {
-          addMarkerAndMoveToPoi();
-        }
-      } else if (state is ConfirmPositionResultState) {
-        if (state.confirmResult) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-          );
-        }
-      }
-    });
-
-    _addMarkerSubject.debounceTime(Duration(milliseconds: 500)).listen((_) {
-      var latlng = LatLng(confirmPoiItem.location.coordinates[1], confirmPoiItem.location.coordinates[0]);
-      mapController?.addSymbol(
-        SymbolOptions(
-          geometry: latlng,
-          iconImage: "hyn_marker_big",
-          iconAnchor: "bottom",
-          iconOffset: Offset(0.0, 3.0),
-        ),
-      );
-      mapController?.animateCamera(CameraUpdate.newLatLng(latlng));
-    });
+//    _positionBloc.add(ConfirmPositionLoadingEvent());
+//    _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition));
+//    _positionBloc.listen((state) {
+//      if (state is ConfirmPositionPageState) {
+//        confirmPoiItem = state.confirmPoiItem;
+//        if (confirmPoiItem?.name == null) {
+//          showDialog(
+//            context: context,
+//            builder: (context) {
+//              return AlertDialog(
+//                title: Text(S.of(context).no_verifiable_poi_around_hint),
+//                actions: <Widget>[
+//                  FlatButton(
+//                      onPressed: () {
+//                        Navigator.of(context)..pop()..pop();
+//                      },
+//                      child: Text(S.of(context).confirm))
+//                ],
+//              );
+//            },
+//          );
+//        } else {
+//          addMarkerAndMoveToPoi();
+//        }
+//      } else if (state is ConfirmPositionResultState) {
+//        if (state.confirmResult) {
+//          Navigator.pushReplacement(
+//            context,
+//            MaterialPageRoute(
+//                builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
+//          );
+//        }
+//      }
+//    });
+//
+//    _addMarkerSubject.debounceTime(Duration(milliseconds: 500)).listen((_) {
+//      var latlng = LatLng(confirmPoiItem.location.coordinates[1], confirmPoiItem.location.coordinates[0]);
+//      mapController?.addSymbol(
+//        SymbolOptions(
+//          geometry: latlng,
+//          iconImage: "hyn_marker_big",
+//          iconAnchor: "bottom",
+//          iconOffset: Offset(0.0, 3.0),
+//        ),
+//      );
+//      mapController?.animateCamera(CameraUpdate.newLatLng(latlng));
+//    });
 
     super.initState();
   }
@@ -154,7 +150,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
               FlatButton(
                   onPressed: () {
                     _isPostingData = true;
-                    _positionBloc.add(ConfirmPositionResultLoadingEvent());
+//                    _positionBloc.add(ConfirmPositionResultLoadingEvent());
                     Navigator.of(context).pop(true);
                   },
                   child: Text(S.of(context).confirm))
@@ -272,42 +268,43 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
 
   @override
   void dispose() {
-    _positionBloc.close();
+//    _positionBloc.close();
     _addMarkerSubject.close();
     super.dispose();
   }
 
   Widget _mapView() {
-    var style;
-    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-      style = Const.kWhiteMapStyleCn;
-    } else {
-      style = Const.kWhiteMapStyle;
-    }
-    var languageCode = Localizations.localeOf(context).languageCode;
-
-    return SizedBox(
-      height: 150,
-      child: MapboxMap(
-        compassEnabled: false,
-        initialCameraPosition: CameraPosition(
-          target: recentlyLocation,
-          zoom: defaultZoom,
-        ),
-        styleString: style,
-        onStyleLoaded: (mapboxController) {
-          onStyleLoaded(mapboxController);
-        },
-        myLocationTrackingMode: MyLocationTrackingMode.None,
-        rotateGesturesEnabled: false,
-        tiltGesturesEnabled: false,
-        enableLogo: false,
-        enableAttribution: false,
-        minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
-        myLocationEnabled: false,
-        languageCode: languageCode,
-      ),
-    );
+    return Container();
+//    var style;
+//    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+//      style = Const.kWhiteMapStyleCn;
+//    } else {
+//      style = Const.kWhiteMapStyle;
+//    }
+//    var languageCode = Localizations.localeOf(context).languageCode;
+//
+//    return SizedBox(
+//      height: 150,
+//      child: MapboxMap(
+//        compassEnabled: false,
+//        initialCameraPosition: CameraPosition(
+//          target: recentlyLocation,
+//          zoom: defaultZoom,
+//        ),
+//        styleString: style,
+//        onStyleLoaded: (mapboxController) {
+//          onStyleLoaded(mapboxController);
+//        },
+//        myLocationTrackingMode: MyLocationTrackingMode.None,
+//        rotateGesturesEnabled: false,
+//        tiltGesturesEnabled: false,
+//        enableLogo: false,
+//        enableAttribution: false,
+//        minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
+//        myLocationEnabled: false,
+//        languageCode: languageCode,
+//      ),
+//    );
   }
 
   void onStyleLoaded(MapboxMapController controller) {
@@ -345,73 +342,74 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
   }
 
   Widget _confirmView() {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(15.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            child: RaisedButton(
-              color: HexColor('#DD4E41'),
-              onPressed: () async {
-                var option = await showConfirmDialog(S.of(context).poi_confirm_title_error);
-                if (option == true) {
-                  _positionBloc.add(ConfirmPositionResultEvent(0, confirmPoiItem));
-                }
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    "res/drawable/ic_confirm_button_error.png",
-                    width: 15,
-                    height: 14,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only(left: 8, bottom: 2),
-                      child: Text(S.of(context).confirm_info_wrong, style: TextStyles.textCfffS14)),
-                ],
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(22)),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 25,
-          ),
-          Container(
-            child: RaisedButton(
-              color: HexColor('#0F95B0'),
-              onPressed: () async {
-                var option = await showConfirmDialog(S.of(context).poi_confirm_title_hint);
-                if (option == true) {
-                  _positionBloc.add(ConfirmPositionResultEvent(1, confirmPoiItem));
-                }
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    "res/drawable/ic_confirm_button_right.png",
-                    width: 15,
-                    height: 14,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.only(left: 8, bottom: 2),
-                      child: Text(S.of(context).confirm_info_right, style: TextStyles.textCfffS14)),
-                ],
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(22)),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return Container();
+//    return Container(
+//      color: Colors.white,
+//      padding: const EdgeInsets.all(15.0),
+//      child: Row(
+//        mainAxisAlignment: MainAxisAlignment.center,
+//        children: <Widget>[
+//          Container(
+//            child: RaisedButton(
+//              color: HexColor('#DD4E41'),
+//              onPressed: () async {
+//                var option = await showConfirmDialog(S.of(context).poi_confirm_title_error);
+//                if (option == true) {
+//                  _positionBloc.add(ConfirmPositionResultEvent(0, confirmPoiItem));
+//                }
+//              },
+//              child: Row(
+//                mainAxisAlignment: MainAxisAlignment.center,
+//                crossAxisAlignment: CrossAxisAlignment.center,
+//                children: <Widget>[
+//                  Image.asset(
+//                    "res/drawable/ic_confirm_button_error.png",
+//                    width: 15,
+//                    height: 14,
+//                  ),
+//                  Padding(
+//                      padding: const EdgeInsets.only(left: 8, bottom: 2),
+//                      child: Text(S.of(context).confirm_info_wrong, style: TextStyles.textCfffS14)),
+//                ],
+//              ),
+//              shape: RoundedRectangleBorder(
+//                borderRadius: BorderRadius.all(Radius.circular(22)),
+//              ),
+//            ),
+//          ),
+//          SizedBox(
+//            width: 25,
+//          ),
+//          Container(
+//            child: RaisedButton(
+//              color: HexColor('#0F95B0'),
+//              onPressed: () async {
+//                var option = await showConfirmDialog(S.of(context).poi_confirm_title_hint);
+//                if (option == true) {
+//                  _positionBloc.add(ConfirmPositionResultEvent(1, confirmPoiItem));
+//                }
+//              },
+//              child: Row(
+//                mainAxisAlignment: MainAxisAlignment.center,
+//                crossAxisAlignment: CrossAxisAlignment.center,
+//                children: <Widget>[
+//                  Image.asset(
+//                    "res/drawable/ic_confirm_button_right.png",
+//                    width: 15,
+//                    height: 14,
+//                  ),
+//                  Padding(
+//                      padding: const EdgeInsets.only(left: 8, bottom: 2),
+//                      child: Text(S.of(context).confirm_info_right, style: TextStyles.textCfffS14)),
+//                ],
+//              ),
+//              shape: RoundedRectangleBorder(
+//                borderRadius: BorderRadius.all(Radius.circular(22)),
+//              ),
+//            ),
+//          ),
+//        ],
+//      ),
+//    );
   }
 }
