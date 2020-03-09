@@ -10,3 +10,5 @@
 
 #import <UMCommon/UMCommon.h>
 #import <UMCommon/UMConfigure.h>
+
+#import <UMAnalytics/MobClick.h>
