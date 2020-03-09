@@ -3,9 +3,8 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
+        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
 
     dependencies {
@@ -18,7 +17,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-
+        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
 }
 

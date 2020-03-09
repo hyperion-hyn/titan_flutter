@@ -4,11 +4,18 @@ import io.flutter.app.FlutterApplication
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.functions.Consumer
 import io.reactivex.plugins.RxJavaPlugins
+import org.hyn.titan.push.UmengPlugin
+import org.hyn.titan.umenglib.BuildConfig
+import org.hyn.titan.umenglib.interfaces.OnPushListener
+import org.hyn.titan.umenglib.push.UMengPushImpl
 import timber.log.Timber
 import java.io.IOException
 
 
 class TitanApp : FlutterApplication() {
+
+    val iUMengPush = UMengPushImpl()
+
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
@@ -44,5 +51,13 @@ class TitanApp : FlutterApplication() {
             e?.printStackTrace()
             Timber.w("rx exception")
         })
+
+        /** umeng init **/
+        iUMengPush.initUMeng(this,object :OnPushListener{
+            override fun onPushClick(title: String?, out_link: String,text: String) {
+                UmengPlugin.openWebView(title,out_link,text)
+            }
+        })
+
     }
 }

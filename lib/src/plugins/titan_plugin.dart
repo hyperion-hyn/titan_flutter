@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
+typedef MessagePushCallBack = void Function(Map values);
+
 class TitanPlugin {
   static final MethodChannel callChannel = MethodChannel('org.hyn.titan/call_channel');
   static final EventChannel keyPairChangeChannel = EventChannel('org.hyn.titan/event_stream');
+  static MessagePushCallBack msgPushChangeCallBack;
 
   static void initFlutterMethodCall() {
     callChannel.setMethodCallHandler(_platformCallHandler);
@@ -20,6 +24,27 @@ class TitanPlugin {
           result += " k:$k, v:$v";
         });
         return result;
+        break;
+
+      case "printLog":
+        String result = call.arguments;
+        String platform = Platform.operatingSystem.toUpperCase();
+        print("[${platform}] :${result}");
+
+        // todo: test
+        /*var text = "<!-- wp:image {\"id\":1346,\"align\":\"center\"} -->\n<div class=\"wp-block-image\"><figure class=\"aligncenter\"><img src=\"https:\/\/news.hyn.space\/wp-content\/uploads\/2020\/02\/signal-attachment-2020-02-24-231552-650x1024.jpeg\" alt=\"\" class=\"wp-image-1346\"\/><\/figure><\/div>\n<!-- \/wp:image -->";
+        Map values = {
+          "title": "新增“宅经济体验合约",
+          "text": text,
+          "out_link": "",
+        };
+        msgPushChangeCallBack(values);
+*/
+        break;
+
+      case "msgPush":
+        Map result = call.arguments;
+        msgPushChangeCallBack(result);
         break;
     }
   }
@@ -119,4 +144,5 @@ class TitanPlugin {
   static Future<bool> bluetoothEnable() async {
     return await callChannel.invokeMethod('bluetoothEnable');
   }
+
 }

@@ -65,4 +65,6 @@ class PrefsKey {
   static final appArea = "app_area";
   static final mapboxCountryCode = "mapbox_countryCode";
   static final lastPosition = "last_map_position";
+
+  static final lastAnnouncement = 'last_announcement';
 }
