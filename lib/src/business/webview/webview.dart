@@ -15,7 +15,6 @@ class WebViewContainer extends StatefulWidget {
   }
 }
 
-
 class WebViewContainerState extends State<WebViewContainer> {
   WebViewController webViewController;
 
@@ -55,7 +54,7 @@ class WebViewContainerState extends State<WebViewContainer> {
               icon: Icon(Icons.share),
               color: Colors.white,
               tooltip: S.of(context).share,
-              onPressed: (){
+              onPressed: () {
                 _shareQr(context);
               },
             ),
@@ -75,7 +74,7 @@ class WebViewContainerState extends State<WebViewContainer> {
                   height: 2,
                   child: LinearProgressIndicator(
 //                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                  ),
+                      ),
                 ),
               Expanded(
                 child: _body(),
@@ -119,7 +118,6 @@ class WebViewContainerState extends State<WebViewContainer> {
   }
 
   Widget _body() {
-
     return WebView(
       initialUrl: widget.initUrl,
       onWebViewCreated: (WebViewController controller) {
@@ -143,10 +141,6 @@ class WebViewContainerState extends State<WebViewContainer> {
       javascriptMode: JavascriptMode.unrestricted,
       navigationDelegate: (NavigationRequest request) {
         bool prevent = false;
-
-//                    if(request.url.contains('verify.meituan.com')) {
-//                      prevent = true;
-//                    }
 
         //非http/https协议
         if (!request.url.startsWith(RegExp('^https?://'))) {
@@ -197,5 +191,4 @@ class WebViewContainerState extends State<WebViewContainer> {
       Share.text(S.of(context).share, widget.initUrl, 'text/plain');
     }
   }
-
 }

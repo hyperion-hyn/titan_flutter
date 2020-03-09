@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/business/home/global_data/global_data.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/business/scaffold_map/map.dart';
 import 'package:titan/src/business/webview/webview.dart';
@@ -133,13 +134,22 @@ class HomePanelState extends State<HomePanel> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(4.0)),
                     onTap: () {
+
+                      print('[Home_panel] -->focusArea， 数组展示');
+
                       Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GlobalDataPage()));
+
+                     /* Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => WebViewContainer(
                                     initUrl: 'https://news.hyn.space/react-reduction/',
                                     title: S.of(context).map3_global_nodes,
                                   )));
+                      */
                     },
                     child: Container(
                       decoration: BoxDecoration(
