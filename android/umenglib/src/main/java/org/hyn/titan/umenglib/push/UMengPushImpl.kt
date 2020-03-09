@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.google.gson.Gson
 import com.hyn.titan.tools.AppPrintTools
 import com.taobao.accs.utl.ALog
+import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import org.hyn.titan.umenglib.interfaces.IUMengPush
 import com.umeng.message.IUmengRegisterCallback
@@ -37,6 +38,9 @@ class UMengPushImpl : IUMengPush{
         this.onPushListener = onPushListener
         UMConfigure.setLogEnabled(true)
         UMConfigure.init(context, UMengConstants.UMENG_APPKEY, "Umeng", UMConfigure.DEVICE_TYPE_PHONE, UMengConstants.UMENG_MESSAGE_SECRET)
+
+        // 选用AUTO页面采集模式
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO)
 
         //获取消息推送代理示例
         val mPushAgent = PushAgent.getInstance(context)
