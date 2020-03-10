@@ -284,7 +284,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                       footerTriggerDistance: 30.0,
                       child: TabBarView(
                         controller: _tabController,
-                        physics: NeverScrollableScrollPhysics(),
+                        //physics: NeverScrollableScrollPhysics(),
                         children: <Widget>[
                           BillHistory(),
                           WithdrawalHistory(),
