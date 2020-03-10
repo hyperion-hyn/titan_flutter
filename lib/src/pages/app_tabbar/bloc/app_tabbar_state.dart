@@ -1,15 +1,21 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
-abstract class AppTabBarState extends Equatable {
-  const AppTabBarState();
-}
+abstract class AppTabBarState {}
 
 class InitialAppTabBarState extends AppTabBarState {
   @override
   List<Object> get props => [];
 }
 
-class MapFocusingState extends AppTabBarState {
+class BottomNavigationBarState extends AppTabBarState with EquatableMixin {
+  final bool isHided;
+
+  BottomNavigationBarState({@required this.isHided});
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isHided];
+
+  @override
+  bool get stringify => true;
 }

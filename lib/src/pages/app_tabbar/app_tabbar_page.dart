@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
+import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
+import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
@@ -22,61 +26,135 @@ class AppTabBarPage extends StatefulWidget {
   }
 }
 
-class AppTabBarPageState extends State<AppTabBarPage> {
+class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
 
-  var _currentTabIndex = 0;
+  int _currentTabIndex = 0;
 
-  var _isHaveNewAnnouncement = false;
+  bool _isHaveNewAnnouncement = false;
+  bool _isHideBottomNavigationBar = false;
+  AnimationController _bottomBarPositionAnimationController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _bottomBarPositionAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      value: 0.0,
+      vsync: this,
+    );
+
+    //set the status bar color
+    FlutterStatusbarcolor.setStatusBarColor(Colors.black12);
+  }
 
   @override
   Widget build(BuildContext context) {
     bool isDebug = env.buildType == BuildType.DEV;
-
     return UpdaterComponent(
-      child: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        drawer: isDebug ? DrawerComponent() : null,
-        bottomNavigationBar: BottomNavigationBar(
-          key: _bottomBarKey,
-          selectedItemColor: Theme.of(context).primaryColor,
-          unselectedItemColor: Colors.black38,
-          showUnselectedLabels: true,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          type: BottomNavigationBarType.fixed,
-          onTap: (index) {
-            setState(() {
-              _currentTabIndex = index;
-            });
-          },
-          currentIndex: _currentTabIndex,
-          items: [
-            BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
-            BottomNavigationBarItem(title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
-            BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
-            BottomNavigationBarItem(
-                title: Text(S.of(context).information),
-                icon: Stack(
-                  children: <Widget>[
-                    Icon(Icons.description),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                      child: Container(
-                        height: 8,
-                        width: 8,
-                        decoration: BoxDecoration(
-                            color: HexColor("#DA3B2A"),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: HexColor("#DA3B2A"))),
-                      ),
-                    ),
-                  ],
-                )),
-            BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
-          ],
+      child: BlocListener<AppTabBarBloc, AppTabBarState>(
+        listener: (context, state) {
+          if (state is BottomNavigationBarState) {
+            if (_isHideBottomNavigationBar != state.isHided) {
+              _isHideBottomNavigationBar = state.isHided;
+              if (_isHideBottomNavigationBar) {
+                _bottomBarPositionAnimationController.animateTo(1, curve: Curves.easeOutQuint);
+              } else {
+                _bottomBarPositionAnimationController.animateBack(0, curve: Curves.easeInQuart);
+              }
+            }
+          }
+        },
+        child: Scaffold(
+          resizeToAvoidBottomPadding: false,
+          drawer: isDebug ? DrawerComponent() : null,
+          body: Stack(
+            children: <Widget>[
+              _getTabView(_currentTabIndex),
+              bottomBar(),
+            ],
+          ),
         ),
-        body: _getTabView(_currentTabIndex),
+      ),
+    );
+  }
+
+  Widget bottomBar() {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+      var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
+      var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
+      var expandedRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
+      var hideRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height, 0.0, -barHeight);
+      final Animation<RelativeRect> barAnimationRect = _bottomBarPositionAnimationController.drive(
+        RelativeRectTween(
+          begin: expandedRelative,
+          end: hideRelative,
+        ),
+      );
+
+      return Stack(
+        children: <Widget>[
+          PositionedTransition(
+            rect: barAnimationRect,
+            child: Container(
+              height: kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom,
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 8.0,
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 8, right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  tabItem(Icons.home, S.of(context).home_page, 0),
+                  tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1),
+                  tabItem(Icons.explore, S.of(context).discover, 2),
+                  tabItem(Icons.description, S.of(context).information, 3),
+                  tabItem(Icons.person, S.of(context).my_page, 4),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget tabItem(IconData iconData, String text, int index) {
+    bool selected = index == this._currentTabIndex;
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(80),
+          onTap: () => {
+            this.setState(() {
+              this._currentTabIndex = index;
+            })
+          },
+          child: Container(
+            padding: EdgeInsets.only(top: 4, bottom: 2),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  iconData,
+                  color: selected ? Theme.of(context).primaryColor : Colors.black38,
+                ),
+                Text(
+                  text,
+                  style: TextStyle(fontSize: 12, color: selected ? Theme.of(context).primaryColor : Colors.black38),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -105,4 +183,28 @@ class AppTabBarPageState extends State<AppTabBarPage> {
 //    }
 //    return HomePage();
   }
+
+//  Widget home() {
+//    return Container(
+//      color: Colors.red,
+//      child: Center(
+//        child: RaisedButton(
+//          onPressed: () {
+//            _isShowBottomNavigationBar = !_isShowBottomNavigationBar;
+//            if (_isShowBottomNavigationBar) {
+//              //show
+//              _bottomBarPositionAnimationController.animateBack(0, curve: Curves.easeInQuart);
+//            } else {
+//              //hide
+//              _bottomBarPositionAnimationController.animateTo(1, curve: Curves.easeOutQuint);
+//            }
+////            setState(() {
+////              _isShowBottomNavigationBar = !_isShowBottomNavigationBar;
+////            });
+//          },
+//          child: Text('hhh'),
+//        ),
+//      ),
+//    );
+//  }
 }

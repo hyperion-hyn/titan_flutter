@@ -1,10 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 
-abstract class WalletCmpState extends Equatable {
+abstract class WalletCmpState {
   const WalletCmpState();
-
-  List<Object> get props => null;
 }
 
 abstract class WalletVoAwareCmpState extends WalletCmpState {

@@ -16,6 +16,7 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
   @override
   Stream<AppTabBarState> mapEventToState(AppTabBarEvent event) async* {
     if (event is CheckNewAnnouncementEvent) {
+      //TODO
       var announcement = await _newsApi.getAnnouncement();
       var isShowDialog = false;
 
@@ -30,6 +31,8 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
         isShowDialog = true;
       }
       sharePre.setString(PrefsKey.lastAnnouncement, json.encode(announcement));
+    } else if (event is BottomNavigationBarEvent) {
+      yield BottomNavigationBarState(isHided: event.isHided);
     }
   }
 }

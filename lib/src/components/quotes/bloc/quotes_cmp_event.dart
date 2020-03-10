@@ -2,11 +2,8 @@ import 'package:equatable/equatable.dart';
 
 import '../model.dart';
 
-abstract class QuotesCmpEvent extends Equatable {
+abstract class QuotesCmpEvent {
   const QuotesCmpEvent();
-
-  @override
-  List<Object> get props => null;
 }
 
 class UpdateQuotesEvent extends QuotesCmpEvent {}

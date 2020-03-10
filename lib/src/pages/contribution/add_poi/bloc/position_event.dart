@@ -5,13 +5,10 @@ import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
 import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
 
 @immutable
-abstract class PositionEvent extends Equatable {
+abstract class PositionEvent {
 //  const PositionEvent();
   PositionEvent();
 
-  @override
-  // TODO: implement props
-  List<Object> get props => null;
 }
 
 class AddPositionEvent extends PositionEvent {

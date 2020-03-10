@@ -78,7 +78,6 @@ class _WalletManagerState extends State<_WalletManager> {
             _activatedWallet = state.walletVo;
             if (_activatedWallet != null) {
               _activatedWallet.balance = _calculateTotalBalance(_activatedWallet);
-              logger.i('balance is ${_activatedWallet.balance}');
             }
           } else if (state is LoadingWalletState) {
             _activatedWallet = null;
