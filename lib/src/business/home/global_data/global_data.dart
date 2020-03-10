@@ -74,11 +74,9 @@ class _GlobalDataState extends State<GlobalDataPage> {
           ),
           body: TabBarView(
             children: [
-              _webPage(
-                initUrl: 'https://news.hyn.space/react-reduction/',
-              ),
-              SignalChatsPage(),
-              SignalChatsPage(),
+              _webPage(),
+              _signalPage(),
+              _poiPage(),
             ],
             physics: NeverScrollableScrollPhysics(),
           ),
@@ -88,7 +86,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
   }
 
 
-  Widget _webPage({String initUrl}) {
+  Widget _webPage() {
     return Column(
       children: <Widget>[
         Padding(
@@ -97,7 +95,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
         ),
         Expanded(
           child: WebView(
-            initialUrl: initUrl,
+            initialUrl: 'https://news.hyn.space/react-reduction/',
             onWebViewCreated: (WebViewController controller) {
 
             },
@@ -127,6 +125,34 @@ class _GlobalDataState extends State<GlobalDataPage> {
               return NavigationDecision.navigate;
             },
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _signalPage() {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Text('信号数据可用于建立三角定位，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番'),
+        ),
+        Expanded(
+          child: SignalChatsPage(),
+        ),
+      ],
+    );
+  }
+
+  Widget _poiPage() {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Text('POI数据是一个公共的位置兴趣点数据集合，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番'),
+        ),
+        Expanded(
+          child: SignalChatsPage(),
         ),
       ],
     );

@@ -546,23 +546,12 @@ class _SignalChatsState extends State<SignalChatsPage> {
   void initState() {
     super.initState();
 
-    this.getData1();
+    //this.getData1();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            child: Text('总信号数据汇总：', style: TextStyle(fontSize: 16)),
-            padding: EdgeInsets.fromLTRB(20, 20, 0, 20),
-          ),
-          Center(
-            child: Container(
-              child: Echarts(
-                option: '''
+    var _barOption = '''
  {
     /*title: {
       text: '某地区蒸发量和降水量',
@@ -631,14 +620,48 @@ class _SignalChatsState extends State<SignalChatsPage> {
       }
     ]
 }
-                  ''',
+                  ''';
+    var _lineOption = '''
+ {
+    xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    grid: {
+       left: '15%',
+    },
+    series: [{
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        type: 'line'
+    }]
+}
+                  ''';
+    var _size = MediaQuery.of(context).size;
+    double _chartsWidth = _size.width-8;
+    double _chartsHeight = 250;
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            child: Text('总信号数据汇总：', style: TextStyle(fontSize: 16)),
+            padding: EdgeInsets.fromLTRB(20, 20, 0, 20),
+          ),
+          Center(
+            child: Container(
+              child: Echarts(
+                option: _barOption,
                 onMessage: (String message) {
                   Map<String, Object> messageAction = jsonDecode(message);
                   print(messageAction);
                 },
               ),
-              width: 300,
-              height: 250,
+              width: _chartsWidth,
+              height: _chartsHeight,
             ),
           ),
           Padding(
@@ -648,28 +671,14 @@ class _SignalChatsState extends State<SignalChatsPage> {
           Center(
             child: Container(
               child: Echarts(
-                option: '''
- {
-    xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-        type: 'value'
-    },
-    series: [{
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        type: 'line'
-    }]
-}
-                  ''',
+                option: _lineOption,
                 onMessage: (String message) {
                   Map<String, Object> messageAction = jsonDecode(message);
                   print(messageAction);
                 },
               ),
-              width: 350,
-              height: 250,
+              width: _chartsWidth,
+              height: _chartsHeight,
             ),
           ),
         ],
