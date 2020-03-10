@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/setting/model.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/cache/app_cache.dart';
 
 import 'bloc/bloc.dart';
 
@@ -41,34 +37,6 @@ class _SettingManagerState extends State<_SettingManager> {
   AreaModel areaModel;
 
   @override
-  void initState() {
-    super.initState();
-    //do logic here
-    _initSetting();
-  }
-
-  _initSetting() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var languageStr = await AppCache.getValue<String>(PrefsKey.SETTING_LANGUAGE);
-      if (languageStr != null) {
-        var languageModel = LanguageModel.fromJson(json.decode(languageStr));
-        BlocProvider.of<SettingBloc>(context).add(UpdateLanguageEvent(languageModel: languageModel));
-      } else {
-        BlocProvider.of<SettingBloc>(context)
-            .add(UpdateLanguageEvent(languageModel: SupportedLanguage.defaultModel(Keys.homePageKey.currentContext)));
-      }
-      var areaModelStr = await AppCache.getValue<String>(PrefsKey.SETTING_AREA);
-      if (areaModelStr != null) {
-        var areaModel = AreaModel.fromJson(json.decode(areaModelStr));
-        BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: areaModel));
-      } else {
-        BlocProvider.of<SettingBloc>(context)
-            .add(UpdateAreaEvent(areaModel: SupportedArea.defaultModel(Keys.homePageKey.currentContext)));
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
@@ -77,13 +45,13 @@ class _SettingManagerState extends State<_SettingManager> {
         } else if (state is UpdateLanguageState) {
           //update current quotes by setting
           var sign = SupportedQuotes.of('USD');
-          if (languageModel?.locale?.languageCode == 'zh') {
+          if (languageModel?.isZh() == true) {
             sign = SupportedQuotes.of('CNY');
           }
           BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: sign));
         }
       },
-      child: BlocBuilder(
+      child: BlocBuilder<SettingBloc, SettingState>(
         builder: (context, state) {
           if (state is UpdateAreaState) {
             areaModel = state.areaModel;

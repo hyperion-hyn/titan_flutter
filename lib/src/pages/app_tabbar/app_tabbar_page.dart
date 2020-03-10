@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
+import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
+import 'package:titan/src/pages/home/bloc/bloc.dart';
 
 import '../../../env.dart';
 import '../home/home_page.dart';
@@ -73,27 +76,33 @@ class AppTabBarPageState extends State<AppTabBarPage> {
             BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
           ],
         ),
-        body: Stack(
-          children: <Widget>[
-            //tab views
-            _getTabView(_currentTabIndex),
-          ],
-        ),
+        body: _getTabView(_currentTabIndex),
       ),
     );
   }
 
   Widget _getTabView(int index) {
-    switch (index) {
-      case 1:
-        return WalletTabsPage();
-      case 2:
-        return DiscoverPage();
-      case 3:
-        return NewsPage();
-      case 4:
-        return MyPage();
-    }
-    return HomePage();
+    return IndexedStack(
+      index: index,
+      children: <Widget>[
+        BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage()),
+        WalletTabsPage(),
+        BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
+        NewsPage(),
+        MyPage(),
+      ],
+    );
+
+//    switch (index) {
+//      case 1:
+//        return WalletTabsPage();
+//      case 2:
+//        return DiscoverPage();
+//      case 3:
+//        return NewsPage();
+//      case 4:
+//        return MyPage();
+//    }
+//    return HomePage();
   }
 }

@@ -12,7 +12,6 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
-import '../../global.dart';
 import '../contribution/contribution_tasks_page.dart';
 
 class HomePanel extends StatefulWidget {

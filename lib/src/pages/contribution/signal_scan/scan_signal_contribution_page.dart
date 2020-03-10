@@ -512,13 +512,15 @@ class _ContributionState extends State<ScanSignalContributionPage> {
         zoom: _defaultZoom,
       ),
       styleString: style,
-      onStyleLoaded: (mapboxController) {
-        mapController = mapboxController;
+      onStyleLoadedCallback: () {
         Future.delayed(Duration(milliseconds: 1000)).then((v) {
           startScan();
         });
       },
       myLocationTrackingMode: MyLocationTrackingMode.None,
+      onMapCreated: (mapboxController) {
+        mapController = mapboxController;
+      },
       rotateGesturesEnabled: false,
       tiltGesturesEnabled: false,
       enableLogo: false,

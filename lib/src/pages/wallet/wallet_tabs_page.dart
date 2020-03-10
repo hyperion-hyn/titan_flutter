@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/pages/wallet/map3_node_page/map3_node_introduction.dart';
-
-import 'wallet_page/wallet_page.dart';
 
 class WalletTabsPage extends StatefulWidget {
   @override
@@ -34,7 +30,7 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
                       labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                       indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: Theme.of(context).primaryColor,
-                      indicatorWeight: 5,
+                      indicatorWeight: 4,
                       unselectedLabelColor: Colors.grey[400],
                       tabs: [
                         Tab(
@@ -60,9 +56,12 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
 //            Map3NodeIntroductionPage(),
             Center(
               child: Text('this is wallet page'),
+            ),
+            Center(
+              child: Text('this is map3 node page'),
             )
           ],
-          physics: NeverScrollableScrollPhysics(),
+//          physics: NeverScrollableScrollPhysics(),
         ),
       ),
     );

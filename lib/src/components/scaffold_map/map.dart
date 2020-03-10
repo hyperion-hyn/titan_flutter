@@ -237,6 +237,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
           iconImage: "hyn_marker_big",
           iconAnchor: "bottom",
           iconOffset: Offset(0.0, 3.0),
+          symbolSortKey:11
         ),
       );
 
@@ -441,13 +442,11 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     return heavenMapPoiInfo;
   }
 
-  void onStyleLoaded(MapboxMapController controller) async {
-    setState(() {
-      mapboxMapController = controller;
-    });
+  void onStyleLoaded() async {
+    setState(() {});
 
-    controller.removeListener(_mapMoveListener);
-    controller.addListener(_mapMoveListener);
+    mapboxMapController.removeListener(_mapMoveListener);
+    mapboxMapController.addListener(_mapMoveListener);
   }
 
   void _mapMoveListener() {
@@ -638,7 +637,10 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           },
                           trackCameraPosition: true,
                           styleString: widget.style,
-                          onStyleLoaded: onStyleLoaded,
+                          onMapCreated: (controller) {
+                            mapboxMapController = controller;
+                          },
+                          onStyleLoadedCallback: onStyleLoaded,
                           initialCameraPosition: CameraPosition(
                             target: Application.recentlyLocation,
                             zoom: widget.defaultZoom,
