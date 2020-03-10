@@ -9,7 +9,7 @@ class InitialAppTabBarState extends AppTabBarState {
   List<Object> get props => [];
 }
 
-class MapUsingState extends AppTabBarState {
+class MapFocusingState extends AppTabBarState {
   @override
   List<Object> get props => [];
 }

@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:titan/src/pages/news/news_page.dart';
 import 'package:titan/src/pages/news/wechat_official_page.dart';
 
 class NewsTagUtils {
-  static String getNewsTag(Locale locale, int tag) {
-    if (locale.languageCode == "zh") {
+  static String getNewsTag(bool isZh, int tag) {
+    if (isZh) {
       if (tag == NewsState.LAST_NEWS_TAG) {
         return NewsTagConsts.ZH_LAST_NEWS_TAG.toString();
       } else if (tag == NewsState.OFFICIAL_ANNOUNCEMENT_TAG) {
@@ -41,10 +40,11 @@ class NewsTagUtils {
         return NewsTagConsts.EN_KAI_AUDIO_TAG.toString();
       }
     }
+    return null;
   }
 
-  static String getCatetory(Locale locale, String category) {
-    if (locale.languageCode == "zh") {
+  static String getCategory(bool isZh, String category) {
+    if (isZh) {
       if (category == NewsState.CATEGORY) {
         return NewsCategoryConsts.ZH_HYPERION_CATEGORY;
       } else if (category == WechatOfficialState.CATEGORY) {
@@ -57,10 +57,11 @@ class NewsTagUtils {
         return NewsCategoryConsts.EN_KAI_CATEGORY;
       }
     }
+    return null;
   }
 
-  static String getFocusCatetory(Locale locale) {
-    if (locale.languageCode == "zh") {
+  static String getFocusCategory(bool isZh) {
+    if (isZh) {
       return NewsCategoryConsts.ZH_FOCUS_CATEGORY;
     } else {
       return NewsCategoryConsts.EN_FOCUS_CATEGORY;

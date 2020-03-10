@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/business/my/app_area.dart';
-import 'package:titan/src/business/position/add_ncov_page.dart';
-import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/consts/extends_icon_font.dart';
-import 'package:titan/src/global.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/pages/contribution/add_poi/add_ncov_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/add_position_page.dart';
 
 class SelectPositionPage extends StatefulWidget {
@@ -32,7 +32,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
 
   @override
   void initState() {
-    userPosition = widget.initLocation ?? recentlyLocation;
+    userPosition = widget.initLocation ?? Application.recentlyLocation;
     super.initState();
   }
 
@@ -136,7 +136,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
     if (widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV) {
       style = Const.kNCovMapStyle;
     } else {
-      if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+      if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
         style = Const.kWhiteMapStyleCn;
       } else {
         style = Const.kWhiteMapStyle;

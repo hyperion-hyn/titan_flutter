@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:titan/src/business/infomation/model/news_detail.dart';
-import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/pages/news/model/news_detail.dart';
 
 class AnnouncementDialog extends StatelessWidget {
-  void Function() onCancel;
-  NewsDetail announcement;
+  final Function onCancel;
+  final NewsDetail announcement;
 
-  AnnouncementDialog(this.announcement,this.onCancel);
+  AnnouncementDialog(this.announcement, this.onCancel);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +43,7 @@ class AnnouncementDialog extends StatelessWidget {
     );
   }
 
-  /*@override
+/*@override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[

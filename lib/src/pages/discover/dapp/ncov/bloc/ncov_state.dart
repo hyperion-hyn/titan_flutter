@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:titan/src/business/discover/dapp/ncov/model/ncov_poi_entity.dart';
+import 'package:titan/src/pages/discover/dapp/ncov/model/ncov_poi_entity.dart';
 
 @immutable
 abstract class NcovState {}

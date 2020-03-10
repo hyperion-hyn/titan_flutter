@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/wallet/api/market_price_api.dart';
-import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 
 class MarketPricePage extends StatefulWidget {

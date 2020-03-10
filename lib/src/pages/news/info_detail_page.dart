@@ -2,9 +2,9 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/infomation/api/news_api.dart';
-import 'package:titan/src/business/infomation/model/news_detail.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import './api/news_api.dart';
+import './model/news_detail.dart';
 
 class InfoDetailPage extends StatefulWidget {
   final String url;
@@ -56,23 +56,24 @@ class _InfoDetailState extends State<InfoDetailPage> {
     return Scaffold(
         appBar: AppBar(
 //          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.white),
-          centerTitle: true,
-          title: Text(
-            widget.title,
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: isLoadingContent?null:<Widget>[
-            IconButton(
-              icon: Icon(Icons.share),
-              color: Colors.white,
-              tooltip: S.of(context).share,
-              onPressed: (){
-                _shareQr(context);
-              },
+            iconTheme: IconThemeData(color: Colors.white),
+            centerTitle: true,
+            title: Text(
+              widget.title,
+              style: TextStyle(color: Colors.white),
             ),
-          ]
-        ),
+            actions: isLoadingContent
+                ? null
+                : <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.share),
+                      color: Colors.white,
+                      tooltip: S.of(context).share,
+                      onPressed: () {
+                        _shareQr(context);
+                      },
+                    ),
+                  ]),
         body: isLoadingContent ? _loadContent() : _loadUrl());
   }
 
@@ -142,7 +143,7 @@ class _InfoDetailState extends State<InfoDetailPage> {
       newsDetail.title = widget.title;
       newsDetail.content = widget.content;
     } else {
-      newsDetail = await _newsApi.getNewsDetai(widget.id);
+      newsDetail = await _newsApi.getNewsDetail(widget.id);
     }
     setState(() {});
   }
@@ -152,5 +153,4 @@ class _InfoDetailState extends State<InfoDetailPage> {
       Share.text(S.of(context).share, widget.url, 'text/plain');
     }
   }
-  
 }

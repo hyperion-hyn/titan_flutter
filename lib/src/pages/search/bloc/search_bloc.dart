@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:titan/src/business/position/model/confirm_poi_item.dart';
 import 'package:titan/src/domain/domain.dart';
 import 'package:titan/src/data/entity/poi.dart';
 import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
 import 'bloc.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
@@ -22,8 +22,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         await searchInteractor.addHistorySearchPoi(event.item);
       } else if (event.item is ConfirmPoiItem) {
         await searchInteractor.addHistorySearchPoiByTitan(event.item);
-      }
-      else {
+      } else {
         await searchInteractor.addHistorySearchText(event.item.toString());
       }
     } else if (event is FetchSearchItemsEvent) {
@@ -40,7 +39,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           print(err.toString());
         }
       }
-    } else if(event is ClearSearchHisotoryEvent) {
+    } else if (event is ClearSearchHisotoryEvent) {
       await searchInteractor.deleteAllHistory();
       yield SearchLoadedState(isHistory: true, items: [], currentSearchText: '');
     }
@@ -56,15 +55,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     return items;
   }
 
-  Future<List<IPoi>>_searchPoi(FetchSearchItemsEvent event) async {
-    return Future.wait([_searchPoiByTitan(event), _searchPoiByMapbox(event)])
-        .then((List<List<IPoi>> list) {
-          List<IPoi> sum = [];
-          sum.addAll(list[0]);
-          sum.addAll(list[1]);
-          print('[search_bloc] --> sum:$sum, sumCount:${sum.length}');
-          return sum;
+  Future<List<IPoi>> _searchPoi(FetchSearchItemsEvent event) async {
+    return Future.wait([_searchPoiByTitan(event), _searchPoiByMapbox(event)]).then((List<List<IPoi>> list) {
+      List<IPoi> sum = [];
+      sum.addAll(list[0]);
+      sum.addAll(list[1]);
+      print('[search_bloc] --> sum:$sum, sumCount:${sum.length}');
+      return sum;
     });
   }
-
 }

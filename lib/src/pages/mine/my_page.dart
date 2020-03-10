@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
-import 'package:titan/src/business/my/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utils.dart';
 

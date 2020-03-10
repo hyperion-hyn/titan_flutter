@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
+import 'package:titan/src/pages/discover/discover_page.dart';
 
 import '../../../env.dart';
 import '../home/home_page.dart';
 import '../wallet/wallet_tabs_page.dart';
-import '../discover/discover_page.dart';
 import '../news/news_page.dart';
-import '../mine/mine_page.dart';
+import '../mine/my_page.dart';
 import 'drawer_component.dart';
 
 class AppTabBarPage extends StatefulWidget {
@@ -22,6 +23,8 @@ class AppTabBarPageState extends State<AppTabBarPage> {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
 
   var _currentTabIndex = 0;
+
+  var _isHaveNewAnnouncement = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,24 @@ class AppTabBarPageState extends State<AppTabBarPage> {
             BottomNavigationBarItem(title: Text(S.of(context).home_page), icon: Icon(Icons.home)),
             BottomNavigationBarItem(title: Text(S.of(context).wallet), icon: Icon(Icons.account_balance_wallet)),
             BottomNavigationBarItem(title: Text(S.of(context).discover), icon: Icon(Icons.explore)),
-            BottomNavigationBarItem(title: Text(S.of(context).information), icon: Icon(Icons.description)),
+            BottomNavigationBarItem(
+                title: Text(S.of(context).information),
+                icon: Stack(
+                  children: <Widget>[
+                    Icon(Icons.description),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                      child: Container(
+                        height: 8,
+                        width: 8,
+                        decoration: BoxDecoration(
+                            color: HexColor("#DA3B2A"),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: HexColor("#DA3B2A"))),
+                      ),
+                    ),
+                  ],
+                )),
             BottomNavigationBarItem(title: Text(S.of(context).my_page), icon: Icon(Icons.person)),
           ],
         ),
@@ -72,7 +92,7 @@ class AppTabBarPageState extends State<AppTabBarPage> {
       case 3:
         return NewsPage();
       case 4:
-        return MinePage();
+        return MyPage();
     }
     return HomePage();
   }

@@ -15,16 +15,15 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/discover/dapp/ncov/bloc/bloc.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/discover/dapp/ncov/bloc/bloc.dart';
 import 'package:titan/src/pages/news/news_nConv_page.dart';
-import 'package:titan/src/business/my/app_area.dart';
-import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
-import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/components/scaffold_map/bottom_panels/common_panel.dart';
+import 'package:titan/src/components/scaffold_map/bottom_panels/user_poi_panel.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/drag_tick.dart';
-import '../../../../global.dart';
 import '../../../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import 'model/ncov_poi_entity.dart';
@@ -174,7 +173,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                 color: Colors.white,
                 tooltip: S.of(context).share,
                 onPressed: () {
-                  if (appLocale.languageCode == "zh") {
+                  if (SettingInheritedModel.of(context).languageModel.isZh()) {
                     Share.text(S.of(context).share, 'https://www.hyn.mobi/ncov.html', 'text/plain');
                   } else {
                     Share.text(S.of(context).share, 'https://www.hyn.space/ncov-en.html', 'text/plain');
@@ -200,7 +199,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                       left: 16,
                       child: InkWell(
                         onTap: () {
-                          if (appLocale.languageCode == "zh") {
+                          if (SettingInheritedModel.of(context).languageModel.isZh()) {
                             launchUrl('https://www.hyn.mobi/cn/titan/ncov-data-source/');
                           } else {
                             launchUrl('https://www.hyn.space/titan/ncov-data-source/');

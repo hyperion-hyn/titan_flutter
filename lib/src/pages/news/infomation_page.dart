@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/infomation/info_detail_page.dart';
 import 'package:titan/src/pages/news/news_page.dart';
 import 'package:titan/src/pages/news/wechat_official_page.dart';
 

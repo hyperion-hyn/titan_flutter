@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/discover/bloc/bloc.dart';
-import 'package:titan/src/business/discover/dapp/encrypt_share/share_dialog.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/global.dart';
-import 'package:titan/src/data/entity/poi.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/discover/bloc/bloc.dart';
+import 'package:titan/src/pages/discover/dapp/encrypt_share/share_dialog.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/data/entity/poi_interface.dart';
 
 import 'event.dart';
@@ -33,7 +32,7 @@ class EncryptShareState extends State<EncryptShare> {
 //      HeaderHeightNotification(height: 400).add(context);
 //    });
 
-    streamSubscription = eventBus.on().listen(eventBusListener);
+    streamSubscription = Application.eventBus.on().listen(eventBusListener);
   }
 
   @override

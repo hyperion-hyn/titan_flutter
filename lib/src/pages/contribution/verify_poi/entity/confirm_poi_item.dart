@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/data/entity/poi_interface.dart';
 import 'package:titan/src/data/entity/search_history_aware_poi.dart';
 

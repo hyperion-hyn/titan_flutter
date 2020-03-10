@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/discover/bloc/bloc.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/pages/discover/bloc/bloc.dart';
 
 class Embassy extends StatefulWidget {
   @override
@@ -35,9 +35,9 @@ class EmbassyState extends State<Embassy> {
                     children: <Widget>[
                       Center(
                           child: Text(
-                            S.of(context).embassy_guide,
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
-                          )),
+                        S.of(context).embassy_guide,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
+                      )),
                       Align(
                         child: InkWell(
                           onTap: () {

@@ -6,8 +6,8 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/business/scaffold_map/map.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/config/consts.dart';
 
 import '../../../../global.dart';

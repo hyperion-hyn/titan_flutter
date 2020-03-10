@@ -6,8 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/inject/injector.dart';
-import 'package:titan/src/business/position/model/confirm_poi_item.dart';
-import 'package:titan/src/components/injector.dart';
 import 'package:titan/src/data/entity/history_search.dart';
 import 'package:titan/src/data/entity/poi.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -15,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/data/entity/poi_interface.dart';
 import 'package:titan/src/data/entity/search_history_aware_poi.dart';
+import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
 import 'package:titan/src/utils/encryption.dart';
 
 import '../../global.dart';
@@ -190,8 +189,7 @@ class _SearchPageState extends State<SearchPage> {
                                   final int itemIndex = index ~/ 2;
                                   if (index.isEven) {
                                     var item = state.items[itemIndex];
-                                    if (item is PoiEntity
-                                    || item is ConfirmPoiItem) {
+                                    if (item is PoiEntity || item is ConfirmPoiItem) {
                                       return buildPoiItem(item);
                                     } else {
                                       return buildTextItem(item.toString());
@@ -240,8 +238,7 @@ class _SearchPageState extends State<SearchPage> {
             child: Stack(children: <Widget>[
               Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Icon(isHistory ? Icons.history : Icons.location_on,
-                      color: Colors.grey[600])),
+                  child: Icon(isHistory ? Icons.history : Icons.location_on, color: Colors.grey[600])),
               Positioned(
                   left: 72,
                   right: 48,

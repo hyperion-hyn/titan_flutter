@@ -31,7 +31,6 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
   }
 
   void _setupData() {
-
     setState(() {
       if (widget.pageType == FinishAddPositionPage.FINISH_PAGE_TYPE_ADD) {
         posiInfoText = S.of(context).poi_add_success_hint;
@@ -118,12 +117,13 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
   }
 
   void _popView() {
-    if (createWalletPopUtilName == null) {
-      Navigator.of(context).pop();
-    } else {
-      Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-      createWalletPopUtilName = null;
-    }
+    //TODO
+    logger.w('TODO');
+//    if (createWalletPopUtilName == null) {
+//      Navigator.of(context).pop();
+//    } else {
+//      Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
+//      createWalletPopUtilName = null;
+//    }
   }
-
 }

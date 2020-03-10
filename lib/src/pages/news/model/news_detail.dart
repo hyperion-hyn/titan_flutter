@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/business/infomation/model/focus_response.dart';
+import './focus_response.dart';
 
 part 'news_detail.g.dart';
 

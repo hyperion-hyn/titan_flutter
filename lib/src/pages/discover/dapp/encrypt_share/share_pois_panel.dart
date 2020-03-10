@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/business/my/app_area.dart';
-import 'package:titan/src/business/scaffold_map/bottom_panels/common_panel.dart';
-import 'package:titan/src/business/scaffold_map/map.dart';
+import 'package:titan/src/components/scaffold_map/bottom_panels/common_panel.dart';
+import 'package:titan/src/components/scaffold_map/map.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/entity/gaode_poi.dart';
@@ -77,7 +78,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
       cancelToken = CancelToken();
       var gaodeModel;
 
-      if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+      if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
         gaodeModel = await _api.searchByGaode(
           lat: _lastPosition.latitude,
           lon: _lastPosition.longitude,
@@ -106,7 +107,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
 
   void activeSelectPoiCallback() {
     if (nearPois != null && nearPois.length > selectedId) {
-      eventBus.fire(SelectedSharePoiEvent(poi: nearPois[selectedId]));
+      Application.eventBus.fire(SelectedSharePoiEvent(poi: nearPois[selectedId]));
     }
   }
 

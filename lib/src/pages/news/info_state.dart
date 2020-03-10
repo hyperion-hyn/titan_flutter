@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/infomation/info_detail_page.dart';
+
+import './info_detail_page.dart';
 
 typedef OnActiveTag = void Function(int tagId);
 

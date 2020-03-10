@@ -4,14 +4,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/my/app_area.dart';
-import 'package:titan/src/business/scaffold_map/map.dart';
-import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/components/scaffold_map/map.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
 import '../../global.dart';
-import '../../business/scaffold_map/bloc/bloc.dart';
 import '../contribution/contribution_tasks_page.dart';
 
 class HomePanel extends StatefulWidget {
@@ -346,6 +347,8 @@ class HomePanelState extends State<HomePanel> {
   }
 
   Widget poiRow2(context) {
+    bool isChinaMainland = SettingInheritedModel.of(context).areaModel.isChinaMainland;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
@@ -370,7 +373,7 @@ class HomePanelState extends State<HomePanel> {
                 isGaodeSearch: true, type: 8, center: center, searchText: '商场', stringType: "shopping_mall"));
           }
         }),
-        if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
+        if (isChinaMainland)
           _buildPoiItem('res/drawable/ic_cybercafe.png', S.of(context).internet_bar, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -378,7 +381,7 @@ class HomePanelState extends State<HomePanel> {
                   SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '网吧', stringType: "cafe"));
             }
           }),
-        if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key)
+        if (isChinaMainland)
           _buildPoiItem('res/drawable/ic_wc.png', S.of(context).toilet, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -386,7 +389,7 @@ class HomePanelState extends State<HomePanel> {
                   isGaodeSearch: true, type: 10, center: center, searchText: '厕所', stringType: "night_club"));
             }
           }),
-        if (currentAppArea.key != AppArea.MAINLAND_CHINA_AREA.key)
+        if (isChinaMainland)
           _buildPoiItem('res/drawable/ic_cafe.png', S.of(context).cafe, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -394,7 +397,7 @@ class HomePanelState extends State<HomePanel> {
                   SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '咖啡馆', stringType: "cafe"));
             }
           }),
-        if (currentAppArea.key != AppArea.MAINLAND_CHINA_AREA.key)
+        if (isChinaMainland)
           _buildPoiItem('res/drawable/ic_hospital.png', S.of(context).hospital, onTap: () async {
             var center = await mapCenter;
             if (center != null) {
@@ -436,6 +439,6 @@ class HomePanelState extends State<HomePanel> {
   }
 
   void onSearch() async {
-    eventBus.fire(GoSearchEvent());
+    Application.eventBus.fire(GoSearchEvent());
   }
 }

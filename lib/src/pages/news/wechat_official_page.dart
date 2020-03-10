@@ -2,10 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/infomation/api/news_api.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/pages/news/api/news_api.dart';
 import 'package:titan/src/pages/news/info_state.dart';
-import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
-import 'package:titan/src/business/load_data_container/load_data_container.dart';
 
 import '../../global.dart';
 import 'news_tag_utils.dart';
@@ -53,6 +54,8 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
+
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
       child: Column(
@@ -65,10 +68,10 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   _buildTag(S.of(context).article, PAPER_TAG),
-                  if (appLocale.languageCode == "zh") _buildTag(S.of(context).video, VIDEO_TAG),
-                  if (appLocale.languageCode == "zh") _buildTag(S.of(context).audio, AUDIO_TAG),
+                  if (isZh) _buildTag(S.of(context).video, VIDEO_TAG),
+                  if (isZh) _buildTag(S.of(context).audio, AUDIO_TAG),
                   Spacer(),
-                  if (selectedTag == VIDEO_TAG && appLocale.languageCode == "zh")
+                  if (selectedTag == VIDEO_TAG && isZh)
                     DropdownButton(
                       icon: Icon(
                         Icons.keyboard_arrow_down,
@@ -218,19 +221,20 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
   }
 
   Future _getPowerListByPage(int page) {
+    bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
     var tags;
-    if (selectedTag == VIDEO_TAG && appLocale.languageCode == "zh") {
+    if (selectedTag == VIDEO_TAG && isZh) {
       tags = selectedVideoTag;
     } else {
       tags = selectedTag;
     }
 
-    return _getPowerList(CATEGORY, tags, page);
+    return _getPowerList(CATEGORY, tags, page, isZh);
   }
 
-  Future _getPowerList(String categories, int tags, int page) async {
-    var requestCatetory = NewsTagUtils.getCatetory(appLocale, categories);
-    var requestTags = NewsTagUtils.getNewsTag(appLocale, tags);
+  Future _getPowerList(String categories, int tags, int page, bool isZh) async {
+    var requestCatetory = NewsTagUtils.getCategory(isZh, categories);
+    var requestTags = NewsTagUtils.getNewsTag(isZh, tags);
 
     var newsResponseList = await _newsApi.getNewsList(requestCatetory, requestTags, page);
 //    isLoading = false;

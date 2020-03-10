@@ -1,7 +1,7 @@
 import 'package:titan/src/basic/http/entity.dart';
-import 'package:titan/src/business/infomation/model/focus_response.dart';
-import 'package:titan/src/business/infomation/model/news_detail.dart';
-import 'package:titan/src/business/infomation/model/news_response.dart';
+import '../model/focus_response.dart';
+import '../model/news_detail.dart';
+import '../model/news_response.dart';
 
 import 'news_http.dart';
 
@@ -15,9 +15,9 @@ class NewsApi {
     return dataList.map((json) => NewsResponse.fromJson(json)).toList();
   }
 
-  Future<NewsDetail> getNewsDetai(int id) async {
+  Future<NewsDetail> getNewsDetail(int id) async {
     var data = await NewsHttpCore.instance.get(
-      "wp-json/wp/v2/posts/${id}",
+      "wp-json/wp/v2/posts/$id",
     ) as Map;
 
     return NewsDetail.fromJson(data);
@@ -35,8 +35,8 @@ class NewsApi {
   }
 
   Future<NewsDetail> getAnnouncement() async {
-    var announcement = await NewsHttpCore.instance.getEntity(
-        "wp-json/sr/news/last",EntityFactory<NewsDetail>((data) => NewsDetail.fromJson(data)));
+    var announcement = await NewsHttpCore.instance
+        .getEntity("wp-json/sr/news/last", EntityFactory<NewsDetail>((data) => NewsDetail.fromJson(data)));
 
     return announcement;
   }

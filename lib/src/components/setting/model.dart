@@ -47,6 +47,10 @@ class LanguageModel extends Equatable {
     };
   }
 
+  bool isZh() {
+    return locale?.languageCode == 'zh';
+  }
+
   factory LanguageModel.fromJson(Map<String, Object> json) {
     var localMap = json['local'] as Map;
     return LanguageModel(

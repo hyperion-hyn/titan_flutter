@@ -3,8 +3,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/discover/dapp/police_service/model/model.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/pages/discover/dapp/police_service/model/model.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 

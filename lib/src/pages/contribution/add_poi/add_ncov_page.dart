@@ -10,11 +10,13 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/discover/dapp/ncov/model/ncov_poi_entity.dart';
-import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
+import 'package:titan/src/pages/discover/dapp/ncov/model/ncov_poi_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/grouped_buttons/grouped_buttons.dart';
@@ -76,7 +78,6 @@ class _AddNcovState extends State<AddNcovPage> {
 
   @override
   void initState() {
-
     _addressController.addListener(_checkInputHeight);
 
     _positionBloc.add(GetOpenCageEvent(widget.userPosition));
@@ -86,6 +87,7 @@ class _AddNcovState extends State<AddNcovPage> {
     });
     super.initState();
   }
+
   @override
   void didChangeDependencies() {
     _setupData();
@@ -152,22 +154,20 @@ class _AddNcovState extends State<AddNcovPage> {
         //print('[add] --> state:${fromState}, toState:${state}');
 
         if (state is SuccessPostPoiNcovDataState) {
-          createWalletPopUtilName = '/data_contribution_page';
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
-            ),
-          );
+          //TODO
+//          createWalletPopUtilName = '/data_contribution_page';
+//          Navigator.push(
+//            context,
+//            MaterialPageRoute(
+//              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
+//            ),
+//          );
         } else if (state is FailPostPoiNcovDataState) {
           setState(() {
             _isUploading = false;
           });
           var hint = S.of(context).add_failed_exist_hint;
-          Fluttertoast.showToast(msg:state.code == -409?
-          hint:
-          S.of(context).add_failed_hint
-          );
+          Fluttertoast.showToast(msg: state.code == -409 ? hint : S.of(context).add_failed_hint);
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 
@@ -204,7 +204,7 @@ class _AddNcovState extends State<AddNcovPage> {
     );
   }
 
-  void _saveCountryCode({String countryCode = "CN"}) async{
+  void _saveCountryCode({String countryCode = "CN"}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(PrefsKey.mapboxCountryCode, countryCode);
   }
@@ -276,7 +276,7 @@ class _AddNcovState extends State<AddNcovPage> {
             onChanged: (String inputText) {
               //print('[add] --> inputText:${inputText}');
             },
-            style:  TextStyle(fontSize: 13),
+            style: TextStyle(fontSize: 13),
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: S.of(context).ncov_cell_hint_name,
@@ -411,7 +411,7 @@ class _AddNcovState extends State<AddNcovPage> {
           decoration: new BoxDecoration(color: Colors.white),
           child: TextFormField(
             controller: _categoryController,
-            style:  TextStyle(fontSize: 13),
+            style: TextStyle(fontSize: 13),
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: S.of(context).ncov_cell_hint_category,
@@ -447,7 +447,6 @@ class _AddNcovState extends State<AddNcovPage> {
     );
   }
 
-
   Widget _buildPropertyCell() {
     return Column(
       children: <Widget>[
@@ -482,7 +481,8 @@ class _AddNcovState extends State<AddNcovPage> {
             fontWeight: FontWeight.w400,
             fontSize: 12,
           ),
-          onChange: (bool isChecked, String label, int index) => print("isChecked: $isChecked   label: $label  index: $index"),
+          onChange: (bool isChecked, String label, int index) =>
+              print("isChecked: $isChecked   label: $label  index: $index"),
           onSelected: (List<String> checked) {
             _symptomsList = checked;
             var _symptomsText = checked.toString();
@@ -521,7 +521,8 @@ class _AddNcovState extends State<AddNcovPage> {
   }
 
   Widget _buildRecordCell() {
-    return _buildDetailCellRow(S.of(context).ncov_cell_title_records, S.of(context).ncov_cell_hint_records, _recordController);
+    return _buildDetailCellRow(
+        S.of(context).ncov_cell_title_records, S.of(context).ncov_cell_hint_records, _recordController);
   }
 
   Widget _buildSafeCell() {
@@ -577,16 +578,20 @@ class _AddNcovState extends State<AddNcovPage> {
           ],
         ),
         Container(
-          height: 100+_inputHeight,
+          height: 100 + _inputHeight,
           decoration: new BoxDecoration(color: Colors.white),
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              _buildAddressCellRow(S.of(context).details_of_street, S.of(context).please_add_streets_hint, _addressController, isDetailAddress: true),
+              _buildAddressCellRow(
+                  S.of(context).details_of_street, S.of(context).please_add_streets_hint, _addressController,
+                  isDetailAddress: true),
               _divider(),
-              _buildAddressCellRow(S.of(context).house_number, S.of(context).please_enter_door_number_hint, _addressHouseNumController),
+              _buildAddressCellRow(
+                  S.of(context).house_number, S.of(context).please_enter_door_number_hint, _addressHouseNumController),
               _divider(),
-              _buildAddressCellRow(S.of(context).postal_code, S.of(context).please_enter_postal_code, _addressPostcodeController),
+              _buildAddressCellRow(
+                  S.of(context).postal_code, S.of(context).please_enter_postal_code, _addressPostcodeController),
             ],
           ),
         ),
@@ -695,9 +700,10 @@ class _AddNcovState extends State<AddNcovPage> {
     );
   }
 
-  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller,{bool isDetailAddress = false}) {
+  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller,
+      {bool isDetailAddress = false}) {
     return Container(
-        height: !isDetailAddress?40:_inputHeight,
+        height: !isDetailAddress ? 40 : _inputHeight,
         padding: const EdgeInsets.only(left: 15, right: 14),
         decoration: new BoxDecoration(color: Colors.white),
         child: Row(
@@ -725,14 +731,13 @@ class _AddNcovState extends State<AddNcovPage> {
                   hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
                 ),
                 keyboardType: TextInputType.text,
-                maxLines: !isDetailAddress?1:4,
+                maxLines: !isDetailAddress ? 1 : 4,
                 //maxLength: !isDetailAddress?50:200,
               ),
             ),
           ],
         ));
   }
-
 
   Widget _buildDetailCellRow(String title, String hintText, TextEditingController controller) {
     return Column(
@@ -748,11 +753,10 @@ class _AddNcovState extends State<AddNcovPage> {
             maxLines: null,
             style: TextStyle(fontSize: 13),
             decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: hintText,
-              hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
-              hintMaxLines: 4
-            ),
+                border: InputBorder.none,
+                hintText: hintText,
+                hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+                hintMaxLines: 4),
           ),
         ),
       ],
@@ -857,7 +861,6 @@ class _AddNcovState extends State<AddNcovPage> {
     });
   }
 
-
   _uploadPoiData() {
     //print('[add] --> 存储中。。。');
 
@@ -914,7 +917,7 @@ class _AddNcovState extends State<AddNcovPage> {
     var houseNumber = _maxLengthLimit(_addressHouseNumController);
     var postCode = _maxLengthLimit(_addressPostcodeController);
     int confirmedCount = 0;
-    if(_numbersController.text.length > 0) {
+    if (_numbersController.text.length > 0) {
       confirmedCount = int.parse(_numbersController.text);
     }
     var confirmedType = _maxLengthLimit(_categoryController);
@@ -927,28 +930,27 @@ class _AddNcovState extends State<AddNcovPage> {
     var contactRecords = _maxLengthLimit(_recordController, isDetailAddress: true);
 
     var collector = NcovPoiEntity(
-      id,
-      country,
-      county,
-      state,
-      city,
-      name,
-      address,
-      location,
-      images,
-      road,
-      houseNumber,
-      postCode,
-      confirmedCount,
-      confirmedType,
-      isolation,
-      isolationHouseType,
-      symptoms,
-      symptomsDetail,
-      trip,
-      securityMeasures,
-      contactRecords
-    );
+        id,
+        country,
+        county,
+        state,
+        city,
+        name,
+        address,
+        location,
+        images,
+        road,
+        houseNumber,
+        postCode,
+        confirmedCount,
+        confirmedType,
+        isolation,
+        isolationHouseType,
+        symptoms,
+        symptomsDetail,
+        trip,
+        securityMeasures,
+        contactRecords);
     var model = PoiNcovDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
     _positionBloc.add(StartPostPoiNcovDataEvent(model));
     setState(() {
@@ -970,7 +972,6 @@ class _AddNcovState extends State<AddNcovPage> {
     return text;
   }
 
-
   void _checkInputHeight() async {
 //    int count = _addressController.text.split('\n').length;
     int length = _addressController.text.length;
@@ -982,7 +983,8 @@ class _AddNcovState extends State<AddNcovPage> {
       return;
     }
 
-    if (count <= 4) {  // use a maximum height of 6 rows
+    if (count <= 4) {
+      // use a maximum height of 6 rows
       // height values can be adapted based on the font size
       var newHeight = count < 1 ? 40.0 : 28.0 + (count * 18.0);
       setState(() {
@@ -991,5 +993,4 @@ class _AddNcovState extends State<AddNcovPage> {
       });
     }
   }
-
 }

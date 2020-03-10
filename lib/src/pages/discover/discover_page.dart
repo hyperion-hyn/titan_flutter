@@ -3,28 +3,28 @@ import 'dart:convert';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/discover/dapp/ncov/ncov_map_page.dart';
-import 'package:titan/src/pages/discover/dmap_define.dart';
-import 'package:titan/src/business/infomation/model/focus_response.dart';
-import 'package:titan/src/business/scaffold_map/map.dart';
-import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/discover/bloc/bloc.dart';
+import 'package:titan/src/pages/discover/dapp/ncov/ncov_map_page.dart';
+import 'package:titan/src/pages/discover/dmap_define.dart';
+import 'package:titan/src/pages/news/model/focus_response.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 
-import '../../business/discover/bloc/bloc.dart';
-
-class DiscoverPageWidget extends StatefulWidget {
+class DiscoverPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return DiscoverPageState();
   }
 }
 
-class DiscoverPageState extends State<DiscoverPageWidget> {
-  List<FocusImage> focusImages = [FocusImage('https://news.hyn.space/wp-content/uploads/2019/10/经济模型.jpeg', "https://www.hyn.space")];
+class DiscoverPageState extends State<DiscoverPage> {
+  List<FocusImage> focusImages = [
+    FocusImage('https://news.hyn.space/wp-content/uploads/2019/10/经济模型.jpeg', "https://www.hyn.space")
+  ];
 
   @override
   void initState() {
@@ -388,7 +388,6 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
   }
 
   Future activeDMap(String dMapName) async {
-
     BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
 
     var model = DMapDefine.kMapList[dMapName];
@@ -398,11 +397,10 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
         mapState.updateMyLocationTrackingMode(MyLocationTrackingMode.None);
         await Future.delayed(Duration(milliseconds: 300));
 
-        mapState?.mapboxMapController?.animateCamera(
-            CameraUpdate.newLatLngZoom(
-              model.dMapConfigModel.defaultLocation,
-              model.dMapConfigModel.defaultZoom,
-            ));
+        mapState?.mapboxMapController?.animateCamera(CameraUpdate.newLatLngZoom(
+          model.dMapConfigModel.defaultLocation,
+          model.dMapConfigModel.defaultZoom,
+        ));
       }
     }
   }

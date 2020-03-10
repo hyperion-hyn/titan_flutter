@@ -10,19 +10,18 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/business/position/bloc/bloc.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/business_time_page.dart';
-import 'package:titan/src/business/position/model/business_time.dart';
-import 'package:titan/src/business/position/model/category_item.dart';
-import 'package:titan/src/business/position/model/poi_collector.dart';
-import 'package:titan/src/business/position/model/poi_data.dart';
+import 'package:titan/src/pages/contribution/add_poi/model/business_time.dart';
+import 'package:titan/src/pages/contribution/add_poi/model/category_item.dart';
+import 'package:titan/src/pages/contribution/add_poi/model/poi_collector.dart';
+import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/select_category_page.dart';
-import 'package:titan/src/business/webview/webview.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 
@@ -72,7 +71,6 @@ class _AddPositionState extends State<AddPositionPage> {
 
   @override
   void initState() {
-
     _addressController.addListener(_checkInputHeight);
 
     _positionBloc.add(GetOpenCageEvent(widget.userPosition));
@@ -82,6 +80,7 @@ class _AddPositionState extends State<AddPositionPage> {
     });
     super.initState();
   }
+
   @override
   void didChangeDependencies() {
     _setupData();
@@ -89,7 +88,6 @@ class _AddPositionState extends State<AddPositionPage> {
   }
 
   void _setupData() {
-
     setState(() {
       _categoryDefaultText = S.of(context).please_select_category_hint;
       _timeDefaultText = S.of(context).please_add_business_hours_hint;
@@ -127,22 +125,20 @@ class _AddPositionState extends State<AddPositionPage> {
         //print('[add] --> state:${fromState}, toState:${state}');
 
         if (state is SuccessPostPoiDataState) {
-          createWalletPopUtilName = '/data_contribution_page';
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
-            ),
-          );
+          //TODO
+//          createWalletPopUtilName = '/data_contribution_page';
+//          Navigator.push(
+//            context,
+//            MaterialPageRoute(
+//              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
+//            ),
+//          );
         } else if (state is FailPostPoiDataState) {
           setState(() {
             _isUploading = false;
           });
           var hint = S.of(context).add_failed_exist_hint;
-          Fluttertoast.showToast(msg:state.code == -409?
-          hint:
-          S.of(context).add_failed_hint
-          );
+          Fluttertoast.showToast(msg: state.code == -409 ? hint : S.of(context).add_failed_hint);
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 
@@ -179,7 +175,7 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  void _saveCountryCode({String countryCode = "CN"}) async{
+  void _saveCountryCode({String countryCode = "CN"}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(PrefsKey.mapboxCountryCode, countryCode);
   }
@@ -438,16 +434,20 @@ class _AddPositionState extends State<AddPositionPage> {
           ],
         ),
         Container(
-          height: 100+_inputHeight,
+          height: 100 + _inputHeight,
           decoration: new BoxDecoration(color: Colors.white),
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              _buildAddressCellRow(S.of(context).details_of_street, S.of(context).please_add_streets_hint, _addressController, isDetailAddress: true),
+              _buildAddressCellRow(
+                  S.of(context).details_of_street, S.of(context).please_add_streets_hint, _addressController,
+                  isDetailAddress: true),
               _divider(),
-              _buildAddressCellRow(S.of(context).house_number, S.of(context).please_enter_door_number_hint, _addressHouseNumController),
+              _buildAddressCellRow(
+                  S.of(context).house_number, S.of(context).please_enter_door_number_hint, _addressHouseNumController),
               _divider(),
-              _buildAddressCellRow(S.of(context).postal_code, S.of(context).please_enter_postal_code, _addressPostcodeController),
+              _buildAddressCellRow(
+                  S.of(context).postal_code, S.of(context).please_enter_postal_code, _addressPostcodeController),
             ],
           ),
         ),
@@ -504,9 +504,11 @@ class _AddPositionState extends State<AddPositionPage> {
                     )),
               ),
               _divider(),
-              _buildDetailCellRow('ic_user_poi_phone_num', S.of(context).phone_number, TextInputType.number, _detailPhoneNumController),
+              _buildDetailCellRow(
+                  'ic_user_poi_phone_num', S.of(context).phone_number, TextInputType.number, _detailPhoneNumController),
               _divider(),
-              _buildDetailCellRow('ic_user_poi_web_site', S.of(context).website, TextInputType.emailAddress, _detailWebsiteController),
+              _buildDetailCellRow(
+                  'ic_user_poi_web_site', S.of(context).website, TextInputType.emailAddress, _detailWebsiteController),
             ],
           ),
         ),
@@ -625,9 +627,10 @@ class _AddPositionState extends State<AddPositionPage> {
     );
   }
 
-  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller,{bool isDetailAddress = false}) {
+  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller,
+      {bool isDetailAddress = false}) {
     return Container(
-        height: !isDetailAddress?40:_inputHeight,
+        height: !isDetailAddress ? 40 : _inputHeight,
         padding: const EdgeInsets.only(left: 15, right: 14),
         decoration: new BoxDecoration(color: Colors.white),
         child: Row(
@@ -655,7 +658,7 @@ class _AddPositionState extends State<AddPositionPage> {
                   hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
                 ),
                 keyboardType: TextInputType.text,
-                maxLines: !isDetailAddress?1:4,
+                maxLines: !isDetailAddress ? 1 : 4,
                 //maxLength: !isDetailAddress?50:200,
               ),
             ),
@@ -851,7 +854,6 @@ class _AddPositionState extends State<AddPositionPage> {
     return text;
   }
 
-
   void _checkInputHeight() async {
 //    int count = _addressController.text.split('\n').length;
     int length = _addressController.text.length;
@@ -863,7 +865,8 @@ class _AddPositionState extends State<AddPositionPage> {
       return;
     }
 
-    if (count <= 4) {  // use a maximum height of 6 rows
+    if (count <= 4) {
+      // use a maximum height of 6 rows
       // height values can be adapted based on the font size
       var newHeight = count < 1 ? 40.0 : 28.0 + (count * 18.0);
       setState(() {
@@ -872,5 +875,4 @@ class _AddPositionState extends State<AddPositionPage> {
       });
     }
   }
-
 }

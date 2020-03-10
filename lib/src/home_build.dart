@@ -2,8 +2,8 @@
 //import 'package:flutter_bloc/flutter_bloc.dart';
 //import 'package:fluttertoast/fluttertoast.dart';
 //import 'package:titan/generated/i18n.dart';
-//import 'package:titan/src/business/discover/bloc/bloc.dart';
-//import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
+//import 'package:titan/src/pages/discover/bloc/bloc.dart';
+//import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 //import 'package:titan/src/global.dart';
 //
 //import 'business/home/bloc/bloc.dart';

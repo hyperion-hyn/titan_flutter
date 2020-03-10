@@ -3,9 +3,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/discover/dapp/embassy/model/model.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/business/webview/webview.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/pages/discover/dapp/embassy/model/model.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
@@ -105,7 +105,8 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
                               SizedBox(
                                 height: 8,
                               ),
-                              buildHeadItem(Icons.location_on, widget.poi.address, hint: S.of(context).no_detail_address),
+                              buildHeadItem(Icons.location_on, widget.poi.address,
+                                  hint: S.of(context).no_detail_address),
 //                  if (widget.poi.remark != null && widget.poi.remark.length > 0)
 //                    buildHeadItem(Icons.message, widget.poi.remark, hint: '无备注'),
                             ],
@@ -117,7 +118,8 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
                         buildInfoItem(S.of(context).department, widget.poi.department),
                         buildInfoItem(S.of(context).operating_hours, widget.poi.remark),
                         buildInfoItem(S.of(context).telphone, widget.poi.telephone),
-                        buildInfoItem(S.of(context).official_website, widget.poi.website, textColor: Colors.blue, onTap: () {
+                        buildInfoItem(S.of(context).official_website, widget.poi.website, textColor: Colors.blue,
+                            onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(

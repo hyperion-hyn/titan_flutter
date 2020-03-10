@@ -56,8 +56,11 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
         ),
         body: TabBarView(
           children: [
-            WalletPage(),
-            Map3NodeIntroductionPage(),
+//            WalletPage(),
+//            Map3NodeIntroductionPage(),
+            Center(
+              child: Text('this is wallet page'),
+            )
           ],
           physics: NeverScrollableScrollPhysics(),
         ),

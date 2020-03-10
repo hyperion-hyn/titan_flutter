@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/business/home/burning_dialog/burning_dialog.dart';
-import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/inject/injector.dart';
-
-import '../../global.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/config/application.dart';
+import 'burning_dialog.dart';
 
 class BottomFabsWidget extends StatefulWidget {
   final bool showBurnBtn;
@@ -114,7 +113,7 @@ class BottomFasScenesState extends State<BottomFabsWidget> {
                 Spacer(),
                 FloatingActionButton(
                   onPressed: () {
-                    eventBus.fire(ToMyLocationEvent());
+                    Application.eventBus.fire(ToMyLocationEvent());
 //                BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
                   },
                   mini: true,

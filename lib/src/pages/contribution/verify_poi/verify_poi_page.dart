@@ -4,7 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/business/scaffold_map/bottom_panels/user_poi_panel.dart';
+import 'package:titan/src/components/scaffold_map/bottom_panels/user_poi_panel.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';

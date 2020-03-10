@@ -1,6 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:titan/src/business/infomation/model/focus_response.dart';
-import 'package:titan/src/business/scaffold_map/dmap/dmap.dart';
+import 'package:titan/src/pages/news/model/focus_response.dart';
 
 @immutable
 abstract class DiscoverState {}
