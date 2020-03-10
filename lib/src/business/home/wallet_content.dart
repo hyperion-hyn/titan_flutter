@@ -57,7 +57,7 @@ class _WalletContentState extends State<WalletContentWidget> {
             WalletPage(),
             Map3NodeIntroductionPage(),
           ],
-          physics: NeverScrollableScrollPhysics(),
+          //physics: NeverScrollableScrollPhysics(),
         ),
       ),
     );

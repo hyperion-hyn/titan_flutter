@@ -78,7 +78,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
               _signalPage(),
               _poiPage(),
             ],
-            physics: NeverScrollableScrollPhysics(),
+            //physics: NeverScrollableScrollPhysics(),
           ),
         ),
       ),
