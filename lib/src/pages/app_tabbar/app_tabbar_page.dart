@@ -12,6 +12,7 @@ import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
+import 'package:titan/src/pages/news/infomation_page.dart';
 
 import '../../../env.dart';
 import '../home/home_page.dart';
@@ -172,7 +173,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
           BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage()),
           WalletTabsPage(),
           BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
-          NewsPage(),
+          InformationPage(),
           MyPage(),
         ],
       ),
