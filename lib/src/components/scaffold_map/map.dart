@@ -19,6 +19,7 @@ import 'package:titan/src/data/entity/heaven_map_poi_info.dart';
 import 'package:titan/src/data/entity/poi.dart';
 import 'package:titan/src/data/entity/poi_interface.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart' as position_model;
 
 import 'bloc/bloc.dart';
@@ -443,10 +444,9 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   }
 
   void onStyleLoaded() async {
-    setState(() {});
-
-    mapboxMapController.removeListener(_mapMoveListener);
-    mapboxMapController.addListener(_mapMoveListener);
+    logger.i('xxx style loaded');
+    mapboxMapController?.removeListener(_mapMoveListener);
+    mapboxMapController?.addListener(_mapMoveListener);
   }
 
   void _mapMoveListener() {
@@ -638,6 +638,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           trackCameraPosition: true,
                           styleString: widget.style,
                           onMapCreated: (controller) {
+                            logger.i('xxx onMapCreated');
                             mapboxMapController = controller;
                           },
                           onStyleLoadedCallback: onStyleLoaded,

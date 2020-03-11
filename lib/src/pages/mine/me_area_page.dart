@@ -26,11 +26,8 @@ class _MeAreaState extends State<MeAreaPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    if(selectedAppArea == null){
-      selectedAppArea = SettingInheritedModel
-          .of(context, aspect: SettingAspect.area)
-          .areaModel;
+    if (selectedAppArea == null) {
+      selectedAppArea = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel;
     }
 
     return Scaffold(
@@ -46,7 +43,7 @@ class _MeAreaState extends State<MeAreaPage> {
         actions: <Widget>[
           InkWell(
             onTap: () {
-              BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: selectedAppArea));
+              BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(areaModel: selectedAppArea));
 //              switchAppArea(selectedAppArea);
               Navigator.pop(context);
             },
@@ -62,7 +59,7 @@ class _MeAreaState extends State<MeAreaPage> {
         ],
       ),
       body: ListView(
-          children: SupportedArea.all(context).map<Widget>((areaModel) {
+          children: SupportedArea.all().map<Widget>((areaModel) {
         return _buildInfoContainer(areaModel);
       }).toList()),
     );
@@ -95,7 +92,7 @@ class _MeAreaState extends State<MeAreaPage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                   child: Text(
-                    areaModel.name,
+                    areaModel.name(context),
                     style: TextStyle(color: HexColor("#333333"), fontSize: 16),
                   ),
                 ),
@@ -118,5 +115,4 @@ class _MeAreaState extends State<MeAreaPage> {
       ),
     );
   }
-
 }

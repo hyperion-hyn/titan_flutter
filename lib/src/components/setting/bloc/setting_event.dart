@@ -1,27 +1,19 @@
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:titan/src/components/setting/model.dart';
 
 @immutable
 abstract class SettingEvent {}
 
-class UpdateLanguageEvent extends SettingEvent {
+class UpdateSettingEvent extends SettingEvent with EquatableMixin {
   final LanguageModel languageModel;
-
-  UpdateLanguageEvent({this.languageModel});
-
-  @override
-  String toString() {
-    return 'UpdateLanguageEvent: $languageModel';
-  }
-}
-
-class UpdateAreaEvent extends SettingEvent {
   final AreaModel areaModel;
 
-  UpdateAreaEvent({this.areaModel});
+  UpdateSettingEvent({this.languageModel, this.areaModel});
 
   @override
-  String toString() {
-    return 'UpdateAreaEvent: $areaModel';
-  }
+  List<Object> get props => [languageModel, areaModel];
+
+  @override
+  bool get stringify => true;
 }

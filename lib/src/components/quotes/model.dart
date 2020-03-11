@@ -27,7 +27,7 @@ class ActiveQuoteVoAndSign {
   ActiveQuoteVoAndSign({this.quoteVo, this.sign});
 }
 
-class SupportedQuotes {
+class SupportedQuoteSigns {
   static QuotesSign _defaultQuotesSign = QuotesSign(quote: 'USD', sign: '\$');
 
   static List<QuotesSign> all = [

@@ -27,7 +27,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
           var symbols = DEFAULT_SYMBOLS;
           final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
-          var converts = SupportedQuotes.all.map((sign) => sign.quote).toList();
+          var converts = SupportedQuoteSigns.all.map((sign) => sign.quote).toList();
           var quotes = await _coinMarketApi.quotes(DEFAULT_SYMBOLS, converts);
           currentQuotesModel = QuotesModel(
               quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);

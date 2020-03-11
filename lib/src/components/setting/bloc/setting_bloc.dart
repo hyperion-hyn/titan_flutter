@@ -17,12 +17,15 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   @override
   Stream<SettingState> mapEventToState(SettingEvent event) async* {
-    if (event is UpdateLanguageEvent) {
-      _saveLanguage(event.languageModel);
-      yield UpdateLanguageState(languageModel: event.languageModel);
-    } else if (event is UpdateAreaEvent) {
-      _saveAreaModel(event.areaModel);
-      yield UpdateAreaState(areaModel: event.areaModel);
+    if (event is UpdateSettingEvent) {
+      if (event.languageModel != null) {
+        _saveLanguage(event.languageModel);
+      }
+      if (event.areaModel != null) {
+        _saveAreaModel(event.areaModel);
+      }
+
+      yield UpdatedSettingState(languageModel: event.languageModel, areaModel: event.areaModel);
     }
   }
 

@@ -40,23 +40,29 @@ class _SettingManagerState extends State<_SettingManager> {
   Widget build(BuildContext context) {
     return BlocListener<SettingBloc, SettingState>(
       listener: (context, state) {
-        if (state is UpdateAreaState) {
-          Config.updateConfig(state.areaModel);
-        } else if (state is UpdateLanguageState) {
-          //update current quotes by setting
-          var sign = SupportedQuotes.of('USD');
-          if (languageModel?.isZh() == true) {
-            sign = SupportedQuotes.of('CNY');
+        if (state is UpdatedSettingState) {
+          if (state.areaModel != null) {
+            Config.updateConfig(state.areaModel);
           }
-          BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: sign));
+          if (state.languageModel != null) {
+            //update current quotes by setting
+            var quoteSign = SupportedQuoteSigns.of('USD');
+            if (languageModel?.isZh() == true) {
+              quoteSign = SupportedQuoteSigns.of('CNY');
+            }
+            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quoteSign));
+          }
         }
       },
       child: BlocBuilder<SettingBloc, SettingState>(
         builder: (context, state) {
-          if (state is UpdateAreaState) {
-            areaModel = state.areaModel;
-          } else if (state is UpdateLanguageState) {
-            languageModel = state.languageModel;
+          if (state is UpdatedSettingState) {
+            if (state.languageModel != null) {
+              languageModel = state.languageModel;
+            }
+            if (state.areaModel != null) {
+              areaModel = state.areaModel;
+            }
           }
 
           return SettingInheritedModel(

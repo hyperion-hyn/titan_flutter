@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
@@ -27,35 +28,30 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
   @override
   void initState() {
     super.initState();
+    _initSetting();
     launchRootPage();
   }
 
-  @override
-  void onCreated() {
-    //init global setting
-    _initSetting();
-  }
+//  @override
+//  void onCreated() {
+//    //init global setting
+//    _initSetting();
+//  }
 
   _initSetting() async {
     var languageStr = await AppCache.getValue<String>(PrefsKey.SETTING_LANGUAGE);
-    if (languageStr != null) {
-      var languageModel = LanguageModel.fromJson(json.decode(languageStr));
-      BlocProvider.of<SettingBloc>(context).add(UpdateLanguageEvent(languageModel: languageModel));
-    } else {
-      BlocProvider.of<SettingBloc>(context)
-          .add(UpdateLanguageEvent(languageModel: SupportedLanguage.defaultModel(context)));
-    }
-
-    //hack. should be delay a while, or the UpdateLanguageEvent will be eaten.
-    await Future.delayed(Duration(milliseconds: 300));
+    LanguageModel languageModel = languageStr != null
+        ? LanguageModel.fromJson(json.decode(languageStr))
+        : SupportedLanguage.defaultModel(context);
 
     var areaModelStr = await AppCache.getValue<String>(PrefsKey.SETTING_AREA);
-    if (areaModelStr != null) {
-      var areaModel = AreaModel.fromJson(json.decode(areaModelStr));
-      BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: areaModel));
-    } else {
-      BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: SupportedArea.defaultModel(context)));
-    }
+    AreaModel areaModel =
+        areaModelStr != null ? AreaModel.fromJson(json.decode(areaModelStr)) : SupportedArea.defaultModel();
+
+    BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(
+      areaModel: areaModel,
+      languageModel: languageModel,
+    ));
   }
 
   void launchRootPage() async {
@@ -64,11 +60,7 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
     if (notFirstTimeLauncher) {
 //    if (false) {
       //launch dashboard
-      BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(
-          page: BlocProvider<AppTabBarBloc>(
-        create: (ctx) => AppTabBarBloc(),
-        child: AppTabBarPage(),
-      )));
+      BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
     } else {
       //launch setting
       BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: SettingOnLauncherPage()));
@@ -77,17 +69,23 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RootPageControlBloc, RootPageControlState>(
-      builder: (ctx, state) {
-        if (state is UpdateRootPageState) {
-          return state.child;
-        }
-        return Scaffold(
-          body: Center(
-            child: Text('please set the root page!'),
-          ),
-        );
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ScaffoldMapBloc>(create: (context) => ScaffoldMapBloc(context)),
+        BlocProvider<AppTabBarBloc>(create: (context) => AppTabBarBloc()),
+      ],
+      child: BlocBuilder<RootPageControlBloc, RootPageControlState>(
+        builder: (ctx, state) {
+          if (state is UpdateRootPageState) {
+            return state.child;
+          }
+          return Scaffold(
+            body: Center(
+              child: Text('please set the root page!'),
+            ),
+          );
+        },
+      ),
     );
   }
 }

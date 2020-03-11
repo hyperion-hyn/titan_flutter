@@ -10,12 +10,16 @@ part 'model.g.dart';
 @JsonSerializable()
 class AreaModel extends Equatable {
   final String id;
-  final String name;
 
-  AreaModel({this.id, this.name});
+//  final String name;
+
+  AreaModel({this.id /*, this.name*/
+      });
 
   @override
-  List<Object> get props => [id, name];
+  List<Object> get props => [
+        id /*, name*/
+      ];
 
   Map<String, Object> toJson() => _$AreaModelToJson(this);
 
@@ -23,6 +27,17 @@ class AreaModel extends Equatable {
 
   bool get isChinaMainland {
     return id == 'mainland_china_area';
+  }
+
+  String name(BuildContext context) {
+    switch (id) {
+      case 'mainland_china_area':
+        return S.of(context).mainland_china;
+      case 'other_area':
+        return S.of(context).other_area;
+      default:
+        return 'unknown area';
+    }
   }
 
   @override
@@ -66,13 +81,13 @@ class LanguageModel extends Equatable {
 }
 
 class SupportedArea {
-  static AreaModel defaultModel(BuildContext context) =>
-      AreaModel(id: 'mainland_china_area', name: S.of(context).mainland_china);
+  static AreaModel defaultModel(/*BuildContext context*/) =>
+      AreaModel(id: 'mainland_china_area' /*, name: S.of(context).mainland_china*/);
 
-  static List<AreaModel> all(BuildContext context) {
+  static List<AreaModel> all(/*BuildContext context*/) {
     return [
-      AreaModel(id: 'mainland_china_area', name: S.of(context).mainland_china),
-      AreaModel(id: 'other_area', name: S.of(context).other_area)
+      AreaModel(id: 'mainland_china_area' /*, name: S.of(context).mainland_china*/),
+      AreaModel(id: 'other_area' /*, name: S.of(context).other_area*/)
     ];
   }
 }

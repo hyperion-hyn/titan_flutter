@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -14,76 +15,69 @@ class MeLanguagePage extends StatefulWidget {
   }
 }
 
-class _LanguageState extends State<MeLanguagePage> {
-
+class _LanguageState extends BaseState<MeLanguagePage> {
   LanguageModel selectedLanguageModel;
-  var isComplete = false;
+
+//  var isComplete = false;
 
   @override
-  void initState() {
-    super.initState();
+  void onCreated() {
+    selectedLanguageModel = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel;
   }
 
-  @override
-  void deactivate() {
-    if(isComplete) {
-      var currentAreaModel = SettingInheritedModel
-          .of(context, aspect: SettingAspect.area)
-          .areaModel;
-
-      for (AreaModel areaModel in SupportedArea.all(context)) {
-        if (currentAreaModel.id == areaModel.id) {
-          BlocProvider.of<SettingBloc>(context).add(
-              UpdateAreaEvent(areaModel: areaModel));
-        }
-      }
-    }
-
-    super.deactivate();
-  }
+//  @override
+//  void deactivate() {
+//    if(isComplete) {
+//      var currentAreaModel = SettingInheritedModel
+//          .of(context, aspect: SettingAspect.area)
+//          .areaModel;
+//
+//      for (AreaModel areaModel in SupportedArea.all(context)) {
+//        if (currentAreaModel.id == areaModel.id) {
+//          BlocProvider.of<SettingBloc>(context).add(
+//              UpdateAreaEvent(areaModel: areaModel));
+//        }
+//      }
+//    }
+//
+//    super.deactivate();
+//  }
 
   @override
   Widget build(BuildContext context) {
-    if(selectedLanguageModel == null) {
-      selectedLanguageModel = SettingInheritedModel
-          .of(context, aspect: SettingAspect.language)
-          .languageModel;
-    }
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          S.of(context).language,
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        actions: <Widget>[
-          InkWell(
-            onTap: () {
-              BlocProvider.of<SettingBloc>(context).add(UpdateLanguageEvent(languageModel: selectedLanguageModel));
-              isComplete = true;
-              Navigator.pop(context);
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              alignment: Alignment.centerRight,
-              child: Text(
-                S.of(context).confirm,
-                style: TextStyle(fontSize: 16, color: Colors.white),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          title: Text(
+            S.of(context).language,
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
+          elevation: 0,
+          actions: <Widget>[
+            InkWell(
+              onTap: () {
+                BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(languageModel: selectedLanguageModel));
+//                isComplete = true;
+                Navigator.pop(context);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  S.of(context).confirm,
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
-            ),
-          )
-        ],
-      ),
-        body:ListView(children: _buildLanguageList())
-    );
+            )
+          ],
+        ),
+        body: ListView(children: _buildLanguageList()));
   }
 
-  List<Widget> _buildLanguageList(){
-    return SupportedLanguage.all.map<Widget>((language){
+  List<Widget> _buildLanguageList() {
+    return SupportedLanguage.all.map<Widget>((language) {
       return _buildInfoContainer(language);
     }).toList();
   }
@@ -139,5 +133,4 @@ class _LanguageState extends State<MeLanguagePage> {
       ),
     );
   }
-
 }

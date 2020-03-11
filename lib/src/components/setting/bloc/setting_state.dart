@@ -6,29 +6,21 @@ import '../model.dart';
 //store
 
 @immutable
-abstract class SettingState extends Equatable {
+abstract class SettingState {
   const SettingState();
 }
 
-class InitialSettingState extends SettingState {
-  @override
-  List<Object> get props => [];
-}
+class InitialSettingState extends SettingState {}
 
-class UpdateLanguageState extends SettingState {
+class UpdatedSettingState extends SettingState with EquatableMixin {
   final LanguageModel languageModel;
-
-  UpdateLanguageState({this.languageModel});
-
-  @override
-  List<Object> get props => [languageModel];
-}
-
-class UpdateAreaState extends SettingState {
   final AreaModel areaModel;
 
-  UpdateAreaState({this.areaModel});
+  UpdatedSettingState({this.languageModel, this.areaModel});
 
   @override
-  List<Object> get props => [areaModel];
+  List<Object> get props => [languageModel, areaModel];
+
+  @override
+  bool get stringify => true;
 }

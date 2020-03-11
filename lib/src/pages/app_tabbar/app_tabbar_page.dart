@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
@@ -40,7 +41,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
     super.initState();
 
     _bottomBarPositionAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300),
       value: 0.0,
       vsync: this,
     );
@@ -71,6 +72,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
           drawer: isDebug ? DrawerComponent() : null,
           body: Stack(
             children: <Widget>[
+              //map at background
+              ScaffoldMap(),
               _getTabView(_currentTabIndex),
               bottomBar(),
             ],
@@ -98,7 +101,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
           PositionedTransition(
             rect: barAnimationRect,
             child: Container(
-              height: kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom,
+              height: barHeight,
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 boxShadow: [
@@ -160,15 +163,19 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
   }
 
   Widget _getTabView(int index) {
-    return IndexedStack(
-      index: index,
-      children: <Widget>[
-        BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage()),
-        WalletTabsPage(),
-        BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
-        NewsPage(),
-        MyPage(),
-      ],
+    var barHeight = MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight;
+    return Padding(
+      padding: EdgeInsets.only(bottom: barHeight),
+      child: IndexedStack(
+        index: index,
+        children: <Widget>[
+          BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage()),
+          WalletTabsPage(),
+          BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
+          NewsPage(),
+          MyPage(),
+        ],
+      ),
     );
 
 //    switch (index) {
