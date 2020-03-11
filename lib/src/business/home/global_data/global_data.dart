@@ -1,4 +1,6 @@
 
+//import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/business/home/global_data/echarts/signal_chart.dart';
@@ -13,9 +15,11 @@ class GlobalDataPage extends StatefulWidget {
 
 
 class _GlobalDataState extends State<GlobalDataPage> {
+
   @override
   void initState() {
     super.initState();
+
   }
 
   @override
@@ -131,30 +135,13 @@ class _GlobalDataState extends State<GlobalDataPage> {
   }
 
   Widget _signalPage() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: Text('信号数据可用于建立三角定位，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番'),
-        ),
-        Expanded(
-          child: SignalChatsPage(),
-        ),
-      ],
-    );
+    var title = '信号数据可用于建立三角定位，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
+    return SignalChatsPage(title);
   }
 
   Widget _poiPage() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: Text('POI数据是一个公共的位置兴趣点数据集合，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番'),
-        ),
-        Expanded(
-          child: SignalChatsPage(),
-        ),
-      ],
-    );
+    var title = 'POI数据是一个公共的位置兴趣点数据集合，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
+    return SignalChatsPage(title);
   }
+
 }

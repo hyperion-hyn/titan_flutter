@@ -2,11 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/business/home/global_data/model/signal_daily_vo.dart';
+import 'package:titan/src/business/home/global_data/model/signal_total_vo.dart';
+import 'package:titan/src/business/home/global_data/model/signal_weekly_vo.dart';
 import 'package:titan/src/domain/gaode_model.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/model/gaode_poi.dart';
 import 'package:titan/src/model/update.dart';
 import 'package:titan/src/business/contribution/vo/signal_collector.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class Api {
   ///附近可以分享的位置
@@ -132,5 +136,46 @@ class Api {
     }
   }
 
+  /// signal total
+  Future<SignalTotalVo> getSignalTotal() async {
+    var model = await HttpCore.instance.getEntity(
+      'map-collector/signal/count',
+      EntityFactory<SignalTotalVo>((json) => SignalTotalVo.fromJson(json)),
+    );
+
+    print('[api] getSignalTotal, total:${model.blueToothTotal}');
+    return model;
+  }
+
+  /// signal daily
+  Future<List<SignalDailyVo>> getSignalDaily() async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/signal/count/daily',
+        EntityFactory<List<SignalDailyVo>>((json) {
+          return (json as List).map((levelInfoJson) {
+            return SignalDailyVo.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
+
+    print('[api] getSignalDaily, length:${list.length}');
+
+    return list;
+  }
+
+  /// signal weekly
+
+  Future<List<SignalWeeklyVo>> getSignalWeekly() async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/signal/count/weekly',
+        EntityFactory<List<SignalWeeklyVo>>((json) {
+      return (json as List).map((levelInfoJson) {
+        return SignalWeeklyVo.fromJson(levelInfoJson);
+      }).toList();
+    }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
+
+    print('[api] getSignalWeekly, length:${list.length}');
+
+    return list;
+  }
 
 }

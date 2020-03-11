@@ -5,6 +5,8 @@ import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../global.dart';
+
 String getExpiredTimeShowTip(BuildContext context, int expireTime) {
   var timeLeft = (expireTime - DateTime.now().millisecondsSinceEpoch) ~/ 1000;
   var day = 3600 * 24;
@@ -76,3 +78,12 @@ Future launchUrl(String url) async {
   }
 }
 
+String getRequestLang() {
+  if (appLocale == null) {
+    return "zh";
+  } else if (appLocale.countryCode == null || appLocale.countryCode == "") {
+    return appLocale.languageCode;
+  } else {
+    return "${appLocale.languageCode}_${appLocale.countryCode}";
+  }
+}
