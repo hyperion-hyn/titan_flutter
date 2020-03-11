@@ -2,8 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/setting/bloc/bloc.dart';
+import 'package:titan/src/components/setting/model.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 
 class MeAreaPage extends StatefulWidget {
   @override
@@ -14,110 +18,105 @@ class MeAreaPage extends StatefulWidget {
 
 class _MeAreaState extends State<MeAreaPage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  var selectedAppArea;
+
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('TODO 地区'),
+
+    if(selectedAppArea == null){
+      selectedAppArea = SettingInheritedModel
+          .of(context, aspect: SettingAspect.area)
+          .areaModel;
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text(
+          S.of(context).app_area_setting,
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        actions: <Widget>[
+          InkWell(
+            onTap: () {
+              BlocProvider.of<SettingBloc>(context).add(UpdateAreaEvent(areaModel: selectedAppArea));
+//              switchAppArea(selectedAppArea);
+              Navigator.pop(context);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              alignment: Alignment.centerRight,
+              child: Text(
+                S.of(context).confirm,
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ),
+          )
+        ],
+      ),
+      body: ListView(
+          children: SupportedArea.all(context).map<Widget>((areaModel) {
+        return _buildInfoContainer(areaModel);
+      }).toList()),
     );
   }
-}
 
-//class _MeAreaState extends State<MeAreaPage> {
-//  @override
-//  void initState() {
-//    super.initState();
-//  }
-//
-//  var selectedAppArea = currentAppArea;
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Scaffold(
-//      backgroundColor: Colors.white,
-//      appBar: AppBar(
-//        iconTheme: IconThemeData(color: Colors.white),
-//        title: Text(
-//          S.of(context).app_area_setting,
-//          style: TextStyle(color: Colors.white),
-//        ),
-//        centerTitle: true,
-//        elevation: 0,
-//        actions: <Widget>[
-//          InkWell(
-//            onTap: () {
-//              switchAppArea(selectedAppArea);
-//              Navigator.pop(context);
-//            },
-//            child: Container(
-//              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-//              alignment: Alignment.centerRight,
-//              child: Text(
-//                S.of(context).confirm,
-//                style: TextStyle(fontSize: 16, color: Colors.white),
-//              ),
-//            ),
-//          )
-//        ],
-//      ),
-//      body: ListView(padding: EdgeInsets.symmetric(horizontal: 0), children: <Widget>[
-//        SizedBox(
-//          height: 4,
-//        ),
-//        _buildInfoContainer(label: S.of(context).mainland_china, appArea: AppArea.MAINLAND_CHINA_AREA),
-//        _divider(),
-//        _buildInfoContainer(label: S.of(context).other_area, appArea: AppArea.OTHER_AREA),
-//        _divider(),
-//      ]),
-//    );
-//  }
-//
-//  Widget _divider() {
-//    return Padding(
-//      padding: const EdgeInsets.symmetric(horizontal: 16),
-//      child: Divider(
-//        height: 1.0,
-//        color: HexColor('#D7D7D7'),
-//      ),
-//    );
-//  }
-//
-//  Widget _buildInfoContainer({String label, AppArea appArea}) {
-//    return InkWell(
-//      onTap: () {
-//        setState(() {
-//          selectedAppArea = appArea;
-//        });
-//      },
-//      child: Container(
-//        height: 56,
-//        child: Row(
-//          mainAxisAlignment: MainAxisAlignment.start,
-//          children: <Widget>[
-//            Padding(
-//              padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
-//              child: Text(
-//                label,
-//                style: TextStyle(color: HexColor("#333333"), fontSize: 16),
-//              ),
-//            ),
-//            Spacer(),
-//            Visibility(
-//              visible: selectedAppArea.key == appArea.key,
-//              child: Padding(
-//                padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
-//                child: Icon(
-//                  Icons.check,
-//                  color: Colors.green,
-//                ),
-//              ),
-//            )
-//          ],
-//        ),
-//      ),
-//    );
-//  }
-//
-//  void switchAppArea(AppArea appArea) {
-//    appAreaChange(appArea);
-//    setState(() {});
-//  }
-//}
+  Widget _divider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Divider(
+        height: 1.0,
+        color: HexColor('#D7D7D7'),
+      ),
+    );
+  }
+
+  Widget _buildInfoContainer(AreaModel areaModel) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          selectedAppArea = areaModel;
+        });
+      },
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
+                  child: Text(
+                    areaModel.name,
+                    style: TextStyle(color: HexColor("#333333"), fontSize: 16),
+                  ),
+                ),
+                Spacer(),
+                Visibility(
+                  visible: selectedAppArea.id == areaModel.id,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.green,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          _divider()
+        ],
+      ),
+    );
+  }
+
+}
