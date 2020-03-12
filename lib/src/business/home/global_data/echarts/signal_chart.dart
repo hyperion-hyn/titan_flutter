@@ -10,7 +10,6 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 
 class SignalChatsPage extends StatefulWidget {
-  //SignalChatsPage({Key key}) : super(key: key);
   String title;
   SignalChatsPage(this.title);
   @override
@@ -42,7 +41,6 @@ class _SignalChatsState extends State<SignalChatsPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Text(widget.title),
-            //child: Text('信号数据可用于建立三角定位，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番'),
           ),
           _weeklyWidget(),
           _dailyWidget(type: SensorType.GPS),
@@ -53,90 +51,6 @@ class _SignalChatsState extends State<SignalChatsPage> {
       ),
     );
   }
-
-  /*
-  Widget _totalWidget() {
-    var legendData = [
-      S.of(globalContext).scan_name_gps,
-      S.of(globalContext).scan_name_wifi,
-      S.of(globalContext).scan_name_bluetooth,
-      S.of(globalContext).scan_name_cellular,
-    ];
-    var data = [0, 0, 0, 0];
-    if (totalVo != null) {
-      data = [];
-      data.add(totalVo.gpsTotal);
-      data.add(totalVo.wifiTotal);
-      data.add(totalVo.blueToothTotal);
-      data.add(totalVo.cellularTotal);
-    }
-
-    var series = [];
-    for (int i=0; i<legendData.length; i++) {
-      var json = {
-        'name': legendData[i],
-        'type': 'bar',
-        'data': [data[i]],
-      };
-      series.add(json);
-    }
-
-    var _barOption = '''
- {
-    tooltip: {
-      trigger: 'axis'
-    },
-    legend: {
-      data: ${jsonEncode(legendData)},
-      bottom: '3%'
-    },
-    calculable: true,
-    xAxis: [
-      {
-            type: 'category',
-            //data: ['1月', '2月', '3月', '4月']
-      }
-    ],
-    yAxis: [
-      {
-            type: 'value'
-      }
-    ],
-    grid: {
-       left: '20%',
-       right: '5%',
-    },
-    series: ${jsonEncode(series)}
-}
-                  ''';
-
-    var _size = MediaQuery.of(context).size;
-    double _chartsWidth = _size.width-8;
-    double _chartsHeight = 250;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          child: Text('当前海伯利安贡献数据情况如下:\n\n信号数据总量：', style: TextStyle(fontSize: 14)),
-          padding: EdgeInsets.fromLTRB(20, 20, 0, 20),
-        ),
-        Center(
-          child: Container(
-            child: Echarts(
-              option: _barOption,
-              onMessage: (String message) {
-                Map<String, Object> messageAction = jsonDecode(message);
-                print(messageAction);
-              },
-            ),
-            width: _chartsWidth,
-            height: _chartsHeight,
-          ),
-        ),
-      ],
-    );
-  }
-  */
 
   Widget _weeklyWidget() {
     var legendData = [
@@ -169,17 +83,6 @@ class _SignalChatsState extends State<SignalChatsPage> {
         'symbol':'circle',
         'type': 'line',
         'data': data[i],
-        /*'markPoint': {
-          'data': [
-            {'type': 'max', 'name': '最大值'},
-            {'type': 'min', 'name': '最小值'}
-          ]
-        },
-        'markLine': {
-          'data': [
-            {'type': 'average', 'name': '平均值'}
-          ]
-        }*/
       };
       series.add(json);
     }
@@ -197,7 +100,6 @@ class _SignalChatsState extends State<SignalChatsPage> {
     xAxis: [
       {
             type: 'category',
-           // data: ['1月', '2月', '3月', '4月', '5月', '6月']
       }
     ],
     yAxis: [
@@ -301,7 +203,7 @@ class _SignalChatsState extends State<SignalChatsPage> {
 }
                   ''';
 
-    print('[signal] --> _lineOption:${_lineOption}');
+    //print('[signal] --> _lineOption:${_lineOption}');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,7 +230,6 @@ class _SignalChatsState extends State<SignalChatsPage> {
   }
 
   _getSignalData() async {
-    //totalVo = await api.getSignalTotal();
     weeklyVoList = await api.getSignalWeekly();
     var dailyList = await api.getSignalDaily();
     dailyVo = dailyList[0];
@@ -336,4 +237,5 @@ class _SignalChatsState extends State<SignalChatsPage> {
 
     });
   }
+
 }

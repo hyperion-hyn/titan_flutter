@@ -143,7 +143,7 @@ class Api {
       EntityFactory<SignalTotalVo>((json) => SignalTotalVo.fromJson(json)),
     );
 
-    print('[api] getSignalTotal, total:${model.blueToothTotal}');
+    //print('[api] getSignalTotal, total:${model.blueToothTotal}');
     return model;
   }
 
@@ -157,7 +157,7 @@ class Api {
           }).toList();
         }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
 
-    print('[api] getSignalDaily, length:${list.length}');
+    //print('[api] getSignalDaily, length:${list.length}');
 
     return list;
   }
@@ -173,7 +173,7 @@ class Api {
       }).toList();
     }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
 
-    print('[api] getSignalWeekly, length:${list.length}');
+    //print('[api] getSignalWeekly, length:${list.length}');
 
     return list;
   }

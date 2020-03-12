@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -8,7 +7,6 @@ import 'package:flutter/services.dart' show PlatformException, SystemChrome, Sys
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
@@ -25,14 +23,12 @@ import 'package:titan/src/business/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/business/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/business/updater/updater.dart';
 import 'package:titan/src/business/wallet/event_bus_event.dart';
-import 'package:titan/src/business/webview/webview.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/inject/injector.dart';
 import 'package:titan/src/model/poi.dart';
 import 'package:titan/src/model/poi_interface.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/encryption.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/selecte_app_area_dialog.dart';
 import 'package:uni_links/uni_links.dart';
 
@@ -53,8 +49,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey fabsContainerKey = GlobalKey(debugLabel: 'fabsContainerKey');
   final GlobalKey panelKey = GlobalKey(debugLabel: 'panelKey');
-
-//  DraggableBottomSheetController _poiBottomSheetController = DraggableBottomSheetController();
 
   StreamSubscription _appLinkSubscription;
 
@@ -105,7 +99,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     var url = values["out_link"];
     var title = values["title"];
     var content = values["content"];
-    print("[dd] content:${content}");
 
     Navigator.push(
         context,
@@ -194,7 +187,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: BlocBuilder<home.HomeBloc, home.HomeState>(
           builder: (context, state) {
             if(state is InitialHomeState && state.announcement != null){
-              print("!!!! isShowAnnounceDialog");
+              //print("!!!! isShowAnnounceDialog");
               //todo 掘金 isShowAnnounceDialog 这里为 true
               isShowAnnounceDialog = false;
               isUpdateAnnounce = true;
@@ -405,8 +398,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 class HomeScene extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-//    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     return Container();
   }
 }
