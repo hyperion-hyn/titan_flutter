@@ -11,15 +11,12 @@ class GlobalDataPage extends StatefulWidget {
   }
 }
 
-
 class _GlobalDataState extends State<GlobalDataPage> {
-
   @override
   void initState() {
     super.initState();
 
     //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
   }
 
   @override
@@ -89,7 +86,6 @@ class _GlobalDataState extends State<GlobalDataPage> {
     );
   }
 
-
   double _htmlHeight = 430;
   WebViewController _controller;
   Widget _webPage() {
@@ -98,7 +94,8 @@ class _GlobalDataState extends State<GlobalDataPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Text('Map3节点是支持整个海伯利安地图网络的基本，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番'),
+            child: Text(
+                'Map3节点是支持整个海伯利安地图网络的基本，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番'),
           ),
           Container(
             height: _htmlHeight,
@@ -107,9 +104,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
               onWebViewCreated: (WebViewController controller) {
                 _controller = controller;
               },
-              onPageFinished: (String url) async {
-
-              },
+              onPageFinished: (String url) async {},
               javascriptMode: JavascriptMode.unrestricted,
               navigationDelegate: (NavigationRequest request) {
                 bool prevent = false;
@@ -153,13 +148,10 @@ class _GlobalDataState extends State<GlobalDataPage> {
   }*/
 
   Widget _signalPage() {
-    var title = '信号数据可用于建立三角定位，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
-    return SignalChatsPage(title);
+    return SignalChatsPage(type: SignalChatsPage.SIGNAL);
   }
 
   Widget _poiPage() {
-    var title = 'POI数据是一个公共的位置兴趣点数据集合，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
-    return SignalChatsPage(title);
+    return SignalChatsPage(type: SignalChatsPage.POI);
   }
-
 }

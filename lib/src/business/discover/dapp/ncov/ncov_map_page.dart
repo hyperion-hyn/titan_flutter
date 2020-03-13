@@ -319,9 +319,10 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
               target: LatLng(39.919730, 116.399345),
               zoom: 7,
             ),
+            onMapCreated: onMapCreated,
             styleString: Const.kNCovMapStyle,
 //            styleString: Const.kNcovMapStyleCn,
-            onStyleLoaded: onStyleLoaded,
+            onStyleLoadedCallback: onStyleLoadedCallback,
             myLocationEnabled: myLocationEnabled,
             myLocationTrackingMode: locationTrackingMode,
             trackCameraPosition: true,
@@ -446,14 +447,16 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     }
   }
 
-  void onStyleLoaded(MapboxMapController controller) async {
+  void onMapCreated(MapboxMapController controller) async {
     setState(() {
       mapboxMapController = controller;
 
       controller.removeListener(_mapMoveListener);
       controller.addListener(_mapMoveListener);
     });
+  }
 
+  void onStyleLoadedCallback() {
     Future.delayed(Duration(milliseconds: 500)).then((value) {
       //cheat double click
 //      _clickTimes = 2;

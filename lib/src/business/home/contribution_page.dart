@@ -179,10 +179,6 @@ class _ContributionState extends State<ContributionPage> {
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
 
-//    if (userPosition != null) {
-//      mapController.animateCamera(CameraUpdate.newLatLng(userPosition));
-//    }
-
     subscription = timerObservable.listen((t) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       var timeGap = nowTime - startTime;
@@ -512,8 +508,10 @@ class _ContributionState extends State<ContributionPage> {
         zoom: defaultZoom,
       ),
       styleString: style,
-      onStyleLoaded: (mapboxController) {
+      onMapCreated: (mapboxController) {
         mapController = mapboxController;
+      },
+      onStyleLoadedCallback: () {
         Future.delayed(Duration(milliseconds: 1000)).then((v) {
           startScan();
         });

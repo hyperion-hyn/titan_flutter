@@ -162,6 +162,20 @@ class Api {
     return list;
   }
 
+  Future<List<Signal>> getPoiDaily() async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/poi/count/daily',
+        EntityFactory<List<Signal>>((json) {
+          return (json as List).map((levelInfoJson) {
+            return Signal.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
+
+    //print('[api] getSignalDaily, length:${list.length}');
+
+    return list;
+  }
+
   /// signal weekly
 
   Future<List<SignalWeeklyVo>> getSignalWeekly() async {

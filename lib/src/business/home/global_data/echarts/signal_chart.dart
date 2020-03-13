@@ -10,8 +10,11 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 
 class SignalChatsPage extends StatefulWidget {
-  String title;
-  SignalChatsPage(this.title);
+  static const int POI = -1;
+  static const int SIGNAL = -2;
+
+  final int type;
+  SignalChatsPage({this.type});
   @override
   _SignalChatsState createState() => _SignalChatsState();
 }
@@ -23,36 +26,52 @@ class _SignalChatsState extends State<SignalChatsPage> {
   SignalTotalVo totalVo;
   SignalDailyVo dailyVo;
   List<SignalWeeklyVo> weeklyVoList;
+  var title = "";
+  List<Signal> poiVoList;
 
   @override
   void initState() {
     super.initState();
 
-    _getSignalData();
+    _getData();
   }
 
   @override
   Widget build(BuildContext context) {
 
+    if (widget.type == SignalChatsPage.POI) {
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Text(title),
+            ),
+            _dailySignalWidget(type: SensorType.POI),
+          ],
+        ),
+      );
+    }
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Text(widget.title),
+            child: Text(title),
           ),
-          _weeklyWidget(),
-          _dailyWidget(type: SensorType.GPS),
-          _dailyWidget(type: SensorType.WIFI),
-          _dailyWidget(type: SensorType.BLUETOOTH),
-          _dailyWidget(type: SensorType.CELLULAR),
+          _weeklySignalWidget(),
+          _dailySignalWidget(type: SensorType.GPS),
+          _dailySignalWidget(type: SensorType.WIFI),
+          _dailySignalWidget(type: SensorType.BLUETOOTH),
+          _dailySignalWidget(type: SensorType.CELLULAR),
         ],
       ),
     );
   }
 
-  Widget _weeklyWidget() {
+  Widget _weeklySignalWidget() {
     var legendData = [
       S.of(globalContext).scan_name_gps,
       S.of(globalContext).scan_name_wifi,
@@ -82,7 +101,7 @@ class _SignalChatsState extends State<SignalChatsPage> {
         'smooth': true,
         'symbol':'circle',
         'type': 'line',
-        'data': data[i],
+        'data': data.isNotEmpty?data[i]:[],
       };
       series.add(json);
     }
@@ -142,14 +161,14 @@ class _SignalChatsState extends State<SignalChatsPage> {
     );
   }
 
-  Widget _dailyWidget({int type}) {
+  Widget _dailySignalWidget({int type}) {
     var _size = MediaQuery.of(context).size;
     double _chartsWidth = _size.width-8;
     double _chartsHeight = 250;
 
     var xAxisData = [];
     var seriesData = [];
-    if (dailyVo != null) {
+    if (dailyVo != null || poiVoList != null) {
       var list = [];
       switch (type) {
         case SensorType.WIFI:
@@ -166,6 +185,10 @@ class _SignalChatsState extends State<SignalChatsPage> {
 
         case SensorType.GPS:
           list = dailyVo.gps;
+          break;
+
+        case SensorType.POI:
+          list = poiVoList;
           break;
       }
 
@@ -184,7 +207,6 @@ class _SignalChatsState extends State<SignalChatsPage> {
  {
     xAxis: {
         type: 'category',
-        //data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         data: ${jsonEncode(xAxisData)}
     },
     yAxis: {
@@ -194,7 +216,6 @@ class _SignalChatsState extends State<SignalChatsPage> {
        left: '15%',
     },
     series: [{
-        //data: [820, 932, 901, 934, 1290, 1330, 1320],
         data: ${jsonEncode(seriesData)},
         smooth: true,
         symbol:'circle',
@@ -229,13 +250,23 @@ class _SignalChatsState extends State<SignalChatsPage> {
     );
   }
 
-  _getSignalData() async {
-    weeklyVoList = await api.getSignalWeekly();
-    var dailyList = await api.getSignalDaily();
-    dailyVo = dailyList[0];
+  _getData() async {
+
+    title = '信号数据可用于建立三角定位，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
+    if (widget.type == SignalChatsPage.POI) {
+      title = 'POI数据是一个公共的位置兴趣点数据集合，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
+      poiVoList = await api.getPoiDaily();
+    }
+    else {
+      weeklyVoList = await api.getSignalWeekly();
+      var dailyList = await api.getSignalDaily();
+      dailyVo = dailyList[0];
+    }
+
     setState(() {
 
     });
   }
+
 
 }
