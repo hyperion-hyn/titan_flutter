@@ -10,8 +10,7 @@ Wallet _$TrustWalletFromJson(Map<String, dynamic> json) {
   return Wallet(
     keystore: json['keystore'] == null
         ? null
-        : KeyStore.fromJson(
-            json['keystore'] as Map<String, dynamic>),
+        : KeyStore.fromJson(json['keystore'] as Map<String, dynamic>),
     accounts: (json['accounts'] as List)
         ?.map((e) =>
             e == null ? null : Account.fromJson(e as Map<String, dynamic>))
@@ -19,8 +18,7 @@ Wallet _$TrustWalletFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$TrustWalletToJson(Wallet instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TrustWalletToJson(Wallet instance) => <String, dynamic>{
       'accounts': instance.accounts,
       'keystore': instance.keystore,
     };

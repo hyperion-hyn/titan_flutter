@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/business/home/global_data/model/map3_node_vo.dart';
 import 'package:titan/src/business/home/global_data/model/signal_daily_vo.dart';
 import 'package:titan/src/business/home/global_data/model/signal_total_vo.dart';
 import 'package:titan/src/business/home/global_data/model/signal_weekly_vo.dart';
@@ -169,7 +170,8 @@ class Api {
           return (json as List).map((levelInfoJson) {
             return Signal.fromJson(levelInfoJson);
           }).toList();
-        }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
+        }), options: RequestOptions(headers: {"Lang": getRequestLang()})
+    );
 
     //print('[api] getSignalDaily, length:${list.length}');
 
@@ -177,19 +179,32 @@ class Api {
   }
 
   /// signal weekly
-
   Future<List<SignalWeeklyVo>> getSignalWeekly() async {
     var list = await HttpCore.instance.getEntity(
         'map-collector/signal/count/weekly',
         EntityFactory<List<SignalWeeklyVo>>((json) {
-      return (json as List).map((levelInfoJson) {
-        return SignalWeeklyVo.fromJson(levelInfoJson);
-      }).toList();
-    }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
+          return (json as List).map((levelInfoJson) {
+            return SignalWeeklyVo.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": getRequestLang()}));
 
     //print('[api] getSignalWeekly, length:${list.length}');
 
     return list;
   }
+
+  //https://api.hyn.space/api/v1/dashboard
+  /// node
+  Future<Map3NodeVo> getMap3NodeData() async {
+    var model = await HttpCore.instance.getEntity(
+        'api/v1/dashboard',
+      EntityFactory<Map3NodeVo>((json) => Map3NodeVo.fromJson(json)),
+    );
+
+    print('[api] getMap3NodeData, length:${model.tiles.length}');
+
+    return model;
+  }
+
 
 }
