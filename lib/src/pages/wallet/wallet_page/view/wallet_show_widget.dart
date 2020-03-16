@@ -146,7 +146,7 @@ class ShowWalletView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${symbolQuote?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(symbolQuote?.quoteVo?.price ?? '--')}",
+                    "${symbolQuote?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}",
                     style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                   ),
                 ),

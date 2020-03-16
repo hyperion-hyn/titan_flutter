@@ -16,6 +16,8 @@ class Routes {
   static const String wallet_transfer_token_confirm = '/wallet/account/confirm_transfer';
   static const String wallet_manager = '/wallet/manager';
   static const String wallet_backup_notice_for_creation = 'wallet/create/backup_notice';
+  static const String wallet_show_resume_word = 'wallet/create/show_resume_word';
+  static const String wallet_confirm_resume_word = 'wallet/create/confirm_resume_word';
 
   //contribution
   static const String contribute_tasks_list = '/contribution/tasks';
@@ -57,6 +59,8 @@ class Routes {
         handler: transferConfirmHandler, transitionType: TransitionType.inFromRight);
     router.define(wallet_manager, handler: managerWalletHandler, transitionType: TransitionType.inFromRight);
     router.define(wallet_backup_notice_for_creation, handler: backUpMnemoicNoticeForCreation, transitionType: TransitionType.inFromRight);
+    router.define(wallet_show_resume_word, handler: showResumeWordForCreation, transitionType: TransitionType.inFromRight);
+    router.define(wallet_confirm_resume_word, handler: confirmResumeWordForCreation, transitionType: TransitionType.inFromRight);
 
     //contribution
     router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: TransitionType.inFromRight);
