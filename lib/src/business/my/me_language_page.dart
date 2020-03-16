@@ -1,11 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/global.dart';
 
 class MeLanguagePage extends StatefulWidget {
@@ -57,6 +55,9 @@ class _LanguageState extends State<MeLanguagePage> {
           height: 4,
         ),
         _buildInfoContainer(label: '简体中文', locale: Locale("zh", "CN")),
+        _divider(),
+        // todo: test_繁体
+        _buildInfoContainer(label: '繁体中文', locale: Locale("zh", "HK")),
         _divider(),
         _buildInfoContainer(label: '한국어', locale: Locale("ko")),
         _divider(),
