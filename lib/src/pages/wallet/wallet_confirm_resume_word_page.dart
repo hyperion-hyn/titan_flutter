@@ -6,7 +6,16 @@ import 'package:titan/src/pages/wallet/wallet_finish_create_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
+import 'wallet_backup_confirm_resume_word_page.dart';
+
 class ConfirmResumeWordPage extends StatefulWidget {
+  String createWalletMnemonicTemp;
+  String walletName;
+  String password;
+
+  ConfirmResumeWordPage(
+      this.createWalletMnemonicTemp, this.walletName, this.password);
+
   @override
   State<StatefulWidget> createState() {
     return _ConfirmResumeWordState();
@@ -26,15 +35,15 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
 
   void initMnemonic() {
     logger.i("createWalletMnemonicTemp: TODO!!");
-//    _candidateWords = createWalletMnemonicTemp
-//        .split(" ")
-//        .asMap()
-//        .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
-//        .values
-//        .toList();
-//
-//    _candidateWords.shuffle();
-//    setState(() {});
+    _candidateWords = widget.createWalletMnemonicTemp
+        .split(" ")
+        .asMap()
+        .map((index, word) =>
+            MapEntry(index, CandidateWordVo("$index-$word", word, false)))
+        .values
+        .toList();
+    _candidateWords.shuffle();
+    setState(() {});
   }
 
   @override
@@ -68,12 +77,16 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFB7B7B7)), borderRadius: BorderRadius.circular(16)),
+                      border: Border.all(color: Color(0xFFB7B7B7)),
+                      borderRadius: BorderRadius.circular(16)),
                   child: GridView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3, mainAxisSpacing: 10.0, crossAxisSpacing: 10.0, childAspectRatio: 3),
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 10.0,
+                          crossAxisSpacing: 10.0,
+                          childAspectRatio: 3),
                       itemCount: _selectedResumeWords.length,
                       itemBuilder: (BuildContext context, int index) {
                         var word = _selectedResumeWords[index];
@@ -84,7 +97,8 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                           child: Container(
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  border: Border.all(color: HexColor("#FFB7B7B7")),
+                                  border:
+                                      Border.all(color: HexColor("#FFB7B7B7")),
                                   borderRadius: BorderRadius.circular(12)),
                               child: Text("${index + 1} ${word.text}")),
                         );
@@ -97,7 +111,10 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, mainAxisSpacing: 10.0, crossAxisSpacing: 10.0, childAspectRatio: 3),
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 10.0,
+                        crossAxisSpacing: 10.0,
+                        childAspectRatio: 3),
                     itemCount: _candidateWords.length,
                     itemBuilder: (BuildContext context, int index) {
                       var candidateWordVo = _candidateWords[index];
@@ -107,10 +124,15 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                         },
                         child: Container(
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(color: Color(0xFFE7E7E7), borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(
+                              color: Color(0xFFE7E7E7),
+                              borderRadius: BorderRadius.circular(12)),
                           child: Text(
                             candidateWordVo.text,
-                            style: TextStyle(color: candidateWordVo.selected ? Colors.transparent : Color(0xFF252525)),
+                            style: TextStyle(
+                                color: candidateWordVo.selected
+                                    ? Colors.transparent
+                                    : Color(0xFF252525)),
                           ),
                         ),
                       );
@@ -122,7 +144,8 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
                     disabledColor: Colors.grey[600],
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
@@ -137,7 +160,8 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                         children: <Widget>[
                           Text(
                             S.of(context).continue_text,
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],
                       ),
@@ -180,17 +204,22 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
 
   Future _submit() async {
     logger.w('TODO');
-//    var selectedMnemonitc = "";
-//    _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
-//
-//    logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
-//    if (selectedMnemonitc.trim() == createWalletMnemonicTemp.trim()) {
-//      var wallet = await WalletUtil.storeByMnemonic(
-//          name: createWalletNameTemp, password: createWalletPasswordTemp, mnemonic: createWalletMnemonicTemp.trim());
-//      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishCreatePage(wallet)));
-//    } else {
-//      Fluttertoast.showToast(msg: S.of(context).confirm_mnemonic_incorrect);
+    var selectedMnemonitc = "";
+    _selectedResumeWords.forEach(
+        (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
+
+    logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
+    if (selectedMnemonitc.trim() == widget.createWalletMnemonicTemp.trim()) {
+      var wallet = await WalletUtil.storeByMnemonic(
+          name: widget.walletName,
+          password: widget.password,
+          mnemonic: widget.createWalletMnemonicTemp.trim());
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => FinishCreatePage(wallet)));
+    } else {
+      Fluttertoast.showToast(msg: S.of(context).confirm_mnemonic_incorrect);
 //    }
+    }
   }
 }
 

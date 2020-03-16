@@ -69,6 +69,7 @@ class PrefsKey {
   static final lastPosition = "last_map_position";
 
   static final lastAnnouncement = 'last_announcement';
+  static final newsUpdateTime = 'news_update_time';
 }
 
 enum Status { idle, loading, success, failed, cancelled }

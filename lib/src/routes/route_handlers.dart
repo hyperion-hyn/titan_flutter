@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
+import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
 import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
@@ -62,7 +64,15 @@ var managerWalletHandler = Handler(
         BlocProvider<WalletManagerBloc>(create: (context) => WalletManagerBloc(), child: WalletManagerPage()));
 
 var backUpMnemoicNoticeForCreation = Handler(handlerFunc: (context, params) {
-  return CreateWalletBackupNoticePage();
+  return CreateWalletBackupNoticePage(params['walletName']?.first,params['password']?.first);
+});
+
+var showResumeWordForCreation = Handler(handlerFunc: (context, params) {
+  return ShowResumeWordPage(params['walletName']?.first,params['password']?.first);
+});
+
+var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
+  return ConfirmResumeWordPage(params['mnemonic']?.first,params['walletName']?.first,params['password']?.first);
 });
 
 //contribution

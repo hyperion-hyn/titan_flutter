@@ -63,7 +63,7 @@ class _InformationPageState extends State<InformationPage> {
             NewsPage(),
             WechatOfficialPage(),
           ],
-          physics: NeverScrollableScrollPhysics(),
+          physics: PageScrollPhysics(),
         ),
       ),
     );

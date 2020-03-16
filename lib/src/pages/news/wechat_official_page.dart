@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -18,7 +20,7 @@ class WechatOfficialPage extends StatefulWidget {
   }
 }
 
-class WechatOfficialState extends InfoState<WechatOfficialPage> {
+class WechatOfficialState extends InfoState<WechatOfficialPage> with AutomaticKeepAliveClientMixin {
   static const String CATEGORY = "3";
 
   static const int FIRST_PAGE = 1;
@@ -33,10 +35,13 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   List<InfoItemVo> _InfoItemVoList = [];
+  Map<int, List<InfoItemVo>> _mapInfoItemVoList = Map();
+  Map<int, int> _mapPageVoList = Map();
+  Map<int, bool> _mapPageCompleteVoList = Map();
   NewsApi _newsApi = NewsApi();
 
   int selectedTag; // = PAPER_TAG;
-  int currentPage; // = FIRST_PAGE;
+//  int currentPage; // = FIRST_PAGE;
 
   int selectedVideoTag = DOMESTIC_VIDEO;
 
@@ -45,15 +50,20 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
   @override
   void initState() {
     super.initState();
-//    _getPowerListByPage(FIRST_PAGE);
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      activeTag(PAPER_TAG);
+      selectedTag = PAPER_TAG;
+      _mapPageVoList = {PAPER_TAG: FIRST_PAGE,DOMESTIC_VIDEO: FIRST_PAGE
+        ,FOREIGN_VIDEO: FIRST_PAGE,AUDIO_TAG: FIRST_PAGE};
+      _mapPageCompleteVoList = {PAPER_TAG: false,DOMESTIC_VIDEO: false
+        ,FOREIGN_VIDEO: false,AUDIO_TAG: false};
+      loadDataBloc.add(LoadingEvent());
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
 
     return Padding(
@@ -101,13 +111,18 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
                         if (selectedVideoTag == value) {
                           return;
                         }
+
                         setState(() {
                           selectedVideoTag = value;
-                          currentPage = 1;
+                          _InfoItemVoList = _mapInfoItemVoList[selectedVideoTag];
+
+                          var isComplete = _mapPageCompleteVoList[getSelectTag(selectedTag)];
+                          if(isComplete){
+                            loadDataBloc.add(LoadMoreEmptyEvent());
+                          }else{
+                            loadDataBloc.add(LoadingMoreSuccessEvent());
+                          }
                         });
-//                        isLoading = true;
-//                        _getPowerListByPage(currentPage);
-                        loadDataBloc.add(LoadingEvent());
                       },
                     )
                 ],
@@ -119,13 +134,7 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
               bloc: loadDataBloc,
               onLoadData: () async {
                 try {
-                  await _getPowerListByPage(FIRST_PAGE);
-
-                  if (_InfoItemVoList.length == 0) {
-                    loadDataBloc.add(LoadEmptyEvent());
-                  } else {
-                    loadDataBloc.add(RefreshSuccessEvent());
-                  }
+                  await loadOrRefreshData();
                 } catch (e) {
                   logger.e(e);
                   loadDataBloc.add(LoadFailEvent());
@@ -133,13 +142,7 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
               },
               onRefresh: () async {
                 try {
-                  await _getPowerListByPage(FIRST_PAGE);
-
-                  if (_InfoItemVoList.length == 0) {
-                    loadDataBloc.add(LoadEmptyEvent());
-                  } else {
-                    loadDataBloc.add(RefreshSuccessEvent());
-                  }
+                  await loadOrRefreshData();
                 } catch (e) {
                   logger.e(e);
                   loadDataBloc.add(RefreshFailEvent());
@@ -147,13 +150,18 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
               },
               onLoadingMore: () async {
                 try {
-                  int lastSize = _InfoItemVoList.length;
-                  await _getPowerListByPage(currentPage + 1);
-
-                  if (_InfoItemVoList.length == lastSize) {
+                  var loadMoreList = await _getPowerListByPage(getSelectTag(selectedTag), _mapPageVoList[getSelectTag(selectedTag)] + 1);
+                  if (loadMoreList.length == 0) {
                     loadDataBloc.add(LoadMoreEmptyEvent());
                   } else {
+                    var tempSelectTag = getSelectTag(selectedTag);
+                    var _tempInfoItemVoList = _mapInfoItemVoList[tempSelectTag];
+                    _tempInfoItemVoList.addAll(loadMoreList);
+                    _mapInfoItemVoList[tempSelectTag] = _tempInfoItemVoList;
+                    _InfoItemVoList = _mapInfoItemVoList[tempSelectTag];
                     loadDataBloc.add(LoadingMoreSuccessEvent());
+
+                    setState(() {});
                   }
                 } catch (e) {
                   logger.e(e);
@@ -161,9 +169,13 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
                   if (e is DioError && e.message == 'Http status error [400]') {
                     loadDataBloc.add(LoadMoreEmptyEvent());
                   } else {
+                    _mapPageCompleteVoList[getSelectTag(selectedTag)] = true;
                     loadDataBloc.add(LoadMoreFailEvent());
                   }
                 }
+              },
+              onLoadingMoreEmpty:() {
+                _mapPageCompleteVoList[getSelectTag(selectedTag)] = true;
               },
               child: ListView.separated(
                 itemBuilder: (context, index) {
@@ -175,29 +187,52 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
                 itemCount: _InfoItemVoList.length,
               ),
             ),
-//            child: LoadDataWidget(
-//              isLoading: isLoading,
-//              child: SmartPullRefresh(
-//                onRefresh: () {
-//                  _getPowerListByPage(FIRST_PAGE);
-//                },
-//                onLoading: () {
-//                  _getPowerListByPage(currentPage + 1);
-//                },
-//                child: ListView.separated(
-//                    itemBuilder: (context, index) {
-//                      return buildInfoItem(_InfoItemVoList[index]);
-//                    },
-//                    separatorBuilder: (context, index) {
-//                      return Divider();
-//                    },
-//                    itemCount: _InfoItemVoList.length),
-//              ),
-//            ),
           ),
         ],
       ),
     );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  Future loadOrRefreshData() async{
+    _mapPageCompleteVoList = {PAPER_TAG: false,DOMESTIC_VIDEO: false
+      ,FOREIGN_VIDEO: false,AUDIO_TAG: false};
+    _mapPageVoList = {PAPER_TAG: FIRST_PAGE,DOMESTIC_VIDEO: FIRST_PAGE
+      ,FOREIGN_VIDEO: FIRST_PAGE,AUDIO_TAG: FIRST_PAGE};
+    var paperList;
+    var domesticList;
+    var foreignList;
+    var audioList;
+    bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
+
+    paperList = await _getPowerListByPage(PAPER_TAG, FIRST_PAGE);
+    if(isZh){
+      domesticList = await _getPowerListByPage(DOMESTIC_VIDEO, FIRST_PAGE);
+      foreignList = await _getPowerListByPage(FOREIGN_VIDEO, FIRST_PAGE);
+      audioList = await _getPowerListByPage(AUDIO_TAG, FIRST_PAGE);
+    }
+    _mapInfoItemVoList = {PAPER_TAG: paperList,DOMESTIC_VIDEO: domesticList,
+      FOREIGN_VIDEO: foreignList,AUDIO_TAG: audioList};
+
+    _InfoItemVoList = _mapInfoItemVoList[getSelectTag(selectedTag)];
+
+    if (_InfoItemVoList.length == 0) {
+      loadDataBloc.add(LoadEmptyEvent());
+    } else {
+      loadDataBloc.add(RefreshSuccessEvent());
+    }
+
+    setState(() {});
+  }
+
+  int getSelectTag(int tags){
+    if(tags == VIDEO_TAG){
+      return selectedVideoTag;
+    }else{
+      return selectedTag;
+    }
   }
 
   Widget _buildTag(String text, int value) {
@@ -205,34 +240,31 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
   }
 
   void activeTag(int tagId) {
-    if (selectedTag == tagId) {
+    if (_mapInfoItemVoList.length == 0 || selectedTag == tagId) {
       return;
     }
 
     setState(() {
       selectedTag = tagId;
-      currentPage = 1;
-    });
-    loadDataBloc.add(LoadingEvent());
+      _InfoItemVoList = _mapInfoItemVoList[getSelectTag(selectedTag)];
 
-//      isLoading = true;
-//    _getPowerListByPage(currentPage);
-//    setState(() {});
+      var isComplete = _mapPageCompleteVoList[getSelectTag(selectedTag)];
+      print("complete tags $selectedTag and $selectedVideoTag and iscomplete $isComplete");
+      if(isComplete){
+        loadDataBloc.add(LoadMoreEmptyEvent());
+      }else{
+        loadDataBloc.add(LoadingMoreSuccessEvent());
+      }
+    });
   }
 
-  Future _getPowerListByPage(int page) {
+  Future<List<InfoItemVo>> _getPowerListByPage(int tags,int page) {
     bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
-    var tags;
-    if (selectedTag == VIDEO_TAG && isZh) {
-      tags = selectedVideoTag;
-    } else {
-      tags = selectedTag;
-    }
 
     return _getPowerList(CATEGORY, tags, page, isZh);
   }
 
-  Future _getPowerList(String categories, int tags, int page, bool isZh) async {
+  Future<List<InfoItemVo>> _getPowerList(String categories, int tags, int page, bool isZh) async {
     var requestCatetory = NewsTagUtils.getCategory(isZh, categories);
     var requestTags = NewsTagUtils.getNewsTag(isZh, tags);
 
@@ -247,18 +279,12 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> {
           publisher: "",
           publishTime: newsResponse.date * 1000);
     }).toList();
+
+    print("tags == $tags and page == $page" );
+    _mapPageVoList[tags] = page;
     if (newsVoList.length == 0) {
-      return;
+      return null;
     }
-    if (page == FIRST_PAGE) {
-      _InfoItemVoList.clear();
-      _InfoItemVoList.addAll(newsVoList);
-    } else {
-      _InfoItemVoList.addAll(newsVoList);
-    }
-    currentPage = page;
-    if (mounted) {
-      setState(() {});
-    }
+    return newsVoList;
   }
 }

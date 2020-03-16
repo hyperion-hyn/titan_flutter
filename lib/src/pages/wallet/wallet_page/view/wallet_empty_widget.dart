@@ -3,6 +3,8 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/routes/routes.dart';
 
+import '../../wallet_show_resume_word_page.dart';
+
 class EmptyWalletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -39,8 +41,8 @@ class EmptyWalletView extends StatelessWidget {
               FlatButton(
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
-                onPressed: () {
-                  Application.router.navigateTo(context, Routes.wallet_create + '?entryRouteName=${Routes.root}');
+                onPressed: (){
+                  Application.router.navigateTo(context, Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
                 },
                 child: Container(
                   child: Padding(

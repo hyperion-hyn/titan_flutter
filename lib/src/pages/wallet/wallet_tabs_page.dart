@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 
+import 'wallet_page/wallet_page.dart';
+
 class WalletTabsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -52,11 +54,12 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
         ),
         body: TabBarView(
           children: [
-//            WalletPage(),
+
+            WalletPage(),
 //            Map3NodeIntroductionPage(),
-            Center(
-              child: Text('this is wallet page'),
-            ),
+//            Center(
+//              child: Text('this is wallet page'),
+//            ),
             Center(
               child: Text('this is map3 node page'),
             )

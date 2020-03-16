@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/routes.dart';
 
 class ShowResumeWordPage extends StatefulWidget {
+
+  String walletName;
+  String password;
+  ShowResumeWordPage(this.walletName,this.password);
+
   @override
   State<StatefulWidget> createState() {
     return _ShowResumeWordState();
@@ -14,6 +21,7 @@ class ShowResumeWordPage extends StatefulWidget {
 
 class _ShowResumeWordState extends State<ShowResumeWordPage> {
   List _resumeWords = [];
+  String createWalletMnemonicTemp;
 
   @override
   void initState() {
@@ -24,13 +32,13 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
   Future getMnemonic() async {
     var mnemonic = await WalletUtil.makeMnemonic();
 
-    logger.i("mnemonic:$mnemonic");
-    logger.w('TODO');
-//    if (mnemonic != null && mnemonic.isNotEmpty) {
-//      _resumeWords = mnemonic.split(" ");
-//      createWalletMnemonicTemp = mnemonic;
-//      setState(() {});
-//    }
+//    logger.i("mnemonic:$mnemonic");
+//    logger.w('TODO');
+    if (mnemonic != null && mnemonic.isNotEmpty) {
+      _resumeWords = mnemonic.split(" ");
+      createWalletMnemonicTemp = mnemonic;
+      setState(() {});
+    }
   }
 
   @override
@@ -114,7 +122,10 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmResumeWordPage()));
+                      print("zhuji $createWalletMnemonicTemp");
+                      Application.router.navigateTo(context, Routes.wallet_confirm_resume_word
+                          + '?mnemonic=${createWalletMnemonicTemp}&walletName=${widget.walletName}&password=${widget.password}');
+//                      Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmResumeWordPage("truck impact silver wall hunt orphan squeeze valid boss emotion right hazard")));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

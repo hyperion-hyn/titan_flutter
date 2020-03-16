@@ -18,6 +18,7 @@ class LoadDataContainer extends StatefulWidget {
   final VoidCallback onLoadData;
   final VoidCallback onRefresh;
   final VoidCallback onLoadingMore;
+  final VoidCallback onLoadingMoreEmpty;
 
   LoadDataContainer({
     @required this.child,
@@ -27,6 +28,7 @@ class LoadDataContainer extends StatefulWidget {
     this.onLoadData,
     this.onRefresh,
     this.onLoadingMore,
+    this.onLoadingMoreEmpty
   });
 
   @override
@@ -153,6 +155,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
       controller.loadComplete();
     } else if (state is LoadMoreEmptyState) {
       controller.loadNoData();
+      widget.onLoadingMoreEmpty();
     } else if (state is LoadMoreFailState) {
       controller.loadFailed();
     }

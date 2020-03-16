@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/validator_util.dart';
 
 class CreateAccountPage extends StatefulWidget {
@@ -168,8 +170,11 @@ class _CreateAccountState extends State<CreateAccountPage> {
 
 //                          createWalletNameTemp = walletName;
 //                          createWalletPasswordTemp = password;
-                          Navigator.push(
-                              context, MaterialPageRoute(builder: (context) => CreateWalletBackupNoticePage()));
+                          Application.router.navigateTo(context, Routes.wallet_backup_notice_for_creation
+                              + '?walletName=$walletName&password=$password');
+
+//                          Navigator.push(
+//                              context, MaterialPageRoute(builder: (context) => CreateWalletBackupNoticePage()));
                         }
                       },
                       child: Padding(

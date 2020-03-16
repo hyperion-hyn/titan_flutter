@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
+import 'package:titan/src/routes/routes.dart';
 
 class CreateWalletBackupNoticePage extends StatefulWidget {
   String mnemoic;
+  String walletName;
+  String password;
+
+  CreateWalletBackupNoticePage(this.walletName,this.password);
 
   @override
   State<StatefulWidget> createState() {
@@ -96,6 +102,8 @@ class _CreateWalletBackupNoticePageState extends State<CreateWalletBackupNoticeP
   }
 
   void _next() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowResumeWordPage()));
+    Application.router.navigateTo(context, Routes.wallet_show_resume_word
+        + '?walletName=${widget.walletName}&password=${widget.password}');
+//    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowResumeWordPage()));
   }
 }
