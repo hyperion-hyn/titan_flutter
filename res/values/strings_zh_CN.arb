@@ -396,5 +396,7 @@
   "symptoms": "出现症状",
   "data_source_explain": "红色POI点数据来源于中国国家及各省市卫健委&腾讯新闻等官方数据。黄色POI点数据来源于泰坦用户的贡献。",
   "source_desc_title": "数据源说明",
-  "epidemic_map_short": "新冠病毒地图"
+  "epidemic_map_short": "新冠病毒地图",
+  "search_failed": "搜索异常",
+  "cannot_get_your_location": "获取不到你当前位置"
 }

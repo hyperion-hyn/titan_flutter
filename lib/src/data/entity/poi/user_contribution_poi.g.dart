@@ -1,20 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'confirm_poi_item.dart';
+part of 'user_contribution_poi.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ConfirmPoiItem _$ConfirmPoiItemFromJson(Map<String, dynamic> json) {
-  return ConfirmPoiItem(
+UserContributionPoi _$ConfirmPoiItemFromJson(Map<String, dynamic> json) {
+  return UserContributionPoi(
     json['id'] as String,
     json['name'] as String,
     json['address'] as String,
     json['category'] as String,
-    json['location'] == null
-        ? null
-        : Location.fromJson(json['location'] as Map<String, dynamic>),
+    json['location'] == null ? null : Location.fromJson(json['location'] as Map<String, dynamic>),
     json['ext'] as String,
     json['state'] as int,
     json['phone'] as String,
@@ -25,8 +23,7 @@ ConfirmPoiItem _$ConfirmPoiItemFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ConfirmPoiItemToJson(ConfirmPoiItem instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ConfirmPoiItemToJson(UserContributionPoi instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'address': instance.address,

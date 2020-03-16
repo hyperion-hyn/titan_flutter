@@ -16,7 +16,6 @@ class MeSettingPage extends StatefulWidget {
 class _MeSettingState extends State<MeSettingPage> {
   @override
   Widget build(BuildContext context) {
-    print('xxx setting build');
     var language = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.name;
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.name(context);
     return Scaffold(
@@ -48,7 +47,6 @@ class _MeSettingState extends State<MeSettingPage> {
 }
 
 Widget _buildMemuBar(String title, String subTitle, Function onTap) {
-  print('xxx title $title subTitle $subTitle');
   return Material(
     child: InkWell(
       onTap: onTap,

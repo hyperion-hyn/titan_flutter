@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'poi.dart';
+part of 'mapbox_poi.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PoiEntity _$PoiEntityFromJson(Map<String, dynamic> json) {
-  return PoiEntity(
+MapBoxPoi _$PoiEntityFromJson(Map<String, dynamic> json) {
+  return MapBoxPoi(
     name: json['name'] as String,
     address: json['address'] as String,
     tags: json['tags'] as String,
@@ -17,7 +17,7 @@ PoiEntity _$PoiEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$PoiEntityToJson(PoiEntity instance) => <String, dynamic>{
+Map<String, dynamic> _$PoiEntityToJson(MapBoxPoi instance) => <String, dynamic>{
       'name': instance.name,
       'address': instance.address,
       'tags': instance.tags,

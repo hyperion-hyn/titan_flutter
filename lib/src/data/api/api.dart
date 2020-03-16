@@ -2,15 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
-import '../entity/gaode_model.dart';
+import '../../domain/model/photo_poi_list_model.dart';
 import 'package:titan/src/global.dart';
-import '../entity/gaode_poi.dart';
+import '../entity/poi/photo_simple_poi.dart';
 import '../entity/update.dart';
 import 'package:titan/src/pages/contribution/signal_scan/vo/signal_collector.dart';
 
 class Api {
   ///附近可以分享的位置
-  Future<GaodeModel> searchByGaode({
+  Future<PhotoPoiListResultModel> searchByGaode({
     @required double lat,
     @required double lon,
     int type,
@@ -20,11 +20,11 @@ class Api {
   }) async {
     return await HttpCore.instance.getEntity(
       'map/around',
-      EntityFactory<GaodeModel>((json) {
+      EntityFactory<PhotoPoiListResultModel>((json) {
         var data = (json['data'] as List).map((map) {
-          return GaodePoi.fromJson(map);
+          return SimplePoiWithPhoto.fromJson(map);
         }).toList();
-        var gaodeModel = GaodeModel(page: json['page'], totalPage: json['total_pages'], data: data);
+        var gaodeModel = PhotoPoiListResultModel(page: json['page'], totalPage: json['total_pages'], data: data);
         return gaodeModel;
       }),
       params: {
@@ -39,7 +39,7 @@ class Api {
   }
 
   ///附近可以分享的位置
-  Future<GaodeModel> searchNearByHyn({
+  Future<PhotoPoiListResultModel> searchNearByHyn({
     @required double lat,
     @required double lon,
     String type,
@@ -55,10 +55,10 @@ class Api {
     );
 
     var data = (json['results'] as List).map((map) {
-      return GaodePoi.fromGJson(map);
+      return SimplePoiWithPhoto.fromGJson(map);
     }).toList();
 
-    var gaodeModel = GaodeModel(page: 1, totalPage: 1, data: data);
+    var gaodeModel = PhotoPoiListResultModel(page: 1, totalPage: 1, data: data);
     return gaodeModel;
   }
 

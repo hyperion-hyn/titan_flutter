@@ -23,6 +23,7 @@ void main() {
   //init key for security share
   TitanPlugin.initKeyPair();
 
+  //init injector
   Api api = Api();
   SearchHistoryDao searchDao = SearchHistoryDao();
   Repository repository = Repository(api: api, searchHistoryDao: searchDao);
@@ -42,6 +43,7 @@ void main() {
       child: App(),
       repository: repository,
       searchInteractor: searchInteractor,
+//      mapStore: ScaffoldMapStore(),
     )),
     debugUpload: env.buildType == BuildType.DEV,
   );

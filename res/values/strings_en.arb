@@ -396,5 +396,7 @@
   "symptoms": "Any symptoms",
   "data_source_explain": "The red POIs are collected from China’s National and provincial Health Committee & Tencent News. The yellow POIs are contributed by users.",
   "source_desc_title": "Data source desc",
-  "epidemic_map_short": "NCP MAP"
+  "epidemic_map_short": "NCP MAP",
+  "search_failed": "搜索异常",
+  "cannot_get_your_location": "获取不到你当前位置"
 }

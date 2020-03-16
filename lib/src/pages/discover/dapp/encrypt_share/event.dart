@@ -1,4 +1,4 @@
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 
 class SelectedSharePoiEvent {
   IPoi poi;

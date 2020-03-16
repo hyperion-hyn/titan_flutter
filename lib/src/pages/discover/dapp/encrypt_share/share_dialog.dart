@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/inject/injector.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
 
 import '../../../../global.dart';

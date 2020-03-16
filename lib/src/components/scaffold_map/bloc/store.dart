@@ -1,5 +1,4 @@
-import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 
 import '../dmap/dmap.dart';
 
@@ -11,11 +10,7 @@ class ScaffoldMapStore {
 
   DMapConfigModel dMapConfigModel;
 
-  ScaffoldMapStore._();
-
-  static final ScaffoldMapStore shared = ScaffoldMapStore._();
-
-  void clearAll() {
+  void clear() {
     currentPoi = null;
     searchText = null;
     searchPoiList = [];

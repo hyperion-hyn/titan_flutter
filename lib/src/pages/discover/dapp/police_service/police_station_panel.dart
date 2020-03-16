@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/pages/discover/dapp/police_service/model/model.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/discover/dapp/police_service/model.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
@@ -77,7 +77,7 @@ class PoliceStationPanelState extends State<PoliceStationPanel> {
                   controller: widget.scrollController,
                   child: WillPopScope(
                     onWillPop: () async {
-                      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+                      Application.eventBus.fire(ClearSelectedPoiEvent());
                       return false;
                     },
                     child: Column(
@@ -104,7 +104,8 @@ class PoliceStationPanelState extends State<PoliceStationPanel> {
                               SizedBox(
                                 height: 8,
                               ),
-                              buildHeadItem(Icons.location_on, widget.poi.address, hint: S.of(context).no_detail_address),
+                              buildHeadItem(Icons.location_on, widget.poi.address,
+                                  hint: S.of(context).no_detail_address),
                               if (widget.poi.remark != null && widget.poi.remark.length > 0)
                                 buildHeadItem(Icons.message, widget.poi.remark, hint: ''),
                             ],
@@ -128,7 +129,8 @@ class PoliceStationPanelState extends State<PoliceStationPanel> {
             right: 8,
             child: InkWell(
               onTap: () {
-                BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+//                BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectedPoiEvent());
+                Application.eventBus.fire(ClearSelectedPoiEvent());
               },
               borderRadius: BorderRadius.all(Radius.circular(32.0)),
               highlightColor: Colors.transparent,

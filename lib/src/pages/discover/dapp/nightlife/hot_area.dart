@@ -56,7 +56,7 @@ class HotAreaState extends BaseState<HotArea> {
     return BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
         bloc: BlocProvider.of<ScaffoldMapBloc>(context),
         builder: (context, state) {
-          if (state is InitDMapState) {
+          if (state is FocusingDMapState) {
             return child;
           } else {
             return SizedBox.shrink();

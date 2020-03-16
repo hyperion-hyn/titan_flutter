@@ -6,6 +6,8 @@ class Injector extends InheritedWidget {
   final SearchInteractor searchInteractor;
   final Repository repository;
 
+//  final ScaffoldMapStore mapStore;
+
   final Widget child;
 
   Injector({
@@ -13,6 +15,7 @@ class Injector extends InheritedWidget {
     @required this.child,
     @required this.searchInteractor,
     @required this.repository,
+//    @required this.mapStore,
   }) : super(key: key, child: child);
 
   static Injector of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<Injector>();

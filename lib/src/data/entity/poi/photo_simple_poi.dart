@@ -1,9 +1,7 @@
-import 'dart:math';
-
 import 'package:mapbox_gl/mapbox_gl.dart';
-import './poi_interface.dart';
+import 'poi_interface.dart';
 
-class GaodePoi implements IPoi {
+class SimplePoiWithPhoto implements IPoi {
   @override
   String address;
 
@@ -18,7 +16,7 @@ class GaodePoi implements IPoi {
 
   String photo;
 
-  GaodePoi({
+  SimplePoiWithPhoto({
     this.latLng,
     this.name,
     this.address,
@@ -26,8 +24,8 @@ class GaodePoi implements IPoi {
     this.photo,
   });
 
-  factory GaodePoi.fromJson(Map<String, dynamic> json) {
-    var poi = GaodePoi();
+  factory SimplePoiWithPhoto.fromJson(Map<String, dynamic> json) {
+    var poi = SimplePoiWithPhoto();
     poi.address = json['address'];
     poi.name = json['name'];
     poi.photo = json['photo'];
@@ -35,8 +33,8 @@ class GaodePoi implements IPoi {
     return poi;
   }
 
-  factory GaodePoi.fromGJson(Map<String, dynamic> json) {
-    var poi = GaodePoi();
+  factory SimplePoiWithPhoto.fromGJson(Map<String, dynamic> json) {
+    var poi = SimplePoiWithPhoto();
 
     var location = json['geometry']["location"];
     var lat = location['lat'];

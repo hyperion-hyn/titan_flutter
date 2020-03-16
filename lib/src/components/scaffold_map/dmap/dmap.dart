@@ -7,11 +7,11 @@ import '../scaffold_map.dart';
 typedef ContextFun = double Function(BuildContext context);
 
 class DMapConfigModel {
-  final List<HeavenDataModel> heavenDataModelList;
   final String dMapName;
+  final List<HeavenDataModel> heavenDataModelList;
 
-  final LatLng defaultLocation;
   final double defaultZoom;
+  final LatLng defaultLocation;
 
   final OnMapClickHandle onMapClickHandle;
   final OnMapLongPressHandle onMapLongPressHandle;

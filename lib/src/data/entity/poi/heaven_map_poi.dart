@@ -1,7 +1,7 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import './poi_interface.dart';
 
-class HeavenMapPoiInfo implements IDMapPoi {
+class HeavenMapPoi implements IDMapPoi {
   String id;
   String time;
   String phone;
@@ -21,10 +21,10 @@ class HeavenMapPoiInfo implements IDMapPoi {
   @override
   LatLng latLng;
 
-  HeavenMapPoiInfo();
+  HeavenMapPoi();
 
-  factory HeavenMapPoiInfo.fromMapFeature(Map<String, dynamic> feature) {
-    HeavenMapPoiInfo poi = HeavenMapPoiInfo();
+  factory HeavenMapPoi.fromMapFeature(Map<String, dynamic> feature) {
+    HeavenMapPoi poi = HeavenMapPoi();
 
     poi.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
     var lat = double.parse(feature["properties"]["lat"]);

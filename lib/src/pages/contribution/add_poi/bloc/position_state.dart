@@ -1,5 +1,5 @@
 import 'package:titan/src/pages/contribution/add_poi/model/category_item.dart';
-import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 
 abstract class PositionState extends AllPageState {}
@@ -69,7 +69,7 @@ class ConfirmPositionLoadingState extends PositionState {
 }
 
 class ConfirmPositionPageState extends PositionState {
-  ConfirmPoiItem confirmPoiItem;
+  UserContributionPoi confirmPoiItem;
 
   ConfirmPositionPageState(this.confirmPoiItem);
 }

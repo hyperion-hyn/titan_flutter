@@ -11,7 +11,7 @@ import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 import '../add_poi/position_finish_page.dart';
-import 'entity/confirm_poi_item.dart';
+import '../../../data/entity/poi/user_contribution_poi.dart';
 
 class VerifyPoiPage extends StatefulWidget {
   final LatLng userPosition;
@@ -31,7 +31,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
   MapboxMapController mapController;
   double defaultZoom = 17;
 
-  ConfirmPoiItem confirmPoiItem;
+  UserContributionPoi confirmPoiItem;
 
   bool _isLoadingPageData = true;
   bool _isLoadPageDataEmpty = false;

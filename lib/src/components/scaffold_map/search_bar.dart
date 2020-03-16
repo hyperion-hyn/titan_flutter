@@ -126,7 +126,7 @@ class _SearchBarState extends State<SearchBar> {
                 ),
                 InkWell(
                   onTap: () {
-                    BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
+                    BlocProvider.of<ScaffoldMapBloc>(context).add(DefaultMapEvent());
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
