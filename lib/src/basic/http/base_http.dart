@@ -130,7 +130,7 @@ class BaseHttpCore {
         response = await dio.patch(url, options: options, cancelToken: cancelToken);
       }
     }
-    print('[base_http] --> patch, params:${params}, response:${response}');
+    //print('[base_http] --> url:${url}, \nparams:${params}, response:${response}');
 
     statusCode = response.statusCode;
     if (statusCode < 0) {

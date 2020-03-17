@@ -323,11 +323,11 @@ class _PurchaseState extends State<PurchasePage> {
                         if (isInsufficientBalance()) {
                           Fluttertoast.showToast(msg: S.of(context).balance_lack);
 
-                          Future.delayed(Duration(milliseconds: 337)).then((v) {
+                          /*Future.delayed(Duration(milliseconds: 337)).then((v) {
                             setState(() {
 
                             });;
-                          });
+                          });*/
                         } else {
                           try {
                             showModalBottomSheet(
@@ -508,11 +508,11 @@ class _PurchaseState extends State<PurchasePage> {
     var usdt = getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_USDT_100);
     var input = getBalanceByType(PAY_BALANCE_TYPE_INCOME);
     var current = getBalanceByType(payBalanceType, payBalanceType_recharge);
-//    print('[pay] --> '
-//        '\ninput:${input}, widget.payOrder.amount:${widget.payOrder.amount}'
-//        '\nhyn:${hyn}, widget.payOrder.hynUSDTAmount:${widget.payOrder.hynUSDTAmount}, '
-//        '\nusdt:${usdt}, widget.payOrder.erc20USDTAmount:${widget.payOrder.erc20USDTAmount}'
-//        '\ncurrent:${current}, widget.payOrder.amount:${widget.payOrder.amount}');
+    print('[pay] --> '
+        '\ninput:${input}, widget.payOrder.amount:${widget.payOrder.amount}'
+        '\nhyn:${hyn}, widget.payOrder.hynUSDTAmount:${widget.payOrder.hynUSDTAmount}, '
+        '\nusdt:${usdt}, widget.payOrder.erc20USDTAmount:${widget.payOrder.erc20USDTAmount}'
+        '\ncurrent:${current}, widget.payOrder.amount:${widget.payOrder.amount}');
     if (
         current < widget.payOrder.amount ||
         (hyn < widget.payOrder.hynUSDTAmount && usdt < widget.payOrder.erc20USDTAmount)
