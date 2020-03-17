@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/entity/poi.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 
@@ -94,7 +94,7 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
       word = msgAry[2];
     }
 
-    return PoiEntity(name: name, latLng: latLng, remark: word);
+    return MapBoxPoi(name: name, latLng: latLng, remark: word);
   }
 
   throw Exception('密文无效或已过期');

@@ -7,7 +7,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/category_item.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/confirm_poi_network_item.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/poi_collector.dart';
-import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/pages/discover/dapp/ncov/model/ncov_poi_entity.dart';
 
 class PositionApi {
@@ -83,11 +83,11 @@ class PositionApi {
     return json;
   }
 
-  Future<ConfirmPoiItem> getConfirmData(String address, double lon, double lat, {String lang = "zh-Hans"}) async {
+  Future<UserContributionPoi> getConfirmData(String address, double lon, double lat, {String lang = "zh-Hans"}) async {
     var confirmPoiItem =
-        await HttpCore.instance.getEntity("map-collector/poi/query/v1", EntityFactory<ConfirmPoiItem>((dataList) {
+        await HttpCore.instance.getEntity("map-collector/poi/query/v1", EntityFactory<UserContributionPoi>((dataList) {
       if ((dataList as List).length > 0) {
-        return ConfirmPoiItem.fromJson(dataList[0]);
+        return UserContributionPoi.fromJson(dataList[0]);
       }
       return null;
     }),
@@ -101,18 +101,18 @@ class PositionApi {
     return confirmPoiItem;
   }
 
-  Future<List<ConfirmPoiItem>> mapGetConfirmData(String pid, {String lang = "zh-Hans"}) async {
+  Future<List<UserContributionPoi>> getUserContributionPoiDetail(String pid, {String lang = "zh-Hans"}) async {
     var data = await HttpCore.instance.getEntity(
         "/map-collector/poi/detail/$pid",
-        EntityFactory<List<ConfirmPoiItem>>(
-            (list) => (list as List).map((item) => ConfirmPoiItem.fromJson(item)).toList()),
+        EntityFactory<List<UserContributionPoi>>(
+            (list) => (list as List).map((item) => UserContributionPoi.fromJson(item)).toList()),
         options: RequestOptions(headers: {
           "Lang": lang,
         }, contentType: "application/json"));
     return data;
   }
 
-  Future<bool> postConfirmPoiData(String address, int answer, ConfirmPoiItem confirmPoiItem,
+  Future<bool> postConfirmPoiData(String address, int answer, UserContributionPoi confirmPoiItem,
       {String lang = "zh-Hans"}) async {
     var poiNetItem = ConfirmPoiNetworkItem(
         confirmPoiItem.id,

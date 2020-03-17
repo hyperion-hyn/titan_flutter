@@ -5,7 +5,6 @@ import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 
 import 'bloc/bloc.dart';

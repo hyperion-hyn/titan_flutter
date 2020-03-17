@@ -1,13 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
-import 'package:titan/src/data/entity/search_history_aware_poi.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 
-part 'confirm_poi_item.g.dart';
+import './search_history_aware_poi.dart';
+
+part 'user_contribution_poi.g.dart';
 
 @JsonSerializable()
-class ConfirmPoiItem with SearchHistoryAwarePoi implements IPoi {
+class UserContributionPoi with SearchHistoryAwarePoi implements IPoi {
   @JsonKey(name: 'id')
   String id;
 
@@ -44,12 +45,12 @@ class ConfirmPoiItem with SearchHistoryAwarePoi implements IPoi {
   @JsonKey(name: 'website')
   String website;
 
-  ConfirmPoiItem.empty();
+  UserContributionPoi.empty();
 
-  ConfirmPoiItem(this.id, this.name, this.address, this.category, this.location, this.ext, this.state, this.phone,
+  UserContributionPoi(this.id, this.name, this.address, this.category, this.location, this.ext, this.state, this.phone,
       this.workTime, this.images, this.postcode, this.website);
 
-  factory ConfirmPoiItem.fromJson(Map<String, dynamic> srcJson) => _$ConfirmPoiItemFromJson(srcJson);
+  factory UserContributionPoi.fromJson(Map<String, dynamic> srcJson) => _$ConfirmPoiItemFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$ConfirmPoiItemToJson(this);
 
@@ -64,7 +65,7 @@ class ConfirmPoiItem with SearchHistoryAwarePoi implements IPoi {
     return null;
   }
 
-  ConfirmPoiItem.setPid(this.id, this.location);
+  UserContributionPoi.setPid(this.id, this.location);
 }
 
 @JsonSerializable()

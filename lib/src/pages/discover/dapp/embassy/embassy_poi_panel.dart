@@ -4,7 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/pages/discover/dapp/embassy/model/model.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/discover/dapp/embassy/entities.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
@@ -79,7 +80,8 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
                   controller: widget.scrollController,
                   child: WillPopScope(
                     onWillPop: () async {
-                      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+//                      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectedPoiEvent());
+                      Application.eventBus.fire(ClearSelectedPoiEvent());
                       return false;
                     },
                     child: Column(
@@ -140,7 +142,8 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
             right: 8,
             child: InkWell(
               onTap: () {
-                BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+//                BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectedPoiEvent());
+                Application.eventBus.fire(ClearSelectedPoiEvent());
               },
               borderRadius: BorderRadius.all(Radius.circular(32.0)),
               highlightColor: Colors.transparent,

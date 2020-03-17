@@ -1,15 +1,40 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/components/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dapp/encrypt_share/share_dialog.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
+import 'package:titan/src/pages/discover/dapp/encrypt_share/share_pois_panel.dart';
 
 import 'event.dart';
+
+final encryptShareDMapConfigModel = DMapConfigModel(
+  dMapName: 'encryptShare',
+  onMapClickHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
+    print('on click encrypt share');
+    return true;
+  },
+  onMapLongPressHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
+    print('on long press encrypt share');
+    return true;
+  },
+  alwaysShowPanel: true,
+  panelDraggable: true,
+  showCenterMarker: true,
+  panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
+    return SharePoisPanel(scrollController: scrollController);
+  },
+  panelPaddingTop: (context) => MediaQuery.of(context).size.height * 0.45,
+  panelAnchorHeight: (context) => MediaQuery.of(context).size.height * 0.55,
+  panelCollapsedHeight: (context) => 220,
+);
 
 class EncryptShare extends StatefulWidget {
   @override
@@ -57,7 +82,7 @@ class EncryptShareState extends State<EncryptShare> {
           children: <Widget>[
             Container(), //need a container to expand.
             //top bar
-            if (state is! MapRouteState)
+            if (state is! FocusingRouteState)
               Material(
                 color: Colors.transparent,
                 child: Container(

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/data/entity/heaven_map_poi_info.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/entity/poi/heaven_map_poi.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
 class NightLifePanel extends StatefulWidget {
-  final HeavenMapPoiInfo poi;
+  final HeavenMapPoi poi;
   final ScrollController scrollController;
 
   NightLifePanel({this.poi, this.scrollController});
@@ -48,7 +48,8 @@ class NightLifePanelState extends State<NightLifePanel> {
                 ),
                 InkWell(
                   onTap: () {
-                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+//                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectedPoiEvent());
+                    Application.eventBus.fire(ClearSelectedPoiEvent());
                   },
                   borderRadius: BorderRadius.all(Radius.circular(32.0)),
                   highlightColor: Colors.transparent,

@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import '../bloc/bloc.dart';
-import 'package:titan/src/data/entity/poi.dart';
+import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../../global.dart';
 
-class PoiPanel extends StatefulWidget {
-  final PoiEntity selectedPoiEntity;
+class SimplePoiPanel extends StatefulWidget {
+  final MapBoxPoi selectedPoiEntity;
   final ScrollController scrollController;
 
-  PoiPanel({this.selectedPoiEntity, this.scrollController});
+  final Function onClose;
+
+  SimplePoiPanel({this.selectedPoiEntity, this.scrollController, this.onClose});
 
   @override
   State<StatefulWidget> createState() {
-    return _PoiPanelState();
+    return _SimplePoiPanelState();
   }
 }
 
-class _PoiPanelState extends State<PoiPanel> {
+class _SimplePoiPanelState extends State<SimplePoiPanel> {
   final GlobalKey _poiHeaderKey = GlobalKey(debugLabel: 'poiHeaderKey');
 
   double getHeaderHeight() {
@@ -63,7 +63,10 @@ class _PoiPanelState extends State<PoiPanel> {
         controller: widget.scrollController,
         child: WillPopScope(
           onWillPop: () async {
-            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+//            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectedPoiEvent());
+            if (widget.onClose != null) {
+              widget.onClose();
+            }
             return false;
           },
           child: Stack(
@@ -118,9 +121,7 @@ class _PoiPanelState extends State<PoiPanel> {
                 top: 4,
                 right: 8,
                 child: InkWell(
-                  onTap: () {
-                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                  },
+                  onTap: widget.onClose,
                   borderRadius: BorderRadius.all(Radius.circular(32.0)),
                   highlightColor: Colors.transparent,
                   child: Ink(

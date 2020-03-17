@@ -1,7 +1,7 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 
-class EmbassyPoi implements IDMapPoi {
+class PoliceStationPoi implements IDMapPoi {
   @override
   String address;
 
@@ -11,24 +11,23 @@ class EmbassyPoi implements IDMapPoi {
   @override
   String remark;
 
-  ///部门
-  String department;
-
-  ///官网
-  String website;
-
-  ///电话
-  String telephone;
-
   @override
   LatLng latLng;
 
+
+  ///部门
+  String department;
+  ///电话
+  String telephone;
+  ///地区
+  String district;
+
   String id;
 
-  EmbassyPoi();
+  PoliceStationPoi();
 
-  factory EmbassyPoi.fromMapFeature(Map<String, dynamic> feature) {
-    EmbassyPoi poi = EmbassyPoi();
+  factory PoliceStationPoi.fromMapFeature(Map<String, dynamic> feature) {
+    PoliceStationPoi poi = PoliceStationPoi();
 
     poi.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
     var lat = double.parse(feature["properties"]["lat"]);
@@ -37,15 +36,10 @@ class EmbassyPoi implements IDMapPoi {
     poi.name = feature["properties"]["name"];
     poi.telephone = feature["properties"]["telephone"];
     poi.department = feature["properties"]["department"];
-    poi.website = feature["properties"]["website"];
+    poi.district = feature["properties"]["district"];
     poi.remark = feature["properties"]["remark"];
     poi.address = feature["properties"]["address"];
 
     return poi;
-  }
-
-  @override
-  String toString() {
-    return 'EmbassyPoi{address: $address, name: $name, remark: $remark, department: $department, website: $website, telephone: $telephone, latLng: $latLng, id: $id}';
   }
 }

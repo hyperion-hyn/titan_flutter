@@ -49,7 +49,9 @@ class FailPanel extends StatelessWidget {
   final bool showCloseBtn;
   final ScrollController scrollController;
 
-  FailPanel({this.message, this.showCloseBtn, this.scrollController});
+  final Function onClose;
+
+  FailPanel({this.message, this.showCloseBtn, this.scrollController, this.onClose});
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +84,7 @@ class FailPanel extends StatelessWidget {
                 right: 8,
                 top: 4,
                 child: InkWell(
-                  onTap: () {
-                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                  },
+                  onTap: onClose,
                   borderRadius: BorderRadius.all(Radius.circular(32.0)),
                   highlightColor: Colors.transparent,
                   child: Ink(

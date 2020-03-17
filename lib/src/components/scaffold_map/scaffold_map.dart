@@ -12,17 +12,19 @@ import 'package:titan/src/components/scaffold_map/bottom_panels/gaode_poi_panel.
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/entity/gaode_poi.dart';
-import 'package:titan/src/data/entity/poi.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
-import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
+import 'package:titan/src/data/entity/poi/photo_simple_poi.dart';
+import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/search_history_aware_poi.dart';
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/search/search_page.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 import 'bloc/bloc.dart';
 import 'bottom_panels/common_panel.dart';
-import 'bottom_panels/poi_panel.dart';
+import 'bottom_panels/simple_poi_panel.dart';
 import 'bottom_panels/route_panel.dart';
 import 'bottom_panels/search_list_panel.dart';
 import 'bottom_panels/user_poi_panel.dart';
@@ -52,21 +54,26 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 //  ScrollController _bottomChildScrollController = ScrollController();
   final GlobalKey poiDraggablePanelKey = GlobalKey(debugLabel: 'poiDraggablePanelKey');
 
-  StreamSubscription _eventbusSubcription;
+//  ScaffoldMapStore _store = ScaffoldMapStore();
+
+  StreamSubscription _eventbusSubscription;
 
   double topBarHeight = 0;
+
+  List<ScaffoldMapState> _stateStack = [];
+  ScaffoldMapState currentState;
 
   @override
   void initState() {
     super.initState();
-    _eventbusSubcription = Application.eventBus.on().listen(eventBusListener);
+    _eventbusSubscription = Application.eventBus.on().listen(eventBusListener);
   }
 
   void eventBusListener(event) async {
     if (event is GoSearchEvent) {
-      var mapScenseState = Keys.mapContainerKey.currentState as MapContainerState;
-      var camraPosition = await mapScenseState.mapboxMapController.getCameraPosition();
-      var center = camraPosition.target;
+      var mapSceneState = Keys.mapContainerKey.currentState as MapContainerState;
+      var cameraPosition = await mapSceneState.mapboxMapController.getCameraPosition();
+      var center = cameraPosition.target;
 
       var searchResult = await Navigator.push(
           context,
@@ -76,25 +83,27 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                     searchText: event.searchText,
                   )));
 
-      BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
+      BlocProvider.of<ScaffoldMapBloc>(context).add(DefaultMapEvent());
 
       if (searchResult is String) {
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(searchText: searchResult, center: center));
-      } else if (searchResult is PoiEntity || searchResult is ConfirmPoiItem) {
+      } else if (searchResult is MapBoxPoi || searchResult is UserContributionPoi) {
         var poi = searchResult;
-        if (searchResult.address == null) {
+        if ((searchResult as SearchHistoryAwarePoi).isHistory) {
+          BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
+        } else {
           //we need to full fil all properties
           BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
-        } else {
-          BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
         }
       }
+    } else if (event is ClearSelectedPoiEvent) {
+      existPoiState();
     }
   }
 
   @override
   void dispose() {
-    _eventbusSubcription.cancel();
+    _eventbusSubscription.cancel();
     super.dispose();
   }
 
@@ -108,184 +117,247 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
     //5. bottom sheet
     //6. bottom operation bar
     //logic:  use prop to update each scene. scene use bloc to update data/state.
+    return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(listener: (context, state) {
+      print('xxxx BlocListener 111 $state');
+      if (state is FocusingSearchState || state is FocusingDMapState) {
+        //set as root
+        _stateStack.clear();
+        _stateStack.add(state);
+      } else if (state is FocusingPoiState) {
+        if (_stateStack.last is FocusingPoiState) {
+          _stateStack.removeLast();
+        }
+        _stateStack.add(state);
+      } else if (state is FocusingRouteState) {
+        if (_stateStack.last is FocusingRouteState) {
+          _stateStack.removeLast();
+        }
+        _stateStack.add(state);
+      }
+    }, child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
+      builder: (context, state) {
+        return buildByState(state);
+      },
+    ));
+  }
+
+  Widget buildByState(ScaffoldMapState state) {
+    print('xxxx buildByState $state');
     return LayoutBuilder(builder: (ctx, BoxConstraints boxConstraints) {
-      return BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(builder: (context, state) {
-        var languageCode = Localizations.localeOf(context).languageCode;
-        double maxHeight = boxConstraints.biggest.height;
+      var languageCode = Localizations.localeOf(context).languageCode;
+      double maxHeight = boxConstraints.biggest.height;
 
-        //---------------------------
-        //set map
-        //---------------------------
-        bool showCenterMarker = false;
-        String style;
-        if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
-          style = Const.kWhiteMapStyleCn;
-        } else {
-          style = Const.kWhiteMapStyle;
-        }
+      //---------------------------
+      //set map
+      //---------------------------
+      String style;
+      if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+        style = Const.kWhiteMapStyleCn;
+      } else {
+        style = Const.kWhiteMapStyle;
+      }
 
-        if (state.dMapConfigModel?.showCenterMarker == true) {
-          showCenterMarker = true;
-        }
+      //---------------------------
+      //set topbar
+      //---------------------------
+      bool showTopBar = false;
+      VoidCallback onTopBarBack;
+      VoidCallback onTopBarClose;
+      String title = '';
+      if (state is FocusingSearchState) {
+        showTopBar = true;
+        title = state.searchText;
+        onTopBarClose = () {
+          BlocProvider.of<ScaffoldMapBloc>(context).add(DefaultMapEvent());
+        };
+        onTopBarBack = () {
+          //TODO
+          logger.w('TODO back from search');
+//            Application.eventBus.fire(GoSearchEvent());
+        };
+      }
 
-        //---------------------------
-        //set topbar
-        //---------------------------
-        bool showTopBar = false;
-        VoidCallback onTopBarBack;
-        VoidCallback onTopBarClose;
-        String title = '';
-        if (state is SearchingPoiByTextState || state is SearchPoiByTextSuccessState) {
-          showTopBar = true;
-          title = state.getSearchText();
-          onTopBarClose = () {
-            BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
-          };
-          onTopBarBack = () {
-            Application.eventBus.fire(GoSearchEvent());
-          };
-        }
+      //---------------------------
+      //set search bar
+      //---------------------------
+      String searchText = '';
+      bool showSearchBar = false;
+      if (state is FocusingSearchState) {
+        showSearchBar = true;
+        searchText = state.searchText;
+      }
 
-        //---------------------------
-        //set search bar
-        //---------------------------
-        String searchText = '';
-        bool showSearchBar = false;
-        if (state is SearchingPoiByTextState || state is SearchPoiByTextSuccessState) {
-          showSearchBar = true;
-          searchText = state.getSearchText();
-        }
+      //---------------------------
+      //set route
+      //---------------------------
+      bool showRoute = false;
+      IPoi fromPoi;
+      IPoi toPoi;
+      String profile;
+      String language;
+      RouteDataModel routeDataModel;
+      if (state is FocusingRouteState) {
+        showRoute = true;
+        fromPoi = state.fromPoi;
+        toPoi = state.toPoi;
+        profile = state.profile;
+        language = state.language;
+        routeDataModel = state.routeDataModel;
+      }
 
-        //---------------------------
-        //set route
-        //---------------------------
-        bool showRoute = false;
-        IPoi fromPoi;
-        IPoi toPoi;
-        String profile;
-        String language;
-        RouteDataModel routeDataModel;
-        if (state is RoutingState) {
-          showRoute = true;
-          fromPoi = state.fromPoi;
-          toPoi = state.toPoi;
-          profile = state.profile;
-          language = state.language;
-        } else if (state is RouteSuccessState) {
-          showRoute = true;
-          fromPoi = state.fromPoi;
-          toPoi = state.toPoi;
-          profile = state.profile;
-          language = state.language;
-          routeDataModel = state.routeDataModel;
-        } else if (state is RouteFailState) {
-          showRoute = true;
-          fromPoi = state.fromPoi;
-          toPoi = state.toPoi;
-          profile = state.profile;
-          language = state.language;
-        }
+      //---------------------------
+      //set the bottom sheet
+      //---------------------------
+      double topPadding = MediaQuery.of(context).padding.top;
+      bool draggable = false;
+      SheetPanelBuilder panelBuilder;
+      double collapsedHeight = 140;
+      double anchorHeight = maxHeight * 0.55;
+      double initHeight = 0;
 
-        //---------------------------
-        //set the bottom sheet
-        //---------------------------
-        double topPadding = MediaQuery.of(context).padding.top;
-        bool draggable = false;
-        SheetPanelBuilder panelBuilder;
-        double collapsedHeight = 140;
-        double anchorHeight = maxHeight * 0.55;
-        double initHeight = 0;
-
-        if (state is InitialScaffoldMapState) {
-          //nothing
-        } else if (state is SearchingPoiState) {
-          //search POI detail
+      if (state is DefaultScaffoldMapState) {
+        //nothing
+      } else if (state is FocusingPoiState) {
+        //search POI detail
+        if (state.status == Status.loading) {
           panelBuilder = (context, controller) => LoadingPanel(scrollController: controller);
-          initHeight = collapsedHeight;
-        } else if (state is ShowPoiState) {
+        } else if (state.status == Status.success) {
           draggable = true;
-          //dMap poi panel (by config)
-          if (state.dMapConfigModel?.panelBuilder != null && state.getCurrentPoi() is IDMapPoi) {
-            panelBuilder =
-                (context, controller) => state.dMapConfigModel.panelBuilder(context, controller, state.getCurrentPoi());
 
-            if (state.dMapConfigModel.panelPaddingTop != null) {
-              topPadding = state.dMapConfigModel?.panelPaddingTop(context);
+          //check is dmap poi
+          if (state.poi is IDMapPoi) {
+            for (var st in _stateStack) {
+              if (st is FocusingDMapState) {
+                if (st.dMapConfigModel?.panelBuilder != null) {
+                  panelBuilder =
+                      (context, controller) => st.dMapConfigModel.panelBuilder(context, controller, state.poi);
+
+                  if (st.dMapConfigModel?.panelPaddingTop != null) {
+                    topPadding = st.dMapConfigModel?.panelPaddingTop(context);
+                  }
+                }
+                break;
+              }
             }
           }
 
           if (panelBuilder == null) {
-            if (state.getCurrentPoi() is PoiEntity) {
-              panelBuilder = (context, controller) => PoiPanel(
+            if (state.poi is MapBoxPoi) {
+              panelBuilder = (context, controller) => SimplePoiPanel(
                     scrollController: controller,
-                    selectedPoiEntity: state.getCurrentPoi(),
+                    selectedPoiEntity: state.poi,
+                    onClose: existPoiState,
                   );
-            } else if (state.getCurrentPoi() is GaodePoi) {
+            } else if (state.poi is SimplePoiWithPhoto) {
               panelBuilder = (context, controller) => GaodePoiPanel(
                     scrollController: controller,
-                    poi: state.getCurrentPoi(),
+                    poi: state.poi,
+                    onClose: existPoiState,
                   );
-            } else if (state.getCurrentPoi() is ConfirmPoiItem) {
+            } else if (state.poi is UserContributionPoi) {
               panelBuilder = (context, controller) => UserPoiPanel(
                     scrollController: controller,
-                    selectedPoiEntity: state.getCurrentPoi(),
+                    selectedPoiEntity: state.poi,
+                    onClose: existPoiState,
                   );
             }
           }
-          initHeight = collapsedHeight;
-        } else if (state is SearchPoiFailState) {
-          //search poi fail
+        } else if (state.status == Status.failed) {
+          panelBuilder = (context, controller) => FailPanel(
+                scrollController: controller,
+                message: state.message,
+                onClose: existPoiState,
+              );
+        }
+        initHeight = collapsedHeight;
+      } else if (state is FocusingSearchState) {
+        if (state.status == Status.failed) {
           panelBuilder = (context, controller) => FailPanel(
                 message: state.message,
                 showCloseBtn: true,
                 scrollController: controller,
+                onClose: existSearchState,
               );
+
           initHeight = collapsedHeight;
-        } else if (state is SearchingPoiByTextState) {
-          //search POI by text.
+        } else if (state.status == Status.loading) {
           panelBuilder = (context, controller) => LoadingPanel(scrollController: controller);
           initHeight = collapsedHeight;
-        } else if (state is SearchPoiByTextSuccessState) {
-          //search success
+        } else if (state.status == Status.success) {
           draggable = true;
           topPadding = topBarHeight + 12; //minus "drag" height 12
-          if (state.getSearchPoiList() != null && state.getSearchPoiList().length > 0) {
+
+          panelBuilder = (context, controller) => SearchListPanel(
+                scrollController: controller,
+                pois: state.pois,
+                onClose: existSearchState,
+                onTapPoi: onShowDetailOfSearchItem,
+              );
+
+          if (state.pois != null && state.pois.length > 0) {
             initHeight = anchorHeight;
           } else {
             initHeight = collapsedHeight;
           }
-
-          panelBuilder =
-              (context, controller) => SearchListPanel(scrollController: controller, pois: state.getSearchPoiList());
-        } else if (state is SearchPoiByTextFailState) {
-          //search fail
-          panelBuilder = (context, controller) => FailPanel(
-                message: state.message,
-                showCloseBtn: true,
-                scrollController: controller,
-              );
-          initHeight = collapsedHeight;
-        } else if (state is RoutingState) {
-          //route on progress
+        }
+      } else if (state is FocusingRouteState) {
+        //route on progress
+        if (state.status == Status.loading) {
           panelBuilder = (context, controller) => LoadingPanel(
                 scrollController: controller,
               );
           initHeight = collapsedHeight;
-        } else if (state is RouteSuccessState) {
-          //route success
+        } else if (state.status == Status.failed) {
+          panelBuilder = (context, controller) => FailPanel(
+                message: state.message,
+                showCloseBtn: false,
+                scrollController: controller,
+                onClose: existRouteState,
+              );
+          initHeight = collapsedHeight;
+        } else if (state.status == Status.success) {
           panelBuilder = (context, controller) => RoutePanel(
                 routeDataModel: routeDataModel,
                 profile: profile,
                 scrollController: controller,
               );
           initHeight = collapsedHeight;
-        } else if (state is RouteFailState) {
-          //route fail
-          panelBuilder = (context, controller) => FailPanel(
-                message: state.message,
-                showCloseBtn: false,
-                scrollController: controller,
-              );
+        }
+      }
+
+      //---------------------------
+      //set opt bar
+      //---------------------------
+      bool showOptBar = false;
+      IPoi currentPoi;
+      if (state is FocusingPoiState) {
+        currentPoi = state.poi;
+        if (state.status == Status.success) {
+          showOptBar = true;
+        }
+      }
+
+      //---------------------------
+      // dMap
+      //---------------------------
+      List<HeavenDataModel> heavenModelList;
+      OnMapClickHandle onMapClickHandle;
+      OnMapLongPressHandle onMapLongPressHandle;
+      bool showCenterMarker = false;
+      if (state is FocusingDMapState) {
+        heavenModelList = state.dMapConfigModel?.heavenDataModelList;
+        onMapClickHandle = state.dMapConfigModel?.onMapClickHandle;
+        onMapLongPressHandle = state.dMapConfigModel?.onMapLongPressHandle;
+        showCenterMarker = state.dMapConfigModel?.showCenterMarker == true;
+
+        if (state.dMapConfigModel?.panelDraggable == true) {
+          draggable = true;
+        }
+        if (state.dMapConfigModel?.panelAnchorHeight != null) {
+          anchorHeight = state.dMapConfigModel?.panelAnchorHeight(context);
+        }
+        if (state.dMapConfigModel?.panelCollapsedHeight != null) {
+          collapsedHeight = state.dMapConfigModel?.panelCollapsedHeight(context);
           initHeight = collapsedHeight;
         }
 
@@ -299,128 +371,99 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           }
           initHeight = collapsedHeight;
         }
-        if (state.dMapConfigModel?.panelDraggable == true) {
-          draggable = true;
-        }
-        if (state.dMapConfigModel?.panelAnchorHeight != null) {
-          anchorHeight = state.dMapConfigModel?.panelAnchorHeight(context);
-        }
-        if (state.dMapConfigModel?.panelCollapsedHeight != null) {
-          collapsedHeight = state.dMapConfigModel?.panelCollapsedHeight(context);
-          initHeight = collapsedHeight;
-        }
+      }
 
-        double panelMax = (maxHeight - topPadding) / maxHeight;
-        double panelMin = collapsedHeight / maxHeight;
-        double panelAnchor = anchorHeight / maxHeight;
-        double panelInitSize = initHeight / maxHeight;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
-        });
+      double panelMax = (maxHeight - topPadding) / maxHeight;
+      double panelMin = collapsedHeight / maxHeight;
+      double panelAnchor = anchorHeight / maxHeight;
+      double panelInitSize = initHeight / maxHeight;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
+      });
 
-        //---------------------------
-        //set opt bar
-        //---------------------------
-        bool showOptBar = false;
-        if (state is ShowPoiState) {
-          showOptBar = true;
-        }
-
-        //---------------------------
-        // dMap
-        //---------------------------
-        List<HeavenDataModel> heavenModelList = state.dMapConfigModel?.heavenDataModelList;
-        OnMapClickHandle onMapClickHandle;
-        OnMapLongPressHandle onMapLongPressHandle;
-        onMapClickHandle = state.dMapConfigModel?.onMapClickHandle;
-        onMapLongPressHandle = state.dMapConfigModel?.onMapLongPressHandle;
-
-        return Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
+      return Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
 //            Container(), //need a container to expand the stack???
-            MapContainer(
-              key: Keys.mapContainerKey,
-              heavenDataList: heavenModelList,
+          MapContainer(
+            key: Keys.mapContainerKey,
+            heavenDataList: heavenModelList,
 //              bottomPanelController: widget.poiBottomSheetController,
-              style: style,
-              routeDataModel: routeDataModel,
-              mapClickHandle: onMapClickHandle,
-              mapLongPressHandle: onMapLongPressHandle,
-              showCenterMarker: showCenterMarker,
-              languageCode: languageCode,
-            ),
+            style: style,
+            routeDataModel: routeDataModel,
+            mapClickHandle: onMapClickHandle,
+            mapLongPressHandle: onMapLongPressHandle,
+            showCenterMarker: showCenterMarker,
+            languageCode: languageCode,
+          ),
 //          if (showSearchBar)
 //            SearchBar(
 //              searchText: searchText,
 //              bottomPanelController: widget.poiBottomSheetController,
 //            ),
-            if (showRoute)
-              RouteBar(
-                fromName: fromPoi.name,
-                toName: toPoi.name,
-                profile: profile,
-                onBack: () {
-                  BlocProvider.of<ScaffoldMapBloc>(context).add(ExistRouteEvent());
-                },
-                onRoute: (String toProfile) {
-                  BlocProvider.of<ScaffoldMapBloc>(context).add(RouteEvent(
-                    fromPoi: fromPoi,
-                    toPoi: toPoi,
-                    profile: toProfile,
-                    language: language,
-                  ));
-                },
-              ),
+          if (showRoute)
+            RouteBar(
+              fromName: fromPoi.name,
+              toName: toPoi.name,
+              profile: profile,
+              onBack: existRouteState,
+              onRoute: (String toProfile) {
+                BlocProvider.of<ScaffoldMapBloc>(context).add(RouteEvent(
+                  fromPoi: fromPoi,
+                  toPoi: toPoi,
+                  profile: toProfile,
+                  language: language,
+                ));
+              },
+            ),
 
-            /* bottom sheet */
-            myWidget.DraggableScrollableActuator(
-              child: NotificationListener<HeaderHeightNotification>(
+          /* bottom sheet */
+          myWidget.DraggableScrollableActuator(
+            child: NotificationListener<HeaderHeightNotification>(
+              onNotification: (notification) {
+                //hack, not elegant
+                var draggableSheet = poiDraggablePanelKey.currentWidget as myWidget.DraggableScrollableSheet;
+                draggableSheet.initialChildSize = notification.height / maxHeight;
+                draggableSheet.minChildSize = notification.height / maxHeight;
+                myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
+                return true;
+              },
+              child: NotificationListener<myWidget.DraggableScrollableNotification>(
                 onNotification: (notification) {
-                  //hack, not elegant
-                  var draggableSheet = poiDraggablePanelKey.currentWidget as myWidget.DraggableScrollableSheet;
-                  draggableSheet.initialChildSize = notification.height / maxHeight;
-                  draggableSheet.minChildSize = notification.height / maxHeight;
-                  myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
-                  return true;
+                  if (notification.extent <= notification.anchorExtent) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      (Keys.mapContainerKey.currentState as MapContainerState).onDragPanelYChange(notification.extent);
+                    });
+                  }
+                  return false;
                 },
-                child: NotificationListener<myWidget.DraggableScrollableNotification>(
-                  onNotification: (notification) {
-                    if (notification.extent <= notification.anchorExtent) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        (Keys.mapContainerKey.currentState as MapContainerState)
-                            .onDragPanelYChange(notification.extent);
-                      });
-                    }
-                    return false;
-                  },
-                  child: myWidget.DraggableScrollableSheet(
-                    key: poiDraggablePanelKey,
-                    maxChildSize: panelMax,
-                    anchorSize: panelAnchor,
-                    minChildSize: panelMin,
-                    initialChildSize: panelInitSize,
-                    draggable: draggable,
-                    expand: true,
-                    builder: (BuildContext ctx, ScrollController scrollController) {
-                      var panel;
-                      if (panelBuilder != null) {
-                        panel = panelBuilder(ctx, scrollController) ??
-                            SingleChildScrollView(
-                              controller: scrollController,
-                              child: Container(),
-                            );
-                      }
-                      return panel ??
+                child: myWidget.DraggableScrollableSheet(
+                  key: poiDraggablePanelKey,
+                  maxChildSize: panelMax,
+                  anchorSize: panelAnchor,
+                  minChildSize: panelMin,
+                  initialChildSize: panelInitSize,
+                  draggable: draggable,
+                  expand: true,
+                  builder: (BuildContext ctx, ScrollController scrollController) {
+                    var panel;
+                    if (panelBuilder != null) {
+                      panel = panelBuilder(ctx, scrollController) ??
                           SingleChildScrollView(
                             controller: scrollController,
                             child: Container(),
                           );
-                    },
-                  ),
+                    }
+                    return panel ??
+                        SingleChildScrollView(
+                          controller: scrollController,
+                          child: Container(),
+                        );
+                  },
                 ),
               ),
             ),
+          ),
 
 //          if (showTopBar)
 //            TopBar(
@@ -434,37 +477,71 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 ////              });
 //              },
 //            ),
-            if (showOptBar)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: OperationBar(
-                  onRouteTap: tapRoute,
-                ),
+          if (showOptBar)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: OperationBar(
+                onRouteTap: () => enterRoute(currentPoi),
               ),
-          ],
-        );
-      });
+            ),
+        ],
+      );
     });
   }
 
-  void tapRoute() async {
-    var currentPoi = ScaffoldMapStore.shared.currentPoi;
-    var location = await getMapState?.mapboxMapController?.lastKnownLocation();
+  void existPoiState() {
+    for (var state in _stateStack) {
+      if (state is FocusingSearchState) {
+        //TODO  back from search list
+        logger.w('TODO close poi of search list');
+        return;
+      } else if (state is FocusingDMapState) {
+        //TODO  back from dmap
+        logger.w('TODO close poi of dmap');
+        return;
+      }
+    }
+    //no stack, just back to default
+    getBloc()?.add(DefaultMapEvent());
+  }
+
+  ScaffoldMapBloc getBloc() {
+    return BlocProvider.of<ScaffoldMapBloc>(context);
+  }
+
+  void existRouteState() {
+    //TODO
+    logger.w('TODO close route panel');
+  }
+
+  void existSearchState() {
+    //TODO
+    logger.w('TODO close search panel');
+  }
+
+  void onShowDetailOfSearchItem(IPoi poi) {
+    //TODO
+    logger.w('TODO show poi detail from search list');
+  }
+
+  void enterRoute(IPoi poi) async {
+    var currentPoi = poi;
     if (currentPoi != null) {
+      var location = await getMapState?.mapboxMapController?.lastKnownLocation();
       if (location == null) {
-        Fluttertoast.showToast(msg: '获取不到你当前位置');
+        Fluttertoast.showToast(msg: S.of(context).cannot_get_your_location);
       } else {
-        var fromPoi = PoiEntity(latLng: location, name: S.of(context).my_location);
+        var fromPoi = MapBoxPoi(latLng: location, name: S.of(context).my_location);
         var toPoi = currentPoi;
         var language = Localizations.localeOf(context).languageCode;
-        var profile = 'driving';
+        var defaultProfile = RouteProfile.driving;
         BlocProvider.of<ScaffoldMapBloc>(context).add(RouteEvent(
           fromPoi: fromPoi,
           toPoi: toPoi,
           language: language,
-          profile: profile,
+          profile: defaultProfile,
         ));
       }
     }

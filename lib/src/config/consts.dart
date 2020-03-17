@@ -23,8 +23,10 @@ class Const {
 
   //white
   static const kWhiteMapStyleCn = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+
 //  static const kWhiteMapStyleCn = 'http://10.10.1.115:9999/titan-see-it-all.json';
   static const kWhiteMapStyle = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+
   //black
   static const kBlackMapStyleCn = "https://cn.tile.map3.network/fiord-color.json";
   static const kBlackMapStyle = "https://static.hyn.space/maptiles/fiord-color.json";
@@ -68,4 +70,12 @@ class PrefsKey {
 
   static final lastAnnouncement = 'last_announcement';
   static final newsUpdateTime = 'news_update_time';
+}
+
+enum Status { idle, loading, success, failed, cancelled }
+
+class RouteProfile {
+  static final String driving = 'driving';
+  static final String walking = 'walking';
+  static final String cycling = 'cycling';
 }

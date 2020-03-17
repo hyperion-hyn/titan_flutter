@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_pickers/image_pickers.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import '../bloc/bloc.dart';
-import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
@@ -15,10 +13,12 @@ import 'package:titan/src/widget/header_height_notification.dart';
 import '../../../global.dart';
 
 class UserPoiPanel extends StatefulWidget {
-  final ConfirmPoiItem selectedPoiEntity;
+  final UserContributionPoi selectedPoiEntity;
   final ScrollController scrollController;
 
-  UserPoiPanel({this.selectedPoiEntity, this.scrollController});
+  final Function onClose;
+
+  UserPoiPanel({this.selectedPoiEntity, this.scrollController, this.onClose});
 
   @override
   State<StatefulWidget> createState() {
@@ -72,7 +72,9 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
         controller: widget.scrollController,
         child: WillPopScope(
           onWillPop: () async {
-            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+            if (widget.onClose != null) {
+              widget.onClose();
+            }
             return false;
           },
           child: Stack(
@@ -141,9 +143,7 @@ class _UserPoiPanelState extends State<UserPoiPanel> {
                 top: 4,
                 right: 8,
                 child: InkWell(
-                  onTap: () {
-                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                  },
+                  onTap: widget.onClose,
                   borderRadius: BorderRadius.all(Radius.circular(32.0)),
                   highlightColor: Colors.transparent,
                   child: Ink(
@@ -356,7 +356,7 @@ Widget buildPicList(double itemWidth, double topValue, List<String> images) {
   );
 }
 
-Widget buildBottomInfoList(BuildContext context, ConfirmPoiItem confirmPoiItem) {
+Widget buildBottomInfoList(BuildContext context, UserContributionPoi confirmPoiItem) {
   List<UserInfoItem> _infoList = [];
 
   if (confirmPoiItem.category.isNotEmpty) {

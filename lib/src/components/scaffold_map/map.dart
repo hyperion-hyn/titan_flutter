@@ -15,12 +15,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/entity/heaven_map_poi_info.dart';
-import 'package:titan/src/data/entity/poi.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/heaven_map_poi.dart';
+import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
-import 'package:titan/src/global.dart';
-import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart' as position_model;
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart' as position_model;
 
 import 'bloc/bloc.dart';
 
@@ -191,9 +190,9 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     }
 
     //if click nothing on the map
-    if (this.currentPoi != null) {
-      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-    }
+//    if (this.currentPoi != null) {
+//      BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectedPoiEvent());
+//    }
   }
 
   _onMapLongPress(Point<double> point, LatLng coordinates) async {
@@ -214,19 +213,19 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     }
 
     //if click on no symbol, then add the place where it is
-    var poi = PoiEntity(latLng: coordinates);
+    var poi = MapBoxPoi(latLng: coordinates);
     BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
   }
 
-  void addMarker(IPoi poi) async {
+  void addMarkerAndMoveCameraToIt(IPoi poi) async {
     bool shouldNeedAddSymbol = true;
 
     if (currentPoi != null) {
       if (currentPoi.latLng != poi.latLng) {
-        //位置不同，先删除再添加新的Marker
+        //remove old marker before add new one
         removeMarker();
       } else {
-        //位置相同，不需要再添加Marker
+        //the same position, no need to change
         shouldNeedAddSymbol = false;
       }
     }
@@ -234,12 +233,11 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     if (shouldNeedAddSymbol) {
       showingSymbol = await mapboxMapController?.addSymbol(
         SymbolOptions(
-          geometry: poi.latLng,
-          iconImage: "hyn_marker_big",
-          iconAnchor: "bottom",
-          iconOffset: Offset(0.0, 3.0),
-          symbolSortKey:11
-        ),
+            geometry: poi.latLng,
+            iconImage: "hyn_marker_big",
+            iconAnchor: "bottom",
+            iconOffset: Offset(0.0, 3.0),
+            symbolSortKey: 11),
       );
 
       CameraPosition p = await mapboxMapController?.getCameraPosition();
@@ -261,7 +259,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     currentPoi = null;
   }
 
-  void _addMarkers(List<IPoi> pois) async {
+  void _addSearchResultMarkers(List<IPoi> pois) async {
     await clearAllMarkers();
 
     List<SymbolOptions> options = pois
@@ -414,10 +412,10 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       var pid = firstFeature["properties"]["pid"];
       if (pid != null) {
         var l = position_model.Location.fromJson(firstFeature['geometry']);
-        position_model.ConfirmPoiItem confirmPoiItem = position_model.ConfirmPoiItem.setPid(pid, l);
+        position_model.UserContributionPoi confirmPoiItem = position_model.UserContributionPoi.setPid(pid, l);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: confirmPoiItem));
       } else {
-        var poi = PoiEntity(name: name, latLng: coordinates);
+        var poi = MapBoxPoi(name: name, latLng: coordinates);
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
       }
 
@@ -427,8 +425,8 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     }
   }
 
-  HeavenMapPoiInfo _convertHeavenMapPoiInfoFromFeature(Map<String, dynamic> feature) {
-    HeavenMapPoiInfo heavenMapPoiInfo = HeavenMapPoiInfo();
+  HeavenMapPoi _convertHeavenMapPoiInfoFromFeature(Map<String, dynamic> feature) {
+    HeavenMapPoi heavenMapPoiInfo = HeavenMapPoi();
 
     heavenMapPoiInfo.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
     var lat = double.parse(feature["properties"]["lat"]);
@@ -441,12 +439,6 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     heavenMapPoiInfo.desc = feature["properties"]["desc"];
     heavenMapPoiInfo.name = feature["properties"]["name"];
     return heavenMapPoiInfo;
-  }
-
-  void onStyleLoaded() async {
-    logger.i('xxx style loaded');
-    mapboxMapController?.removeListener(_mapMoveListener);
-    mapboxMapController?.addListener(_mapMoveListener);
   }
 
   void _mapMoveListener() {
@@ -584,13 +576,13 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
       listener: (context, state) {
-        if (state is SearchingPoiState || state is ShowPoiState) {
-          addMarker(state.getCurrentPoi());
-        } else if (state is SearchPoiByTextSuccessState) {
-          if (state.getSearchPoiList().length > 0) {
-            _addMarkers(state.getSearchPoiList());
+        if (state is FocusingPoiState) {
+          addMarkerAndMoveCameraToIt(state.poi);
+        } else if (state is FocusingSearchState) {
+          if (state.pois != null && state.pois.length > 0) {
+            _addSearchResultMarkers(state.pois);
           }
-        } else if (state is InitialScaffoldMapState || state is InitDMapState) {
+        } else if (state is DefaultScaffoldMapState || state is FocusingDMapState) {
           clearAllMarkers();
           _mapPositionAnimationController.value = 0.0;
         } else {
@@ -624,13 +616,14 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                         child: MapboxMap(
                           compassEnabled: false,
                           onMapClick: (point, coordinates) {
-                            if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                            //ignore base on some state
+                            if (state is FocusingRouteState) {
                               return;
                             }
                             _onMapClick(point, coordinates);
                           },
                           onMapLongPress: (point, coordinates) {
-                            if (state is RoutingState || state is RouteSuccessState || state is RouteFailState) {
+                            if (state is FocusingRouteState) {
                               return;
                             }
                             _onMapLongPress(point, coordinates);
@@ -638,10 +631,10 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           trackCameraPosition: true,
                           styleString: widget.style,
                           onMapCreated: (controller) {
-                            logger.i('xxx onMapCreated');
                             mapboxMapController = controller;
+                            mapboxMapController?.removeListener(_mapMoveListener);
+                            mapboxMapController?.addListener(_mapMoveListener);
                           },
-                          onStyleLoadedCallback: onStyleLoaded,
                           initialCameraPosition: CameraPosition(
                             target: Application.recentlyLocation,
                             zoom: widget.defaultZoom,

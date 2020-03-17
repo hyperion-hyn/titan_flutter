@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:meta/meta.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
-import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 
 @immutable
 abstract class PositionEvent {
@@ -76,7 +76,7 @@ class ConfirmPositionResultLoadingEvent extends PositionEvent {}
 
 class ConfirmPositionResultEvent extends PositionEvent {
   int answer;
-  ConfirmPoiItem confirmPoiItem;
+  UserContributionPoi confirmPoiItem;
 
   ConfirmPositionResultEvent(this.answer, this.confirmPoiItem);
 }

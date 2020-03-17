@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:titan/src/domain/domain.dart';
-import 'package:titan/src/data/entity/poi.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
-import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
+import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'bloc.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
@@ -18,9 +18,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
     if (event is AddSearchItemEvent) {
-      if (event.item is PoiEntity) {
+      if (event.item is MapBoxPoi) {
         await searchInteractor.addHistorySearchPoi(event.item);
-      } else if (event.item is ConfirmPoiItem) {
+      } else if (event.item is UserContributionPoi) {
         await searchInteractor.addHistorySearchPoiByTitan(event.item);
       } else {
         await searchInteractor.addHistorySearchText(event.item.toString());

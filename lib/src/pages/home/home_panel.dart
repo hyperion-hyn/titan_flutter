@@ -304,35 +304,35 @@ class HomePanelState extends State<HomePanel> {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
-                isGaodeSearch: true, type: 1, center: center, searchText: '美食', stringType: "restaurant"));
+                isCategorySearch: true, gaodeType: 1, center: center, searchText: '美食', typeOfNearBy: "restaurant"));
           }
         }),
         _buildPoiItem('res/drawable/ic_hotel.png', S.of(context).hotel, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(
-                SearchTextEvent(isGaodeSearch: true, type: 2, center: center, searchText: '酒店', stringType: "lodging"));
+                SearchTextEvent(isCategorySearch: true, gaodeType: 2, center: center, searchText: '酒店', typeOfNearBy: "lodging"));
           }
         }),
         _buildPoiItem('res/drawable/ic_scenic_spotx.png', S.of(context).attraction, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
-                isGaodeSearch: true, type: 3, center: center, searchText: '景点', stringType: "tourist_attraction"));
+                isCategorySearch: true, gaodeType: 3, center: center, searchText: '景点', typeOfNearBy: "tourist_attraction"));
           }
         }),
         _buildPoiItem('res/drawable/ic_park.png', S.of(context).paking, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
-                isGaodeSearch: true, type: 4, center: center, searchText: '停车场', stringType: "parking"));
+                isCategorySearch: true, gaodeType: 4, center: center, searchText: '停车场', typeOfNearBy: "parking"));
           }
         }),
         _buildPoiItem('res/drawable/ic_gas_station.png', S.of(context).gas_station, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
-                isGaodeSearch: true, type: 5, center: center, searchText: '加油站', stringType: "gas_station"));
+                isCategorySearch: true, gaodeType: 5, center: center, searchText: '加油站', typeOfNearBy: "gas_station"));
           }
         }),
       ],
@@ -355,21 +355,21 @@ class HomePanelState extends State<HomePanel> {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(
-                SearchTextEvent(isGaodeSearch: true, type: 6, center: center, searchText: '银行', stringType: "bank"));
+                SearchTextEvent(isCategorySearch: true, gaodeType: 6, center: center, searchText: '银行', typeOfNearBy: "bank"));
           }
         }),
         _buildPoiItem('res/drawable/ic_supermarket.png', S.of(context).supermarket, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
-                isGaodeSearch: true, type: 7, center: center, searchText: '超市', stringType: "grocery_or_supermarket"));
+                isCategorySearch: true, gaodeType: 7, center: center, searchText: '超市', typeOfNearBy: "grocery_or_supermarket"));
           }
         }),
         _buildPoiItem('res/drawable/ic_market.png', S.of(context).mall, onTap: () async {
           var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
-                isGaodeSearch: true, type: 8, center: center, searchText: '商场', stringType: "shopping_mall"));
+                isCategorySearch: true, gaodeType: 8, center: center, searchText: '商场', typeOfNearBy: "shopping_mall"));
           }
         }),
         if (isChinaMainland)
@@ -377,7 +377,7 @@ class HomePanelState extends State<HomePanel> {
             var center = await mapCenter;
             if (center != null) {
               BlocProvider.of<ScaffoldMapBloc>(context).add(
-                  SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '网吧', stringType: "cafe"));
+                  SearchTextEvent(isCategorySearch: true, gaodeType: 9, center: center, searchText: '网吧', typeOfNearBy: "cafe"));
             }
           }),
         if (isChinaMainland)
@@ -385,7 +385,7 @@ class HomePanelState extends State<HomePanel> {
             var center = await mapCenter;
             if (center != null) {
               BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
-                  isGaodeSearch: true, type: 10, center: center, searchText: '厕所', stringType: "night_club"));
+                  isCategorySearch: true, gaodeType: 10, center: center, searchText: '厕所', typeOfNearBy: "night_club"));
             }
           }),
         if (isChinaMainland)
@@ -393,7 +393,7 @@ class HomePanelState extends State<HomePanel> {
             var center = await mapCenter;
             if (center != null) {
               BlocProvider.of<ScaffoldMapBloc>(context).add(
-                  SearchTextEvent(isGaodeSearch: true, type: 9, center: center, searchText: '咖啡馆', stringType: "cafe"));
+                  SearchTextEvent(isCategorySearch: true, gaodeType: 9, center: center, searchText: '咖啡馆', typeOfNearBy: "cafe"));
             }
           }),
         if (isChinaMainland)
@@ -401,7 +401,7 @@ class HomePanelState extends State<HomePanel> {
             var center = await mapCenter;
             if (center != null) {
               BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
-                  isGaodeSearch: true, type: 10, center: center, searchText: '医院', stringType: "hospital"));
+                  isCategorySearch: true, gaodeType: 10, center: center, searchText: '医院', typeOfNearBy: "hospital"));
             }
           }),
       ],

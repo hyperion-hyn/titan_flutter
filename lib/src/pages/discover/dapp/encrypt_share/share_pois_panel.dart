@@ -9,8 +9,8 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/api/api.dart';
-import 'package:titan/src/data/entity/gaode_poi.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/photo_simple_poi.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../../../global.dart';
@@ -32,7 +32,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
   LatLng _lastPosition;
 
   CancelToken cancelToken;
-  List<GaodePoi> nearPois;
+  List<SimplePoiWithPhoto> nearPois;
 
   int selectedId = 0;
 
@@ -92,7 +92,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
         );
       }
 
-      List<GaodePoi> pois = gaodeModel.data;
+      List<SimplePoiWithPhoto> pois = gaodeModel.data;
       setState(() {
         nearPois = pois;
         isLoading = false;

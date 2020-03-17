@@ -396,5 +396,7 @@
   "symptoms": "증상이 나타나다",
   "data_source_explain": "붉은 POI 점 데이터는 중국 국가 및 각 성 시 위건위& 텐센트 뉴스 등 공식 데이터에서 유래했다.노란색 POI 점 데이터는 타이탄 사용자의 기여에서 유래했다.",
   "source_desc_title": "데이터 소스 설명",
-  "epidemic_map_short": "NCP 지도"
+  "epidemic_map_short": "NCP 지도",
+  "search_failed": "搜索异常",
+  "cannot_get_your_location": "获取不到你当前位置"
 }

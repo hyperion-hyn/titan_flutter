@@ -26,15 +26,14 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
   Stream<DiscoverState> mapEventToState(DiscoverEvent event) async* {
     if (event is InitDiscoverEvent) {
       yield InitialDiscoverState();
-
-      BlocProvider.of<map.ScaffoldMapBloc>(context).add(map.InitMapEvent());
+      //main map back to default state
+      BlocProvider.of<map.ScaffoldMapBloc>(context).add(map.DefaultMapEvent());
     } else if (event is ActiveDMapEvent) {
       DMapCreationModel model = DMapDefine.kMapList[event.name];
       if (model != null) {
         yield ActiveDMapState(name: event.name);
 
-        DMapCreationModel model = DMapDefine.kMapList[event.name];
-        BlocProvider.of<map.ScaffoldMapBloc>(context).add(map.InitDMapEvent(
+        BlocProvider.of<map.ScaffoldMapBloc>(context).add(map.EnterDMapEvent(
           dMapConfigModel: model.dMapConfigModel,
         ));
       }

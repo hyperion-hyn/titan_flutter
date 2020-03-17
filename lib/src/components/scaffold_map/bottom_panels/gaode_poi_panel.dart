@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import '../bloc/bloc.dart';
-import 'package:titan/src/data/entity/gaode_poi.dart';
+import 'package:titan/src/data/entity/poi/photo_simple_poi.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../../global.dart';
 
 class GaodePoiPanel extends StatefulWidget {
-  final GaodePoi poi;
+  final SimplePoiWithPhoto poi;
   final ScrollController scrollController;
 
-  GaodePoiPanel({this.poi, this.scrollController});
+  final Function onClose;
+
+  GaodePoiPanel({this.poi, this.scrollController, this.onClose});
 
   @override
   State<StatefulWidget> createState() {
@@ -64,7 +64,10 @@ class _GaodePoiPanelState extends State<GaodePoiPanel> {
         controller: widget.scrollController,
         child: WillPopScope(
           onWillPop: () async {
-            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
+//            BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectedPoiEvent());
+            if (widget.onClose != null) {
+              widget.onClose();
+            }
             return false;
           },
           child: Stack(
@@ -130,9 +133,7 @@ class _GaodePoiPanelState extends State<GaodePoiPanel> {
                 top: 4,
                 right: 8,
                 child: InkWell(
-                  onTap: () {
-                    BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectPoiEvent());
-                  },
+                  onTap: widget.onClose,
                   borderRadius: BorderRadius.all(Radius.circular(32.0)),
                   highlightColor: Colors.transparent,
                   child: Ink(

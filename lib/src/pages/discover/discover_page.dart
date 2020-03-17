@@ -79,7 +79,6 @@ class DiscoverPageState extends State<DiscoverPage> {
                         onImageTap: (int index) {
                           var focusImage = focusImages[index];
 
-                          print(focusImage.toString());
                           if (focusImage.link == null || focusImage.link.isEmpty) {
                             return;
                           }

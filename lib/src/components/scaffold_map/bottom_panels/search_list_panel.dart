@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/pages/contribution/verify_poi/entity/confirm_poi_item.dart';
-import '../bloc/bloc.dart';
-import 'package:titan/src/data/entity/gaode_poi.dart';
-import 'package:titan/src/data/entity/poi.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
+import 'package:titan/src/data/entity/poi/photo_simple_poi.dart';
+import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
+
+typedef OnTapPoi = void Function(IPoi);
 
 class SearchListPanel extends StatelessWidget {
   final List<IPoi> pois;
   final ScrollController scrollController;
   final double listHeight;
 
-  SearchListPanel({this.pois, this.scrollController, this.listHeight = 300});
+  final Function onClose;
+  final OnTapPoi onTapPoi;
+
+
+  SearchListPanel({this.pois, this.scrollController, this.onClose, this.onTapPoi, this.listHeight = 300});
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +48,7 @@ class SearchListPanel extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: InkWell(
-                  onTap: () {
-                    BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
-                  },
+                  onTap: onClose,
                   borderRadius: BorderRadius.all(Radius.circular(32.0)),
                   highlightColor: Colors.transparent,
                   child: Padding(
@@ -102,9 +104,7 @@ class SearchListPanel extends StatelessWidget {
           Align(
             alignment: Alignment.topRight,
             child: InkWell(
-              onTap: () {
-                BlocProvider.of<ScaffoldMapBloc>(context).add(InitMapEvent());
-              },
+              onTap: onClose,
               borderRadius: BorderRadius.all(Radius.circular(32.0)),
               highlightColor: Colors.transparent,
               child: Padding(
@@ -129,11 +129,11 @@ class SearchListPanel extends StatelessWidget {
   }
 
   Widget buildItem(context, IPoi poi) {
-    if (poi is PoiEntity) {
+    if (poi is MapBoxPoi) {
       return buildCommonPoiItem(context, poi);
-    } else if (poi is GaodePoi) {
+    } else if (poi is SimplePoiWithPhoto) {
       return buildGaodePoiItem(context, poi);
-    } else if (poi is ConfirmPoiItem) {
+    } else if (poi is UserContributionPoi) {
       return buildCommonPoiItem(context, poi);
     } else {
       return Text('not implemented');
@@ -143,7 +143,7 @@ class SearchListPanel extends StatelessWidget {
   Widget buildCommonPoiItem(context, IPoi poi) {
     return InkWell(
       onTap: () {
-        onTapPoi(context, poi);
+        onTapPoi(poi);
       },
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -166,10 +166,10 @@ class SearchListPanel extends StatelessWidget {
     );
   }
 
-  Widget buildGaodePoiItem(context, GaodePoi poi) {
+  Widget buildGaodePoiItem(context, SimplePoiWithPhoto poi) {
     return InkWell(
       onTap: () {
-        onTapPoi(context, poi);
+        onTapPoi(poi);
       },
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -212,9 +212,5 @@ class SearchListPanel extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void onTapPoi(context, IPoi poi) {
-    BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
   }
 }

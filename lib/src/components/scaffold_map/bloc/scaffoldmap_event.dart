@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/src/data/entity/poi_interface.dart';
+import 'package:titan/src/data/entity/poi/poi_interface.dart';
 
 import '../dmap/dmap.dart';
 
-abstract class ScaffoldMapEvent {
-  const ScaffoldMapEvent();
-}
+abstract class ScaffoldMapEvent {}
 
-class InitMapEvent extends ScaffoldMapEvent {}
+class DefaultMapEvent extends ScaffoldMapEvent {}
 
 //---------------------
 // poi
@@ -26,8 +24,6 @@ class ShowPoiEvent extends ScaffoldMapEvent {
   ShowPoiEvent({this.poi});
 }
 
-class ClearSelectPoiEvent extends ScaffoldMapEvent {}
-
 //---------------------
 // search
 //---------------------
@@ -35,12 +31,12 @@ class SearchTextEvent extends ScaffoldMapEvent {
   String searchText;
   LatLng center;
 
-  //is gaode search
-  bool isGaodeSearch;
-  int type;
-  String stringType;
+  //is category search
+  bool isCategorySearch;
+  int gaodeType; //only China mainland, type of gaode
+  String typeOfNearBy; //only not China mainland, category of type
 
-  SearchTextEvent({this.searchText, this.center, this.type, this.isGaodeSearch, this.stringType});
+  SearchTextEvent({this.searchText, this.center, this.gaodeType, this.isCategorySearch, this.typeOfNearBy});
 }
 
 //---------------------
@@ -68,19 +64,21 @@ class RouteEvent extends ScaffoldMapEvent {
   });
 }
 
-class ExistRouteEvent extends ScaffoldMapEvent {}
+//class ExistRouteEvent extends ScaffoldMapEvent {}
 
 //---------------------
 // dmap
 //---------------------
 
-class InitDMapEvent extends ScaffoldMapEvent {
+class EnterDMapEvent extends ScaffoldMapEvent {
   final DMapConfigModel dMapConfigModel;
 
-  InitDMapEvent({@required this.dMapConfigModel});
+  EnterDMapEvent({@required this.dMapConfigModel});
 }
 
-//bus event
+//---------------------
+// bus event
+//---------------------
 class GoSearchEvent {
   String searchText;
 
@@ -88,6 +86,8 @@ class GoSearchEvent {
 }
 
 class ToMyLocationEvent {}
+
+class ClearSelectedPoiEvent {}
 
 //class OnMapMovedEvent {
 //  LatLng latLng;

@@ -5,7 +5,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:matcher/matcher.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/domain/domain.dart';
-import 'package:titan/src/data/entity/poi.dart';
+import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
 import 'package:titan/src/data/entity/update.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/db/search_history_dao.dart';
@@ -23,12 +23,12 @@ void main() {
   test('mapbox search api', () async {
     SearchInteractor interactor = SearchInteractor(Repository(api: Api(), searchHistoryDao: SearchHistoryDao()));
     var data = await interactor.searchPoiByMapbox('台湾高雄', LatLng(23.108317, 113.316121), 'zh');
-    expect(data, TypeMatcher<List<PoiEntity>>());
+    expect(data, TypeMatcher<List<MapBoxPoi>>());
   });
 
   test('mapbox reverse geo search', () async {
     SearchInteractor interactor = SearchInteractor(Repository(api: Api(), searchHistoryDao: SearchHistoryDao()));
     var entity = await interactor.reverseGeoSearch(LatLng(23.108317, 113.316121), 'zh');
-    expect(entity, TypeMatcher<PoiEntity>());
+    expect(entity, TypeMatcher<MapBoxPoi>());
   });
 }

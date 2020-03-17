@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,25 +9,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          RaisedButton(
-            onPressed: () {
-              BlocProvider.of<AppTabBarBloc>(context).add(BottomNavigationBarEvent(isHided: true));
-            },
-            child: Text('隐藏底部'),
-          ),
-          RaisedButton(
-            onPressed: () {
-              BlocProvider.of<AppTabBarBloc>(context).add(BottomNavigationBarEvent(isHided: false));
-            },
-            child: Text('显示底部'),
-          ),
-        ],
-      ),
-    );
+    return Container();
   }
 }
 

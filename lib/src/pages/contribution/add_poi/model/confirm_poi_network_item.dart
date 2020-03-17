@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../verify_poi/entity/confirm_poi_item.dart';
+import '../../../../data/entity/poi/user_contribution_poi.dart';
 
 part 'confirm_poi_network_item.g.dart';
 

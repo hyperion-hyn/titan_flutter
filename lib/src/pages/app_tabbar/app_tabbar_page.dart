@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
 import 'package:titan/src/global.dart';
@@ -55,19 +56,18 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
   Widget build(BuildContext context) {
     bool isDebug = env.buildType == BuildType.DEV;
     return UpdaterComponent(
-      child: BlocListener<AppTabBarBloc, AppTabBarState>(
-        listener: (context, state) {
-          if (state is BottomNavigationBarState) {
-            if (_isHideBottomNavigationBar != state.isHided) {
-              _isHideBottomNavigationBar = state.isHided;
-              if (_isHideBottomNavigationBar) {
-                _bottomBarPositionAnimationController.animateTo(1, curve: Curves.easeOutQuint);
-              } else {
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
+            listener: (context, state) {
+              if (state is DefaultScaffoldMapState) {
                 _bottomBarPositionAnimationController.animateBack(0, curve: Curves.easeInQuart);
+              } else {
+                _bottomBarPositionAnimationController.animateTo(1, curve: Curves.easeOutQuint);
               }
-            }
-          }
-        },
+            },
+          ),
+        ],
         child: Scaffold(
           resizeToAvoidBottomPadding: false,
           drawer: isDebug ? DrawerComponent() : null,
@@ -76,7 +76,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
               //map at background
               ScaffoldMap(),
               _getTabView(_currentTabIndex),
-              bottomBar(),
+              bottomNavigationBar(),
             ],
           ),
         ),
@@ -84,7 +84,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
     );
   }
 
-  Widget bottomBar() {
+  Widget bottomNavigationBar() {
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
       var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
