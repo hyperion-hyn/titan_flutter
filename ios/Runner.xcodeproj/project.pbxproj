@@ -18,6 +18,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		9A0663F22416250D005A7C38 /* UMAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A0663F12416250D005A7C38 /* UMAnalytics.framework */; };
 		9A86DB6323AC6ECF0032B410 /* SensorPluginInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6223AC6ECF0032B410 /* SensorPluginInterface.swift */; };
 		9A86DB6523AC722F0032B410 /* SensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6423AC722F0032B410 /* SensorManager.swift */; };
 		9A86DB6723AC72610032B410 /* Sensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6623AC72610032B410 /* Sensor.swift */; };
@@ -83,6 +84,7 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A0663F12416250D005A7C38 /* UMAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UMAnalytics.framework; sourceTree = "<group>"; };
 		9A86DB6223AC6ECF0032B410 /* SensorPluginInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorPluginInterface.swift; sourceTree = "<group>"; };
 		9A86DB6423AC722F0032B410 /* SensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorManager.swift; sourceTree = "<group>"; };
 		9A86DB6623AC72610032B410 /* Sensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sensor.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				F537410722E84F0000ADF4FF /* Mobile.framework in Frameworks */,
 				9705A1C61CF904A100538489 /* Flutter.framework in Frameworks */,
 				9AEF446523FC238200E5733F /* UMCommonLog.framework in Frameworks */,
+				9A0663F22416250D005A7C38 /* UMAnalytics.framework in Frameworks */,
 				9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */,
 				3B80C3941E831B6300D905FE /* App.framework in Frameworks */,
 				9AEF445F23FC237400E5733F /* UserNotifications.framework in Frameworks */,
@@ -163,6 +166,7 @@
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
+				9A0663F12416250D005A7C38 /* UMAnalytics.framework */,
 				9AEF445B23FC215900E5733F /* UMCommonLog.framework */,
 				9AEF445923FC213E00E5733F /* UTDID.framework */,
 				9AEF445723FC210F00E5733F /* UMPush.framework */,
