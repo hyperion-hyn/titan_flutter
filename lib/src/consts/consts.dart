@@ -71,6 +71,7 @@ class Const {
 
   static const Map LANGUAGE_NAME_MAP = {
     "zh_CN": "简体中文",
+    "zh_HK": "繁體中文",
     "ko_": "한글",
     "en_": "English",
   };

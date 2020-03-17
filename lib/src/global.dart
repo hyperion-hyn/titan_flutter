@@ -52,7 +52,7 @@ var appLanguageCode = "en";
 BuildContext globalContext;
 
 bool isRechargeByTianWalletFinish = false;
-Locale defaultLocale = Locale("zh","CN");
+Locale defaultLocale = Locale("zh", "CN");
 
 AppArea currentAppArea = AppArea.MAINLAND_CHINA_AREA;
 

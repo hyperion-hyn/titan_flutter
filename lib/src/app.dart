@@ -53,9 +53,14 @@ class _AppState extends State<App> {
       var l = window.locale?.languageCode;
       if (l == 'zh') {
         localeChange(Locale("zh", "CN"));
-      } else if (l == 'ko') {
+      }
+      else if (l == 'zh_HK') {
+        localeChange(Locale('zh', 'HK'));
+      }
+      else if (l == 'ko') {
         localeChange(Locale('ko', ''));
-      } else {
+      }
+      else {
         localeChange(Locale('en', ''));
       }
       return;

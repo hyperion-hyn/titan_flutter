@@ -382,7 +382,7 @@
   "turn_on_wifi_hint": "打開WiFi 掃描更精準的信號地圖",
   "all_powers_func": "總算力：${totalPower}",
   "background_scan": "後台掃描",
-  "max_range_func": "最大範圍約：${ maxMeter} 米",
+  "max_range_func": "最大範圍約：${maxMeter} 米",
   "withdrawal": "提幣",
   "balance_with_unit": "賬戶餘額(USDT)",
   "earnings_balance": "收益餘額",
@@ -415,7 +415,7 @@
   "redemption_success": "贖回成功",
   "redemption_fail": "贖回出錯",
   "mortgage_time": "抵押時間：${time}",
-  "mortgage_id": "抵押ID ：${i d}",
+  "mortgage_id": "抵押ID ：${id}",
   "personal_information": "個人信息",
   "modify_account_password": "修改賬戶密碼",
   "modify_fund_password": "修改資金密碼",
@@ -650,5 +650,7 @@
   "my_hash_gift_contract": "贈送合約",
   "my_hash_home_economic_contract": "宅經濟合約",
   "buy_need_hyn_only_func":"( 需：HYN 等額${hyn}U)",
-  "hashrate_contract": "算力合約"
+  "hashrate_contract": "算力合約",
+  "purchase_title_recharge_only_usdt": "使用直充USDT余额",
+  "buy_need_usdt_only_func": "(需：USDT ${usdt}U)"
 }

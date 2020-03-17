@@ -647,7 +647,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           },
                           trackCameraPosition: true,
                           styleString: widget.style,
-                          onStyleLoaded: onStyleLoaded,
+                          onMapCreated: onStyleLoaded,
                           initialCameraPosition: CameraPosition(
                             target: recentlyLocation,
                             zoom: widget.defaultZoom,

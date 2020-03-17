@@ -650,5 +650,7 @@
   "my_hash_gift_contract": "선물 계약",
   "my_hash_home_economic_contract": "가정 경제 계약",
   "buy_need_hyn_only_func": "(HYN등액 ${hyn})",
-  "hashrate_contract": "계산력 계약"
+  "hashrate_contract": "계산력 계약",
+  "purchase_title_recharge_only_usdt": "직접 충전 USDT 저울 사용",
+  "buy_need_usdt_only_func": "(USDT ${usdt})"
 }

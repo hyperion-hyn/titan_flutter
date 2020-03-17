@@ -27,7 +27,10 @@ class _MeSettingState extends State<MeSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    var languageName = Const.LANGUAGE_NAME_MAP["${appLocale.languageCode}_${appLocale.countryCode ?? ""}"];
+    var languageCode = appLocale.languageCode??'';
+    var countryCode = appLocale.countryCode??'';
+    var languageName = Const.LANGUAGE_NAME_MAP["${languageCode}_${countryCode}"] ?? "";
+    //print('[me_setting] --> languageName:${languageName}, currentAppArea:${currentAppArea.name}');
 
     return Scaffold(
       appBar: AppBar(

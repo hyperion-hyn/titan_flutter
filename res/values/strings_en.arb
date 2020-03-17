@@ -650,5 +650,7 @@
   "my_hash_gift_contract": "Gift contGract",
   "my_hash_home_economic_contract": "Home economic contract",
   "buy_need_hyn_only_func": "(USDT Deposit：from HYN ${hyn}U)",
-  "hashrate_contract": "HashRate contract"
+  "hashrate_contract": "HashRate contract",
+  "purchase_title_recharge_only_usdt": "By direct charge USDT ",
+  "buy_need_usdt_only_func": "(Deposit：from USDT ${usdt}U)"
 }

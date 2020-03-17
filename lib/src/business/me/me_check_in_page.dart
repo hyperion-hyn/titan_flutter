@@ -310,8 +310,10 @@ class _MeCheckIn extends State<MeCheckIn> {
         zoom: defaultZoom,
       ),
       styleString: S.of(context).scan_wifi_map_style_url,
-      onStyleLoaded: (mapboxController) {
+      onMapCreated: (mapboxController) {
         mapController = mapboxController;
+      },
+      onStyleLoadedCallback: () {
         Future.delayed(Duration(milliseconds: 1000)).then((v) {
           startScan();
         });

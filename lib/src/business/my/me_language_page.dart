@@ -17,6 +17,7 @@ class _LanguageState extends State<MeLanguagePage> {
   @override
   void initState() {
     super.initState();
+
   }
 
   var selectedLocale = appLocale;
@@ -28,7 +29,9 @@ class _LanguageState extends State<MeLanguagePage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          S.of(context).language,
+          S
+              .of(context)
+              .language,
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -43,7 +46,9 @@ class _LanguageState extends State<MeLanguagePage> {
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               alignment: Alignment.centerRight,
               child: Text(
-                S.of(context).confirm,
+                S
+                    .of(context)
+                    .confirm,
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
@@ -54,14 +59,13 @@ class _LanguageState extends State<MeLanguagePage> {
         SizedBox(
           height: 4,
         ),
-        _buildInfoContainer(label: '简体中文', locale: Locale("zh", "CN")),
+        _buildInfoContainer(label: '简体中文', locale: Locale("zh", 'CN')),
         _divider(),
-        // todo: test_繁体
-        _buildInfoContainer(label: '繁体中文', locale: Locale("zh", "HK")),
+        _buildInfoContainer(label: '繁體中文', locale: Locale("zh", 'HK')),
         _divider(),
-        _buildInfoContainer(label: '한국어', locale: Locale("ko")),
+        _buildInfoContainer(label: '한국어', locale: Locale("ko", '')),
         _divider(),
-        _buildInfoContainer(label: 'English', locale: Locale("en")),
+        _buildInfoContainer(label: 'English', locale: Locale("en", '')),
         _divider(),
       ]),
     );
@@ -78,6 +82,17 @@ class _LanguageState extends State<MeLanguagePage> {
   }
 
   Widget _buildInfoContainer({String label, Locale locale}) {
+
+    var visible = false;
+    if (locale.languageCode == 'zh') {
+      visible = (selectedLocale.countryCode == locale.countryCode);
+      //print('[language] --> countryCode:${locale.countryCode}, selectedLocale.countryCode:${selectedLocale.countryCode}');
+    } else {
+      visible = (selectedLocale.languageCode == locale.languageCode);
+      //print('[language] --> language:${locale.languageCode}, selectedLocale.languageCode:${selectedLocale.languageCode}');
+    }
+    //print('\n');
+
     return InkWell(
       onTap: () {
         setState(() {
@@ -98,7 +113,7 @@ class _LanguageState extends State<MeLanguagePage> {
             ),
             Spacer(),
             Visibility(
-              visible: selectedLocale.languageCode == locale.languageCode,
+              visible: visible,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                 child: Icon(
@@ -116,4 +131,5 @@ class _LanguageState extends State<MeLanguagePage> {
   void switchLanguage(Locale locale) {
     localeChange(locale);
   }
+
 }
