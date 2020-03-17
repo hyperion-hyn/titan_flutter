@@ -14,7 +14,9 @@ class SymbolQuoteVo extends Equatable {
   ///the symbol base quote price
   final double price;
 
-  SymbolQuoteVo({this.symbol, this.quote, this.price});
+  final double percentChange24h;
+
+  SymbolQuoteVo({this.symbol, this.quote, this.price, this.percentChange24h});
 
   factory SymbolQuoteVo.fromJson(Map<String, dynamic> json) => _$SymbolQuoteVoFromJson(json);
 
@@ -26,5 +28,5 @@ class SymbolQuoteVo extends Equatable {
   }
 
   @override
-  List<Object> get props => [symbol, quote, price];
+  List<Object> get props => [symbol, quote, price, percentChange24h];
 }

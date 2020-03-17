@@ -6,9 +6,9 @@ import '../model.dart';
 import './bloc.dart';
 
 class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
-  CoinMarketApi _coinMarketApi;
+  CoinMarketApi _coinMarketApi = CoinMarketApi();
 
-  static const DEFAULT_SYMBOLS = ['ETH', 'HYN'];
+  static const DEFAULT_SYMBOLS = ['ETH', 'HYN', 'USDT'];
 
   static const UPDATE_THRESHOLD = 5 * 60 * 1000; //5 minute
   QuotesModel currentQuotesModel;

@@ -42,7 +42,7 @@ class WalletUtil {
       name: name,
       mnemonic: mnemonic,
       password: password,
-      activeCoins: [CoinType.ETHEREUM, CoinType.BITCOIN],
+      activeCoins: [CoinType.ETHEREUM],
     );
     return loadWallet(fileName);
   }

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/bloc/quotes_cmp_bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -11,6 +13,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/utils/wallet_utils.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -23,6 +26,9 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> with RouteAware {
+
+  LoadDataBloc loadDataBloc = LoadDataBloc();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -52,11 +58,11 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
   @override
   void initState() {
     super.initState();
-
+    loadDataBloc.add(LoadingEvent());
     //update quotes
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
+//    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+//    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
@@ -64,7 +70,42 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
     //hyn quote
     ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
 
-    return Column(
+    return LoadDataContainer(
+        bloc: loadDataBloc,
+        enablePullUp: false,
+        onLoadData: () async {
+          //update quotes
+          BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
+          //update all coin balance
+          BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+          await Future.delayed(Duration(seconds: 1));
+
+          loadDataBloc.add(RefreshSuccessEvent());
+          setState(() {});
+//          try {
+//            await loadOrRefreshData();
+//          } catch (e) {
+//            logger.e(e);
+//            loadDataBloc.add(LoadFailEvent());
+//          }
+        },
+        onRefresh: () async {
+          //update quotes
+          BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
+          //update all coin balance
+          BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+          await Future.delayed(Duration(seconds: 1));
+
+          loadDataBloc.add(RefreshSuccessEvent());
+          setState(() {});
+//          try {
+//            await loadOrRefreshData();
+//          } catch (e) {
+//            logger.e(e);
+//            loadDataBloc.add(RefreshFailEvent());
+//          }
+        },
+        child: Column(
       children: <Widget>[
         Expanded(child: _buildWalletView(context)),
         //hyn quotes view
@@ -95,7 +136,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
                     Spacer(),
                     //quote
                     Text(
-                      '${hynQuoteSign != null ? '${hynQuoteSign.quoteVo.price} ${hynQuoteSign.sign.sign}' : '--'}',
+                      '${hynQuoteSign != null ? '${WalletUtils.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
                       style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ],
@@ -105,13 +146,13 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
           ),
         )
       ],
-    );
+    ));
   }
 
   Widget _buildWalletView(BuildContext context) {
     var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
     if (activatedWalletVo != null) {
-      return ShowWalletView(activatedWalletVo);
+      return ShowWalletView(activatedWalletVo,loadDataBloc);
     }
 
     return BlocBuilder<WalletCmpBloc, WalletCmpState>(
@@ -141,6 +182,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
   @override
   void dispose() {
     Application.routeObserver.unsubscribe(this);
+    loadDataBloc.close();
     super.dispose();
   }
 }

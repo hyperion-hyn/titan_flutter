@@ -54,8 +54,8 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
       "09:30-22:00",
       "09:00-22:00",
       "10:00-20:00",
-      "10:00-21:00"
-          "custom_time"
+      "10:00-21:00",
+      "custom_time"
     ];
 
     for (int i = 0; i < 7; i++) {
