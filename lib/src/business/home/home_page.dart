@@ -86,6 +86,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
       eventBus.fire(ToMyLocationEvent());
       BlocProvider.of<home.HomeBloc>(context).add(home.HomeInitEvent());
+
+      BlocProvider.of<home.HomeBloc>(context).add(home.HomeAnnouncementEvent());
     });
 
     TitanPlugin.msgPushChangeCallBack = (Map values) {
@@ -193,7 +195,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Updater(
         child: BlocBuilder<home.HomeBloc, home.HomeState>(
           builder: (context, state) {
-            if(state is InitialHomeState && state.announcement != null){
+            if(state is HomeAnnouncementState && state.announcement != null){
               print("!!!! isShowAnnounceDialog");
               isShowAnnounceDialog = true;
               isUpdateAnnounce = true;
@@ -275,7 +277,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                   //tab views
                   _getContent(_currentIndex),
-                  if(isShowAnnounceDialog && state is InitialHomeState) AnnouncementDialog(
+                  if(isShowAnnounceDialog && state is HomeAnnouncementState) AnnouncementDialog(
                       state.announcement,(){
                     isShowAnnounceDialog = false;
                     //isUpdateAnnounce = false;

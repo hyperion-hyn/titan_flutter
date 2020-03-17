@@ -22,3 +22,6 @@ class MapOperatingEvent extends HomeEvent {
 
 class HomeInitEvent extends HomeEvent {
 }
+
+class HomeAnnouncementEvent extends HomeEvent {
+}
