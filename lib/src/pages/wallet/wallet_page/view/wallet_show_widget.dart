@@ -22,7 +22,7 @@ class ShowWalletView extends StatelessWidget {
   final WalletVo walletVo;
   LoadDataBloc loadDataBloc;
 
-  ShowWalletView(this.walletVo,this.loadDataBloc);
+  ShowWalletView(this.walletVo, this.loadDataBloc);
 
   @override
   Widget build(BuildContext context) {
@@ -114,22 +114,22 @@ class ShowWalletView extends StatelessWidget {
               height: 16,
             ),
             ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return InkWell(
-                        onTap: () {
-                          var coinVo = walletVo.coins[index];
-                          var coinVoJsonStr =
-                              FluroConvertUtils.object2string(coinVo.toJson());
-                          Application.router.navigateTo(
-                              context,
-                              Routes.wallet_account_detail +
-                                  '?coinVo=$coinVoJsonStr');
-                        },
-                        child: _buildAccountItem(context, walletVo.coins[index]));
-                  },
-                  itemCount: walletVo.coins.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                    onTap: () {
+                      var coinVo = walletVo.coins[index];
+                      var coinVoJsonStr =
+                          FluroConvertUtils.object2string(coinVo.toJson());
+                      Application.router.navigateTo(
+                          context,
+                          Routes.wallet_account_detail +
+                              '?coinVo=$coinVoJsonStr');
+                    },
+                    child: _buildAccountItem(context, walletVo.coins[index]));
+              },
+              itemCount: walletVo.coins.length,
             )
           ]),
     );
@@ -181,7 +181,8 @@ class ShowWalletView extends StatelessWidget {
                         style: TextStyles.textC9b9b9bS12,
                       ),
                     ),
-                    getPercentChange(symbolQuote?.quoteVo?.percentChange24h)
+                    if(symbolQuote?.quoteVo?.percentChange24h != null)
+                      getPercentChange(symbolQuote?.quoteVo?.percentChange24h)
                   ],
                 )
               ],
@@ -216,23 +217,23 @@ class ShowWalletView extends StatelessWidget {
   }
 
   Widget getPercentChange(double percentChange) {
-    if (percentChange > 0) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 6),
-        child: Text(
-          "${WalletUtils.formatPercentChange(percentChange)}",
-          style: TextStyles.textC00ec00S12,
-        ),
-      );
-    } else {
-      return Padding(
-        padding: const EdgeInsets.only(left: 6),
-        child: Text(
-          "${WalletUtils.formatPercentChange(percentChange)}",
-          style: TextStyles.textCff2d2dS12,
-        ),
-      );
-    }
+      if (percentChange > 0) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 6),
+          child: Text(
+            "${WalletUtils.formatPercentChange(percentChange)}",
+            style: TextStyles.textC00ec00S12,
+          ),
+        );
+      } else {
+        return Padding(
+          padding: const EdgeInsets.only(left: 6),
+          child: Text(
+            "${WalletUtils.formatPercentChange(percentChange)}",
+            style: TextStyles.textCff2d2dS12,
+          ),
+        );
+      }
   }
 
   Widget getCoinImage(bool isNetworkUrl, String imageUrl) {
