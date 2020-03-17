@@ -5,9 +5,12 @@ import 'package:titan/src/business/infomation/model/news_detail.dart';
 abstract class HomeState {}
 
 class InitialHomeState extends HomeState {
-  NewsDetail announcement;
-  InitialHomeState({this.announcement});
 }
 
 class MapOperatingState extends HomeState {
+}
+
+class HomeAnnouncementState extends HomeState {
+  NewsDetail announcement;
+  HomeAnnouncementState({this.announcement});
 }

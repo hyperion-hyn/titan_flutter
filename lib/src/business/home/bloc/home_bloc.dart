@@ -21,6 +21,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
     if(event is HomeInitEvent) {
+      yield InitialHomeState();
+    } else if(event is MapOperatingEvent) {
+      yield MapOperatingState();
+    } else if(event is HomeAnnouncementEvent) {
       var announcement = await _newsApi.getAnnouncement();
       var isShowDialog = false;
       await SharedPreferences.getInstance().then((sharePre){
@@ -36,12 +40,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         sharePre.setString(PrefsKey.lastAnnouncement, json.encode(announcement));
       });
       if(isShowDialog){
-        yield InitialHomeState(announcement: announcement);
-      }else{
-        yield InitialHomeState();
+        yield HomeAnnouncementState(announcement: announcement);
       }
-    } else if(event is MapOperatingEvent) {
-      yield MapOperatingState();
     }
 
   }
