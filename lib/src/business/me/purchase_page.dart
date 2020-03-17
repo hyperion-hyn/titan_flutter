@@ -431,8 +431,8 @@ class _PurchaseState extends State<PurchasePage> {
                                       settings: RouteSettings(name: "/recharge_purchase_page")))
                               .then((value) async {
                             userInfo = await service.getUserInfo();
-                            payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                            payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_USDT_100;
+                            //payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                            //payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_USDT_100;
                             setState(() {});
                           });
                         },
