@@ -163,38 +163,10 @@ class _PurchaseState extends State<PurchasePage> {
     );
   }
 
-  double getBalanceByType(String option, [String chargeType = PAY_BALANCE_TYPE_RECHARGE_HYBRID]) {
-    if (userInfo == null) return 0.0;
-
-    //print('balance: ${userInfo.balance}, \ntotalChargeBalance: ${userInfo.totalChargeBalance}, \nchargeHynBalance: ${userInfo.chargeHynBalance}, \nchargeUsdtBalance: ${userInfo.chargeUsdtBalance})');
-
-    double balance = 0;
-    if (option == PAY_OPTION_INCOME) {
-      balance = (userInfo?.balance ?? 0) - (userInfo?.totalChargeBalance ?? 0);
-    } else {
-      if (chargeType == PAY_BALANCE_TYPE_RECHARGE_HYN) {
-        balance = userInfo?.chargeHynBalance ?? 0;
-      } else if (chargeType == PAY_BALANCE_TYPE_RECHARGE_USDT) {
-        balance = userInfo?.chargeUsdtBalance ?? 0;
-      } else {
-        balance = userInfo?.totalChargeBalance ?? 0;
-      }
-    }
-
-    int decimals = 2;
-    int fac = pow(10, decimals);
-    //print('fac: $fac');
-    double d = balance;
-    d = (d * fac).floor() / fac;
-    //print("d: $d");
-
-    return d;
-  }
-
   Widget _buildHynBalancePayBox() {
-    var hyn = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_HYN));
-    var usdt = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_USDT));
-    var input = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_OPTION_INCOME));
+    var hyn = Const.DOUBLE_NUMBER_FORMAT.format(_getBalanceByType(PAY_BALANCE_TYPE_RECHARGE_HYN));
+    var usdt = Const.DOUBLE_NUMBER_FORMAT.format(_getBalanceByType(PAY_BALANCE_TYPE_RECHARGE_USDT));
+    var input = Const.DOUBLE_NUMBER_FORMAT.format(_getBalanceByType(PAY_BALANCE_TYPE_INCOME_HYN));
 
     return Column(
       children: <Widget>[
@@ -331,7 +303,7 @@ class _PurchaseState extends State<PurchasePage> {
                     color: Color(0xFFD6A734),
                     onPressed: () async {
                       if (userInfo != null && widget.payOrder != null) {
-                        if (isInsufficientBalance()) {
+                        if (_isInsufficientBalance()) {
                           Fluttertoast.showToast(msg: S.of(context).balance_lack);
                         } else {
                           try {
@@ -410,7 +382,7 @@ class _PurchaseState extends State<PurchasePage> {
                   ),
                 ),
               ),
-              if (isInsufficientBalance())
+              if (_isInsufficientBalance())
                 Container(
                   padding: EdgeInsets.only(top: 16),
                   child: Row(
@@ -503,27 +475,49 @@ class _PurchaseState extends State<PurchasePage> {
     );
   }
 
-  bool isInsufficientBalance() {
-    var hyn = getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_HYN);
-    var usdt = getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_USDT);
-    var current = getBalanceByType(payOption, payBalanceType);
-    var isCurrent = (current < widget.payOrder.amount);
-    var isHynUsdt = (payOption == PAY_OPTION_RECHARGE &&
-        hyn < widget.payOrder.hynUSDTAmount &&
-        usdt < widget.payOrder.erc20USDTAmount);
+  double _getBalanceByType(String chargeType) {
+    if (userInfo == null) return 0.0;
 
-    /*var input = getBalanceByType(PAY_OPTION_INCOME);
-    print('[pay] --> '
-        '\nisCurrent:${isCurrent}, isHynUsdt:${isHynUsdt}'
-        '\ninput:${input}, widget.payOrder.amount:${widget.payOrder.amount}'
-        '\nhyn:${hyn}, widget.payOrder.hynUSDTAmount:${widget.payOrder.hynUSDTAmount}, '
-        '\nusdt:${usdt}, widget.payOrder.erc20USDTAmount:${widget.payOrder.erc20USDTAmount}'
-        '\ncurrent:${current}, widget.payOrder.amount:${widget.payOrder.amount}');
-    */
+    double balance = 0;
 
-    if (isCurrent || isHynUsdt) {
-      return true;
+    switch (chargeType) {
+      case PAY_BALANCE_TYPE_RECHARGE_HYN:
+        balance = userInfo?.chargeHynBalance ?? 0;
+        break;
+
+      case PAY_BALANCE_TYPE_RECHARGE_USDT:
+        balance = userInfo?.chargeUsdtBalance ?? 0;
+        break;
+
+      case PAY_BALANCE_TYPE_RECHARGE_HYBRID:
+        balance = userInfo?.totalChargeBalance ?? 0;
+        break;
+
+      case PAY_BALANCE_TYPE_INCOME_HYN:
+        balance = (userInfo?.balance ?? 0) - (userInfo?.totalChargeBalance ?? 0);
+        break;
     }
-    return false;
+
+    int decimals = 2;
+    int fac = pow(10, decimals);
+    //print('fac: $fac');
+    double d = balance;
+    d = (d * fac).floor() / fac;
+    //print("d: $d");
+
+    return d;
+  }
+
+  bool _isInsufficientBalance() {
+    bool _isInsufficient = false;
+    if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE_HYBRID) {
+      var _rechargeHyn = _getBalanceByType(PAY_BALANCE_TYPE_RECHARGE_HYN);
+      var _rechargeUsdt = _getBalanceByType(PAY_BALANCE_TYPE_RECHARGE_USDT);
+      _isInsufficient = _rechargeHyn < widget.payOrder.hynUSDTAmount || _rechargeUsdt < widget.payOrder.erc20USDTAmount;
+    } else {
+      var _balance = _getBalanceByType(payBalanceType);
+      _isInsufficient = _balance < widget.payOrder.amount;
+    }
+    return _isInsufficient;
   }
 }
