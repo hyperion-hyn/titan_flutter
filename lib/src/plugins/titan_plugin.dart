@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 typedef MessagePushCallBack = void Function(Map values);
 
@@ -38,7 +39,7 @@ class TitanPlugin {
           "out_link": "",
         };
         msgPushChangeCallBack(values);
-        */
+*/
         break;
 
       case "msgPush":
