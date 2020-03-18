@@ -1,23 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/app.dart';
-import 'package:titan/src/basic/http/entity.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
-import 'package:titan/src/business/me/purchase_contract_page.dart';
 import 'package:titan/src/consts/consts.dart';
-import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
-import 'contract/buy_hash_rate_page_v2.dart';
 import 'enter_fund_password.dart';
-import 'model/contract_info.dart';
 import 'model/contract_info_v2.dart';
 import 'model/pay_order.dart';
 import 'model/quotes.dart';
@@ -320,20 +308,21 @@ class _PurchaseState extends State<PurchasePage> {
                     ],
                   ),
                 ),
-              _radioButton(
-                  title: S.of(context).income_amount,
-                  groupValue: payOption,
-                  value: PAY_OPTION_INCOME,
-                  child: Expanded(
-                    child: Text(S.of(context).purchase_title_input_func(input),
-                        style: TextStyle(fontSize: 12, color: Color(0xFF9B9B9B))),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      payOption = PAY_OPTION_INCOME;
-                      payBalanceType = PAY_BALANCE_TYPE_INCOME_HYN;
-                    });
-                  }),
+              if (widget.contractInfo.type != 3)
+                _radioButton(
+                    title: S.of(context).income_amount,
+                    groupValue: payOption,
+                    value: PAY_OPTION_INCOME,
+                    child: Expanded(
+                      child: Text(S.of(context).purchase_title_input_func(input),
+                          style: TextStyle(fontSize: 12, color: Color(0xFF9B9B9B))),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        payOption = PAY_OPTION_INCOME;
+                        payBalanceType = PAY_BALANCE_TYPE_INCOME_HYN;
+                      });
+                    }),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 32),
@@ -367,7 +356,7 @@ class _PurchaseState extends State<PurchasePage> {
                                 PayOrder _payOrder = await service.createOrder(contractId: widget.contractInfo.id);
                                 orderId = _payOrder.order_id;
                               }
-                              print("[puchase] --->type:${widget.contractInfo.type}, payBalanceType:${payBalanceType}");
+                              //print("[puchase] --->type:${widget.contractInfo.type}, payBalanceType:${payBalanceType}");
 
                               var ret = await service.confirmPayV3(
                                   orderId: orderId, payType: payBalanceType, fundToken: fundToken);
@@ -383,11 +372,9 @@ class _PurchaseState extends State<PurchasePage> {
                                       MaterialPageRoute(builder: (context) => MyHashRatePage()),
                                       ModalRoute.withName(createWalletPopUtilName));
                                   createWalletPopUtilName = null;
-                                }
-                                else {
+                                } else {
                                   Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                                      context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
                                 }
                               } else {
                                 if (code == -1007) {
@@ -520,17 +507,21 @@ class _PurchaseState extends State<PurchasePage> {
     var hyn = getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_HYN);
     var usdt = getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_USDT);
     var current = getBalanceByType(payOption, payBalanceType);
+    var isCurrent = (current < widget.payOrder.amount);
+    var isHynUsdt = (payOption == PAY_OPTION_RECHARGE &&
+        hyn < widget.payOrder.hynUSDTAmount &&
+        usdt < widget.payOrder.erc20USDTAmount);
 
-    /*
-    var input = getBalanceByType(PAY_OPTION_INCOME);
+    /*var input = getBalanceByType(PAY_OPTION_INCOME);
     print('[pay] --> '
+        '\nisCurrent:${isCurrent}, isHynUsdt:${isHynUsdt}'
         '\ninput:${input}, widget.payOrder.amount:${widget.payOrder.amount}'
         '\nhyn:${hyn}, widget.payOrder.hynUSDTAmount:${widget.payOrder.hynUSDTAmount}, '
         '\nusdt:${usdt}, widget.payOrder.erc20USDTAmount:${widget.payOrder.erc20USDTAmount}'
         '\ncurrent:${current}, widget.payOrder.amount:${widget.payOrder.amount}');
     */
-    if (current < widget.payOrder.amount ||
-        (hyn < widget.payOrder.hynUSDTAmount && usdt < widget.payOrder.erc20USDTAmount)) {
+
+    if (isCurrent || isHynUsdt) {
       return true;
     }
     return false;

@@ -301,7 +301,7 @@ class _MeState extends UserState<MePage> with RouteAware {
             children: <Widget>[
               _buildCenterBigButton(S.of(context).get_power, "res/drawable/get_power.png", () {
                 createWalletPopUtilName = "/BuyHashRatePageV2";
-                print('[[[[BuyHashRatePageV2');
+                //print('[[[[BuyHashRatePageV2');
                 Navigator.push(context, MaterialPageRoute(
                     settings: RouteSettings(name: '/BuyHashRatePageV2'),builder: (context) => BuyHashRatePageV2()));
               }),

@@ -49,13 +49,6 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    //print('-----111');
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -164,12 +157,6 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                               Expanded(
                                                   child: Center(
                                                 child: Image.network(_contractInfoTemp.icon),
-                                                /*FadeInImage.assetNetwork(
-                                                  image: _contractInfoTemp.icon,
-                                                  placeholder: 'res/drawable/img_placeholder_circle.png',
-//                                                height: constraint.biggest.height,
-                                                  fit: BoxFit.cover,
-                                                )*/
                                               )),
                                               SizedBox(
                                                 height: 16,
@@ -252,11 +239,6 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                                         style:
                                             TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                                       ),
-//                                      Spacer(),
-//                                      Text(
-//                                        "每人限抵${_selectedContractInfo.limit}份",
-//                                        style: TextStyle(color: Colors.grey, fontSize: 14),
-//                                      )
                                     ],
                                   ),
                                   SizedBox(
