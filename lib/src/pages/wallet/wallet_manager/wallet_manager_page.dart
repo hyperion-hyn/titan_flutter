@@ -5,6 +5,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
@@ -200,7 +201,11 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               Spacer(),
               InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
+                  var walletStr =
+                  FluroConvertUtils.object2string(wallet.toJson());
+                  Application.router.navigateTo(
+                      context, Routes.wallet_setting + '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+//                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
                 },
                 child: Icon(
                   Icons.info_outline,
