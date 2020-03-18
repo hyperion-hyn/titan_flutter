@@ -255,6 +255,7 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
             builder: (context) => PurchasePage(
                   contractInfo: widget.contractInfo,
                   payOrder: payOrder,
+              number: countText,
                 )));
   }
 }

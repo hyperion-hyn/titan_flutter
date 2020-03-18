@@ -31,7 +31,9 @@ class PurchasePage extends StatefulWidget {
 
   final PayOrder payOrder;
 
-  PurchasePage({@required this.contractInfo, @required this.payOrder});
+  final String number;
+
+  PurchasePage({@required this.contractInfo, @required this.payOrder, @required this.number});
 
   @override
   State<StatefulWidget> createState() {
@@ -125,7 +127,22 @@ class _PurchaseState extends State<PurchasePage> {
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       )
                     ],
-                  )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          S.of(context).quantity + "：",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                        Text(
+                          S.of(context).quantity_func(widget.number),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -261,7 +261,7 @@
   "n_days_product": "${days}天产出",
   "power_martgage": "算力抵押",
   "product": "产品：",
-  "amount": "金额：",
+  "amount": "价格：",
   "amount_copy_success_hint": "金额复制成功",
   "please_mortgage": "请抵押",
   "becharge_amount": "充值余额",
@@ -652,5 +652,6 @@
   "buy_need_hyn_only_func": "(需：HYN等额 ${hyn}U)",
   "hashrate_contract": "算力合约",
   "purchase_title_recharge_only_usdt": "使用直充USDT余额",
-  "buy_need_usdt_only_func": "(需：USDT ${usdt}U)"
+  "buy_need_usdt_only_func": "(需：USDT ${usdt}U)",
+  "quantity_func": "${number} 份"
 }

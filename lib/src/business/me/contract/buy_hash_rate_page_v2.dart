@@ -89,6 +89,7 @@ class _BuyHashRateStateV2 extends State<BuyHashRatePageV2> {
                               builder: (context) => PurchasePage(
                                     contractInfo: _selectedContractInfo,
                                     payOrder: orderContractState.payOrder,
+                                    number: "1",
                                   )));
 
                       return;
