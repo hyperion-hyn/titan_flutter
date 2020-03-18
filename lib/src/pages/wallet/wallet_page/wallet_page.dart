@@ -35,33 +35,15 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
   }
 
   @override
-  void didPopNext() {
-    doDidPopNext();
-  }
-
-  Future doDidPopNext() async {
-//    var activatedWallet = WalletViewModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
-//    if (activatedWallet != null) {
-//      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
-//      String updateWalletFileName = activatedWallet.wallet.keystore.fileName;
-//      if (defaultWalletFileName == updateWalletFileName) {
-//        _walletBloc.add(UpdateWalletEvent(activatedWallet));
-//      } else {
-//        _walletBloc.add(ScanWalletEvent());
-//      }
-//    } else {
-//      _walletBloc.add(ScanWalletEvent());
-//    }
+  void didPopNext() async{
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    super.didPushNext();
   }
 
   @override
   void initState() {
     super.initState();
     loadDataBloc.add(LoadingEvent());
-    //update quotes
-//    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
-    //update all coin balance
-//    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
@@ -118,9 +100,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
   }
 
   Widget _buildWalletView(BuildContext context) {
-    var activatedWalletVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            .activatedWallet;
+    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
     if (activatedWalletVo != null) {
       return LoadDataContainer(
           bloc: loadDataBloc,

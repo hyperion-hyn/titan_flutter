@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
@@ -20,7 +21,7 @@ class FinishImportPage extends StatelessWidget {
               return IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () {
-                  Routes.popUntilCreateOrImportWalletEntryRoute(context, wallet);
+                  Routes.popUntilCreateOrImportWalletEntryRoute(context);
                 },
               );
             },
@@ -71,7 +72,7 @@ class FinishImportPage extends StatelessWidget {
                     onPressed: () async {
                       BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
-                      Routes.popUntilCreateOrImportWalletEntryRoute(context, wallet);
+                      Routes.popUntilCreateOrImportWalletEntryRoute(context);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

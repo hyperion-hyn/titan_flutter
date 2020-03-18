@@ -4,12 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/wallet/service/wallet_service.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 
 
@@ -185,10 +188,21 @@ class _WalletSettingState extends State<WalletSettingPage> {
                       var result = await widget.wallet.delete(walletPassword);
                       print("del result ${widget.wallet.keystore.fileName} $result");
                       if (result) {
-                        //TODO if there is no wallet any more, back to root page. else active a new wallet and back to pre page.
+                        List<Wallet> walletList = await WalletUtil.scanWallets();
+                        var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
 
+                        if(activatedWalletVo.activatedWallet.wallet.keystore.fileName
+                            == widget.wallet.keystore.fileName && walletList.length > 0){//delete current wallet
+                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
+                          Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                        }else if(walletList.length > 0){//delete other wallet
+//                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: activatedWalletVo.activatedWallet.wallet));
+                          Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                        }else{//no wallet
+                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+                          Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                        }
                         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
-                        Navigator.of(context).popUntil((r) => r.isFirst);
                       } else {
                         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
                       }
