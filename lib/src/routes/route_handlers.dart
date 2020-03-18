@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
@@ -68,9 +69,15 @@ var managerWalletHandler = Handler(
 
 var settingWalletHandler = Handler(
     handlerFunc: (context, params) {
-      _cacheOrClearEntryWalletRouteName(params);
       Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
       return WalletSettingPage(wallet);
+    });
+
+var settingBackupNoticeWalletHandler = Handler(
+    handlerFunc: (context, params) {
+      _cacheOrClearEntryWalletRouteName(params);
+      Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+      return WalletBackupNoticePage(wallet);
     });
 
 var backUpMnemoicNoticeForCreation = Handler(handlerFunc: (context, params) {

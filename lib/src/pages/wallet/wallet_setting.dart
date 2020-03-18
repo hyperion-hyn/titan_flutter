@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/service/wallet_service.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
@@ -12,6 +13,7 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 
@@ -104,8 +106,11 @@ class _WalletSettingState extends State<WalletSettingPage> {
             Divider(),
             InkWell(
               onTap: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => WalletBackupNoticePage(widget.wallet)));
+                var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
+                Application.router.navigateTo(
+                    context, Routes.wallet_setting_wallet_backup_notice + '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+//                Navigator.push(
+//                    context, MaterialPageRoute(builder: (context) => WalletBackupNoticePage(widget.wallet)));
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),

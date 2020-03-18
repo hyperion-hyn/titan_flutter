@@ -201,10 +201,9 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               Spacer(),
               InkWell(
                 onTap: () {
-                  var walletStr =
-                  FluroConvertUtils.object2string(wallet.toJson());
+                  var walletStr = FluroConvertUtils.object2string(wallet.toJson());
                   Application.router.navigateTo(
-                      context, Routes.wallet_setting + '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                      context, Routes.wallet_setting + '?walletStr=$walletStr');
 //                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
                 },
                 child: Icon(
