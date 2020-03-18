@@ -25,8 +25,11 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends State<WalletPage> with RouteAware {
+class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepAliveClientMixin{
   LoadDataBloc loadDataBloc = LoadDataBloc();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void didChangeDependencies() {

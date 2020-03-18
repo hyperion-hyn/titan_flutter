@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 
+import 'map3_node_page/map3_node_introduction.dart';
 import 'wallet_page/wallet_page.dart';
 
 class WalletTabsPage extends StatefulWidget {
@@ -56,13 +57,13 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
           children: [
 
             WalletPage(),
-//            Map3NodeIntroductionPage(),
+            Map3NodeIntroductionPage(),
 //            Center(
 //              child: Text('this is wallet page'),
 //            ),
-            Center(
-              child: Text('this is map3 node page'),
-            )
+//            Center(
+//              child: Text('this is map3 node page'),
+//            )
           ],
 //          physics: NeverScrollableScrollPhysics(),
         ),
