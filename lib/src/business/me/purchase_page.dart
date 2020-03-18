@@ -10,10 +10,12 @@ import 'package:titan/src/app.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
+import 'package:titan/src/business/me/purchase_contract_page.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../global.dart';
+import 'contract/buy_hash_rate_page_v2.dart';
 import 'enter_fund_password.dart';
 import 'model/contract_info.dart';
 import 'model/contract_info_v2.dart';
@@ -39,18 +41,18 @@ class PurchasePage extends StatefulWidget {
 
 class _PurchaseState extends State<PurchasePage> {
   ///直充余额类型支付
-  static const String PAY_BALANCE_TYPE_RECHARGE = "RB_HYN";
+  static const String PAY_BALANCE_TYPE_RECHARGE_HYN = "RB_HYN";
   static const String PAY_BALANCE_TYPE_RECHARGE_USDT = "RB_USDT";
+  static const String PAY_BALANCE_TYPE_RECHARGE_HYBRID = "RB_HYBRID";
 
   ///收益余额类型支付
-  static const String PAY_BALANCE_TYPE_INCOME = "B_HYN";
+  static const String PAY_BALANCE_TYPE_INCOME_HYN = "B_HYN";
+  String payBalanceType = PAY_BALANCE_TYPE_RECHARGE_USDT;
 
-  String payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-
-  static const String PAY_BALANCE_TYPE_RECHARGE_USDT_100 = "RB_USDT_100";
-  static const String PAY_BALANCE_TYPE_RECHARGE_100 = "RB_HYN_100";
-  static const String PAY_BALANCE_TYPE_RECHARGE_37 = "RB_HYN_37";
-  String payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_USDT_100;
+  // 支付选项
+  static const String PAY_OPTION_RECHARGE = "RECHARGE";
+  static const String PAY_OPTION_INCOME = "INCOME";
+  String payOption = PAY_OPTION_RECHARGE;
 
   var service = UserService();
 
@@ -156,18 +158,18 @@ class _PurchaseState extends State<PurchasePage> {
     );
   }
 
-  double getBalanceByType(String type, [String chargeType = PAY_BALANCE_TYPE_RECHARGE_USDT_100]) {
+  double getBalanceByType(String option, [String chargeType = PAY_BALANCE_TYPE_RECHARGE_HYBRID]) {
     if (userInfo == null) return 0.0;
 
     //print('balance: ${userInfo.balance}, \ntotalChargeBalance: ${userInfo.totalChargeBalance}, \nchargeHynBalance: ${userInfo.chargeHynBalance}, \nchargeUsdtBalance: ${userInfo.chargeUsdtBalance})');
 
     double balance = 0;
-    if (type == PAY_BALANCE_TYPE_INCOME) {
+    if (option == PAY_OPTION_INCOME) {
       balance = (userInfo?.balance ?? 0) - (userInfo?.totalChargeBalance ?? 0);
-    } else if (type == PAY_BALANCE_TYPE_RECHARGE) {
-      if (chargeType == PAY_BALANCE_TYPE_RECHARGE_100) {
+    } else {
+      if (chargeType == PAY_BALANCE_TYPE_RECHARGE_HYN) {
         balance = userInfo?.chargeHynBalance ?? 0;
-      } else if (chargeType == PAY_BALANCE_TYPE_RECHARGE_USDT_100) {
+      } else if (chargeType == PAY_BALANCE_TYPE_RECHARGE_USDT) {
         balance = userInfo?.chargeUsdtBalance ?? 0;
       } else {
         balance = userInfo?.totalChargeBalance ?? 0;
@@ -185,9 +187,9 @@ class _PurchaseState extends State<PurchasePage> {
   }
 
   Widget _buildHynBalancePayBox() {
-    var hyn = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_100));
-    var usdt = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_USDT_100));
-    var input = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_BALANCE_TYPE_INCOME));
+    var hyn = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_HYN));
+    var usdt = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_USDT));
+    var input = Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(PAY_OPTION_INCOME));
 
     return Column(
       children: <Widget>[
@@ -233,8 +235,8 @@ class _PurchaseState extends State<PurchasePage> {
               ),
               _radioButton(
                   title: S.of(context).becharge_amount,
-                  groupValue: payBalanceType,
-                  value: PAY_BALANCE_TYPE_RECHARGE,
+                  groupValue: payOption,
+                  value: PAY_OPTION_RECHARGE,
                   child: Expanded(
                     child: Text(
                       S.of(context).purchase_title_recharge_func(hyn, usdt),
@@ -243,57 +245,59 @@ class _PurchaseState extends State<PurchasePage> {
                   ),
                   onTap: () {
                     setState(() {
-                      payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+                      payOption = PAY_OPTION_RECHARGE;
+                      payBalanceType = PAY_BALANCE_TYPE_RECHARGE_USDT;
                     });
                   }),
-              if (payBalanceType != PAY_BALANCE_TYPE_INCOME)
+              if (payOption == PAY_OPTION_RECHARGE)
                 Padding(
                   padding: const EdgeInsets.only(left: 38.0),
                   child: Column(
                     children: <Widget>[
                       _radioButton(
                           title: S.of(context).purchase_title_recharge_only_usdt,
-                          groupValue: payBalanceType_recharge,
-                          value: PAY_BALANCE_TYPE_RECHARGE_USDT_100,
+                          groupValue: payBalanceType,
+                          value: PAY_BALANCE_TYPE_RECHARGE_USDT,
                           isVertical: true,
                           child: Text(
-                            S.of(context).buy_need_usdt_only_func(Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.amount) ?? '--'),
+                            S.of(context).buy_need_usdt_only_func(
+                                Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.amount) ?? '--'),
                             style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
                           ),
                           onTap: () {
                             setState(() {
-                              payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                              payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_USDT_100;
+                              payBalanceType = PAY_BALANCE_TYPE_RECHARGE_USDT;
                             });
                           }),
                       _radioButton(
                           title: S.of(context).purchase_title_recharge_only_hyn,
-                          groupValue: payBalanceType_recharge,
-                          value: PAY_BALANCE_TYPE_RECHARGE_100,
+                          groupValue: payBalanceType,
+                          value: PAY_BALANCE_TYPE_RECHARGE_HYN,
                           isVertical: true,
                           child: Text(
-                            S.of(context).buy_need_hyn_only_func(Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.amount) ?? '--'),
+                            S.of(context).buy_need_hyn_only_func(
+                                Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.amount) ?? '--'),
                             style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
                           ),
                           onTap: () {
                             setState(() {
-                              payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                              payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_100;
+                              payBalanceType = PAY_BALANCE_TYPE_RECHARGE_HYN;
                             });
                           }),
                       _radioButton(
                           title: S.of(context).purchase_title_recharge_usdt_hyn,
-                          groupValue: payBalanceType_recharge,
-                          value: PAY_BALANCE_TYPE_RECHARGE_37,
+                          groupValue: payBalanceType,
+                          value: PAY_BALANCE_TYPE_RECHARGE_HYBRID,
                           isVertical: true,
                           child: Text(
-                            S.of(context).buy_need_hyn_usdt_func(Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--', Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--'),
+                            S.of(context).buy_need_hyn_usdt_func(
+                                Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.hynUSDTAmount) ?? '--',
+                                Const.DOUBLE_NUMBER_FORMAT.format(widget.payOrder?.erc20USDTAmount) ?? '--'),
                             style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 12),
                           ),
                           onTap: () {
                             setState(() {
-                              payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                              payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_37;
+                              payBalanceType = PAY_BALANCE_TYPE_RECHARGE_HYBRID;
                             });
                           }),
                     ],
@@ -301,15 +305,16 @@ class _PurchaseState extends State<PurchasePage> {
                 ),
               _radioButton(
                   title: S.of(context).income_amount,
-                  groupValue: payBalanceType,
-                  value: PAY_BALANCE_TYPE_INCOME,
+                  groupValue: payOption,
+                  value: PAY_OPTION_INCOME,
                   child: Expanded(
                     child: Text(S.of(context).purchase_title_input_func(input),
                         style: TextStyle(fontSize: 12, color: Color(0xFF9B9B9B))),
                   ),
                   onTap: () {
                     setState(() {
-                      payBalanceType = PAY_BALANCE_TYPE_INCOME;
+                      payOption = PAY_OPTION_INCOME;
+                      payBalanceType = PAY_BALANCE_TYPE_INCOME_HYN;
                     });
                   }),
               Center(
@@ -322,12 +327,6 @@ class _PurchaseState extends State<PurchasePage> {
                       if (userInfo != null && widget.payOrder != null) {
                         if (isInsufficientBalance()) {
                           Fluttertoast.showToast(msg: S.of(context).balance_lack);
-
-                          /*Future.delayed(Duration(milliseconds: 337)).then((v) {
-                            setState(() {
-
-                            });;
-                          });*/
                         } else {
                           try {
                             showModalBottomSheet(
@@ -341,39 +340,38 @@ class _PurchaseState extends State<PurchasePage> {
                               }
 
                               // todo: jison_HYN
-                              var type = payBalanceType;
                               var code = -1;
                               var msg = "";
                               var orderId = widget.payOrder.order_id;
 
-                              if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
-                                  payBalanceType_recharge == PAY_BALANCE_TYPE_RECHARGE_100) {
+                              if (payOption == PAY_OPTION_RECHARGE &&
+                                  payBalanceType == PAY_BALANCE_TYPE_RECHARGE_HYN &&
+                                  widget.contractInfo.type != 3) {
                                 PayOrder _payOrder = await service.createOrder(contractId: widget.contractInfo.id);
                                 orderId = _payOrder.order_id;
-                                var ret = await service.confirmPay(
-                                    orderId: orderId, payType: type, fundToken: fundToken);
-                                code = ret.code;
-                                msg = ret.msg;
-                              } else {
-                                if (payBalanceType == PAY_BALANCE_TYPE_RECHARGE &&
-                                    payBalanceType_recharge == PAY_BALANCE_TYPE_RECHARGE_USDT_100) {
-                                  type = PAY_BALANCE_TYPE_RECHARGE_USDT;
-                                }
-                                PayOrder _payOrder = await service.createOrderV2(contractId: widget.contractInfo.id);
-                                orderId = _payOrder.order_id;
-                                var ret = await service.confirmPayV2(
-                                    orderId: orderId, payType: type, fundToken: fundToken);
-                                code = ret.code;
-                                msg = ret.msg;
                               }
-                              print("[puchase] ---> payBalanceType:${payBalanceType}, type: ${type}");
+                              print("[puchase] --->type:${widget.contractInfo.type}, payBalanceType:${payBalanceType}");
 
+                              var ret = await service.confirmPayV3(
+                                  orderId: orderId, payType: payBalanceType, fundToken: fundToken);
+                              code = ret.code;
+                              msg = ret.msg;
 
                               if (code == 0) {
                                 //支付成功
                                 Fluttertoast.showToast(msg: S.of(context).action_success_hint);
-                                Navigator.pushReplacement(
-                                    context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                                if (createWalletPopUtilName != null) {
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => MyHashRatePage()),
+                                      ModalRoute.withName(createWalletPopUtilName));
+                                  createWalletPopUtilName = null;
+                                }
+                                else {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => MyHashRatePage()));
+                                }
                               } else {
                                 if (code == -1007) {
                                   Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
@@ -383,7 +381,6 @@ class _PurchaseState extends State<PurchasePage> {
                                   Fluttertoast.showToast(msg: msg ?? S.of(context).pay_fail_hint);
                                 }
                               }
-
                             });
                           } catch (e) {
                             logger.e(e);
@@ -502,24 +499,23 @@ class _PurchaseState extends State<PurchasePage> {
     );
   }
 
-
   bool isInsufficientBalance() {
-    var hyn = getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_100);
-    var usdt = getBalanceByType(PAY_BALANCE_TYPE_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_USDT_100);
-    var input = getBalanceByType(PAY_BALANCE_TYPE_INCOME);
-    var current = getBalanceByType(payBalanceType, payBalanceType_recharge);
+    var hyn = getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_HYN);
+    var usdt = getBalanceByType(PAY_OPTION_RECHARGE, PAY_BALANCE_TYPE_RECHARGE_USDT);
+    var current = getBalanceByType(payOption, payBalanceType);
+
+    /*
+    var input = getBalanceByType(PAY_OPTION_INCOME);
     print('[pay] --> '
         '\ninput:${input}, widget.payOrder.amount:${widget.payOrder.amount}'
         '\nhyn:${hyn}, widget.payOrder.hynUSDTAmount:${widget.payOrder.hynUSDTAmount}, '
         '\nusdt:${usdt}, widget.payOrder.erc20USDTAmount:${widget.payOrder.erc20USDTAmount}'
         '\ncurrent:${current}, widget.payOrder.amount:${widget.payOrder.amount}');
-    if (
-        current < widget.payOrder.amount ||
-        (hyn < widget.payOrder.hynUSDTAmount && usdt < widget.payOrder.erc20USDTAmount)
-    ) {
+    */
+    if (current < widget.payOrder.amount ||
+        (hyn < widget.payOrder.hynUSDTAmount && usdt < widget.payOrder.erc20USDTAmount)) {
       return true;
     }
     return false;
   }
-
 }

@@ -272,6 +272,14 @@ class MapRichApi {
         options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
   }
 
+  ///确认支付订单V3
+  Future<ResponseEntity<dynamic>> confirmPayV3(
+      {@required int orderId, @required String payType, @required String token, @required String fundToken}) async {
+    return await MapRichHttpCore.instance.postResponseEntity('order/v3/pay', null,
+        params: {"orderId": orderId, "payType": payType},
+        options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang(), "Fund-Token": fundToken}));
+  }
+
   Future<ResponseEntity<dynamic>> confirmExperiencePayV2(
       {@required int orderId, @required String payType, @required String token, @required String fundToken}) async {
     return await MapRichHttpCore.instance.postResponseEntity('order/v2/experience/paid', null,

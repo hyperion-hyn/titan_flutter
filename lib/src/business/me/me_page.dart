@@ -252,7 +252,8 @@ class _MeState extends UserState<MePage> with RouteAware {
                     }),
                     //显示算力，一定要要做转换显示  Utils.powerForShow
                     _buildHeaderSectionItem(S.of(context).my_power_with_unit, Utils.powerForShow(LOGIN_USER_INFO?.totalPower??0), () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
+
+                      Navigator.push(context, MaterialPageRoute(settings: RouteSettings(name: '/MyHashRatePage'),builder: (context) => MyHashRatePage()));
                     }),
                     _buildHeaderSectionItem(S.of(context).node_mortgage_with_unit, LOGIN_USER_INFO.mortgageNodes, () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyNodeMortgagePage()));
@@ -299,7 +300,10 @@ class _MeState extends UserState<MePage> with RouteAware {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               _buildCenterBigButton(S.of(context).get_power, "res/drawable/get_power.png", () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => BuyHashRatePageV2()));
+                createWalletPopUtilName = "/BuyHashRatePageV2";
+                print('[[[[BuyHashRatePageV2');
+                Navigator.push(context, MaterialPageRoute(
+                    settings: RouteSettings(name: '/BuyHashRatePageV2'),builder: (context) => BuyHashRatePageV2()));
               }),
               Padding(
                 padding: const EdgeInsets.only(top: 18),
@@ -506,8 +510,7 @@ class _MeState extends UserState<MePage> with RouteAware {
   Future _checkIn() async {
     await Navigator.push(
         context,
-        MaterialPageRoute(
-            settings: RouteSettings(name: '/data_contribution_page'), builder: (context) => DataContributionPage()));
+        MaterialPageRoute(builder: (context) => DataContributionPage()));
 //    _finishCheckIn();
   }
 

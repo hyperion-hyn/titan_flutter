@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
+import 'package:loading/loading.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/business/me/model/experience_info_v2.dart';
 import 'package:titan/src/business/me/model/user_info.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/business/me/purchase_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
 import '../../global.dart';
-import 'enter_fund_password.dart';
 import 'model/contract_info_v2.dart';
 import 'model/pay_order.dart';
-import 'my_hash_rate_page.dart';
-import 'recharge_purchase_page.dart';
 import 'service/user_service.dart';
-import 'dart:math';
 
 class PurchaseContractPage extends StatefulWidget {
   final ContractInfoV2 contractInfo;
@@ -29,16 +27,8 @@ class PurchaseContractPage extends StatefulWidget {
 }
 
 class _PurchaseContractState extends State<PurchaseContractPage> {
-  int payType = 1; //0: HYN 1：HYN余额
-
-  ///直充余额类型支付
-  static const String PAY_BALANCE_TYPE_RECHARGE = "RB_HYN";
-
-  String payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-
   var service = UserService();
 
-  UserInfo userInfo;
   ExperienceInfoV2 experienceInfo = ExperienceInfoV2(0, 0);
   PayOrder payOrder;
 
@@ -57,9 +47,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
   }
 
   void loadData() async {
-    //用户余额等信息
-    userInfo = await service.getUserInfo();
-
     //体验信息
     experienceInfo = await service.experience(widget.contractInfo.id);
 
@@ -124,30 +111,6 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
     );
   }
 
-  double getBalanceByType(String type, [String chargeType = 'hyn']) {
-    if (userInfo == null) return 0.0;
-
-    //print('balance: ${userInfo.balance}, chargeBalance: ${userInfo.chargeBalance})');
-
-    double balance = 0;
-    if (chargeType == 'hyn') {
-      balance = userInfo?.chargeHynBalance ?? 0;
-    } else if (chargeType == 'usdt') {
-      balance = userInfo?.chargeUsdtBalance ?? 0;
-    } else {
-      balance = userInfo?.totalChargeBalance ?? 0;
-    }
-
-    int decimals = 2;
-    int fac = pow(10, decimals);
-    //print('fac: $fac');
-    double d = balance;
-    d = (d * fac).floor() / fac;
-    //print("d: $d");
-
-    return d;
-  }
-
   Widget _buildHynBalancePayBox() {
     return Column(
       children: <Widget>[
@@ -164,125 +127,36 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
                 child: RaisedButton(
                   elevation: 1,
                   color: Color(0xFFD6A734),
-                  onPressed: () async {
-                    var countText = _descController.text;
-                    if (countText.isEmpty) {
-                      Fluttertoast.showToast(
-                          msg: S.of(context).experience_numbers_not_empty, gravity: ToastGravity.CENTER);
-                      setState(() {
-
-                      });
-                      return;
-                    }
-
-                    try {
-                      payOrder = await service.createExperienceOrder(
-                          contractId: widget.contractInfo.id, count: int.parse(countText));
-                    } catch (e) {
-                      logger.e(e);
-                      if (e is HttpResponseCodeNotSuccess) {
-                        if (e.code == -1007) {
-                          Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
-                        } else if (e.code == -1004) {
-                          Fluttertoast.showToast(msg: S.of(context).balance_lack);
-                        } else {
-                          Fluttertoast.showToast(msg: e.message ?? S.of(context).pay_fail_hint);
-                        }
-                        return ;
-                      }
-                    }
-
-                    if (userInfo != null && payOrder != null) {
-                      if (isInsufficientBalance()) {
-                        Fluttertoast.showToast(msg: S.of(context).balance_lack);
-                        setState(() {
-
-                        });
-                      } else {
-                        try {
-                          showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return EnterFundPasswordWidget();
-                              }).then((fundToken) async {
-                            if (fundToken == null) {
-                              return;
-                            }
-                            var ret = await service.confirmExperiencePay(
-                                orderId: payOrder.order_id, payType: payBalanceType, fundToken: fundToken);
-                            if (ret.code == 0) {
-                              //支付成功
-                              Fluttertoast.showToast(msg: S.of(context).action_success_hint);
-                              Navigator.pushReplacement(
-                                  context, MaterialPageRoute(builder: (context) => MyHashRatePage()));
-                            } else {
-                              if (ret.code == -1007) {
-                                Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
-                              } else if (ret.code == -1004) {
-                                Fluttertoast.showToast(msg: S.of(context).balance_lack);
-                              } else {
-                                Fluttertoast.showToast(msg: ret.msg ?? S.of(context).pay_fail_hint);
-                              }
-                            }
-                          });
-                        } catch (e) {
-                          logger.e(e);
-                          Fluttertoast.showToast(msg: S.of(context).transfer_exception_hint);
-                        }
-                      }
-                    } else {
-                      Fluttertoast.showToast(msg: S.of(context).data_exception_hint);
-                    }
-                  },
+                  onPressed: _onPressed,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                     child: SizedBox(
                         height: 40,
                         width: 192,
                         child: Center(
-                            child: Text(
-                          S.of(context).confirm_mortgage,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            if (_isOnPressed)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: SizedBox(
+                                    height: 30,
+                                    width: 30,
+                                    child: Loading(
+                                      indicator: BallSpinFadeLoaderIndicator(),
+                                    )),
+                              ),
+                            Text(
+                              S.of(context).next,
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ))),
                   ),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-              ),
-              if (isInsufficientBalance())
-                Container(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        S.of(context).balance_lack,
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RechargePurchasePage(),
-                                      settings: RouteSettings(name: "/recharge_purchase_page")))
-                              .then((value) async {
-                            userInfo = await service.getUserInfo();
-                            payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                            setState(() {});
-                          });
-                        },
-                        child: Text(
-                          S.of(context).click_charge,
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              )
             ],
           ),
         ),
@@ -333,30 +207,54 @@ class _PurchaseContractState extends State<PurchaseContractPage> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15, top: 6, bottom: 10),
-          child: Text(
-            S
-                .of(context)
-                .experience_avaliable_func(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
-            //S.of(context).available_balance_usdt(Const.DOUBLE_NUMBER_FORMAT.format(getBalanceByType(payBalanceType))),
-            style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
-          ),
-        ),
       ],
     );
   }
 
-  bool isInsufficientBalance() {
-    var count = -1;
-    if (_descController.text.isNotEmpty) {
-      count = int.parse(_descController.text);
-    }
-    var total = getBalanceByType(payBalanceType, 'total');
-    if (total < count * 10 || total <= 0) {
-      return true;
+  bool _isOnPressed = false;
+  void _onPressed() async {
+    var countText = _descController.text;
+    if (countText.isEmpty) {
+      Fluttertoast.showToast(msg: S.of(context).experience_numbers_not_empty, gravity: ToastGravity.CENTER);
+      return;
     }
 
-    return false;
+    if (_isOnPressed) {
+      return;
+    }
+    setState(() {
+      _isOnPressed = true;
+    });
+
+    try {
+      payOrder = await service.createExperienceOrder(contractId: widget.contractInfo.id, count: int.parse(countText));
+    } catch (e) {
+      logger.e(e);
+      setState(() {
+        _isOnPressed = false;
+      });
+      if (e is HttpResponseCodeNotSuccess) {
+        if (e.code == -1007) {
+          Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
+        } else if (e.code == -1004) {
+          Fluttertoast.showToast(msg: S.of(context).balance_lack);
+        } else {
+          Fluttertoast.showToast(msg: e.message ?? S.of(context).pay_fail_hint);
+        }
+        return;
+      }
+    }
+
+    setState(() {
+      _isOnPressed = false;
+    });
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PurchasePage(
+                  contractInfo: widget.contractInfo,
+                  payOrder: payOrder,
+                )));
   }
 }

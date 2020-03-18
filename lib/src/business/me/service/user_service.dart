@@ -322,6 +322,18 @@ class UserService {
         orderId: orderId, payType: payType, token: userToken.token, fundToken: fundToken);
   }
 
+  // V3
+  Future<ResponseEntity<dynamic>> confirmPayV3(
+      {@required int orderId, @required String payType, @required String fundToken}) async {
+    UserToken userToken = await getUserTokenFromSharedpref();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+
+    return await _mapRichApi.confirmPayV3(
+        orderId: orderId, payType: payType, token: userToken.token, fundToken: fundToken);
+  }
+
   ///体验支付确认
   Future<ResponseEntity<dynamic>> confirmExperiencePay(
       {@required int orderId, @required String payType, @required String fundToken}) async {
