@@ -13,7 +13,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/utils/wallet_utils.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -88,7 +88,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepA
                     Spacer(),
                     //quote
                     Text(
-                      '${hynQuoteSign != null ? '${WalletUtils.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
+                      '${hynQuoteSign != null ? '${WalletUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
                       style: TextStyle(
                           color: HexColor('#333333'),
                           fontWeight: FontWeight.bold,

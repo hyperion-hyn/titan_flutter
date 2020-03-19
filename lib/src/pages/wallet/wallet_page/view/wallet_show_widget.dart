@@ -12,11 +12,10 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/wallet_utils.dart';
 
 class ShowWalletView extends StatelessWidget {
   final WalletVo walletVo;
@@ -177,7 +176,7 @@ class ShowWalletView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        "${symbolQuote?.sign?.sign ?? ''} ${WalletUtils.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}",
+                        "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}",
                         style: TextStyles.textC9b9b9bS12,
                       ),
                     ),
@@ -195,7 +194,7 @@ class ShowWalletView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "${WalletUtils.formatCoinNum(coin.balance)}",
+                  "${WalletUtil.formatCoinNum(coin.balance)}",
                   style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                 ),
                 SizedBox(
@@ -204,7 +203,7 @@ class ShowWalletView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${symbolQuote?.sign?.sign ?? ''} ${WalletUtils.formatPrice(coin.balance * (symbolQuote?.quoteVo?.price ?? 0))}",
+                    "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(coin.balance * (symbolQuote?.quoteVo?.price ?? 0))}",
                     style: TextStyles.textC9b9b9bS12,
                   ),
                 ),
@@ -221,7 +220,7 @@ class ShowWalletView extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(left: 6),
           child: Text(
-            "${WalletUtils.formatPercentChange(percentChange)}",
+            "${WalletUtil.formatPercentChange(percentChange)}",
             style: TextStyles.textC00ec00S12,
           ),
         );
@@ -229,7 +228,7 @@ class ShowWalletView extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(left: 6),
           child: Text(
-            "${WalletUtils.formatPercentChange(percentChange)}",
+            "${WalletUtil.formatPercentChange(percentChange)}",
             style: TextStyles.textCff2d2dS12,
           ),
         );
