@@ -94,7 +94,9 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
               }
 
               var shouldShow = notification.extent <= notification.anchorExtent;
-              (_bottomBarKey.currentState as BottomFabsWidgetState).setVisible(shouldShow);
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                (_bottomBarKey.currentState as BottomFabsWidgetState).setVisible(shouldShow);
+              });
 
               return true;
             },
@@ -102,7 +104,10 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
               children: <Widget>[
                 ScaffoldMap(),
                 userLocationBar(),
-                _getTabView(_currentTabIndex),
+                Padding(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
+                  child: _getTabView(_currentTabIndex),
+                ),
                 bottomNavigationBar(),
               ],
             ),
@@ -228,32 +233,32 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
   }
 
   Widget _getTabView(int index) {
-    var barHeight = MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight;
-    return Padding(
-      padding: EdgeInsets.only(bottom: barHeight),
-      child: IndexedStack(
-        index: index,
-        children: <Widget>[
-          BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey)),
-          WalletTabsPage(),
-          BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
-          InformationPage(),
-          MyPage(),
-        ],
-      ),
-    );
+//    var barHeight = MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight;
+//    return Padding(
+//      padding: EdgeInsets.only(bottom: barHeight),
+//      child: IndexedStack(
+//        index: index,
+//        children: <Widget>[
+//          BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey)),
+//          WalletTabsPage(),
+//          BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
+//          InformationPage(),
+//          MyPage(),
+//        ],
+//      ),
+//    );
 
-//    switch (index) {
-//      case 1:
-//        return WalletTabsPage();
-//      case 2:
-//        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage());
-//      case 3:
-//        return InformationPage();
-//      case 4:
-//        return MyPage();
-//    }
-//    return BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey));
+    switch (index) {
+      case 1:
+        return WalletTabsPage();
+      case 2:
+        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage());
+      case 3:
+        return InformationPage();
+      case 4:
+        return MyPage();
+    }
+    return BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey));
   }
 
 //  Widget home() {

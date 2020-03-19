@@ -52,7 +52,7 @@ class ScaffoldMap extends StatefulWidget {
 
 class _ScaffoldMapState extends State<ScaffoldMap> {
 //  ScrollController _bottomChildScrollController = ScrollController();
-  final GlobalKey poiDraggablePanelKey = GlobalKey(debugLabel: 'poiDraggablePanelKey');
+//  final GlobalKey poiDraggablePanelKey = GlobalKey(debugLabel: 'poiDraggablePanelKey');
 
 //  ScaffoldMapStore _store = ScaffoldMapStore();
 
@@ -109,14 +109,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
   @override
   Widget build(BuildContext context) {
-    //scenes:
-    //1. map
-    //2. top navigation bar
-    //3. search bar
-    //4. route bar
-    //5. bottom sheet
-    //6. bottom operation bar
-    //logic:  use prop to update each scene. scene use bloc to update data/state.
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(listener: (context, state) {
       if (state is FocusingSearchState || state is FocusingDMapState) {
         //set as root
@@ -135,12 +127,20 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       }
     }, child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
       builder: (context, state) {
-        return buildByState(state);
+        return buildBodyByState(state);
       },
     ));
   }
 
-  Widget buildByState(ScaffoldMapState state) {
+  Widget buildBodyByState(ScaffoldMapState state) {
+    //scenes:
+    //1. map
+    //2. top navigation bar
+    //3. search bar
+    //4. route bar
+    //5. bottom sheet
+    //6. bottom operation bar
+    //logic:  use prop to update each scene. scene use bloc to update data/state.
     return LayoutBuilder(builder: (ctx, BoxConstraints boxConstraints) {
       var languageCode = Localizations.localeOf(context).languageCode;
       double maxHeight = boxConstraints.biggest.height;
@@ -375,9 +375,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       double panelMin = collapsedHeight / maxHeight;
       double panelAnchor = anchorHeight / maxHeight;
       double panelInitSize = initHeight / maxHeight;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
-      });
+      if (panelBuilder != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          myWidget.DraggableScrollableActuator.reset(Keys.mapDraggablePanelKey.currentContext);
+        });
+      }
 
       return Stack(
         fit: StackFit.expand,
@@ -420,10 +422,10 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
             child: NotificationListener<HeaderHeightNotification>(
               onNotification: (notification) {
                 //hack, not elegant
-                var draggableSheet = poiDraggablePanelKey.currentWidget as myWidget.DraggableScrollableSheet;
+                var draggableSheet = Keys.mapDraggablePanelKey.currentWidget as myWidget.DraggableScrollableSheet;
                 draggableSheet.initialChildSize = notification.height / maxHeight;
                 draggableSheet.minChildSize = notification.height / maxHeight;
-                myWidget.DraggableScrollableActuator.reset(poiDraggablePanelKey.currentContext);
+                myWidget.DraggableScrollableActuator.reset(Keys.mapDraggablePanelKey.currentContext);
                 return true;
               },
               child: NotificationListener<myWidget.DraggableScrollableNotification>(
@@ -436,7 +438,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                   return false;
                 },
                 child: myWidget.DraggableScrollableSheet(
-                  key: poiDraggablePanelKey,
+                  key: Keys.mapDraggablePanelKey,
                   maxHeight: maxHeight,
                   maxChildSize: panelMax,
                   anchorSize: panelAnchor,

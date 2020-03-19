@@ -123,7 +123,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepA
           },
           onRefresh: () async {
             //update quotes
-            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
+            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
             //update all coin balance
             BlocProvider.of<WalletCmpBloc>(context)
                 .add(UpdateActivatedWalletBalanceEvent());

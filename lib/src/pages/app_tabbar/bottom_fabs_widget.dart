@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/inject/injector.dart';
@@ -31,12 +30,9 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
   }
 
   void setVisible(bool isVisible) {
-    print('iss $_isShow $isVisible');
     if (_isShow != isVisible) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _isShow = isVisible;
-        });
+      setState(() {
+        _isShow = isVisible;
       });
     }
   }

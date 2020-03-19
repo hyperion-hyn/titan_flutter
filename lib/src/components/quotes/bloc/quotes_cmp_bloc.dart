@@ -19,7 +19,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
   @override
   Stream<QuotesCmpState> mapEventToState(QuotesCmpEvent event) async* {
     if (event is UpdateQuotesEvent) {
-      if (currentQuotesModel == null ||
+      if (currentQuotesModel == null || event.isForceUpdate ||
           DateTime.now().millisecondsSinceEpoch - currentQuotesModel.lastUpdateTime > UPDATE_THRESHOLD) {
         yield UpdatingQuotesState();
 

@@ -49,6 +49,7 @@ class Keys {
   static final mapContainerKey = GlobalKey(debugLabel: '__map__');
   static final mapParentKey = GlobalKey(debugLabel: '__map_parent__');
   static final homePanelKey = GlobalKey(debugLabel: '__home_panel_parent__');
+  static final mapDraggablePanelKey = GlobalKey(debugLabel: 'mapDraggablePanelKey');
 }
 
 class PrefsKey {
