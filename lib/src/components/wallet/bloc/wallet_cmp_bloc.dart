@@ -35,9 +35,14 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       if (_activatedWalletVo != null) {
         yield UpdatingWalletBalanceState();
 
-        await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
+        try {
+          await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
+          yield UpdatedWalletBalanceState(walletVo: _activatedWalletVo.copyWith());
+        } catch (e) {
+          logger.e(e);
 
-        yield UpdatedWalletBalanceState(walletVo: _activatedWalletVo.copyWith());
+          yield UpdateFailedWalletBalanceState();
+        }
       }
     } else if (event is LoadLocalDiskWalletAndActiveEvent) {
       yield LoadingWalletState();
@@ -46,7 +51,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         var wallet = await walletRepository.getActivatedWalletFormLocalDisk();
         //now active loaded wallet_vo. tips: maybe null
         add(ActiveWalletEvent(wallet: wallet));
-        add(UpdateActivatedWalletBalanceEvent());
+//        add(UpdateActivatedWalletBalanceEvent());
       } catch (e) {
         logger.e(e);
 
