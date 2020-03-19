@@ -30,7 +30,7 @@ class AccountTransferService {
       return TransactionDetailVo(
           type: type,
           state: 0,
-          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(erc20TransferHistory.value)).toDouble(),
+          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(erc20TransferHistory.value), int.parse(erc20TransferHistory.tokenDecimal)).toDouble(),
           unit: erc20TransferHistory.tokenSymbol,
           fromAddress: erc20TransferHistory.from,
           toAddress: erc20TransferHistory.to,

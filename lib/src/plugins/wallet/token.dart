@@ -51,7 +51,8 @@ class SupportedTokens {
   static const USDT_ERC20 = const AssetToken(
     name: 'Tether USD',
     decimals: 6,
-    logo: 'https://tether.to/wp-content/uploads/2015/02/Tether_logo_dm-e1537976324456.png',
+//    logo: 'https://tether.to/wp-content/uploads/2015/02/Tether_logo_dm-e1537976324456.png',
+    logo: 'res/drawable/usdt_logo.png',
     contractAddress: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     symbol: 'USDT',
   );
@@ -59,6 +60,7 @@ class SupportedTokens {
   static const USDT_ERC20_ROPSTEN = const AssetToken(
     name: 'Tether USD',
     decimals: 6,
+    logo: 'res/drawable/usdt_logo.png',
     contractAddress: '0xE82B8Eb1ce4684475eFc1655928dD012fb5Fa0Bb',
     symbol: 'USDT',
   );

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 
@@ -94,7 +95,7 @@ class _WalletManagerState extends State<_WalletManager> {
     if (walletVo != null && _quotesSign != null && _quoteModel != null) {
       double totalBalance = 0;
       for (var coin in walletVo.coins) {
-        var vo = _getQuoteVoPriceBySign(_quoteModel, _quotesSign);
+        var vo = _getQuoteVoPriceBySign(coin, _quoteModel, _quotesSign);
         if (vo != null) {
           totalBalance += vo.price * coin.balance;
         }
@@ -104,9 +105,9 @@ class _WalletManagerState extends State<_WalletManager> {
     return 0;
   }
 
-  SymbolQuoteVo _getQuoteVoPriceBySign(QuotesModel quotesModel, QuotesSign quotesSign) {
+  SymbolQuoteVo _getQuoteVoPriceBySign(CoinVo coinVo, QuotesModel quotesModel, QuotesSign quotesSign) {
     for (var vo in quotesModel.quotes) {
-      if (vo.quote == quotesSign.quote) {
+      if (vo.quote == quotesSign.quote && vo.symbol == coinVo.symbol) {
         return vo;
       }
     }

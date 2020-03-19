@@ -69,7 +69,7 @@ class QuotesInheritedModel extends InheritedModel<QuotesAspect> {
   ActiveQuoteVoAndSign activatedQuoteVoAndSign(String symbol) {
     if (quotesModel != null && activeQuotesSign != null) {
       for (var quote in quotesModel.quotes) {
-        if (quote.symbol == symbol) {
+        if (quote.symbol == symbol && quote.quote == activeQuotesSign.quote) {
           return ActiveQuoteVoAndSign(quoteVo: quote, sign: activeQuotesSign);
         }
       }

@@ -5,9 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
+import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
 import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
@@ -21,6 +24,7 @@ import 'package:titan/src/pages/wallet/wallet_send_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 
 import '../config/consts.dart';
+import 'fluro_convert_utils.dart';
 
 var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return RootPageControlComponent(key: Keys.rootKey);
@@ -62,6 +66,19 @@ var transferConfirmHandler = Handler(handlerFunc: (context, params) {
 var managerWalletHandler = Handler(
     handlerFunc: (context, params) =>
         BlocProvider<WalletManagerBloc>(create: (context) => WalletManagerBloc(), child: WalletManagerPage()));
+
+var settingWalletHandler = Handler(
+    handlerFunc: (context, params) {
+      Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+      return WalletSettingPage(wallet);
+    });
+
+var settingBackupNoticeWalletHandler = Handler(
+    handlerFunc: (context, params) {
+      _cacheOrClearEntryWalletRouteName(params);
+      Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+      return WalletBackupNoticePage(wallet);
+    });
 
 var backUpMnemoicNoticeForCreation = Handler(handlerFunc: (context, params) {
   return CreateWalletBackupNoticePage(params['walletName']?.first,params['password']?.first);

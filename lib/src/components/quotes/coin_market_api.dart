@@ -22,7 +22,8 @@ class CoinMarketApi {
       for (var key in keys) {
         for (var convert in quoteConverts) {
           var price = datas[key]["quote"][convert]["price"];
-          var vo = SymbolQuoteVo(symbol: key, quote: convert, price: price);
+          var percentChange24h = datas[key]["quote"][convert]["percent_change_24h"];
+          var vo = SymbolQuoteVo(symbol: key, quote: convert, price: price, percentChange24h: percentChange24h);
           list.add(vo);
         }
       }

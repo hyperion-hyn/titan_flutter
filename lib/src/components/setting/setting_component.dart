@@ -47,7 +47,7 @@ class _SettingManagerState extends State<_SettingManager> {
           if (state.languageModel != null) {
             //update current quotes by setting
             var quoteSign = SupportedQuoteSigns.of('USD');
-            if (languageModel?.isZh() == true) {
+            if (state.languageModel?.isZh() == true) {
               quoteSign = SupportedQuoteSigns.of('CNY');
             }
             BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quoteSign));

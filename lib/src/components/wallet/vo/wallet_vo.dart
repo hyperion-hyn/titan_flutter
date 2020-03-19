@@ -19,10 +19,10 @@ class WalletVo {
 
   Map<String, dynamic> toJson() => _$WalletVoToJson(this);
 
-  WalletVo copyWith(WalletVo target) {
+  WalletVo copyWith([WalletVo target]) {
     return WalletVo(
-        balance: target.balance ?? this.balance,
-        coins: target.coins ?? this.coins,
-        wallet: target.wallet ?? this.wallet);
+        balance: target?.balance ?? this.balance,
+        coins: target?.coins ?? this.coins,
+        wallet: target?.wallet ?? this.wallet);
   }
 }

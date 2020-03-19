@@ -5,6 +5,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
@@ -22,17 +23,37 @@ class WalletManagerPage extends StatefulWidget {
   }
 }
 
-class _WalletManagerState extends BaseState<WalletManagerPage> {
+class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   WalletManagerBloc _walletManagerBloc;
 
   @override
-  void onCreated() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+//  @override
+//  void onCreated() {
+//    _walletManagerBloc = BlocProvider.of<WalletManagerBloc>(context);
+//    _walletManagerBloc.add(ScanWalletEvent());
+//  }
+
+  @override
+  void didPush() {
     _walletManagerBloc = BlocProvider.of<WalletManagerBloc>(context);
     _walletManagerBloc.add(ScanWalletEvent());
+    super.didPush();
+  }
+
+  @override
+  void didPopNext() {
+    _walletManagerBloc.add(ScanWalletEvent());
+    super.didPushNext();
   }
 
   @override
   void dispose() {
+    Application.routeObserver.unsubscribe(this);
     _walletManagerBloc.close();
     super.dispose();
   }
@@ -51,9 +72,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> {
           actions: <Widget>[
             InkWell(
               onTap: () {
-                var currentRouteName = ModalRoute.of(context).settings.name;
+//                var currentRouteName = ModalRoute.of(context).settings.name;
+//                created = false;
                 Application.router.navigateTo(
-                    context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(currentRouteName)}');
+                    context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.wallet_manager)}');
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -65,9 +87,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> {
             ),
             InkWell(
               onTap: () {
-                var currentRouteName = ModalRoute.of(context).settings.name;
+//                var currentRouteName = ModalRoute.of(context).settings.name;
+//                created = false;
                 Application.router.navigateTo(
-                    context, Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(currentRouteName)}');
+                    context, Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.wallet_manager)}');
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -178,7 +201,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> {
               Spacer(),
               InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
+                  var walletStr = FluroConvertUtils.object2string(wallet.toJson());
+                  Application.router.navigateTo(
+                      context, Routes.wallet_setting + '?walletStr=$walletStr');
+//                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
                 },
                 child: Icon(
                   Icons.info_outline,

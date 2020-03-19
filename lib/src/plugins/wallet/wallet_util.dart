@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -42,7 +43,7 @@ class WalletUtil {
       name: name,
       mnemonic: mnemonic,
       password: password,
-      activeCoins: [CoinType.ETHEREUM, CoinType.BITCOIN],
+      activeCoins: [CoinType.ETHEREUM],
     );
     return loadWallet(fileName);
   }
@@ -248,4 +249,21 @@ class WalletUtil {
       return _web3clientRopsten;
     }
   }
+
+  static String formatCoinNum(double coinNum) {
+    return NumberFormat("#,###.######").format(coinNum);
+  }
+
+  static String formatPrice(double price) {
+    if(price >= 1){
+      return NumberFormat("#,###.##").format(price);
+    }else{
+      return NumberFormat("#,###.####").format(price);
+    }
+  }
+
+  static String formatPercentChange(double percentChange) {
+    return NumberFormat("#,###.##").format(percentChange) + "%";
+  }
+
 }
