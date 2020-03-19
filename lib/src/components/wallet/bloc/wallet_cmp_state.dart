@@ -29,3 +29,5 @@ class UpdatingWalletBalanceState extends WalletCmpState {}
 class UpdatedWalletBalanceState extends WalletVoAwareCmpState {
   UpdatedWalletBalanceState({WalletVo walletVo}) : super(walletVo: walletVo);
 }
+
+class UpdateFailedWalletBalanceState extends WalletCmpState {}

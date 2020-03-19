@@ -6,7 +6,11 @@ abstract class QuotesCmpEvent {
   const QuotesCmpEvent();
 }
 
-class UpdateQuotesEvent extends QuotesCmpEvent {}
+class UpdateQuotesEvent extends QuotesCmpEvent {
+  final bool isForceUpdate;
+
+  UpdateQuotesEvent({this.isForceUpdate});
+}
 
 class UpdateQuotesSignEvent extends QuotesCmpEvent {
   final QuotesSign sign;

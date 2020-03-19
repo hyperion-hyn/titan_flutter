@@ -331,7 +331,7 @@ class WalletConfig {
 
   static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
 
-  static bool isMainNet = false;
+  static bool isMainNet = true;
 
   static String getInfuraApi() {
     return isMainNet ? INFURA_MAIN_API : INFURA_ROPSTEN_API;

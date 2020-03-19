@@ -78,11 +78,9 @@ class DiscoverPageState extends State<DiscoverPage> {
                         radius: Radius.circular(0),
                         onImageTap: (int index) {
                           var focusImage = focusImages[index];
-
                           if (focusImage.link == null || focusImage.link.isEmpty) {
                             return;
                           }
-
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -91,7 +89,7 @@ class DiscoverPageState extends State<DiscoverPage> {
                                         title: "",
                                       )));
                         },
-                        dotVerticalPadding: 16,
+//                        dotVerticalPadding: 0,
                         dotBgColor: Colors.transparent,
                         images: focusImages.map((focusImage) {
                           return FadeInImage.assetNetwork(

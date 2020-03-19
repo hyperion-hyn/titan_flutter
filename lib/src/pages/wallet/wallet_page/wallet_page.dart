@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
@@ -25,7 +26,7 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepAliveClientMixin{
+class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   @override
@@ -38,7 +39,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepA
   }
 
   @override
-  void didPopNext() async{
+  void didPopNext() async {
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     super.didPushNext();
   }
@@ -46,7 +47,15 @@ class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepA
   @override
   void initState() {
     super.initState();
-    loadDataBloc.add(LoadingEvent());
+//    loadDataBloc.add(LoadingEvent());
+  }
+
+  @override
+  void onCreated() {
+    //update quotes
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    //update all coin balance
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
@@ -54,8 +63,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepA
     super.build(context);
 
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
 
     return Column(
       children: <Widget>[
@@ -89,10 +97,7 @@ class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepA
                     //quote
                     Text(
                       '${hynQuoteSign != null ? '${WalletUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
-                      style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
+                      style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ],
                 ),
@@ -110,33 +115,18 @@ class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepA
       return LoadDataContainer(
           bloc: loadDataBloc,
           enablePullUp: false,
-          onLoadData: () async {
-            //update quotes
-            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
-            //update all coin balance
-            BlocProvider.of<WalletCmpBloc>(context)
-                .add(UpdateActivatedWalletBalanceEvent());
-            await Future.delayed(Duration(seconds: 1));
-
-            loadDataBloc.add(RefreshSuccessEvent());
-            setState(() {});
-          },
           onRefresh: () async {
             //update quotes
-            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
+            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
             //update all coin balance
-            BlocProvider.of<WalletCmpBloc>(context)
-                .add(UpdateActivatedWalletBalanceEvent());
-            await Future.delayed(Duration(seconds: 1));
+            BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+
+            await Future.delayed(Duration(milliseconds: 700));
 
             loadDataBloc.add(RefreshSuccessEvent());
-            setState(() {});
           },
           child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: ShowWalletView(activatedWalletVo, loadDataBloc)
-          )
-      );
+              scrollDirection: Axis.vertical, child: ShowWalletView(activatedWalletVo, loadDataBloc)));
     }
 
     return BlocBuilder<WalletCmpBloc, WalletCmpState>(

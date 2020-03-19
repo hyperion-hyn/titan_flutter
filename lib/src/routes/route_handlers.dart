@@ -27,7 +27,7 @@ import '../config/consts.dart';
 import 'fluro_convert_utils.dart';
 
 var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  return RootPageControlComponent(key: Keys.homePageKey);
+  return RootPageControlComponent(key: Keys.rootKey);
 });
 
 //wallet

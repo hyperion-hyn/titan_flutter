@@ -577,7 +577,14 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
       listener: (context, state) {
         if (state is FocusingPoiState) {
-          addMarkerAndMoveCameraToIt(state.poi);
+          //hack, wait parent update build, then move camera smooth
+          if (state.status == Status.loading) {
+            Future.delayed(Duration(milliseconds: 20)).then((value) {
+              addMarkerAndMoveCameraToIt(state.poi);
+            });
+          } else {
+            addMarkerAndMoveCameraToIt(state.poi);
+          }
         } else if (state is FocusingSearchState) {
           if (state.pois != null && state.pois.length > 0) {
             _addSearchResultMarkers(state.pois);

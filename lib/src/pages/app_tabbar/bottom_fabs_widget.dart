@@ -9,46 +9,32 @@ import 'burning_dialog.dart';
 class BottomFabsWidget extends StatefulWidget {
   final bool showBurnBtn;
 
-  BottomFabsWidget({Key key, this.showBurnBtn}) : super(key: key);
+  BottomFabsWidget({this.showBurnBtn, Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return BottomFasScenesState();
+    return BottomFabsWidgetState();
   }
 }
 
-class BottomFasScenesState extends State<BottomFabsWidget> {
-  double _fabsBottom = 16;
-  double opacity = 1;
+class BottomFabsWidgetState extends State<BottomFabsWidget> {
+  bool _isShow = true;
 
-  void updateBottomPadding(double bottom, double anchorHeight) {
-    if (bottom >= 0 && bottom <= anchorHeight) {
-      setState(() {
-        _fabsBottom = bottom;
-        opacity = 1;
-      });
-    }
-    if (bottom > anchorHeight) {
-      double dy = _fabsBottom + 50 - bottom;
-      if (dy > 0) {
-        setState(() {
-          opacity = dy / 50;
-        });
-      } else if (opacity != 0) {
-        setState(() {
-          opacity = 0;
-        });
-      }
-    }
-  }
-
-  void _clean() {
+  void _clean(context) {
     var searchInteractor = Injector.of(context).searchInteractor;
     searchInteractor.deleteAllHistory();
 
     //TODO UI back to global
 //    BlocProvider.of<home.HomeBloc>(context).add(home.ExistSearchEvent());
 //    BlocProvider.of<map.MapBloc>(context).add(map.ResetMapEvent());
+  }
+
+  void setVisible(bool isVisible) {
+    if (_isShow != isVisible) {
+      setState(() {
+        _isShow = isVisible;
+      });
+    }
   }
 
   void _showFireModalBottomSheet(context) {
@@ -71,7 +57,7 @@ class BottomFasScenesState extends State<BottomFabsWidget> {
                           builder: (BuildContext context) {
                             return BurningDialog();
                           });
-                      _clean();
+                      _clean(context);
                     }),
                 new ListTile(
                   leading: new Icon(Icons.close),
@@ -86,50 +72,44 @@ class BottomFasScenesState extends State<BottomFabsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: _fabsBottom,
-      left: 0,
-      right: 0,
-      child: IgnorePointer(
-        ignoring: opacity == 0,
-        child: Opacity(
-          opacity: opacity,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: <Widget>[
-                if (widget.showBurnBtn == true)
-                  FloatingActionButton(
-                    onPressed: () => _showFireModalBottomSheet(context),
-                    mini: true,
-                    heroTag: 'cleanData',
-                    backgroundColor: Colors.white,
-                    child: Image.asset(
-                      'res/drawable/ic_logo.png',
-                      width: 24,
-                      color: Colors.black87,
-                    ),
-                  ),
-                Spacer(),
-                FloatingActionButton(
-                  onPressed: () {
-                    Application.eventBus.fire(ToMyLocationEvent());
+    if (_isShow == true) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            if (widget.showBurnBtn == true)
+              FloatingActionButton(
+                onPressed: () => _showFireModalBottomSheet(context),
+                mini: true,
+                heroTag: 'cleanData',
+                backgroundColor: Colors.white,
+                child: Image.asset(
+                  'res/drawable/ic_logo.png',
+                  width: 24,
+                  color: Colors.black87,
+                ),
+              ),
+            Spacer(),
+            FloatingActionButton(
+              onPressed: () {
+                Application.eventBus.fire(ToMyLocationEvent());
 //                BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
-                  },
-                  mini: true,
-                  heroTag: 'myLocation',
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.my_location,
-                    color: Colors.black87,
-                    size: 24,
-                  ),
-                )
-              ],
-            ),
-          ),
+              },
+              mini: true,
+              heroTag: 'myLocation',
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.my_location,
+                color: Colors.black87,
+                size: 24,
+              ),
+            )
+          ],
         ),
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 }
