@@ -53,7 +53,7 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   @override
   void onCreated() {
     //update quotes
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent());
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
@@ -120,7 +120,8 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
             BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
             //update all coin balance
             BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
-            await Future.delayed(Duration(seconds: 1));
+
+            await Future.delayed(Duration(milliseconds: 700));
 
             loadDataBloc.add(RefreshSuccessEvent());
           },

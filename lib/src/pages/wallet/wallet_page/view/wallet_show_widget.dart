@@ -19,7 +19,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 
 class ShowWalletView extends StatelessWidget {
   final WalletVo walletVo;
-  LoadDataBloc loadDataBloc;
+  final LoadDataBloc loadDataBloc;
 
   ShowWalletView(this.walletVo, this.loadDataBloc);
 
