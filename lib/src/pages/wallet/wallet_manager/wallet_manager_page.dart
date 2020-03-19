@@ -127,7 +127,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   }
 
   Widget _buildWallet(Wallet wallet) {
-    bool isSelected = wallet == WalletInheritedModel.of(context).activatedWallet?.wallet;
+    bool isSelected = wallet.keystore.fileName == WalletInheritedModel.of(context).activatedWallet?.wallet?.keystore?.fileName;
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
     return Padding(

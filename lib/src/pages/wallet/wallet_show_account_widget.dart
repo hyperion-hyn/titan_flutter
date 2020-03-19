@@ -10,6 +10,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -32,7 +33,7 @@ import '../../pages/wallet/model/transtion_detail_vo.dart';
 import 'api/etherscan_api.dart';
 
 class ShowAccountPage extends StatefulWidget {
-  final CoinVo coinVo;
+  CoinVo coinVo;
 
   ShowAccountPage(String coinVo) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
@@ -50,6 +51,22 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   @override
   int getStartPage() {
     return 1;
+  }
+
+  @override
+  void onCreated() {
+    BlocProvider.of<WalletCmpBloc>(context).listen((WalletCmpState walletCmpState){
+      if(walletCmpState is UpdatedWalletBalanceState){
+        for(CoinVo coinVo in walletCmpState.walletVo.coins){
+          if(coinVo.contractAddress == widget.coinVo.contractAddress){
+            widget.coinVo = coinVo;
+          }
+        }
+        setState(() {
+
+        });
+      }
+    });
   }
 
   @override
