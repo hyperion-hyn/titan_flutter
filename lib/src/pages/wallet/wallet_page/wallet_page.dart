@@ -51,6 +51,8 @@ class _WalletPageState extends State<WalletPage> with RouteAware, AutomaticKeepA
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     //hyn quote
     ActiveQuoteVoAndSign hynQuoteSign =
         QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
