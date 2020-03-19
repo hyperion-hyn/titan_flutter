@@ -118,7 +118,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
     //6. bottom operation bar
     //logic:  use prop to update each scene. scene use bloc to update data/state.
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(listener: (context, state) {
-      print('xxxx BlocListener 111 $state');
       if (state is FocusingSearchState || state is FocusingDMapState) {
         //set as root
         _stateStack.clear();
@@ -142,7 +141,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
   }
 
   Widget buildByState(ScaffoldMapState state) {
-    print('xxxx buildByState $state');
     return LayoutBuilder(builder: (ctx, BoxConstraints boxConstraints) {
       var languageCode = Localizations.localeOf(context).languageCode;
       double maxHeight = boxConstraints.biggest.height;
@@ -439,6 +437,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
                 },
                 child: myWidget.DraggableScrollableSheet(
                   key: poiDraggablePanelKey,
+                  maxHeight: maxHeight,
                   maxChildSize: panelMax,
                   anchorSize: panelAnchor,
                   minChildSize: panelMin,

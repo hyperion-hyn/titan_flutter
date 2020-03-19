@@ -23,7 +23,7 @@ import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 import '../config/consts.dart';
 
 var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  return RootPageControlComponent(key: Keys.homePageKey);
+  return RootPageControlComponent(key: Keys.rootKey);
 });
 
 //wallet

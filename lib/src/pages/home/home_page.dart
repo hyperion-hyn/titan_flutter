@@ -1,15 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/home/home_panel.dart';
+import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 class HomePage extends StatefulWidget {
+  HomePage({Key key}) : super(key: key);
+
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return myWidget.DraggableScrollableActuator(
+      child: BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
+        listener: (context, state) {
+          if (state is DefaultScaffoldMapState) {
+            myWidget.DraggableScrollableActuator.setMin(context);
+          } else {
+            myWidget.DraggableScrollableActuator.setHide(context);
+          }
+        },
+        child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(builder: (context, state) {
+          return LayoutBuilder(builder: (context, constraints) {
+            return Stack(
+              children: <Widget>[
+                buildMainSheetPanel(context, state, constraints),
+              ],
+            );
+          });
+        }),
+      ),
+    );
+  }
+
+  Widget buildMainSheetPanel(context, state, boxConstraints) {
+    double maxHeight = boxConstraints.biggest.height;
+    double anchorSize = 0.5;
+    double minChildSize = 88.0 / maxHeight;
+    double initSize = 280.0 / maxHeight;
+    EdgeInsets mediaPadding = MediaQuery.of(context).padding;
+    double maxChildSize = (maxHeight - mediaPadding.top) / maxHeight;
+    //hack, why maxHeight == 0 for the first time of release???
+    if (maxHeight == 0.0) {
+      return Container();
+    }
+    return myWidget.DraggableScrollableSheet(
+      key: Keys.homePanelKey,
+      maxHeight: maxHeight,
+      maxChildSize: maxChildSize,
+      expand: true,
+      minChildSize: minChildSize,
+      anchorSize: anchorSize,
+      initialChildSize: initSize,
+      draggable: true,
+      builder: (BuildContext ctx, ScrollController scrollController) {
+        return HomePanel(scrollController: scrollController);
+      },
+    );
   }
 }
 

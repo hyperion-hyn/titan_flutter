@@ -44,9 +44,11 @@ class Const {
 
 class Keys {
   static final materialAppKey = GlobalKey(debugLabel: '__app__');
+  static final rootKey = GlobalKey(debugLabel: '__root_page__');
   static final homePageKey = GlobalKey(debugLabel: '__home_page__');
   static final mapContainerKey = GlobalKey(debugLabel: '__map__');
   static final mapParentKey = GlobalKey(debugLabel: '__map_parent__');
+  static final homePanelKey = GlobalKey(debugLabel: '__home_panel_parent__');
 }
 
 class PrefsKey {

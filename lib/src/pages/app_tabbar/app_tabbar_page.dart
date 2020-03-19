@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
-import 'package:titan/src/global.dart';
-import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
-import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
 
+import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
+
 import '../../../env.dart';
 import '../home/home_page.dart';
 import '../wallet/wallet_tabs_page.dart';
-import '../news/news_page.dart';
 import '../mine/my_page.dart';
 import 'drawer_component.dart';
 
@@ -29,14 +29,17 @@ class AppTabBarPage extends StatefulWidget {
   }
 }
 
-class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderStateMixin {
+class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
+
+  var _fabsHeight = 56;
 
   int _currentTabIndex = 0;
 
   bool _isHaveNewAnnouncement = false;
   bool _isHideBottomNavigationBar = false;
   AnimationController _bottomBarPositionAnimationController;
+  AnimationController _fabsBarPositionAnimationController;
 
   @override
   void initState() {
@@ -47,10 +50,17 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
       value: 0.0,
       vsync: this,
     );
+    _fabsBarPositionAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      value: 0.0,
+      vsync: this,
+    );
 
     //set the status bar color
     FlutterStatusbarcolor.setStatusBarColor(Colors.black12);
   }
+
+  ScaffoldMapState _mapState;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +70,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
         listeners: [
           BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
             listener: (context, state) {
+              _mapState = state;
               if (state is DefaultScaffoldMapState) {
                 _bottomBarPositionAnimationController.animateBack(0, curve: Curves.easeInQuart);
               } else {
@@ -71,63 +82,116 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
         child: Scaffold(
           resizeToAvoidBottomPadding: false,
           drawer: isDebug ? DrawerComponent() : null,
-          body: Stack(
-            children: <Widget>[
-              //map at background
-              ScaffoldMap(),
-              _getTabView(_currentTabIndex),
-              bottomNavigationBar(),
-            ],
+          body: NotificationListener<myWidget.DraggableScrollableNotification>(
+            onNotification: (notification) {
+              bool isHomePanelMoving = notification.context.widget.key == Keys.homePanelKey;
+              if (notification.extent <= notification.anchorExtent &&
+                  ((_isDefaultState && isHomePanelMoving) || (!_isDefaultState && !isHomePanelMoving))) {
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  var toValue = (notification.extent * (notification.maxHeight + _fabsHeight)) / notification.maxHeight;
+                  _fabsBarPositionAnimationController.value = toValue;
+                });
+              }
+
+              var shouldShow = notification.extent <= notification.anchorExtent;
+              (_bottomBarKey.currentState as BottomFabsWidgetState).setVisible(shouldShow);
+
+              return true;
+            },
+            child: Stack(
+              children: <Widget>[
+                ScaffoldMap(),
+                userLocationBar(),
+                _getTabView(_currentTabIndex),
+                bottomNavigationBar(),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget bottomNavigationBar() {
-    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
-      var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
-      var expandedRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
-      var hideRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height, 0.0, -barHeight);
-      final Animation<RelativeRect> barAnimationRect = _bottomBarPositionAnimationController.drive(
-        RelativeRectTween(
-          begin: expandedRelative,
-          end: hideRelative,
-        ),
-      );
+  bool get _isDefaultState {
+    return _mapState is DefaultScaffoldMapState || _mapState == null;
+  }
 
-      return Stack(
-        children: <Widget>[
-          PositionedTransition(
-            rect: barAnimationRect,
-            child: Container(
-              height: barHeight,
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8.0,
-                  ),
-                ],
-              ),
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 8, right: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  tabItem(Icons.home, S.of(context).home_page, 0),
-                  tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1),
-                  tabItem(Icons.explore, S.of(context).discover, 2),
-                  tabItem(Icons.description, S.of(context).information, 3),
-                  tabItem(Icons.person, S.of(context).my_page, 4),
-                ],
+  Widget userLocationBar() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
+        var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
+
+        var bottomMostRelative = RelativeRect.fromLTRB(
+            0.0, constraints.biggest.height - _fabsHeight - (_isDefaultState ? barHeight : 0), 0.0, 0.0);
+        var topMostRelative = RelativeRect.fromLTRB(0.0, 0, 0.0, 0);
+        final Animation<RelativeRect> barAnimationRect = _fabsBarPositionAnimationController.drive(
+          RelativeRectTween(
+            begin: bottomMostRelative,
+            end: topMostRelative,
+          ),
+        );
+
+        return Stack(
+          children: <Widget>[
+            PositionedTransition(
+                rect: barAnimationRect,
+                child: BottomFabsWidget(
+                  key: _bottomBarKey,
+                  showBurnBtn: true,
+                )),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget bottomNavigationBar() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
+        var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
+        var expandedRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
+        var hideRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height, 0.0, -barHeight);
+        final Animation<RelativeRect> barAnimationRect = _bottomBarPositionAnimationController.drive(
+          RelativeRectTween(
+            begin: expandedRelative,
+            end: hideRelative,
+          ),
+        );
+
+        return Stack(
+          children: <Widget>[
+            PositionedTransition(
+              rect: barAnimationRect,
+              child: Container(
+                height: barHeight,
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8.0,
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 8, right: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    tabItem(Icons.home, S.of(context).home_page, 0),
+                    tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1),
+                    tabItem(Icons.explore, S.of(context).discover, 2),
+                    tabItem(Icons.description, S.of(context).information, 3),
+                    tabItem(Icons.person, S.of(context).my_page, 4),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 
   Widget tabItem(IconData iconData, String text, int index) {
@@ -170,7 +234,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
       child: IndexedStack(
         index: index,
         children: <Widget>[
-          BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage()),
+          BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey)),
           WalletTabsPage(),
           BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
           InformationPage(),
@@ -183,13 +247,13 @@ class AppTabBarPageState extends State<AppTabBarPage> with SingleTickerProviderS
 //      case 1:
 //        return WalletTabsPage();
 //      case 2:
-//        return DiscoverPage();
+//        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage());
 //      case 3:
-//        return NewsPage();
+//        return InformationPage();
 //      case 4:
 //        return MyPage();
 //    }
-//    return HomePage();
+//    return BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey));
   }
 
 //  Widget home() {

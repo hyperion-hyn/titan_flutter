@@ -93,6 +93,7 @@ class DraggableScrollableSheet extends StatefulWidget {
     this.anchorSize = 0.60,
     this.expand = true,
     this.draggable = true,
+    this.maxHeight,
     @required this.builder,
   })  : assert(initialChildSize != null),
         assert(minChildSize != null),
@@ -116,6 +117,8 @@ class DraggableScrollableSheet extends StatefulWidget {
   ///
   /// The default value is `0.25`.
   double minChildSize;
+
+  double maxHeight;
 
   double anchorSize;
 
@@ -179,6 +182,7 @@ class DraggableScrollableNotification extends Notification with ViewportNotifica
     @required this.maxExtent,
     @required this.initialExtent,
     @required this.context,
+    this.maxHeight,
   })  : assert(extent != null),
         assert(initialExtent != null),
         assert(minExtent != null),
@@ -196,6 +200,8 @@ class DraggableScrollableNotification extends Notification with ViewportNotifica
 
   /// The minimum value of [extent], which is >= 0.
   final double minExtent;
+
+  final double maxHeight;
 
   final double anchorExtent;
 
@@ -237,6 +243,7 @@ class _DraggableSheetExtent {
     @required this.maxExtent,
     @required this.initialExtent,
     this.anchorExtent,
+    this.maxHeight,
     @required VoidCallback listener,
     this.context,
     this.draggable,
@@ -250,6 +257,7 @@ class _DraggableSheetExtent {
         _currentExtent = ValueNotifier<double>(initialExtent)..addListener(listener),
         availablePixels = double.infinity;
 
+  double maxHeight;
   double minExtent;
   double anchorExtent;
   double maxExtent;
@@ -282,6 +290,7 @@ class _DraggableSheetExtent {
     _currentExtent.value = value.clamp(/*minExtent*/ 0.0, maxExtent);
 
     DraggableScrollableNotification(
+      maxHeight: maxHeight,
       minExtent: minExtent,
       maxExtent: maxExtent,
       anchorExtent: anchorExtent,
@@ -325,6 +334,7 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> wit
   void initState() {
     super.initState();
     _extent = _DraggableSheetExtent(
+      maxHeight: widget.maxHeight,
       minExtent: widget.minChildSize,
       maxExtent: widget.maxChildSize,
       anchorExtent: widget.anchorSize,
