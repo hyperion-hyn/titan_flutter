@@ -155,7 +155,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
       controller.loadComplete();
     } else if (state is LoadMoreEmptyState) {
       controller.loadNoData();
-      widget.onLoadingMoreEmpty();
+      if(widget.onLoadingMoreEmpty != null) widget.onLoadingMoreEmpty();
     } else if (state is LoadMoreFailState) {
       controller.loadFailed();
     }
