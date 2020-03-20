@@ -54,13 +54,13 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
 });
 
 var walletAccountSendTransactionHandler = Handler(handlerFunc: (context, params) {
-  return WalletSendPage(params['coinVo']?.first, params['backRouteName']?.first);
+  _cacheOrClearEntryWalletRouteName(params);
+  return WalletSendPage(params['coinVo']?.first);
 });
 
 var transferConfirmHandler = Handler(handlerFunc: (context, params) {
   return WalletSendConfirmPage(
-      params['coinVo']?.first, double.parse(params['transferAmount']?.first ?? '0'), params['receiverAddress']?.first,
-      backRouteName: params['backRouteName']?.first);
+      params['coinVo']?.first, double.parse(params['transferAmount']?.first ?? '0'), params['receiverAddress']?.first);
 });
 
 var managerWalletHandler = Handler(

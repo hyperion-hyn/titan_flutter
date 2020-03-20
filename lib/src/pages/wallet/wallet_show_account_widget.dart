@@ -121,7 +121,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "≈${activeQuoteVoAndSign?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(widget.coinVo.balance * activeQuoteVoAndSign?.quoteVo?.price)}",
+                              "≈${activeQuoteVoAndSign?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(widget.coinVo.balance ??= 0.0 * activeQuoteVoAndSign?.quoteVo?.price)}",
                               style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                             ),
                           ),
@@ -140,12 +140,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 children: <Widget>[
                                   InkWell(
                                     onTap: () {
-                                      var backRouteName =
-                                          ModalRoute.of(context).settings?.name ?? Routes.wallet_account_detail;
                                       Application.router.navigateTo(
                                           context,
                                           Routes.wallet_account_send_transaction +
-                                              '?coinVo=${FluroConvertUtils.object2string(widget.coinVo.toJson())}&backRouteName=${Uri.encodeComponent(backRouteName)}');
+                                              '?coinVo=${FluroConvertUtils.object2string(widget.coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
                                     },
                                     child: Row(
                                       children: <Widget>[

@@ -17,9 +17,8 @@ import '../../global.dart';
 
 class WalletSendPage extends StatefulWidget {
   final CoinVo coinVo;
-  final String backRouteName;
 
-  WalletSendPage(String coinVo, this.backRouteName) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
+  WalletSendPage(String coinVo) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -233,7 +232,7 @@ class _WalletSendState extends State<WalletSendPage> {
       Application.router.navigateTo(
           context,
           Routes.wallet_transfer_token_confirm +
-              "?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=${_receiverAddressController.text}&backRouteName=${widget.backRouteName}");
+              "?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=${_receiverAddressController.text}");
     }
   }
 
