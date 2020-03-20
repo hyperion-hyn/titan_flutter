@@ -9,7 +9,7 @@ import 'utile_ui.dart';
 
 class ExceptionProcess {
   static process(dynamic error, {bool isThrow = true}) {
-    logger.e(error);
+    //logger.e(error);
     if (error is HttpResponseCodeNotSuccess) {
       HttpResponseCodeNotSuccess notSuccessError = NOT_SUCCESS_ERROR_CODE_MAP[error.code];
       if (notSuccessError == null) {

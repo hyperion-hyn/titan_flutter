@@ -520,7 +520,8 @@ class _ContributionState extends State<ContributionPage> {
       style = Const.kBlackMapStyle;
     }
 
-    //print('[_mapView] ,userPosition: ${userPosition}');
+    print('[_mapView] ,userPosition: ${userPosition}');
+
     return MapboxMap(
       compassEnabled: false,
       initialCameraPosition: CameraPosition(

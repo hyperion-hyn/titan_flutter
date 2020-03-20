@@ -37,8 +37,6 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 
   Quotes quotes;
 
-//  UserInfo userInfo;
-
   UserEthAddress userEthAddress;
 
   @override
@@ -48,21 +46,6 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
   }
 
   void loadData() async {
-//    try {
-//      var data = await service.getUserEthAddress();
-//      setState(() {
-//        userEthAddress = data;
-//      });
-//    } catch (e) {
-//      logger.e(e);
-//      Fluttertoast.showToast(msg: S.of(context).fail_get_user_recharge_address_hint);
-//    }
-//
-//    //行情
-//    var quotesData = await service.quotes();
-//    setState(() {
-//      quotes = quotesData;
-//    });
 
     var datas = await Future.wait([service.getUserEthAddress(), service.quotes()]);
     setState(() {
@@ -71,12 +54,6 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
     });
 
     _showAlertDialog();
-
-    //用户余额等信息
-//    var _userInfo = await service.getUserInfo();
-//    setState(() {
-//      userInfo = _userInfo;
-//    });
   }
 
   void _showAlertDialog() {
@@ -94,31 +71,6 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(S.of(context).transfer_warning_hint),
-//                RichText(
-//                  text: TextSpan(
-//                      text: S.of(context).this_address,
-//                      style: TextStyle(fontSize: 16.0, color: Colors.black),
-//                      children: <TextSpan>[
-//                        TextSpan(
-//                            text: S.of(context).only_accept_hyn_assets,
-//                            style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.bold)),
-//                        TextSpan(
-//                            text: S.of(context).do_deposit_other_asset,
-//                            style: TextStyle(fontSize: 16.0, color: Colors.black)),
-//                      ]),
-//                  textAlign: TextAlign.left,
-//                ),
-//                SizedBox(
-//                  height: 8,
-//                ),
-//                Text(
-//                  S.of(context).current_exchange_rate('${quotes?.to}', '${quotes?.currency}'),
-//                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-//                ),
-//                Text(
-//                  '1${quotes?.to} ≈ ${NumberFormat("#,###.####").format(quotes?.rate == null ? 0 : (1 / quotes?.rate))}${quotes?.currency}',
-//                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red),
-//                )
               ],
             ),
             actions: <Widget>[
@@ -246,11 +198,6 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               SizedBox(
                 height: 16,
               ),
-
-//              Text(
-//                '推荐使用imToken扫码支付',
-//                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.grey[500]),
-//              ),
               Padding(
                 padding: const EdgeInsets.only(top: 22.0),
                 child: RaisedButton(
@@ -321,11 +268,9 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                           });
                     } else {
                       isRechargeByTianWalletFinish = false;
-//                      _transferToken(context, 'HYN');
 
                       showModalBottomSheet(
                           context: context,
-//                          backgroundColor: Color(0xffefefef),
                           builder: (ctx) {
                             return Wrap(
                               children: <Widget>[
@@ -448,7 +393,6 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
             builder: (context) => WalletSendPage(null,
                 receiverAddress: userEthAddress.address,
                 symbol: symbol,
-//                                  currencyUnit: 'USD',
                 backRouteName: "/recharge_purchase_page"))).then((value) {
       if (isRechargeByTianWalletFinish) {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RechargeByTitanFinishPage()));

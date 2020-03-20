@@ -44,7 +44,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     alignment: Alignment.center,
                     width: 72,
                     height: 72,
-                    child: Image.asset("res/drawable/hyn_icon.png"),
+                    child: Image.asset("res/drawable/hyn_logo.png"),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 64),
