@@ -69,7 +69,9 @@ class _TextaState extends State<CustomInputText> {
   void searchTextChangeListener() {
     String currentText = widget.controller.text.trim();
     if(oldText != currentText){
+      if (!_filterSubject.isClosed) {
       _filterSubject.sink.add(currentText);
+      }
       oldText = currentText;
     }
     if (currentText.isNotEmpty) {
