@@ -29,7 +29,7 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
   }
 
   void initMnemonic() {
-    logger.i("mnemonic:${widget.mnemonic}");
+    //logger.i("mnemonic:${widget.mnemonic}");
     _candidateWords = widget.mnemonic
         .split(" ")
         .asMap()
@@ -135,7 +135,7 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                       var selectedMnemonitc = "";
                       _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
 
-                      logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
+                      //logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
                       if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
                         Fluttertoast.showToast(msg: S.of(context).backup_finish);
                         Navigator.of(context).popUntil(ModalRoute.withName("/wallet_manager_page"));

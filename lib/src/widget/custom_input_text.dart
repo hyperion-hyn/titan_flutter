@@ -53,15 +53,18 @@ class _TextaState extends State<CustomInputText> {
   @override
   void initState() {
     super.initState();
+
+    print('[CustomInputText] ---> initState');
     widget.controller.addListener(searchTextChangeListener);
     _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
       widget.fieldCallBack(text);
     });
-//    _focusNode.addListener(_focusNodeListener);
   }
 
   @override
   void dispose() {
+    print('[CustomInputText] ---> dispose');
+
     _filterSubject.close();
     super.dispose();
   }
@@ -75,29 +78,36 @@ class _TextaState extends State<CustomInputText> {
       oldText = currentText;
     }
     if (currentText.isNotEmpty) {
-      setState(() {
+      if (mounted){
+        setState(() {
           widget.isShowClean = true;
         });
+      }
     } else {
       widget.fieldCallBack("");
+      if (mounted){
         setState(() {
           widget.isShowClean = false;
         });
+      }
     }
   }
 
   Future<Null> _focusNodeListener() async {
     if (_focusNode.hasFocus) {
-      setState(() {
-        widget.isShowClean = true;
-      });
+      if (mounted){
+        setState(() {
+          widget.isShowClean = true;
+        });
+      }
     } else {
-      setState(() {
-        widget.isShowClean = false;
-      });
+      if (mounted){
+        setState(() {
+          widget.isShowClean = false;
+        });
+      }
     }
   }
-
 
 
   @override
@@ -114,13 +124,10 @@ class _TextaState extends State<CustomInputText> {
         ),
         Expanded(
           child: TextFormField(
-//              inputFormatters: [LengthLimitingTextInputFormatter(9)],
             textInputAction: TextInputAction.search,
             onFieldSubmitted: (value){
               widget.fieldCallBack(value,isForceSearch: true);
             },
-//              focusNode: _focusNode,
-//              textAlign: TextAlign.left,
             controller: widget.controller,
             autofocus: false,
             style: TextStyle(fontSize: 14),
@@ -130,7 +137,6 @@ class _TextaState extends State<CustomInputText> {
             maxLines: 1,
             textAlign: TextAlign.left,
             decoration: InputDecoration(
-//                contentPadding: EdgeInsets.all(10),
               border: InputBorder.none,
               hintText: S.of(context).please_enter_category_keywords_hint,
               hintStyle: TextStyle(fontSize: 14, color: Color(0xff777777)),
@@ -141,7 +147,6 @@ class _TextaState extends State<CustomInputText> {
         Container(
           child: Row(
             mainAxisSize: MainAxisSize.min,
-//                  mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               widget.isShowClean

@@ -29,7 +29,7 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
   Future getMnemonic() async {
     var mnemonic = widget.mnemonic;
 
-    logger.i("mnemonic:$mnemonic");
+    //logger.i("mnemonic:$mnemonic");
 
     if (mnemonic != null && mnemonic.isNotEmpty) {
       _resumeWords = mnemonic.split(" ");

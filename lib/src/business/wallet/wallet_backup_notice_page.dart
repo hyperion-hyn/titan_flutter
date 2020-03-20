@@ -144,7 +144,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                         if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
                           var mnemonic = await WalletUtil.exportMnemonic(
                               fileName: wallet.keystore.fileName, password: walletPassword);
-                          logger.i('your mnemonic is: $mnemonic');
+                          //logger.i('your mnemonic is: $mnemonic');
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) => BackupShowResumeWordPage(wallet, mnemonic)));
                         } else {

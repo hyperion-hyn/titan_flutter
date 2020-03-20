@@ -184,7 +184,7 @@ class WalletService {
   Future<WalletVo> getDefaultWalletVo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String walletVoJson = await prefs.getString(DEFAULT_WALLET_VO);
-    logger.i("walletVoJson:${walletVoJson}");
+    //logger.i("walletVoJson:${walletVoJson}");
     if (walletVoJson == null) {
       return null;
     } else {

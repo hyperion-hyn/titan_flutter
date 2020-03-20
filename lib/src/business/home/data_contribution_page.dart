@@ -54,22 +54,17 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
 
   @override
   void didPopNext() {
-    //print("didPopNext");
     doDidPopNext();
   }
 
   Future doDidPopNext() async {
     if (currentWalletVo != null) {
       String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
-      //logger.i("defaultWalletFileName:$defaultWalletFileName");
       String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
-      //logger.i("updateWalletFileName:$updateWalletFileName");
       if (defaultWalletFileName == updateWalletFileName) {
-        //logger.i("do UpdateWalletEvent");
         _walletBloc.add(UpdateWalletEvent(currentWalletVo));
       } else {
         currentWalletVo = null;
-        //logger.i("do ScanWalletEvent");
         _walletBloc.add(ScanWalletEvent());
       }
     } else {
@@ -83,8 +78,10 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
   Future _updateCheckInCount() async {
     try {
       globalCheckInModel = await _userService.checkInCountV2();
-      setState(() {
-      });
+      if (mounted) {
+        setState(() {
+        });
+      }
     } catch (_) {
       ExceptionProcess.process(_, isThrow: false);
     }
@@ -109,14 +106,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     });
 
     _updateCheckInCount();
-    //load check in history
-//    CheckInModel.loadFromSharePrefs().then((model) {
-//      if(model != null) {
-//        setState(() {
-//          checkInModel = model;
-//        });
-//      }
-//    });
+
   }
 
   @override
@@ -139,7 +129,7 @@ class _DataContributionState extends State<DataContributionPage> with RouteAware
     return BlocBuilder<WalletBloc, WalletState>(
       bloc: _walletBloc,
       builder: (BuildContext context, WalletState state) {
-        print('[Home-Data-Contribution] --> state: ${state}');
+        //print('[Home-Data-Contribution] --> state: ${state}');
 
         if (state is WalletEmptyState) {
           return _walletTipsView();

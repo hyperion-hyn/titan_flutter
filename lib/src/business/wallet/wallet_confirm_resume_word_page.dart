@@ -25,7 +25,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
   }
 
   void initMnemonic() {
-    logger.i("createWalletMnemonicTemp:$createWalletMnemonicTemp");
+    //logger.i("createWalletMnemonicTemp:$createWalletMnemonicTemp");
     _candidateWords = createWalletMnemonicTemp
         .split(" ")
         .asMap()
@@ -182,7 +182,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
     var selectedMnemonitc = "";
     _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
 
-    logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
+    //logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
     if (selectedMnemonitc.trim() == createWalletMnemonicTemp.trim()) {
       var wallet = await WalletUtil.storeByMnemonic(
           name: createWalletNameTemp, password: createWalletPasswordTemp, mnemonic: createWalletMnemonicTemp.trim());

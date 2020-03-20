@@ -26,7 +26,7 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
   Future getMnemonic() async {
     var mnemonic = await WalletUtil.makeMnemonic();
 
-    logger.i("mnemonic:$mnemonic");
+    //logger.i("mnemonic:$mnemonic");
 
     if (mnemonic != null && mnemonic.isNotEmpty) {
       _resumeWords = mnemonic.split(" ");
