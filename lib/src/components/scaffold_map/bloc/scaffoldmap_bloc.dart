@@ -216,6 +216,12 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     else if (event is EnterDMapEvent) {
       yield FocusingDMapState(dMapConfigModel: event.dMapConfigModel);
     }
+    //-------------------
+    // yield a state
+    //-------------------
+    else if (event is YieldStateEvent) {
+      yield event.state;
+    }
   }
 
 //  ScaffoldMapState _getHomeState() {

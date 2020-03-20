@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 
 import '../dmap/dmap.dart';
@@ -74,6 +75,14 @@ class EnterDMapEvent extends ScaffoldMapEvent {
   final DMapConfigModel dMapConfigModel;
 
   EnterDMapEvent({@required this.dMapConfigModel});
+}
+
+///just yield a state
+///for example: back to a preview state
+class YieldStateEvent extends ScaffoldMapEvent {
+  final ScaffoldMapState state;
+
+  YieldStateEvent({this.state});
 }
 
 //---------------------

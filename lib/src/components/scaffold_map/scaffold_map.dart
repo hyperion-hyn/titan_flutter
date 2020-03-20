@@ -61,7 +61,6 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
   double topBarHeight = 0;
 
   List<ScaffoldMapState> _stateStack = [];
-  ScaffoldMapState currentState;
 
   @override
   void initState() {
@@ -89,7 +88,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(searchText: searchResult, center: center));
       } else if (searchResult is MapBoxPoi || searchResult is UserContributionPoi) {
         var poi = searchResult;
-        if ((searchResult as SearchHistoryAwarePoi).isHistory) {
+        if ((searchResult as SearchHistoryAwarePoi).isHistory == true) {
           BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
         } else {
           //we need to full fil all properties
@@ -110,29 +109,44 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ScaffoldMapBloc, ScaffoldMapState>(listener: (context, state) {
-      if (state is FocusingSearchState || state is FocusingDMapState) {
-        //set as root
-        _stateStack.clear();
-        _stateStack.add(state);
-      } else if (state is FocusingPoiState) {
-        if (_stateStack.last is FocusingPoiState) {
-          _stateStack.removeLast();
-        }
-        _stateStack.add(state);
-      } else if (state is FocusingRouteState) {
-        if (_stateStack.last is FocusingRouteState) {
-          _stateStack.removeLast();
-        }
-        _stateStack.add(state);
+      //back to previous state
+      while (_stateStack.contains(state)) {
+        _stateStack.removeLast();
       }
+
+      //set as root state
+      if (state is DefaultScaffoldMapState) {
+        _stateStack.clear();
+      }
+
+      //come to a new can stack state, clear all states except
+      if (state is FocusingSearchState || state is FocusingDMapState) {
+        if (_stateStack.length > 0) {
+          var firstState = _stateStack.first;
+          _stateStack.clear();
+          //add back default_state as root
+          if (firstState is DefaultScaffoldMapState) {
+            _stateStack.add(firstState);
+          }
+        }
+      }
+
+      //remove last if the same state type
+      if (_stateStack.length > 0) {
+        if (_stateStack.last != null && _stateStack.last.runtimeType == state.runtimeType) {
+          _stateStack.removeLast();
+        }
+      }
+
+      _stateStack.add(state);
     }, child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
       builder: (context, state) {
-        return buildBodyByState(state);
+        return buildMapByState(state);
       },
     ));
   }
 
-  Widget buildBodyByState(ScaffoldMapState state) {
+  Widget buildMapByState(ScaffoldMapState state) {
     //scenes:
     //1. map
     //2. top navigation bar
@@ -169,9 +183,8 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           BlocProvider.of<ScaffoldMapBloc>(context).add(DefaultMapEvent());
         };
         onTopBarBack = () {
-          //TODO
-          logger.w('TODO back from search');
-//            Application.eventBus.fire(GoSearchEvent());
+          //back to previous state
+          backToPreviewState();
         };
       }
 
@@ -407,7 +420,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
               toName: toPoi.name,
               profile: profile,
               onBack: existRouteState,
-              onRoute: (String toProfile) {
+              onReRoute: (String toProfile) {
                 BlocProvider.of<ScaffoldMapBloc>(context).add(RouteEvent(
                   fromPoi: fromPoi,
                   toPoi: toPoi,
@@ -493,19 +506,16 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
   }
 
   void existPoiState() {
-    for (var state in _stateStack) {
-      if (state is FocusingSearchState) {
-        //TODO  back from search list
-        logger.w('TODO close poi of search list');
-        return;
-      } else if (state is FocusingDMapState) {
-        //TODO  back from dmap
-        logger.w('TODO close poi of dmap');
-        return;
-      }
-    }
-    //no stack, just back to default
-    getBloc()?.add(DefaultMapEvent());
+    backToPreviewState();
+//    for (var state in _stateStack) {
+//      if (state is FocusingSearchState || state is FocusingDMapState) {
+//        //back to pre state
+//        backToPreviewState();
+//        return;
+//      }
+//    }
+//    //no stack, just back to default
+//    getBloc()?.add(DefaultMapEvent());
   }
 
   ScaffoldMapBloc getBloc() {
@@ -513,18 +523,25 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
   }
 
   void existRouteState() {
-    //TODO
-    logger.w('TODO close route panel');
+    //back to pre state
+    backToPreviewState();
   }
 
   void existSearchState() {
-    //TODO
-    logger.w('TODO close search panel');
+    //back to default
+    backToPreviewState();
+  }
+
+  void backToPreviewState() {
+    if (_stateStack.length > 1) {
+      getBloc()?.add(YieldStateEvent(state: _stateStack[_stateStack.length - 2]));
+    } else {
+      getBloc()?.add(DefaultMapEvent());
+    }
   }
 
   void onShowDetailOfSearchItem(IPoi poi) {
-    //TODO
-    logger.w('TODO show poi detail from search list');
+    getBloc()?.add(ShowPoiEvent(poi: poi));
   }
 
   void enterRoute(IPoi poi) async {

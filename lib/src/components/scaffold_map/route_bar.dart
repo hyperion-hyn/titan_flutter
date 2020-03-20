@@ -9,14 +9,14 @@ class RouteBar extends StatefulWidget {
   final String fromName;
   final String toName;
   final String profile;
-  final OnRoute onRoute;
+  final OnRoute onReRoute;
   final VoidCallback onBack;
 
   RouteBar({
     this.fromName,
     this.profile,
     this.toName,
-    this.onRoute,
+    this.onReRoute,
     this.onBack,
   });
 
@@ -124,8 +124,8 @@ class _RouteBarState extends State<RouteBar> {
                           widget.profile == 'driving'
                               ? null
                               : () {
-                                  if (widget.onRoute != null) {
-                                    widget.onRoute('driving');
+                                  if (widget.onReRoute != null) {
+                                    widget.onReRoute('driving');
                                   }
                                 }),
                       buildRouteTypeItem(
@@ -135,8 +135,8 @@ class _RouteBarState extends State<RouteBar> {
                           widget.profile == 'cycling'
                               ? null
                               : () {
-                                  if (widget.onRoute != null) {
-                                    widget.onRoute('cycling');
+                                  if (widget.onReRoute != null) {
+                                    widget.onReRoute('cycling');
                                   }
                                 }),
                       buildRouteTypeItem(
@@ -146,8 +146,8 @@ class _RouteBarState extends State<RouteBar> {
                           widget.profile == 'walking'
                               ? null
                               : () {
-                                  if (widget.onRoute != null) {
-                                    widget.onRoute('walking');
+                                  if (widget.onReRoute != null) {
+                                    widget.onReRoute('walking');
                                   }
                                 }),
                     ],

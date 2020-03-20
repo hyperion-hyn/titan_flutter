@@ -40,18 +40,17 @@ class MapContainer extends StatefulWidget {
 //  final DraggableBottomSheetController bottomPanelController;
   final String languageCode;
 
-  MapContainer(
-      {Key key,
-      this.heavenDataList,
-      this.routeDataModel,
-      this.style,
-      this.defaultZoom = 13,
+  MapContainer({Key key,
+    this.heavenDataList,
+    this.routeDataModel,
+    this.style,
+    this.defaultZoom = 13,
 //      this.defaultCenter,
 //    this.bottomPanelController,
-      this.mapClickHandle,
-      this.mapLongPressHandle,
-      this.showCenterMarker,
-      this.languageCode})
+    this.mapClickHandle,
+    this.mapLongPressHandle,
+    this.showCenterMarker,
+    this.languageCode})
       : super(key: key);
 
   @override
@@ -264,12 +263,13 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
     List<SymbolOptions> options = pois
         .map(
-          (poi) => SymbolOptions(
+          (poi) =>
+          SymbolOptions(
               geometry: poi.latLng,
               iconImage: "marker_gray",
               iconAnchor: "center",
               iconSize: Platform.isAndroid ? 1 : 0.4),
-        )
+    )
         .toList();
     var symbolList = await mapboxMapController?.addSymbolList(options);
 
@@ -323,7 +323,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     }
 
     List symbolMarkerFeatures =
-        await mapboxMapController?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
+    await mapboxMapController?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
     if (symbolMarkerFeatures != null && symbolMarkerFeatures.isNotEmpty) {
       print("symbolMarkerFeatures：" + symbolMarkerFeatures[0]);
 
@@ -392,7 +392,9 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       var coordinatesArray = firstFeature["geometry"]["coordinates"];
       var coordinates = LatLng(coordinatesArray[1], coordinatesArray[0]);
       print("coordinates:$coordinates");
-      var languageCode = Localizations.localeOf(context).languageCode;
+      var languageCode = Localizations
+          .localeOf(context)
+          .languageCode;
       var name = "";
       if (languageCode == "zh") {
         name = firstFeature["properties"]["name:zh"];
@@ -477,7 +479,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
           _toMyLocation();
         } else {
           Map<PermissionGroup, PermissionStatus> permissions =
-              await PermissionHandler().requestPermissions([PermissionGroup.location]);
+          await PermissionHandler().requestPermissions([PermissionGroup.location]);
           if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
             _toMyLocation();
             Rx.timer('', Duration(milliseconds: 1500)).listen((d) {
@@ -493,15 +495,23 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
   void _showGoToOpenAppSettingsDialog() {
     _showDialogWidget(
-        title: Text(S.of(context).require_location),
-        content: Text(S.of(context).require_location_message),
+        title: Text(S
+            .of(context)
+            .require_location),
+        content: Text(S
+            .of(context)
+            .require_location_message),
         actions: <Widget>[
           FlatButton(
-            child: Text(S.of(context).cancel),
+            child: Text(S
+                .of(context)
+                .cancel),
             onPressed: () => Navigator.pop(context),
           ),
           FlatButton(
-            child: Text(S.of(context).setting),
+            child: Text(S
+                .of(context)
+                .setting),
             onPressed: () {
               PermissionHandler().openAppSettings();
               Navigator.pop(context);
@@ -512,15 +522,23 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
   void _showGoToOpenLocationServceDialog() {
     _showDialogWidget(
-      title: Text(S.of(context).open_location_service),
-      content: Text(S.of(context).open_location_service_message),
+      title: Text(S
+          .of(context)
+          .open_location_service),
+      content: Text(S
+          .of(context)
+          .open_location_service_message),
       actions: <Widget>[
         FlatButton(
-          child: Text(S.of(context).cancel),
+          child: Text(S
+              .of(context)
+              .cancel),
           onPressed: () => Navigator.pop(context),
         ),
         FlatButton(
-          child: Text(S.of(context).setting),
+          child: Text(S
+              .of(context)
+              .setting),
           onPressed: () {
             if (Platform.isIOS) {
               PermissionHandler().openAppSettings();
@@ -543,15 +561,15 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              )
+          title: title,
+          content: content,
+          actions: actions,
+        )
             : AlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              );
+          title: title,
+          content: content,
+          actions: actions,
+        );
       },
     );
   }
@@ -642,6 +660,11 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                             mapboxMapController?.removeListener(_mapMoveListener);
                             mapboxMapController?.addListener(_mapMoveListener);
                           },
+                          onStyleLoadedCallback: () {
+                            Future.delayed(Duration(milliseconds: 1500)).then((_) {
+                              Application.eventBus.fire(ToMyLocationEvent());
+                            });
+                          },
                           initialCameraPosition: CameraPosition(
                             target: Application.recentlyLocation,
                             zoom: widget.defaultZoom,
@@ -656,6 +679,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           myLocationTrackingMode: locationTrackingMode,
                           languageCode: widget.languageCode,
                           children: <Widget>[
+
                             ///active plugins
                             HeavenPlugin(models: widget.heavenDataList),
                             RoutePlugin(model: widget.routeDataModel),
@@ -670,7 +694,9 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                               Icon(
                                 ExtendsIconFont.position_marker,
                                 size: 64,
-                                color: Theme.of(context).primaryColor,
+                                color: Theme
+                                    .of(context)
+                                    .primaryColor,
                               ),
                               SizedBox(height: 68)
                             ],

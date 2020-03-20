@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/global.dart';
 
 import 'env.dart';
 import 'src/basic/bloc/app_bloc_delegate.dart';
@@ -45,6 +46,9 @@ void main() {
       searchInteractor: searchInteractor,
 //      mapStore: ScaffoldMapStore(),
     )),
-    debugUpload: env.buildType == BuildType.DEV,
+    debugUpload: env.buildType == BuildType.PROD,
+    handler: (FlutterErrorDetails detail) {
+      logger.e(detail.exception?.message, detail.exception, detail.stack);
+    }
   );
 }
