@@ -78,6 +78,7 @@ class _ContributionState extends State<ContributionPage> {
   bool isVisibleToast = false;
   var _isAcceptSignalProtocol = true;
   var _currentScanType = SensorType.GNSS;
+  var _isStartScanning = false;
 
   @override
   void initState() {
@@ -172,6 +173,12 @@ class _ContributionState extends State<ContributionPage> {
   }
 
   void startScan() async {
+    if (_isStartScanning) {
+      return;
+    }
+
+    _isStartScanning = true;
+
     progressStreamController.add(0);
 
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
@@ -179,11 +186,6 @@ class _ContributionState extends State<ContributionPage> {
     var timerObservable = Observable.periodic(Duration(milliseconds: 500), (x) => x);
     lastZoom = defaultZoom;
     startTime = DateTime.now().millisecondsSinceEpoch;
-
-//    if (userPosition != null) {
-//      mapController.animateCamera(CameraUpdate.newLatLng(userPosition));
-//    }
-
     subscription = timerObservable.listen((t) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       var timePassed = nowTime - startTime;
@@ -202,6 +204,7 @@ class _ContributionState extends State<ContributionPage> {
         subscription?.cancel();
         _isFinishScan = true;
         sensorPlugin.stopScan();
+        _isStartScanning = false;
       }
     });
 
@@ -525,13 +528,13 @@ class _ContributionState extends State<ContributionPage> {
         zoom: defaultZoom,
       ),
       styleString: style,
-      onMapCreated: (mapboxController) {
-        mapController = mapboxController;
+      onMapCreated: (controller) {
+        mapController = controller;
       },
       onStyleLoadedCallback: () {
-        Future.delayed(Duration(milliseconds: 1000)).then((v) {
-          startScan();
-        });
+          Future.delayed(Duration(milliseconds: 1000)).then((v) {
+            startScan();
+          });
       },
       myLocationTrackingMode: MyLocationTrackingMode.Tracking,
       rotateGesturesEnabled: false,

@@ -500,10 +500,8 @@ class _PurchaseState extends State<PurchasePage> {
 
     int decimals = 2;
     int fac = pow(10, decimals);
-    //print('fac: $fac');
     double d = balance;
     d = (d * fac).floor() / fac;
-    //print("d: $d");
 
     return d;
   }
