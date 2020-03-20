@@ -154,10 +154,8 @@ class _SelectPositionState extends State<SelectPositionPage> {
             zoom: defaultZoom,
           ),
           styleString: style,
-          onMapCreated: (mapboxController) {
-            mapController = mapboxController;
-          },
-          onStyleLoadedCallback: () {
+          onMapCreated: (controller) {
+            mapController = controller;
             mapController.removeListener(_mapMoveListener);
             mapController.addListener(_mapMoveListener);
           },

@@ -445,7 +445,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     return heavenMapPoiInfo;
   }
 
-  void onStyleLoaded(MapboxMapController controller) async {
+  void onMapCreated(MapboxMapController controller) async {
     setState(() {
       mapboxMapController = controller;
     });
@@ -647,7 +647,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           },
                           trackCameraPosition: true,
                           styleString: widget.style,
-                          onMapCreated: onStyleLoaded,
+                          onMapCreated: onMapCreated,
                           initialCameraPosition: CameraPosition(
                             target: recentlyLocation,
                             zoom: widget.defaultZoom,

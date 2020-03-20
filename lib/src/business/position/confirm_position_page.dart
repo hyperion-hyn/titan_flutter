@@ -289,9 +289,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
           zoom: defaultZoom,
         ),
         styleString: style,
-        onMapCreated: (mapboxController) {
-            onStyleLoaded(mapboxController);
-        },
+        onMapCreated: onMapCreated,
         myLocationTrackingMode: MyLocationTrackingMode.None,
         rotateGesturesEnabled: false,
         tiltGesturesEnabled: false,
@@ -304,7 +302,7 @@ class _ConfirmPositionState extends State<ConfirmPositionPage> {
     );
   }
 
-  void onStyleLoaded(MapboxMapController controller) {
+  void onMapCreated(MapboxMapController controller) {
     mapController = controller;
     addMarkerAndMoveToPoi();
   }

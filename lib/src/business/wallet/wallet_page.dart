@@ -76,6 +76,8 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
 
   @override
   void initState() {
+    super.initState();
+
     _walletBloc = WalletBloc();
     _walletBloc.add(ScanWalletEvent());
 
@@ -86,7 +88,6 @@ class _WalletPageState extends State<WalletPage> with RouteAware {
         _walletBloc.add(ScanWalletEvent());
       }
     });
-    super.initState();
   }
 
   @override

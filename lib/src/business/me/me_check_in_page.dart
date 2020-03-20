@@ -108,8 +108,14 @@ class _MeCheckIn extends State<MeCheckIn> {
   double lastZoom;
   bool isVisibleWiFi = false;
   bool isVisibleToast = false;
+  var _isStartScanning = false;
 
   void startScan() async {
+    if (_isStartScanning) {
+      return;
+    }
+
+    _isStartScanning = true;
     progressStreamController.add(0);
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);
     var timeStep = duration / (defaultZoom - minZoom + 1);
@@ -130,6 +136,7 @@ class _MeCheckIn extends State<MeCheckIn> {
           lastMoveTime = DateTime.now().millisecondsSinceEpoch;
         }
       } else {
+        _isStartScanning = false;
         subscription?.cancel();
       }
     });
@@ -310,8 +317,8 @@ class _MeCheckIn extends State<MeCheckIn> {
         zoom: defaultZoom,
       ),
       styleString: S.of(context).scan_wifi_map_style_url,
-      onMapCreated: (mapboxController) {
-        mapController = mapboxController;
+      onMapCreated: (controller) {
+        mapController = controller;
       },
       onStyleLoadedCallback: () {
         Future.delayed(Duration(milliseconds: 1000)).then((v) {
