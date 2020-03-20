@@ -510,7 +510,7 @@ class _MeState extends UserState<MePage> with RouteAware {
   Future _checkIn() async {
     await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => DataContributionPage()));
+        MaterialPageRoute(settings:RouteSettings(name: '/data_contribution_page'),builder: (context) => DataContributionPage()));
 //    _finishCheckIn();
   }
 
