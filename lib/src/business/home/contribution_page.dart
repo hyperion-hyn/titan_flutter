@@ -92,6 +92,7 @@ class _ContributionState extends State<ContributionPage> {
   void dispose() {
     super.dispose();
 
+    //sensorPlugin.stopScan();
     subscription?.cancel();
     progressStreamController.close();
     sensorPlugin.destory();

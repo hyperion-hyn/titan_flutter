@@ -13,6 +13,7 @@ class GlobalDataPage extends StatefulWidget {
 
 class _GlobalDataState extends State<GlobalDataPage> {
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

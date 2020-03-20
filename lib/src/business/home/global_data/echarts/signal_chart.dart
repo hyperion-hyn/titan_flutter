@@ -23,7 +23,7 @@ class SignalChatsPage extends StatefulWidget {
 }
 
 
-class _SignalChatsState extends State<SignalChatsPage> {
+class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveClientMixin {
   Api _api = Api();
   SignalDailyVo _dailyVo;
   List<SignalWeeklyVo> _weeklyVoList;
@@ -32,10 +32,15 @@ class _SignalChatsState extends State<SignalChatsPage> {
   Map3NodeVo _map3nodeVo;
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
 
     _getData();
+
+    print('[signal_chart] --> initState：${_title}');
   }
 
   @override
@@ -301,7 +306,7 @@ class _SignalChatsState extends State<SignalChatsPage> {
       children: <Widget>[
         Padding(
           child: Text('信号数据总量：', style: TextStyle(fontSize: 14)),
-          padding: EdgeInsets.fromLTRB(20, 20, 0, 20),
+          padding: EdgeInsets.fromLTRB(20, 16, 0, 8),
         ),
         Center(
           child: Container(
@@ -390,7 +395,7 @@ class _SignalChatsState extends State<SignalChatsPage> {
       children: <Widget>[
         Padding(
           child: Text('最近一个月${SensorType.getScanName(type)}数据增量：', style: TextStyle(fontSize: 14)),
-          padding: EdgeInsets.fromLTRB(20, 20, 0, 20),
+          padding: EdgeInsets.fromLTRB(20, 16, 0, 8),
         ),
         Center(
           child: Container(

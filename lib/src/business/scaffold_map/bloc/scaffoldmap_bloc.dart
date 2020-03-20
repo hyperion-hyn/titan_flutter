@@ -33,7 +33,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 
   @override
   Stream<ScaffoldMapState> mapEventToState(ScaffoldMapEvent event) async* {
-    print("currentEvent:$event");
+    print("[ScaffoldMapBloc] currentEvent:$event");
 
     if (event is InitMapEvent) {
       ScaffoldMapStore.shared.clearAll();
@@ -190,6 +190,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     // dmap
     //--------------
     else if (event is InitDMapEvent) {
+      print('[ScaffoldMapBloc] mapEventToState , dmap');
+
       yield InitDMapState(dMapConfigModel: event.dMapConfigModel);
     }
   }
@@ -197,7 +199,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   ScaffoldMapState _getHomeState() {
     DMapConfigModel dmap = state.dMapConfigModel;
     ScaffoldMapState mapState;
-    print('dmapname ${dmap?.dMapName}');
+    print('[ScaffoldMapBloc] dmapname ${dmap?.dMapName}');
     if (dmap == null) {
       mapState = InitialScaffoldMapState();
     } else {
@@ -212,7 +214,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     _cancelToken = CancelToken();
     var url =
         'https://api.hyn.space/directions/v5/hyperion/$profile/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=polyline6&language=$language&steps=true&banner_instructions=true&voice_instructions=true&voice_units=metric&access_token=pk.hyn';
-    print("[bloccc] _fetchRoute:${_fetchRoute}");
+    print("[ScaffoldMapBloc] _fetchRoute:${_fetchRoute}");
     var responseMap = await HttpCore.instance.get(url, cancelToken: _cancelToken);
     _cancelToken = null;
     var response = json.encode(responseMap);

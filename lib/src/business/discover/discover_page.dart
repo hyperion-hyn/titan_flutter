@@ -388,6 +388,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
   }
 
   Future activeDMap(String dMapName) async {
+    print('[discover] --> activeDMap');
 
     BlocProvider.of<DiscoverBloc>(context).add(ActiveDMapEvent(name: dMapName));
 
@@ -397,7 +398,7 @@ class DiscoverPageState extends State<DiscoverPageWidget> {
         MapContainerState mapState = (Keys.mapContainerKey.currentState as MapContainerState);
         mapState.updateMyLocationTrackingMode(MyLocationTrackingMode.None);
         await Future.delayed(Duration(milliseconds: 300));
-
+        //print('[discover] --> activeDMap, model.dMapConfigModel.defaultZoom:${model.dMapConfigModel.defaultZoom}');
         mapState?.mapboxMapController?.animateCamera(
             CameraUpdate.newLatLngZoom(
               model.dMapConfigModel.defaultLocation,

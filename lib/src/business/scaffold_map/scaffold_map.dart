@@ -332,6 +332,11 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         OnMapLongPressHandle onMapLongPressHandle;
         onMapClickHandle = state.dMapConfigModel?.onMapClickHandle;
         onMapLongPressHandle = state.dMapConfigModel?.onMapLongPressHandle;
+        double defaultZoom = 13;
+        if (state.dMapConfigModel != null && state.dMapConfigModel.defaultZoom != null) {
+          defaultZoom = state.dMapConfigModel.defaultZoom??13;
+        }
+        print('[Scaffold_map] build , dmap, showRoute:${showRoute}, zoom:${defaultZoom}');
 
         return Stack(
           fit: StackFit.expand,
@@ -347,6 +352,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
               mapLongPressHandle: onMapLongPressHandle,
               showCenterMarker: showCenterMarker,
               languageCode: languageCode,
+              defaultZoom: defaultZoom,
             ),
 //          if (showSearchBar)
 //            SearchBar(
