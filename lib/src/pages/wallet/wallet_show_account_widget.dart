@@ -54,22 +54,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   }
 
   @override
-  void onCreated() {
-    BlocProvider.of<WalletCmpBloc>(context).listen((WalletCmpState walletCmpState){
-      if(walletCmpState is UpdatedWalletBalanceState){
-        for(CoinVo coinVo in walletCmpState.walletVo.coins){
-          if(coinVo.contractAddress == widget.coinVo.contractAddress){
-            widget.coinVo = coinVo;
-          }
-        }
-        setState(() {
-
-        });
-      }
-    });
-  }
-
-  @override
   void postFrameCallBackAfterInitState() async {
     loadDataBloc.add(LoadingEvent());
   }
@@ -90,180 +74,195 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: LoadDataContainer(
-          bloc: loadDataBloc,
-          onLoadData: onWidgetLoadDataCallback,
-          onRefresh: onWidgetRefreshCallback,
-          onLoadingMore: onWidgetLoadingMoreCallback,
-          child: SingleChildScrollView(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 32, bottom: 24),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFF9B9B9B), width: 0),
-                              shape: BoxShape.circle,
+        body: BlocListener<WalletCmpBloc, WalletCmpState>(
+          listener: (context, state) {
+            //update WalletVo total balance
+            if(state is UpdatedWalletBalanceState){
+              for(CoinVo coinVo in state.walletVo.coins){
+                if(coinVo.contractAddress == widget.coinVo.contractAddress){
+                  widget.coinVo = coinVo;
+                }
+              }
+              setState(() {
+
+              });
+            }
+          },
+          child: LoadDataContainer(
+            bloc: loadDataBloc,
+            onLoadData: onWidgetLoadDataCallback,
+            onRefresh: onWidgetRefreshCallback,
+            onLoadingMore: onWidgetLoadingMoreCallback,
+            child: SingleChildScrollView(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(top: 32, bottom: 24),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xFF9B9B9B), width: 0),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.asset(widget.coinVo.logo),
                             ),
-                            child: Image.asset(widget.coinVo.logo),
                           ),
-                        ),
-                        Text(
-                          "${WalletInheritedModel.formatPrice(widget.coinVo.balance)} ${widget.coinVo.symbol}",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "≈${activeQuoteVoAndSign?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(widget.coinVo.balance * activeQuoteVoAndSign?.quoteVo?.price)}",
-                            style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
+                          Text(
+                            "${WalletInheritedModel.formatPrice(widget.coinVo.balance)} ${widget.coinVo.symbol}",
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                           ),
-                        ),
-                        SizedBox(
-                          height: 24,
-                        ),
-                        Divider(
-                          height: 2,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          child: IntrinsicHeight(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                InkWell(
-                                  onTap: () {
-                                    var backRouteName =
-                                        ModalRoute.of(context).settings?.name ?? Routes.wallet_account_detail;
-                                    Application.router.navigateTo(
-                                        context,
-                                        Routes.wallet_account_send_transaction +
-                                            '?coinVo=${FluroConvertUtils.object2string(widget.coinVo.toJson())}&backRouteName=${Uri.encodeComponent(backRouteName)}');
-                                  },
-                                  child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        ExtendsIconFont.send,
-                                        color: Theme.of(context).primaryColor,
-                                        size: 32,
-                                      ),
-                                      SizedBox(
-                                        width: 8,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          S.of(context).send,
-                                          style: TextStyle(
-                                            color: HexColor(
-                                              "#FF6D6D6D",
-                                            ),
-                                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "≈${activeQuoteVoAndSign?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(widget.coinVo.balance * activeQuoteVoAndSign?.quoteVo?.price)}",
+                              style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 24,
+                          ),
+                          Divider(
+                            height: 2,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            child: IntrinsicHeight(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  InkWell(
+                                    onTap: () {
+                                      var backRouteName =
+                                          ModalRoute.of(context).settings?.name ?? Routes.wallet_account_detail;
+                                      Application.router.navigateTo(
+                                          context,
+                                          Routes.wallet_account_send_transaction +
+                                              '?coinVo=${FluroConvertUtils.object2string(widget.coinVo.toJson())}&backRouteName=${Uri.encodeComponent(backRouteName)}');
+                                    },
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          ExtendsIconFont.send,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 32,
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                VerticalDivider(),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => WalletReceivePage(widget.coinVo)));
-                                  },
-                                  child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        ExtendsIconFont.receiver,
-                                        color: Theme.of(context).primaryColor,
-                                        size: 24,
-                                      ),
-                                      SizedBox(
-                                        width: 8,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          S.of(context).receiver,
-                                          style: TextStyle(
-                                            color: HexColor(
-                                              "#FF6D6D6D",
-                                            ),
-                                          ),
+                                        SizedBox(
+                                          width: 8,
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                VerticalDivider(),
-                                Builder(
-                                  builder: (BuildContext context) {
-                                    return InkWell(
-                                      onTap: () {
-                                        Clipboard.setData(ClipboardData(text: widget.coinVo.address));
-                                        Scaffold.of(context)
-                                            .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
-                                      },
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            ExtendsIconFont.copy_content,
-                                            color: Theme.of(context).primaryColor,
-                                            size: 24,
-                                          ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              S.of(context).copy,
-                                              style: TextStyle(
-                                                color: HexColor(
-                                                  "#FF6D6D6D",
-                                                ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            S.of(context).send,
+                                            style: TextStyle(
+                                              color: HexColor(
+                                                "#FF6D6D6D",
                                               ),
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                )
-                              ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  VerticalDivider(),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) => WalletReceivePage(widget.coinVo)));
+                                    },
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          ExtendsIconFont.receiver,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 24,
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            S.of(context).receiver,
+                                            style: TextStyle(
+                                              color: HexColor(
+                                                "#FF6D6D6D",
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  VerticalDivider(),
+                                  Builder(
+                                    builder: (BuildContext context) {
+                                      return InkWell(
+                                        onTap: () {
+                                          Clipboard.setData(ClipboardData(text: widget.coinVo.address));
+                                          Scaffold.of(context)
+                                              .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
+                                        },
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              ExtendsIconFont.copy_content,
+                                              color: Theme.of(context).primaryColor,
+                                              size: 24,
+                                            ),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                S.of(context).copy,
+                                                style: TextStyle(
+                                                  color: HexColor(
+                                                    "#FF6D6D6D",
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  if (dataList.length > 1)
-                    ListView.builder(
-                      primary: false,
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index == 0) {
-                          return SizedBox.shrink();
-                        } else {
-                          var currentTransactionDetail = dataList[index];
-                          TransactionDetailVo lastTransactionDetail;
-                          if (index > 1) {
-                            lastTransactionDetail = dataList[index - 1];
+                    if (dataList.length > 1)
+                      ListView.builder(
+                        primary: false,
+                        shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index == 0) {
+                            return SizedBox.shrink();
+                          } else {
+                            var currentTransactionDetail = dataList[index];
+                            TransactionDetailVo lastTransactionDetail;
+                            if (index > 1) {
+                              lastTransactionDetail = dataList[index - 1];
+                            }
+                            return _buildTransactionItem(context, currentTransactionDetail, lastTransactionDetail);
                           }
-                          return _buildTransactionItem(context, currentTransactionDetail, lastTransactionDetail);
-                        }
-                      },
-                      itemCount: max<int>(0, dataList.length),
-                    )
-                ]),
+                        },
+                        itemCount: max<int>(0, dataList.length),
+                      )
+                  ]),
+            ),
           ),
         ));
   }

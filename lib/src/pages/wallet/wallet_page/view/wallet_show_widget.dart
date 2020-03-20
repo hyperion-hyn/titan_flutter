@@ -220,7 +220,7 @@ class ShowWalletView extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(left: 6),
           child: Text(
-            "${WalletUtil.formatPercentChange(percentChange)}",
+            "+${WalletUtil.formatPercentChange(percentChange)}",
             style: TextStyles.textC00ec00S12,
           ),
         );
