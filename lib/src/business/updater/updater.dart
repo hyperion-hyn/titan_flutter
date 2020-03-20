@@ -63,7 +63,7 @@ class _UpdaterState extends State<Updater> {
           if (state.appData.updateEntity != null) {
             PackageInfo packageInfo = await PackageInfo.fromPlatform();
             if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
-              //_showUpdateDialog(state.appData.updateEntity);
+              _showUpdateDialog(state.appData.updateEntity);
             } else {
               print('已经是最新版本');
               if (state.isManual) {
