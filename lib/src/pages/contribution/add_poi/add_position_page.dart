@@ -773,12 +773,9 @@ class _AddPositionState extends State<AddPositionPage> {
       String dayText = "";
       for (var item in _timeItem.dayList) {
         if (!item.isCheck) continue;
-        if(item == _timeItem.dayList.last){
-          dayText += "${item.label}";
-        }else{
           dayText += "${item.label}、";
-        }
       }
+      dayText = dayText.replaceFirst("、", "",dayText.length - 1);
       setState(() {
         _timeText = _timeItem.timeStr + " " + dayText;
       });
