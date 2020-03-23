@@ -74,7 +74,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
               SignalChatsPage(type: SignalChatsPage.SIGNAL),
               SignalChatsPage(type: SignalChatsPage.POI),
             ],
-            //physics: NeverScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
           ),
         ),
       ),

@@ -171,7 +171,13 @@ class _ContributionState extends State<ContributionPage> {
     await sensorPlugin.init();
   }
 
+  bool _isStartScanning = false;
   void startScan() async {
+    if (_isStartScanning) {
+      return;
+    }
+    _isStartScanning = true;
+
     progressStreamController.add(0);
 
     duration = max<int>((defaultZoom - minZoom).toInt() * 3000, duration);

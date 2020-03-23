@@ -1,11 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/business/discover/dmap_define.dart';
 import 'package:titan/src/business/home/global_data/model/map3_node_vo.dart';
 import 'package:titan/src/business/home/global_data/model/signal_daily_vo.dart';
 import 'package:titan/src/business/home/global_data/model/signal_weekly_vo.dart';
+import 'package:titan/src/business/my/app_area.dart';
+import 'package:titan/src/business/scaffold_map/map.dart';
+import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
@@ -22,7 +28,6 @@ class SignalChatsPage extends StatefulWidget {
   _SignalChatsState createState() => _SignalChatsState();
 }
 
-
 class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveClientMixin {
   Api _api = Api();
   SignalDailyVo _dailyVo;
@@ -33,6 +38,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
   @override
   bool get wantKeepAlive => true;
+  MapboxMapController _mapboxMapController;
 
   @override
   void initState() {
@@ -49,20 +55,32 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       return SingleChildScrollView(
         child: _nodeWidget(),
       );
-    }
-    else if (widget.type == SignalChatsPage.POI) {
-      return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Text(_title),
-            ),
-            _dailySignalWidget(type: SensorType.POI),
-          ],
-        ),
-      );
+    } else if (widget.type == SignalChatsPage.POI) {
+      return Stack(fit: StackFit.expand, children: <Widget>[
+        _mapView(),
+        Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            //bottom: 16,
+            child: Column(
+              children: <Widget>[
+                Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(_title),
+                    )),
+                Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(20, 0, 0, 8),
+                      child: SizedBox(width: double.infinity, child: Text('POI数据分布：', style: TextStyle(fontSize: 14))),
+                    )),
+              ],
+            )),
+        Positioned(left: 0, right: 0, bottom: 0, child: _dailySignalWidget(type: SensorType.POI)),
+      ]);
     } else {
       return SingleChildScrollView(
         child: Column(
@@ -83,6 +101,50 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     }
   }
 
+  Widget _mapView() {
+    var style;
+    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
+      style = Const.kWhiteMapStyleCn;
+    } else {
+      style = Const.kWhiteMapStyle;
+    }
+    var languageCode = Localizations.localeOf(context).languageCode;
+    DMapCreationModel model = DMapDefine.kMapList["poi"];
+    var models = model.dMapConfigModel.heavenDataModelList;
+    print('[signal] --> _mapView, models.length:${models.length}');
+
+    return MapboxMapParent(
+      key: Keys.mapHeatKey,
+      controller: _mapboxMapController,
+      child: MapboxMap(
+        compassEnabled: false,
+        initialCameraPosition: CameraPosition(
+          target: LatLng(23.13246724,113.36946487),// 天河公园-学院附近
+          zoom: 12,
+        ),
+        styleString: style,
+        onMapCreated: onMapCreated,
+        myLocationTrackingMode: MyLocationTrackingMode.Tracking,
+        rotateGesturesEnabled: false,
+        tiltGesturesEnabled: false,
+        enableLogo: false,
+        enableAttribution: false,
+        minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
+        myLocationEnabled: false,
+        languageCode: languageCode,
+        children: <Widget>[
+          ///active plugins
+          HeavenPlugin(models: models),
+        ],
+      ),
+    );
+  }
+
+  void onMapCreated(MapboxMapController controller) {
+    print('[signal] --> onMapCreated, controller:${controller}');
+    _mapboxMapController = controller;
+  }
+
   Widget _nodeWidget() {
     var data = [];
 
@@ -93,10 +155,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       for (var i = 0; i < _map3nodeVo.tiles.length; i++) {
         var item = _map3nodeVo.tiles[i];
         geoCoordMap[item.id.city] = item.id.location;
-        var dict = {
-          'name': item.id.city,
-          'value': item.count
-        };
+        var dict = {'name': item.id.city, 'value': item.count};
         geoCoordCounts.add(dict);
       }
       //print('[item] --> geoCoordMap:${geoCoordMap}');
@@ -110,21 +169,16 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
           geoCoord.add(value);
         }
         if (geoCoord != null) {
-          var dict = {
-            'name': item['name'],
-            'value': geoCoord
-          };
+          var dict = {'name': item['name'], 'value': geoCoord};
           //print('[item] --> dict:${dict}');
 
           data.add(dict);
         }
       }
-
     }
     //print('[node] --> geoCoordMap:${data.length}');
 
-    var _barOption =
-    '''
+    var _barOption = '''
 {
     backgroundColor: '#404a59',
     title: {
@@ -205,7 +259,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     ''';
 
     var _size = MediaQuery.of(context).size;
-    double _chartsWidth = _size.width-8.0;
+    double _chartsWidth = _size.width - 8.0;
     double _chartsHeight = 300;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,8 +268,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
             padding: const EdgeInsets.all(16.0),
             //color: HexColor('#404a59'),
             //color: Colors.w,
-            child: Text(_title, style: TextStyle(color: Colors.black))
-        ),
+            child: Text(_title, style: TextStyle(color: Colors.black))),
         Center(
           child: Container(
             child: Echarts(
@@ -259,13 +312,13 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     }
 
     var series = [];
-    for (int i=0; i<legendData.length; i++) {
+    for (int i = 0; i < legendData.length; i++) {
       var json = {
         'name': legendData[i],
         'smooth': true,
-        'symbol':'circle',
+        'symbol': 'circle',
         'type': 'line',
-        'data': data.isNotEmpty?data[i]:[],
+        'data': data.isNotEmpty ? data[i] : [],
       };
       series.add(json);
     }
@@ -299,7 +352,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
                   ''';
 
     var _size = MediaQuery.of(context).size;
-    double _chartsWidth = _size.width-8;
+    double _chartsWidth = _size.width - 8;
     double _chartsHeight = 250;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,8 +380,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
   Widget _dailySignalWidget({int type}) {
     var _size = MediaQuery.of(context).size;
-    double _chartsWidth = _size.width-8;
-    double _chartsHeight = 250;
+    double _chartsWidth = _size.width - 0;
+    double _chartsHeight = type != SensorType.POI ? 250:180;
 
     var xAxisData = [];
     var seriesData = [];
@@ -378,6 +431,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     },
     grid: {
        left: '15%',
+       top: '10%',
+       bottom: '20%',
     },
     series: [{
         data: ${jsonEncode(seriesData)},
@@ -393,10 +448,14 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          child: Text('最近一个月${SensorType.getScanName(type)}数据增量：', style: TextStyle(fontSize: 14)),
-          padding: EdgeInsets.fromLTRB(20, 16, 0, 8),
-        ),
+        Container(
+            color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(20, 16, 0, 0),
+              child: SizedBox(
+                  width: double.infinity,
+                  child: Text('最近一个月${SensorType.getScanName(type)}数据增量：', style: TextStyle(fontSize: 14))),
+            )),
         Center(
           child: Container(
             child: Echarts(
@@ -415,36 +474,33 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   }
 
   _getData() async {
-
     switch (widget.type) {
       case SignalChatsPage.NODE:
         {
-          _title = 'Map3节点是支持整个海伯利安地图网络的基本，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
+          _title =
+              '''Map3节点网络启用全新的空间数据模型，旨在大规模、高性能及低成本地将基础设施提升1000倍。Map3是由One Map算法技术支撑的去中心化地图/位置服务PaaS, 旨在支持构建Map3去中心化节点的大型网络。''';
           _map3nodeVo = await _api.getMap3NodeData();
-        }
-        break;
-
-      case SignalChatsPage.POI:
-        {
-          _title = 'POI数据是一个公共的位置兴趣点数据集合，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
-          _poiVoList = await _api.getPoiDaily();
         }
         break;
 
       case SignalChatsPage.SIGNAL:
         {
-          _title = '信号数据可用于建立三角定位，XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX介绍一番';
+          _title = '''信号数据将有效提升去中心化地图的定位精准度，只要有GPS，蓝牙，基站或WIFI信号的地区就能提供有效的应急救援、精准导航等定位功能，适用于户外徒步或探险等多场景应用。''';
           _weeklyVoList = await _api.getSignalWeekly();
           var dailyList = await _api.getSignalDaily();
           _dailyVo = dailyList[0];
         }
         break;
+
+      case SignalChatsPage.POI:
+        {
+          _title =
+              '''POI贡献基于众包、众治的去中心化理念，以去中心化的最有效方式鼓励用户贡献真实详细的位置详情。为避免POI信息有误，同时推出博弈系统配合网络验证，开放给所有地图用户查验POI数据真实性。未来想要搜索附近好吃好玩的目的地，只需在App首页输入关键字，如美食、酒店、商场、景点等，即可查看该位置点详情。''';
+          _poiVoList = await _api.getPoiDaily();
+        }
+        break;
     }
 
-    setState(() {
-
-    });
+    setState(() {});
   }
-
-
 }
