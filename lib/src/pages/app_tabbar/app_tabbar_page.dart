@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
@@ -40,6 +41,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
   bool _isHideBottomNavigationBar = false;
   AnimationController _bottomBarPositionAnimationController;
   AnimationController _fabsBarPositionAnimationController;
+  DateTime _lastPressedAt;
 
   @override
   void initState() {
@@ -100,16 +102,26 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
               return true;
             },
-            child: Stack(
-              children: <Widget>[
-                ScaffoldMap(),
-                userLocationBar(),
-                Padding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
-                  child: _getTabView(_currentTabIndex),
-                ),
-                bottomNavigationBar(),
-              ],
+            child: WillPopScope(
+              onWillPop: () async {
+                if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+                  _lastPressedAt = DateTime.now();
+                  Fluttertoast.showToast(msg: S.of(context).click_again_to_exist_app);
+                  return false;
+                }
+                return true;
+              },
+              child: Stack(
+                children: <Widget>[
+                  ScaffoldMap(),
+                  userLocationBar(),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
+                    child: _getTabView(_currentTabIndex),
+                  ),
+                  bottomNavigationBar(),
+                ],
+              ),
             ),
           ),
         ),
