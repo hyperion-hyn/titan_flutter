@@ -27,8 +27,6 @@ class MyPromotePage extends StatefulWidget {
 class _MyPromoteState extends DataListState<MyPromotePage> {
   UserService _userService = UserService();
 
-//  PageResponse<PromotionInfo> _pageResponse = PageResponse(0, 0, []);
-
   String link = "${Const.MAP_RICH_DOMAIN_WEBSITE}register?lang=${getRequestLang()}&code=${LOGIN_USER_INFO.id}";
 
   @override
@@ -38,11 +36,6 @@ class _MyPromoteState extends DataListState<MyPromotePage> {
     loadDataBloc.add(LoadingEvent());
   }
 
-//  @override
-//  void initState() {
-//    super.initState();
-//    _getFirstPromitionList();
-//  }
 
   Future _updateUserInstance() async {
     try {

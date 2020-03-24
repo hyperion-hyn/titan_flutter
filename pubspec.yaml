@@ -47,7 +47,7 @@ dependencies:
   #https://pub.dev/packages/path_provider#-installing-tab-
   path_provider: ^1.1.0
   #https://pub.dev/packages/qr_flutter#-installing-tab-
-  qr_flutter: ^2.0.0+51
+  qr_flutter: ^3.2.0
   #https://pub.dev/packages/sqflite#-installing-tab-
   sqflite: ^1.2.0
   #https://pub.dev/packages/shared_preferences#-installing-tab-

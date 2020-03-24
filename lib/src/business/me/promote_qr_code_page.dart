@@ -90,23 +90,24 @@ class _PromoteQrCodePageState extends State<PromoteQrCodePage> {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 22,
+                bottom: 0,
                 height: 96,
                 child: Container(
-                  color: HexColor('#343434').withOpacity(1.0),
+//                  color: HexColor('#343434').withOpacity(0.5),
+                  color: Theme.of(context).primaryColor,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
                         margin:
-                            EdgeInsets.only(top: 18, bottom: 18, left: 30, right: 8),
+                            EdgeInsets.only(top: 0, bottom: 0, left: 18, right: 16),
                         child: QrImage(
                           data: widget.url,
-                          padding: EdgeInsets.all(0.0),
+                          padding: EdgeInsets.all(2),
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
-                          version: 4,
+                          version: QrVersions.auto,
                           size: 60,
                         ),
                       ),
@@ -139,7 +140,7 @@ class _PromoteQrCodePageState extends State<PromoteQrCodePage> {
         Positioned(
             left: 0,
             right: 0,
-            bottom: 118,
+            bottom: 96,
             child: _bottomImageList())
       ],
     );

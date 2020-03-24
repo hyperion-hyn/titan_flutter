@@ -489,7 +489,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
-        } else if (permission == PermissionStatus.disabled) {
+        } else if (permission == PermissionStatus.denied) {
           Fluttertoast.showToast(msg: S.of(context).open_location_service);
         } else {
           Map<PermissionGroup, PermissionStatus> permissions =
