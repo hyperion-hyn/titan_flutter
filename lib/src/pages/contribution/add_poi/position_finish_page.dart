@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/routes/routes.dart';
 
 class FinishAddPositionPage extends StatefulWidget {
   static const String FINISH_PAGE_TYPE_ADD = "finish_page_type_add";
@@ -49,7 +50,9 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
             builder: (BuildContext context) {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: _popView,
+                onPressed: (){
+                  Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                },
               );
             },
           ),
@@ -95,7 +98,9 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
-                    onPressed: _popView,
+                    onPressed: (){
+                      Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                    },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -116,14 +121,4 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
         ));
   }
 
-  void _popView() {
-    //TODO
-    logger.w('TODO');
-//    if (createWalletPopUtilName == null) {
-//      Navigator.of(context).pop();
-//    } else {
-//      Navigator.of(context).popUntil(ModalRoute.withName(createWalletPopUtilName));
-//      createWalletPopUtilName = null;
-//    }
-  }
 }

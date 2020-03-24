@@ -10,6 +10,10 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/business_time_page.dart';
@@ -22,6 +26,7 @@ import 'package:titan/src/pages/contribution/add_poi/select_category_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 
@@ -36,7 +41,7 @@ class AddPositionPage extends StatefulWidget {
   }
 }
 
-class _AddPositionState extends State<AddPositionPage> {
+class _AddPositionState extends BaseState<AddPositionPage> {
   PositionBloc _positionBloc = PositionBloc();
 
   TextEditingController _addressNameController = TextEditingController();
@@ -68,16 +73,25 @@ class _AddPositionState extends State<AddPositionPage> {
 
   PublishSubject<int> _filterSubject = PublishSubject<int>();
   int _requestOpenCageDataCount = 0;
+  String language;
+  String address;
+
+  @override
+  void onCreated() {
+    language = SettingInheritedModel.of(context).languageCode;
+    address = WalletInheritedModel.of(context).activatedWallet.wallet.accounts[0].address;
+
+    _positionBloc.add(GetOpenCageEvent(widget.userPosition,language));
+    _filterSubject.debounceTime(Duration(seconds: 1)).listen((count) {
+      //print('[add] ---> count:$count, _requestOpenCageDataCount:$_requestOpenCageDataCount');
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition,language));
+    });
+    super.onCreated();
+  }
 
   @override
   void initState() {
     _addressController.addListener(_checkInputHeight);
-
-    _positionBloc.add(GetOpenCageEvent(widget.userPosition));
-    _filterSubject.debounceTime(Duration(seconds: 1)).listen((count) {
-      //print('[add] ---> count:$count, _requestOpenCageDataCount:$_requestOpenCageDataCount');
-      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
-    });
     super.initState();
   }
 
@@ -125,8 +139,9 @@ class _AddPositionState extends State<AddPositionPage> {
         //print('[add] --> state:${fromState}, toState:${state}');
 
         if (state is SuccessPostPoiDataState) {
-          //TODO
 //          createWalletPopUtilName = '/data_contribution_page';
+          Application.router.navigateTo(context,Routes.contribute_position_finish
+              + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
 //          Navigator.push(
 //            context,
 //            MaterialPageRoute(
@@ -792,7 +807,7 @@ class _AddPositionState extends State<AddPositionPage> {
 
     // 2.检测网络数据
     if (_openCageData == null) {
-      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
       return;
     }
 
@@ -835,7 +850,7 @@ class _AddPositionState extends State<AddPositionPage> {
         poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite);
 
     var model = PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
-    _positionBloc.add(StartPostPoiDataEvent(model));
+    _positionBloc.add(StartPostPoiDataEvent(model,address));
     setState(() {
       _isUploading = true;
     });

@@ -17,6 +17,9 @@ class AddPositionEvent extends PositionEvent {
 
 // category
 class SelectCategoryInitEvent extends PositionEvent {
+  String address;
+  String language;
+  SelectCategoryInitEvent(this.address,this.language);
   //todo: 每个page 有个 bloc
   //todo: delete
 }
@@ -28,8 +31,10 @@ class SelectCategoryLoadingEvent extends PositionEvent {
 class SelectCategoryResultEvent extends PositionEvent {
   //todo: 命名问题
   final String searchText;
+  String address;
+  String language;
 
-  SelectCategoryResultEvent({this.searchText});
+  SelectCategoryResultEvent(this.address,this.language,{this.searchText});
 }
 
 class SelectCategoryClearEvent extends PositionEvent {}
@@ -37,15 +42,17 @@ class SelectCategoryClearEvent extends PositionEvent {}
 // get
 class GetOpenCageEvent extends PositionEvent {
   final LatLng userPosition;
+  String language;
 
-  GetOpenCageEvent(this.userPosition);
+  GetOpenCageEvent(this.userPosition,this.language);
 }
 
 // uploading poi
 class StartPostPoiDataEvent extends PositionEvent {
   final PoiDataModel poiDataModel;
+  String address;
 
-  StartPostPoiDataEvent(this.poiDataModel);
+  StartPostPoiDataEvent(this.poiDataModel,this.address);
 }
 
 class LoadingPostPoiDataEvent extends PositionEvent {
@@ -63,13 +70,14 @@ class FailPostPoiDataEvent extends PositionEvent {
 }
 
 // confirm
-//class ConfirmPositionLoadingEvent extends PositionEvent {
-//}
+class ConfirmPositionLoadingEvent extends PositionEvent {
+}
 
 class ConfirmPositionPageEvent extends PositionEvent {
   LatLng userPosition;
-
-  ConfirmPositionPageEvent(this.userPosition);
+  String language;
+  String address;
+  ConfirmPositionPageEvent(this.userPosition,this.language,this.address);
 }
 
 class ConfirmPositionResultLoadingEvent extends PositionEvent {}
@@ -77,15 +85,15 @@ class ConfirmPositionResultLoadingEvent extends PositionEvent {}
 class ConfirmPositionResultEvent extends PositionEvent {
   int answer;
   UserContributionPoi confirmPoiItem;
-
-  ConfirmPositionResultEvent(this.answer, this.confirmPoiItem);
+  String address;
+  ConfirmPositionResultEvent(this.answer, this.confirmPoiItem,this.address);
 }
 
 // uploading poi ncvo
 class StartPostPoiNcovDataEvent extends PositionEvent {
   final PoiNcovDataModel poiDataModel;
-
-  StartPostPoiNcovDataEvent(this.poiDataModel);
+  String address;
+  StartPostPoiNcovDataEvent(this.poiDataModel,this.address);
 }
 
 class LoadingPostPoiNcovDataEvent extends PositionEvent {

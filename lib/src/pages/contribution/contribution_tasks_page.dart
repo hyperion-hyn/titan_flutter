@@ -183,7 +183,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
-                    print('TODO');
+                    Application.router.navigateTo(
+                        context, Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+
 //                    createWalletPopUtilName = '/data_contribution_page';
 //                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                   },
@@ -210,9 +212,10 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
+                    Application.router.navigateTo(
+                        context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
 //                    createWalletPopUtilName = '/data_contribution_page';
 //                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
-                    print('TODO');
                   },
                   child: Container(
                     child: Padding(
@@ -330,12 +333,13 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => WalletManagerPage(),
-              settings: RouteSettings(name: "/wallet_manager_page"),
-            ));
+        Application.router.navigateTo(context,Routes.wallet_manager + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
+//        Navigator.push(
+//            context,
+//            MaterialPageRoute(
+//              builder: (context) => WalletManagerPage(),
+//              settings: RouteSettings(name: "/wallet_manager_page"),
+//            ));
       },
       child: SizedBox(
         height: 64,

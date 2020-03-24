@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/category_item.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -17,7 +20,7 @@ class SelectCategoryPage extends StatefulWidget {
   }
 }
 
-class _SelectCategoryState extends State<SelectCategoryPage> {
+class _SelectCategoryState extends BaseState<SelectCategoryPage> {
   PositionBloc _positionBloc = PositionBloc();
   List<CategoryItem> categoryList = [];
   String selectCategory = "";
@@ -26,6 +29,16 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
   bool _visibleCloseIcon = false;
   CustomInputText inputText;
   List<String> _tagList = [];
+  String address;
+  String language;
+
+  @override
+  void onCreated() {
+    address = WalletInheritedModel.of(context).activatedWallet.wallet.accounts[0].address;
+    language = SettingInheritedModel.of(context).languageCode;
+    _positionBloc.add(SelectCategoryInitEvent(address,language));
+    super.onCreated();
+  }
 
   @override
   void initState() {
@@ -48,8 +61,6 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
     );
 
     super.initState();
-
-    _positionBloc.add(SelectCategoryInitEvent());
 
   }
 
@@ -124,7 +135,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
           return _buildBody(state);
         } else {
           return AllPageStateContainer(state,(){
-          _positionBloc.add(SelectCategoryInitEvent());
+            _positionBloc.add(SelectCategoryInitEvent(address,language));
           });
         }
       },
@@ -286,7 +297,7 @@ class _SelectCategoryState extends State<SelectCategoryPage> {
       }
 
       _positionBloc.add(SelectCategoryLoadingEvent());
-      _positionBloc.add(SelectCategoryResultEvent(searchText: textOrPoi));
+      _positionBloc.add(SelectCategoryResultEvent(address,language,searchText: textOrPoi));
       _lastSearch = textOrPoi;
     }
   }

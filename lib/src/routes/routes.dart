@@ -28,6 +28,7 @@ class Routes {
   static const String contribute_add_poi = '/contribution/tasks/add_poi';
   static const String contribute_verify_poi = '/contribution/tasks/verify_poi';
   static const String contribute_add_nCov_poi = '/contribution/tasks/add_nCov_poi';
+  static const String contribute_position_finish = '/contribution/tasks/position_finish';
 
   static String createOrImportWalletEntryRouteName;
 
@@ -70,6 +71,7 @@ class Routes {
     router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: TransitionType.inFromRight);
     router.define(contribute_done, handler: contributionDoneHandler, transitionType: TransitionType.inFromRight);
     router.define(contribute_scan_signal, handler: contributionScanSignalHandler, transitionType: TransitionType.inFromRight);
+    router.define(contribute_position_finish, handler: contributionPositionFinishHandler, transitionType: TransitionType.inFromRight);
   }
 
   static Widget unknownPage() => Scaffold(

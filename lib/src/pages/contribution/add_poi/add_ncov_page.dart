@@ -10,13 +10,19 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
+import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/discover/dapp/ncov/model/ncov_poi_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/grouped_buttons/grouped_buttons.dart';
@@ -32,7 +38,7 @@ class AddNcovPage extends StatefulWidget {
   }
 }
 
-class _AddNcovState extends State<AddNcovPage> {
+class _AddNcovState extends BaseState<AddNcovPage> {
   PositionBloc _positionBloc = PositionBloc();
 
   TextEditingController _addressNameController = TextEditingController();
@@ -75,16 +81,24 @@ class _AddNcovState extends State<AddNcovPage> {
   int _requestOpenCageDataCount = 0;
 
   ScrollController _scrollController = ScrollController();
+  String language;
+  String walletAddress;
+
+  @override
+  void onCreated() {
+    language = SettingInheritedModel.of(context).languageCode;
+    walletAddress = WalletInheritedModel.of(context).activatedWallet.wallet.accounts[0].address;
+    _positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
+    _filterSubject.debounceTime(Duration(seconds: 1)).listen((count) {
+      //print('[add] ---> count:$count, _requestOpenCageDataCount:$_requestOpenCageDataCount');
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
+    });
+    super.onCreated();
+  }
 
   @override
   void initState() {
     _addressController.addListener(_checkInputHeight);
-
-    _positionBloc.add(GetOpenCageEvent(widget.userPosition));
-    _filterSubject.debounceTime(Duration(seconds: 1)).listen((count) {
-      //print('[add] ---> count:$count, _requestOpenCageDataCount:$_requestOpenCageDataCount');
-      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
-    });
     super.initState();
   }
 
@@ -154,7 +168,8 @@ class _AddNcovState extends State<AddNcovPage> {
         //print('[add] --> state:${fromState}, toState:${state}');
 
         if (state is SuccessPostPoiNcovDataState) {
-          //TODO
+          Application.router.navigateTo(context,Routes.contribute_position_finish
+              + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
 //          createWalletPopUtilName = '/data_contribution_page';
 //          Navigator.push(
 //            context,
@@ -872,7 +887,7 @@ class _AddNcovState extends State<AddNcovPage> {
 
     // 2.检测网络数据
     if (_openCageData == null) {
-      _positionBloc.add(GetOpenCageEvent(widget.userPosition));
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition,language));
       return;
     }
 
@@ -952,7 +967,7 @@ class _AddNcovState extends State<AddNcovPage> {
         securityMeasures,
         contactRecords);
     var model = PoiNcovDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
-    _positionBloc.add(StartPostPoiNcovDataEvent(model));
+    _positionBloc.add(StartPostPoiNcovDataEvent(model,walletAddress));
     setState(() {
       _isUploading = true;
     });

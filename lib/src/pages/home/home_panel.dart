@@ -10,6 +10,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
 import '../contribution/contribution_tasks_page.dart';
@@ -244,13 +245,14 @@ class HomePanelState extends State<HomePanel> {
             child: InkWell(
               borderRadius: BorderRadius.all(Radius.circular(4.0)),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    settings: RouteSettings(name: '/data_contribution_page'),
-                    builder: (context) => ContributionTasksPage(),
-                  ),
-                );
+                Application.router.navigateTo(context,Routes.contribute_tasks_list);
+//                Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                    settings: RouteSettings(name: '/data_contribution_page'),
+//                    builder: (context) => ContributionTasksPage(),
+//                  ),
+//                );
               },
               child: Container(
                 decoration: BoxDecoration(

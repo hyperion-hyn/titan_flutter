@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
@@ -103,6 +104,11 @@ var contributionDoneHandler = Handler(handlerFunc: (context, params) {
 
 var contributionScanSignalHandler = Handler(handlerFunc: (context, params) {
   return ScanSignalContributionPage(latLng: params['latLng']?.first);
+});
+
+var contributionPositionFinishHandler = Handler(handlerFunc: (context, params) {
+  _cacheOrClearEntryWalletRouteName(params);
+  return FinishAddPositionPage(params['pageType']?.first);
 });
 
 //var demoRouteHandler = Handler(
