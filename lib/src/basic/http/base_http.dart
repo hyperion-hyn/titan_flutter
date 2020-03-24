@@ -145,12 +145,12 @@ class BaseHttpCore {
     try {
       map = json.decode(response.data);
     } catch (err) {
-      print('[base_http] json decode 1 err $err');
+      //print('[base_http] json decode 1 err $err');
       //String res2Json = json.encode(response.data);
       try {
         map = json.decode(response.data);
       } catch (err) {
-        print('[base_http] json decode 2 err $err');
+        //print('[base_http] json decode 2 err $err');
       }
     }
 

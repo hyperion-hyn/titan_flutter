@@ -43,6 +43,15 @@ final policeDMapConfigModel = DMapConfigModel(
       print('on long press police');
       return true;
     },
+
+    // todo:jison_add
+    alwaysShowPanel: false,
+    panelDraggable: false,
+    showCenterMarker: false,
+    //panelPaddingTop: (context) => MediaQuery.of(context).size.height * 0.45,
+    panelAnchorHeight: (context) => MediaQuery.of(context).size.height,
+    panelCollapsedHeight: (context) => 20,
+
     panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {
       return PoliceStationPanel(poi: poi, scrollController: scrollController);
     },
