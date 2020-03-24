@@ -44,14 +44,18 @@ class _SettingManagerState extends State<_SettingManager> {
           if (state.areaModel != null) {
             Config.updateConfig(state.areaModel);
           }
-          if (state.languageModel != null) {
+          if (state.quotesSign != null) {
+            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: state.quotesSign));
+          }
+
+          /*if (state.languageModel != null) {
             //update current quotes by setting
             var quoteSign = SupportedQuoteSigns.of('USD');
             if (state.languageModel?.isZh() == true) {
               quoteSign = SupportedQuoteSigns.of('CNY');
             }
             BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quoteSign));
-          }
+          }*/
         }
       },
       child: BlocBuilder<SettingBloc, SettingState>(

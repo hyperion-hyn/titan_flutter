@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -24,8 +25,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       if (event.areaModel != null) {
         _saveAreaModel(event.areaModel);
       }
-
-      yield UpdatedSettingState(languageModel: event.languageModel, areaModel: event.areaModel);
+      if (event.quotesSign != null) {
+        _saveQuoteSign(event.quotesSign);
+      }
+      yield UpdatedSettingState(languageModel: event.languageModel, areaModel: event.areaModel, quotesSign: event.quotesSign);
     }
   }
 
@@ -37,5 +40,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   Future<bool> _saveAreaModel(AreaModel areaModel) {
     var modelStr = json.encode(areaModel.toJson());
     return AppCache.saveValue(PrefsKey.SETTING_AREA, modelStr);
+  }
+
+  Future<bool> _saveQuoteSign(QuotesSign quotesSign) {
+    var modelStr = json.encode(quotesSign.toJson());
+    return AppCache.saveValue(PrefsKey.SETTING_QUOTE_SIGN, modelStr);
   }
 }

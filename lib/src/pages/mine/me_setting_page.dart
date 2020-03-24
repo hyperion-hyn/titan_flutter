@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 
 import 'me_area_page.dart';
 import 'me_language_page.dart';
+import 'me_price_page.dart';
 
 class MeSettingPage extends StatefulWidget {
   @override
@@ -17,6 +19,7 @@ class _MeSettingState extends State<MeSettingPage> {
   @override
   Widget build(BuildContext context) {
     var language = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.name;
+    var quoteStr = QuotesInheritedModel.of(context,aspect: QuotesAspect.quote).activeQuotesSign?.quote;
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.name(context);
     return Scaffold(
         appBar: AppBar(
@@ -29,6 +32,12 @@ class _MeSettingState extends State<MeSettingPage> {
         ),
         body: Column(
           children: <Widget>[
+            _buildMemuBar("价格显示", quoteStr, () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MePricePage()));
+            }),
+            Divider(
+              height: 1,
+            ),
             _buildMemuBar(S.of(context).language, language, () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MeLanguagePage()));
             }),

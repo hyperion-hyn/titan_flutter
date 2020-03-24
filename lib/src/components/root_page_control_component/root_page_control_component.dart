@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/inject/injector.dart';
+import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
@@ -49,9 +50,14 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
     AreaModel areaModel =
         areaModelStr != null ? AreaModel.fromJson(json.decode(areaModelStr)) : SupportedArea.defaultModel();
 
+    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign =
+    quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
+
     BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(
       areaModel: areaModel,
       languageModel: languageModel,
+      quotesSign: quotesSign
     ));
   }
 

@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 
 import 'vo/symbol_quote_vo.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'model.g.dart';
 
 class QuotesModel extends Equatable {
   final String symbolStr;
@@ -13,11 +15,21 @@ class QuotesModel extends Equatable {
   List<Object> get props => [symbolStr, quotes, lastUpdateTime];
 }
 
-class QuotesSign {
-  final String quote;
-  final String sign;
+@JsonSerializable()
+class QuotesSign extends Object {
 
-  QuotesSign({this.quote, this.sign});
+  @JsonKey(name: 'quote')
+  String quote;
+
+  @JsonKey(name: 'sign')
+  String sign;
+
+  QuotesSign({this.quote,this.sign});
+
+  factory QuotesSign.fromJson(Map<String, dynamic> srcJson) => _$QuotesSignFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$QuotesSignToJson(this);
+
 }
 
 class ActiveQuoteVoAndSign {
@@ -28,10 +40,10 @@ class ActiveQuoteVoAndSign {
 }
 
 class SupportedQuoteSigns {
-  static QuotesSign _defaultQuotesSign = QuotesSign(quote: 'USD', sign: '\$');
+  static QuotesSign defaultQuotesSign = QuotesSign(quote: 'USD', sign: '\$');
 
   static List<QuotesSign> all = [
-    _defaultQuotesSign,
+    defaultQuotesSign,
     QuotesSign(quote: 'CNY', sign: '¥'),
   ];
 
@@ -41,6 +53,6 @@ class SupportedQuoteSigns {
         return sign;
       }
     }
-    return _defaultQuotesSign;
+    return defaultQuotesSign;
   }
 }
