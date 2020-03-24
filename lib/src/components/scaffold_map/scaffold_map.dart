@@ -392,6 +392,10 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           myWidget.DraggableScrollableActuator.reset(Keys.mapDraggablePanelKey.currentContext);
         });
+      }else{
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          myWidget.DraggableScrollableActuator.setHide(Keys.mapDraggablePanelKey.currentContext);
+        });
       }
 
       return Stack(
