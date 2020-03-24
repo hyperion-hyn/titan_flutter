@@ -9,7 +9,6 @@ import 'poi_interface.dart';
 
 part 'mapbox_poi.g.dart';
 
-@JsonSerializable()
 class MapBoxPoi with SearchHistoryAwarePoi implements IPoi {
   String name;
   String address;

@@ -7,7 +7,6 @@ import './search_history_aware_poi.dart';
 
 part 'user_contribution_poi.g.dart';
 
-@JsonSerializable()
 class UserContributionPoi with SearchHistoryAwarePoi implements IPoi {
   @JsonKey(name: 'id')
   String id;

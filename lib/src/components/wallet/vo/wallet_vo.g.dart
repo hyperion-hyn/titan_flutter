@@ -15,10 +15,12 @@ WalletVo _$WalletVoFromJson(Map<String, dynamic> json) {
         ?.map((e) =>
             e == null ? null : CoinVo.fromJson(e as Map<String, dynamic>))
         ?.toList(),
+    balance: (json['balance'] as num)?.toDouble(),
   );
 }
 
 Map<String, dynamic> _$WalletVoToJson(WalletVo instance) => <String, dynamic>{
       'wallet': instance.wallet,
       'coins': instance.coins,
+      'balance': instance.balance,
     };

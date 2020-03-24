@@ -4,7 +4,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'token.g.dart';
 
-@JsonSerializable()
 class AssetToken {
   final int decimals;
   final String name;

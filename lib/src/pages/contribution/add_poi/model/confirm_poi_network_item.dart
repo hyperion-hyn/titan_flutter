@@ -5,7 +5,6 @@ import '../../../../data/entity/poi/user_contribution_poi.dart';
 part 'confirm_poi_network_item.g.dart';
 
 
-@JsonSerializable()
 class ConfirmPoiNetworkItem extends Object {
 
   @JsonKey(name: 'id')

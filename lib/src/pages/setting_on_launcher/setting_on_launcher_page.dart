@@ -21,6 +21,7 @@ class SettingOnLauncherPage extends StatefulWidget {
 
 class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
   AreaModel _currentArea;
+  LanguageModel _currentLanguage;
 
   @override
   void didChangeDependencies() {
@@ -58,6 +59,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                       );
                     })).toList(),
                     onChanged: (value) {
+                      _currentLanguage = value;
                       BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(languageModel: value));
                     },
                     value: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel,
@@ -109,6 +111,17 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                               UiUtil.showSnackBar(context, S.of(context).select_region_tip);
                               return;
                             }
+
+                            //setting quote sign
+                            if(_currentLanguage == null){
+                              _currentLanguage = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel;
+                            }
+                            var quoteSign = SupportedQuoteSigns.of('USD');
+                            if (_currentLanguage.isZh() == true) {
+                              quoteSign = SupportedQuoteSigns.of('CNY');
+                            }
+                            BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(quotesSign: quoteSign));
+
                             var prefs = await SharedPreferences.getInstance();
                             await prefs.setBool(PrefsKey.FIRST_TIME_LAUNCHER_KEY, true);
                             BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
