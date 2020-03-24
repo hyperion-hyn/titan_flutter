@@ -157,7 +157,7 @@ final poiDMapConfigModel = DMapConfigModel(
     dMapName: 'poi',
     heavenDataModelList: <HeavenDataModel>[
       HeavenDataModel(
-        id: '1818210e27554201b638851aa246e7d1',
+        id: '3818230e27554203b638851aa246e7d3',
         sourceLayer: 'poi',
         sourceUrl: "https://store.tile.map3.network/tile/contribution/poi/{z}/{x}/{y}.pbf",
         color: 0xff836FFF,
@@ -167,7 +167,7 @@ final poiDMapConfigModel = DMapConfigModel(
     defaultZoom: 12,
     onMapClickHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
       var poi;
-      var feature = await _getFeature(point, coordinates, 'layer-heaven-1818210e27554201b638851aa246e7d1');
+      var feature = await _getFeature(point, coordinates, 'layer-heaven-3818230e27554203b638851aa246e7d3');
       if (feature != null) {
         poi = PoliceStationPoi.fromMapFeature(feature);
         if (poi != null) {
@@ -245,7 +245,8 @@ class DMapDefine {
       createDAppWidgetFunction: (context) => EncryptShare(),
     ),
     'poi': DMapCreationModel(
-      dMapConfigModel: poiDMapConfigModel
+      dMapConfigModel: poiDMapConfigModel,
+      createDAppWidgetFunction: (context) => EncryptShare(),
     )
   };
 }

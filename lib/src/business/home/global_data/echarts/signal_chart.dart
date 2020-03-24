@@ -111,7 +111,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     var languageCode = Localizations.localeOf(context).languageCode;
     DMapCreationModel model = DMapDefine.kMapList["poi"];
     var models = model.dMapConfigModel.heavenDataModelList;
-    print('[signal] --> _mapView, models.length:${models.length}');
+    print('[signal] --> _mapView, models.length:${models.length}, name:${models[0].sourceLayer}');
 
     return MapboxMapParent(
       key: Keys.mapHeatKey,
@@ -124,7 +124,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         ),
         styleString: style,
         onMapCreated: onMapCreated,
-        myLocationTrackingMode: MyLocationTrackingMode.Tracking,
+        myLocationTrackingMode: MyLocationTrackingMode.None,
         rotateGesturesEnabled: false,
         tiltGesturesEnabled: false,
         enableLogo: false,
