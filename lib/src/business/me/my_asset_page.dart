@@ -9,6 +9,7 @@ import 'package:titan/src/business/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/business/load_data_container/load_data_container.dart';
 import 'package:titan/src/business/me/draw_balance_page.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
+import 'package:titan/src/business/me/model/daily_bills_type.dart';
 import 'package:titan/src/business/me/model/page_response.dart';
 import 'package:titan/src/business/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/business/me/recharge_purchase_page.dart';
@@ -29,13 +30,31 @@ class MyAssetPage extends StatefulWidget {
 
 class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin {
   TabController _tabController;
-
+  List<DailyBillsModel> _dailyBillsModels;
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
   }
 
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+
+    List<DailyBillsModel> list = [
+      //DailyBillsModel(S.of(context).daily_bills_type_all, DailyBillsType.all),
+      DailyBillsModel(S.of(context).daily_bills_type_buycontract, DailyBillsType.buyContract),
+      DailyBillsModel(S.of(context).daily_bills_type_node, DailyBillsType.node),
+      DailyBillsModel(S.of(context).daily_bills_type_income, DailyBillsType.income),
+      DailyBillsModel(S.of(context).daily_bills_type_recharge, DailyBillsType.recharge),
+      //DailyBillsModel("提币账单", DailyBillsType.withdrawal),
+      DailyBillsModel(S.of(context).daily_bills_type_others, DailyBillsType.others),
+      DailyBillsModel(S.of(context).withdrawal_records, DailyBillsType.none),
+    ];
+    _dailyBillsModels = list;
+    _tabController = TabController(length: _dailyBillsModels.length, vsync: this);
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -249,26 +268,21 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                           margin: EdgeInsets.symmetric(vertical: 8),
                           width: 200,
                           child: TabBar(
+                            isScrollable: true,
                             indicatorColor: Theme.of(context).primaryColor,
                             indicatorWeight: 5,
                             controller: _tabController,
                             labelColor: Color(0xFF252525),
                             unselectedLabelColor: Colors.grey,
                             indicatorSize: TabBarIndicatorSize.label,
-                            tabs: <Widget>[
-                              Tab(
-                                child: Text(
-                                  S.of(context).bill_flow,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Tab(
-                                child: Text(
-                                  S.of(context).withdrawal_records,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
+                            tabs: _dailyBillsModels.map((DailyBillsModel model) =>
+                                Tab(
+                                  child: Text(
+                                    model.name,
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                            ).toList(),
                           ),
                         ),
                       ),
@@ -285,10 +299,9 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                       child: TabBarView(
                         controller: _tabController,
                         //physics: NeverScrollableScrollPhysics(),
-                        children: <Widget>[
-                          BillHistory(),
-                          WithdrawalHistory(),
-                        ],
+                        children: _dailyBillsModels.map((DailyBillsModel value) =>
+                            value.type==DailyBillsType.none?WithdrawalHistory():BillHistory(type: value.type)
+                        ).toList(),
                       ),
                     ),
                   ),
@@ -303,6 +316,9 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
 }
 
 class BillHistory extends StatefulWidget {
+  final DailyBillsType type;
+  BillHistory({this.type});
+
   @override
   State<StatefulWidget> createState() {
     return _BillHistoryState();
@@ -438,7 +454,7 @@ class _BillHistoryState extends DataListState<BillHistory> {
 
   @override
   Future<List> onLoadData(int page) {
-    return _userService.getBillList(page);
+    return _userService.getBillList(page, type: widget.type);
   }
 
   void _listenEventBus() {

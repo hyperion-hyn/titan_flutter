@@ -653,5 +653,11 @@
   "hashrate_contract": "HashRate contract",
   "purchase_title_recharge_only_usdt": "By direct charge USDT ",
   "buy_need_usdt_only_func": "(Deposit：from USDT ${usdt}U)",
-  "quantity_func": "${number}"
+  "quantity_func": "${number}",
+  "daily_bills_type_others": "Other",
+  "daily_bills_type_recharge": "Recharge",
+  "daily_bills_type_income": "Income",
+  "daily_bills_type_node": "Node",
+  "daily_bills_type_buycontract": "Buy Contract",
+  "daily_bills_type_all": "All"
 }

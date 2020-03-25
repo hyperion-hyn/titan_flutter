@@ -653,5 +653,11 @@
   "hashrate_contract": "계산력 계약",
   "purchase_title_recharge_only_usdt": "직접 충전 USDT 저울 사용",
   "buy_need_usdt_only_func": "(USDT ${usdt})",
-  "quantity_func": "${number}"
+  "quantity_func": "${number}",
+  "daily_bills_type_others": "기타",
+  "daily_bills_type_recharge": "재충전",
+  "daily_bills_type_income": "소득",
+  "daily_bills_type_node": "노드",
+  "daily_bills_type_buycontract": "계약",
+  "daily_bills_type_all": "총 청구서"
 }

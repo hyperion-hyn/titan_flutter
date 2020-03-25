@@ -10,6 +10,7 @@ import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/common_response.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/model/contract_info_v2.dart';
+import 'package:titan/src/business/me/model/daily_bills_type.dart';
 import 'package:titan/src/business/me/model/experience_info_v2.dart';
 import 'package:titan/src/business/me/model/fund_token.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
@@ -223,12 +224,15 @@ class UserService {
     return billList;
   }
 
-  Future<List<BillInfo>> getBillList(int page) async {
+  Future<List<BillInfo>> getBillList(int page, {DailyBillsType type = DailyBillsType.all}) async {
+    var typeString = type.toString().split('.').last;
+    print('[Servece_api] getBillList, type:${type}, typeString: ${typeString}');
+
     UserToken userToken = await getUserTokenFromSharedpref();
     if (userToken == null) {
       throw new Exception("not login");
     }
-    List<BillInfo> billList = await _mapRichApi.getBillList(userToken.token, page);
+    List<BillInfo> billList = await _mapRichApi.getBillList(userToken.token, page, typeString);
     return billList;
   }
 

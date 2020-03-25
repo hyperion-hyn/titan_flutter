@@ -653,5 +653,11 @@
   "hashrate_contract": "算力合約",
   "purchase_title_recharge_only_usdt": "使用直充USDT余额",
   "buy_need_usdt_only_func": "(需：USDT ${usdt}U)",
-  "quantity_func": "${number} 份"
+  "quantity_func": "${number} 份",
+  "daily_bills_type_others": "其他賬單",
+  "daily_bills_type_recharge": "充值賬單",
+  "daily_bills_type_income": "收益賬單",
+  "daily_bills_type_node": "節點賬單",
+  "daily_bills_type_buycontract": "入金/付購賬單",
+  "daily_bills_type_all": "總賬單"
 }

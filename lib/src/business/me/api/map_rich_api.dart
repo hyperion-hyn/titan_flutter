@@ -7,6 +7,7 @@ import 'package:titan/src/business/me/api/map_rich_http.dart';
 import 'package:titan/src/business/me/model/bill_info.dart';
 import 'package:titan/src/business/me/model/contract_info.dart';
 import 'package:titan/src/business/me/model/contract_info_v2.dart';
+import 'package:titan/src/business/me/model/daily_bills_type.dart';
 import 'package:titan/src/business/me/model/experience_info_v2.dart';
 import 'package:titan/src/business/me/model/fund_token.dart';
 import 'package:titan/src/business/me/model/mortgage_info.dart';
@@ -370,12 +371,12 @@ class MapRichApi {
 
   ///getBillList
   // todo: jison edit_userInfo
-  Future<List<BillInfo>> getBillList(String token, int page) async {
+  Future<List<BillInfo>> getBillList(String token, int page, String type) async {
     return await MapRichHttpCore.instance.getEntity("dailyBills", EntityFactory<List<BillInfo>>((json) {
       return (json as List).map((billJson) {
         return BillInfo.fromJson(billJson);
       }).toList();
-    }), params: {"page": page}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
+    }), params: {"page": page, "type": type}, options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}));
   }
 
   /*
