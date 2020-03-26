@@ -132,6 +132,8 @@ class _WalletSendState extends State<WalletSendPage> {
                           },
                           controller: _receiverAddressController,
                           decoration: InputDecoration(
+                            hintText: '如: 0x81e7A0529AC1726e...',
+                            hintStyle: TextStyle(color: Colors.black12),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           ),
@@ -149,10 +151,14 @@ class _WalletSendState extends State<WalletSendPage> {
                             fontSize: 16,
                           ),
                         ),
+                        Text(
+                          '(可用 ${WalletUtil.formatCoinNum(widget.coinVo.balance)})',
+                          style: TextStyle(fontSize: 12, color: Colors.black38),
+                        ),
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            _amountController.text = widget.coinVo.balance.toString();
+                            _amountController.text = WalletUtil.formatCoinNum(widget.coinVo.balance);
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
@@ -185,6 +191,8 @@ class _WalletSendState extends State<WalletSendPage> {
                         },
                         controller: _amountController,
                         decoration: InputDecoration(
+                          hintText: '输入转账数量',
+                          hintStyle: TextStyle(color: Colors.black12),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
@@ -199,7 +207,9 @@ class _WalletSendState extends State<WalletSendPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ $quoteSign${WalletUtil.formatPrice(_notionalValue)}")),
+                        Padding(
+                            padding: EdgeInsets.only(left: 8, top: 8),
+                            child: Text("≈ $quoteSign${WalletUtil.formatPrice(_notionalValue)}")),
                       ],
                     ),
                     SizedBox(
