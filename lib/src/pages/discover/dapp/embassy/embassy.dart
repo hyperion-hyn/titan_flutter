@@ -29,15 +29,12 @@ final embassyDMapConfigModel = DMapConfigModel(
       var poi;
       var feature = await MapUtil.getFeature(point, coordinates, 'layer-heaven-c1b7c5102eca43029f0416892447e0ed');
       if (feature != null) {
-        print('【D-map] --> $feature');
+        //print('【D-map] --> $feature');
         poi = EmbassyPoi.fromMapFeature(feature);
         if (poi != null) {
           BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
         }
       }
-//      if (poi == null) {
-//        BlocProvider.of<ScaffoldMapBloc>(context).add(ClearSelectedPoiEvent());
-//      }
       return true;
     },
     onMapLongPressHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {

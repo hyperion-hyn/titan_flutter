@@ -245,6 +245,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
                   if (st.dMapConfigModel?.panelPaddingTop != null) {
                     topPadding = st.dMapConfigModel?.panelPaddingTop(context);
+                    print('[scaffold_map]  topPadding:${topPadding}');
                   }
                 }
                 break;
@@ -365,33 +366,26 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
 
         if (state.dMapConfigModel?.panelDraggable == true) {
           draggable = true;
-          print('[scaffold_map] ---> dmap, draggable:${draggable}');
         }
 
         if (state.dMapConfigModel?.panelAnchorHeight != null) {
           anchorHeight = state.dMapConfigModel?.panelAnchorHeight(context);
-          print('[scaffold_map] ---> dmap, anchorHeight:${anchorHeight}');
         }
 
         if (state.dMapConfigModel?.panelCollapsedHeight != null) {
           collapsedHeight = state.dMapConfigModel?.panelCollapsedHeight(context);
           initHeight = collapsedHeight;
-          print('[scaffold_map] ---> dmap, collapsedHeight:${collapsedHeight}, initHeight:${initHeight}');
         }
 
         //for dMap, always show sheet panel, for now mainly for share Encrypted location Share
-        print('[scaffold_map] ---> dmap, panelBuilder:${panelBuilder}');
-
         if (panelBuilder == null &&
             state.dMapConfigModel?.alwaysShowPanel == true &&
             state.dMapConfigModel?.panelBuilder != null) {
           panelBuilder = (context, controller) => state.dMapConfigModel.panelBuilder(context, controller, null);
           if (state.dMapConfigModel?.panelPaddingTop != null) {
             topPadding = state.dMapConfigModel?.panelPaddingTop(context);
-            print('[scaffold_map] ---> dmap-Encrypted, topPadding:${topPadding}');
           }
           initHeight = collapsedHeight;
-          print('[scaffold_map] ---> dmap-Encrypted, initHeight:${initHeight}');
         }
       }
 

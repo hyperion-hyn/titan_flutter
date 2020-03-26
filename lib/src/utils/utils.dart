@@ -26,14 +26,14 @@ String getExpiredTimeShowTip(BuildContext context, int expireTime) {
   }
 }
 
-String shortBlockChainAddress(String address) {
+String shortBlockChainAddress(String address, {int limitCharsLength=9}) {
   if (address == null || address == "") {
     return "";
   }
-  if (address.length < 9) {
+  if (address.length < limitCharsLength) {
     return address;
   }
-  return address.substring(0, 9) + "..." + address.substring(address.length - 9, address.length);
+  return address.substring(0, limitCharsLength) + "..." + address.substring(address.length - limitCharsLength, address.length);
 }
 
 String shortEmail(String email) {

@@ -59,7 +59,7 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
             if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
               _showUpdateDialog(state.appData.updateEntity);
             } else {
-              print('已经是最新版本');
+              print('[updater] 已经是最新版本');
               if (state.isManual) {
                 Fluttertoast.showToast(msg: S.of(context).latest_version_tip);
               }

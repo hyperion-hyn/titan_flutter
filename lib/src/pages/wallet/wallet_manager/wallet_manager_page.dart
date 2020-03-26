@@ -117,7 +117,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               );
             } else if (state is WalletEmptyState) {
               return Container(
-                child: Text('empty wallet TODO'),
+                child: Center(child: Text('Empty wallet TODO!')),
               );
             } else {
               return Container();

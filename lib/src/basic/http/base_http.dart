@@ -114,9 +114,9 @@ class BaseHttpCore {
       response = await dio.get(url, options: options, cancelToken: cancelToken);
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
-        params.forEach((key,value){
+        /*params.forEach((key,value){
           print("[base_http] post params.key $key params.values $value");
-        });
+        });*/
         response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
       } else if (data != null) {
         response = await dio.post(url, data: data, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
