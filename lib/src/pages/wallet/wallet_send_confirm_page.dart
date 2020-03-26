@@ -266,7 +266,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                         fontSize: 12),
                                   ),
                                   Text(
-                                    '${gasPriceRecommend.safeLowWait} 分钟',
+                                    S.of(context).wait_min(gasPriceRecommend.safeLowWait.toString()),
                                     style: TextStyle(fontSize: 10, color: Colors.black38),
                                   )
                                 ],
@@ -299,7 +299,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                         fontSize: 12),
                                   ),
                                   Text(
-                                    '${gasPriceRecommend.avgWait} 分钟',
+                                    S.of(context).wait_min(gasPriceRecommend.avgWait.toString()),
                                     style: TextStyle(fontSize: 10, color: Colors.black38),
                                   )
                                 ],
@@ -333,7 +333,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                         fontSize: 12),
                                   ),
                                   Text(
-                                    '${gasPriceRecommend.fastWait} 分钟',
+                                    S.of(context).wait_min(gasPriceRecommend.fastWait.toString()),
                                     style: TextStyle(fontSize: 10, color: Colors.black38),
                                   )
                                 ],
