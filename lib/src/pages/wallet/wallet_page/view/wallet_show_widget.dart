@@ -69,7 +69,7 @@ class ShowWalletView extends StatelessWidget {
                                 width: 8,
                               ),
                               Text(
-                                "${WalletInheritedModel.formatPrice(walletVo.balance)}",
+                                "${WalletUtil.formatPrice(walletVo.balance)}",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 24,

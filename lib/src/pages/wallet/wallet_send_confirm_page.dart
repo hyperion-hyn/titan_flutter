@@ -47,7 +47,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   double ethFee = 0.0;
   double currencyFee = 0.0;
 
-  NumberFormat currency_format = new NumberFormat("#,###.####");
+//  NumberFormat currency_format = new NumberFormat("#,###.####");
 
 //  NumberFormat token_fee_format = new NumberFormat("#,###.########");
 
@@ -101,6 +101,14 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 //    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
+    var gasLimit = widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_GAS_LIMIT : EthereumConst.ERC20_GAS_LIMIT;
+    var gasEstimate =
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+
+    var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
+
+    var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -137,7 +145,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           ),
                         ),
                         Text(
-                          "≈ $quoteSign${currency_format.format(widget.transferAmount * quotePrice)}",
+                          "≈ $quoteSign${WalletUtil.formatPrice(widget.transferAmount * quotePrice)}",
                           style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
@@ -227,7 +235,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           alignment: Alignment.centerLeft,
                           height: 24,
                           child: Text(
-                            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${currency_format.format(currencyFee)})",
+                            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${WalletUtil.formatPrice(gasPriceEstimate.toDouble())})",
                             style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                           ),
                         ),
@@ -384,7 +392,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     setState(() {
       selectedPriceLevel = index;
     });
-    _getGasFee();
+//    _getGasFee();
   }
 
   Future _getGasFee() async {
@@ -419,7 +427,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     ethFee = ConvertTokenUnit.weiToEther(weiBigInt: ret).toDouble();
     currencyFee = (Decimal.parse(ethFee.toString()) * Decimal.parse(ethQuotePrice.toString())).toDouble();
 
-    logger.i('费率是 $ethFee eth, eth price is: $ethQuotePrice');
+    logger.i(
+        '费率是 $ethFee eth, eth price is: $ethQuotePrice, ${ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(EthereumConst.ERC20_GAS_LIMIT)).toStringAsFixed(0)))}');
     logger.i('费率是 $currencyFee usd');
 
     setState(() {

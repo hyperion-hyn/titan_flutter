@@ -153,7 +153,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
     return (activatedWallet != oldWidget.activatedWallet && dependencies.contains(WalletAspect.activatedWallet));
   }
 
-  static String formatPrice(double price) {
-    return NumberFormat("#,###.#####").format(price);
-  }
+//  static String formatPrice(double price) {
+//    return NumberFormat("#,###.#####").format(price);
+//  }
 }
