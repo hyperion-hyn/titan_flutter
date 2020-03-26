@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:decimal/decimal.dart';
+import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import '../coin_market_api.dart';
 import '../model.dart';
 import './bloc.dart';
@@ -19,7 +23,8 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
   @override
   Stream<QuotesCmpState> mapEventToState(QuotesCmpEvent event) async* {
     if (event is UpdateQuotesEvent) {
-      if (currentQuotesModel == null || event.isForceUpdate == true ||
+      if (currentQuotesModel == null ||
+          event.isForceUpdate == true ||
           DateTime.now().millisecondsSinceEpoch - currentQuotesModel.lastUpdateTime > UPDATE_THRESHOLD) {
         yield UpdatingQuotesState();
 
@@ -41,6 +46,27 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
       }
     } else if (event is UpdateQuotesSignEvent) {
       yield UpdatedQuotesSignState(sign: event.sign);
+    } else if (event is UpdateGasPriceEvent) {
+      yield GasPriceState(status: Status.loading);
+
+      try {
+        var response = await HttpCore.instance.get('https://ethgasstation.info/json/ethgasAPI.json');
+        var gasPriceRecommend = GasPriceRecommend(
+            fast: parseGasPriceToBigIntWei(response['fastest']),
+            fastWait: response['fastestWait'],
+            average: parseGasPriceToBigIntWei(response['average']),
+            avgWait: response['avgWait'],
+            safeLow: parseGasPriceToBigIntWei(response['safeLow']),
+            safeLowWait: response['safeLowWait']);
+        yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
+      } catch (e) {
+        logger.e(e);
+        yield GasPriceState(status: Status.failed);
+      }
     }
+  }
+
+  Decimal parseGasPriceToBigIntWei(double num) {
+    return Decimal.parse(num.toString()) / Decimal.fromInt(10) * Decimal.fromInt(TokenUnit.G_WEI);
   }
 }

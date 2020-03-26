@@ -17,3 +17,5 @@ class UpdateQuotesSignEvent extends QuotesCmpEvent {
 
   UpdateQuotesSignEvent({this.sign});
 }
+
+class UpdateGasPriceEvent extends QuotesCmpEvent {}
