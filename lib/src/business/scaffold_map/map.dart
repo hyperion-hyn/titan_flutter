@@ -475,10 +475,8 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
   void _listenEventBus() {
     _eventBusSubscription = eventBus.on().listen((event) async {
-
       if (event is ToMyLocationEvent) {
         //check location service
-
         ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
 
         if (serviceStatus == ServiceStatus.disabled) {
@@ -487,6 +485,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         }
 
         PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+        print('xxx $permission');
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
         } else if (permission == PermissionStatus.denied) {

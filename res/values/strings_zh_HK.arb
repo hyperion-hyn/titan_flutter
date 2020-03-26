@@ -502,7 +502,7 @@
   "maprich_intro_url":"${rich_domain}intro?lang=zh_CN",
   "actual_amount_received":"( 以到賬交易所實時價為準)",
   "get_current_position_fail_tips": "獲取不到你當前位置",
-  "open_location_service": "請開啟定位服務",
+  "open_location_service": "請授予定位服務權限",
   "apply_location_service": "申請定位授權",
   "allow_location_service": "請你授權使用定位功能.",
   "again_click_exit_app": "再按一下退出程序",
