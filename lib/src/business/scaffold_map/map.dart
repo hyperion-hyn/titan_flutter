@@ -478,32 +478,48 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       if (event is ToMyLocationEvent) {
         //check location service
         ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+        print('【map], serviceStatus $serviceStatus');
 
         if (serviceStatus == ServiceStatus.disabled) {
           _showGoToOpenLocationServceDialog();
           return;
         }
 
+
         PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
-        print('xxx $permission');
+        print('【map] permission：$permission');
+
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
-        } else if (permission == PermissionStatus.denied) {
-          Fluttertoast.showToast(msg: S.of(context).open_location_service);
-        } else {
-          Map<PermissionGroup, PermissionStatus> permissions =
-              await PermissionHandler().requestPermissions([PermissionGroup.location]);
-          if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
-            _toMyLocation();
-            Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
-              _toMyLocation(); //hack, location not auto move
-            });
+        } else if (permission == PermissionStatus.denied){
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          var haveLaunched = prefs.getBool(PrefsKey.haveLaunched)??false;
+          if (haveLaunched) {
+            Fluttertoast.showToast(msg: S.of(context).open_location_service);
           } else {
-            _showGoToOpenAppSettingsDialog();
+            _requestLocationPermissions();
+            prefs.setBool(PrefsKey.haveLaunched, true);
           }
+        }
+        else {
+          _requestLocationPermissions();
         }
       }
     });
+  }
+
+  void _requestLocationPermissions() async {
+    Map<PermissionGroup, PermissionStatus> permissions =
+    await PermissionHandler().requestPermissions([PermissionGroup.location]);
+
+    if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
+      _toMyLocation();
+      Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
+        _toMyLocation(); //hack, location not auto move
+      });
+    } else {
+      _showGoToOpenAppSettingsDialog();
+    }
   }
 
   void _showGoToOpenAppSettingsDialog() {
