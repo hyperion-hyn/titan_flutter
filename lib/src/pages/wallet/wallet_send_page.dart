@@ -9,6 +9,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
@@ -33,6 +34,24 @@ class _WalletSendState extends State<WalletSendPage> {
   final _fromKey = GlobalKey<FormState>();
 
   double _notionalValue = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController.addListener(() {
+      var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+      var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+      setState(() {
+        _notionalValue = double.parse(_amountController.text) * quotePrice;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _amountController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +132,8 @@ class _WalletSendState extends State<WalletSendPage> {
                           },
                           controller: _receiverAddressController,
                           decoration: InputDecoration(
+                            hintText: '如: 0x81e7A0529AC1726e...',
+                            hintStyle: TextStyle(color: Colors.black12),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           ),
@@ -130,10 +151,14 @@ class _WalletSendState extends State<WalletSendPage> {
                             fontSize: 16,
                           ),
                         ),
+                        Text(
+                          '(可用 ${WalletUtil.formatCoinNum(widget.coinVo.balance)})',
+                          style: TextStyle(fontSize: 12, color: Colors.black38),
+                        ),
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            _amountController.text = widget.coinVo.balance.toString();
+                            _amountController.text = WalletUtil.formatCoinNum(widget.coinVo.balance);
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
@@ -166,21 +191,25 @@ class _WalletSendState extends State<WalletSendPage> {
                         },
                         controller: _amountController,
                         decoration: InputDecoration(
+                          hintText: '输入转账数量',
+                          hintStyle: TextStyle(color: Colors.black12),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
-                        onChanged: (value) {
-                          setState(() {
-                            _notionalValue = double.parse(value) * quotePrice;
-                          });
-                        },
+//                        onChanged: (value) {
+//                          setState(() {
+//                            _notionalValue = double.parse(value) * quotePrice;
+//                          });
+//                        },
                       ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Padding(padding: EdgeInsets.only(left: 8, top: 8), child: Text("≈ $_notionalValue $quoteSign")),
+                        Padding(
+                            padding: EdgeInsets.only(left: 8, top: 8),
+                            child: Text("≈ $quoteSign${WalletUtil.formatPrice(_notionalValue)}")),
                       ],
                     ),
                     SizedBox(

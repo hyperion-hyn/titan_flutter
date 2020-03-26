@@ -385,13 +385,9 @@ class Wallet {
         } else {
           final contract = WalletUtil.getHynErc20Contract(contractAddress);
           final balanceFun = contract.function('balanceOf');
-          try {
-            final balance = await WalletUtil.getWeb3Client()
-                .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
-            return balance.first;
-          } catch (e) {
-            logger.e(e);
-          }
+          final balance = await WalletUtil.getWeb3Client()
+              .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
+          return balance.first;
         }
         break;
     }

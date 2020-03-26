@@ -219,6 +219,7 @@ class WalletUtil {
     return contract;
   }
 
+  /// https://infura.io/docs/gettingStarted/makeRequests.md
   static Future<dynamic> postInfura({String method, List params, int id = 1}) {
     return HttpCore.instance.post(WalletConfig.getInfuraApi(),
         params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},

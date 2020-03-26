@@ -19,6 +19,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
@@ -84,7 +85,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                 }
               }
               setState(() {
-
               });
             }
           },
@@ -115,13 +115,13 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                             ),
                           ),
                           Text(
-                            "${WalletInheritedModel.formatPrice(widget.coinVo.balance)} ${widget.coinVo.symbol}",
+                            "${WalletUtil.formatCoinNum(widget.coinVo.balance)} ${widget.coinVo.symbol}",
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "≈${activeQuoteVoAndSign?.sign?.sign ?? ''} ${WalletInheritedModel.formatPrice(widget.coinVo.balance ??= 0.0 * activeQuoteVoAndSign?.quoteVo?.price)}",
+                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${WalletUtil.formatPrice((widget.coinVo.balance ?? 0.0) * activeQuoteVoAndSign?.quoteVo?.price)}",
                               style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                             ),
                           ),
@@ -274,7 +274,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     var title = "";
     var account = "";
     var amountColor;
-    var amountText = "${WalletInheritedModel.formatPrice(transactionDetail.amount)} ${transactionDetail.unit}";
+    var amountText = "${WalletUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.unit}";
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconData = ExtendsIconFont.receiver;
       title = S.of(context).received;

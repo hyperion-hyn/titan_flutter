@@ -448,7 +448,7 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               var gas = await WalletUtil.ethGasPrice();
-              logger.i('油费是 $gas');
+              logger.i('油费是 $gas ${gas / BigInt.from(TokenUnit.G_WEI)}');
             },
             child: Text('查看以太坊油费'),
           ),

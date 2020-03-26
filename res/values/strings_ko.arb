@@ -398,5 +398,6 @@
   "source_desc_title": "데이터 소스 설명",
   "epidemic_map_short": "NCP 지도",
   "search_failed": "搜索异常",
-  "cannot_get_your_location": "获取不到你当前位置"
+  "cannot_get_your_location": "获取不到你当前位置",
+  "wait_min": "${min} 分钟"
 }

@@ -24,6 +24,7 @@ class _MarketPriceState extends State<MarketPricePage> {
 
   @override
   void initState() {
+    super.initState();
     _getPrice();
   }
 

@@ -4,10 +4,12 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
@@ -45,29 +47,50 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   double ethFee = 0.0;
   double currencyFee = 0.0;
 
-  NumberFormat currency_format = new NumberFormat("#,###.##");
-  NumberFormat token_fee_format = new NumberFormat("#,###.########");
+//  NumberFormat currency_format = new NumberFormat("#,###.####");
 
-  var isLoading = false;
+//  NumberFormat token_fee_format = new NumberFormat("#,###.########");
+
+  var isTransferring = false;
   var isLoadingGasFee = false;
 
-  int speed = EthereumConst.FAST_SPEED;
+//  Decimal gasPrice; // = EthereumConst.FAST_SPEED;
+  int selectedPriceLevel = 1;
+
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
 
   @override
   void onCreated() {
-    var defaultSpeed = EthereumConst.FAST_SPEED;
+//    var defaultSpeed = EthereumConst.FAST_SPEED;
     activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+//    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    _speedOnTap(EthereumConst.FAST_SPEED, quotePrice);
+
+    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    _speedOnTap(1);
 //    _updateSpeed(defaultSpeed, quotePrice);
   }
 
   @override
   void initState() {
-    _getGasFee();
+    super.initState();
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+//    _getGasFee();
+  }
+
+  Decimal get gasPrice {
+    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    switch (selectedPriceLevel) {
+      case 0:
+        return gasPriceRecommend.safeLow;
+      case 1:
+        return gasPriceRecommend.average;
+      case 2:
+        return gasPriceRecommend.fast;
+      default:
+        return gasPriceRecommend.average;
+    }
   }
 
   @override
@@ -76,20 +99,29 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
 //    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+
+    var gasLimit = widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_GAS_LIMIT : EthereumConst.ERC20_GAS_LIMIT;
+    var gasEstimate =
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+
+    var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
+
+    var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
 
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.white),
-          centerTitle: true,
-          title: Text(
-            S.of(context).transfer_confirm,
-            style: TextStyle(color: Colors.white),
-          ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
+        title: Text(
+          S.of(context).transfer_confirm,
+          style: TextStyle(color: Colors.white),
         ),
-        body: SingleChildScrollView(
-          child: Column(
+      ),
+      body: SingleChildScrollView(
+        child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -113,7 +145,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           ),
                         ),
                         Text(
-                          "≈ $quoteSign${currency_format.format(widget.transferAmount * quotePrice)}",
+                          "≈ $quoteSign${WalletUtil.formatPrice(widget.transferAmount * quotePrice)}",
                           style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
@@ -203,7 +235,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           alignment: Alignment.centerLeft,
                           height: 24,
                           child: Text(
-                            "$ethFee ETH(≈ $quoteSign${currency_format.format(currencyFee)})",
+                            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${WalletUtil.formatPrice(gasPriceEstimate.toDouble())})",
                             style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                           ),
                         ),
@@ -223,68 +255,96 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              _speedOnTap(EthereumConst.LOW_SPEED, quotePrice);
+                              _speedOnTap(0);
                             },
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: speed == EthereumConst.LOW_SPEED ? Colors.blue : Colors.grey[200],
+                                  color: gasPrice == gasPriceRecommend.safeLow ? Colors.blue : Colors.grey[200],
                                   border: Border(),
                                   borderRadius:
                                       BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
-                              child: Text(
-                                S.of(context).speed_slow,
-                                style: TextStyle(color: speed == EthereumConst.LOW_SPEED ? Colors.white : Colors.black),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    S.of(context).speed_slow,
+                                    style: TextStyle(
+                                        color: gasPrice == gasPriceRecommend.safeLow ? Colors.white : Colors.black,
+                                        fontSize: 12),
+                                  ),
+                                  Text(
+                                    S.of(context).wait_min(gasPriceRecommend.safeLowWait.toString()),
+                                    style: TextStyle(fontSize: 10, color: Colors.black38),
+                                  )
+                                ],
                               ),
                             ),
                           ),
                         ),
                         VerticalDivider(
-                          width: 2,
+                          width: 1,
                           thickness: 2,
                         ),
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              _speedOnTap(EthereumConst.FAST_SPEED, quotePrice);
+                              _speedOnTap(1);
                             },
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: speed == EthereumConst.FAST_SPEED ? Colors.blue : Colors.grey[200],
+                                  color: gasPrice == gasPriceRecommend.average ? Colors.blue : Colors.grey[200],
                                   border: Border(),
                                   borderRadius: BorderRadius.all(Radius.circular(0))),
-                              child: Text(
-                                S.of(context).speed_normal,
-                                style:
-                                    TextStyle(color: speed == EthereumConst.FAST_SPEED ? Colors.white : Colors.black),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    S.of(context).speed_normal,
+                                    style: TextStyle(
+                                        color: gasPrice == gasPriceRecommend.average ? Colors.white : Colors.black,
+                                        fontSize: 12),
+                                  ),
+                                  Text(
+                                    S.of(context).wait_min(gasPriceRecommend.avgWait.toString()),
+                                    style: TextStyle(fontSize: 10, color: Colors.black38),
+                                  )
+                                ],
                               ),
                             ),
                           ),
                         ),
                         VerticalDivider(
-                          width: 2,
+                          width: 1,
                           thickness: 2,
                         ),
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              _speedOnTap(EthereumConst.SUPER_FAST_SPEED, quotePrice);
+                              _speedOnTap(2);
                             },
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: speed == EthereumConst.SUPER_FAST_SPEED ? Colors.blue : Colors.grey[200],
+                                  color: gasPrice == gasPriceRecommend.fast ? Colors.blue : Colors.grey[200],
                                   border: Border(),
                                   borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
-                              child: Text(
-                                S.of(context).speed_fast,
-                                style: TextStyle(
-                                    color: speed == EthereumConst.SUPER_FAST_SPEED ? Colors.white : Colors.black),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    S.of(context).speed_fast,
+                                    style: TextStyle(
+                                        color: gasPrice == gasPriceRecommend.fast ? Colors.white : Colors.black,
+                                        fontSize: 12),
+                                  ),
+                                  Text(
+                                    S.of(context).wait_min(gasPriceRecommend.fastWait.toString()),
+                                    style: TextStyle(fontSize: 10, color: Colors.black38),
+                                  )
+                                ],
                               ),
                             ),
                           ),
@@ -307,14 +367,14 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
                 disabledTextColor: Colors.white,
-                onPressed: isLoading ? null : _transfer,
+                onPressed: isTransferring ? null : _transfer,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        isLoading ? S.of(context).please_waiting : S.of(context).send,
+                        isTransferring ? S.of(context).please_waiting : S.of(context).send,
                         style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                       ),
                     ],
@@ -323,20 +383,16 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               ),
             ),
           ],
-        ),),);
+        ),
+      ),
+    );
   }
 
-  void _speedOnTap(int newSpeed, double price) {
-    speed = newSpeed;
-    setState(() {});
-    _getGasFee();
-
-//    setState(() {
-//      speed = newSpeed;
-//      ethFee = speed.toDouble() *
-//          (widget.coinVo.contractAddress == null ? EthereumConst.ETH_GAS_LIMIT : EthereumConst.ERC20_GAS_LIMIT);
-//      currencyFee = ethFee * price;
-//    });
+  void _speedOnTap(int index) {
+    setState(() {
+      selectedPriceLevel = index;
+    });
+//    _getGasFee();
   }
 
   Future _getGasFee() async {
@@ -346,10 +402,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     var wallet = activatedWallet.wallet;
     var toAddress = widget.receiverAddress;
     var contract = widget.coinVo.contractAddress;
-    var decimals = widget.coinVo.decimals;
+//    var decimals = widget.coinVo.decimals;
     var amount = widget.transferAmount;
 
-    var ethCurrencyRate = activatedQuoteSign.quoteVo.price;
+    var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ??
+        0; // activatedQuoteSign.quoteVo.price;
 
     var erc20FunAbi;
 
@@ -363,14 +420,15 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     var ret = await wallet.estimateGasPrice(
       toAddress: toAddress,
       value: ConvertTokenUnit.etherToWei(etherDouble: amount),
-      gasPrice: BigInt.from(speed),
+      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
       data: erc20FunAbi,
     );
 
-    ethFee = ConvertTokenUnit.weiToDecimal(ret, decimals).toDouble();
-    currencyFee = (ConvertTokenUnit.weiToDecimal(ret, decimals) * Decimal.parse(ethCurrencyRate.toString())).toDouble();
+    ethFee = ConvertTokenUnit.weiToEther(weiBigInt: ret).toDouble();
+    currencyFee = (Decimal.parse(ethFee.toString()) * Decimal.parse(ethQuotePrice.toString())).toDouble();
 
-    logger.i('费率是 $ethFee eth');
+    logger.i(
+        '费率是 $ethFee eth, eth price is: $ethQuotePrice, ${ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(EthereumConst.ERC20_GAS_LIMIT)).toStringAsFixed(0)))}');
     logger.i('费率是 $currencyFee usd');
 
     setState(() {
@@ -391,7 +449,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
       try {
         setState(() {
-          isLoading = true;
+          isTransferring = true;
         });
         var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
         if (widget.coinVo.symbol == "ETH") {
@@ -410,7 +468,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       } catch (_) {
         logger.e(_);
         setState(() {
-          isLoading = false;
+          isTransferring = false;
         });
         if (_ is PlatformException) {
           if (_.code == WalletError.PASSWORD_WRONG) {
@@ -437,7 +495,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     final txHash = await wallet.sendEthTransaction(
       password: password,
       toAddress: toAddress,
-      gasPrice: BigInt.from(speed),
+      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
       value: amount,
     );
 
@@ -451,7 +509,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     final txHash = await wallet.sendErc20Transaction(
       contractAddress: contractAddress,
       password: password,
-      gasPrice: BigInt.from(speed),
+      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
       value: amount,
       toAddress: toAddress,
     );

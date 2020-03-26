@@ -1,7 +1,9 @@
+import 'package:decimal/decimal.dart';
 import 'package:equatable/equatable.dart';
 
 import 'vo/symbol_quote_vo.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 part 'model.g.dart';
 
 class QuotesModel extends Equatable {
@@ -17,19 +19,17 @@ class QuotesModel extends Equatable {
 
 @JsonSerializable()
 class QuotesSign extends Object {
-
   @JsonKey(name: 'quote')
   String quote;
 
   @JsonKey(name: 'sign')
   String sign;
 
-  QuotesSign({this.quote,this.sign});
+  QuotesSign({this.quote, this.sign});
 
   factory QuotesSign.fromJson(Map<String, dynamic> srcJson) => _$QuotesSignFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$QuotesSignToJson(this);
-
 }
 
 class ActiveQuoteVoAndSign {
@@ -55,4 +55,24 @@ class SupportedQuoteSigns {
     }
     return defaultQuotesSign;
   }
+}
+
+class GasPriceRecommend {
+  final Decimal fast;
+  final double fastWait;
+
+  final Decimal average;
+  final double avgWait;
+
+  final Decimal safeLow;
+  final double safeLowWait;
+
+  GasPriceRecommend({
+    this.average,
+    this.fast,
+    this.safeLow,
+    this.avgWait,
+    this.fastWait,
+    this.safeLowWait,
+  });
 }
