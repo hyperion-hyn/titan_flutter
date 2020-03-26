@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_introduction.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 
-import 'map3_node_page/map3_node_introduction.dart';
 import 'wallet_page/wallet_page.dart';
 
 class WalletTabsPage extends StatefulWidget {
@@ -55,9 +56,8 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
         ),
         body: TabBarView(
           children: [
-
             WalletPage(),
-            Map3NodeIntroductionPage(),
+            Map3NodePage(),
 //            Center(
 //              child: Text('this is wallet page'),
 //            ),

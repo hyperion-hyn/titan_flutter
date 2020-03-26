@@ -105,6 +105,7 @@ dependencies:
   #https://pub:dev/packages/image_pickers#-readme-tab-
   image_pickers: ^1.0.7+1
   bordered_text: ^1.0.0
+  video_player: ^0.10.8+1
 
 dev_dependencies:
   flutter_driver:

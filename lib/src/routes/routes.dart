@@ -30,6 +30,10 @@ class Routes {
   static const String contribute_add_nCov_poi = '/contribution/tasks/add_nCov_poi';
   static const String contribute_position_finish = '/contribution/tasks/position_finish';
 
+  //map3node
+  static const String map3node_product_list = '/map3node/product_list';
+  static const String map3node_create_wallet = '/map3node/create_wallet';
+
   static String createOrImportWalletEntryRouteName;
 
   static void popUntilCreateOrImportWalletEntryRoute<T extends Object>(BuildContext context, [T result]) {
@@ -72,6 +76,10 @@ class Routes {
     router.define(contribute_done, handler: contributionDoneHandler, transitionType: TransitionType.inFromRight);
     router.define(contribute_scan_signal, handler: contributionScanSignalHandler, transitionType: TransitionType.inFromRight);
     router.define(contribute_position_finish, handler: contributionPositionFinishHandler, transitionType: TransitionType.inFromRight);
+
+    //map3node
+    router.define(map3node_product_list, handler: map3NodeProductListHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_create_wallet, handler: map3NodeCreateWalletHandler, transitionType: TransitionType.inFromRight);
   }
 
   static Widget unknownPage() => Scaffold(

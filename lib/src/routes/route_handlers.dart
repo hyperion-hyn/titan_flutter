@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
@@ -109,6 +111,15 @@ var contributionScanSignalHandler = Handler(handlerFunc: (context, params) {
 var contributionPositionFinishHandler = Handler(handlerFunc: (context, params) {
   _cacheOrClearEntryWalletRouteName(params);
   return FinishAddPositionPage(params['pageType']?.first);
+});
+
+
+var map3NodeProductListHandler = Handler(handlerFunc: (context, params) {
+  return Map3NodeProductPage();
+});
+
+var map3NodeCreateWalletHandler = Handler(handlerFunc: (context, params) {
+  return Map3NodeCreateWalletPage();
 });
 
 //var demoRouteHandler = Handler(
