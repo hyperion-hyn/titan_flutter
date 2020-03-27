@@ -485,19 +485,18 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         }
 
         PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
-        print('xxx $permission');
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
-        } else if (permission == PermissionStatus.denied) {
+        } /*else if (permission == PermissionStatus.denied) {
           Fluttertoast.showToast(msg: S.of(context).open_location_service);
-        } else {
+        }*/ else {
           Map<PermissionGroup, PermissionStatus> permissions =
               await PermissionHandler().requestPermissions([PermissionGroup.location]);
           if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
             _toMyLocation();
-            Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
-              _toMyLocation(); //hack, location not auto move
-            });
+//            Observable.timer('', Duration(milliseconds: 1500)).listen((d) {
+//              _toMyLocation(); //hack, location not auto move
+//            });
           } else {
             _showGoToOpenAppSettingsDialog();
           }

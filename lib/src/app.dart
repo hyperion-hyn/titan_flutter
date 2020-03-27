@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/business/my/app_area.dart';
 import 'package:titan/src/consts/consts.dart';
 import 'package:titan/src/style/theme.dart';
@@ -25,7 +26,7 @@ class App extends StatefulWidget {
   }
 }
 
-class _AppState extends State<App> {
+class _AppState extends BaseState<App> {
   @override
   void initState() {
     super.initState();
@@ -41,6 +42,10 @@ class _AppState extends State<App> {
         currentAppArea = appArea;
       });
     };
+  }
+
+  @override
+  void onCreated() {
     _getLocale();
   }
 
@@ -51,7 +56,7 @@ class _AppState extends State<App> {
     if (languageCode == null) {
       //set default locale
       var l = window.locale?.languageCode;
-      if (l == 'zh') {
+      if (l == 'zh' || l?.contains('zh_Hans') == true) {
         localeChange(Locale("zh", "CN"));
       }
       else if (l == 'zh_HK') {
