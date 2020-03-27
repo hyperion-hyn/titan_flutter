@@ -659,5 +659,12 @@
   "daily_bills_type_income": "Income",
   "daily_bills_type_node": "Node",
   "daily_bills_type_buycontract": "Buy Contract",
-  "daily_bills_type_all": "All"
+  "daily_bills_type_all": "All",
+  "contract_record": "Contract Record",
+  "all_bills": "All",
+  "contract_bills": "Contract",
+  "node_bills": "Node",
+  "reward_bills": "Reward",
+  "recharge_withdrawal_bills": "Deposit/Withdrawal",
+  "my_account": "My Account"
 }

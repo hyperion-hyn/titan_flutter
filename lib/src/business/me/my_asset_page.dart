@@ -42,27 +42,23 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
     super.didChangeDependencies();
 
     List<DailyBillsModel> list = [
-      //DailyBillsModel(S.of(context).daily_bills_type_all, DailyBillsType.all),
-      DailyBillsModel(S.of(context).daily_bills_type_buycontract, DailyBillsType.buyContract),
-      DailyBillsModel(S.of(context).daily_bills_type_node, DailyBillsType.node),
-      DailyBillsModel(S.of(context).daily_bills_type_income, DailyBillsType.income),
-      DailyBillsModel(S.of(context).daily_bills_type_recharge, DailyBillsType.recharge),
-      //DailyBillsModel("提币账单", DailyBillsType.withdrawal),
-      DailyBillsModel(S.of(context).daily_bills_type_others, DailyBillsType.others),
       DailyBillsModel(S.of(context).withdrawal_records, DailyBillsType.none),
     ];
     _dailyBillsModels = list;
     _tabController = TabController(length: _dailyBillsModels.length, vsync: this);
-
   }
-  @override
+
+
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      //backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
+        centerTitle: false,
+        title: Text(S.of(context).my_account,
+          style: TextStyle(color: Colors.white),
+        ),
         actions: <Widget>[
           Align(
               alignment: Alignment.centerRight,
@@ -91,10 +87,10 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   GestureDetector(
                     onTap: () async {
                       Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => RechargePurchasePage(),
-                                  settings: RouteSettings(name: "/recharge_purchase_page")))
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RechargePurchasePage(),
+                              settings: RouteSettings(name: "/recharge_purchase_page")))
                           .then((isSuccess) async {
                         if (isSuccess != null && isSuccess) {
                           await UserService.syncUserInfo();
@@ -116,10 +112,11 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
               ))
         ],
       ),
+
       body: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(top: 0, bottom: 24),
+            padding: EdgeInsets.only(top: 36),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -131,11 +128,12 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                     Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
+                          padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             S.of(context).balance_with_unit,
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: Color(0xFF9B9B9B),
+                              fontWeight: FontWeight.w500
                             ),
                           ),
                         ),
@@ -143,7 +141,9 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
                             "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} ",
-                            style: TextStyle(color: Colors.white, fontSize: 24),
+                            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 24,
+                                fontWeight: FontWeight.bold
+                            ),
                           ),
                         )
                       ],
@@ -159,26 +159,31 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   children: <Widget>[
                     Row(
                       mainAxisSize: MainAxisSize.min,
+                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text(
                           S.of(context).earnings_balance,
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Color(0xFF9B9B9B),
                             fontSize: 14,
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 4),
+                          padding: const EdgeInsets.only(left: 12),
                           child: Text(
                             "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance - LOGIN_USER_INFO.totalChargeBalance)} ",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).primaryColor,
                               fontSize: 14,
+                              fontWeight: FontWeight.bold
                             ),
                           ),
                         )
                       ],
+                    ),
+                    SizedBox(
+                      height: 8,
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -187,22 +192,12 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                         Text(
                           S.of(context).recharge_balance,
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Color(0xFF9B9B9B),
                             fontSize: 14,
                           ),
                         ),
-//                        Padding(
-//                          padding: const EdgeInsets.only(left: 4.0),
-//                          child: Text(
-//                            '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalChargeBalance)}',
-//                            style: TextStyle(
-//                              color: Colors.white,
-//                              fontSize: 14,
-//                            ),
-//                          ),
-//                        ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.only(left: 12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
@@ -210,15 +205,16 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                                 children: <Widget>[
                                   Text(
                                     S.of(context).hyn_eq_u,
-                                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                                    style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 12),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 4.0),
                                     child: Text(
                                       '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.chargeHynBalance)}',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: Theme.of(context).primaryColor,
                                         fontSize: 12,
+                                          fontWeight: FontWeight.bold
                                       ),
                                     ),
                                   ),
@@ -228,15 +224,16 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                                 children: <Widget>[
                                   Text(
                                     S.of(context).usdt_direct,
-                                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                                    style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 12),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 4.0),
                                     child: Text(
                                       '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.chargeUsdtBalance)}',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: Theme.of(context).primaryColor,
                                         fontSize: 12,
+                                        fontWeight: FontWeight.bold
                                       ),
                                     ),
                                   ),
@@ -252,63 +249,92 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-//                padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 8),
-                          width: 200,
-                          child: TabBar(
-                            isScrollable: true,
-                            indicatorColor: Theme.of(context).primaryColor,
-                            indicatorWeight: 5,
-                            controller: _tabController,
-                            labelColor: Color(0xFF252525),
-                            unselectedLabelColor: Colors.grey,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            tabs: _dailyBillsModels.map((DailyBillsModel model) =>
-                                Tab(
-                                  child: Text(
-                                    model.name,
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                            ).toList(),
+          /*Container(
+            decoration: BoxDecoration(
+                //color: Colors.white,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                  child: SizedBox(
+//                height: 38,
+                    width: 240,
+                    child: FlatButton(
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Theme.of(context).primaryColor),
+                          borderRadius: BorderRadius.circular(38)),
+                      onPressed: () async {
+                        var isSuccess = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DrawBalancePage(),
+                                settings: RouteSettings(name: "/draw_balance_page")));
+                        if (isSuccess != null && isSuccess) {
+                          eventBus.fire(Refresh());
+                          _tabController.animateTo(1);
+                        }
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                          child: Text(
+                            S.of(context).withdrawal,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.w500),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  Expanded(
-                    child: RefreshConfiguration.copyAncestor(
-                      enableLoadingWhenFailed: true,
-                      context: context,
-                      headerBuilder: () => WaterDropMaterialHeader(
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                      footerTriggerDistance: 30.0,
-                      child: TabBarView(
-                        controller: _tabController,
-                        //physics: NeverScrollableScrollPhysics(),
-                        children: _dailyBillsModels.map((DailyBillsModel value) =>
-                            value.type==DailyBillsType.none?WithdrawalHistory():BillHistory(type: value.type)
-                        ).toList(),
-                      ),
+                      color: Colors.white,
                     ),
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                  child: SizedBox(
+//                height: 38,
+                    width: 240,
+                    child: FlatButton(
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Theme.of(context).primaryColor),
+                          borderRadius: BorderRadius.circular(38)),
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RechargePurchasePage(),
+                                settings: RouteSettings(name: "/recharge_purchase_page")))
+                            .then((isSuccess) async {
+                          if (isSuccess != null && isSuccess) {
+                            await UserService.syncUserInfo();
+                            setState(() {});
+                            _tabController.index = 0;
+                            eventBus.fire(Refresh());
+                          }
+                        });
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                          child: Text(
+                            S.of(context).recharge,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          )
+          )*/
         ],
       ),
     );

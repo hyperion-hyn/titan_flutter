@@ -4,12 +4,10 @@ import 'package:titan/src/global.dart';
 
 enum DailyBillsType {
   all,
-  buyContract,
+  contract,
   node,
-  income,
-  recharge,
-  withdrawal,
-  others,
+  reward,
+  inAndOut,
   none
 }
 

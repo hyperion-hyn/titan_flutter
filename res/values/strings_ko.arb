@@ -659,5 +659,12 @@
   "daily_bills_type_income": "소득",
   "daily_bills_type_node": "노드",
   "daily_bills_type_buycontract": "계약",
-  "daily_bills_type_all": "총 청구서"
+  "daily_bills_type_all": "총 청구서",
+  "contract_record": "계약 기록",
+  "all_bills": "모두",
+  "contract_bills": "계약",
+  "node_bills": "마디",
+  "reward_bills": "보상",
+  "recharge_withdrawal_bills": "입출금",
+  "my_account": "내 계정"
 }

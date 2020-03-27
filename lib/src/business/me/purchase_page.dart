@@ -74,7 +74,6 @@ class _PurchaseState extends State<PurchasePage> {
         centerTitle: true,
         title: Text(
           S.of(context).power_martgage,
-          //"ddd",
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,

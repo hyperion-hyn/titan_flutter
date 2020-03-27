@@ -4,6 +4,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/business/about/about_me_page.dart';
 import 'package:titan/src/business/home/data_contribution_page.dart';
 import 'package:titan/src/business/me/grade_page.dart';
+import 'package:titan/src/business/me/my_contract_record_page.dart';
 import 'package:titan/src/business/me/my_hash_rate_page.dart';
 import 'package:titan/src/business/me/my_node_mortgage_page.dart';
 import 'package:titan/src/business/me/node_mortgage/node_mortgage_page_v2.dart';
@@ -328,7 +329,13 @@ class _MeState extends UserState<MePage> with RouteAware {
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
       child: Column(
         children: <Widget>[
-          // todo: jison opened
+          _buildMemuBar(S.of(context).contract_record, "ic_me_page_task_record", () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractRecordPage()));
+          }),
+          Divider(
+            height: 2,
+          ),
+
           _buildMemuBar(S.of(context).task_record, "ic_me_page_task_record", () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => MeCheckInHistory()));
           }),

@@ -659,5 +659,12 @@
   "daily_bills_type_income": "收益賬單",
   "daily_bills_type_node": "節點賬單",
   "daily_bills_type_buycontract": "入金/付購賬單",
-  "daily_bills_type_all": "總賬單"
+  "daily_bills_type_all": "總賬單",
+  "contract_record": "賬單",
+  "all_bills": "總賬單",
+  "contract_bills": "合約賬單",
+  "node_bills": "節點賬單",
+  "reward_bills": "獎勵賬單",
+  "recharge_withdrawal_bills": "充值提幣賬單",
+  "my_account": "我的賬戶"
 }
