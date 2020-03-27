@@ -6,13 +6,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_create_join_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
@@ -51,6 +55,11 @@ void _cacheOrClearEntryWalletRouteName(params) {
   }
   Routes.createOrImportWalletEntryRouteName = url;
 }
+
+var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
+  return WebViewContainer(initUrl: FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first)
+      , title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
+});
 
 var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
   return ShowAccountPage(params['coinVo']?.first);
@@ -122,6 +131,19 @@ var map3NodeCreateWalletHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeCreateWalletPage();
 });
 
+var map3NodeCreateJoinContractHandler = Handler(handlerFunc: (context, params) {
+  _cacheOrClearEntryWalletRouteName(params);
+  return Map3NodeCreateJoinContractPage(params['pageType']?.first);
+});
+
+var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
+  return Map3NodeSendConfirmPage(
+      params['coinVo']?.first, double.parse(params['transferAmount']?.first ?? '0'), params['receiverAddress']?.first);
+});
+
+var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
+  return Map3NodeBroadcaseSuccessPage();
+});
 //var demoRouteHandler = Handler(
 //    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
 //      String message = params["message"]?.first;
