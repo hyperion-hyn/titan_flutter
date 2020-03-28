@@ -329,7 +329,7 @@ class _MeState extends UserState<MePage> with RouteAware {
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
       child: Column(
         children: <Widget>[
-          _buildMemuBar(S.of(context).contract_record, "ic_me_page_task_record", () {
+          _buildMemuBar(S.of(context).contract_record, "ic_bill", () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractRecordPage()));
           }),
           Divider(
