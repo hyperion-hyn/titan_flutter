@@ -321,14 +321,33 @@ class _DrawBalanceState extends BaseState<DrawBalancePage> {
                                 child: InkWell(
                                   onTap: () async {
                                     String barcode = await BarcodeScanner.scan();
-                                    if (barcode.indexOf(':') > 0) {
+                                    /*if (barcode.indexOf(':') > 0) {
                                       var ls = barcode.split(':');
                                       barcode = ls[ls.length - 1];
+                                    }*/
+
+                                    //print('[barcode] --->1, barcode:${barcode}, length:${barcode.length}');
+
+                                    if (barcode.length > 42) {
+                                      // 1.针对本APP"充值"生成的地址判断
+                                      if (barcode.startsWith("ethereum:")) {
+                                        var ls = barcode.split('ethereum:');
+                                        barcode = ls[ls.length - 1];
+                                      }
                                     }
-                                    if (barcode.length != 40 && barcode.length != 42) {
-                                      Fluttertoast.showToast(msg: S.of(context).no_eth_address);
-                                    } else {
+
+                                    // 1.针对IM-TokenAPP"充值"生成的地址判断
+                                    if (barcode.startsWith("0x")) {
+                                      barcode = barcode.substring(0, 42);
+                                    }
+
+                                    //print('[barcode] --->2, barcode:${barcode}, length:${barcode.length}');
+
+                                    if (barcode.length == 42) {
                                       addressTEController.text = barcode;
+                                    }
+                                    else {
+                                      Fluttertoast.showToast(msg: S.of(context).no_eth_address);
                                     }
                                   },
                                   child: Icon(
