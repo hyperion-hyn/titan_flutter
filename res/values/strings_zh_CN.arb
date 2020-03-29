@@ -665,6 +665,6 @@
   "contract_bills": "合约账单",
   "node_bills": "节点账单",
   "reward_bills": "奖励账单",
-  "recharge_withdrawal_bills": "充值提币账单",
+  "recharge_withdrawal_bills": "充提账单",
   "my_account": "我的账户"
 }
