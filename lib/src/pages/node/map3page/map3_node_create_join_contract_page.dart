@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -89,6 +90,10 @@ class _Map3NodeCreateJoinContractState extends State<Map3NodeCreateJoinContractP
                       child: TextFormField(
                           controller: _joinCoinController,
                           keyboardType: TextInputType.number,
+                          inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                          onChanged: (textStr){
+
+                          },
                           decoration: InputDecoration(
                             hintStyle: TextStyles.textC9b9b9bS14,
                             labelStyle: TextStyles.textC333S14,
@@ -96,8 +101,11 @@ class _Map3NodeCreateJoinContractState extends State<Map3NodeCreateJoinContractP
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(horizontal: 10),
                           ),
-                          validator: (joinStr) {
-                            return joinStr.length != 0 && int.parse(joinStr) > 20000 ? null : "不能少于20,000HYN";
+                          validator: (textStr) {
+                            return textStr.length != 0 &&
+                                    int.parse(textStr) > 20000
+                                ? null
+                                : "不能少于20,000HYN";
                           }),
                     ),
                   )

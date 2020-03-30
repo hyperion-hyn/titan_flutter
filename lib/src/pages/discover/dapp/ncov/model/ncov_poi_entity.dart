@@ -110,7 +110,6 @@ class NcovPoiEntity extends Object {
 
 }
 
-@JsonSerializable()
 class Location extends Object {
   @JsonKey(name: 'coordinates')
   List<double> coordinates;

@@ -67,7 +67,6 @@ class UserContributionPoi with SearchHistoryAwarePoi implements IPoi {
   UserContributionPoi.setPid(this.id, this.location);
 }
 
-@JsonSerializable()
 class Location extends Object {
   @JsonKey(name: 'coordinates')
   List<double> coordinates;
