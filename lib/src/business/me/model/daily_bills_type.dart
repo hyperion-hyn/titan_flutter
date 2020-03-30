@@ -8,6 +8,7 @@ enum DailyBillsType {
   node,
   reward,
   inAndOut,
+  record,
   none
 }
 

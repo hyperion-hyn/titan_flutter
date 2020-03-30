@@ -41,15 +41,14 @@ class _MyContractRecordState extends UserState<MyContractRecordPage> with Ticker
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
 
-    List<DailyBillsModel> list = [
+    _dailyBillsModels = [
       DailyBillsModel(S.of(context).all_bills, DailyBillsType.all),
       DailyBillsModel(S.of(context).contract_bills, DailyBillsType.contract),
       DailyBillsModel(S.of(context).node_bills, DailyBillsType.node),
       DailyBillsModel(S.of(context).reward_bills, DailyBillsType.reward),
       DailyBillsModel(S.of(context).recharge_withdrawal_bills, DailyBillsType.inAndOut),
     ];
-    _dailyBillsModels = list;
-    _tabController = TabController(length: _dailyBillsModels.length, vsync: this);
+     _tabController = TabController(length: _dailyBillsModels.length, vsync: this);
 
   }
   @override
@@ -116,7 +115,7 @@ class _MyContractRecordState extends UserState<MyContractRecordPage> with Ticker
                         controller: _tabController,
                         //physics: NeverScrollableScrollPhysics(),
                         children: _dailyBillsModels.map((DailyBillsModel value) =>
-                            value.type==DailyBillsType.none?WithdrawalHistory():BillHistory(type: value.type)
+                            value.type==DailyBillsType.record?WithdrawalHistory():BillHistory(type: value.type)
                         ).toList(),
                       ),
                     ),

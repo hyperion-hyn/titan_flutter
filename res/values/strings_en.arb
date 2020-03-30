@@ -660,7 +660,7 @@
   "daily_bills_type_node": "Node",
   "daily_bills_type_buycontract": "Buy Contract",
   "daily_bills_type_all": "All",
-  "contract_record": "Contract Record",
+  "contract_record": "Bill",
   "all_bills": "All",
   "contract_bills": "Contract",
   "node_bills": "Node",

@@ -38,27 +38,22 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
+
     super.didChangeDependencies();
 
-    List<DailyBillsModel> list = [
-      DailyBillsModel(S.of(context).withdrawal_records, DailyBillsType.none),
+    _dailyBillsModels = [DailyBillsModel(S.of(context).withdrawal_records, DailyBillsType.record),
     ];
-    _dailyBillsModels = list;
     _tabController = TabController(length: _dailyBillsModels.length, vsync: this);
+
   }
-
-
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: false,
-        title: Text(S.of(context).my_account,
-          style: TextStyle(color: Colors.white),
-        ),
+        centerTitle: true,
         actions: <Widget>[
           Align(
               alignment: Alignment.centerRight,
@@ -87,10 +82,10 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   GestureDetector(
                     onTap: () async {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RechargePurchasePage(),
-                              settings: RouteSettings(name: "/recharge_purchase_page")))
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RechargePurchasePage(),
+                                  settings: RouteSettings(name: "/recharge_purchase_page")))
                           .then((isSuccess) async {
                         if (isSuccess != null && isSuccess) {
                           await UserService.syncUserInfo();
@@ -112,11 +107,10 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
               ))
         ],
       ),
-
       body: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(top: 36),
+            padding: EdgeInsets.only(top: 0, bottom: 24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,12 +122,11 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                     Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.only(bottom: 6),
                           child: Text(
                             S.of(context).balance_with_unit,
                             style: TextStyle(
-                              color: Color(0xFF9B9B9B),
-                              fontWeight: FontWeight.w500
+                              color: Colors.white70,
                             ),
                           ),
                         ),
@@ -141,9 +134,7 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
                             "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance)} ",
-                            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 24,
-                                fontWeight: FontWeight.bold
-                            ),
+                            style: TextStyle(color: Colors.white, fontSize: 24),
                           ),
                         )
                       ],
@@ -159,31 +150,26 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                   children: <Widget>[
                     Row(
                       mainAxisSize: MainAxisSize.min,
-                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text(
                           S.of(context).earnings_balance,
                           style: TextStyle(
-                            color: Color(0xFF9B9B9B),
+                            color: Colors.white70,
                             fontSize: 14,
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 12),
+                          padding: const EdgeInsets.only(left: 4),
                           child: Text(
                             "${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.balance - LOGIN_USER_INFO.totalChargeBalance)} ",
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor,
+                              color: Colors.white,
                               fontSize: 14,
-                              fontWeight: FontWeight.bold
                             ),
                           ),
                         )
                       ],
-                    ),
-                    SizedBox(
-                      height: 8,
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -192,12 +178,22 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                         Text(
                           S.of(context).recharge_balance,
                           style: TextStyle(
-                            color: Color(0xFF9B9B9B),
+                            color: Colors.white70,
                             fontSize: 14,
                           ),
                         ),
+//                        Padding(
+//                          padding: const EdgeInsets.only(left: 4.0),
+//                          child: Text(
+//                            '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.totalChargeBalance)}',
+//                            style: TextStyle(
+//                              color: Colors.white,
+//                              fontSize: 14,
+//                            ),
+//                          ),
+//                        ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 12),
+                          padding: const EdgeInsets.only(left: 8),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
@@ -205,16 +201,15 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                                 children: <Widget>[
                                   Text(
                                     S.of(context).hyn_eq_u,
-                                    style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 12),
+                                    style: TextStyle(color: Colors.white70, fontSize: 12),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 4.0),
                                     child: Text(
                                       '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.chargeHynBalance)}',
                                       style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
+                                        color: Colors.white,
                                         fontSize: 12,
-                                          fontWeight: FontWeight.bold
                                       ),
                                     ),
                                   ),
@@ -224,16 +219,15 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
                                 children: <Widget>[
                                   Text(
                                     S.of(context).usdt_direct,
-                                    style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 12),
+                                    style: TextStyle(color: Colors.white70, fontSize: 12),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 4.0),
                                     child: Text(
                                       '${Const.DOUBLE_NUMBER_FORMAT.format(LOGIN_USER_INFO.chargeUsdtBalance)}',
                                       style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
+                                        color: Colors.white,
                                         fontSize: 12,
-                                        fontWeight: FontWeight.bold
                                       ),
                                     ),
                                   ),
@@ -249,264 +243,69 @@ class _MyAssetState extends UserState<MyAssetPage> with TickerProviderStateMixin
               ],
             ),
           ),
-          /*Container(
-            decoration: BoxDecoration(
-                //color: Colors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
-                  child: SizedBox(
-//                height: 38,
-                    width: 240,
-                    child: FlatButton(
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Theme.of(context).primaryColor),
-                          borderRadius: BorderRadius.circular(38)),
-                      onPressed: () async {
-                        var isSuccess = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DrawBalancePage(),
-                                settings: RouteSettings(name: "/draw_balance_page")));
-                        if (isSuccess != null && isSuccess) {
-                          eventBus.fire(Refresh());
-                          _tabController.animateTo(1);
-                        }
-                      },
-                      child: Container(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
-                          child: Text(
-                            S.of(context).withdrawal,
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ),
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
-                  child: SizedBox(
-//                height: 38,
-                    width: 240,
-                    child: FlatButton(
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Theme.of(context).primaryColor),
-                          borderRadius: BorderRadius.circular(38)),
-                      onPressed: () async {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RechargePurchasePage(),
-                                settings: RouteSettings(name: "/recharge_purchase_page")))
-                            .then((isSuccess) async {
-                          if (isSuccess != null && isSuccess) {
-                            await UserService.syncUserInfo();
-                            setState(() {});
-                            _tabController.index = 0;
-                            eventBus.fire(Refresh());
-                          }
-                        });
-                      },
-                      child: Container(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
-                          child: Text(
-                            S.of(context).recharge,
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ),
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )*/
-        ],
-      ),
-    );
-  }
-}
-
-class BillHistory extends StatefulWidget {
-  final DailyBillsType type;
-  BillHistory({this.type});
-
-  @override
-  State<StatefulWidget> createState() {
-    return _BillHistoryState();
-  }
-}
-
-class _BillHistoryState extends DataListState<BillHistory> {
-  UserService _userService = UserService();
-  StreamSubscription _eventBusSubscription;
-
-  @override
-  void initState() {
-    super.initState();
-    _listenEventBus();
-  }
-
-  @override
-  void postFrameCallBackAfterInitState() {
-    loadDataBloc.add(LoadingEvent());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LoadDataContainer(
-      bloc: loadDataBloc,
-      onLoadData: onWidgetLoadDataCallback,
-      onRefresh: onWidgetRefreshCallback,
-      onLoadingMore: onWidgetLoadingMoreCallback,
-      child: ListView.separated(
-          physics: ClampingScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return _buildItem(dataList[index]);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Divider(
-                thickness: 0.5,
-                color: Colors.black12,
-              ),
-            );
-          },
-          itemCount: dataList.length),
-    );
-  }
-
-  Widget _buildItem(BillInfo billInfo) {
-    if (billInfo.hasDetail) {
-      return InkWell(
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => MeDailyBillsDetail(billInfo)));
-        },
-        child: _buildItemDetail(billInfo),
-      );
-    } else {
-      return _buildItemDetail(billInfo);
-    }
-  }
-
-  Widget _buildItemDetail(BillInfo billInfo) {
-    var amountColor = Colors.black;
-    if (billInfo.amount > 0) {
-      amountColor = HexColor("#6DBA1A");
-    } else {
-      amountColor = HexColor("#D0021B");
-    }
-
-    String subTitle = billInfo.subTitle;
-    //subTitle = '抵押ID 1,10,100,1000,10000,100000,1000000,10000000';
-    if (subTitle.length > 25) {
-      subTitle = subTitle.substring(0, 25) + '...';
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: <Widget>[
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    billInfo.title,
-                    style: TextStyle(fontSize: 16, color: HexColor("#252525")),
+            child: Container(
+//                padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          width: 200,
+                          child: TabBar(
+                            isScrollable: true,
+                            indicatorColor: Theme.of(context).primaryColor,
+                            indicatorWeight: 5,
+                            controller: _tabController,
+                            labelColor: Color(0xFF252525),
+                            unselectedLabelColor: Colors.grey,
+                            indicatorSize: TabBarIndicatorSize.label,
+                            tabs: _dailyBillsModels.map((DailyBillsModel model) =>
+                                Tab(
+                                  child: Text(
+                                    model.name,
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                            ).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                if (billInfo.subTitle != null)
-                  SizedBox(
-                    child: Container(
-                      child: Text(
-                        subTitle,
-                        style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                  Expanded(
+                    child: RefreshConfiguration.copyAncestor(
+                      enableLoadingWhenFailed: true,
+                      context: context,
+                      headerBuilder: () => WaterDropMaterialHeader(
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                      footerTriggerDistance: 30.0,
+                      child: TabBarView(
+                        controller: _tabController,
+                        //physics: NeverScrollableScrollPhysics(),
+                        children: _dailyBillsModels.map((DailyBillsModel value) =>
+                            value.type==DailyBillsType.record?WithdrawalHistory():Container()
+                        ).toList(),
                       ),
                     ),
-                    width: 180,
-                  )
-              ],
-            ),
-          ),
-          Spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  Const.DOUBLE_NUMBER_FORMAT.format(billInfo.amount),
-                  style: TextStyle(fontSize: 16, color: amountColor, fontWeight: FontWeight.bold),
-                ),
+                  ),
+                ],
               ),
-              Text(
-                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(billInfo.crateAt * 1000)),
-                style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
-              )
-            ],
-          ),
-          Container(
-            width: 16,
-            height: 16,
-            child: Icon(
-              !billInfo.hasDetail ? null : Icons.chevron_right,
-              color: Colors.black54,
             ),
-          ),
+          )
         ],
       ),
     );
   }
-
-  @override
-  Future<List> onLoadData(int page) {
-    return _userService.getBillList(page, type: widget.type);
-  }
-
-  void _listenEventBus() {
-    _eventBusSubscription = eventBus.on().listen((event) async {
-      if (event is Refresh) {
-        loadDataBloc.add(RefreshingEvent());
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _eventBusSubscription?.cancel();
-    loadDataBloc.close();
-    super.dispose();
-  }
 }
 
-class BillDetailVo {
-  String title;
-  String subTitle;
-  String time;
-  String amountStr;
-
-  BillDetailVo({this.title, this.subTitle, this.time, this.amountStr});
-}
 
 //////////
 
