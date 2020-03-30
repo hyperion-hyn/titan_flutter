@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -17,12 +18,10 @@ class Map3NodeCreateJoinContractPage extends StatefulWidget {
   Map3NodeCreateJoinContractPage(this.pageType);
 
   @override
-  _Map3NodeCreateJoinContractState createState() =>
-      new _Map3NodeCreateJoinContractState();
+  _Map3NodeCreateJoinContractState createState() => new _Map3NodeCreateJoinContractState();
 }
 
-class _Map3NodeCreateJoinContractState
-    extends State<Map3NodeCreateJoinContractPage> {
+class _Map3NodeCreateJoinContractState extends State<Map3NodeCreateJoinContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   String pageTitle = "";
@@ -30,8 +29,7 @@ class _Map3NodeCreateJoinContractState
 
   @override
   void initState() {
-    if (widget.pageType ==
-        Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
+    if (widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
       pageTitle = "创建Map3抵押合约";
       managerTitle = "获得管理费（HYN）：";
     } else {
@@ -57,16 +55,12 @@ class _Map3NodeCreateJoinContractState
 
   List<Widget> _pageView(BuildContext context) {
     return [
-      Container(
-          color: Colors.white,
-          child: getMap3NodeProductItem(context, showButton: false)),
+      Container(color: Colors.white, child: getMap3NodeProductItem(context, showButton: false)),
       Container(
         height: 5,
         color: DefaultColors.colorf5f5f5,
       ),
-      if (widget.pageType ==
-          Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_JOIN)
-        startAccount(),
+      if (widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_JOIN) startAccount(),
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Text("投入数量  （Moo钱包HYN余额 10,000）", style: TextStyles.textC333S14),
@@ -100,14 +94,10 @@ class _Map3NodeCreateJoinContractState
                             labelStyle: TextStyles.textC333S14,
                             hintText: "投入量，不少于20,000",
                             border: OutlineInputBorder(),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
                           ),
                           validator: (joinStr) {
-                            return joinStr.length != 0 &&
-                                    int.parse(joinStr) > 20000
-                                ? null
-                                : "不能少于20,000HYN";
+                            return joinStr.length != 0 && int.parse(joinStr) > 20000 ? null : "不能少于20,000HYN";
                           }),
                     ),
                   )
@@ -153,27 +143,21 @@ class _Map3NodeCreateJoinContractState
               Padding(
                 padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                 child: RichText(
-                  text: TextSpan(
-                      text: "期满共产生（HYN）：",
-                      style: TextStyles.textC9b9b9bS12,
-                      children: [
-                        TextSpan(
-                          text: "21000",
-                          style: TextStyles.textC333S14,
-                        )
-                      ]),
+                  text: TextSpan(text: "期满共产生（HYN）：", style: TextStyles.textC9b9b9bS12, children: [
+                    TextSpan(
+                      text: "21000",
+                      style: TextStyles.textC333S14,
+                    )
+                  ]),
                 ),
               ),
               RichText(
-                text: TextSpan(
-                    text: managerTitle,
-                    style: TextStyles.textC9b9b9bS12,
-                    children: [
-                      TextSpan(
-                        text: "1000",
-                        style: TextStyles.textC333S14,
-                      )
-                    ]),
+                text: TextSpan(text: managerTitle, style: TextStyles.textC9b9b9bS12, children: [
+                  TextSpan(
+                    text: "1000",
+                    style: TextStyles.textC333S14,
+                  )
+                ]),
               ),
             ],
           )),
@@ -190,8 +174,7 @@ class _Map3NodeCreateJoinContractState
             Text("·  请确保阿克苏就离开房间啊来解放拉萨就", style: TextStyles.textCf29a6eS14),
             Padding(
               padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-              child: Text(
-                  "·  请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就",
+              child: Text("·  请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就",
                   style: TextStyles.textC9b9b9bS14),
             ),
             Text("·  请确保阿克苏就离开房间啊来解放拉萨就", style: TextStyles.textC9b9b9bS14),
@@ -199,26 +182,27 @@ class _Map3NodeCreateJoinContractState
         ),
       ),
       Container(
-        margin: EdgeInsets.only(top: 10,bottom: 10),
-        padding:EdgeInsets.symmetric(horizontal: 30),
+        margin: EdgeInsets.only(top: 10, bottom: 10),
+        padding: EdgeInsets.symmetric(horizontal: 30),
         constraints: BoxConstraints.expand(height: 48),
         child: RaisedButton(
             textColor: Colors.white,
             color: DefaultColors.color0F95B0,
             shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).primaryColor),
-                borderRadius: BorderRadius.circular(36)),
+                side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
             child: Text("确定"),
             onPressed: () {
               setState(() {
-                _joinCoinFormKey.currentState.validate();
-                var activatedWalletVo =
-                    WalletInheritedModel.of(context).activatedWallet;
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_send_confirm_page +
-                        "?coinVo=${FluroConvertUtils.object2string(activatedWalletVo.coins[1].toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=055weffsfsfgsd");
+                if (_joinCoinFormKey.currentState.validate()) {
+                  var activatedWalletVo = WalletInheritedModel.of(context).activatedWallet;
+                  Application.router.navigateTo(
+                      context,
+                      Routes.map3node_send_confirm_page +
+                          "?coinVo=${FluroConvertUtils.object2string(activatedWalletVo.coins[1].toJson())}" +
+                          "&transferAmount=${_joinCoinController.text}&receiverAddress=055weffsfsfgsd");
+                } else {
+                  Fluttertoast.showToast(msg: "请输入投入量");
+                }
               });
             }),
       )

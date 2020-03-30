@@ -138,7 +138,7 @@ var map3NodeCreateJoinContractHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeSendConfirmPage(
-      params['coinVo']?.first, double.parse(params['transferAmount']?.first ?? '0'), params['receiverAddress']?.first);
+      params['coinVo']?.first ?? '0', double.parse(params['transferAmount']?.first ?? '0'), params['receiverAddress']?.first ?? '0');
 });
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {

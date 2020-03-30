@@ -1,5 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+
+import 'node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
   final String title;
@@ -13,6 +18,7 @@ class MyMap3ContractPage extends StatefulWidget {
 
 class _MyMap3ContractState extends State<MyMap3ContractPage> {
   List<ContractStatsModel> _dataArray;
+  LoadDataBloc loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
@@ -20,6 +26,14 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     _loadData();
   }
+
+
+  @override
+  void dispose() {
+    loadDataBloc.close();
+    super.dispose();
+  }
+
 
   _loadData() {
     List<ContractStatsModel> list = [];
@@ -43,17 +57,21 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       body: Container(
         padding: const EdgeInsets.all(8),
         color: HexColor('#05095F'),
-        child: ListView.separated(
-            itemBuilder: (context, index) {
-              return buildInfoItem(_dataArray[index]);
-            },
-            separatorBuilder: (context, index) {
-              return Container(
-                height: 8,
-                color: Colors.white10,
-              );
-            },
-            itemCount: ContractStatus.values.length),
+        child: LoadDataContainer(
+          bloc: loadDataBloc,
+          onRefresh: () async {},
+          child: ListView.separated(
+              itemBuilder: (context, index) {
+                return buildInfoItem(_dataArray[index]);
+              },
+              separatorBuilder: (context, index) {
+                return Container(
+                  height: 8,
+                  color: Colors.white10,
+                );
+              },
+              itemCount: ContractStatus.values.length),
+        ),
       ),
     );
   }
@@ -152,23 +170,27 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
   Widget buildInfoItem(ContractStatsModel model) {
     return Container(
-      color: HexColor('#7275A2'),
+      //color: HexColor('#7275A2'),
+      decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(5),
+          color: HexColor('#7275A2')),
       child: IntrinsicHeight(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: Container(
-//                  alignment: Alignment.center,
                   child: FadeInImage.assetNetwork(
                     image: "",
-                    placeholder: 'res/drawable/img_placeholder.jpg',
-                    width: 60,
-                    height: 60,
+                    //placeholder: 'res/drawable/img_placeholder.jpg',
+                    placeholder: 'res/drawable/ic_map3_node_item.png',
+                    width: 55,
+                    height: 55,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -182,6 +204,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Spacer(),
                       Text(model.title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: HexColor('#FFFFFF'))),
                       Spacer(),
                       Text(model.detail, style: TextStyle(fontSize: 13, color: HexColor('#FFFFFF'))),
@@ -190,6 +213,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                         model.date,
                         style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF')),
                       ),
+                      Spacer(),
                     ],
                   ),
                 ),
@@ -230,6 +254,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                         onTap: () {
                           if (model.status == ContractStatus.Expired) {
                             print('[点击查看收益]');
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => NodeContractDetailPage()));
                           }
                         },
                         child:
@@ -242,8 +267,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                                   style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))
                               ),
                               TextSpan(
-                                  text: "1000",
-                                  style: TextStyle(fontSize: 12, color: HexColor('#E39F2D')),
+                                text: "1000",
+                                style: TextStyle(fontSize: 12, color: HexColor('#E39F2D')),
                               ),
                               TextSpan(
                                   text: "HYN",
@@ -287,7 +312,7 @@ class ContractStatsModel {
   ContractStatus status;
   String statusInfo;
   String resultInfo;
-  
+
   ContractStatsModel(
       {title = "Map3节点（V0.8）",
       detail = "发起账户 Moo Oxfde...fdaff",
