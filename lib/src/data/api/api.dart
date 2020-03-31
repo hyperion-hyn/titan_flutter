@@ -2,6 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/pages/global_data/model/map3_node_vo.dart';
+import 'package:titan/src/pages/global_data/model/signal_daily_vo.dart';
+import 'package:titan/src/pages/global_data/model/signal_total_vo.dart';
+import 'package:titan/src/pages/global_data/model/signal_weekly_vo.dart';
 import '../../domain/model/photo_poi_list_model.dart';
 import 'package:titan/src/global.dart';
 import '../entity/poi/photo_simple_poi.dart';
@@ -132,4 +136,74 @@ class Api {
       return false;
     }
   }
+
+  /// signal total
+  Future<SignalTotalVo> getSignalTotal() async {
+    var model = await HttpCore.instance.getEntity(
+      'map-collector/signal/count',
+      EntityFactory<SignalTotalVo>((json) => SignalTotalVo.fromJson(json)),
+    );
+
+    //print('[api] getSignalTotal, total:${model.blueToothTotal}');
+    return model;
+  }
+
+  /// signal daily
+  Future<List<SignalDailyVo>> getSignalDaily({String language = "zh-Hans"}) async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/signal/count/daily',
+        EntityFactory<List<SignalDailyVo>>((json) {
+          return (json as List).map((levelInfoJson) {
+            return SignalDailyVo.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": language}));
+
+    //print('[api] getSignalDaily, length:${list.length}');
+
+    return list;
+  }
+
+  Future<List<Signal>> getPoiDaily({String language = "zh-Hans"}) async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/poi/count/daily',
+        EntityFactory<List<Signal>>((json) {
+          return (json as List).map((levelInfoJson) {
+            return Signal.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": language})
+    );
+
+    //print('[api] getSignalDaily, length:${list.length}');
+
+    return list;
+  }
+
+  /// signal weekly
+  Future<List<SignalWeeklyVo>> getSignalWeekly({String language = "zh-Hans"}) async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/signal/count/weekly',
+        EntityFactory<List<SignalWeeklyVo>>((json) {
+          return (json as List).map((levelInfoJson) {
+            return SignalWeeklyVo.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": language}));
+
+    //print('[api] getSignalWeekly, length:${list.length}');
+
+    return list;
+  }
+
+  //https://api.hyn.space/api/v1/dashboard
+  /// node
+  Future<Map3NodeVo> getMap3NodeData() async {
+    var model = await HttpCore.instance.getEntity(
+      'api/v1/dashboard',
+      EntityFactory<Map3NodeVo>((json) => Map3NodeVo.fromJson(json)),
+    );
+
+    print('[api] getMap3NodeData, length:${model.tiles.length}');
+
+    return model;
+  }
+
 }
