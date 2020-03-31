@@ -18,8 +18,8 @@ import 'package:titan/src/utils/format_util.dart';
 
 class NodeContractDetailPage extends StatefulWidget {
 
-  ContractNodeItem contract;
-  NodeContractDetailPage(this.contract);
+  ContractNodeItem contractNodeItem;
+  NodeContractDetailPage(this.contractNodeItem);
 
   @override
   State<StatefulWidget> createState() {
@@ -43,16 +43,16 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
 
   _loadData() async {
 
-    var list = await api.getContractDelegator(widget.contract.id);
-    var item = await api.getContractDetail(widget.contract.id);
+    var list = await api.getContractDelegator(widget.contractNodeItem.id);
+    var item = await api.getContractDetail(widget.contractNodeItem.id);
     setState(() {
       _delegatorList = list;
       _contractDetailItem = item;
     });
-    print('[map3] contract_id:${widget.contract.id}, detail_id:${item.instance.id}');
+    print('[map3] contractNodeItemId:${widget.contractNodeItem.id}, detail_id:${item.instance.id}, list.length:${list.length}');
 
 
-    if (item == null) {
+    if (item == null && list.length == 0) {
       loadDataBloc.add(LoadEmptyEvent());
     } else {
       loadDataBloc.add(RefreshSuccessEvent());
@@ -140,7 +140,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Expanded(child: Text("MAP3节点（V0.8）", style: TextStyles.textC333S14)),
+                          Expanded(child: Text(widget.contractNodeItem.ownerName, style: TextStyles.textC333S14)),
                         ],
                       ),
                       Container(
@@ -148,7 +148,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Text("启动共需1，000，000HYN", style: TextStyles.textC333S14),
+                        child: Text("启动共需${FormatUtil.formatNum(widget.contractNodeItem.contract.minTotalDelegation)}HYN", style: TextStyles.textC333S14),
                       )
                     ],
                   ),
@@ -164,17 +164,17 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                   switch (value) {
                     case 1:
                       title = "期满年化奖励";
-                      detail = "8.9%";
+                      detail = "${FormatUtil.formatPercent(widget.contractNodeItem.contract.annualizedYield)}";
                       break;
 
                     case 2:
                       title = "合约期限";
-                      detail = "1月";
+                      detail = "${widget.contractNodeItem.contract.duration}月";
                       break;
 
                     case 3:
                       title = "管理费";
-                      detail = "20%";
+                      detail = "${FormatUtil.formatPercent(widget.contractNodeItem.contract.commission)}";
                       break;
                   }
                   return Expanded(
