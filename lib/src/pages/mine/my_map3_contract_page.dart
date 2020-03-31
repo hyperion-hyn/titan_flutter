@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 import 'node_contract_detail_page.dart';
 
@@ -19,7 +21,7 @@ class MyMap3ContractPage extends StatefulWidget {
 }
 
 class _MyMap3ContractState extends State<MyMap3ContractPage> {
-  List<ContractStatsModel> _dataArray;
+  List<ContractNodeItem> _dataArray = [];
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   var api = NodeApi();
@@ -31,36 +33,39 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     _loadData();
   }
 
-
   @override
   void dispose() {
     loadDataBloc.close();
     super.dispose();
   }
 
-
   _loadData() async {
-    List<ContractStatsModel> list = [];
-    for (var i = 0; i < 5; i++) {
-      ContractStatsModel model = ContractStatsModel(
-          status: ContractStatus.values[i], statusInfo: _getStatusInfo(i), resultInfo: _getResultInfo(i));
-      list.add(model);
+
+    List<ContractNodeItem> dataList = [];
+    if (widget.title.contains("发起")) {
+      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
+      dataList  = createContractList;
+    } else {
+      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
+      dataList = joinContractList;
     }
-    _dataArray = list;
 
-    List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
+    if (dataList.length == 0) {
+      loadDataBloc.add(LoadEmptyEvent());
+    } else {
+      loadDataBloc.add(RefreshSuccessEvent());
+    }
 
-    //List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
-    List<ContractNodeItem> joinContractList = [];
+    setState(() {
+      _dataArray = dataList;
+    });
 
-    print('[map3] _loadData, createLength:${createContractList.length}, joinLength:${joinContractList.length}');
-
+    print('[map3] widget.title:${widget.title}, _loadData, dataList.length:${dataList.length}');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
 
   }
 
@@ -74,7 +79,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         child: LoadDataContainer(
           bloc: loadDataBloc,
           onRefresh: () async {
-
+            _loadData();
           },
           child: ListView.separated(
               itemBuilder: (context, index) {
@@ -86,33 +91,34 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                   color: Colors.white10,
                 );
               },
-              itemCount: ContractStatus.values.length),
+              itemCount: _dataArray.length),
         ),
       ),
     );
   }
 
-  HexColor _getStatusColor(ContractStatus status) {
+  HexColor _getStatusColor(String stateString) {
+    var state = enumContractStateFromString(stateString);
     var statusColor = HexColor('#EED097');
 
-    switch (status) {
-      case ContractStatus.SuspendRun:
+    switch (state) {
+      case ContractState.PENDING:
         statusColor = HexColor('#EED097');
         break;
 
-      case ContractStatus.Running:
+      case ContractState.Running:
         statusColor = HexColor('#3FF78C');
         break;
 
-      case ContractStatus.Expired:
+      case ContractState.Expired:
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractStatus.Withdrawal:
+      case ContractState.Withdrawal:
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractStatus.FailRun:
+      case ContractState.FailRun:
         statusColor = HexColor('#F22504');
         break;
 
@@ -122,69 +128,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     return statusColor;
   }
 
-  String _getStatusInfo(int index) {
-    var statusInfo = "还差1000HYN";
-
-    var status = ContractStatus.values[index];
-    switch (status) {
-      case ContractStatus.SuspendRun:
-        statusInfo = "剩下3天启动";
-        break;
-
-      case ContractStatus.Running:
-        statusInfo = "已运行20天";
-        break;
-
-      case ContractStatus.Expired:
-        statusInfo = "已到期";
-        break;
-
-      case ContractStatus.Withdrawal:
-        statusInfo = "已提币";
-        break;
-
-      case ContractStatus.FailRun:
-        statusInfo = "超期启动失败";
-        break;
-
-      default:
-        break;
-    }
-    return statusInfo;
-  }
-
-  String _getResultInfo(int index) {
-    var statusInfo = "还差1000HYN";
-
-    var status = ContractStatus.values[index];
-    switch (status) {
-      case ContractStatus.SuspendRun:
-        statusInfo = "还差1000HYN";
-        break;
-
-      case ContractStatus.Running:
-        statusInfo = "剩下80天到期";
-        break;
-
-      case ContractStatus.Expired:
-        statusInfo = "点击查看收益";
-        break;
-
-      case ContractStatus.Withdrawal:
-        statusInfo = "合约完成";
-        break;
-
-      case ContractStatus.FailRun:
-        statusInfo = "还差1000HYN";
-        break;
-
-      default:
-        break;
-    }
-    return statusInfo;
-  }
-
-  Widget buildInfoItem(ContractStatsModel model) {
+  Widget buildInfoItem(ContractNodeItem model) {
     return Container(
       //color: HexColor('#7275A2'),
       decoration: BoxDecoration(
@@ -201,14 +145,20 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: Container(
-                  child: FadeInImage.assetNetwork(
+                  child: Image.asset(
+                    "res/drawable/ic_map3_node_item.png",
+                    width: 55,
+                    height: 55,
+                    fit: BoxFit.cover,
+                  ),
+                  /*child: FadeInImage.assetNetwork(
                     image: "",
                     //placeholder: 'res/drawable/img_placeholder.jpg',
                     placeholder: 'res/drawable/ic_map3_node_item.png',
                     width: 55,
                     height: 55,
                     fit: BoxFit.cover,
-                  ),
+                  ),*/
                 ),
               ),
               Expanded(
@@ -221,12 +171,12 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Spacer(),
-                      Text(model.title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: HexColor('#FFFFFF'))),
+                      Text(model.contract.nodeName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: HexColor('#FFFFFF'))),
                       Spacer(),
-                      Text(model.detail, style: TextStyle(fontSize: 13, color: HexColor('#FFFFFF'))),
+                      Text("发起账户 ${model.ownerName} ${model.owner}", style: TextStyle(fontSize: 13, color: HexColor('#FFFFFF'))),
                       Spacer(),
                       Text(
-                        model.date,
+                        FormatUtil.formatDate(model.instanceStartTime),
                         style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF')),
                       ),
                       Spacer(),
@@ -255,12 +205,13 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                               //color: Colors.red,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: _getStatusColor(model.status),
+                                  // todo:
+                                  color: _getStatusColor(model.state),
                                   border: Border.all(color: Colors.white, width: 1.0)),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 4),
-                              child: Text(model.statusInfo, style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))),
+                              child: Text("剩下7天启动", style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))),
                             ),
                           ],
                         ),
@@ -268,13 +219,13 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                       Spacer(),
                       InkWell(
                         onTap: () {
-                          if (model.status == ContractStatus.Expired) {
-                            print('[点击查看收益]');
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => NodeContractDetailPage()));
-                          }
+                          //if (model.state == ContractState.Expired) {
+                            print('[点击查看收益] id:${model.id}');
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => NodeContractDetailPage(model)));
+                          //}
                         },
                         child:
-                        (model.status == ContractStatus.SuspendRun || model.status ==  ContractStatus.FailRun)?
+                        (model.state == ContractState.PENDING || model.state ==  ContractState.FailRun)?
 
                         Text.rich(TextSpan(
                             children: [
@@ -291,10 +242,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                                   style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))
                               ),
                             ]
-                        )):
-                        Text(model.resultInfo, style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))) ,
+                        )): // todo:
+                        Text("合约完成", style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))) ,
                       ),
-                      if (model.status == ContractStatus.SuspendRun) FlatButton(
+                      if (model.state == ContractState.PENDING) FlatButton(
                         padding: EdgeInsets.symmetric(horizontal: 4,vertical: 2),
                         color: Colors.white,
 //                        highlightColor: Colors.black,
@@ -319,28 +270,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   }
 }
 
-enum ContractStatus { SuspendRun, Running, Expired, Withdrawal, FailRun }
+enum ContractState { PENDING, Running, Expired, Withdrawal, FailRun }
 
-class ContractStatsModel {
-  String title;
-  String detail;
-  String date;
-  ContractStatus status;
-  String statusInfo;
-  String resultInfo;
-
-  ContractStatsModel(
-      {title = "Map3节点（V0.8）",
-      detail = "发起账户 Moo Oxfde...fdaff",
-      date = "2020-10-20",
-      status = ContractStatus.SuspendRun,
-      statusInfo = "",
-      resultInfo = ""}) {
-    this.title = title;
-    this.detail = detail;
-    this.date = date;
-    this.status = status;
-    this.statusInfo = statusInfo;
-    this.resultInfo = resultInfo;
-  }
+ContractState enumContractStateFromString(String fruit) {
+  fruit = 'ContractState.$fruit';
+  return ContractState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }

@@ -4,11 +4,10 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 
-import 'package:titan/src/basic/http/entity.dart';
-import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
@@ -42,7 +41,15 @@ class NodeApi {
             headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"})
     );
   }
- 
+
+  Future<List<ContractDelegatorItem>> getContractDelegator(int contractId) async {
+    return await HttpCore.instance
+        .getEntity("delegations/instance/$contractId/delegators",
+        EntityFactory<List<ContractDelegatorItem>>((list) => (list as List).map((item) => ContractDelegatorItem.fromJson(item)).toList()),
+        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"})
+    );
+  }
+
   Future<List<NodeItem>> getContractList() async {
     var contractsList = await HttpCore.instance
         .getEntity("contracts/list", EntityFactory<List<NodeItem>>((data){

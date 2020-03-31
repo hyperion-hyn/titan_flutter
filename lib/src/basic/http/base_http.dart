@@ -49,7 +49,7 @@ class BaseHttpCore {
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
-    print('[request] responseEntity.data:${responseEntity.data}');
+    //print('[request] responseEntity.data:${responseEntity.data}');
     return responseEntity.data;
   }
 
