@@ -383,7 +383,53 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   }
 
   Future _transferNew() async {
-    Application.router.navigateTo(context,Routes.map3node_broadcase_success_page);
+
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        }).then((walletPassword) async {
+      if (walletPassword == null) {
+        return;
+      }
+
+      try {
+        setState(() {
+          isTransferring = true;
+        });
+//        var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+//        if (widget.coinVo.symbol == "ETH") {
+//          await _transferEth(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
+//        } else {
+//          await _transferErc20(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
+//        }
+//        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
+
+
+        Application.router.navigateTo(context,Routes.map3node_broadcase_success_page);
+      } catch (_) {
+        logger.e(_);
+        setState(() {
+          isTransferring = false;
+        });
+        if (_ is PlatformException) {
+          if (_.code == WalletError.PASSWORD_WRONG) {
+            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else if (_ is RPCError) {
+          if (_.errorCode == -32000) {
+            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
+      }
+    });
   }
 
   Future _transfer() async {

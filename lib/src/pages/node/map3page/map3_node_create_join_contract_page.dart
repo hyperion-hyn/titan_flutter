@@ -144,6 +144,10 @@ class _Map3NodeCreateJoinContractState
             (suggest)=>int.parse(suggest)
     ).toList();
     double minTotal = nodeItem.minTotalDelegation * nodeItem.ownerMinDelegationRate;
+
+    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var balance = WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
@@ -158,7 +162,7 @@ class _Map3NodeCreateJoinContractState
         startAccount(),
       Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Text("投入数量  （Moo钱包HYN余额 10,000）", style: TextStyles.textC333S14),
+        child: Text("投入数量  （$walletName钱包HYN余额 ${FormatUtil.formatNumDecimal(balance)}）", style: TextStyles.textC333S14),
       ),
       Container(
           padding: const EdgeInsets.only(left: 30.0, right: 30, bottom: 10),
@@ -289,7 +293,7 @@ class _Map3NodeCreateJoinContractState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("·  请确保钱包账户（Moo）的ETH GAS费充足", style: TextStyles.textCf29a6eS14),
+            Text("·  请确保钱包账户（$walletName）的ETH GAS费充足", style: TextStyles.textCf29a6eS14),
             Padding(
               padding: const EdgeInsets.only(top: 10.0, bottom: 10),
               child: Text(
@@ -316,12 +320,10 @@ class _Map3NodeCreateJoinContractState
                 if(!_joinCoinFormKey.currentState.validate()){
                   return;
                 }
-                var activatedWalletVo =
-                    WalletInheritedModel.of(context).activatedWallet;
                 Application.router.navigateTo(
                     context,
                     Routes.map3node_send_confirm_page +
-                        "?coinVo=${FluroConvertUtils.object2string(activatedWalletVo.coins[1].toJson())}" +
+                        "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                         "&transferAmount=${_joinCoinController.text}&receiverAddress=055weffsfsfgsd");
               });
             }),
