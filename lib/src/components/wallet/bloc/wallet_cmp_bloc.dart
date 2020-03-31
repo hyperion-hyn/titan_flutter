@@ -51,6 +51,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         var wallet = await walletRepository.getActivatedWalletFormLocalDisk();
         //now active loaded wallet_vo. tips: maybe null
         add(ActiveWalletEvent(wallet: wallet));
+//        await Future.delayed(Duration(milliseconds: 100));
 //        add(UpdateActivatedWalletBalanceEvent());
       } catch (e) {
         logger.e(e);

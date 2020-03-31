@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 
 import 'package:decimal/decimal.dart';
@@ -9,10 +10,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/crypto.dart';
@@ -39,11 +43,240 @@ class _WalletDemoState extends State<WalletDemo> {
         children: <Widget>[
           RaisedButton(
             onPressed: () async {
+              var index = EthereumNetType.values.indexOf(WalletConfig.netType);
               setState(() {
-                WalletConfig.isMainNet = !WalletConfig.isMainNet;
+                WalletConfig.netType = EthereumNetType.values[(index + 1) % EthereumNetType.values.length];
               });
             },
-            child: Text('切换网络类型 ${WalletConfig.isMainNet ? "主网" : "ROPSTEN网"}'),
+            child: Text('${WalletConfig.netType.toString().split('.')[1]} 点击切换网络类型'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var wallets = await WalletUtil.scanWallets();
+              if (wallets.length > 0) {
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallets[0]));
+              }
+            },
+            child: Text('激活一个钱包'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              if (WalletConfig.netType != EthereumNetType.local) {
+                logger.i('请先切换到内外网络');
+              } else {
+                final client = WalletUtil.getWeb3Client();
+                const String privateKey = '80fbdcc3f242f533aa4609bdcc7f17da5dcdd89cdc593fea6bc453e2db561f72';
+                final credentials = await client.credentialsFromPrivateKey(privateKey);
+
+                final address = await credentials.extractAddress();
+                print(address.hexEip55);
+                print(await client.getBalance(address));
+
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                if (activeWallet != null) {
+                  var toAddress = activeWallet.getEthAccount().address;
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 10); //.toRadixString(16);
+
+                  var txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction(
+                      to: EthereumAddress.fromHex(toAddress),
+                      value: EtherAmount.inWei(amount),
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: EthereumConst.ETH_GAS_LIMIT,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  logger.i('ETH交易已提交，交易hash $txHash');
+
+                  var hynErc20Contract = WalletUtil.getHynErc20Contract(SupportedTokens.HYN_LOCAL.contractAddress);
+                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 3000000);//三十万
+                  txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction.callContract(
+                      contract: hynErc20Contract,
+                      function: hynErc20Contract.function('transfer'),
+                      parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: 500000,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  logger.i('HYN交易已提交，交易hash $txHash');
+                }
+              }
+            },
+            child: Text('从内网地址转账到本地钱包测试'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var wallets = await WalletUtil.scanWallets();
+              if (wallets.length > 0) {
+                var wallet0 = wallets[0];
+                var credentials = await wallet0.getCredentials('my_password');
+                final client = WalletUtil.getWeb3Client();
+                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+
+                final ret = await client
+                    .call(contract: map3Contract, function: map3Contract.function('maxTotalDelegation'), params: []);
+                logger.i('map3 maxTotalDelegation, result: $ret');
+              }
+            },
+            child: Text('map3调用查询，最大抵押量'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var wallets = await WalletUtil.scanWallets();
+              if (wallets.length > 0) {
+                var wallet0 = wallets[0];
+
+                var maxStakingAmount = 1000000; //一百万
+                var myStaking = 0.2 * maxStakingAmount; //最小抵押量
+                var credentials = await wallet0.getCredentials('my_password');
+                final client = WalletUtil.getWeb3Client();
+                var erc20ContractAddress = wallet0.getEthAccount().contractAssetTokens[0].contractAddress;
+                var erc20Contract = WalletUtil.getHynErc20Contract(erc20ContractAddress);
+                var approveToAddress = WalletConfig.map3ContractAddress;
+                var signed = await client.signTransaction(
+                  credentials,
+                  Transaction.callContract(
+                    contract: erc20Contract,
+                    function: erc20Contract.function('approve'),
+                    parameters: [
+                      EthereumAddress.fromHex(approveToAddress),
+                      ConvertTokenUnit.etherToWei(etherDouble: myStaking)
+                    ],
+                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: 500000,
+                  ),
+                  fetchChainIdFromNetworkId: true,
+                );
+                var ret = await WalletUtil.postToEthereumNetwork(
+                    method: 'eth_sendRawTransaction',
+                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+
+                logger.i('hyn approve, result: $ret');
+              }
+            },
+            child: Text('hyn approve'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              //请注意，要先 approve
+              logger.w('请注意，要先 approve');
+              var wallets = await WalletUtil.scanWallets();
+              if (wallets.length > 0) {
+                var wallet0 = wallets[0];
+                var credentials = await wallet0.getCredentials('my_password');
+                final client = WalletUtil.getWeb3Client();
+                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+
+                var maxStakingAmount = 1000000; //一百万
+                var myStaking = 0.2 * maxStakingAmount; //最小抵押量
+                var durationType = 0; //0: 1月， 1: 3月， 2: 6月
+                var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
+
+                var signed = await client.signTransaction(
+                  credentials,
+                  Transaction.callContract(
+                    contract: map3Contract,
+                    function: map3Contract.function('createNode'),
+                    parameters: [ConvertTokenUnit.etherToWei(etherDouble: myStaking), BigInt.from(durationType)],
+                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: gasLimit,
+                  ),
+                  fetchChainIdFromNetworkId: true,
+                );
+                var ret = await WalletUtil.postToEthereumNetwork(
+                    method: 'eth_sendRawTransaction',
+                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+
+                logger.i('map3 createNode, result: $ret');
+              }
+            },
+            child: Text('map3创建节点抵押'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              //请注意，要先 approve
+              logger.w('请注意，要先 approve');
+
+              var wallets = await WalletUtil.scanWallets();
+              if (wallets.length > 0) {
+                var wallet0 = wallets[0];
+
+                ///创建节点合约的钱包地址
+                var createNodeWalletAddress = wallet0.getEthAccount().address;
+
+                var credentials = await wallet0.getCredentials('my_password');
+                final client = WalletUtil.getWeb3Client();
+                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+
+                double myStaking = 100000; //我要抵押的量
+                var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
+
+                var signed = await client.signTransaction(
+                  credentials,
+                  Transaction.callContract(
+                    contract: map3Contract,
+                    function: map3Contract.function('delegate'),
+                    parameters: [
+                      EthereumAddress.fromHex(createNodeWalletAddress),
+                      ConvertTokenUnit.etherToWei(etherDouble: myStaking)
+                    ],
+                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: gasLimit,
+                  ),
+                  fetchChainIdFromNetworkId: true,
+                );
+                var ret = await WalletUtil.postToEthereumNetwork(
+                    method: 'eth_sendRawTransaction',
+                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+
+                logger.i('map3 delegate, result: $ret');
+              }
+            },
+            child: Text('map3参与抵押'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var wallets = await WalletUtil.scanWallets();
+              if (wallets.length > 0) {
+                var wallet0 = wallets[0];
+
+                ///创建节点合约的钱包地址
+                var createNodeWalletAddress = wallet0.getEthAccount().address;
+                var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
+
+                var credentials = await wallet0.getCredentials('my_password');
+                final client = WalletUtil.getWeb3Client();
+                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+
+                var signed = await client.signTransaction(
+                  credentials,
+                  Transaction.callContract(
+                    contract: map3Contract,
+                    function: map3Contract.function('collect'),
+                    parameters: [EthereumAddress.fromHex(createNodeWalletAddress)],
+                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: gasLimit,
+                  ),
+                  fetchChainIdFromNetworkId: true,
+                );
+                var ret = await WalletUtil.postToEthereumNetwork(
+                    method: 'eth_sendRawTransaction',
+                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+
+                logger.i('map3 collect, result: $ret');
+              }
+            },
+            child: Text('map3提币'),
           ),
           Divider(
             height: 16,
@@ -502,7 +735,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 logger.e(e);
               }
             },
-            child: Text('EHT转账'),
+            child: Text('ETH转账'),
           ),
           RaisedButton(
             onPressed: () async {

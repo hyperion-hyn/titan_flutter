@@ -10,7 +10,7 @@ class EtherscanApi {
   String host = "";
 
   EtherscanApi() {
-    if (WalletConfig.isMainNet) {
+    if (WalletConfig.netType == EthereumNetType.main) {
       host = Config.ETHERSCAN_API_URL;
     } else {
       host = "https://api-ropsten.etherscan.io";
@@ -18,11 +18,11 @@ class EtherscanApi {
   }
 
   static String getTxDetailUrl(BuildContext context, String txHash, bool isChinaMainland) {
-    if (isChinaMainland && WalletConfig.isMainNet) {
+    if (isChinaMainland && WalletConfig.netType == EthereumNetType.main) {
       return "https://cn.etherscan.com/tx/$txHash";
     }
 
-    if (WalletConfig.isMainNet) {
+    if (WalletConfig.netType == EthereumNetType.main) {
       if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
         return 'https://cn.etherscan.com/tx/$txHash';
       } else {
@@ -73,34 +73,34 @@ class EtherscanApi {
     }
   }
 
-  Future<BigInt> queryBalance(String address, [tag = 'latest']) async {
-    Map result = await HttpCore.instance.get("$host/api", params: {
-      "module": "account",
-      "action": "balance",
-      "apikey": Config.ETHERSCAN_APIKEY,
-      "address": address,
-      "tag": tag,
-    });
-    if (result['status'] == '1') {
-      return BigInt.parse(result['result']);
-    } else {
-      return BigInt.from(0);
-    }
-  }
+//  Future<BigInt> queryBalance(String address, [tag = 'latest']) async {
+//    Map result = await HttpCore.instance.get("$host/api", params: {
+//      "module": "account",
+//      "action": "balance",
+//      "apikey": Config.ETHERSCAN_APIKEY,
+//      "address": address,
+//      "tag": tag,
+//    });
+//    if (result['status'] == '1') {
+//      return BigInt.parse(result['result']);
+//    } else {
+//      return BigInt.from(0);
+//    }
+//  }
 
-  Future<BigInt> queryErc20TokenBalance({String address, String contractAddress, tag = 'latest'}) async {
-    Map result = await HttpCore.instance.get("$host/api", params: {
-      "module": "account",
-      "action": "tokenbalance",
-      "apikey": Config.ETHERSCAN_APIKEY,
-      "address": address,
-      "contractaddress": contractAddress,
-      "tag": tag,
-    });
-    if (result['status'] == '1') {
-      return BigInt.parse(result['result']);
-    } else {
-      return BigInt.from(0);
-    }
-  }
+//  Future<BigInt> queryErc20TokenBalance({String address, String contractAddress, tag = 'latest'}) async {
+//    Map result = await HttpCore.instance.get("$host/api", params: {
+//      "module": "account",
+//      "action": "tokenbalance",
+//      "apikey": Config.ETHERSCAN_APIKEY,
+//      "address": address,
+//      "contractaddress": contractAddress,
+//      "tag": tag,
+//    });
+//    if (result['status'] == '1') {
+//      return BigInt.parse(result['result']);
+//    } else {
+//      return BigInt.from(0);
+//    }
+//  }
 }

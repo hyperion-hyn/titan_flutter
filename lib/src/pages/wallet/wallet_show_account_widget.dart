@@ -294,7 +294,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       }
     }
 
-    if (SupportedTokens.allContractTokens(WalletConfig.isMainNet)
+    if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
         .toList()
         .contains(transactionDetail.toAddress.toLowerCase())) {

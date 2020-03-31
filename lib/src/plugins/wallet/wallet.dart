@@ -31,293 +31,6 @@ class EthereumConst {
 
   static const int ETH_GAS_LIMIT = 21000;
   static const int ERC20_GAS_LIMIT = 25000;
-
-  static const HYN_ERC20_ABI = '''
-[
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "name",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_spender",
-        "type": "address"
-      },
-      {
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "name": "approve",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "totalSupply",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_from",
-        "type": "address"
-      },
-      {
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "name": "transferFrom",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "INITIAL_SUPPLY",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "decimals",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_spender",
-        "type": "address"
-      },
-      {
-        "name": "_subtractedValue",
-        "type": "uint256"
-      }
-    ],
-    "name": "decreaseApproval",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "symbol",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "name": "transfer",
-    "outputs": [
-
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_spender",
-        "type": "address"
-      },
-      {
-        "name": "_addedValue",
-        "type": "uint256"
-      }
-    ],
-    "name": "increaseApproval",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "name": "_spender",
-        "type": "address"
-      }
-    ],
-    "name": "allowance",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "name": "spender",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "Approval",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "Transfer",
-    "type": "event"
-  }
-]
-  ''';
 }
 
 class WalletError {
@@ -326,15 +39,53 @@ class WalletError {
   static const PARAMETERS_WRONG = "2";
 }
 
+enum EthereumNetType {
+  main,
+  repsten,
+  local,
+}
+
+EthereumNetType getEthereumNetTypeFromString(String type) {
+  for (var value in EthereumNetType.values) {
+    if (value.toString() == type) {
+      return value;
+    }
+  }
+}
+
 class WalletConfig {
   static String get INFURA_MAIN_API => '${Config.INFURA_API_URL}/v3/${Config.INFURA_PRVKEY}';
 
   static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
 
-  static bool isMainNet = true;
+  static const String LOCAL_API = 'http://10.10.1.119:7545';
 
-  static String getInfuraApi() {
-    return isMainNet ? INFURA_MAIN_API : INFURA_ROPSTEN_API;
+  static EthereumNetType netType = EthereumNetType.main;
+
+  static String get map3ContractAddress {
+    switch (netType) {
+      case EthereumNetType.main:
+        //TODO
+        return '0x76239FD2F32a14B6b6F868F36baba041B3013D82';
+      case EthereumNetType.repsten:
+        //TODO
+        return '0x76239FD2F32a14B6b6F868F36baba041B3013D82';
+      case EthereumNetType.local:
+        return '0x76239FD2F32a14B6b6F868F36baba041B3013D82';
+    }
+    return '';
+  }
+
+  static String getEthereumApi() {
+    switch (netType) {
+      case EthereumNetType.main:
+        return INFURA_MAIN_API;
+      case EthereumNetType.repsten:
+        return INFURA_ROPSTEN_API;
+      case EthereumNetType.local:
+        return LOCAL_API;
+    }
+    return '';
   }
 }
 
@@ -378,7 +129,7 @@ class Wallet {
     switch (coinType) {
       case CoinType.ETHEREUM:
         if (contractAddress == null) {
-          var response = await WalletUtil.postInfura(method: "eth_getBalance", params: [address, block]);
+          var response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
           if (response['result'] != null) {
             return hexToInt(response['result']);
           }
@@ -428,7 +179,7 @@ class Wallet {
       if (data != null) {
         params['data'] = data;
       }
-      var response = await WalletUtil.postInfura(method: 'eth_estimateGas', params: [params]);
+      var response = await WalletUtil.postToEthereumNetwork(method: 'eth_estimateGas', params: [params]);
       if (response['result'] != null) {
         BigInt amountUsed = hexToInt(response['result']);
         return amountUsed * gasPrice;
@@ -482,6 +233,13 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+  }
+
+  Future<web3.Credentials> getCredentials(String password) async {
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client();
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    return credentials;
   }
 
   Future<bool> delete(String password) async {
