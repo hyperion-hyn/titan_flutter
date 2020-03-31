@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
 class Map3NodeCreateJoinContractPage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
@@ -28,6 +34,12 @@ class _Map3NodeCreateJoinContractState
   final _joinCoinFormKey = GlobalKey<FormState>();
   String pageTitle = "";
   String managerTitle = "";
+  AllPageState currentState = LoadingState();
+  NodeApi _nodeApi = NodeApi();
+  NodeItem nodeItem;
+  PublishSubject<String> _filterSubject = PublishSubject<String>();
+  String endProfit = "";
+  String spendManager = "";
 
   @override
   void initState() {
@@ -39,6 +51,14 @@ class _Map3NodeCreateJoinContractState
       pageTitle = "参与Map3节点抵押";
       managerTitle = "应付管理费（HYN）：";
     }
+    _joinCoinController.addListener(textChangeListener);
+
+    _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
+      getCurrentSpend(text);
+//      widget.fieldCallBack(text);
+    });
+
+    getNetworkData();
     super.initState();
   }
 
@@ -47,20 +67,88 @@ class _Map3NodeCreateJoinContractState
     return Scaffold(
       appBar: AppBar(centerTitle: true, title: Text(pageTitle)),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: _pageView(context),
-        ),
-      ),
+      body: _pageView(context),
     );
   }
 
-  List<Widget> _pageView(BuildContext context) {
-    return [
+  void getNetworkData() async {
+    try{
+      nodeItem = await _nodeApi.getContractItem();
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          currentState = null;
+        });
+      });
+    }catch(e){
+      setState(() {
+        currentState = LoadFailState();
+      });
+    }
+  }
+
+  void textChangeListener(){
+    _filterSubject.sink.add(_joinCoinController.text);
+  }
+
+  void getCurrentSpend(String inputText){
+    if(nodeItem == null){
+      return;
+    }
+    if(inputText == null || inputText == ""){
+      setState(() {
+        endProfit = "";
+        spendManager = "";
+      });
+      return;
+    }
+    double inputValue = double.parse(inputText);
+    double doubleEndProfit = inputValue * nodeItem.annualizedYield * nodeItem.duration / 12;
+    double doubleSpendManager = inputValue * nodeItem.commission / 12;
+    endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
+    spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
+
+    setState(() {
+      _joinCoinController.value = TextEditingValue(
+      // 设置内容
+      text: inputText,
+      // 保持光标在最后
+      selection: TextSelection.fromPosition(TextPosition(
+      affinity: TextAffinity.downstream,
+      offset: inputText.length)));
+    });
+  }
+
+//  void pressJoinSuggest(int joinNum){
+//    _joinCoinController.text = joinNum.toString();
+//    _joinCoinController.selection
+//    getCurrentSpend(joinNum.toString());
+//  }
+
+  @override
+  void dispose() {
+    _filterSubject.close();
+    super.dispose();
+  }
+
+  Widget _pageView(BuildContext context) {
+    if(currentState != null){
+      return AllPageStateContainer(currentState,(){
+        setState(() {
+          currentState = LoadingState();
+        });
+        getNetworkData();
+      });
+    }
+
+    List<int> suggestList = nodeItem.suggestQuantity.split(",").map(
+            (suggest)=>int.parse(suggest)
+    ).toList();
+    double minTotal = nodeItem.minTotalDelegation * nodeItem.ownerMinDelegationRate;
+    return SingleChildScrollView(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
           color: Colors.white,
-          child: getMap3NodeProductItem(context, showButton: false)),
+          child: getMap3NodeProductItem(context, nodeItem, showButton: false, )),
       Container(
         height: 5,
         color: DefaultColors.colorf5f5f5,
@@ -96,9 +184,11 @@ class _Map3NodeCreateJoinContractState
                       child: TextFormField(
                           controller: _joinCoinController,
                           keyboardType: TextInputType.number,
-                          inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                          onChanged: (textStr){
-
+                          inputFormatters: [
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
+                          onChanged: (textStr) {
+                            _filterSubject.sink.add(textStr);
                           },
                           decoration: InputDecoration(
                             hintStyle: TextStyles.textC9b9b9bS14,
@@ -112,7 +202,7 @@ class _Map3NodeCreateJoinContractState
                             return textStr.length != 0 &&
                                     int.parse(textStr) > 20000
                                 ? null
-                                : "不能少于20,000HYN";
+                                : "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
                           }),
                     ),
                   )
@@ -121,40 +211,47 @@ class _Map3NodeCreateJoinContractState
               SizedBox(
                 height: 10,
               ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: FlatButton(
-                      color: HexColor("#d2e5fb"),
-                      child: Text(
-                        "20,000HYN",
-                        style: TextStyles.textC333S12,
+              if(suggestList.length == 3)
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: FlatButton(
+                        color: HexColor("#d2e5fb"),
+                        child: Text(
+                          "${FormatUtil.formatNum(suggestList[0])}HYN",
+                          style: TextStyles.textC333S12,
+                        ),
+                        onPressed: () {
+                          getCurrentSpend(suggestList[0].toString());
+                        },
                       ),
-                      onPressed: () {},
                     ),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      color: HexColor("#d2e5fb"),
-                      child: Text("40,000HYN", style: TextStyles.textC333S12),
-                      onPressed: () {},
+                    SizedBox(
+                      width: 15,
                     ),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      color: HexColor("#d2e5fb"),
-                      child: Text("60,000HYN", style: TextStyles.textC333S12),
-                      onPressed: () {},
+                    Expanded(
+                      child: FlatButton(
+                        color: HexColor("#d2e5fb"),
+                        child: Text("${FormatUtil.formatNum(suggestList[1])}HYN", style: TextStyles.textC333S12),
+                        onPressed: () {
+                          getCurrentSpend(suggestList[1].toString());
+                        },
+                      ),
                     ),
-                  )
-                ],
-              ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: FlatButton(
+                        color: HexColor("#d2e5fb"),
+                        child: Text("${FormatUtil.formatNum(suggestList[2])}HYN", style: TextStyles.textC333S12),
+                        onPressed: () {
+                          getCurrentSpend(suggestList[2].toString());
+                        },
+                      ),
+                    )
+                  ],
+                ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                 child: RichText(
@@ -163,7 +260,7 @@ class _Map3NodeCreateJoinContractState
                       style: TextStyles.textC9b9b9bS12,
                       children: [
                         TextSpan(
-                          text: "21000",
+                          text: "$endProfit",
                           style: TextStyles.textC333S14,
                         )
                       ]),
@@ -175,7 +272,7 @@ class _Map3NodeCreateJoinContractState
                     style: TextStyles.textC9b9b9bS12,
                     children: [
                       TextSpan(
-                        text: "1000",
+                        text: "$spendManager",
                         style: TextStyles.textC333S14,
                       )
                     ]),
@@ -192,14 +289,14 @@ class _Map3NodeCreateJoinContractState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("·  请确保阿克苏就离开房间啊来解放拉萨就", style: TextStyles.textCf29a6eS14),
+            Text("·  请确保钱包账户（Moo）的ETH GAS费充足", style: TextStyles.textCf29a6eS14),
             Padding(
               padding: const EdgeInsets.only(top: 10.0, bottom: 10),
               child: Text(
-                  "·  请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就请确保阿克苏就离开房间啊来解放拉萨就",
+                  "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
                   style: TextStyles.textC9b9b9bS14),
             ),
-            Text("·  请确保阿克苏就离开房间啊来解放拉萨就", style: TextStyles.textC9b9b9bS14),
+            Text("·  投入Map3节点后不可撤销。", style: TextStyles.textC9b9b9bS14),
           ],
         ),
       ),
@@ -216,7 +313,9 @@ class _Map3NodeCreateJoinContractState
             child: Text("确定"),
             onPressed: () {
               setState(() {
-                _joinCoinFormKey.currentState.validate();
+                if(!_joinCoinFormKey.currentState.validate()){
+                  return;
+                }
                 var activatedWalletVo =
                     WalletInheritedModel.of(context).activatedWallet;
                 Application.router.navigateTo(
@@ -227,7 +326,7 @@ class _Map3NodeCreateJoinContractState
               });
             }),
       )
-    ];
+    ]));
   }
 
   Widget startAccount() {
