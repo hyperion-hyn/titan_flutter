@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
+import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -36,15 +37,14 @@ class _Map3NodeCreateJoinContractState
   String managerTitle = "";
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
-  NodeItem nodeItem;
+  ContractNodeItem contractNodeItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
 
   @override
   void initState() {
-    if (widget.pageType ==
-        Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
+    if (widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
       pageTitle = "创建Map3抵押合约";
       managerTitle = "获得管理费（HYN）：";
     } else {
@@ -73,7 +73,11 @@ class _Map3NodeCreateJoinContractState
 
   void getNetworkData() async {
     try{
-      nodeItem = await _nodeApi.getContractItem();
+      if (widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
+        contractNodeItem = await _nodeApi.getContractItem();
+      }else{
+        contractNodeItem = await _nodeApi.getContractInstanceItem();
+      }
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
           currentState = null;
@@ -91,7 +95,7 @@ class _Map3NodeCreateJoinContractState
   }
 
   void getCurrentSpend(String inputText){
-    if(nodeItem == null){
+    if(contractNodeItem == null){
       return;
     }
     if(inputText == null || inputText == ""){
@@ -102,8 +106,8 @@ class _Map3NodeCreateJoinContractState
       return;
     }
     double inputValue = double.parse(inputText);
-    double doubleEndProfit = inputValue * nodeItem.annualizedYield * nodeItem.duration / 12;
-    double doubleSpendManager = inputValue * nodeItem.commission / 12;
+    double doubleEndProfit = inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 12;
+    double doubleSpendManager = inputValue * contractNodeItem.contract.commission / 12;
     endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
     spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
 
@@ -131,7 +135,7 @@ class _Map3NodeCreateJoinContractState
   }
 
   Widget _pageView(BuildContext context) {
-    if(currentState != null){
+    if(currentState != null || contractNodeItem.contract == null){
       return AllPageStateContainer(currentState,(){
         setState(() {
           currentState = LoadingState();
@@ -140,10 +144,10 @@ class _Map3NodeCreateJoinContractState
       });
     }
 
-    List<int> suggestList = nodeItem.suggestQuantity.split(",").map(
+    List<int> suggestList = contractNodeItem.contract.suggestQuantity.split(",").map(
             (suggest)=>int.parse(suggest)
     ).toList();
-    double minTotal = nodeItem.minTotalDelegation * nodeItem.ownerMinDelegationRate;
+    double minTotal = contractNodeItem.contract.minTotalDelegation * contractNodeItem.contract.ownerMinDelegationRate;
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
@@ -152,7 +156,7 @@ class _Map3NodeCreateJoinContractState
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
           color: Colors.white,
-          child: getMap3NodeProductItem(context, nodeItem, showButton: false, )),
+          child: getMap3NodeProductItem(context, contractNodeItem.contract, showButton: false, )),
       Container(
         height: 5,
         color: DefaultColors.colorf5f5f5,
@@ -324,7 +328,7 @@ class _Map3NodeCreateJoinContractState
                     context,
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=055weffsfsfgsd");
+                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}");
               });
             }),
       )
@@ -349,8 +353,8 @@ class _Map3NodeCreateJoinContractState
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("Moo", style: TextStyles.textC333S14),
-                Text("ljaslfkjasldkjsldj", style: TextStyles.textC9b9b9bS12)
+                Text("${contractNodeItem.ownerName}", style: TextStyles.textC333S14),
+                Text("${contractNodeItem.owner}", style: TextStyles.textC9b9b9bS12)
               ],
             )
           ],

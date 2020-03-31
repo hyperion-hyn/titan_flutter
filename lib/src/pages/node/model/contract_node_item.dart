@@ -16,6 +16,9 @@ part 'contract_node_item.g.dart';
   @JsonKey(name: 'owner')
   String owner;
 
+  @JsonKey(name: 'ownerName')
+  String ownerName;
+
   @JsonKey(name: 'amountDelegation')
   int amountDelegation;
 
@@ -23,12 +26,14 @@ part 'contract_node_item.g.dart';
   int remainDelegation;
 
   @JsonKey(name: 'instanceStartTime')
-  String instanceStartTime;
+  int instanceStartTime;
 
   @JsonKey(name: 'state')
   String state;
 
-  ContractNodeItem(this.id,this.contract,this.owner,this.amountDelegation,this.remainDelegation,this.instanceStartTime,this.state,);
+  ContractNodeItem(this.id,this.contract,this.owner,this.ownerName,this.amountDelegation,this.remainDelegation,this.instanceStartTime,this.state,);
+
+  ContractNodeItem.onlyNodeItem(this.contract);
 
   factory ContractNodeItem.fromJson(Map<String, dynamic> srcJson) => _$ContractNodeItemFromJson(srcJson);
 
