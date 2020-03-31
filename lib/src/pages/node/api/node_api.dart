@@ -32,9 +32,9 @@ class NodeApi {
     );
   }
 
-  Future<ContractDetailItem> getContractDetail(int contractId) async {
+  Future<ContractDetailItem> getContractDetail(int contractNodeItemId) async {
     return await HttpCore.instance
-        .getEntity("delegations/instance/$contractId",
+        .getEntity("delegations/instance/$contractNodeItemId",
         EntityFactory<ContractDetailItem>((data) =>
             ContractDetailItem.fromJson(data)),
         options: RequestOptions(
@@ -42,9 +42,9 @@ class NodeApi {
     );
   }
 
-  Future<List<ContractDelegatorItem>> getContractDelegator(int contractId) async {
+  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId) async {
     return await HttpCore.instance
-        .getEntity("delegations/instance/$contractId/delegators",
+        .getEntity("delegations/instance/$contractNodeItemId/delegators",
         EntityFactory<List<ContractDelegatorItem>>((list) => (list as List).map((item) => ContractDelegatorItem.fromJson(item)).toList()),
         options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"})
     );

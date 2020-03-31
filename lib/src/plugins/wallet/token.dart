@@ -1,6 +1,4 @@
-//数字资产
-
-import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 
 part 'token.g.dart';
 
@@ -71,11 +69,20 @@ class SupportedTokens {
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
 
-  static List<AssetToken> allContractTokens(bool isMainNet) {
-    if (isMainNet) {
+  static const HYN_LOCAL = const AssetToken(
+      name: 'Hyperion ROPSTEN',
+      decimals: 18,
+      contractAddress: '0x05D9c03Fd700B0fc3bD10ef4Ac66d343ff9E69D7',
+      logo: 'res/drawable/hyn_logo.png',
+      symbol: 'HYN');
+
+  static List<AssetToken> allContractTokens(EthereumNetType netType) {
+    if (netType == EthereumNetType.main) {
       return [HYN, USDT_ERC20];
+    } else if (netType == EthereumNetType.repsten) {
+      return [HYN_ROPSTEN, USDT_ERC20_ROPSTEN];
     } else {
-      return [HYN_ROPSTEN];
+      return [HYN_LOCAL];
     }
   }
 }

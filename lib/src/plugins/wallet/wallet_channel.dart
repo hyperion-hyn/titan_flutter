@@ -97,26 +97,6 @@ class WalletChannel {
     });
   }
 
-  static Future<BigInt> getBalance({
-    @required String address,
-    @required int coinType,
-    String erc20ContractAddress,
-    bool isMainNet,
-  }) async {
-    var balanceHex = await TitanPlugin.callChannel.invokeMethod("wallet_getBalance", {
-      "address": address,
-      "coinType": coinType,
-      "erc20ContractAddress": erc20ContractAddress,
-      "isMainNet": isMainNet
-    });
-    return BigInt.parse(balanceHex, radix: 16);
-  }
-
-  static Future<BigInt> ethGasPrice({bool isMainNet}) async {
-    var gasPriceStr = await TitanPlugin.callChannel.invokeMethod("wallet_ethGasPrice", {"isMainNet": isMainNet});
-    return BigInt.parse(gasPriceStr, radix: 16);
-  }
-
   ///删除钱包
   static Future<bool> delete(String fileName, String password, [int coinTypeValue = CoinType.ETHEREUM]) async {
     return await TitanPlugin.callChannel.invokeMethod("wallet_delete", {
@@ -124,50 +104,5 @@ class WalletChannel {
       "password": password,
       "coinTypeValue": coinTypeValue,
     });
-  }
-
-  ///计算费用
-  static Future<BigInt> estimateGas({
-    @required String fromAddress,
-    @required String toAddress,
-    @required int coinType,
-    @required String amount,
-    String erc20ContractAddress,
-    bool isMainNet,
-  }) async {
-    var gasLimit = await TitanPlugin.callChannel.invokeMethod("wallet_estimateGas", {
-      "fromAddress": fromAddress,
-      "toAddress": toAddress,
-      "coinType": coinType,
-      "amount": amount,
-      "erc20ContractAddress": erc20ContractAddress,
-      "isMainNet": isMainNet,
-    });
-    return BigInt.parse(gasLimit, radix: 16);
-  }
-
-  static Future<String> transfer({
-    @required String password,
-    @required String fileName,
-    @required String fromAddress,
-    @required String toAddress,
-    @required String amount,
-    @required int coinType,
-    String erc20ContractAddress,
-    bool isMainNet,
-    String data,
-  }) async {
-    var txHash = await TitanPlugin.callChannel.invokeMethod("wallet_transfer", {
-      "password": password,
-      "fileName": fileName,
-      "fromAddress": fromAddress,
-      "toAddress": toAddress,
-      "amount": amount,
-      "coinType": coinType,
-      "erc20ContractAddress": erc20ContractAddress,
-      "isMainNet": isMainNet,
-      "data": data,
-    });
-    return txHash;
   }
 }

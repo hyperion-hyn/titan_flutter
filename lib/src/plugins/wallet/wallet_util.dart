@@ -7,7 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/hyn_erc20_abi.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/map3_staking_abi.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:http/http.dart';
@@ -73,74 +75,12 @@ class WalletUtil {
 
   ///get eth gas price
   static Future<BigInt> ethGasPrice({int requestId = 1}) async {
-    var response = await postInfura(method: 'eth_gasPrice', params: []);
+    var response = await postToEthereumNetwork(method: 'eth_gasPrice', params: []);
     if (response['result'] != null) {
       BigInt gasPrice = hexToInt(response['result']);
       return gasPrice;
     }
     return BigInt.from(0);
-  }
-
-  ///estimate eth gas
-  ///return amountUsed * lastEthGasPrice
-  static Future<BigInt> estimateGas({
-    @required String fromAddress,
-    @required String toAddress,
-    @required int coinType,
-    @required String amount,
-    String erc20ContractAddress,
-  }) {
-    return WalletChannel.estimateGas(
-      fromAddress: fromAddress,
-      toAddress: toAddress,
-      coinType: coinType,
-      amount: amount,
-      erc20ContractAddress: erc20ContractAddress,
-      isMainNet: WalletConfig.isMainNet,
-    );
-  }
-
-  static Future<String> transfer({
-    @required String password,
-    @required String fileName,
-    @required String fromAddress,
-    @required String toAddress,
-    @required String amount,
-    @required int coinType,
-    String data,
-  }) {
-    return WalletChannel.transfer(
-      password: password,
-      fileName: fileName,
-      fromAddress: fromAddress,
-      toAddress: toAddress,
-      amount: amount,
-      coinType: coinType,
-      isMainNet: WalletConfig.isMainNet,
-      data: data,
-    );
-  }
-
-  static Future<String> transferErc20Token({
-    @required String password,
-    @required String fileName,
-    @required String fromAddress,
-    @required String toAddress,
-    @required String amount,
-    @required String erc20ContractAddress,
-    String data,
-  }) {
-    return WalletChannel.transfer(
-      password: password,
-      fileName: fileName,
-      fromAddress: fromAddress,
-      toAddress: toAddress,
-      amount: amount,
-      coinType: CoinType.ETHEREUM,
-      erc20ContractAddress: erc20ContractAddress,
-      isMainNet: WalletConfig.isMainNet,
-      data: data,
-    );
   }
 
   static Future<String> exportPrivateKey({
@@ -183,9 +123,7 @@ class WalletUtil {
     String funName,
     List<dynamic> params = const [],
   }) {
-    final abiCode = EthereumConst.HYN_ERC20_ABI;
-    final contract =
-        web3.DeployedContract(web3.ContractAbi.fromJson(abiCode, 'HYN'), web3.EthereumAddress.fromHex(erc20Address));
+    final contract = getHynErc20Contract(erc20Address);
     final func = contract.function(funName);
     return func.encodeCall(params);
   }
@@ -204,31 +142,40 @@ class WalletUtil {
   static Wallet _parseWalletJson(dynamic map) {
     var keystore = KeyStore.fromDynamicMap(map);
     var accounts = List<Account>.from(
-        map['accounts'].map((accountMap) => Account.fromJsonWithNet(accountMap, WalletConfig.isMainNet)));
+        map['accounts'].map((accountMap) => Account.fromJsonWithNet(accountMap, WalletConfig.netType)));
     var wallet = Wallet(keystore: keystore, accounts: accounts);
     return wallet;
   }
 
-  static web3.Web3Client _newWeb3Client() {
-    return web3.Web3Client(WalletConfig.getInfuraApi(), Client());
+  static web3.Web3Client _newWeb3Client(String api) {
+    return web3.Web3Client(api, Client());
   }
 
   static web3.DeployedContract _newHynContract(String contractAddress) {
     final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(EthereumConst.HYN_ERC20_ABI, 'HYN'), web3.EthereumAddress.fromHex(contractAddress));
+        web3.ContractAbi.fromJson(HYN_ERC20_ABI, 'HYN'), web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
+  static web3.DeployedContract _newMap3Contract(String contractAddress) {
+    final contract = web3.DeployedContract(
+        web3.ContractAbi.fromJson(MAP3_STAKING_ABI, 'Map3Staking'), web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   /// https://infura.io/docs/gettingStarted/makeRequests.md
-  static Future<dynamic> postInfura({String method, List params, int id = 1}) {
-    return HttpCore.instance.post(WalletConfig.getInfuraApi(),
+  static Future<dynamic> postToEthereumNetwork({String method, List params, int id = 1}) {
+    return HttpCore.instance.post(WalletConfig.getEthereumApi(),
         params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},
         options: RequestOptions(contentType: Headers.jsonContentType));
   }
 
   static web3.DeployedContract _hynErc20Contract;
+  static web3.DeployedContract _map3StakingContract;
+
   static web3.Web3Client _web3clientMain;
   static web3.Web3Client _web3clientRopsten;
+  static web3.Web3Client _web3clientLocal;
 
   static web3.DeployedContract getHynErc20Contract(String contractAddress) {
     if (_hynErc20Contract == null || _hynErc20Contract?.address?.hex?.contains(contractAddress) != true) {
@@ -237,18 +184,32 @@ class WalletUtil {
     return _hynErc20Contract;
   }
 
-  static web3.Web3Client getWeb3Client() {
-    if (WalletConfig.isMainNet) {
-      if (_web3clientMain == null) {
-        _web3clientMain = WalletUtil._newWeb3Client();
-      }
-      return _web3clientMain;
-    } else {
-      if (_web3clientRopsten == null) {
-        _web3clientRopsten = WalletUtil._newWeb3Client();
-      }
-      return _web3clientRopsten;
+  static web3.DeployedContract getMap3Contract(String contractAddress) {
+    if (_map3StakingContract == null || _map3StakingContract?.address?.hex?.contains(contractAddress) != true) {
+      _map3StakingContract = WalletUtil._newMap3Contract(contractAddress);
     }
+    return _map3StakingContract;
+  }
+
+  static web3.Web3Client getWeb3Client() {
+    switch (WalletConfig.netType) {
+      case EthereumNetType.main:
+        if (_web3clientMain == null) {
+          _web3clientMain = WalletUtil._newWeb3Client(WalletConfig.INFURA_MAIN_API);
+        }
+        return _web3clientMain;
+      case EthereumNetType.repsten:
+        if (_web3clientRopsten == null) {
+          _web3clientRopsten = WalletUtil._newWeb3Client(WalletConfig.INFURA_ROPSTEN_API);
+        }
+        return _web3clientRopsten;
+      case EthereumNetType.local:
+        if (_web3clientLocal == null) {
+          _web3clientLocal = WalletUtil._newWeb3Client(WalletConfig.LOCAL_API);
+        }
+        return _web3clientLocal;
+    }
+    return null;
   }
 
   static String formatCoinNum(double coinNum) {
@@ -256,9 +217,9 @@ class WalletUtil {
   }
 
   static String formatPrice(double price) {
-    if(price >= 1){
+    if (price >= 1) {
       return NumberFormat("#,###.##").format(price);
-    }else{
+    } else {
       return NumberFormat("#,###.####").format(price);
     }
   }
@@ -266,5 +227,4 @@ class WalletUtil {
   static String formatPercentChange(double percentChange) {
     return NumberFormat("#,###.##").format(percentChange) + "%";
   }
-
 }

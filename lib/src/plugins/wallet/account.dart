@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 
 part 'account.g.dart';
 
@@ -21,18 +22,20 @@ class Account {
     this.contractAssetTokens,
   });
 
-  factory Account.fromJsonWithNet(Map<dynamic, dynamic> json, [bool isMainNet = true]) {
+  factory Account.fromJsonWithNet(Map<dynamic, dynamic> json, [EthereumNetType netType = EthereumNetType.main]) {
     AssetToken token;
     var erc20Tokens = <AssetToken>[];
     if (json['coinType'] == CoinType.ETHEREUM) {
       token = SupportedTokens.ETHEREUM;
       //active contract tokens
-      if (isMainNet) {
+      if (netType == EthereumNetType.main) {
         erc20Tokens.add(SupportedTokens.HYN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20);
-      } else {
+      } else if (netType == EthereumNetType.repsten) {
         erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
+      } else {
+        erc20Tokens.add(SupportedTokens.HYN_LOCAL);
       }
     } else if (json['coinType'] == CoinType.BITCOIN) {
       token = SupportedTokens.BTC;
