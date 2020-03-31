@@ -6,10 +6,15 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/node_head_entity.dart';
+import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:video_player/video_player.dart';
 
 import 'map3_node_create_join_contract_page.dart';
@@ -24,6 +29,8 @@ class Map3NodePage extends StatefulWidget {
 class _Map3NodeState extends State<Map3NodePage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   VideoPlayerController _controller;
+  NodeApi _nodeApi = NodeApi();
+  NodePageEntityVo _nodePageEntityVo = NodePageEntityVo(null,List());
 
   @override
   void initState() {
@@ -36,6 +43,9 @@ class _Map3NodeState extends State<Map3NodePage> {
               _controller.play();
             });
           });
+
+//    loadDataBloc.add(LoadingEvent());
+    getNetworkData();
     super.initState();
   }
 
@@ -46,21 +56,42 @@ class _Map3NodeState extends State<Map3NodePage> {
 //      color: HexColor("#161443"),
       child: LoadDataContainer(
         bloc: loadDataBloc,
-        onRefresh: () async {},
+//        onLoadData: () async {
+//          getNetworkData();
+//        },
+        onRefresh: () async {
+          getNetworkData();
+        },
         child: CustomScrollView(
           slivers: <Widget>[
             SliverToBoxAdapter(child: _map3HeadItem()),
             SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-              return _getMap3NodeWaitItem(context, index);
-            }, childCount: 30))
+              return _getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]);
+            }, childCount: _nodePageEntityVo.contractNodeList.length))
           ],
         ),
       ),
     );
   }
 
+  void getNetworkData() async {
+    try{
+      _nodePageEntityVo = await _nodeApi.getNodePageEntityVo();
+//      Future.delayed(Duration(seconds: 1), () {
+        loadDataBloc.add(RefreshSuccessEvent());
+        setState(() {
+        });
+//      });
+    }catch(e){
+      loadDataBloc.add(LoadFailEvent());
+    }
+  }
+
   Widget _map3HeadItem() {
+    if(_nodePageEntityVo.nodeHeadEntity == null){
+      return Container();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -89,7 +120,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
-                      "全球已有超过200个地图服务节点为海伯利安地图提供稳定可靠的地图服务",
+                      _nodePageEntityVo.nodeHeadEntity.message,
                       style: TextStyles.textCfffS12,
                     ),
                   ))
@@ -126,7 +157,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Expanded(
-                                  child: Text("MAP3节点",
+                                  child: Text("${_nodePageEntityVo.nodeHeadEntity.node.name}",
                                       style: TextStyles.textCfffS14)),
                               InkWell(
                                 onTap: (){
@@ -153,7 +184,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                             padding:
                                 const EdgeInsets.only(top: 10.0, bottom: 10),
                             child: Text(
-                                "    抵押一个map3节点，你就会有权限开通一个map3服务节点，同时获得节点收益。",
+                                "    ${_nodePageEntityVo.nodeHeadEntity.node.content}",
                                 style: TextStyles.textCfffS14),
                           ),
                         ],
@@ -180,7 +211,7 @@ class _Map3NodeState extends State<Map3NodePage> {
     );
   }
 
-  Widget _getMap3NodeWaitItem(BuildContext context, int index) {
+  Widget _getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
     return Card(
       color: Colors.white54,
       margin: const EdgeInsets.only(left: 5.0, right: 5, bottom: 5),
@@ -210,7 +241,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                              child: Text("MAP3节点（V0.8）",
+                              child: Text("${contractNodeItem.contract.nodeName}",
                                   style: TextStyles.textCfffS14)),
                           Text("剩余3天启动", style: TextStyles.textCfffS12)
                         ],
@@ -220,7 +251,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                         child: Row(
                           children: <Widget>[
                             Expanded(
-                                child: Text("发起账户 Moo 0xfaksdhfkasdfk",
+                                child: Text("发起账户 ${contractNodeItem.ownerName} ${contractNodeItem.owner}",
                                     style: TextStyles.textCfffS12)),
                             RichText(
                               text: TextSpan(
@@ -228,7 +259,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                                   style: TextStyles.textCfffS12,
                                   children: <TextSpan>[
                                     TextSpan(
-                                        text: "1000",
+                                        text: "${FormatUtil.formatNum(contractNodeItem.remainDelegation)}",
                                         style: TextStyles.textCf29a6eS12),
                                     TextSpan(
                                         text: "HYN",
@@ -250,7 +281,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                   child: Center(
                       child: Column(
                     children: <Widget>[
-                      Text("8.08%", style: TextStyles.textCfffS12),
+                      Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}", style: TextStyles.textCfffS12),
                       Text("年化奖励", style: TextStyles.textCfffS12)
                     ],
                   )),
@@ -259,7 +290,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                   child: Center(
                       child: Column(
                     children: <Widget>[
-                      Text("1月", style: TextStyles.textCfffS12),
+                      Text("${contractNodeItem.contract.duration}月", style: TextStyles.textCfffS12),
                       Text("合约周期", style: TextStyles.textCfffS12)
                     ],
                   )),
@@ -268,7 +299,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                   child: Center(
                       child: Column(
                     children: <Widget>[
-                      Text("20%", style: TextStyles.textCfffS12),
+                      Text("${FormatUtil.formatPercent(contractNodeItem.contract.commission)}", style: TextStyles.textCfffS12),
                       Text("管理费", style: TextStyles.textCfffS12)
                     ],
                   )),

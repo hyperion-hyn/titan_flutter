@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -7,7 +9,10 @@ import 'package:titan/src/pages/node/model/contract_node_item.dart';
 
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
+import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
+import 'package:titan/src/pages/node/model/start_join_instance.dart';
 
 class NodeApi {
 
@@ -63,6 +68,43 @@ class NodeApi {
     }));
 
     return contractsItem;
-   }
+  }
+
+  Future<String> startContractInstance(StartJoinInstance startJoinInstance) async {
+    String postData = json.encode(startJoinInstance.toJson());
+    var data = await HttpCore.instance
+        .post("contracts/create/1", data: postData,
+        options: RequestOptions(contentType: "application/json"));
+    return data['msg'];
+  }
+
+  Future<String> joinContractInstance(StartJoinInstance startJoinInstance) async {
+    String postData = json.encode(startJoinInstance.toJson());
+    var data = await HttpCore.instance
+        .post("instances/delegate/8", data: postData,
+        options: RequestOptions(contentType: "application/json"));
+    return data['msg'];
+  }
+
+  Future<NodePageEntityVo> getNodePageEntityVo() async {
+    var nodeHeadEntity = await HttpCore.instance
+        .getEntity("nodes/intro", EntityFactory<NodeHeadEntity>((data){
+      return NodeHeadEntity.fromJson(data);
+    }));
+
+    var pendingList = await getContractPendingList();
+
+    return NodePageEntityVo(nodeHeadEntity, pendingList);
+  }
+
+  Future<List<ContractNodeItem>> getContractPendingList() async {
+    var contractsList = await HttpCore.instance
+        .getEntity("instances/pending", EntityFactory<List<ContractNodeItem>>((data){
+      return (data as List).map((dataItem)=>ContractNodeItem.fromJson(dataItem)).toList();
+    }));
+
+    return contractsList;
+  }
+
 
 }
