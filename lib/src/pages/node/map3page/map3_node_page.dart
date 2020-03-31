@@ -212,6 +212,9 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 
   Widget _getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
+    String startAccount = "发起账户 ${contractNodeItem.ownerName} ${contractNodeItem.owner}";
+    startAccount = startAccount.substring(0,startAccount.length > 25 ? 25 : startAccount.length);
+    startAccount = startAccount + "...";
     return Card(
       color: Colors.white54,
       margin: const EdgeInsets.only(left: 5.0, right: 5, bottom: 5),
@@ -251,8 +254,9 @@ class _Map3NodeState extends State<Map3NodePage> {
                         child: Row(
                           children: <Widget>[
                             Expanded(
-                                child: Text("发起账户 ${contractNodeItem.ownerName} ${contractNodeItem.owner}",
-                                    style: TextStyles.textCfffS12)),
+                                child: Text("$startAccount",
+                                    style: TextStyles.textCfffS12,maxLines:1,softWrap: true)),
+                            SizedBox(width: 10,),
                             RichText(
                               text: TextSpan(
                                   text: "还差",
@@ -269,7 +273,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                           ],
                         ),
                       ),
-                      Text("2020-10-20", style: TextStyles.textCfffS12),
+                      Text("${FormatUtil.formatDate(contractNodeItem.instanceStartTime)}", style: TextStyles.textCfffS12),
                     ],
                   ),
                 )
