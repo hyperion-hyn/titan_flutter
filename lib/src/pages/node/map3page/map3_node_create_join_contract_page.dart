@@ -201,14 +201,14 @@ class _Map3NodeCreateJoinContractState
                           decoration: InputDecoration(
                             hintStyle: TextStyles.textC9b9b9bS14,
                             labelStyle: TextStyles.textC333S14,
-                            hintText: "投入量，不少于20,000",
+                            hintText: "投入量，不少于${FormatUtil.formatNumDecimal(minTotal)}",
                             border: OutlineInputBorder(),
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 10),
                           ),
                           validator: (textStr) {
                             return textStr.length != 0 &&
-                                    int.parse(textStr) > 20000
+                                    int.parse(textStr) >= minTotal
                                 ? null
                                 : "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
                           }),
@@ -328,7 +328,8 @@ class _Map3NodeCreateJoinContractState
                     context,
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}");
+                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}" +
+                "&pageType=${widget.pageType}");
               });
             }),
       )
