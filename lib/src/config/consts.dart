@@ -4,6 +4,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 
 class Const {
   static const String DOMAIN = 'https://api.hyn.space/';
+  static const String DOMAIN_MAP3_LOCAL = 'http://10.10.1.115:5000/';
 
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX = "https://www.hyn.space/titan/share?key=";

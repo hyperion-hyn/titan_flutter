@@ -6,9 +6,13 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:video_player/video_player.dart';
+
+import 'map3_node_create_join_contract_page.dart';
 
 class Map3NodePage extends StatefulWidget {
   @override
@@ -69,15 +73,15 @@ class _Map3NodeState extends State<Map3NodePage> {
                       child: VideoPlayer(_controller),
                     )
                   : Container(),
-              Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      "MAP3更多介绍",
-                      style: TextStyles.textCfffS14,
-                    ),
-                  )),
+//              Align(
+//                  alignment: Alignment.topRight,
+//                  child: Padding(
+//                    padding: const EdgeInsets.all(10.0),
+//                    child: Text(
+//                      "MAP3更多介绍",
+//                      style: TextStyles.textCfffS14,
+//                    ),
+//                  )),
               Positioned(
                   left: 0,
                   right: 0,
@@ -111,6 +115,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                         "res/drawable/ic_map3_node_item.png",
                         width: 80,
                         height: 80,
+                        fit:BoxFit.cover
                       ),
                     ),
                     Flexible(
@@ -123,7 +128,25 @@ class _Map3NodeState extends State<Map3NodePage> {
                               Expanded(
                                   child: Text("MAP3节点",
                                       style: TextStyles.textCfffS14)),
-                              Text("开通教程", style: TextStyles.textCfffS14)
+                              InkWell(
+                                onTap: (){
+                                  String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                                  String webTitle = FluroConvertUtils.fluroCnParamsEncode("如何新开Map3节点");
+                                  Application.router.navigateTo(context, Routes.toolspage_webview_page
+                                      + '?initUrl=$webUrl&title=$webTitle');
+//                                  Navigator.push(
+//                                      context,
+//                                      MaterialPageRoute(
+//                                          builder: (context) => WebViewContainer(
+//                                            initUrl: "http://baidu.com",
+//                                            title: "如何新开Map3节点",
+//                                          )));
+                                },
+                                child: Text("开通教程", style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.lightGreenAccent,
+                                    decoration: TextDecoration.underline)),
+                              )
                             ],
                           ),
                           Padding(
@@ -176,6 +199,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                     "res/drawable/ic_map3_node_item.png",
                     width: 50,
                     height: 50,
+                    fit:BoxFit.cover,
                   ),
                 ),
                 Flexible(
@@ -255,7 +279,9 @@ class _Map3NodeState extends State<Map3NodePage> {
                       alignment: Alignment.centerRight,
                       child: MaterialButton(
                         color: Colors.white,
-                        onPressed: () {},
+                        onPressed: () {
+                          Application.router.navigateTo(context, Routes.map3node_create_join_contract_page + "?pageType=${Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_JOIN}");
+                        },
                         child: Text("参与", style: TextStyles.textC26ac29S12),
                       )),
                 )

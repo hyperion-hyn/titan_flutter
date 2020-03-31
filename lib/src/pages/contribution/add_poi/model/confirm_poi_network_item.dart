@@ -43,7 +43,6 @@ class Location extends Object {
 }*/
 
 
-@JsonSerializable()
 class Properties extends Object {
 
   @JsonKey(name: 'name')

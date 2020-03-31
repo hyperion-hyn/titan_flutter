@@ -45,7 +45,7 @@ class ShowAccountPage extends StatefulWidget {
 }
 
 class _ShowAccountPageState extends DataListState<ShowAccountPage> {
-  DateFormat dateFormat = new DateFormat("yyyy/MM/dd");
+  DateFormat _dateFormat = new DateFormat("yyyy/MM/dd");
 
   AccountTransferService _accountTransferService = AccountTransferService();
 
@@ -301,10 +301,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       title = S.of(context).contract_call;
     }
 
-    var time = dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
+    var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
     var lastTransactionTime = lastTransactionDetail != null
-        ? dateFormat.format(DateTime.fromMillisecondsSinceEpoch(lastTransactionDetail.time))
-        : null;
+        ? _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(lastTransactionDetail.time))
+    : null;
     var isShowTime = lastTransactionTime != time;
 
     return Column(
