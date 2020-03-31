@@ -31,6 +31,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   VideoPlayerController _controller;
   NodeApi _nodeApi = NodeApi();
   NodePageEntityVo _nodePageEntityVo = NodePageEntityVo(null,List());
+  int currentPage = 0;
 
   @override
   void initState() {
@@ -59,8 +60,11 @@ class _Map3NodeState extends State<Map3NodePage> {
 //        onLoadData: () async {
 //          getNetworkData();
 //        },
-        onRefresh: () async {
+        onRefresh: () {
           getNetworkData();
+        },
+        onLoadingMore: (){
+          getMoreNetworkData();
         },
         child: CustomScrollView(
           slivers: <Widget>[
@@ -77,6 +81,7 @@ class _Map3NodeState extends State<Map3NodePage> {
 
   void getNetworkData() async {
     try{
+      currentPage = 0;
       _nodePageEntityVo = await _nodeApi.getNodePageEntityVo();
 //      Future.delayed(Duration(seconds: 1), () {
         loadDataBloc.add(RefreshSuccessEvent());
@@ -85,6 +90,23 @@ class _Map3NodeState extends State<Map3NodePage> {
 //      });
     }catch(e){
       loadDataBloc.add(LoadFailEvent());
+    }
+  }
+
+  void getMoreNetworkData() async {
+    try{
+      currentPage = currentPage + 1;
+      List<ContractNodeItem> contractNodeList = await _nodeApi.getContractPendingList(currentPage);
+      if(contractNodeList.length > 0){
+        _nodePageEntityVo.contractNodeList.addAll(contractNodeList);
+        loadDataBloc.add(LoadingMoreSuccessEvent());
+      }else{
+        loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+      setState(() {
+      });
+    }catch(e){
+      loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 

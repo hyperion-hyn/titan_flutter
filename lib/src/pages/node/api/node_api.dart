@@ -50,9 +50,9 @@ class NodeApi {
     );
   }
 
-  Future<List<NodeItem>> getContractList() async {
+  Future<List<NodeItem>> getContractList(int page) async {
     var contractsList = await HttpCore.instance
-        .getEntity("contracts/list", EntityFactory<List<NodeItem>>((data){
+        .getEntity("contracts/list?page=$page", EntityFactory<List<NodeItem>>((data){
           return (data as List).map((dataItem)=>NodeItem.fromJson(dataItem)).toList();
         }));
 
@@ -99,14 +99,14 @@ class NodeApi {
       return NodeHeadEntity.fromJson(data);
     }));
 
-    var pendingList = await getContractPendingList();
+    var pendingList = await getContractPendingList(0);
 
     return NodePageEntityVo(nodeHeadEntity, pendingList);
   }
 
-  Future<List<ContractNodeItem>> getContractPendingList() async {
+  Future<List<ContractNodeItem>> getContractPendingList(int page) async {
     var contractsList = await HttpCore.instance
-        .getEntity("instances/pending", EntityFactory<List<ContractNodeItem>>((data){
+        .getEntity("instances/pending?page=$page", EntityFactory<List<ContractNodeItem>>((data){
       return (data as List).map((dataItem)=>ContractNodeItem.fromJson(dataItem)).toList();
     }));
 

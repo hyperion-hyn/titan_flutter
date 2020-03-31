@@ -411,6 +411,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 //          await _transferErc20(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
 //        }
 //        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
+
+
         var startJoin = StartJoinInstance(widget.coinVo.contractAddress,
             activatedWallet.wallet.keystore.name, widget.transferAmount,
             "NJFOLKFLANLF90RJK32JILFJRNWGJRIONGOPRNEWGJRNJVNJRENJKLVNJRJENWGNRLVJRENWJEORNLGJKNSRJKVNJRKSNRJKNVJKRENVSJKRNJVKNRENVJKSNRVKJRNEJKVJJREWNVKEJNJKRNEKJWNVJKRNJKVNIRWNRKJNGUOVHRUHB35HJGUONRKJFVNAKJRJGKJRNK");

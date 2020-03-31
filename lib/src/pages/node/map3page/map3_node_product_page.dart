@@ -26,6 +26,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   NodeApi _nodeApi = NodeApi();
   List<NodeItem> nodeList = List();
+  int currentPage = 0;
 
   @override
   void initState() {
@@ -55,6 +56,9 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
         onRefresh: () async {
           getNetworkData();
         },
+        onLoadingMore: (){
+          getMoreNetworkData();
+        },
         child: CustomScrollView(
           slivers: <Widget>[
             SliverList(
@@ -74,7 +78,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
 
   void getNetworkData() async {
     try{
-      nodeList = await _nodeApi.getContractList();
+      nodeList = await _nodeApi.getContractList(currentPage);
       Future.delayed(Duration(seconds: 1), () {
         loadDataBloc.add(RefreshSuccessEvent());
         setState(() {
@@ -82,6 +86,23 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
       });
     }catch(e){
       loadDataBloc.add(LoadFailEvent());
+    }
+  }
+
+  void getMoreNetworkData() async {
+    try{
+      currentPage = currentPage + 1;
+      List<NodeItem> tempNodeList = await _nodeApi.getContractList(currentPage);
+      if(tempNodeList.length > 0){
+        nodeList.addAll(tempNodeList);
+        loadDataBloc.add(LoadingMoreSuccessEvent());
+      }else{
+        loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+      setState(() {
+      });
+    }catch(e){
+      loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 
