@@ -2,15 +2,25 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/my_map3_contract_page.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_join_contract_page.dart';
+import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
+import 'package:titan/src/pages/node/model/contract_detail_item.dart';
+import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class NodeContractDetailPage extends StatefulWidget {
+
+  ContractNodeItem contract;
+  NodeContractDetailPage(this.contract);
+
   @override
   State<StatefulWidget> createState() {
     return _NodeContractDetailState();
@@ -18,11 +28,40 @@ class NodeContractDetailPage extends StatefulWidget {
 }
 
 class _NodeContractDetailState extends State<NodeContractDetailPage> {
+
   LoadDataBloc loadDataBloc = LoadDataBloc();
+  var api = NodeApi();
+  ContractDetailItem _contractDetailItem;
+  List<ContractDelegatorItem> _delegatorList = [];
 
   @override
   void initState() {
     super.initState();
+
+    _loadData();
+  }
+
+  _loadData() async {
+
+    var list = await api.getContractDelegator(widget.contract.id);
+    var item = await api.getContractDetail(widget.contract.id);
+    setState(() {
+      _delegatorList = list;
+      _contractDetailItem = item;
+    });
+    print('[map3] contract_id:${widget.contract.id}, detail_id:${item.instance.id}');
+
+
+    if (item == null) {
+      loadDataBloc.add(LoadEmptyEvent());
+    } else {
+      loadDataBloc.add(RefreshSuccessEvent());
+    }
+
+    setState(() {
+      _contractDetailItem = item;
+    });
+
   }
 
   @override
@@ -329,8 +368,8 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
         Container(
           color: Colors.white,
           child: Column(
-            children: [0, 1, 2, 3, 4].map((value) {
-              return value == 0
+            children: _delegatorList.map((value) {
+              return value == _delegatorList.first
                   ? Container(
                       padding: const EdgeInsets.all(12.0),
                       color: Colors.white,
@@ -361,15 +400,15 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(value == 1 ? "Moo（发起人）" : "Moo$value",
+                              Text(value == _delegatorList.first ? "Moo（发起人）" : value.userName,
                                   style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500)),
                               Container(
                                 height: 4.0,
                               ),
-                              Text("0xdasf9fdafu31ffadf", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                              Text(value.userAddress, style: TextStyle(fontSize: 12, color: Colors.grey)),
                             ],
                           ),
-                          Text("200,000",
+                          Text("${FormatUtil.formatNum(value.amountDelegation)}",
                               style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500)),
                           Text("2020-10-10", style: TextStyle(fontSize: 12, color: Colors.grey)),
                         ],
@@ -403,7 +442,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                     //color: Colors.red,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _getStatusColor(ContractStatus.SuspendRun),
+                        color: _getStatusColor(ContractState.PENDING),
                         border: Border.all(color: Colors.grey, width: 1.0)),
                   ),
                 ),
@@ -521,27 +560,27 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
     );
   }
 
-  HexColor _getStatusColor(ContractStatus status) {
+  HexColor _getStatusColor(ContractState status) {
     var statusColor = HexColor('#EED097');
 
     switch (status) {
-      case ContractStatus.SuspendRun:
+      case ContractState.PENDING:
         statusColor = HexColor('#EED097');
         break;
 
-      case ContractStatus.Running:
+      case ContractState.Running:
         statusColor = HexColor('#3FF78C');
         break;
 
-      case ContractStatus.Expired:
+      case ContractState.Expired:
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractStatus.Withdrawal:
+      case ContractState.Withdrawal:
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractStatus.FailRun:
+      case ContractState.FailRun:
         statusColor = HexColor('#F22504');
         break;
 

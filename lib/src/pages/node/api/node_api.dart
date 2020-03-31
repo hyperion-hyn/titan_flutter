@@ -2,11 +2,9 @@
 import 'package:dio/dio.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
-
-import 'package:titan/src/basic/http/entity.dart';
-import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 
 class NodeApi {
@@ -35,6 +33,14 @@ class NodeApi {
             ContractDetailItem.fromJson(data)),
         options: RequestOptions(
             headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"})
+    );
+  }
+
+  Future<List<ContractDelegatorItem>> getContractDelegator(int contractId) async {
+    return await HttpCore.instance
+        .getEntity("delegations/instance/$contractId/delegators",
+        EntityFactory<List<ContractDelegatorItem>>((list) => (list as List).map((item) => ContractDelegatorItem.fromJson(item)).toList()),
+        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"})
     );
   }
  
