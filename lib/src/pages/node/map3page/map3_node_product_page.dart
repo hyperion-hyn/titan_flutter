@@ -6,11 +6,14 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_join_contract_page.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class Map3NodeProductPage extends StatefulWidget {
   @override
@@ -21,9 +24,14 @@ class Map3NodeProductPage extends StatefulWidget {
 
 class _Map3NodeProductState extends State<Map3NodeProductPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
+  NodeApi _nodeApi = NodeApi();
+  List<NodeItem> nodeList = List();
 
   @override
   void initState() {
+    loadDataBloc.add(LoadingEvent());
+    getNetworkData();
+
     super.initState();
   }
 
@@ -31,27 +39,50 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(centerTitle: true, title: Text("Map3节点抵押合约")),
-      body: Container(
-        color: HexColor("#f5f5f5"),
-        child: LoadDataContainer(
-          bloc: loadDataBloc,
-          onRefresh: () async {},
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    double topValue = (index == 0) ? 10 : 0;
-                    bool hasRemind = (index == 3) ? true : false;
-                    return Card(
-                        color: Colors.white,
-                        margin: EdgeInsets.only(left: 5.0, right: 5, bottom: 5,  top:topValue),
-                        child: getMap3NodeProductItem(context, hasRemind: hasRemind));
-              }, childCount: 30))
-            ],
-          ),
+      body: _pageView(),
+    );
+  }
+
+  Widget _pageView() {
+
+    return Container(
+      color: HexColor("#f5f5f5"),
+      child: LoadDataContainer(
+        bloc: loadDataBloc,
+        onLoadData: () async {
+          getNetworkData();
+        },
+        onRefresh: () async {
+          getNetworkData();
+        },
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  double topValue = (index == 0) ? 10 : 0;
+                  bool hasRemind = (index == 3) ? true : false;
+                  return Card(
+                      color: Colors.white,
+                      margin: EdgeInsets.only(left: 5.0, right: 5, bottom: 5,  top:topValue),
+                      child: getMap3NodeProductItem(context, nodeList[index],hasRemind: hasRemind));
+                }, childCount: nodeList.length))
+          ],
         ),
       ),
     );
+  }
+
+  void getNetworkData() async {
+    try{
+      nodeList = await _nodeApi.getContractList();
+      Future.delayed(Duration(seconds: 1), () {
+        loadDataBloc.add(RefreshSuccessEvent());
+        setState(() {
+        });
+      });
+    }catch(e){
+      loadDataBloc.add(LoadFailEvent());
+    }
   }
 
   @override
@@ -61,7 +92,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   }
 }
 
-Widget getMap3NodeProductItem(BuildContext context,{hasRemind = false,showButton = true}) {
+Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem,{hasRemind = false,showButton = true}) {
   return Padding(
     padding: EdgeInsets.only(left: 10.0, right: 10, top: 10, bottom: 10),
     child: Column(
@@ -89,10 +120,9 @@ Widget getMap3NodeProductItem(BuildContext context,{hasRemind = false,showButton
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text("MAP3节点（V0.8）",
-                              style: TextStyles.textC333S14bold),
+                          Text(nodeItem.nodeName, style: TextStyles.textC333S14bold),
                           SizedBox(height: 5,),
-                          Text("启动共需1,000,000HYN",
+                          Text("启动共需${FormatUtil.formatNum(nodeItem.minTotalDelegation)}HYN",
                               style: TextStyles.textC333S14)
                         ],
                       ),
@@ -126,7 +156,7 @@ Widget getMap3NodeProductItem(BuildContext context,{hasRemind = false,showButton
                   child: Column(
                     children: <Widget>[
                       Text("期满年化奖励", style: TextStyles.textC9b9b9bS12),
-                      Text("8.9%", style: TextStyles.textC333S14)
+                      Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textC333S14)
                     ],
                   )),
             ),
@@ -135,7 +165,7 @@ Widget getMap3NodeProductItem(BuildContext context,{hasRemind = false,showButton
                   child: Column(
                     children: <Widget>[
                       Text("合约期限", style: TextStyles.textC9b9b9bS12),
-                      Text("1月", style: TextStyles.textC333S14)
+                      Text("${nodeItem.duration}月", style: TextStyles.textC333S14)
                     ],
                   )),
             ),
@@ -144,7 +174,7 @@ Widget getMap3NodeProductItem(BuildContext context,{hasRemind = false,showButton
                   child: Column(
                     children: <Widget>[
                       Text("管理费", style: TextStyles.textC9b9b9bS12),
-                      Text("20%", style: TextStyles.textC333S14)
+                      Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textC333S14)
                     ],
                   )),
             ),
@@ -153,7 +183,7 @@ Widget getMap3NodeProductItem(BuildContext context,{hasRemind = false,showButton
                   child: Column(
                     children: <Widget>[
                       Text("创建最低投入", style: TextStyles.textC9b9b9bS12),
-                      Text("20%", style: TextStyles.textC333S14)
+                      Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}", style: TextStyles.textC333S14)
                     ],
                   )),
             )
