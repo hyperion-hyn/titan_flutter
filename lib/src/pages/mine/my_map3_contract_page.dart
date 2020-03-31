@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/model/contract_node_item.dart';
 
 import 'node_contract_detail_page.dart';
 
@@ -20,6 +22,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   List<ContractStatsModel> _dataArray;
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
+  var api = NodeApi();
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +39,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   }
 
 
-  _loadData() {
+  _loadData() async {
     List<ContractStatsModel> list = [];
     for (var i = 0; i < 5; i++) {
       ContractStatsModel model = ContractStatsModel(
@@ -43,11 +47,21 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       list.add(model);
     }
     _dataArray = list;
+
+    List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
+
+    //List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
+    List<ContractNodeItem> joinContractList = [];
+
+    print('[map3] _loadData, createLength:${createContractList.length}, joinLength:${joinContractList.length}');
+
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+
   }
 
   @override
@@ -59,7 +73,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         color: HexColor('#05095F'),
         child: LoadDataContainer(
           bloc: loadDataBloc,
-          onRefresh: () async {},
+          onRefresh: () async {
+
+          },
           child: ListView.separated(
               itemBuilder: (context, index) {
                 return buildInfoItem(_dataArray[index]);
