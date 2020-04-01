@@ -23,7 +23,7 @@ class HttpCore extends BaseHttpCore {
   }
 
   static var _dio = new Dio(BaseOptions(
-    baseUrl: Const.DOMAIN_MAP3_LOCAL,
+    baseUrl: Const.DOMAIN,
     connectTimeout: 5000,
     receiveTimeout: 5000,
 //    headers: {"user-agent": "dio", "api": "1.0.0"},
