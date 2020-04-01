@@ -138,11 +138,11 @@ class _WalletDemoState extends State<WalletDemo> {
 
                 var maxStakingAmount = 1000000; //一百万
                 var myStaking = 0.4 * maxStakingAmount; //最小抵押量
-                var erc20ContractAddress = wallet0.getEthAccount().contractAssetTokens[0].contractAddress;
+                var hynErc20ContractAddress = wallet0.getEthAccount().contractAssetTokens[0].contractAddress;
                 var approveToAddress = WalletConfig.map3ContractAddress;
                 try {
                   var signedHex = await wallet0.signApproveErc20Token(
-                      contractAddress: erc20ContractAddress,
+                      contractAddress: hynErc20ContractAddress,
                       approveToAddress: approveToAddress,
                       amount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
                       password: 'my_password',
