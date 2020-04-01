@@ -154,6 +154,42 @@ class _Map3NodeJoinContractState
         color: DefaultColors.colorf5f5f5,
       ),
       startAccount(),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top:10.0, left:10),
+            child: Text("节点配置"),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top:15.0, left:20),
+            child: Row(
+              children: <Widget>[
+                Container(
+                    width: 100,
+                    child: Text("服务商",style:TextStyles.textC9b9b9bS14)),
+                new Text("阿里云",style: TextStyles.textC333S14)
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top:15.0, left:20),
+            child: Row(
+              children: <Widget>[
+                Container(
+                    width: 100,
+                    child: Text("节点位置",style:TextStyles.textC9b9b9bS14)),
+                new Text("中国深圳",style: TextStyles.textC333S14)
+              ],
+            ),
+          ),
+        ],
+      ),
+      Container(
+        height: 5,
+        margin: const EdgeInsets.only(top:15.0),
+        color: DefaultColors.colorf5f5f5,
+      ),
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Text("投入数量  （$walletName钱包HYN余额 ${FormatUtil.formatNumDecimal(balance)}）", style: TextStyles.textC333S14),
@@ -197,10 +233,14 @@ class _Map3NodeJoinContractState
                                 EdgeInsets.symmetric(horizontal: 10),
                           ),
                           validator: (textStr) {
-                            return textStr.length != 0 &&
-                                    int.parse(textStr) >= minTotal
-                                ? null
-                                : "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
+                            if(textStr.length == 0 || int.parse(textStr) < minTotal){
+                              return "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
+                            }else if(int.parse(textStr) > balance){
+//                              return "HYN余额不足";
+                              return null;
+                            }else{
+                              return null;
+                            }
                           }),
                     ),
                   )
