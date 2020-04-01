@@ -42,10 +42,11 @@ class NodeApi {
     );
   }
 
-  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId) async {
+  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0}) async {
     return await HttpCore.instance
         .getEntity("delegations/instance/$contractNodeItemId/delegators",
         EntityFactory<List<ContractDelegatorItem>>((list) => (list as List).map((item) => ContractDelegatorItem.fromJson(item)).toList()),
+        params: {"page": page},
         options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"})
     );
   }

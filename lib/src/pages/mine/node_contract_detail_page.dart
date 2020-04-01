@@ -33,17 +33,37 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
   var api = NodeApi();
   ContractDetailItem _contractDetailItem;
   List<ContractDelegatorItem> _delegatorList = [];
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
 
-    _loadData();
+    _loadLastData();
   }
 
-  _loadData() async {
+  _loadMoreData() async {
+    var list = await api.getContractDelegator(widget.contractNodeItem.id, page: _currentPage);
+    if (list.length == 0) {
+      loadDataBloc.add(LoadMoreEmptyEvent());
+    } else {
+      _currentPage += 1;
+      loadDataBloc.add(LoadingMoreSuccessEvent());
 
-    var list = await api.getContractDelegator(widget.contractNodeItem.id);
+      setState(() {
+        _delegatorList.addAll(list);
+      });
+    }
+
+    print('[map3] _loadMoreData, list.length:${list.length}');
+
+  }
+
+  _loadLastData() async {
+
+    _currentPage = 0;
+    var list = await api.getContractDelegator(widget.contractNodeItem.id, page: _currentPage);
+    list.insert(0, ContractDelegatorItem("0x","0",0,0));
     var item = await api.getContractDetail(widget.contractNodeItem.id);
     setState(() {
       _delegatorList = list;
@@ -55,6 +75,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
     if (item == null && list.length == 0) {
       loadDataBloc.add(LoadEmptyEvent());
     } else {
+      _currentPage += 1;
       loadDataBloc.add(RefreshSuccessEvent());
     }
 
@@ -83,7 +104,8 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
         color: HexColor("#f5f5f5"),
         child: LoadDataContainer(
           bloc: loadDataBloc,
-          onRefresh: () async {},
+          onRefresh: _loadLastData,
+          onLoadingMore: _loadMoreData,
           child: CustomScrollView(
             slivers: <Widget>[
               _contractIntroductionRow(context, 3),
@@ -140,7 +162,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Expanded(child: Text(widget.contractNodeItem.ownerName, style: TextStyles.textC333S14)),
+                          Expanded(child: Text(widget.contractNodeItem.contract.nodeName, style: TextStyles.textC333S14)),
                         ],
                       ),
                       Container(
@@ -342,13 +364,13 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
               switch (value) {
                 case 1:
                   title = "创建时间:";
-                  detail = "2020-10-10";
+                  detail = "${FormatUtil.formatDate(_contractDetailItem.instance.instanceStartTime)}";
                   bottom = 4.0;
                   break;
 
                 case 2:
                   title = "参与账户:";
-                  detail = "21,000";
+                  detail = "${FormatUtil.formatNum(_contractDetailItem.instance.amountDelegation)}";
                   break;
               }
               return Padding(
@@ -400,12 +422,14 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(value == _delegatorList.first ? "Moo（发起人）" : value.userName,
+                              Text(value == _delegatorList[1] ? "${value.userName}（发起人）" : value.userName,
                                   style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500)),
                               Container(
                                 height: 4.0,
                               ),
-                              Text(value.userAddress, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                              Container(
+                                width: 100,
+                                  child: Text(value.userAddress, style: TextStyle(fontSize: 12, color: Colors.grey))),
                             ],
                           ),
                           Text("${FormatUtil.formatNum(value.amountDelegation)}",
