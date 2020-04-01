@@ -17,20 +17,21 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
-class Map3NodeCreateJoinContractPage extends StatefulWidget {
+class Map3NodeCreateContractPage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
   static const String CONTRACT_PAGE_TYPE_JOIN = "contract_page_type_join";
-  String pageType;
+  String pageType = CONTRACT_PAGE_TYPE_CREATE;
+  String contractId;
 
-  Map3NodeCreateJoinContractPage(this.pageType);
+  Map3NodeCreateContractPage(this.contractId);
 
   @override
-  _Map3NodeCreateJoinContractState createState() =>
-      new _Map3NodeCreateJoinContractState();
+  _Map3NodeCreateContractState createState() =>
+      new _Map3NodeCreateContractState();
 }
 
-class _Map3NodeCreateJoinContractState
-    extends State<Map3NodeCreateJoinContractPage> {
+class _Map3NodeCreateContractState
+    extends State<Map3NodeCreateContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   String pageTitle = "";
@@ -41,16 +42,15 @@ class _Map3NodeCreateJoinContractState
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
+  var selectServerItemValue;
+  var selectNodeItemValue;
+  List<DropdownMenuItem> serverList;
+  List<DropdownMenuItem> nodeList;
 
   @override
   void initState() {
-    if (widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-      pageTitle = "创建Map3抵押合约";
-      managerTitle = "获得管理费（HYN）：";
-    } else {
-      pageTitle = "参与Map3节点抵押";
-      managerTitle = "应付管理费（HYN）：";
-    }
+    pageTitle = "创建Map3抵押合约";
+    managerTitle = "获得管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
     _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
@@ -73,11 +73,26 @@ class _Map3NodeCreateJoinContractState
 
   void getNetworkData() async {
     try{
-      if (widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-        contractNodeItem = await _nodeApi.getContractItem();
-      }else{
-        contractNodeItem = await _nodeApi.getContractInstanceItem();
-      }
+      contractNodeItem = await _nodeApi.getContractItem(widget.contractId);
+
+      List<String> serverListStr = ["亚马逊云（推荐）","阿里云","华为云"];
+      serverList = new List();
+      serverListStr.forEach((value){
+        DropdownMenuItem item = new DropdownMenuItem(
+            value: value, child: new Text(value,style: TextStyles.textC333S14,));
+        serverList.add(item);
+      });
+      selectServerItemValue = serverList[0].value;
+
+      List<String> nodeListStr = ["中国深圳（推荐）","香港","新加坡"];
+      nodeList = new List();
+      nodeListStr.forEach((value){
+        DropdownMenuItem item = new DropdownMenuItem(
+            value: value, child: new Text(value,style: TextStyles.textC333S14));
+        nodeList.add(item);
+      });
+      selectNodeItemValue = nodeList[0].value;
+
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
           currentState = null;
@@ -152,6 +167,7 @@ class _Map3NodeCreateJoinContractState
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
     var balance = WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
+
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
@@ -161,12 +177,90 @@ class _Map3NodeCreateJoinContractState
         height: 5,
         color: DefaultColors.colorf5f5f5,
       ),
-      if (widget.pageType ==
-          Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_JOIN)
-        startAccount(),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top:10.0, left:10),
+            child: Text("节点配置"),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top:10.0, left:20),
+            child: Row(children: <Widget>[
+              Container(
+                  width: 100,
+                  child: Text("节点版本",style:TextStyles.textC9b9b9bS14)),
+              Text("Map3 V0.8云节点",style:TextStyles.textC333S14),
+            ],),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top:15.0, left:20),
+            child: Row(
+              children: <Widget>[
+                Container(
+                    width: 100,
+                    child: Text("服务商",style:TextStyles.textC9b9b9bS14)),
+                DropdownButtonHideUnderline(
+                  child: Container(
+                    height: 30,
+                    padding: EdgeInsets.only(left: 10.0, right: 10),
+                    decoration: BoxDecoration(
+                        border: new Border.all(color: DefaultColors.color9b9b9b, width: 1), // 边色与边宽度
+                                borderRadius: new BorderRadius.circular((5.0)), // 圆角度
+                    ),
+                    child: DropdownButton(
+                      value: selectServerItemValue,
+                      items: serverList,
+                      onChanged: (value){
+                        setState(() {
+                          selectServerItemValue=value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top:15.0, left:20),
+            child: Row(
+              children: <Widget>[
+                Container(
+                    width: 100,
+                    child: Text("节点位置",style:TextStyles.textC9b9b9bS14)),
+                DropdownButtonHideUnderline(
+                  child: Container(
+                    height: 30,
+                    padding: EdgeInsets.only(left: 10.0, right: 10),
+                    decoration: BoxDecoration(
+                      border: new Border.all(color: DefaultColors.color9b9b9b, width: 1), // 边色与边宽度
+                      borderRadius: new BorderRadius.circular((5.0)), // 圆角度
+                    ),
+                    child: DropdownButton(
+                      value: selectNodeItemValue,
+                      items: nodeList,
+                      onChanged: (value){
+                        setState(() {
+                          selectNodeItemValue=value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      Container(
+        height: 5,
+        margin: const EdgeInsets.only(top:15.0),
+        color: DefaultColors.colorf5f5f5,
+      ),
       Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Text("投入数量  （$walletName钱包HYN余额 ${FormatUtil.formatNumDecimal(balance)}）", style: TextStyles.textC333S14),
+        child: Text("抵押HYN数量  （$walletName钱包HYN余额 ${FormatUtil.formatNumDecimal(balance)}）", style: TextStyles.textC333S14),
       ),
       Container(
           padding: const EdgeInsets.only(left: 30.0, right: 30, bottom: 10),
@@ -207,10 +301,14 @@ class _Map3NodeCreateJoinContractState
                                 EdgeInsets.symmetric(horizontal: 10),
                           ),
                           validator: (textStr) {
-                            return textStr.length != 0 &&
-                                    int.parse(textStr) >= minTotal
-                                ? null
-                                : "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
+                            if(textStr.length == 0 || int.parse(textStr) < minTotal){
+                              return "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
+                            }else if(int.parse(textStr) > balance){
+//                              return "HYN余额不足";
+                              return null;
+                            }else{
+                              return null;
+                            }
                           }),
                     ),
                   )
@@ -297,14 +395,18 @@ class _Map3NodeCreateJoinContractState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("·  请确保钱包账户（$walletName）的ETH GAS费充足", style: TextStyles.textCf29a6eS14),
+            Text("·  请确保钱包账户（$walletName）的ETH GAS费充足", style: TextStyles.textC9b9b9bS14),
             Padding(
               padding: const EdgeInsets.only(top: 10.0, bottom: 10),
               child: Text(
-                  "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
+                  "·  创建后，若7天内没能积攒足够启动所需HYN，则本次Map3节点抵押合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
                   style: TextStyles.textC9b9b9bS14),
             ),
-            Text("·  投入Map3节点后不可撤销。", style: TextStyles.textC9b9b9bS14),
+            Text("·  Map3节点抵押合约创建后不可撤销。", style: TextStyles.textC9b9b9bS14),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+              child: Text("·  创建节点需要暂时冻结500U账户余额，用于支付直推人的贡献奖励。直推人及奖励收取节点总收益的5%。", style: TextStyles.textCf29a6eS14),
+            ),
           ],
         ),
       ),
@@ -329,7 +431,8 @@ class _Map3NodeCreateJoinContractState
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                         "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}" +
-                "&pageType=${widget.pageType}");
+                "&pageType=${widget.pageType}" +
+                "&contractId=${widget.contractId}");
               });
             }),
       )
@@ -371,5 +474,4 @@ class _Map3NodeCreateJoinContractState
     );
   }
 
-  int _getManagerPrice(int joinPrice) {}
 }

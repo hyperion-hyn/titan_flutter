@@ -29,7 +29,7 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
 
-import 'map3_node_create_join_contract_page.dart';
+import 'map3_node_create_contract_page.dart';
 
 
 class Map3NodeSendConfirmPage extends StatefulWidget {
@@ -37,8 +37,9 @@ class Map3NodeSendConfirmPage extends StatefulWidget {
   final double transferAmount;
   final String receiverAddress;
   final String pageType;
+  final String contractId;
 
-  Map3NodeSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress, this.pageType)
+  Map3NodeSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress, this.pageType, this.contractId)
       : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -417,11 +418,11 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
             activatedWallet.wallet.keystore.name, widget.transferAmount,
             "NJFOLKFLANLF90RJK32JILFJRNWGJRIONGOPRNEWGJRNJVNJRENJKLVNJRJENWGNRLVJRENWJEORNLGJKNSRJKVNJRKSNRJKNVJKRENVSJKRNJVKNRENVJKSNRVKJRNEJKVJJREWNVKEJNJKRNEKJWNVJKRNJKVNIRWNRKJNGUOVHRUHB35HJGUONRKJFVNAKJRJGKJRNK");
         String resultMsg = "";
-        if(widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-          resultMsg = await _nodeApi.startContractInstance(startJoin);
+        if(widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
+          resultMsg = await _nodeApi.startContractInstance(widget.contractId,startJoin);
           print("creat post result = $resultMsg");
         }else{
-          resultMsg = await _nodeApi.joinContractInstance(startJoin);
+          resultMsg = await _nodeApi.joinContractInstance(widget.contractId,startJoin);
           print("join post result = $resultMsg");
         }
         Application.router.navigateTo(context,Routes.map3node_broadcase_success_page);

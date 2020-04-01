@@ -2,9 +2,16 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 
+import '../../env.dart';
+
 class Const {
-  static const String DOMAIN = 'https://api.hyn.space/';
-  static const String DOMAIN_MAP3_LOCAL = 'http://10.10.1.115:5000/';
+  static String get DOMAIN {
+    if(env.buildType == BuildType.DEV){
+      return 'http://10.10.1.115:5000/';
+    }else{
+      return 'https://api.hyn.space/';
+    }
+  }
 
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX = "https://www.hyn.space/titan/share?key=";
@@ -84,4 +91,9 @@ class RouteProfile {
   static final String driving = 'driving';
   static final String walking = 'walking';
   static final String cycling = 'cycling';
+}
+
+class PlatformErrorCode {
+  static const String PASSWORD_WRONG = '1';
+  static const String PARAMETERS_WRONG = '2';
 }

@@ -7,8 +7,9 @@ import 'package:titan/src/components/root_page_control_component/root_page_contr
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_join_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_join_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
@@ -131,15 +132,20 @@ var map3NodeCreateWalletHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeCreateWalletPage();
 });
 
-var map3NodeCreateJoinContractHandler = Handler(handlerFunc: (context, params) {
+var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
   _cacheOrClearEntryWalletRouteName(params);
-  return Map3NodeCreateJoinContractPage(params['pageType']?.first);
+  return Map3NodeCreateContractPage(params['contractId']?.first);
+});
+
+var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
+  _cacheOrClearEntryWalletRouteName(params);
+  return Map3NodeJoinContractPage(params['contractId']?.first);
 });
 
 var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeSendConfirmPage(
       params['coinVo']?.first ?? '0', double.parse(params['transferAmount']?.first ?? '0'),
-      params['receiverAddress']?.first ?? '0', params['pageType']?.first);
+      params['receiverAddress']?.first ?? '0', params['pageType']?.first,params['contractId']?.first);
 });
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {

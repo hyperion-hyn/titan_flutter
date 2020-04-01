@@ -119,24 +119,45 @@ class WalletUtil {
   }
 
   static Uint8List getErc20FuncAbi({
-    String erc20Address,
+    String contractAddress,
     String funName,
     List<dynamic> params = const [],
   }) {
-    final contract = getHynErc20Contract(erc20Address);
+    final contract = getHynErc20Contract(contractAddress);
+    final func = contract.function(funName);
+    return func.encodeCall(params);
+  }
+
+  static Uint8List getMap3FuncAbi({
+    String contractAddress,
+    String funName,
+    List<dynamic> params = const [],
+  }) {
+    final contract = getMap3Contract(contractAddress);
     final func = contract.function(funName);
     return func.encodeCall(params);
   }
 
   static String getErc20FuncAbiHex({
-    String ethAccountAddress,
-    String erc20Address,
+    String contractAddress,
     String funName,
     List<dynamic> params = const [],
     bool include0x = true,
+    bool padToEvenLength = true
   }) {
-    var abi = getErc20FuncAbi(erc20Address: erc20Address, params: params, funName: funName);
-    return bytesToHex(abi, include0x: include0x);
+    var abi = getErc20FuncAbi(contractAddress: contractAddress, params: params, funName: funName);
+    return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
+  }
+
+  static String getMap3FuncAbiHex({
+    String contractAddress,
+    String funName,
+    List<dynamic> params = const [],
+    bool include0x = true,
+    bool padToEvenLength = true
+  }) {
+    var abi = getMap3FuncAbi(contractAddress: contractAddress, params: params, funName: funName);
+    return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
   }
 
   static Wallet _parseWalletJson(dynamic map) {

@@ -177,6 +177,31 @@ const MAP3_STAKING_ABI = '''
         {
           "indexed": true,
           "internalType": "address",
+          "name": "nodeAddr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "firstHalfPubKey",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "secondHalfPubKey",
+          "type": "bytes32"
+        }
+      ],
+      "name": "NodePublicKeyChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
           "name": "previousOwner",
           "type": "address"
         },
@@ -574,6 +599,16 @@ const MAP3_STAKING_ABI = '''
           "internalType": "enum Map3Staking.StakingDuration",
           "name": "duration",
           "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "firstHalfPubKey",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "secondHalfPubKey",
+          "type": "bytes32"
         }
       ],
       "name": "createNode",
@@ -612,6 +647,26 @@ const MAP3_STAKING_ABI = '''
         }
       ],
       "name": "collect",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "firstHalfPubKey",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "secondHalfPubKey",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setNodePublicKey",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -712,6 +767,16 @@ const MAP3_STAKING_ABI = '''
           "internalType": "address",
           "name": "node",
           "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "firstHalfPubKey",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "secondHalfPubKey",
+          "type": "bytes32"
         },
         {
           "internalType": "uint256",

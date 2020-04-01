@@ -7,7 +7,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_join_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -158,9 +158,9 @@ Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem,{hasRemind 
                       if(walletList.length == 0){
                         Application.router.navigateTo(context, Routes.map3node_create_wallet);
                       }else{
-                        Application.router.navigateTo(context, Routes.map3node_create_join_contract_page
-                            + "?pageType=${Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE}"
-                            + "&entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}");
+                        Application.router.navigateTo(context, Routes.map3node_create_contract_page
+                            + "?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}"
+                            + "&contractId=${nodeItem.id}");
                       }
                     },
                     child: Text("创建合约", style: TextStyles.textC26ac29S12),

@@ -9,7 +9,6 @@ import 'package:titan/config.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
-import '../../global.dart';
 import 'wallet_util.dart';
 
 part 'wallet.g.dart';
@@ -66,12 +65,12 @@ class WalletConfig {
     switch (netType) {
       case EthereumNetType.main:
         //TODO
-        return '0x76239FD2F32a14B6b6F868F36baba041B3013D82';
+        return '';
       case EthereumNetType.repsten:
         //TODO
-        return '0x76239FD2F32a14B6b6F868F36baba041B3013D82';
+        return '';
       case EthereumNetType.local:
-        return '0x76239FD2F32a14B6b6F868F36baba041B3013D82';
+        return '0x60018A4bE1234fCF9B76776338D54Ad3d22ecdf5';
     }
     return '';
   }
@@ -182,7 +181,8 @@ class Wallet {
       var response = await WalletUtil.postToEthereumNetwork(method: 'eth_estimateGas', params: [params]);
       if (response['result'] != null) {
         BigInt amountUsed = hexToInt(response['result']);
-        return amountUsed * gasPrice;
+//        return amountUsed * gasPrice;
+        return amountUsed;
       }
     }
 
@@ -240,6 +240,107 @@ class Wallet {
     final client = WalletUtil.getWeb3Client();
     final credentials = await client.credentialsFromPrivateKey(privateKey);
     return credentials;
+  }
+
+  Future<String> signApproveErc20Token({
+    String contractAddress,
+    String approveToAddress,
+    String password,
+    BigInt amount,
+    BigInt gasPrice,
+    int gasLimit,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
+    var signed = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: erc20Contract,
+        function: erc20Contract.function('approve'),
+        parameters: [web3.EthereumAddress.fromHex(approveToAddress), amount],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  /// stakingAmount: how many amount of hyn do you what to stake.
+  /// type:          what type of contract do you what to stake. [0 for 1 monty, 1 for 3 month, 2 for 6 month]
+  Future<String> signCreateMap3Node({
+    BigInt stakingAmount,
+    int type,
+    String firstHalfPubKey,
+    String secondHalfPubKey,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    var signed = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('createNode'),
+        parameters: [stakingAmount, BigInt.from(type), hexToBytes(firstHalfPubKey), hexToBytes(secondHalfPubKey)],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  Future<String> signDelegateMap3Node({
+    String createNodeWalletAddress,
+    BigInt stakingAmount,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    var signed = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('delegate'),
+        parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress), stakingAmount],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  ///Withdraw token
+  Future<String> signCollectMap3Node({
+    String createNodeWalletAddress,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    var signed = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('collect'),
+        parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress)],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signed, include0x: true, padToEvenLength: true);
   }
 
   Future<bool> delete(String password) async {
