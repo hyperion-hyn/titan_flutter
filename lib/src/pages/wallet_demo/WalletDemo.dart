@@ -252,6 +252,7 @@ class _WalletDemoState extends State<WalletDemo> {
               var wallets = await WalletUtil.scanWallets();
               if (wallets.length > 0) {
                 var wallet0 = wallets[0];
+                var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
 
                 ///创建节点合约的钱包地址
                 var createNodeWalletAddress = wallet0.getEthAccount().address;
@@ -259,7 +260,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 var signedHex = await wallet0.signCollectMap3Node(
                   createNodeWalletAddress: createNodeWalletAddress,
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
-                  gasLimit: 50000,
+                  gasLimit: gasLimit,
                   password: 'my_password',
                 );
                 var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
