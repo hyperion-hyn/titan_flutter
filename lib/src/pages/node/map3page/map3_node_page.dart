@@ -42,8 +42,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: HexColor("#0d4285"),
-//      color: HexColor("#161443"),
+      color: Color(0xff194772),
       child: LoadDataContainer(
         bloc: loadDataBloc,
         onRefresh: () async {},
@@ -90,7 +89,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
                       "全球已有超过200个地图服务节点为海伯利安地图提供稳定可靠的地图服务",
-                      style: TextStyles.textCfffS12,
+                      style: TextStyle(fontSize: 12, color: Colors.white60),
                     ),
                   ))
             ],
@@ -99,25 +98,25 @@ class _Map3NodeState extends State<Map3NodePage> {
         Card(
           color: Colors.white54,
           margin:
-              const EdgeInsets.only(left: 5.0, right: 5, top: 10, bottom: 10),
+              const EdgeInsets.only(left: 8.0, right: 8, top: 16, bottom: 16),
 //          padding: const EdgeInsets.only(left:10.0,right: 10,top: 5,bottom: 5),
           child: Padding(
             padding:
-                const EdgeInsets.only(left: 10.0, right: 10, top: 5, bottom: 5),
+                const EdgeInsets.only(left: 8.0, right: 8, top: 8, bottom: 8),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
+                    ClipRRect(
                       child: Image.asset(
                         "res/drawable/ic_map3_node_item.png",
                         width: 80,
                         height: 80,
                         fit:BoxFit.cover
                       ),
+                      borderRadius: BorderRadius.circular(4.0),
                     ),
+                    SizedBox(width: 16),
                     Flexible(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,8 +125,8 @@ class _Map3NodeState extends State<Map3NodePage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Expanded(
-                                  child: Text("MAP3节点",
-                                      style: TextStyles.textCfffS14)),
+                                  child: Text("MAP3节点(V0.8)",
+                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white))),
                               InkWell(
                                 onTap: (){
                                   String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
@@ -143,7 +142,7 @@ class _Map3NodeState extends State<Map3NodePage> {
 //                                          )));
                                 },
                                 child: Text("开通教程", style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     color: Colors.lightGreenAccent,
                                     decoration: TextDecoration.underline)),
                               )
@@ -151,10 +150,10 @@ class _Map3NodeState extends State<Map3NodePage> {
                           ),
                           Padding(
                             padding:
-                                const EdgeInsets.only(top: 10.0, bottom: 10),
+                                const EdgeInsets.only(top: 8.0, bottom: 8),
                             child: Text(
                                 "    抵押一个map3节点，你就会有权限开通一个map3服务节点，同时获得节点收益。",
-                                style: TextStyles.textCfffS14),
+                                style: TextStyle(fontSize: 13, color: Colors.white)),
                           ),
                         ],
                       ),
@@ -166,7 +165,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                   onPressed: () {
                     Application.router.navigateTo(context,Routes.map3node_product_list);
                   },
-                  child: Text("创建节点抵押合约", style: TextStyles.textC26ac29S14),
+                  child: Text("创建合约", style: TextStyles.textC26ac29S14),
                 )
               ],
             ),

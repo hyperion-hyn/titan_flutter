@@ -70,9 +70,9 @@ class SupportedTokens {
       symbol: 'HYN');
 
   static const HYN_LOCAL = const AssetToken(
-      name: 'Hyperion ROPSTEN',
+      name: 'Hyperion LOCAL',
       decimals: 18,
-      contractAddress: '0x05D9c03Fd700B0fc3bD10ef4Ac66d343ff9E69D7',
+      contractAddress: '0x379B3086759cb622298D42b82DA99afaB491D66B',
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
 

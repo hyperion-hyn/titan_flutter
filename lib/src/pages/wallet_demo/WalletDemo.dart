@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -71,7 +72,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 logger.i('请先切换到内外网络');
               } else {
                 final client = WalletUtil.getWeb3Client();
-                const String privateKey = '80fbdcc3f242f533aa4609bdcc7f17da5dcdd89cdc593fea6bc453e2db561f72';
+                const String privateKey = 'c06ce0ecee633c3f685516423873e6a77ae3ab04057bf33891729b3cd5110707';
                 final credentials = await client.credentialsFromPrivateKey(privateKey);
 
                 final address = await credentials.extractAddress();
@@ -96,7 +97,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   logger.i('ETH交易已提交，交易hash $txHash');
 
                   var hynErc20Contract = WalletUtil.getHynErc20Contract(SupportedTokens.HYN_LOCAL.contractAddress);
-                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 3000000);//三十万
+                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 300000); //三十万
                   txHash = await client.sendTransaction(
                     credentials,
                     Transaction.callContract(
@@ -119,7 +120,6 @@ class _WalletDemoState extends State<WalletDemo> {
               var wallets = await WalletUtil.scanWallets();
               if (wallets.length > 0) {
                 var wallet0 = wallets[0];
-                var credentials = await wallet0.getCredentials('my_password');
                 final client = WalletUtil.getWeb3Client();
                 var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
 
@@ -137,31 +137,29 @@ class _WalletDemoState extends State<WalletDemo> {
                 var wallet0 = wallets[0];
 
                 var maxStakingAmount = 1000000; //一百万
-                var myStaking = 0.2 * maxStakingAmount; //最小抵押量
-                var credentials = await wallet0.getCredentials('my_password');
-                final client = WalletUtil.getWeb3Client();
+                var myStaking = 0.4 * maxStakingAmount; //最小抵押量
                 var erc20ContractAddress = wallet0.getEthAccount().contractAssetTokens[0].contractAddress;
-                var erc20Contract = WalletUtil.getHynErc20Contract(erc20ContractAddress);
                 var approveToAddress = WalletConfig.map3ContractAddress;
-                var signed = await client.signTransaction(
-                  credentials,
-                  Transaction.callContract(
-                    contract: erc20Contract,
-                    function: erc20Contract.function('approve'),
-                    parameters: [
-                      EthereumAddress.fromHex(approveToAddress),
-                      ConvertTokenUnit.etherToWei(etherDouble: myStaking)
-                    ],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: 500000,
-                  ),
-                  fetchChainIdFromNetworkId: true,
-                );
-                var ret = await WalletUtil.postToEthereumNetwork(
-                    method: 'eth_sendRawTransaction',
-                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+                try {
+                  var signedHex = await wallet0.signApproveErc20Token(
+                      contractAddress: erc20ContractAddress,
+                      approveToAddress: approveToAddress,
+                      amount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+                      password: 'my_password',
+                      gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
+                      gasLimit: 50000);
+                  var ret =
+                      await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
-                logger.i('hyn approve, result: $ret');
+                  logger.i('hyn approve, result: $ret');
+                } catch (e) {
+                  logger.e(e);
+                  if (e is PlatformException) {
+                    if (e.code == PlatformErrorCode.PASSWORD_WRONG) {
+                      Fluttertoast.showToast(msg: '密码错误');
+                    }
+                  }
+                }
               }
             },
             child: Text('hyn approve'),
@@ -173,29 +171,49 @@ class _WalletDemoState extends State<WalletDemo> {
               var wallets = await WalletUtil.scanWallets();
               if (wallets.length > 0) {
                 var wallet0 = wallets[0];
-                var credentials = await wallet0.getCredentials('my_password');
-                final client = WalletUtil.getWeb3Client();
-                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
 
                 var maxStakingAmount = 1000000; //一百万
                 var myStaking = 0.2 * maxStakingAmount; //最小抵押量
-                var durationType = 0; //0: 1月， 1: 3月， 2: 6月
+                int durationType = 0; //0: 1月， 1: 3月， 2: 6月
                 var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
+//
+                var signedHex;
 
-                var signed = await client.signTransaction(
-                  credentials,
-                  Transaction.callContract(
-                    contract: map3Contract,
-                    function: map3Contract.function('createNode'),
-                    parameters: [ConvertTokenUnit.etherToWei(etherDouble: myStaking), BigInt.from(durationType)],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: gasLimit,
-                  ),
-                  fetchChainIdFromNetworkId: true,
+//                var credentials = await wallet0.getCredentials('my_password');
+//                final client = WalletUtil.getWeb3Client();
+//                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+//                var signed = await client.signTransaction(
+//                  credentials,
+//                  Transaction.callContract(
+//                    contract: map3Contract,
+//                    function: map3Contract.function('createNode'),
+//                    parameters: [
+//                      ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+//                      BigInt.from(durationType),
+//                      hexToBytes('0x75c452bab9f8a838f6880290d537867adf0b7d744edba34806cb3c9455517435'),
+//                      hexToBytes('0xe5dede8ce87e38149f1e8df57da67d43d12a27f61d11d7f6d14ebbb6132a850d'),
+//                    ],
+//                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+//                    maxGas: gasLimit,
+//                  ),
+//                  fetchChainIdFromNetworkId: true,
+//                );
+//                signedHex = bytesToHex(signed, include0x: true, padToEvenLength: true);
+//                logger.i('xxx 1 $signedHex');
+//                var ret = await WalletUtil.postToEthereumNetwork(
+//                    method: 'eth_sendRawTransaction',
+//                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+
+                signedHex = await wallet0.signCreateMap3Node(
+                  stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+                  type: durationType,
+                  firstHalfPubKey: '0x75c452bab9f8a838f6880290d537867adf0b7d744edba34806cb3c9455517435',
+                  secondHalfPubKey: '0xe5dede8ce87e38149f1e8df57da67d43d12a27f61d11d7f6d14ebbb6132a850d',
+                  gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
+                  gasLimit: gasLimit,
+                  password: 'my_password',
                 );
-                var ret = await WalletUtil.postToEthereumNetwork(
-                    method: 'eth_sendRawTransaction',
-                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+                var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
                 logger.i('map3 createNode, result: $ret');
               }
@@ -211,33 +229,18 @@ class _WalletDemoState extends State<WalletDemo> {
               if (wallets.length > 0) {
                 var wallet0 = wallets[0];
 
-                ///创建节点合约的钱包地址
-                var createNodeWalletAddress = wallet0.getEthAccount().address;
-
-                var credentials = await wallet0.getCredentials('my_password');
-                final client = WalletUtil.getWeb3Client();
-                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
-
+                var createNodeWalletAddress = wallet0.getEthAccount().address; //创建节点合约的钱包地址
                 double myStaking = 100000; //我要抵押的量
                 var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
 
-                var signed = await client.signTransaction(
-                  credentials,
-                  Transaction.callContract(
-                    contract: map3Contract,
-                    function: map3Contract.function('delegate'),
-                    parameters: [
-                      EthereumAddress.fromHex(createNodeWalletAddress),
-                      ConvertTokenUnit.etherToWei(etherDouble: myStaking)
-                    ],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: gasLimit,
-                  ),
-                  fetchChainIdFromNetworkId: true,
+                var signedHex = await wallet0.signDelegateMap3Node(
+                  createNodeWalletAddress: createNodeWalletAddress,
+                  stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+                  gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
+                  gasLimit: gasLimit,
+                  password: 'my_password',
                 );
-                var ret = await WalletUtil.postToEthereumNetwork(
-                    method: 'eth_sendRawTransaction',
-                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+                var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
                 logger.i('map3 delegate, result: $ret');
               }
@@ -252,145 +255,19 @@ class _WalletDemoState extends State<WalletDemo> {
 
                 ///创建节点合约的钱包地址
                 var createNodeWalletAddress = wallet0.getEthAccount().address;
-                var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
 
-                var credentials = await wallet0.getCredentials('my_password');
-                final client = WalletUtil.getWeb3Client();
-                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
-
-                var signed = await client.signTransaction(
-                  credentials,
-                  Transaction.callContract(
-                    contract: map3Contract,
-                    function: map3Contract.function('collect'),
-                    parameters: [EthereumAddress.fromHex(createNodeWalletAddress)],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: gasLimit,
-                  ),
-                  fetchChainIdFromNetworkId: true,
+                var signedHex = await wallet0.signCollectMap3Node(
+                  createNodeWalletAddress: createNodeWalletAddress,
+                  gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
+                  gasLimit: 50000,
+                  password: 'my_password',
                 );
-                var ret = await WalletUtil.postToEthereumNetwork(
-                    method: 'eth_sendRawTransaction',
-                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
+                var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
                 logger.i('map3 collect, result: $ret');
               }
             },
             child: Text('map3提币'),
-          ),
-          Divider(
-            height: 16,
-          ),
-          RaisedButton(
-            onPressed: () async {
-              var apiUrl = "https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"; //Replace with your API
-
-              var httpClient = Client();
-              var ethClient = new Web3Client(apiUrl, httpClient);
-//              EtherAmount balance = await ethClient.getBalance(
-//                  EthereumAddress.fromHex(
-//                      '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0'));
-//              var ret = balance.getInWei;
-//              var w = Convert.weiToNum(ret, 18);
-//              print("balance is $w ${balance.getValueInUnit(EtherUnit.ether)}");
-
-              final abiCode = await DefaultAssetBundle.of(context).loadString("res/eth/hyn_abi.json");
-              final contract = DeployedContract(ContractAbi.fromJson(abiCode, 'HYN'),
-                  EthereumAddress.fromHex('0xaebbada2bece10c84cbeac637c438cb63e1446c9'));
-              final balanceFun = contract.function('balanceOf');
-//              final balanceHyn = await ethClient.call(
-//                  contract: contract,
-//                  function: balanceFun,
-//                  params: [
-//                    EthereumAddress.fromHex(
-//                        '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0')
-//                  ]);
-//              print(balanceHyn);
-//              print('hyn balance is: ${Convert.weiToNum(balanceHyn.first)}');
-
-//              ethClient.getGasPrice();
-
-//              Uint8List getBalanceFunAbi = balanceFun.encodeCall([
-//                EthereumAddress.fromHex(
-//                    '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0')
-//              ]);
-//              print(bytesToHex(getBalanceFunAbi));
-
-              final transferFun = contract.function('transfer');
-              Uint8List transferFunAbi = transferFun.encodeCall([
-                EthereumAddress.fromHex('0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7'),
-                ConvertTokenUnit.numToWei(10)
-              ]);
-
-              print(
-                  'Convert.numToWei(1) ${ConvertTokenUnit.numToWei(1)}, ${bytesToHex(transferFunAbi, include0x: true)}');
-
-              var response = await HttpCore.instance.post(apiUrl,
-                  params: {"jsonrpc": "2.0", "method": "eth_gasPrice", "params": [], "id": 1},
-                  options: RequestOptions(contentType: Headers.jsonContentType));
-
-              if (response['result'] != null) {
-//                logger.i(response['result']);
-                String gasPriceHex = response['result'];
-                BigInt gasPrice = hexToInt(gasPriceHex);
-                print('gasPrice is $gasPrice');
-
-                var estimateGasOfHynResponse = await HttpCore.instance.post(apiUrl,
-                    params: {
-                      "jsonrpc": "2.0",
-                      "method": "eth_estimateGas",
-                      "params": [
-                        {
-                          'from': '0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7',
-                          'to': '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0',
-                          'gasPrice': '0x${gasPrice.toRadixString(16)}',
-                          'data': bytesToHex(transferFunAbi, include0x: true)
-                        }
-                      ],
-                      "id": 2
-                    },
-                    options: RequestOptions(contentType: Headers.jsonContentType));
-
-                if (estimateGasOfHynResponse['result'] != null) {
-                  var amountUse = hexToInt(estimateGasOfHynResponse['result']);
-                  var allWei = amountUse * gasPrice;
-                  var us = ConvertTokenUnit.weiToDecimal(allWei) * Decimal.parse('200');
-                  logger.i('hyn fee $us, wei $allWei');
-                } else {
-                  logger.e(estimateGasOfHynResponse['error']);
-                }
-
-                var tValue = '0x${ConvertTokenUnit.etherToWei(etherDouble: 10.3).toRadixString(16)}';
-//                var tValue = '0x9184e72a';
-                print('value $tValue, gasPrice: 0x${gasPrice.toRadixString(16)}}');
-                var estimateGasOfEthResponse = await HttpCore.instance.post(apiUrl,
-                    params: {
-                      "jsonrpc": "2.0",
-                      "method": "eth_estimateGas",
-                      "params": [
-                        {
-                          'from': '0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7',
-                          'to': '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0',
-                          'gasPrice': '0x${gasPrice.toRadixString(16)}',
-                          'value': tValue
-                        }
-                      ],
-                      "id": 3
-                    },
-                    options: RequestOptions(contentType: Headers.jsonContentType));
-                if (estimateGasOfEthResponse['result'] != null) {
-                  var amountUse = hexToInt(estimateGasOfEthResponse['result']);
-                  var allWei = amountUse * gasPrice;
-                  var us = ConvertTokenUnit.weiToDecimal(allWei) * Decimal.parse('200');
-                  logger.i('eth fee $us');
-                } else {
-                  logger.e(estimateGasOfEthResponse['error']);
-                }
-              } else {
-                logger.e(response['error']);
-              }
-            },
-            child: Text('dart获取余额'),
           ),
           Divider(
             height: 16,
@@ -407,6 +284,7 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var mnemonic =
                   "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal";
+//              var mnemonic = 'rug doctor thing reform minor sunset night raven hungry rival false language';
               if (!bip39.validateMnemonic(mnemonic)) {
                 Fluttertoast.showToast(msg: '不是合法的助记词');
                 return;
@@ -427,8 +305,9 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
 //              var prvKey = "0xafeefca74d9a325cf1d6b6911d61a65c32afa8e02bd5e78e2e4ac2910bab45f5";
               var prvKey = "0xab4accc9310d90a61fc354d8f353bca4a2b3c0590685d3eb82d0216af3badddc";
+//              var prvKey = "92e06b7043c2edc07de56fd1f22764d9d7927a386e6efc0632f74a1141291ec6";
 //              var prvKey = "0x311add4073c265380aafab346b31bb0a22ca0ad7b6f544cb4a16b88f864526a3";  //moo
-              var walletName = "我的密钥钱包1";
+              var walletName = "我的私钥钱包1";
               var password = 'my_password';
               var wallet = await WalletUtil.storePrivateKey(name: walletName, password: password, prvKeyHex: prvKey);
               if (wallet != null) {
@@ -688,23 +567,27 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               var toAddress = '0xe7147924489DbA4b6eF71CFC3b0615eD74C34c39';
-              var erc20contract = '0xaebbada2bece10c84cbeac637c438cb63e1446c9';
-              var decimals = 18;
-              var amount = 13.45;
+              var amount = 0.0; //13.45;
 
               var wallets = await WalletUtil.scanWallets();
               if (wallets.isNotEmpty) {
                 var wallet = wallets.first;
-                var erc20FunAbi = WalletUtil.getErc20FuncAbiHex(
-                    erc20Address: erc20contract,
-                    funName: 'transfer',
-                    params: [EthereumAddress.fromHex(toAddress), ConvertTokenUnit.etherToWei(etherDouble: amount)]);
+                var createNodeWalletAddress = wallet.getEthAccount().address; //创建节点合约的钱包地址
+                double myStaking = 100000; //我要抵押的量
+                var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
+
+                var funAbi = WalletUtil.getMap3FuncAbiHex(
+                    contractAddress: WalletConfig.map3ContractAddress,
+                    funName: 'delegate',
+                    params: [EthereumAddress.fromHex(createNodeWalletAddress), ConvertTokenUnit.etherToWei(etherDouble: myStaking)]);
                 var ret = await wallet.estimateGasPrice(
-                  toAddress: '0xe7147924489DbA4b6eF71CFC3b0615eD74C34c39',
+                  toAddress: WalletConfig.map3ContractAddress,
                   value: ConvertTokenUnit.etherToWei(etherDouble: amount),
-                  gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
-                  data: erc20FunAbi,
+                  gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
+                  gasLimit: BigInt.from(gasLimit),
+                  data: funAbi,
                 );
+                logger.i('estimateGasPrice $ret');
               } else {
                 print('无钱包');
               }

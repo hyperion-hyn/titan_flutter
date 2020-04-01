@@ -84,3 +84,8 @@ class RouteProfile {
   static final String walking = 'walking';
   static final String cycling = 'cycling';
 }
+
+class PlatformErrorCode {
+  static const String PASSWORD_WRONG = '1';
+  static const String PARAMETERS_WRONG = '2';
+}

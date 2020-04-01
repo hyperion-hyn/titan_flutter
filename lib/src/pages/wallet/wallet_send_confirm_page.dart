@@ -395,47 +395,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 //    _getGasFee();
   }
 
-  Future _getGasFee() async {
-    setState(() {
-      isLoadingGasFee = true;
-    });
-    var wallet = activatedWallet.wallet;
-    var toAddress = widget.receiverAddress;
-    var contract = widget.coinVo.contractAddress;
-//    var decimals = widget.coinVo.decimals;
-    var amount = widget.transferAmount;
-
-    var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ??
-        0; // activatedQuoteSign.quoteVo.price;
-
-    var erc20FunAbi;
-
-    if (widget.coinVo.contractAddress != null) {
-      erc20FunAbi = WalletUtil.getErc20FuncAbiHex(
-          erc20Address: contract,
-          funName: 'transfer',
-          params: [web3.EthereumAddress.fromHex(toAddress), ConvertTokenUnit.etherToWei(etherDouble: amount)]);
-    }
-
-    var ret = await wallet.estimateGasPrice(
-      toAddress: toAddress,
-      value: ConvertTokenUnit.etherToWei(etherDouble: amount),
-      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
-      data: erc20FunAbi,
-    );
-
-    ethFee = ConvertTokenUnit.weiToEther(weiBigInt: ret).toDouble();
-    currencyFee = (Decimal.parse(ethFee.toString()) * Decimal.parse(ethQuotePrice.toString())).toDouble();
-
-    logger.i(
-        '费率是 $ethFee eth, eth price is: $ethQuotePrice, ${ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(EthereumConst.ERC20_GAS_LIMIT)).toStringAsFixed(0)))}');
-    logger.i('费率是 $currencyFee usd');
-
-    setState(() {
-      isLoadingGasFee = false;
-    });
-  }
-
   Future _transfer() async {
     showModalBottomSheet(
         isScrollControlled: true,
