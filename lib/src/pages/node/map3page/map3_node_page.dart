@@ -17,7 +17,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:video_player/video_player.dart';
 
-import 'map3_node_create_join_contract_page.dart';
+import 'map3_node_create_contract_page.dart';
 
 class Map3NodePage extends StatefulWidget {
   @override
@@ -45,8 +45,8 @@ class _Map3NodeState extends State<Map3NodePage> {
             });
           });
 
-//    loadDataBloc.add(LoadingEvent());
-    getNetworkData();
+    loadDataBloc.add(LoadingEvent());
+//    getNetworkData();
     super.initState();
   }
 
@@ -57,9 +57,9 @@ class _Map3NodeState extends State<Map3NodePage> {
 //      color: HexColor("#161443"),
       child: LoadDataContainer(
         bloc: loadDataBloc,
-//        onLoadData: () async {
-//          getNetworkData();
-//        },
+        onLoadData: () async {
+          getNetworkData();
+        },
         onRefresh: () {
           getNetworkData();
         },
@@ -304,6 +304,82 @@ class _Map3NodeState extends State<Map3NodePage> {
             Row(
               children: <Widget>[
                 Expanded(
+                  flex: 4,
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}", style: TextStyles.textCfffS12),
+                                  ],
+                                )),
+                          ),
+                          Expanded(
+                            child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text("${contractNodeItem.contract.duration}月", style: TextStyles.textCfffS12),
+                                  ],
+                                )),
+                          ),
+                          Expanded(
+                            child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text("${FormatUtil.formatPercent(contractNodeItem.contract.commission)}", style: TextStyles.textCfffS12),
+                                  ],
+                                )),
+                          ),
+                      ],),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text("年化奖励", style: TextStyles.textCfffS12)
+                                  ],
+                                )),
+                          ),
+                          Expanded(
+                            child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text("合约周期", style: TextStyles.textCfffS12)
+                                  ],
+                                )),
+                          ),
+                          Expanded(
+                            child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text("管理费", style: TextStyles.textCfffS12)
+                                  ],
+                                )),
+                          ),
+                        ],)
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: MaterialButton(
+                    color: Colors.white,
+                    onPressed: () {
+                      Application.router.navigateTo(context, Routes.map3node_join_contract_page
+                          + "?contractId=${contractNodeItem.id}");
+                    },
+                    child: Text("参与", style: TextStyles.textC26ac29S12),
+                  ),
+                ),
+              ],
+            )
+            /*Row(
+              children: <Widget>[
+                Expanded(
                   child: Center(
                       child: Column(
                     children: <Widget>[
@@ -337,13 +413,15 @@ class _Map3NodeState extends State<Map3NodePage> {
                       child: MaterialButton(
                         color: Colors.white,
                         onPressed: () {
-                          Application.router.navigateTo(context, Routes.map3node_create_join_contract_page + "?pageType=${Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_JOIN}");
+                          Application.router.navigateTo(context, Routes.map3node_create_join_contract_page
+                              + "?pageType=${Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_JOIN}"
+                          + "&contractId=${contractNodeItem.id}");
                         },
                         child: Text("参与", style: TextStyles.textC26ac29S12),
                       )),
                 )
               ],
-            )
+            )*/
           ],
         ),
       ),

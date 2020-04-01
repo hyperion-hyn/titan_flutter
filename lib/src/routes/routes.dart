@@ -36,7 +36,8 @@ class Routes {
   //map3node
   static const String map3node_product_list = '/map3node/product_list';
   static const String map3node_create_wallet = '/map3node/create_wallet';
-  static const String map3node_create_join_contract_page = '/map3node/create_join_contract_page';
+  static const String map3node_create_contract_page = '/map3node/create_contract_page';
+  static const String map3node_join_contract_page = '/map3node/join_contract_page';
   static const String map3node_send_confirm_page = '/map3node/send_confirm_page';
   static const String map3node_broadcase_success_page = '/map3node/broadcase_success_page';
   static String createOrImportWalletEntryRouteName;
@@ -88,7 +89,8 @@ class Routes {
     //map3node
     router.define(map3node_product_list, handler: map3NodeProductListHandler, transitionType: TransitionType.inFromRight);
     router.define(map3node_create_wallet, handler: map3NodeCreateWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_create_join_contract_page, handler: map3NodeCreateJoinContractHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_create_contract_page, handler: map3NodeCreateContractHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_join_contract_page, handler: map3NodeJoinContractHandler, transitionType: TransitionType.inFromRight);
     router.define(map3node_send_confirm_page, handler: map3NodeSendConfirmHandler, transitionType: TransitionType.inFromRight);
     router.define(map3node_broadcase_success_page, handler: map3NodeBroadcaseSuccessHandler, transitionType: TransitionType.inFromRight);
   }

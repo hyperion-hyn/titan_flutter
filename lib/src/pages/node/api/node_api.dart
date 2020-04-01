@@ -59,36 +59,36 @@ class NodeApi {
     return contractsList;
   }
 
-  Future<ContractNodeItem> getContractItem() async {
+  Future<ContractNodeItem> getContractItem(String contractId) async {
     var nodeItem = await HttpCore.instance
-        .getEntity("contracts/detail/1", EntityFactory<NodeItem>((data){
+        .getEntity("contracts/detail/$contractId", EntityFactory<NodeItem>((data){
       return NodeItem.fromJson(data);
     }));
 
     return ContractNodeItem.onlyNodeItem(nodeItem);
   }
 
-  Future<ContractNodeItem> getContractInstanceItem() async {
+  Future<ContractNodeItem> getContractInstanceItem(String contractId) async {
     var contractsItem = await HttpCore.instance
-        .getEntity("instances/detail/8", EntityFactory<ContractNodeItem>((data){
+        .getEntity("instances/detail/$contractId", EntityFactory<ContractNodeItem>((data){
       return ContractNodeItem.fromJson(data);
     }));
 
     return contractsItem;
   }
 
-  Future<String> startContractInstance(StartJoinInstance startJoinInstance) async {
+  Future<String> startContractInstance(String contractId,StartJoinInstance startJoinInstance) async {
     String postData = json.encode(startJoinInstance.toJson());
     var data = await HttpCore.instance
-        .post("contracts/create/1", data: postData,
+        .post("contracts/create/$contractId", data: postData,
         options: RequestOptions(contentType: "application/json"));
     return data['msg'];
   }
 
-  Future<String> joinContractInstance(StartJoinInstance startJoinInstance) async {
+  Future<String> joinContractInstance(String contractId,StartJoinInstance startJoinInstance) async {
     String postData = json.encode(startJoinInstance.toJson());
     var data = await HttpCore.instance
-        .post("instances/delegate/8", data: postData,
+        .post("instances/delegate/$contractId", data: postData,
         options: RequestOptions(contentType: "application/json"));
     return data['msg'];
   }
