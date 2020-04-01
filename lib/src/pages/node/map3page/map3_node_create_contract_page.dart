@@ -17,20 +17,21 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
-class Map3NodeCreateJoinContractPage extends StatefulWidget {
+class Map3NodeCreateContractPage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
   static const String CONTRACT_PAGE_TYPE_JOIN = "contract_page_type_join";
-  String pageType;
+  String pageType = CONTRACT_PAGE_TYPE_CREATE;
+  String contractId;
 
-  Map3NodeCreateJoinContractPage(this.pageType);
+  Map3NodeCreateContractPage(this.contractId);
 
   @override
-  _Map3NodeCreateJoinContractState createState() =>
-      new _Map3NodeCreateJoinContractState();
+  _Map3NodeCreateContractState createState() =>
+      new _Map3NodeCreateContractState();
 }
 
-class _Map3NodeCreateJoinContractState
-    extends State<Map3NodeCreateJoinContractPage> {
+class _Map3NodeCreateContractState
+    extends State<Map3NodeCreateContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   String pageTitle = "";
@@ -44,13 +45,8 @@ class _Map3NodeCreateJoinContractState
 
   @override
   void initState() {
-    if (widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-      pageTitle = "创建Map3抵押合约";
-      managerTitle = "获得管理费（HYN）：";
-    } else {
-      pageTitle = "参与Map3节点抵押";
-      managerTitle = "应付管理费（HYN）：";
-    }
+    pageTitle = "创建Map3抵押合约";
+    managerTitle = "获得管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
     _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
@@ -73,11 +69,7 @@ class _Map3NodeCreateJoinContractState
 
   void getNetworkData() async {
     try{
-      if (widget.pageType == Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-        contractNodeItem = await _nodeApi.getContractItem();
-      }else{
-        contractNodeItem = await _nodeApi.getContractInstanceItem();
-      }
+      contractNodeItem = await _nodeApi.getContractItem(widget.contractId);
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
           currentState = null;
@@ -161,9 +153,6 @@ class _Map3NodeCreateJoinContractState
         height: 5,
         color: DefaultColors.colorf5f5f5,
       ),
-      if (widget.pageType ==
-          Map3NodeCreateJoinContractPage.CONTRACT_PAGE_TYPE_JOIN)
-        startAccount(),
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Text("投入数量  （$walletName钱包HYN余额 ${FormatUtil.formatNumDecimal(balance)}）", style: TextStyles.textC333S14),
@@ -201,14 +190,14 @@ class _Map3NodeCreateJoinContractState
                           decoration: InputDecoration(
                             hintStyle: TextStyles.textC9b9b9bS14,
                             labelStyle: TextStyles.textC333S14,
-                            hintText: "投入量，不少于20,000",
+                            hintText: "投入量，不少于${FormatUtil.formatNumDecimal(minTotal)}",
                             border: OutlineInputBorder(),
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 10),
                           ),
                           validator: (textStr) {
                             return textStr.length != 0 &&
-                                    int.parse(textStr) > 20000
+                                    int.parse(textStr) >= minTotal
                                 ? null
                                 : "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
                           }),
@@ -328,7 +317,9 @@ class _Map3NodeCreateJoinContractState
                     context,
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}");
+                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}" +
+                "&pageType=${widget.pageType}" +
+                "&contractId=${widget.contractId}");
               });
             }),
       )
@@ -370,5 +361,4 @@ class _Map3NodeCreateJoinContractState
     );
   }
 
-  int _getManagerPrice(int joinPrice) {}
 }

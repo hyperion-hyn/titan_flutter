@@ -16,6 +16,8 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -27,13 +29,17 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
 
+import 'map3_node_create_contract_page.dart';
+
 
 class Map3NodeSendConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final double transferAmount;
   final String receiverAddress;
+  final String pageType;
+  final String contractId;
 
-  Map3NodeSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress)
+  Map3NodeSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress, this.pageType, this.contractId)
       : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -53,6 +59,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
+  NodeApi _nodeApi = NodeApi();
 
   @override
   void onCreated() {
@@ -407,6 +414,17 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 //        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
 
 
+        var startJoin = StartJoinInstance(widget.coinVo.contractAddress,
+            activatedWallet.wallet.keystore.name, widget.transferAmount,
+            "NJFOLKFLANLF90RJK32JILFJRNWGJRIONGOPRNEWGJRNJVNJRENJKLVNJRJENWGNRLVJRENWJEORNLGJKNSRJKVNJRKSNRJKNVJKRENVSJKRNJVKNRENVJKSNRVKJRNEJKVJJREWNVKEJNJKRNEKJWNVJKRNJKVNIRWNRKJNGUOVHRUHB35HJGUONRKJFVNAKJRJGKJRNK");
+        String resultMsg = "";
+        if(widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
+          resultMsg = await _nodeApi.startContractInstance(widget.contractId,startJoin);
+          print("creat post result = $resultMsg");
+        }else{
+          resultMsg = await _nodeApi.joinContractInstance(widget.contractId,startJoin);
+          print("join post result = $resultMsg");
+        }
         Application.router.navigateTo(context,Routes.map3node_broadcase_success_page);
       } catch (_) {
         logger.e(_);

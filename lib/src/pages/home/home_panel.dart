@@ -9,6 +9,7 @@ import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/drag_tick.dart';
@@ -134,13 +135,21 @@ class HomePanelState extends State<HomePanel> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(4.0)),
                     onTap: () {
-                      Navigator.push(
+                      /*Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => WebViewContainer(
                                     initUrl: 'https://news.hyn.space/react-reduction/',
                                     title: S.of(context).map3_global_nodes,
-                                  )));
+                                  )));*/
+
+                      print('[Home_panel] -->focusArea， 数组展示');
+
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GlobalDataPage()));
+
                     },
                     child: Container(
                       decoration: BoxDecoration(

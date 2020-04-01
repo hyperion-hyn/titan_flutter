@@ -9,6 +9,7 @@ class SensorType {
   static const int GPS = -3;
   static const int GNSS = -4;
   static const int CELLULAR = -5;
+  static const int POI = -6;
 
   static String getScanImageName(int type) {
     var _imageName = "wifi";
@@ -58,11 +59,15 @@ class SensorType {
 //        name = S.of(globalContext).scan_name_start;
         name = '';
         break;
+
+      case POI:
+        name = "POI";
+        break;
     }
 
     return name;
   }
-  
+
   static String getTypeString(int type) {
     switch (type) {
       case WIFI:
@@ -84,6 +89,10 @@ class SensorType {
       case CELLULAR:
         {
           return "CELLULAR";
+        }
+      case POI:
+        {
+          return "POI";
         }
       default:
         {

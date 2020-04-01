@@ -88,7 +88,7 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
           }
           return Scaffold(
             body: Center(
-              child: Text('please set the root page!'),
+              //child: Text('please set the root page!'),
             ),
           );
         },
