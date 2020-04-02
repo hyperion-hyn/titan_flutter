@@ -72,7 +72,7 @@ class SupportedTokens {
   static const HYN_LOCAL = const AssetToken(
       name: 'Hyperion LOCAL',
       decimals: 18,
-      contractAddress: '0x379B3086759cb622298D42b82DA99afaB491D66B',
+      contractAddress: '0xbcA2Ee1FF8950EEdDc2B83193B249841D7bd3415',
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
 
