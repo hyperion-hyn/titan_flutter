@@ -68,55 +68,6 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              if (WalletConfig.netType != EthereumNetType.local) {
-                logger.i('请先切换到内外网络');
-              } else {
-                final client = WalletUtil.getWeb3Client();
-                const String privateKey = 'bbceb86983c2301f76ed4aa49eafed1beea70d4f1fea137890f436d1c31c41fb';
-                final credentials = await client.credentialsFromPrivateKey(privateKey);
-
-                final address = await credentials.extractAddress();
-                print(address.hexEip55);
-                print(await client.getBalance(address));
-
-                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-                if (activeWallet != null) {
-                  var toAddress = activeWallet.getEthAccount().address;
-                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 10); //.toRadixString(16);
-
-                  var txHash = await client.sendTransaction(
-                    credentials,
-                    Transaction(
-                      to: EthereumAddress.fromHex(toAddress),
-                      value: EtherAmount.inWei(amount),
-                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                      maxGas: EthereumConst.ETH_GAS_LIMIT,
-                    ),
-                    fetchChainIdFromNetworkId: true,
-                  );
-                  logger.i('ETH交易已提交，交易hash $txHash');
-
-                  var hynErc20Contract = WalletUtil.getHynErc20Contract(SupportedTokens.HYN_LOCAL.contractAddress);
-                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 300000); //三十万
-                  txHash = await client.sendTransaction(
-                    credentials,
-                    Transaction.callContract(
-                      contract: hynErc20Contract,
-                      function: hynErc20Contract.function('transfer'),
-                      parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
-                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                      maxGas: 500000,
-                    ),
-                    fetchChainIdFromNetworkId: true,
-                  );
-                  logger.i('HYN交易已提交，交易hash $txHash');
-                }
-              }
-            },
-            child: Text('从内网地址转账到本地钱包测试'),
-          ),
-          RaisedButton(
-            onPressed: () async {
               var wallets = await WalletUtil.scanWallets();
               if (wallets.length > 0) {
                 var wallet0 = wallets[0];
@@ -538,6 +489,84 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
+//              eth_getTransactionCount
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+              if (activeWallet != null) {
+//                getTransactionCount
+                final client = WalletUtil.getWeb3Client();
+                var ethAddress = activeWallet.getEthAccount().address;
+
+                var count =
+                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.genesis());
+                logger.i('genesis nonce is $count');
+
+                count =
+                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.current());
+                logger.i('current nonce is $count');
+
+                count =
+                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.pending());
+                logger.i('pending nonce is $count');
+              }
+            },
+            child: Text('查看nonce'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              if (WalletConfig.netType != EthereumNetType.local) {
+                logger.i('请先切换到内外网络');
+              } else {
+                final client = WalletUtil.getWeb3Client();
+                const String privateKey = 'bbceb86983c2301f76ed4aa49eafed1beea70d4f1fea137890f436d1c31c41fb';
+                final credentials = await client.credentialsFromPrivateKey(privateKey);
+
+                final address = await credentials.extractAddress();
+                print(address.hexEip55);
+                print(await client.getBalance(address));
+
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                if (activeWallet != null) {
+                  var toAddress = activeWallet.getEthAccount().address;
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 10); //.toRadixString(16);
+
+                  var count =
+                  await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55), atBlock: BlockNum.pending());
+
+                  var txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction(
+                      to: EthereumAddress.fromHex(toAddress),
+                      value: EtherAmount.inWei(amount),
+                      nonce: count,
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: EthereumConst.ETH_GAS_LIMIT,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  logger.i('ETH交易已提交，交易hash $txHash');
+
+                  var hynErc20Contract = WalletUtil.getHynErc20Contract(SupportedTokens.HYN_LOCAL.contractAddress);
+                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 300000); //三十万
+                  txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction.callContract(
+                      contract: hynErc20Contract,
+                      function: hynErc20Contract.function('transfer'),
+                      parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
+                      nonce: count + 1,
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: 500000,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  logger.i('HYN交易已提交，交易hash $txHash');
+                }
+              }
+            },
+            child: Text('从内网地址转账到本地钱包测试'),
+          ),
+          RaisedButton(
+            onPressed: () async {
               var wallets = await WalletUtil.scanWallets();
               for (var wallet in wallets) {
                 var balance;
@@ -580,7 +609,10 @@ class _WalletDemoState extends State<WalletDemo> {
                 var funAbi = WalletUtil.getMap3FuncAbiHex(
                     contractAddress: WalletConfig.map3ContractAddress,
                     funName: 'delegate',
-                    params: [EthereumAddress.fromHex(createNodeWalletAddress), ConvertTokenUnit.etherToWei(etherDouble: myStaking)]);
+                    params: [
+                      EthereumAddress.fromHex(createNodeWalletAddress),
+                      ConvertTokenUnit.etherToWei(etherDouble: myStaking)
+                    ]);
                 var ret = await wallet.estimateGasPrice(
                   toAddress: WalletConfig.map3ContractAddress,
                   value: ConvertTokenUnit.etherToWei(etherDouble: amount),
