@@ -155,6 +155,7 @@ class _WalletDemoState extends State<WalletDemo> {
 //                    method: 'eth_sendRawTransaction',
 //                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
 
+
                 signedHex = await wallet0.signCreateMap3Node(
                   stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
                   type: durationType,
@@ -173,9 +174,6 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              //请注意，要先 approve
-              logger.w('请注意，要先 approve');
-
               var wallets = await WalletUtil.scanWallets();
               if (wallets.length > 0) {
                 var wallet0 = wallets[0];
@@ -529,8 +527,8 @@ class _WalletDemoState extends State<WalletDemo> {
                   var toAddress = activeWallet.getEthAccount().address;
                   var amount = ConvertTokenUnit.etherToWei(etherDouble: 10); //.toRadixString(16);
 
-                  var count =
-                  await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55), atBlock: BlockNum.pending());
+                  var count = await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55),
+                      atBlock: BlockNum.pending());
 
                   var txHash = await client.sendTransaction(
                     credentials,

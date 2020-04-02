@@ -390,7 +390,8 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet> wit
 //      _contentScrollToZero(1);
       _animateSheetTo(_extent.minExtent);
     } else if (_InheritedUpdatePositionStateNotifier.shouldHide(context)) {
-      _extent._currentExtent.value = 0;
+//      _extent._currentExtent.value = 0;
+      _animateSheetTo(0);
     }
   }
 
