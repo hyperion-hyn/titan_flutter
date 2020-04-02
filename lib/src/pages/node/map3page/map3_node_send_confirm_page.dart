@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -38,8 +39,9 @@ class Map3NodeSendConfirmPage extends StatefulWidget {
   final String receiverAddress;
   final String pageType;
   final String contractId;
+  ContractNodeItem contractNodeItem;
 
-  Map3NodeSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress, this.pageType, this.contractId)
+  Map3NodeSendConfirmPage(String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress, this.pageType, this.contractId)
       : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -419,10 +421,11 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
             "NJFOLKFLANLF90RJK32JILFJRNWGJRIONGOPRNEWGJRNJVNJRENJKLVNJRJENWGNRLVJRENWJEORNLGJKNSRJKVNJRKSNRJKNVJKRENVSJKRNJVKNRENVJKSNRVKJRNEJKVJJREWNVKEJNJKRNEKJWNVJKRNJKVNIRWNRKJNGUOVHRUHB35HJGUONRKJFVNAKJRJGKJRNK");
         String resultMsg = "";
         if(widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-          resultMsg = await _nodeApi.startContractInstance(widget.contractId,startJoin);
+          resultMsg = await _nodeApi.startContractInstance(widget.contractNodeItem, activatedWallet, walletPassword, gasPrice.toInt(), widget.contractId, startJoin);
           print("creat post result = $resultMsg");
         }else{
-          resultMsg = await _nodeApi.joinContractInstance(widget.contractId,startJoin);
+          resultMsg = await _nodeApi.joinContractInstance(widget.contractNodeItem, activatedWallet, walletPassword, gasPrice.toInt(),
+              widget.contractNodeItem.owner, widget.contractId, startJoin);
           print("join post result = $resultMsg");
         }
         Application.router.navigateTo(context,Routes.map3node_broadcase_success_page);
@@ -450,79 +453,79 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     });
   }
 
-  Future _transfer() async {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      if (walletPassword == null) {
-        return;
-      }
+//  Future _transfer() async {
+//    showModalBottomSheet(
+//        isScrollControlled: true,
+//        context: context,
+//        builder: (BuildContext context) {
+//          return EnterWalletPasswordWidget();
+//        }).then((walletPassword) async {
+//      if (walletPassword == null) {
+//        return;
+//      }
+//
+//      try {
+//        setState(() {
+//          isTransferring = true;
+//        });
+//        var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+//        if (widget.coinVo.symbol == "ETH") {
+//          await _transferEth(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
+//        } else {
+//          await _transferErc20(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
+//        }
+//        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
+//
+//        Routes.popUntilCreateOrImportWalletEntryRoute(context);
+//      } catch (_) {
+//        logger.e(_);
+//        setState(() {
+//          isTransferring = false;
+//        });
+//        if (_ is PlatformException) {
+//          if (_.code == WalletError.PASSWORD_WRONG) {
+//            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+//          } else {
+//            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+//          }
+//        } else if (_ is RPCError) {
+//          if (_.errorCode == -32000) {
+//            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+//          } else {
+//            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+//          }
+//        } else {
+//          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+//        }
+//      }
+//    });
+//  }
 
-      try {
-        setState(() {
-          isTransferring = true;
-        });
-        var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-        if (widget.coinVo.symbol == "ETH") {
-          await _transferEth(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
-        } else {
-          await _transferErc20(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
-        }
-        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
-
-        Routes.popUntilCreateOrImportWalletEntryRoute(context);
-      } catch (_) {
-        logger.e(_);
-        setState(() {
-          isTransferring = false;
-        });
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
-      }
-    });
-  }
-
-  Future _transferEth(String password, double etherDouble, String toAddress, Wallet wallet) async {
-    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
-
-    final txHash = await wallet.sendEthTransaction(
-      password: password,
-      toAddress: toAddress,
-      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
-      value: amount,
-    );
-
-    logger.i('ETH transaction committed，txhash $txHash');
-  }
-
-  Future _transferErc20(String password, double etherDouble, String toAddress, Wallet wallet) async {
-    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
-    var contractAddress = widget.coinVo.contractAddress;
-
-    final txHash = await wallet.sendErc20Transaction(
-      contractAddress: contractAddress,
-      password: password,
-      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
-      value: amount,
-      toAddress: toAddress,
-    );
-
-    logger.i('HYN transaction committed，txhash $txHash ');
-  }
+//  Future _transferEth(String password, double etherDouble, String toAddress, Wallet wallet) async {
+//    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
+//
+//    final txHash = await wallet.sendEthTransaction(
+//      password: password,
+//      toAddress: toAddress,
+//      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
+//      value: amount,
+//    );
+//
+//    logger.i('ETH transaction committed，txhash $txHash');
+//  }
+//
+//  Future _transferErc20(String password, double etherDouble, String toAddress, Wallet wallet) async {
+//    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
+//    var contractAddress = widget.coinVo.contractAddress;
+//
+//    final txHash = await wallet.sendErc20Transaction(
+//      contractAddress: contractAddress,
+//      password: password,
+//      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
+//      value: amount,
+//      toAddress: toAddress,
+//    );
+//
+//    logger.i('HYN transaction committed，txhash $txHash ');
+//  }
 }

@@ -12,6 +12,8 @@ StartJoinInstance _$StartJoinInstanceFromJson(Map<String, dynamic> json) {
     json['name'] as String,
     json['amount'] as double,
     json['data'] as String,
+    approveData: json['approveData'] as String,
+    createData: json['createData'] as String,
   );
 }
 
@@ -21,4 +23,6 @@ Map<String, dynamic> _$StartJoinInstanceToJson(StartJoinInstance instance) =>
       'name': instance.name,
       'amount': instance.amount,
       'data': instance.data,
+      'approveData': instance.approveData,
+      'createData': instance.createData,
     };

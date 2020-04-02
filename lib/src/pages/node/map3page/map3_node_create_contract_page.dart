@@ -430,6 +430,7 @@ class _Map3NodeCreateContractState
                     context,
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+                        "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
                         "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}" +
                 "&pageType=${widget.pageType}" +
                 "&contractId=${widget.contractId}");
