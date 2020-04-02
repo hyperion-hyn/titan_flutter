@@ -357,36 +357,39 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       OnMapClickHandle onMapClickHandle;
       OnMapLongPressHandle onMapLongPressHandle;
       bool showCenterMarker = false;
-      if (state is FocusingDMapState) {
-        heavenModelList = state.dMapConfigModel?.heavenDataModelList;
-        onMapClickHandle = state.dMapConfigModel?.onMapClickHandle;
-        onMapLongPressHandle = state.dMapConfigModel?.onMapLongPressHandle;
-        showCenterMarker = state.dMapConfigModel?.showCenterMarker == true;
+      for(var st in _stateStack) {
+        if(st is FocusingDMapState) {
+          heavenModelList = st.dMapConfigModel?.heavenDataModelList;
+          onMapClickHandle = st.dMapConfigModel?.onMapClickHandle;
+          onMapLongPressHandle = st.dMapConfigModel?.onMapLongPressHandle;
+          showCenterMarker = st.dMapConfigModel?.showCenterMarker == true;
 
-        print('[scaffold_map] ---> dmap, begin...${state.dMapConfigModel.dMapName}');
+          print('[scaffold_map] ---> dmap, begin...${st.dMapConfigModel.dMapName}');
 
-        if (state.dMapConfigModel?.panelDraggable == true) {
-          draggable = true;
-        }
-
-        if (state.dMapConfigModel?.panelAnchorHeight != null) {
-          anchorHeight = state.dMapConfigModel?.panelAnchorHeight(context);
-        }
-
-        if (state.dMapConfigModel?.panelCollapsedHeight != null) {
-          collapsedHeight = state.dMapConfigModel?.panelCollapsedHeight(context);
-          initHeight = collapsedHeight;
-        }
-
-        //for dMap, always show sheet panel, for now mainly for share Encrypted location Share
-        if (panelBuilder == null &&
-            state.dMapConfigModel?.alwaysShowPanel == true &&
-            state.dMapConfigModel?.panelBuilder != null) {
-          panelBuilder = (context, controller) => state.dMapConfigModel.panelBuilder(context, controller, null);
-          if (state.dMapConfigModel?.panelPaddingTop != null) {
-            topPadding = state.dMapConfigModel?.panelPaddingTop(context);
+          if (st.dMapConfigModel?.panelDraggable == true) {
+            draggable = true;
           }
-          initHeight = collapsedHeight;
+
+          if (st.dMapConfigModel?.panelAnchorHeight != null) {
+            anchorHeight = st.dMapConfigModel?.panelAnchorHeight(context);
+          }
+
+          if (st.dMapConfigModel?.panelCollapsedHeight != null) {
+            collapsedHeight = st.dMapConfigModel?.panelCollapsedHeight(context);
+            initHeight = collapsedHeight;
+          }
+
+          //for dMap, always show sheet panel, for now mainly for share Encrypted location Share
+          if (panelBuilder == null &&
+              st.dMapConfigModel?.alwaysShowPanel == true &&
+              st.dMapConfigModel?.panelBuilder != null) {
+            panelBuilder = (context, controller) => st.dMapConfigModel.panelBuilder(context, controller, null);
+            if (st.dMapConfigModel?.panelPaddingTop != null) {
+              topPadding = st.dMapConfigModel?.panelPaddingTop(context);
+            }
+            initHeight = collapsedHeight;
+          }
+          break;
         }
       }
 
