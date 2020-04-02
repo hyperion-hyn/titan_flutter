@@ -278,6 +278,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           panelBuilder = (context, controller) => FailPanel(
                 scrollController: controller,
                 message: state.message,
+                showCloseBtn: true,
                 onClose: existPoiState,
               );
         }
@@ -322,7 +323,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         } else if (state.status == Status.failed) {
           panelBuilder = (context, controller) => FailPanel(
                 message: state.message,
-                showCloseBtn: false,
+                showCloseBtn: true,
                 scrollController: controller,
                 onClose: existRouteState,
               );
