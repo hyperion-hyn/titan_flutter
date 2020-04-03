@@ -10,6 +10,7 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -148,7 +149,7 @@ class _Map3NodeJoinContractState
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
           color: Colors.white,
-          child: getMap3NodeProductItem(context, contractNodeItem.contract, showButton: false, )),
+          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract)),
       Container(
         height: 5,
         color: DefaultColors.colorf5f5f5,
@@ -359,7 +360,7 @@ class _Map3NodeJoinContractState
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                         "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}" +
+                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
                 "&pageType=${widget.pageType}" +
                 "&contractId=${widget.contractId}");
               });

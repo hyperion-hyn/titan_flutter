@@ -173,7 +173,7 @@ class _Map3NodeCreateContractState
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
           color: Colors.white,
-          child: getMap3NodeProductItem(context, contractNodeItem.contract, showButton: false, )),
+          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract, showMinDelegation: true)),
       Container(
         height: 5,
         color: DefaultColors.colorf5f5f5,
@@ -476,4 +476,101 @@ class _Map3NodeCreateContractState
     );
   }
 
+}
+
+Widget getMap3NodeProductHeadItem(BuildContext context,NodeItem nodeItem,{hasRemind = false,showMinDelegation = false}) {
+  return Padding(
+    padding: EdgeInsets.only(left: 10.0, right: 10, top: 20, bottom: 10),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: Image.asset(
+                "res/drawable/ic_map3_node_item.png",
+                width: 50,
+                height: 50,
+                fit:BoxFit.cover,
+              ),
+            ),
+            Flexible(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(nodeItem.nodeName, style: TextStyles.textC333S14bold),
+                          SizedBox(height: 5,),
+                          Text("启动共需${FormatUtil.formatNum(nodeItem.minTotalDelegation)}HYN",
+                              style: TextStyles.textC333S14)
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+        Container(
+          height: 3,
+          margin: EdgeInsets.only(top: 10, bottom: 10),
+          color: DefaultColors.colorf5f5f5,
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Text("期满年化奖励", style: TextStyles.textC9b9b9bS12),
+                      Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textC333S14)
+                    ],
+                  )),
+            ),
+            Expanded(
+              child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Text("合约期限", style: TextStyles.textC9b9b9bS12),
+                      Text("${nodeItem.duration}月", style: TextStyles.textC333S14)
+                    ],
+                  )),
+            ),
+            Expanded(
+              child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Text("管理费", style: TextStyles.textC9b9b9bS12),
+                      Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textC333S14)
+                    ],
+                  )),
+            ),
+            if(showMinDelegation)
+              Expanded(
+                child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text("创建最低投入", style: TextStyles.textC9b9b9bS12),
+                        Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}", style: TextStyles.textC333S14)
+                      ],
+                    )),
+              )
+          ],
+        ),
+        if(hasRemind)
+          Padding(
+            padding: const EdgeInsets.only(top:8.0),
+            child: Text("注：合约生效满3个月后，即可提取50%奖励", style: TextStyles.textCf29a6eS12),
+          )
+      ],
+    ),
+  );
 }
