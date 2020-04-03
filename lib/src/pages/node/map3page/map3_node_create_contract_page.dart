@@ -10,6 +10,7 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -430,7 +431,8 @@ class _Map3NodeCreateContractState
                     context,
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}" +
+                        "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
+                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
                 "&pageType=${widget.pageType}" +
                 "&contractId=${widget.contractId}");
               });

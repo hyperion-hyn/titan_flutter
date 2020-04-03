@@ -5,11 +5,16 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
+import 'map3_node_create_contract_page.dart';
+
 class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
+  String pageType;
+
+  Map3NodeBroadcaseSuccessPage(this.pageType);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
         appBar: AppBar(
             leading: Builder(
               builder: (BuildContext context) {
@@ -46,7 +51,8 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 Container(
                   width: 250,
                   child: Text(
-                    "已在区块链上网络广播 创建/参加 Map3节点抵押合约的消息，区块链网络需要5-30分钟开采验证。",
+                    "已在区块链上网络广播 ${pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE ? "创建" : "参加"}"
+                        + " Map3节点抵押合约的消息，区块链网络需要5-30分钟开采验证。",
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -56,16 +62,17 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        padding:EdgeInsets.symmetric(horizontal: 30),
+                        padding: EdgeInsets.symmetric(horizontal: 30),
                         constraints: BoxConstraints.expand(height: 48),
                         child: FlatButton(
                           color: Theme.of(context).primaryColor,
                           shape: RoundedRectangleBorder(
-                              side:
-                              BorderSide(color: Theme.of(context).primaryColor),
+                              side: BorderSide(
+                                  color: Theme.of(context).primaryColor),
                               borderRadius: BorderRadius.circular(36)),
                           onPressed: () {
-                            Share.text(S.of(context).share, "http://baidu.com", 'text/plain');
+                            Share.text(S.of(context).share, "http://baidu.com",
+                                'text/plain');
 //                            Application.router.navigateTo(
 //                                context,
 //                                Routes.wallet_create +
@@ -78,15 +85,15 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                               child: Text(
                                 "分享",
                                 style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white),
+                                    fontSize: 16, color: Colors.white),
                               ),
                             ),
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16,horizontal: 30),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 16, horizontal: 30),
                         child: Container(
                           constraints: BoxConstraints.expand(height: 48),
                           child: FlatButton(
@@ -108,8 +115,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                 child: Text(
                                   "查看合约详情",
                                   style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white),
+                                      fontSize: 16, color: Colors.white),
                                 ),
                               ),
                             ),

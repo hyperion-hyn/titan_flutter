@@ -139,7 +139,7 @@ class _Map3NodeJoinContractState
     List<int> suggestList = contractNodeItem.contract.suggestQuantity.split(",").map(
             (suggest)=>int.parse(suggest)
     ).toList();
-    double minTotal = contractNodeItem.contract.minTotalDelegation * contractNodeItem.contract.ownerMinDelegationRate;
+    double minTotal = contractNodeItem.contract.minTotalDelegation * contractNodeItem.contract.minDelegationRate;
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
@@ -358,6 +358,7 @@ class _Map3NodeJoinContractState
                     context,
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+                        "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
                         "&transferAmount=${_joinCoinController.text}&receiverAddress=${contractNodeItem.owner}" +
                 "&pageType=${widget.pageType}" +
                 "&contractId=${widget.contractId}");
