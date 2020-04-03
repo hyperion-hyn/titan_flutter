@@ -4,9 +4,14 @@ import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utils.dart';
 
 import 'node_contract_detail_page.dart';
 
@@ -23,6 +28,7 @@ class MyMap3ContractPage extends StatefulWidget {
 class _MyMap3ContractState extends State<MyMap3ContractPage> {
   List<ContractNodeItem> _dataArray = [];
   LoadDataBloc loadDataBloc = LoadDataBloc();
+  var _currentPage = 0;
 
   var api = NodeApi();
 
@@ -30,6 +36,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   void initState() {
     super.initState();
 
+    loadDataBloc.add(LoadingEvent());
     _loadData();
   }
 
@@ -39,7 +46,35 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     super.dispose();
   }
 
+  _loadMoreData() async {
+
+    List<ContractNodeItem> dataList = [];
+    if (widget.title.contains("发起")) {
+      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);
+      dataList  = createContractList;
+    } else {
+      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(page: _currentPage);
+      dataList = joinContractList;
+    }
+
+    if (dataList.length == 0) {
+      loadDataBloc.add(LoadMoreEmptyEvent());
+    } else {
+      _currentPage += 1;
+      loadDataBloc.add(LoadingMoreSuccessEvent());
+
+      setState(() {
+        _dataArray.addAll(dataList);
+      });
+    }
+
+    print('[map3] _loadMoreData, list.length:${dataList.length}');
+
+  }
+
   _loadData() async {
+
+    _currentPage = 0;
 
     List<ContractNodeItem> dataList = [];
     if (widget.title.contains("发起")) {
@@ -53,12 +88,17 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     if (dataList.length == 0) {
       loadDataBloc.add(LoadEmptyEvent());
     } else {
+      _currentPage ++;
       loadDataBloc.add(RefreshSuccessEvent());
+
+      // todo: 测试写死
+      dataList.first.state = "Running";
+
+      setState(() {
+        _dataArray = dataList;
+      });
     }
 
-    setState(() {
-      _dataArray = dataList;
-    });
 
     print('[map3] widget.title:${widget.title}, _loadData, dataList.length:${dataList.length}');
   }
@@ -78,9 +118,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         color: HexColor('#05095F'),
         child: LoadDataContainer(
           bloc: loadDataBloc,
-          onRefresh: () async {
-            _loadData();
-          },
+          onLoadData: _loadData,
+          onRefresh: _loadData,
+          // todo: 服务器暂时没支持page分页
+          //onLoadingMore: _loadMoreData,
           child: ListView.separated(
               itemBuilder: (context, index) {
                 return buildInfoItem(_dataArray[index]);
@@ -173,7 +214,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                       Spacer(),
                       Text(model.contract.nodeName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: HexColor('#FFFFFF'))),
                       Spacer(),
-                      Text("发起账户 ${model.ownerName} ${model.owner}", style: TextStyle(fontSize: 13, color: HexColor('#FFFFFF'))),
+                      Text("发起账户 ${model.ownerName} ${shortBlockChainAddress(model.owner, limitCharsLength: 6)}", style: TextStyle(fontSize: 13, color: HexColor('#FFFFFF'))),
                       Spacer(),
                       Text(
                         FormatUtil.formatDate(model.instanceStartTime),
@@ -220,12 +261,18 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                       InkWell(
                         onTap: () {
                           //if (model.state == ContractState.Expired) {
-                            print('[点击查看收益] id:${model.id}');
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => NodeContractDetailPage(model)));
+                            //print('[点击查看收益] id:${model.id}');
+
+                            String jsonString = FluroConvertUtils.object2string(model.toJson());
+                            //print('[xx] param:${jsonString}');
+
+                            Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) => NodeContractDetailPage(model)));
                           //}
                         },
                         child:
-                        (model.state == ContractState.PENDING || model.state ==  ContractState.FailRun)?
+                        (enumContractStateFromString(model.state) == ContractState.PENDING || enumContractStateFromString(model.state) ==  ContractState.FailRun)?
 
                         Text.rich(TextSpan(
                             children: [
@@ -234,7 +281,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                                   style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))
                               ),
                               TextSpan(
-                                text: "1000",
+                                text: "${FormatUtil.formatNum(model.remainDelegation)}",
                                 style: TextStyle(fontSize: 12, color: HexColor('#E39F2D')),
                               ),
                               TextSpan(
@@ -245,7 +292,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                         )): // todo:
                         Text("合约完成", style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))) ,
                       ),
-                      if (model.state == ContractState.PENDING) FlatButton(
+                      if (enumContractStateFromString(model.state) == ContractState.PENDING) FlatButton(
                         padding: EdgeInsets.symmetric(horizontal: 4,vertical: 2),
                         color: Colors.white,
 //                        highlightColor: Colors.black,
@@ -253,7 +300,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                         textColor: HexColor('#3C99FA'),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                         onPressed: (){
-                          print('加快启动');
+                          //print('加快启动');
+                          Application.router.navigateTo(context, Routes.map3node_join_contract_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN}" + "&contractId=${model.id}");
                         },
                         child: Text("加快启动", style: TextStyle(fontSize: 12)),
                       ),
