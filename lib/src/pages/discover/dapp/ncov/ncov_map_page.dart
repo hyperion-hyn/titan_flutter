@@ -111,19 +111,19 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   }
 
   void _setupLevelList() {
-    var level_1 = NcovCountLevelModel('> 1000', '7c0000');
+    var level_1 = NcovCountLevelModel('> 10000', '7c0000');
     levelList.add(level_1);
 
-    var level_2 = NcovCountLevelModel('500 - 1000', 'd52f30');
+    var level_2 = NcovCountLevelModel('1000 - 10000', 'd52f30');
     levelList.add(level_2);
 
-    var level_3 = NcovCountLevelModel('100 - 499', 'f3664c');
+    var level_3 = NcovCountLevelModel('500 - 999', 'f3664c');
     levelList.add(level_3);
 
-    var level_4 = NcovCountLevelModel('10 - 99', 'ffa477');
+    var level_4 = NcovCountLevelModel('100 - 499', 'ffa477');
     levelList.add(level_4);
 
-    var level_5 = NcovCountLevelModel('1 - 9', 'ffd5c0');
+    var level_5 = NcovCountLevelModel('1 - 99', 'ffd5c0');
     levelList.add(level_5);
 
 //    var level_6 = NcovCountLevelModel('0', 'ffffff');
@@ -282,7 +282,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
             ),
           ),
           SizedBox(
-            width: 16,
+            width: 8,
           ),
           Text(
             model.levelTitle,
