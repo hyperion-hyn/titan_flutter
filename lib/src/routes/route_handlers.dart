@@ -151,7 +151,7 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
-  return Map3NodeBroadcaseSuccessPage();
+  return Map3NodeBroadcaseSuccessPage(params['pageType']?.first);
 });
 //var demoRouteHandler = Handler(
 //    handlerFunc: (BuildContext context, Map<String, List<String>> params) {

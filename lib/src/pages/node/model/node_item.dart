@@ -21,11 +21,17 @@ part 'node_item.g.dart';
   @JsonKey(name: 'ownerMinDelegationRate')
   double ownerMinDelegationRate;
 
+  @JsonKey(name: 'minDelegationRate')
+  double minDelegationRate;
+
   @JsonKey(name: 'annualizedYield')
   double annualizedYield;
 
   @JsonKey(name: 'duration')
   int duration;
+
+  @JsonKey(name: 'durationType')
+  int durationType;
 
   @JsonKey(name: 'commission')
   double commission;
@@ -42,7 +48,7 @@ part 'node_item.g.dart';
   @JsonKey(name: 'suggestQuantity')
   String suggestQuantity;
 
-  NodeItem(this.id,this.nodeName,this.nodeId,this.minTotalDelegation,this.ownerMinDelegationRate,this.annualizedYield,this.duration,this.commission,this.halfCollected,this.halfCollectedDuration,this.halfCollectedRate,this.suggestQuantity,);
+  NodeItem(this.id,this.nodeName,this.nodeId,this.minTotalDelegation,this.ownerMinDelegationRate,this.minDelegationRate,this.annualizedYield,this.duration,this.durationType,this.commission,this.halfCollected,this.halfCollectedDuration,this.halfCollectedRate,this.suggestQuantity,);
 
   factory NodeItem.fromJson(Map<String, dynamic> srcJson) => _$NodeItemFromJson(srcJson);
 

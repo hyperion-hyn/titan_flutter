@@ -139,7 +139,7 @@ class _Map3NodeJoinContractState
     List<int> suggestList = contractNodeItem.contract.suggestQuantity.split(",").map(
             (suggest)=>int.parse(suggest)
     ).toList();
-    double minTotal = contractNodeItem.contract.minTotalDelegation * contractNodeItem.contract.ownerMinDelegationRate;
+    double minTotal = contractNodeItem.contract.minTotalDelegation * contractNodeItem.contract.minDelegationRate;
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;

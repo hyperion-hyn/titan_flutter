@@ -104,11 +104,11 @@ class NodeApi {
     gasLimit: 50000);
 
     var nodeKey = await HttpCore.instance
-        .getEntity("contracts/create/$contractId", EntityFactory<Map<String, dynamic>>((data){
+        .getEntity("nodekey/generate", EntityFactory<Map<String, dynamic>>((data){
       return data;
     }));
 
-    int durationType = contractNodeItem.contract.duration; //0: 1月， 1: 3月， 2: 6月
+    int durationType = contractNodeItem.contract.durationType; //0: 1月， 1: 3月， 2: 6月
     var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
 
     //create
@@ -124,8 +124,9 @@ class NodeApi {
 
     startJoinInstance.approveData = approveSignedHex;
     startJoinInstance.createData = createSignedHex;
-
+    startJoinInstance.publicKey = nodeKey["publicKey"];
     String postData = json.encode(startJoinInstance.toJson());
+    print("startContractInstance = $postData");
     var data = await HttpCore.instance
         .post("contracts/create/$contractId", data: postData,
         options: RequestOptions(contentType: "application/json"));
@@ -161,7 +162,10 @@ class NodeApi {
       password: password,
     );
 
+    startJoinInstance.approveData = approveSignedHex;
+    startJoinInstance.delegateData = joinSignedHex;
     String postData = json.encode(startJoinInstance.toJson());
+    print("joinContractInstance = $postData");
     var data = await HttpCore.instance
         .post("instances/delegate/$contractId", data: postData,
         options: RequestOptions(contentType: "application/json"));

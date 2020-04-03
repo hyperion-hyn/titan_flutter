@@ -417,8 +417,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
 
         var startJoin = StartJoinInstance(widget.coinVo.contractAddress,
-            activatedWallet.wallet.keystore.name, widget.transferAmount,
-            "NJFOLKFLANLF90RJK32JILFJRNWGJRIONGOPRNEWGJRNJVNJRENJKLVNJRJENWGNRLVJRENWJEORNLGJKNSRJKVNJRKSNRJKNVJKRENVSJKRNJVKNRENVJKSNRVKJRNEJKVJJREWNVKEJNJKRNEKJWNVJKRNJKVNIRWNRKJNGUOVHRUHB35HJGUONRKJFVNAKJRJGKJRNK");
+            activatedWallet.wallet.keystore.name, widget.transferAmount);
         String resultMsg = "";
         if(widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
           resultMsg = await _nodeApi.startContractInstance(widget.contractNodeItem, activatedWallet, walletPassword, gasPrice.toInt(), widget.contractId, startJoin);
@@ -428,7 +427,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
               widget.contractNodeItem.owner, widget.contractId, startJoin);
           print("join post result = $resultMsg");
         }
-        Application.router.navigateTo(context,Routes.map3node_broadcase_success_page);
+        Application.router.navigateTo(context,Routes.map3node_broadcase_success_page + "?pageType=${widget.pageType}");
       } catch (_) {
         logger.e(_);
         setState(() {

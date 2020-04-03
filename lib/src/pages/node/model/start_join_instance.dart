@@ -15,14 +15,15 @@ class StartJoinInstance extends Object {
   @JsonKey(name: 'amount')
   double amount;
 
-  @JsonKey(name: 'data')
-  String data;
-
   String approveData;
 
   String createData;
 
-  StartJoinInstance(this.address,this.name,this.amount,this.data,{this.approveData,this.createData});
+  String delegateData;
+
+  String publicKey;
+
+  StartJoinInstance(this.address,this.name,this.amount,{this.approveData, this.createData, this.delegateData, this.publicKey});
 
   factory StartJoinInstance.fromJson(Map<String, dynamic> srcJson) => _$StartJoinInstanceFromJson(srcJson);
 
