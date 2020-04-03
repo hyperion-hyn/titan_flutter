@@ -364,7 +364,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           onMapLongPressHandle = st.dMapConfigModel?.onMapLongPressHandle;
           showCenterMarker = st.dMapConfigModel?.showCenterMarker == true;
 
-          print('[scaffold_map] ---> dmap, begin...${st.dMapConfigModel.dMapName}');
+          //print('[scaffold_map] ---> dmap, begin...${st.dMapConfigModel.dMapName}');
 
           if (st.dMapConfigModel?.panelDraggable == true) {
             draggable = true;

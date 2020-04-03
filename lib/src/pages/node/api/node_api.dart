@@ -22,18 +22,20 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 class NodeApi {
 
  
-  Future<List<ContractNodeItem>> getMyCreateNodeContract() async {
+  Future<List<ContractNodeItem>> getMyCreateNodeContract({int page = 0}) async {
     return await HttpCore.instance
         .getEntity("delegations/my-create",
         EntityFactory<List<ContractNodeItem>>((list) => (list as List).map((item) => ContractNodeItem.fromJson(item)).toList()),
+        params: {"page": page},
         options: RequestOptions(headers: {"Address": "jifijfkeo904o3jfi0joitqjjfli"})
     );
   }
 
-  Future<List<ContractNodeItem>> getMyJoinNodeContract() async {
+  Future<List<ContractNodeItem>> getMyJoinNodeContract({int page = 0}) async {
     return await HttpCore.instance
         .getEntity("delegations/my-join",
       EntityFactory<List<ContractNodeItem>>((list) => (list as List).map((item) => ContractNodeItem.fromJson(item)).toList()),
+        params: {"page": page},
         options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"})
     );
   }

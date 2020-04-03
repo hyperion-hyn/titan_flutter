@@ -133,7 +133,7 @@ class _Map3NodeJoinContractState
         setState(() {
           currentState = LoadingState();
         });
-        getNetworkData();
+//        getNetworkData();
       });
     }
 

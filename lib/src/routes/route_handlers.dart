@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
+import 'package:titan/src/pages/mine/node_contract_detail_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
@@ -153,6 +154,19 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeBroadcaseSuccessPage(params['pageType']?.first);
 });
+
+var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
+  //print('[route_handlers] param:${params}');
+
+  var jsonString = FluroConvertUtils.string2map(params['model']?.first);
+  //print('[route_handlers] jsonString:${jsonString}');
+
+  var model = ContractNodeItem.fromJson(jsonString);
+  return NodeContractDetailPage(model);
+});
+
+
+
 //var demoRouteHandler = Handler(
 //    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
 //      String message = params["message"]?.first;
