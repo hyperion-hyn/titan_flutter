@@ -540,7 +540,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context,NodeItem nodeItem,{hasRem
                   child: Column(
                     children: <Widget>[
                       Text("合约期限", style: TextStyles.textC9b9b9bS12),
-                      Text("${nodeItem.duration}月", style: TextStyles.textC333S14)
+                      Text("${nodeItem.duration}天", style: TextStyles.textC333S14)
                     ],
                   )),
             ),
@@ -568,7 +568,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context,NodeItem nodeItem,{hasRem
         if(hasRemind)
           Padding(
             padding: const EdgeInsets.only(top:8.0),
-            child: Text("注：合约生效满3个月后，即可提取50%奖励", style: TextStyles.textCf29a6eS12),
+            child: Text("注：合约生效满90天后，即可提取50%奖励", style: TextStyles.textCf29a6eS12),
           )
       ],
     ),
