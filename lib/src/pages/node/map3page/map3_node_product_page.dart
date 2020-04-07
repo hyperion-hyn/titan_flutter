@@ -143,7 +143,7 @@ Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem,{hasRemind 
                         children: <Widget>[
                           Text(nodeItem.nodeName, style: TextStyles.textC333S14bold),
                           SizedBox(height: 5,),
-                          Text("启动共需${FormatUtil.formatNum(nodeItem.minTotalDelegation)}HYN",
+                          Text("启动共需${FormatUtil.stringFormatNum(nodeItem.minTotalDelegation)}HYN",
                               style: TextStyles.textC333S14)
                         ],
                       ),

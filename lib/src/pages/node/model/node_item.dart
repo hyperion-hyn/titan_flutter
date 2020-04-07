@@ -16,7 +16,7 @@ part 'node_item.g.dart';
   int nodeId;
 
   @JsonKey(name: 'minTotalDelegation')
-  int minTotalDelegation;
+  String minTotalDelegation;
 
   @JsonKey(name: 'ownerMinDelegationRate')
   double ownerMinDelegationRate;

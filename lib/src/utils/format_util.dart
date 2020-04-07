@@ -8,6 +8,10 @@ class FormatUtil{
     return NumberFormat("#,###,###,###").format(numValue);
   }
 
+  static String stringFormatNum(String numValue) {
+    return NumberFormat("#,###,###,###").format(int.parse(numValue));
+  }
+
   static String formatNumDecimal(double numValue) {
     return NumberFormat("#,###,###,###.####").format(numValue);
   }

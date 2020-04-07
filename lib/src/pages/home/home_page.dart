@@ -111,7 +111,7 @@ class HomePageState extends State<HomePage> {
     var content = values["content"];
     if (type == "contract" && subType == "detail") {
       var contractId = content["contractId"];
-      var model = ContractNodeItem(int.parse(contractId), NodeItem(0, "", 0, 0, 0.0, 0.0, 0.0, 0, 0, 0.0, false, "", "", ""), "", "", 0, 0, 0, "");
+      var model = ContractNodeItem.onlyNodeId(int.parse(contractId));
       String jsonString = FluroConvertUtils.object2string(model.toJson());
       Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
     }

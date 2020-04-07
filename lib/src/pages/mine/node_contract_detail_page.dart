@@ -183,7 +183,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Text("启动共需${FormatUtil.formatNum(widget.contractNodeItem.contract.minTotalDelegation)}HYN", style: TextStyles.textC333S14),
+                        child: Text("启动共需${FormatUtil.stringFormatNum(widget.contractNodeItem.contract.minTotalDelegation)}HYN", style: TextStyles.textC333S14),
                       )
                     ],
                   ),
@@ -383,13 +383,13 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
               switch (value) {
                 case 1:
                   title = "创建时间:";
-                  detail = "${FormatUtil.formatDate(_contractDetailItem?.instance.instanceStartTime)}";
+                  detail = "${FormatUtil.formatDate(_contractDetailItem?.instance?.instanceStartTime)}";
                   bottom = 4.0;
                   break;
 
                 case 2:
                   title = "参与账户:";
-                  detail = "${FormatUtil.formatNum(_contractDetailItem?.instance.amountDelegation)}";
+                  detail = "${FormatUtil.formatNum(int.parse(_contractDetailItem?.instance?.amountDelegation))}";
                   break;
               }
               return Padding(

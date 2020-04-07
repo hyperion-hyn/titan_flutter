@@ -136,7 +136,7 @@ class _Map3NodeJoinContractState
     List<int> suggestList = contractNodeItem.contract.suggestQuantity.split(",").map(
             (suggest)=>int.parse(suggest)
     ).toList();
-    double minTotal = contractNodeItem.contract.minTotalDelegation * contractNodeItem.contract.minDelegationRate;
+    double minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.minDelegationRate;
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
@@ -145,7 +145,7 @@ class _Map3NodeJoinContractState
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
           color: Colors.white,
-          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract)),
+          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract,showMinDelegation: false )),
       Container(
         height: 5,
         color: DefaultColors.colorf5f5f5,
@@ -230,8 +230,12 @@ class _Map3NodeJoinContractState
                                 EdgeInsets.symmetric(horizontal: 10),
                           ),
                           validator: (textStr) {
-                            if(textStr.length == 0 || int.parse(textStr) < minTotal){
+                            if(textStr.length == 0) {
+                              return "请输入HYN数量";
+                            }else if(int.parse(textStr) < minTotal && int.parse(contractNodeItem.remainDelegation) >= minTotal){
                               return "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
+                            }else if(int.parse(textStr) != int.parse(contractNodeItem.remainDelegation) && int.parse(contractNodeItem.remainDelegation) < minTotal){
+                              return "必须投入${FormatUtil.formatNumDecimal(double.parse(contractNodeItem.remainDelegation))}HYN";
                             }else if(int.parse(textStr) > balance){
 //                              return "HYN余额不足";
                               return null;
@@ -240,7 +244,10 @@ class _Map3NodeJoinContractState
                             }
                           }),
                     ),
-                  )
+                  ),
+                  MaterialButton(onPressed:(){
+                    _filterSubject.sink.add(contractNodeItem.remainDelegation);
+                  },child: Text("全部份额"),)
                 ],
               ),
               SizedBox(
@@ -287,6 +294,7 @@ class _Map3NodeJoinContractState
                     )
                   ],
                 ),
+              Text("剩余份额 ${contractNodeItem.remainDelegation}HYN"),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                 child: RichText(
