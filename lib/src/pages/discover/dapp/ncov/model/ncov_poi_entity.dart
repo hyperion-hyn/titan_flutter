@@ -3,6 +3,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 
 part 'ncov_poi_entity.g.dart';
 
+@JsonSerializable()
 class NcovPoiEntity extends Object {
   @JsonKey(name: 'id')
   String id;
@@ -110,6 +111,7 @@ class NcovPoiEntity extends Object {
 
 }
 
+@JsonSerializable()
 class Location extends Object {
   @JsonKey(name: 'coordinates')
   List<double> coordinates;

@@ -65,10 +65,10 @@ class WalletConfig {
     switch (netType) {
       case EthereumNetType.main:
         //TODO
-        return '';
+        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.repsten:
         //TODO
-        return '';
+        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.local:
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
     }

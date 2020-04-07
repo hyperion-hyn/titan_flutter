@@ -4,6 +4,7 @@ import 'package:titan/src/data/entity/converter/model_converter.dart';
 
 part 'poi_collector.g.dart';
 
+@JsonSerializable()
 class PoiCollector extends Object {
   @JsonKey(name: 'category_id')
   String categoryId;

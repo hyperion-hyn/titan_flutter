@@ -10,13 +10,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -84,8 +82,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                   widget.coinVo = coinVo;
                 }
               }
-              setState(() {
-              });
             }
           },
           child: LoadDataContainer(
@@ -132,7 +128,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                             height: 2,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                             child: IntrinsicHeight(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -272,13 +268,13 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   ) {
     var iconData;
     var title = "";
-    var account = "";
+    var describe = "";
     var amountColor;
-    var amountText = "${WalletUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.unit}";
+    var amountText = "${WalletUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.symbol}";
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconData = ExtendsIconFont.receiver;
       title = S.of(context).received;
-      account = "From:" + shortBlockChainAddress(transactionDetail.fromAddress);
+      describe = "From:" + shortBlockChainAddress(transactionDetail.fromAddress);
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FF259B24");
         amountText = '+ $amountText';
@@ -286,7 +282,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconData = ExtendsIconFont.send;
       title = S.of(context).sent;
-      account = "To:" + shortBlockChainAddress(transactionDetail.toAddress);
+      describe = "To:" + shortBlockChainAddress(transactionDetail.toAddress);
 
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FFE51C23");
@@ -307,87 +303,87 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     : null;
     var isShowTime = lastTransactionTime != time;
 
-    return Column(
-      children: <Widget>[
-        if (isShowTime)
-          Container(
-              padding: EdgeInsets.symmetric(vertical: 4),
-              color: Color(0xFFF5F5F5),
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: Text(
-                  time,
-                  style: TextStyle(color: Color(0xFF9B9B9B)),
-                ),
-              )),
-        InkWell(
-          onTap: () {
-            var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-            var url = EtherscanApi.getTxDetailUrl(context, transactionDetail.hash, isChinaMainland);
-            print("txUrl:$url");
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => WebViewContainer(
-                          initUrl: url,
-                          title: '',
-                        )));
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 8, right: 8),
-                  child: Icon(
-                    iconData,
-                    color: Color(0xFFCDCDCD),
-                    size: 24,
+    return Ink(
+      color: Color(0xFFF5F5F5),
+      child: Column(
+        children: <Widget>[
+          if (isShowTime)
+            Container(
+                padding: EdgeInsets.symmetric(vertical: 4),
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: Text(
+                    time,
+                    style: TextStyle(color: Color(0xFF9B9B9B)),
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                )),
+          Ink(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
+                var url = EtherscanApi.getTxDetailUrl(context, transactionDetail.hash, isChinaMainland);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WebViewContainer(
+                              initUrl: url,
+                              title: '',
+                            )));
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, right: 8),
+                      child: Icon(
+                        iconData,
+                        color: Color(0xFFCDCDCD),
+                        size: ExtendsIconFont.receiver == iconData? 19 : 24,
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              title,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  title,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Spacer(),
+                                Text(
+                                  amountText,
+                                  style: TextStyle(color: amountColor, fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
-                            Spacer(),
-                            Text(
-                              amountText,
-                              style: TextStyle(color: amountColor, fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 4),
                               child: Text(
-                                account,
+                                describe,
                                 style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
                               ),
-                            ),
+                            )
                           ],
-                        )
-                      ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ],
+          SizedBox(height: 1),
+        ],
+      ),
     );
   }
 

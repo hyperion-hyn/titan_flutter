@@ -6,7 +6,7 @@ part of 'mapbox_poi.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MapBoxPoi _$PoiEntityFromJson(Map<String, dynamic> json) {
+MapBoxPoi _$MapBoxPoiFromJson(Map<String, dynamic> json) {
   return MapBoxPoi(
     name: json['name'] as String,
     address: json['address'] as String,
@@ -17,7 +17,7 @@ MapBoxPoi _$PoiEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$PoiEntityToJson(MapBoxPoi instance) => <String, dynamic>{
+Map<String, dynamic> _$MapBoxPoiToJson(MapBoxPoi instance) => <String, dynamic>{
       'name': instance.name,
       'address': instance.address,
       'tags': instance.tags,

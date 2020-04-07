@@ -6,13 +6,15 @@ part of 'user_contribution_poi.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserContributionPoi _$ConfirmPoiItemFromJson(Map<String, dynamic> json) {
+UserContributionPoi _$UserContributionPoiFromJson(Map<String, dynamic> json) {
   return UserContributionPoi(
     json['id'] as String,
     json['name'] as String,
     json['address'] as String,
     json['category'] as String,
-    json['location'] == null ? null : Location.fromJson(json['location'] as Map<String, dynamic>),
+    json['location'] == null
+        ? null
+        : Location.fromJson(json['location'] as Map<String, dynamic>),
     json['ext'] as String,
     json['state'] as int,
     json['phone'] as String,
@@ -20,10 +22,12 @@ UserContributionPoi _$ConfirmPoiItemFromJson(Map<String, dynamic> json) {
     (json['images'] as List)?.map((e) => e as String)?.toList(),
     json['postcode'] as String,
     json['website'] as String,
-  );
+  )..remark = json['remark'] as String;
 }
 
-Map<String, dynamic> _$ConfirmPoiItemToJson(UserContributionPoi instance) => <String, dynamic>{
+Map<String, dynamic> _$UserContributionPoiToJson(
+        UserContributionPoi instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'address': instance.address,
@@ -37,7 +41,6 @@ Map<String, dynamic> _$ConfirmPoiItemToJson(UserContributionPoi instance) => <St
       'postcode': instance.postcode,
       'website': instance.website,
       'remark': instance.remark,
-      'latLng': LatLngConverter.latLngToJson(instance.latLng),
     };
 
 Location _$LocationFromJson(Map<String, dynamic> json) {

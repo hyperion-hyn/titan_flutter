@@ -10,7 +10,7 @@ StartJoinInstance _$StartJoinInstanceFromJson(Map<String, dynamic> json) {
   return StartJoinInstance(
     json['address'] as String,
     json['name'] as String,
-    json['amount'] as double,
+    (json['amount'] as num)?.toDouble(),
     json['data'] as String,
   );
 }
