@@ -83,8 +83,8 @@ class HomePageState extends State<HomePage> {
     };
 
     TitanPlugin.urlLauncherCallBack = (Map values) {
-      _urlLauncherAction(values);
       print('[Home_page] initState, urlLauncher, values:${values}');
+      _urlLauncherAction(values);
     };
   }
 
