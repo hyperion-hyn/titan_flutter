@@ -11,7 +11,10 @@ StartJoinInstance _$StartJoinInstanceFromJson(Map<String, dynamic> json) {
     json['address'] as String,
     json['name'] as String,
     (json['amount'] as num)?.toDouble(),
-    json['data'] as String,
+    approveData: json['approveData'] as String,
+    createData: json['createData'] as String,
+    delegateData: json['delegateData'] as String,
+    publicKey: json['publicKey'] as String,
   );
 }
 
@@ -20,5 +23,8 @@ Map<String, dynamic> _$StartJoinInstanceToJson(StartJoinInstance instance) =>
       'address': instance.address,
       'name': instance.name,
       'amount': instance.amount,
-      'data': instance.data,
+      'approveData': instance.approveData,
+      'createData': instance.createData,
+      'delegateData': instance.delegateData,
+      'publicKey': instance.publicKey,
     };

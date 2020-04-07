@@ -320,7 +320,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                             child: Center(
                                 child: Column(
                                   children: <Widget>[
-                                    Text("${contractNodeItem.contract.duration}月", style: TextStyles.textCfffS12),
+                                    Text("${contractNodeItem.contract.duration}天", style: TextStyles.textCfffS12),
                                   ],
                                 )),
                           ),
