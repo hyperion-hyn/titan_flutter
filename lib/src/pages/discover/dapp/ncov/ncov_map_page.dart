@@ -322,8 +322,19 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
 //            styleString: Const.kNcovMapStyleCn,
             onMapCreated: (controller) {
               mapboxMapController = controller;
+
+              setState(() {
+                mapboxMapController.removeListener(_mapMoveListener);
+                mapboxMapController.addListener(_mapMoveListener);
+              });
+
+              Future.delayed(Duration(milliseconds: 500)).then((value) {
+                //cheat double click
+                //      _clickTimes = 2;
+                _fireToMyLocation();
+              });
             },
-            onStyleLoadedCallback: onStyleLoaded,
+//            onStyleLoadedCallback: onStyleLoaded,
             myLocationEnabled: myLocationEnabled,
             myLocationTrackingMode: locationTrackingMode,
             trackCameraPosition: true,
@@ -448,18 +459,18 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     }
   }
 
-  void onStyleLoaded() async {
-    setState(() {
-      mapboxMapController.removeListener(_mapMoveListener);
-      mapboxMapController.addListener(_mapMoveListener);
-    });
-
-    Future.delayed(Duration(milliseconds: 500)).then((value) {
-      //cheat double click
-//      _clickTimes = 2;
-      _fireToMyLocation();
-    });
-  }
+//  void onStyleLoaded() async {
+//    setState(() {
+//      mapboxMapController.removeListener(_mapMoveListener);
+//      mapboxMapController.addListener(_mapMoveListener);
+//    });
+//
+//    Future.delayed(Duration(milliseconds: 500)).then((value) {
+//      //cheat double click
+////      _clickTimes = 2;
+//      _fireToMyLocation();
+//    });
+//  }
 
   bool updateMyLocationTrackingMode(MyLocationTrackingMode mode) {
     if (mode != locationTrackingMode) {
