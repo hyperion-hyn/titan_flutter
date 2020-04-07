@@ -1,15 +1,10 @@
 import 'dart:math';
-import 'dart:typed_data';
-import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 
-import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -18,9 +13,8 @@ import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
@@ -551,7 +545,7 @@ class _WalletDemoState extends State<WalletDemo> {
                       value: EtherAmount.inWei(amount),
                       nonce: count,
                       gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                      maxGas: EthereumConst.ETH_GAS_LIMIT,
+                      maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
                     ),
                     fetchChainIdFromNetworkId: true,
                   );

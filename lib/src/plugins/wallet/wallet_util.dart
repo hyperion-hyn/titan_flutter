@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +12,7 @@ import 'package:titan/src/plugins/wallet/map3_staking_abi.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:http/http.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:bip39/bip39.dart' as bip39;
@@ -138,24 +138,22 @@ class WalletUtil {
     return func.encodeCall(params);
   }
 
-  static String getErc20FuncAbiHex({
-    String contractAddress,
-    String funName,
-    List<dynamic> params = const [],
-    bool include0x = true,
-    bool padToEvenLength = true
-  }) {
+  static String getErc20FuncAbiHex(
+      {String contractAddress,
+      String funName,
+      List<dynamic> params = const [],
+      bool include0x = true,
+      bool padToEvenLength = true}) {
     var abi = getErc20FuncAbi(contractAddress: contractAddress, params: params, funName: funName);
     return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
   }
 
-  static String getMap3FuncAbiHex({
-    String contractAddress,
-    String funName,
-    List<dynamic> params = const [],
-    bool include0x = true,
-    bool padToEvenLength = true
-  }) {
+  static String getMap3FuncAbiHex(
+      {String contractAddress,
+      String funName,
+      List<dynamic> params = const [],
+      bool include0x = true,
+      bool padToEvenLength = true}) {
     var abi = getMap3FuncAbi(contractAddress: contractAddress, params: params, funName: funName);
     return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
   }

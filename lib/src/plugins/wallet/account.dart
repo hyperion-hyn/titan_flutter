@@ -1,7 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
+
+import 'wallet_const.dart';
 
 part 'account.g.dart';
 

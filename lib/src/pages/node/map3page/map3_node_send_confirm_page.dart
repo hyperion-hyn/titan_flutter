@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
@@ -19,12 +16,12 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
@@ -98,7 +95,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
-    var gasLimit = widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_GAS_LIMIT : EthereumConst.ERC20_GAS_LIMIT;
+    var gasLimit = widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_TRANSFER_GAS_LIMIT : EthereumConst.ERC20_TRANSFER_GAS_LIMIT;
     var gasEstimate =
         ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 

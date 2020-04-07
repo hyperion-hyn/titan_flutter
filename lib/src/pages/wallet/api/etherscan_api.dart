@@ -4,7 +4,7 @@ import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 class EtherscanApi {
   String host = "";

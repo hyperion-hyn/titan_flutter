@@ -4,7 +4,7 @@ import 'package:decimal/decimal.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import '../coin_market_api.dart';
 import '../model.dart';
 import './bloc.dart';

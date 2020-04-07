@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/inject/injector.dart';
+import 'package:titan/src/global.dart';
 import 'bloc.dart';
 
 class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
@@ -38,6 +39,7 @@ class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
 
         yield UpdateCheckState(isChecking: false, updateEntity: versionModel, isManual: event.isManual);
       } catch (err) {
+        logger.e(err);
         yield UpdateCheckState(isError: true, isChecking: false, isManual: event.isManual);
       }
     }
