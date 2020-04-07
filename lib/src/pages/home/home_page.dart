@@ -8,7 +8,11 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/home/home_panel.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
+import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 class HomePage extends StatefulWidget {
@@ -79,6 +83,7 @@ class HomePageState extends State<HomePage> {
     };
 
     TitanPlugin.urlLauncherCallBack = (Map values) {
+      _urlLauncherAction(values);
       print('[Home_page] initState, urlLauncher, values:${values}');
     };
   }
@@ -100,7 +105,17 @@ class HomePageState extends State<HomePage> {
             )));
   }
 
-
+  void _urlLauncherAction(Map values) {
+    var type = values["type"];
+    var subType = values["subType"];
+    var content = values["content"];
+    if (type == "contract" && subType == "detail") {
+      var contractId = content["contractId"];
+      var model = ContractNodeItem(int.parse(contractId), NodeItem(0, "", 0, 0, 0.0, 0.0, 0.0, 0, 0, 0.0, false, "", "", ""), "", "", 0, 0, 0, "");
+      String jsonString = FluroConvertUtils.object2string(model.toJson());
+      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+    }
+  }
 }
 
 /* todo:
