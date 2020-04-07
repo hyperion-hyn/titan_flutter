@@ -124,8 +124,8 @@ class NodeApi {
       password: password,
     );
 
-    startJoinInstance.approveData = approveSignedHex;
-    startJoinInstance.createData = createSignedHex;
+    //todo add txHash value
+    startJoinInstance.txHash = "";
     startJoinInstance.publicKey = nodeKey["publicKey"];
     String postData = json.encode(startJoinInstance.toJson());
     print("startContractInstance = $postData");
@@ -164,8 +164,8 @@ class NodeApi {
       password: password,
     );
 
-    startJoinInstance.approveData = approveSignedHex;
-    startJoinInstance.delegateData = joinSignedHex;
+    //todo add txHash value
+    startJoinInstance.txHash = "";
     String postData = json.encode(startJoinInstance.toJson());
     print("joinContractInstance = $postData");
     var data = await HttpCore.instance

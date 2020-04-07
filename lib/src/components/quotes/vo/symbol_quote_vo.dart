@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'symbol_quote_vo.g.dart';
 
+@JsonSerializable()
 class SymbolQuoteVo extends Equatable {
   ///ETH, HYN etc..
   final String symbol;

@@ -4,7 +4,7 @@ import '../../../../data/entity/poi/user_contribution_poi.dart';
 
 part 'confirm_poi_network_item.g.dart';
 
-
+@JsonSerializable()
 class ConfirmPoiNetworkItem extends Object {
 
   @JsonKey(name: 'id')
@@ -42,7 +42,7 @@ class Location extends Object {
 
 }*/
 
-
+@JsonSerializable()
 class Properties extends Object {
 
   @JsonKey(name: 'name')

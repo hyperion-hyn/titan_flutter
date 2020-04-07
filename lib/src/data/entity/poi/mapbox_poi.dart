@@ -9,6 +9,7 @@ import 'poi_interface.dart';
 
 part 'mapbox_poi.g.dart';
 
+@JsonSerializable()
 class MapBoxPoi with SearchHistoryAwarePoi implements IPoi {
   String name;
   String address;
@@ -22,9 +23,9 @@ class MapBoxPoi with SearchHistoryAwarePoi implements IPoi {
     this.isHistory = isHistory;
   }
 
-  factory MapBoxPoi.fromJson(Map<String, dynamic> json) => _$PoiEntityFromJson(json);
+  factory MapBoxPoi.fromJson(Map<String, dynamic> json) => _$MapBoxPoiFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PoiEntityToJson(this);
+  Map<String, dynamic> toJson() => _$MapBoxPoiToJson(this);
 
   @override
   String toString() {

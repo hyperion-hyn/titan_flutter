@@ -7,6 +7,7 @@ import './search_history_aware_poi.dart';
 
 part 'user_contribution_poi.g.dart';
 
+@JsonSerializable()
 class UserContributionPoi with SearchHistoryAwarePoi implements IPoi {
   @JsonKey(name: 'id')
   String id;
@@ -49,9 +50,9 @@ class UserContributionPoi with SearchHistoryAwarePoi implements IPoi {
   UserContributionPoi(this.id, this.name, this.address, this.category, this.location, this.ext, this.state, this.phone,
       this.workTime, this.images, this.postcode, this.website);
 
-  factory UserContributionPoi.fromJson(Map<String, dynamic> srcJson) => _$ConfirmPoiItemFromJson(srcJson);
+  factory UserContributionPoi.fromJson(Map<String, dynamic> srcJson) => _$UserContributionPoiFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$ConfirmPoiItemToJson(this);
+  Map<String, dynamic> toJson() => _$UserContributionPoiToJson(this);
 
   @override
   String remark;
@@ -67,6 +68,7 @@ class UserContributionPoi with SearchHistoryAwarePoi implements IPoi {
   UserContributionPoi.setPid(this.id, this.location);
 }
 
+@JsonSerializable()
 class Location extends Object {
   @JsonKey(name: 'coordinates')
   List<double> coordinates;

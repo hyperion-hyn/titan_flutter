@@ -98,7 +98,7 @@ class _WalletDemoState extends State<WalletDemo> {
                       amount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
                       password: 'my_password',
                       gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
-                      gasLimit: 50000);
+                      gasLimit: 5000000);
                   var ret =
                       await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
@@ -154,7 +154,6 @@ class _WalletDemoState extends State<WalletDemo> {
 //                var ret = await WalletUtil.postToEthereumNetwork(
 //                    method: 'eth_sendRawTransaction',
 //                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
-
 
                 signedHex = await wallet0.signCreateMap3Node(
                   stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
@@ -494,15 +493,30 @@ class _WalletDemoState extends State<WalletDemo> {
                 final client = WalletUtil.getWeb3Client();
                 var ethAddress = activeWallet.getEthAccount().address;
 
+//                var count =
+//                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.genesis());
+//                logger.i('genesis nonce is $count');
+//
+//                count =
+//                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.current());
+//                logger.i('current nonce is $count');
+
+                var transactionHash = '0x9f86f325e64a0c9f947141e901575d11f89e3966e9b470662f0af25e9abc8852';
+                if (transactionHash != null && transactionHash.length > 0) {
+//                  var transaction = await client.getTransactionByHash(transactionHash);
+//                  if(transaction != null) {
+//                    logger.i(transaction);
+//                  }
+
+                  var transactionReceipt = await client.getTransactionReceipt(transactionHash);
+                  if (transactionReceipt != null) {
+                    logger.i("transactionReceipt ${transactionReceipt.status}");
+                  } else {
+                    print('transactionReceipt is null');
+                  }
+                }
+
                 var count =
-                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.genesis());
-                logger.i('genesis nonce is $count');
-
-                count =
-                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.current());
-                logger.i('current nonce is $count');
-
-                count =
                     await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.pending());
                 logger.i('pending nonce is $count');
               }
@@ -654,21 +668,20 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               try {
-                var password = 'my_password';
-                var amount = ConvertTokenUnit.etherToWei(etherDouble: 1); //.toRadixString(16);
-                var wallets = await WalletUtil.scanWallets();
-                if (wallets.length > 0) {
-                  var wallet0 = wallets[0];
-                  var hynErc20ContractAddress = wallet0.getEthAccount().contractAssetTokens[0].contractAddress;
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                if (activeWallet != null) {
+                  var password = 'my_password';
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 1000000000000000); //.toRadixString(16);
+                  var hynErc20ContractAddress = activeWallet.getEthAccount().contractAssetTokens[0].contractAddress;
 
-                  var toAddress = '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0';
+                  var toAddress = '0x89A9855032047fAF65BAA95F43128af6EE5721eD';
 
-                  final txHash = await wallet0.sendErc20Transaction(
+                  final txHash = await activeWallet.sendErc20Transaction(
                     contractAddress: hynErc20ContractAddress,
                     password: password,
-                    gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
                     value: amount,
                     toAddress: toAddress,
+                    gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
                   );
 
                   logger.i('HYN交易已提交，交易hash $txHash');

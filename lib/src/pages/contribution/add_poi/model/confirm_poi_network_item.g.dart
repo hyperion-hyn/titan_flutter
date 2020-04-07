@@ -27,18 +27,6 @@ Map<String, dynamic> _$ConfirmPoiNetworkItemToJson(
       'Properties': instance.properties,
     };
 
-Location _$LocationFromJson(Map<String, dynamic> json) {
-  return Location(
-    (json['coordinates'] as List)?.map((e) => (e as num)?.toDouble())?.toList(),
-    json['type'] as String,
-  );
-}
-
-Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
-      'coordinates': instance.coordinates,
-      'type': instance.type,
-    };
-
 Properties _$PropertiesFromJson(Map<String, dynamic> json) {
   return Properties(
     json['name'] as String,

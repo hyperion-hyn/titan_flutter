@@ -20,6 +20,7 @@ class AccountTransferService {
     List<Erc20TransferHistory> erc20TransferHistoryList =
         await _etherScanApi.queryErc20History(coinVo.contractAddress, coinVo.address, page);
 
+    //TODO merge locale items;  1\ get local pending items, 2\ if find local item in net, update local to net status, and filter it.
     List<TransactionDetailVo> detailList = erc20TransferHistoryList.map((erc20TransferHistory) {
       var type = 0;
       if (erc20TransferHistory.from == coinVo.address.toLowerCase()) {
@@ -28,14 +29,21 @@ class AccountTransferService {
         type = TransactionType.TRANSFER_IN;
       }
       return TransactionDetailVo(
-          type: type,
-          state: 0,
-          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(erc20TransferHistory.value), int.parse(erc20TransferHistory.tokenDecimal)).toDouble(),
-          unit: erc20TransferHistory.tokenSymbol,
-          fromAddress: erc20TransferHistory.from,
-          toAddress: erc20TransferHistory.to,
-          time: int.parse(erc20TransferHistory.timeStamp + "000"),
-          hash: erc20TransferHistory.hash);
+        type: type,
+        state: 0,
+        amount: ConvertTokenUnit.weiToDecimal(
+                BigInt.parse(erc20TransferHistory.value), int.parse(erc20TransferHistory.tokenDecimal))
+            .toDouble(),
+        symbol: erc20TransferHistory.tokenSymbol,
+        fromAddress: erc20TransferHistory.from,
+        toAddress: erc20TransferHistory.to,
+        time: int.parse(erc20TransferHistory.timeStamp + "000"),
+        hash: erc20TransferHistory.hash,
+        gasPrice: erc20TransferHistory.gasPrice,
+        gasUsed: erc20TransferHistory.gasUsed,
+        gas: erc20TransferHistory.gas,
+        nonce: erc20TransferHistory.nonce,
+      );
     }).toList();
     return detailList;
   }
@@ -50,15 +58,21 @@ class AccountTransferService {
       } else if (ethTransferHistory.to == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       }
+      //TODO merge locale items;  1\ get local pending items, 2\ if find local item in net, update local to net status, and filter it.
       return TransactionDetailVo(
-          type: type,
-          state: 0,
-          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(ethTransferHistory.value)).toDouble(),
-          unit: "ETH",
-          fromAddress: ethTransferHistory.from,
-          toAddress: ethTransferHistory.to,
-          time: int.parse(ethTransferHistory.timeStamp + "000"),
-          hash: ethTransferHistory.hash);
+        type: type,
+        state: 0,
+        amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(ethTransferHistory.value)).toDouble(),
+        symbol: "ETH",
+        fromAddress: ethTransferHistory.from,
+        toAddress: ethTransferHistory.to,
+        time: int.parse(ethTransferHistory.timeStamp + "000"),
+        hash: ethTransferHistory.hash,
+        gasPrice: ethTransferHistory.gasPrice,
+        gasUsed: ethTransferHistory.gasUsed,
+        gas: ethTransferHistory.gas,
+        nonce: ethTransferHistory.nonce,
+      );
     }).toList();
     return detailList;
   }
@@ -67,4 +81,10 @@ class AccountTransferService {
 class TransactionType {
   static const TRANSFER_OUT = 1;
   static const TRANSFER_IN = 2;
+}
+
+class TransactionStatus {
+  static const PENDING = 0;
+  static const FAILED = -1;
+  static const CONFIRMED = 1;
 }

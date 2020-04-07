@@ -66,12 +66,7 @@ Location _$LocationFromJson(Map<String, dynamic> json) {
   );
 }
 
-/*Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
+Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
       'coordinates': instance.coordinates,
       'type': instance.type,
-    };*/
-
-Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
- 'lat': instance.coordinates[0],
-  'lon': instance.coordinates[1],
-};
+    };

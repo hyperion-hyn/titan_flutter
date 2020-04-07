@@ -1,7 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 part 'token.g.dart';
 
+@JsonSerializable()
 class AssetToken {
   final int decimals;
   final String name;
