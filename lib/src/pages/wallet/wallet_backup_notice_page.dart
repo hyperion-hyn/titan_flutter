@@ -6,6 +6,7 @@ import 'package:titan/src/pages/wallet/wallet_backup_show_resume_word_page.dart'
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 

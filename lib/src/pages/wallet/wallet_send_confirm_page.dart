@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
@@ -15,6 +12,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -25,9 +23,7 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
-import 'package:web3dart/web3dart.dart' as web3;
 
-import '../../extension/navigator_ext.dart';
 
 class WalletSendConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
@@ -101,7 +97,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 //    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
-    var gasLimit = widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_GAS_LIMIT : EthereumConst.ERC20_GAS_LIMIT;
+    var gasLimit = widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_TRANSFER_GAS_LIMIT : EthereumConst.ERC20_TRANSFER_GAS_LIMIT;
     var gasEstimate =
         ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 

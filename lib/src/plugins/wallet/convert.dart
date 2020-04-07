@@ -1,6 +1,5 @@
 import 'package:decimal/decimal.dart';
-
-import 'wallet.dart';
+import 'wallet_const.dart';
 
 class ConvertTokenUnit {
   static BigInt numToWei(double num, [int decimals = 18]) {

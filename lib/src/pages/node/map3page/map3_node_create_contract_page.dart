@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';

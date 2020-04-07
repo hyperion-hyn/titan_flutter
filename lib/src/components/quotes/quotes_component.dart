@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 class QuotesComponent extends StatelessWidget {
   final Widget child;

@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -24,7 +25,6 @@ import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 

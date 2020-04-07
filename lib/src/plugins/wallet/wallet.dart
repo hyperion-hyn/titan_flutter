@@ -4,89 +4,15 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
-import 'package:titan/config.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
 import 'wallet_util.dart';
 
 part 'wallet.g.dart';
-
-class TokenUnit {
-  static const WEI = 1;
-  static const K_WEI = 1000;
-  static const M_WEI = 1000000;
-  static const G_WEI = 1000000000;
-  static const T_WEI = 1000000000000;
-  static const P_WEI = 1000000000000000;
-  static const ETHER = 1000000000000000000;
-}
-
-class EthereumConst {
-  static const LOW_SPEED = 3 * TokenUnit.G_WEI;
-  static const FAST_SPEED = 10 * TokenUnit.G_WEI;
-  static const SUPER_FAST_SPEED = 30 * TokenUnit.G_WEI;
-
-  static const int ETH_GAS_LIMIT = 21000;
-  static const int ERC20_GAS_LIMIT = 25000;
-}
-
-class WalletError {
-  static const UNKNOWN_ERROR = "0";
-  static const PASSWORD_WRONG = "1";
-  static const PARAMETERS_WRONG = "2";
-}
-
-enum EthereumNetType {
-  main,
-  repsten,
-  local,
-}
-
-EthereumNetType getEthereumNetTypeFromString(String type) {
-  for (var value in EthereumNetType.values) {
-    if (value.toString() == type) {
-      return value;
-    }
-  }
-}
-
-class WalletConfig {
-  static String get INFURA_MAIN_API => '${Config.INFURA_API_URL}/v3/${Config.INFURA_PRVKEY}';
-
-  static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
-
-  static const String LOCAL_API = 'http://10.10.1.115:7545';
-
-  static EthereumNetType netType = EthereumNetType.main;
-
-  static String get map3ContractAddress {
-    switch (netType) {
-      case EthereumNetType.main:
-        //TODO
-        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
-      case EthereumNetType.repsten:
-        //TODO
-        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
-      case EthereumNetType.local:
-        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
-    }
-    return '';
-  }
-
-  static String getEthereumApi() {
-    switch (netType) {
-      case EthereumNetType.main:
-        return INFURA_MAIN_API;
-      case EthereumNetType.repsten:
-        return INFURA_ROPSTEN_API;
-      case EthereumNetType.local:
-        return LOCAL_API;
-    }
-    return '';
-  }
-}
 
 @JsonSerializable()
 class Wallet {
@@ -109,6 +35,18 @@ class Wallet {
     for (var account in accounts) {
       if (account.coinType == CoinType.ETHEREUM) {
         return account;
+      }
+    }
+    return null;
+  }
+
+  AssetToken getHynToken() {
+    var tokens = getEthAccount()?.contractAssetTokens;
+    if (tokens != null) {
+      for (var token in tokens) {
+        if (token.symbol == 'HYN') {
+          return token;
+        }
       }
     }
     return null;
@@ -159,9 +97,9 @@ class Wallet {
     if (account != null) {
       if (gasLimit == null) {
         if (data == null) {
-          gasLimit = BigInt.from(EthereumConst.ETH_GAS_LIMIT);
+          gasLimit = BigInt.from(EthereumConst.ETH_TRANSFER_GAS_LIMIT);
         } else {
-          gasLimit = BigInt.from(EthereumConst.ERC20_GAS_LIMIT);
+          gasLimit = BigInt.from(EthereumConst.ERC20_TRANSFER_GAS_LIMIT);
         }
       }
       if (gasPrice == null) {
@@ -194,6 +132,8 @@ class Wallet {
     String toAddress,
     BigInt value,
     BigInt gasPrice,
+    int nonce,
+    int gasLimit = EthereumConst.ETH_TRANSFER_GAS_LIMIT,
   }) async {
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
@@ -203,8 +143,9 @@ class Wallet {
       web3.Transaction(
         to: web3.EthereumAddress.fromHex(toAddress),
         gasPrice: web3.EtherAmount.inWei(gasPrice),
-        maxGas: EthereumConst.ETH_GAS_LIMIT,
+        maxGas: gasLimit,
         value: web3.EtherAmount.inWei(value),
+        nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
     );
@@ -217,6 +158,8 @@ class Wallet {
     String toAddress,
     BigInt value,
     BigInt gasPrice,
+    int nonce,
+    int gasLimit = EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
   }) async {
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
@@ -229,7 +172,8 @@ class Wallet {
         function: contract.function('transfer'),
         parameters: [web3.EthereumAddress.fromHex(toAddress), value],
         gasPrice: web3.EtherAmount.inWei(gasPrice),
-        maxGas: EthereumConst.ERC20_GAS_LIMIT,
+        maxGas: gasLimit,
+        nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
     );
@@ -242,6 +186,32 @@ class Wallet {
     return credentials;
   }
 
+  Future<String> sendApproveErc20Token({
+    String contractAddress,
+    String approveToAddress,
+    String password,
+    BigInt amount,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: erc20Contract,
+        function: erc20Contract.function('approve'),
+        parameters: [web3.EthereumAddress.fromHex(approveToAddress), amount],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+  }
+
   Future<String> signApproveErc20Token({
     String contractAddress,
     String approveToAddress,
@@ -249,6 +219,7 @@ class Wallet {
     BigInt amount,
     BigInt gasPrice,
     int gasLimit,
+    int nonce,
   }) async {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
@@ -261,10 +232,40 @@ class Wallet {
         parameters: [web3.EthereumAddress.fromHex(approveToAddress), amount],
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
+        nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
     );
     return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  /// stakingAmount: how many amount of hyn do you what to stake.
+  /// type:          what type of contract do you what to stake. [0 for 1 monty, 1 for 3 month, 2 for 6 month]
+  Future<String> sendCreateMap3Node({
+    BigInt stakingAmount,
+    int type,
+    String firstHalfPubKey,
+    String secondHalfPubKey,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('createNode'),
+        parameters: [stakingAmount, BigInt.from(type), hexToBytes(firstHalfPubKey), hexToBytes(secondHalfPubKey)],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
   }
 
   /// stakingAmount: how many amount of hyn do you what to stake.
@@ -277,6 +278,7 @@ class Wallet {
     String password,
     BigInt gasPrice,
     int gasLimit,
+    int nonce,
   }) async {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
@@ -289,10 +291,36 @@ class Wallet {
         parameters: [stakingAmount, BigInt.from(type), hexToBytes(firstHalfPubKey), hexToBytes(secondHalfPubKey)],
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
+        nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
     );
     return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  Future<String> sendDelegateMap3Node({
+    String createNodeWalletAddress,
+    BigInt stakingAmount,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('delegate'),
+        parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress), stakingAmount],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
   }
 
   Future<String> signDelegateMap3Node({
@@ -301,6 +329,7 @@ class Wallet {
     String password,
     BigInt gasPrice,
     int gasLimit,
+    int nonce,
   }) async {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
@@ -313,10 +342,36 @@ class Wallet {
         parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress), stakingAmount],
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
+        nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
     );
     return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  ///Withdraw token
+  Future<String> sendCollectMap3Node({
+    String createNodeWalletAddress,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('collect'),
+        parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress)],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
   }
 
   ///Withdraw token
@@ -325,6 +380,7 @@ class Wallet {
     String password,
     BigInt gasPrice,
     int gasLimit,
+    int nonce,
   }) async {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
@@ -337,6 +393,7 @@ class Wallet {
         parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress)],
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
+        nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
     );

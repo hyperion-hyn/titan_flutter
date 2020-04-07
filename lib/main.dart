@@ -32,12 +32,12 @@ void main() {
 
   BlocSupervisor.delegate = AppBlocDelegate();
 
-  if (env.buildType == BuildType.PROD) {
+//  if (env.buildType == BuildType.PROD) {
     FlutterBugly.init(
       androidAppId: Config.BUGLY_ANDROID_APPID,
       iOSAppId: Config.BUGLY_IOS_APPID,
     );
-  }
+//  }
 
   FlutterBugly.postCatchedException(
     () => runApp(Injector(
