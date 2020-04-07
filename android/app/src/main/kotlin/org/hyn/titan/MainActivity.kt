@@ -23,7 +23,7 @@ import org.hyn.titan.push.UMengPluginInterface
 import org.hyn.titan.push.UmengPlugin
 import org.hyn.titan.sensor.SensorPluginInterface
 import org.hyn.titan.umenglib.push.UMengPushImpl
-import org.hyn.titan.utils.AppPrintPlugin
+import org.hyn.titan.utils.AppToolsPlugin
 import org.hyn.titan.wallet.WalletPluginInterface
 import java.io.File
 
@@ -40,9 +40,13 @@ class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         GeneratedPluginRegistrant.registerWith(this)
-        AppPrintPlugin.registerWith(this)
+        AppToolsPlugin.registerWith(this)
         UmengPlugin.registerWith(this)
         GlobalScope.launch {
+            Thread.sleep(2000)
+            withContext(Dispatchers.Main) {
+                AppToolsPlugin.deeplinkStart(intent.data)
+            }
             Thread.sleep(10000)
             withContext(Dispatchers.Main){
                 AppPrintTools.printLog(UMengPushImpl.umengToken)
@@ -140,6 +144,7 @@ class MainActivity : FlutterActivity() {
                 }
             }
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
