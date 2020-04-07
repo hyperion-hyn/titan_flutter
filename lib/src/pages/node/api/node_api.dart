@@ -81,7 +81,6 @@ class NodeApi {
   Future<String> startContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
       int gasPrice, String contractId, StartJoinInstance startJoinInstance) async {
     var wallet = activatedWallet.wallet;
-
 //    var maxStakingAmount = 1000000; //一百万
     var maxStakingAmount = double.parse(contractNodeItem.contract.minTotalDelegation); //一百万
     var myStaking = contractNodeItem.contract.ownerMinDelegationRate * maxStakingAmount; //最小抵押量
