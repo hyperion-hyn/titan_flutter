@@ -19,7 +19,9 @@ class SignalChatsPage extends StatefulWidget {
   static const int NODE = -3;
 
   final int type;
+
   SignalChatsPage({this.type});
+
   @override
   _SignalChatsState createState() => _SignalChatsState();
 }
@@ -123,7 +125,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       child: MapboxMap(
         compassEnabled: false,
         initialCameraPosition: CameraPosition(
-          target: LatLng(23.13246724,113.36946487),// 天河公园-学院附近
+          target: LatLng(23.13246724, 113.36946487), // 天河公园-学院附近
           zoom: 12,
         ),
         styleString: style,
@@ -385,7 +387,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   Widget _dailySignalWidget({int type}) {
     var _size = MediaQuery.of(context).size;
     double _chartsWidth = _size.width - 0;
-    double _chartsHeight = type != SensorType.POI ? 250:180;
+    double _chartsHeight = type != SensorType.POI ? 250 : 180;
 
     var xAxisData = [];
     var seriesData = [];
@@ -460,7 +462,11 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
               padding: EdgeInsets.fromLTRB(20, 16, 0, 0),
               child: SizedBox(
                   width: double.infinity,
-                  child: Text('最近一个月${SensorType.getScanName(context,type)}数据增量：', style: TextStyle(fontSize: 14))),
+                  child: Text('最近一个月${SensorType.getScanName(context, type)}数据增量：',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ))),
             )),
         Center(
           child: Container(
