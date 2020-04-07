@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/home/home_panel.dart';
+import 'package:titan/src/pages/news/info_detail_page.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 class HomePage extends StatefulWidget {
@@ -14,6 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+
   @override
   Widget build(BuildContext context) {
     return myWidget.DraggableScrollableActuator(
@@ -63,7 +69,43 @@ class HomePageState extends State<HomePage> {
       },
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+
+    TitanPlugin.msgPushChangeCallBack = (Map values) {
+      _pushWebView(values);
+    };
+
+    TitanPlugin.urlLauncherCallBack = (Map values) {
+      print('[Home_page] initState, urlLauncher, values:${values}');
+    };
+  }
+
+  void _pushWebView(Map values) {
+    var url = values["out_link"];
+    var title = values["title"];
+    var content = values["content"];
+    print("[dd] content:${content}");
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => InfoDetailPage(
+              id: 0,
+              url: url,
+              title: title,
+              content: content,
+            )));
+  }
+
+
 }
+
+/* todo:
+ * 暂时关闭内容有：首页合约弹窗
+  * */
 
 //class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //  final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
@@ -133,7 +175,7 @@ class HomePageState extends State<HomePage> {
 //                  content: content,
 //                )));
 //  }
-//
+
 //  void _showSetAreaAppDialog() {
 //    showDialog(
 //        context: context,
