@@ -523,7 +523,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 logger.i('请先切换到内外网络');
               } else {
                 final client = WalletUtil.getWeb3Client();
-                const String privateKey = '1a23cda50e4c05ad10829ee46f130392a2f6c16416d2a8f8c1b36ffdc56627cd';
+                const String privateKey = '9a53609d8e8b37c9fe2265a31e5c9d3d5fda137b205e1389a1fa7fe665a49152';
                 final credentials = await client.credentialsFromPrivateKey(privateKey);
 
                 final address = await credentials.extractAddress();
