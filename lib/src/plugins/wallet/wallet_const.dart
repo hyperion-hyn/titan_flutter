@@ -65,7 +65,7 @@ class WalletConfig {
         //TODO
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.local:
-        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
+        return '0x8f8445BD4fff551494A9f0fce1A3316234334c90';
     }
     return '';
   }

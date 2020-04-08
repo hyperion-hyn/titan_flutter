@@ -246,7 +246,7 @@ class _Map3NodeJoinContractState
                     ),
                   ),
                   MaterialButton(onPressed:(){
-                    _filterSubject.sink.add(contractNodeItem.remainDelegation);
+                    getCurrentSpend(contractNodeItem.remainDelegation);
                   },child: Text("全部份额"),)
                 ],
               ),
