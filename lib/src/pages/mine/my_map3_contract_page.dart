@@ -281,7 +281,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                                   style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))
                               ),
                               TextSpan(
-                                text: "${FormatUtil.formatNum(model.remainDelegation)}",
+                                text: "${FormatUtil.formatNum(int.parse(model.remainDelegation))}",
                                 style: TextStyle(fontSize: 12, color: HexColor('#E39F2D')),
                               ),
                               TextSpan(

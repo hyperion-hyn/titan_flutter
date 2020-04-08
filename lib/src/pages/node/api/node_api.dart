@@ -82,7 +82,7 @@ class NodeApi {
       int gasPrice, String contractId, StartJoinInstance startJoinInstance) async {
     var wallet = activatedWallet.wallet;
 //    var maxStakingAmount = 1000000; //一百万
-    var maxStakingAmount = contractNodeItem.contract.minTotalDelegation; //一百万
+    var maxStakingAmount = double.parse(contractNodeItem.contract.minTotalDelegation); //一百万
     var myStaking = contractNodeItem.contract.ownerMinDelegationRate * maxStakingAmount; //最小抵押量
     var ethAccount = wallet.getEthAccount();
     var hynAssetToken = wallet.getHynToken();
@@ -122,20 +122,21 @@ class NodeApi {
     );
     print('createMap3Hex is: $createMap3Hex');
 
-    startJoinInstance.txHash = createMap3Hex;
-    startJoinInstance.publicKey = nodeKey["publicKey"];
-    String postData = json.encode(startJoinInstance.toJson());
-    print("startContractInstance = $postData");
-    var data = await HttpCore.instance
-        .post("contracts/create/$contractId", data: postData, options: RequestOptions(contentType: "application/json"));
-    return data['msg'];
+//    startJoinInstance.txHash = createMap3Hex;
+//    startJoinInstance.publicKey = nodeKey["publicKey"];
+//    String postData = json.encode(startJoinInstance.toJson());
+//    print("startContractInstance = $postData");
+//    var data = await HttpCore.instance
+//        .post("contracts/create/$contractId", data: postData, options: RequestOptions(contentType: "application/json"));
+//    return data['msg'];
+    return "success";
   }
 
   Future<String> joinContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
       int gasPrice, createNodeWalletAddress, String contractId, StartJoinInstance startJoinInstance) async {
     var wallet = activatedWallet.wallet;
 
-    var maxStakingAmount = contractNodeItem.contract.minTotalDelegation; //一百万
+    var maxStakingAmount = double.parse(contractNodeItem.contract.minTotalDelegation); //一百万
     var myStaking = contractNodeItem.contract.ownerMinDelegationRate * maxStakingAmount; //最小抵押量
     var ethAccount = wallet.getEthAccount();
     var hynErc20ContractAddress = wallet.getEthAccount().contractAssetTokens[0].contractAddress;
@@ -167,12 +168,13 @@ class NodeApi {
     );
     print('joinHex is: $joinHex');
 
-    startJoinInstance.txHash = joinHex;
-    String postData = json.encode(startJoinInstance.toJson());
-    print("joinContractInstance = $postData");
-    var data = await HttpCore.instance.post("instances/delegate/$contractId",
-        data: postData, options: RequestOptions(contentType: "application/json"));
-    return data['msg'];
+//    startJoinInstance.txHash = joinHex;
+//    String postData = json.encode(startJoinInstance.toJson());
+//    print("joinContractInstance = $postData");
+//    var data = await HttpCore.instance.post("instances/delegate/$contractId",
+//        data: postData, options: RequestOptions(contentType: "application/json"));
+//    return data['msg'];
+    return "success";
   }
 
   Future<NodePageEntityVo> getNodePageEntityVo() async {

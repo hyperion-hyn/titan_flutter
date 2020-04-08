@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 import 'bloc.dart';
@@ -30,6 +33,17 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
       await walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
+      if(_activatedWalletVo?.wallet != null && _activatedWalletVo?.wallet.getEthAccount() != null
+      && _activatedWalletVo.wallet.keystore != null) {
+        String postData = "{\"address\":\"${_activatedWalletVo.wallet
+            .getEthAccount()
+            ?.address}\",\"name\":\"${_activatedWalletVo.wallet.keystore
+            ?.name}\"}";
+        print("!!!!!$postData");
+        await HttpCore.instance
+            .post("wallets/", data: postData,
+            options: RequestOptions(contentType: "application/json"));
+      }
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());
     } else if (event is UpdateActivatedWalletBalanceEvent) {
       if (_activatedWalletVo != null) {

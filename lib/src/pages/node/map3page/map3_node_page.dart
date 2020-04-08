@@ -267,7 +267,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                           Expanded(
                               child: Text("${contractNodeItem.contract.nodeName}",
                                   style: TextStyles.textCfffS14)),
-                          Text("剩余3天启动", style: TextStyles.textCfffS12)
+                          Text("剩余${contractNodeItem.remainDay}天启动", style: TextStyles.textCfffS12)
                         ],
                       ),
                       Padding(
@@ -284,7 +284,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                                   style: TextStyles.textCfffS12,
                                   children: <TextSpan>[
                                     TextSpan(
-                                        text: "${FormatUtil.formatNum(contractNodeItem.remainDelegation)}",
+                                        text: "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
                                         style: TextStyles.textCf29a6eS12),
                                     TextSpan(
                                         text: "HYN",

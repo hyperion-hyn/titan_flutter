@@ -160,7 +160,7 @@ class _Map3NodeCreateContractState
     List<int> suggestList = contractNodeItem.contract.suggestQuantity.split(",").map(
             (suggest)=>int.parse(suggest)
     ).toList();
-    double minTotal = contractNodeItem.contract.minTotalDelegation * contractNodeItem.contract.ownerMinDelegationRate;
+    double minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.ownerMinDelegationRate;
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
@@ -505,7 +505,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context,NodeItem nodeItem,{hasRem
                         children: <Widget>[
                           Text(nodeItem.nodeName, style: TextStyles.textC333S14bold),
                           SizedBox(height: 5,),
-                          Text("启动共需${FormatUtil.formatNum(nodeItem.minTotalDelegation)}HYN",
+                          Text("启动共需${FormatUtil.stringFormatNum(nodeItem.minTotalDelegation)}HYN",
                               style: TextStyles.textC333S14)
                         ],
                       ),
@@ -550,13 +550,14 @@ Widget getMap3NodeProductHeadItem(BuildContext context,NodeItem nodeItem,{hasRem
                     ],
                   )),
             ),
-            if(showMinDelegation)
+//            if(showMinDelegation)
               Expanded(
                 child: Center(
                     child: Column(
                       children: <Widget>[
-                        Text("创建最低投入", style: TextStyles.textC9b9b9bS12),
-                        Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}", style: TextStyles.textC333S14)
+                        Text(showMinDelegation ? "创建最低投入" : "最低投入", style: TextStyles.textC9b9b9bS12),
+                        Text(showMinDelegation ? "${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}"
+                            : "${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textC333S14)
                       ],
                     )),
               )
