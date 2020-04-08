@@ -79,7 +79,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
                     color: Colors.white,
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(20, 0, 0, 8),
-                      child: SizedBox(width: double.infinity, child: Text('POI数据分布：', style: TextStyle(fontSize: 14))),
+                      child: SizedBox(width: double.infinity, child: Text(S.of(context).poi_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
                     )),
               ],
             )),
@@ -364,7 +364,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          child: Text('信号数据总量：', style: TextStyle(fontSize: 14)),
+          child: Text(S.of(context).signal_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           padding: EdgeInsets.fromLTRB(20, 16, 0, 8),
         ),
         Center(
@@ -462,7 +462,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
               padding: EdgeInsets.fromLTRB(20, 16, 0, 0),
               child: SizedBox(
                   width: double.infinity,
-                  child: Text('最近一个月${SensorType.getScanName(context, type)}数据增量：',
+                  child: Text(S.of(context).signal_chart_last_month_numbers_func("${SensorType.getScanName(context, type)}"),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -492,14 +492,14 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       case SignalChatsPage.NODE:
         {
           _title =
-              '''Map3节点网络启用全新的空间数据模型，旨在大规模、高性能及低成本地将基础设施提升1000倍。Map3是由One Map算法技术支撑的去中心化地图/位置服务PaaS, 旨在支持构建Map3去中心化节点的大型网络。''';
+              S.of(context).signal_chart_desc_map3;
           _map3nodeVo = await _api.getMap3NodeData();
         }
         break;
 
       case SignalChatsPage.SIGNAL:
         {
-          _title = '''信号数据将有效提升去中心化地图的定位精准度，只要有GPS，蓝牙，基站或WIFI信号的地区就能提供有效的应急救援、精准导航等定位功能，适用于户外徒步或探险等多场景应用。''';
+          _title = S.of(context).signal_chart_desc_signal;
           _weeklyVoList = await _api.getSignalWeekly(language: languageCode);
           var dailyList = await _api.getSignalDaily(language: languageCode);
           _dailyVo = dailyList[0];
@@ -509,7 +509,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       case SignalChatsPage.POI:
         {
           _title =
-              '''POI贡献基于众包、众治的去中心化理念，以去中心化的最有效方式鼓励用户贡献真实详细的位置详情。为避免POI信息有误，同时推出博弈系统配合网络验证，开放给所有地图用户查验POI数据真实性。未来想要搜索附近好吃好玩的目的地，只需在App首页输入关键字，如美食、酒店、商场、景点等，即可查看该位置点详情。''';
+              S.of(context).signal_chart_desc_poi;
           _poiVoList = await _api.getPoiDaily(language: languageCode);
         }
         break;

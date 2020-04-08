@@ -6,6 +6,8 @@ import '../../env.dart';
 
 class Const {
   static String get DOMAIN {
+    //return 'https://api.hyn.space/';
+
     if(env.buildType == BuildType.DEV){
       return 'http://10.10.1.115:5000/';
     }else{

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
@@ -94,7 +95,7 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
             FloatingActionButton(
               onPressed: () {
                 Application.eventBus.fire(ToMyLocationEvent());
-//                BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
+                //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
               },
               mini: true,
               heroTag: 'myLocation',

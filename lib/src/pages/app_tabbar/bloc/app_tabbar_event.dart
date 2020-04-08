@@ -5,6 +5,9 @@ abstract class AppTabBarEvent {
   AppTabBarEvent();
 }
 
+class InitialAppTabBarEvent extends AppTabBarEvent {
+}
+
 class CheckNewAnnouncementEvent extends AppTabBarEvent {}
 
 class BottomNavigationBarEvent extends AppTabBarEvent {

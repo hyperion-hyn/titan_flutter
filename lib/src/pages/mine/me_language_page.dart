@@ -93,6 +93,16 @@ class _LanguageState extends BaseState<MeLanguagePage> {
   }
 
   Widget _buildInfoContainer(LanguageModel languageModel) {
+
+    var _visible = false;
+    if (selectedLanguageModel.locale.languageCode == 'zh') {
+      _visible = (selectedLanguageModel.locale.countryCode == languageModel.locale.countryCode);
+      //print('[language] --> countryCode:${locale.countryCode}, selectedLocale.countryCode:${selectedLocale.countryCode}');
+    } else {
+      _visible = (selectedLanguageModel.locale.languageCode == languageModel.locale.languageCode);
+      //print('[language] --> language:${locale.languageCode}, selectedLocale.languageCode:${selectedLocale.languageCode}');
+    }
+    
     return InkWell(
       onTap: () {
         print("$selectedLanguageModel  $languageModel");
@@ -116,7 +126,7 @@ class _LanguageState extends BaseState<MeLanguagePage> {
                 ),
                 Spacer(),
                 Visibility(
-                  visible: selectedLanguageModel.locale.languageCode == languageModel.locale.languageCode,
+                  visible: _visible,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                     child: Icon(

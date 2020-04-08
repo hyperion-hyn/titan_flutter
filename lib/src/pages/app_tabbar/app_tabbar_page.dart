@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -5,9 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
@@ -21,6 +25,10 @@ import '../../../env.dart';
 import '../home/home_page.dart';
 import '../wallet/wallet_tabs_page.dart';
 import '../mine/my_page.dart';
+import 'announcement_dialog.dart';
+import 'bloc/app_tabbar_bloc.dart';
+import 'bloc/app_tabbar_event.dart';
+import 'bloc/app_tabbar_state.dart';
 import 'drawer_component.dart';
 
 class AppTabBarPage extends StatefulWidget {
@@ -37,11 +45,13 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
   int _currentTabIndex = 0;
 
-  bool _isHaveNewAnnouncement = false;
-  bool _isHideBottomNavigationBar = false;
   AnimationController _bottomBarPositionAnimationController;
   AnimationController _fabsBarPositionAnimationController;
   DateTime _lastPressedAt;
+  StreamSubscription _clearBadgeSubcription;
+
+  ScaffoldMapState _mapState;
+  var _isShowAnnounceDialog = false;
 
   @override
   void initState() {
@@ -52,6 +62,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
       value: 0.0,
       vsync: this,
     );
+
     _fabsBarPositionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       value: 0.0,
@@ -60,9 +71,28 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
     //set the status bar color
     FlutterStatusbarcolor.setStatusBarColor(Colors.black12);
+
+    // 检测是否有新弹窗
+    Future.delayed(Duration(milliseconds: 2000)).then((value) {
+      print('[home] --> check new announcement');
+      BlocProvider.of<AppTabBarBloc>(context).add(CheckNewAnnouncementEvent());
+    });
+
+    _clearBadgeSubcription = Application.eventBus.on().listen((event) {
+      print('[home] --> clear badge');
+      if (event is ClearBadgeEvent) {
+        BlocProvider.of<AppTabBarBloc>(context).add(InitialAppTabBarEvent());
+      }
+    });
   }
 
-  ScaffoldMapState _mapState;
+
+  @override
+  void dispose() {
+    _clearBadgeSubcription.cancel();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,16 +141,31 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                 }
                 return true;
               },
-              child: Stack(
-                children: <Widget>[
-                  ScaffoldMap(),
-                  userLocationBar(),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
-                    child: _getTabView(_currentTabIndex),
-                  ),
-                  bottomNavigationBar(),
-                ],
+              child: BlocBuilder<AppTabBarBloc, AppTabBarState>(
+                builder: (context, state) {
+
+                  if(state is CheckNewAnnouncementState && state.announcement != null){
+                    _isShowAnnounceDialog = true;
+                    Application.isUpdateAnnounce = true;
+                  }
+
+                  return Stack(
+                    children: <Widget>[
+                      ScaffoldMap(),
+                      userLocationBar(),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
+                        child: _getTabView(_currentTabIndex),
+                      ),
+                      bottomNavigationBar(),
+                      if(_isShowAnnounceDialog && state is CheckNewAnnouncementState) AnnouncementDialog(
+                          state.announcement,(){
+                        _isShowAnnounceDialog = false;
+                        BlocProvider.of<AppTabBarBloc>(context).add(InitialAppTabBarEvent());
+                      })
+                    ],
+                  );
+                }
               ),
             ),
           ),
@@ -228,6 +273,17 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                if (Application.isUpdateAnnounce && index == 3) Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                  child: Container(
+                    height: 8,
+                    width: 8,
+                    decoration: BoxDecoration(
+                        color: HexColor("#DA3B2A"),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: HexColor("#DA3B2A"))),
+                  ),
+                ),
                 Icon(
                   iconData,
                   color: selected ? Theme.of(context).primaryColor : Colors.black38,
