@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -25,12 +27,21 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   List<ContractNodeItem> _dataArray = [];
   LoadDataBloc loadDataBloc = LoadDataBloc();
   var _currentPage = 0;
+  Wallet _wallet;
 
   var api = NodeApi();
 
   @override
   void initState() {
     super.initState();
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
 
     loadDataBloc.add(LoadingEvent());
     _loadData();
@@ -74,10 +85,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     List<ContractNodeItem> dataList = [];
     if (widget.title.contains("发起")) {
-      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
+      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(address: _wallet.getEthAccount().address);
       dataList  = createContractList;
     } else {
-      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
+      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(address: _wallet.getEthAccount().address);
       dataList = joinContractList;
     }
 
@@ -95,15 +106,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       });
     }
 
-
     print('[map3] widget.title:${widget.title}, _loadData, dataList.length:${dataList.length}');
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-  }
 
   @override
   Widget build(BuildContext context) {
