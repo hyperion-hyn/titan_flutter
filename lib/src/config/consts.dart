@@ -9,7 +9,8 @@ class Const {
     //return 'https://api.hyn.space/';
 
     if(env.buildType == BuildType.DEV){
-      return 'http://10.10.1.115:5000/';
+      return 'http://116.23.19.213:35000/';
+//      return 'http://10.10.1.115:5000/';
     }else{
       return 'https://api.hyn.space/';
     }
