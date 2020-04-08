@@ -414,7 +414,7 @@ class _Map3NodeCreateContractState
         constraints: BoxConstraints.expand(height: 48),
         child: RaisedButton(
             textColor: Colors.white,
-            color: DefaultColors.color0F95B0,
+            color: DefaultColors.color0f95b0,
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: Theme.of(context).primaryColor),
                 borderRadius: BorderRadius.circular(36)),

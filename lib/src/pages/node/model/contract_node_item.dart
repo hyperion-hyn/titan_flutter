@@ -47,7 +47,7 @@ part 'contract_node_item.g.dart';
 
   String get remainDay{
     double remian = (expectCancelTime - instanceStartTime) / 3600 / 24;
-    return FormatUtil.formatNumDecimal(remian);
+    return FormatUtil.doubleFormatNum(remian);
   }
 
 }
