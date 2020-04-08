@@ -45,8 +45,6 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
   int _currentTabIndex = 0;
 
-  bool _isHaveNewAnnouncement = false;
-  bool _isHideBottomNavigationBar = false;
   AnimationController _bottomBarPositionAnimationController;
   AnimationController _fabsBarPositionAnimationController;
   DateTime _lastPressedAt;
@@ -91,7 +89,6 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
   @override
   void dispose() {
-
     _clearBadgeSubcription.cancel();
     super.dispose();
   }

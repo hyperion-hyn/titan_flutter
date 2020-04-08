@@ -55,7 +55,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           //S.of(context).map3_global_nodes,
-          "全球数据",
+          S.of(context).global_data,
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -83,13 +83,13 @@ class _GlobalDataState extends State<GlobalDataPage> {
                           unselectedLabelColor: Colors.grey[400],
                           tabs: [
                             Tab(
-                              text: 'Map3节点',
+                              text: S.of(context).global_data_map3,
                             ),
                             Tab(
-                              text: '信号数据',
+                              text: S.of(context).global_data_signal,
                             ),
                             Tab(
-                              text: 'POI数据',
+                              text: S.of(context).global_data_poi,
                             ),
                           ],
                         ),
@@ -106,7 +106,7 @@ class _GlobalDataState extends State<GlobalDataPage> {
               SignalChatsPage(type: SignalChatsPage.SIGNAL),
               SignalChatsPage(type: SignalChatsPage.POI),
             ],
-            physics: NeverScrollableScrollPhysics(),
+            //physics: NeverScrollableScrollPhysics(),
           ),
         ),
       ),
