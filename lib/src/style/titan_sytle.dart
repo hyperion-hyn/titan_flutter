@@ -31,6 +31,13 @@ class TextStyles {
   static TextStyle textC26ac29S12 = textStyle(fontSize: 12, color: DefaultColors.color26ac29);//绿色
   static TextStyle textCf29a6eS12 = textStyle(fontSize: 12, color: DefaultColors.colorf29a6e);//黄色
   static TextStyle textCf29a6eS14 = textStyle(color: DefaultColors.colorf29a6e);//黄色
+
+  static TextStyle textC906b00S13 = textStyle(fontSize: 13, color: DefaultColors.color906b00);//土黄色
+  static TextStyle textCcc000000S16 = textStyle(fontSize: 16, color: DefaultColors.colorcc000000);//黑80%
+  static TextStyle textCcc000000S14 = textStyle(color: DefaultColors.colorcc000000);//黑80%
+  static TextStyle textC99000000S10 = textStyle(fontSize: 10, color: DefaultColors.color99000000);//黑60%
+  static TextStyle textCff4c3bS18 = textStyle(fontSize: 18, color: DefaultColors.colorff4c3b,fontWeight: FontWeight.bold);//红
+  static TextStyle textC7c5b00S12 = textStyle(fontSize: 12, color: DefaultColors.color7c5b00);//深土黄
 }
 
 class DefaultColors {
@@ -45,5 +52,13 @@ class DefaultColors {
   static Color colorff2d2d = HexColor("#ff2d2d");
   static Color color26ac29 = HexColor("#26ac29");
   static Color colorf29a6e = HexColor("#f29a6e");
-  static Color color0F95B0 = HexColor("#0F95B0");//main color
+  static Color color0f95b0 = HexColor("#0f95b0");//main color
+  static Color colorcc000000 = HexColor("#cc000000");
+  static Color color99000000 = HexColor("#99000000");
+  static Color color66000000 = HexColor("#66000000");
+  static Color colorffdb58 = HexColor("#ffdb58");
+  static Color color906b00 = HexColor("#906b00");
+  static Color colorff4c3b = HexColor("#ff4c3b");
+  static Color color7c5b00 = HexColor("#7c5b00");
+  static Color color1177869e = HexColor("#1177869e");
 }

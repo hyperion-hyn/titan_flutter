@@ -113,9 +113,10 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               //请注意，要先 approve
               logger.w('请注意，要先 approve');
-              var wallets = await WalletUtil.scanWallets();
-              if (wallets.length > 0) {
-                var wallet0 = wallets[0];
+              var wallets = WalletInheritedModel.of(context).activatedWallet;
+//              var wallets = await WalletUtil.scanWallets();
+              if (wallets != null) {
+                var wallet0 = wallets.wallet;
 
                 var maxStakingAmount = 1000000; //一百万
                 var myStaking = 0.2 * maxStakingAmount; //最小抵押量
@@ -156,7 +157,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   secondHalfPubKey: '0xe5dede8ce87e38149f1e8df57da67d43d12a27f61d11d7f6d14ebbb6132a850d',
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                   gasLimit: gasLimit,
-                  password: 'my_password',
+                  password: '111111',
                 );
                 var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
@@ -167,9 +168,10 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var wallets = await WalletUtil.scanWallets();
-              if (wallets.length > 0) {
-                var wallet0 = wallets[0];
+              var wallets = WalletInheritedModel.of(context).activatedWallet;
+//              var wallets = await WalletUtil.scanWallets();
+              if (wallets != null) {
+                var wallet0 = wallets.wallet;
 
                 var createNodeWalletAddress = wallet0.getEthAccount().address; //创建节点合约的钱包地址
                 double myStaking = 100000; //我要抵押的量
@@ -180,7 +182,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                   gasLimit: gasLimit,
-                  password: 'my_password',
+                  password: '111111',
                 );
                 var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
