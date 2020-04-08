@@ -1,18 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/utils.dart';
-
 import 'node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
@@ -114,8 +110,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Container(
-        padding: const EdgeInsets.all(8),
-        color: HexColor('#05095F'),
+        padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+        color: HexColor('#E2E0E3'),
         child: LoadDataContainer(
           bloc: loadDataBloc,
           onLoadData: _loadData,
@@ -124,7 +120,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           //onLoadingMore: _loadMoreData,
           child: ListView.separated(
               itemBuilder: (context, index) {
-                return buildInfoItem(_dataArray[index]);
+                return _buildInfoItem(_dataArray[index]);
               },
               separatorBuilder: (context, index) {
                 return Container(
@@ -169,7 +165,123 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     return statusColor;
   }
 
-  Widget buildInfoItem(ContractNodeItem model) {
+  Widget _buildInfoItem(ContractNodeItem contractNodeItem) {
+    String startAccount = "${contractNodeItem.owner}";
+    startAccount = startAccount.substring(0,startAccount.length > 25 ? 25 : startAccount.length);
+    startAccount = startAccount + "...";
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding:
+        const EdgeInsets.only(left: 20.0, right: 13, top: 7, bottom: 7),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text("${contractNodeItem.ownerName}",
+                    style: TextStyles.textCcc000000S14),
+                Expanded(
+                    child: Text(" $startAccount",
+                        style: TextStyles.textC9b9b9bS12)),
+                Text("剩余时间：${contractNodeItem.remainDay}天", style: TextStyles.textC9b9b9bS12)
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top:8,bottom: 16),
+              child: Divider(height: 1,color: DefaultColors.color1177869e),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Image.asset(
+                  "res/drawable/ic_map3_node_item_contract.png",
+                  width: 42,
+                  height: 42,
+                  fit:BoxFit.cover,
+                ),
+                SizedBox(width: 6,),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(
+                              child: Text("${contractNodeItem.contract.nodeName}",
+                                  style: TextStyles.textCcc000000S14))
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: Row(
+                          children: <Widget>[
+                            Text("最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                                style: TextStyles.textC99000000S10,maxLines:1,softWrap: true),
+                            Text("  |  ",style: TextStyles.textC9b9b9bS12),
+                            Text("${contractNodeItem.contract.duration}天",style: TextStyles.textC99000000S10)
+                          ],
+                        ),
+                      ),
+                      Text("${FormatUtil.formatDate(contractNodeItem.instanceStartTime)}", style: TextStyles.textCfffS12),
+                    ],
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}", style: TextStyles.textCff4c3bS18),
+                    Text("年化奖励", style: TextStyles.textC99000000S10)
+                  ],
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top:9,bottom: 9),
+              child: Divider(height: 1,color: DefaultColors.color1177869e),
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                        text: "还差",
+                        style: TextStyles.textC9b9b9bS12,
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
+                              style: TextStyles.textC7c5b00S12),
+                          TextSpan(
+                              text: "HYN",
+                              style: TextStyles.textC9b9b9bS12),
+                        ]),
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                  width: 78,
+                  child: FlatButton(
+                    color: DefaultColors.colorffdb58,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24)),
+                    onPressed: () {
+                      Application.router.navigateTo(context, Routes.map3node_join_contract_page
+                          + "?contractId=${contractNodeItem.id}");
+                    },
+                    child: Text("参与", style: TextStyles.textC906b00S13),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  /*
+  Widget _buildInfoItem_old(ContractNodeItem model) {
     return Container(
       //color: HexColor('#7275A2'),
       decoration: BoxDecoration(
@@ -192,14 +304,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                     height: 55,
                     fit: BoxFit.cover,
                   ),
-                  /*child: FadeInImage.assetNetwork(
-                    image: "",
-                    //placeholder: 'res/drawable/img_placeholder.jpg',
-                    placeholder: 'res/drawable/ic_map3_node_item.png',
-                    width: 55,
-                    height: 55,
-                    fit: BoxFit.cover,
-                  ),*/
                 ),
               ),
               Expanded(
@@ -261,14 +365,14 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                       InkWell(
                         onTap: () {
                           //if (model.state == ContractState.Expired) {
-                            //print('[点击查看收益] id:${model.id}');
+                          //print('[点击查看收益] id:${model.id}');
 
-                            String jsonString = FluroConvertUtils.object2string(model.toJson());
-                            //print('[xx] param:${jsonString}');
+                          String jsonString = FluroConvertUtils.object2string(model.toJson());
+                          //print('[xx] param:${jsonString}');
 
-                            Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+                          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
 
-                            //Navigator.push(context, MaterialPageRoute(builder: (context) => NodeContractDetailPage(model)));
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => NodeContractDetailPage(model)));
                           //}
                         },
                         child:
@@ -316,6 +420,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       ),
     );
   }
+  */
+
 }
 
 enum ContractState { PENDING, Running, Expired, Withdrawal, FailRun }

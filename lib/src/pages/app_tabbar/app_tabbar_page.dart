@@ -74,12 +74,12 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
     // 检测是否有新弹窗
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
-      print('[home] --> check new announcement');
+      //print('[home] --> check new announcement');
       BlocProvider.of<AppTabBarBloc>(context).add(CheckNewAnnouncementEvent());
     });
 
     _clearBadgeSubcription = Application.eventBus.on().listen((event) {
-      print('[home] --> clear badge');
+      //print('[home] --> clear badge');
       if (event is ClearBadgeEvent) {
         BlocProvider.of<AppTabBarBloc>(context).add(InitialAppTabBarEvent());
       }
