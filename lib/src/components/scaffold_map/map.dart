@@ -456,7 +456,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   }
 
   int _clickTimes = 0;
-
+  var _isRunningRequestPermissions = false;
   Future _toMyLocation() async {
     _clickTimes++;
     _toLocationEventSubject.sink.add(1);
@@ -465,8 +465,8 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   void _listenEventBus() {
     _eventBusSubscription = Application.eventBus.on().listen((event) async {
       if (event is ToMyLocationEvent) {
-        //check location service
 
+        //check location service
         ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
 
         if (serviceStatus == ServiceStatus.disabled) {
@@ -478,15 +478,23 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         if (permission == PermissionStatus.granted) {
           _toMyLocation();
         } else {
-          Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler().requestPermissions([PermissionGroup.location]);
-          if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
-            _toMyLocation();
-            Rx.timer('', Duration(milliseconds: 1500)).listen((d) {
-              _toMyLocation(); //hack, location not auto move
-            });
-          } else {
-            _showGoToOpenAppSettingsDialog();
+
+          if (!_isRunningRequestPermissions) {
+            _isRunningRequestPermissions = true;
+
+            Map<PermissionGroup, PermissionStatus> permissions =
+            await PermissionHandler().requestPermissions([PermissionGroup.location]);
+
+            if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
+              _toMyLocation();
+              Rx.timer('', Duration(milliseconds: 1500)).listen((d) {
+                _toMyLocation(); //hack, location not auto move
+              });
+            } else {
+              _showGoToOpenAppSettingsDialog();
+            }
+
+            _isRunningRequestPermissions = false;
           }
         }
       }

@@ -18,4 +18,12 @@ class Application {
   //-----------------
   //default set to guangzhou tower center
   static LatLng recentlyLocation = LatLng(23.10901, 113.31799);
+
+  //-----------------
+  // Announce
+  //-----------------
+  static bool isUpdateAnnounce = false;
+
 }
+
+class ClearBadgeEvent {}

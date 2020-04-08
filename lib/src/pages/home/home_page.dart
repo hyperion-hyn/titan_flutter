@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,28 +25,28 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return myWidget.DraggableScrollableActuator(
-      child: BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
-        listener: (context, state) {
-          if (state is DefaultScaffoldMapState) {
-            myWidget.DraggableScrollableActuator.setMin(context);
-          } else {
-            myWidget.DraggableScrollableActuator.setHide(context);
-          }
-        },
-        child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(builder: (context, state) {
-          return LayoutBuilder(builder: (context, constraints) {
-            return Stack(
-              children: <Widget>[
-                buildMainSheetPanel(context, state, constraints),
-              ],
-            );
-          });
-        }),
-      ),
-    );
+        child: BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
+          listener: (context, state) {
+            if (state is DefaultScaffoldMapState) {
+              myWidget.DraggableScrollableActuator.setMin(context);
+            } else {
+              myWidget.DraggableScrollableActuator.setHide(context);
+            }
+          },
+          child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(builder: (context, state) {
+            return LayoutBuilder(builder: (context, constraints) {
+              return Stack(
+                children: <Widget>[
+                  buildMainSheetPanel(context, constraints),
+                ],
+              );
+            });
+          }),
+        ),
+      );
   }
 
-  Widget buildMainSheetPanel(context, state, boxConstraints) {
+  Widget buildMainSheetPanel(context, boxConstraints) {
     double maxHeight = boxConstraints.biggest.height;
     double anchorSize = 0.5;
     double minChildSize = 88.0 / maxHeight;
@@ -74,6 +72,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -83,10 +82,11 @@ class HomePageState extends State<HomePage> {
     };
 
     TitanPlugin.urlLauncherCallBack = (Map values) {
-      print('[Home_page] initState, urlLauncher, values:${values}');
       _urlLauncherAction(values);
     };
+
   }
+
 
   void _pushWebView(Map values) {
     var url = values["out_link"];
@@ -110,6 +110,8 @@ class HomePageState extends State<HomePage> {
     var subType = values["subType"];
     var content = values["content"];
     if (type == "contract" && subType == "detail") {
+      print('[Home_page] _urlLauncherAction, values:${values}');
+
       var contractId = content["contractId"];
       var model = ContractNodeItem(int.parse(contractId), NodeItem(0, "", 0, 0, 0.0, 0.0, 0.0, 0, 0, 0.0, false, "", "", ""), "", "", 0, 0, 0, "");
       String jsonString = FluroConvertUtils.object2string(model.toJson());
@@ -118,9 +120,6 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-/* todo:
- * 暂时关闭内容有：首页合约弹窗
-  * */
 
 //class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //  final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
