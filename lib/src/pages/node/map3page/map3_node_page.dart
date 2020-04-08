@@ -408,7 +408,6 @@ class _Map3NodeState extends State<Map3NodePage> {
                           ],
                         ),
                       ),
-                      Text("${FormatUtil.formatDate(contractNodeItem.instanceStartTime)}", style: TextStyles.textCfffS12),
                     ],
                   ),
                 ),

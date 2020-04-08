@@ -99,6 +99,7 @@ class NodeApi {
         await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address), atBlock: BlockNum.pending());
 
     //approve
+    print('approve result: $count');
     var approveTx = await wallet.sendApproveErc20Token(
         contractAddress: hynErc20ContractAddress,
         approveToAddress: approveToAddress,

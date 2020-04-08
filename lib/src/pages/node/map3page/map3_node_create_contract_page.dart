@@ -119,8 +119,9 @@ class _Map3NodeCreateContractState
       return;
     }
     double inputValue = double.parse(inputText);
-    double doubleEndProfit = inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 12;
-    double doubleSpendManager = inputValue * contractNodeItem.contract.commission / 12;
+    double doubleEndProfit = inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
+    double doubleSpendManager = (double.parse(contractNodeItem.contract.minTotalDelegation) - inputValue)
+        * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 * contractNodeItem.contract.commission;
     endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
     spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
 

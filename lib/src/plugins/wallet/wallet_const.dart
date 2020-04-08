@@ -18,7 +18,7 @@ class EthereumConst {
   static const int ETH_TRANSFER_GAS_LIMIT = 21000;
   static const int ERC20_TRANSFER_GAS_LIMIT = 40000;
 
-  static const int ERC20_APPROVE_GAS_LIMIT = 40000;
+  static const int ERC20_APPROVE_GAS_LIMIT = 100000;
 
   //TODO
   static const int CREATE_MAP3_NODE_GAS_LIMIT = 1000000;
@@ -65,7 +65,7 @@ class WalletConfig {
         //TODO
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.local:
-        return '0x08069f96640bb84c2a9330Bf54084486daF80407';
+        return '0x75D009f011c17b0707D13959485EBccb7c248012';
     }
     return '';
   }

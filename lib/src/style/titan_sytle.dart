@@ -36,7 +36,9 @@ class TextStyles {
   static TextStyle textCcc000000S16 = textStyle(fontSize: 16, color: DefaultColors.colorcc000000);//黑80%
   static TextStyle textCcc000000S14 = textStyle(color: DefaultColors.colorcc000000);//黑80%
   static TextStyle textC99000000S10 = textStyle(fontSize: 10, color: DefaultColors.color99000000);//黑60%
+  static TextStyle textC99000000S13 = textStyle(fontSize: 13, color: DefaultColors.color99000000);//黑60%
   static TextStyle textCff4c3bS18 = textStyle(fontSize: 18, color: DefaultColors.colorff4c3b,fontWeight: FontWeight.bold);//红
+  static TextStyle textCff4c3bS20 = textStyle(fontSize: 20, color: DefaultColors.colorff4c3b,fontWeight: FontWeight.bold);//红
   static TextStyle textC7c5b00S12 = textStyle(fontSize: 12, color: DefaultColors.color7c5b00);//深土黄
 }
 

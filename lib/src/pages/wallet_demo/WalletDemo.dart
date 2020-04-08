@@ -77,9 +77,10 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var wallets = await WalletUtil.scanWallets();
-              if (wallets.length > 0) {
-                var wallet0 = wallets[0];
+//              var wallets = await WalletUtil.scanWallets();
+              var wallets = WalletInheritedModel.of(context).activatedWallet;
+              if (wallets != null) {
+                var wallet0 = wallets.wallet;
 
                 var maxStakingAmount = 1000000; //一百万
                 var myStaking = 0.4 * maxStakingAmount; //最小抵押量
@@ -90,7 +91,7 @@ class _WalletDemoState extends State<WalletDemo> {
                       contractAddress: hynErc20ContractAddress,
                       approveToAddress: approveToAddress,
                       amount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
-                      password: 'my_password',
+                      password: '111111',
                       gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                       gasLimit: 5000000);
                   var ret =
@@ -525,7 +526,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 logger.i('请先切换到内外网络');
               } else {
                 final client = WalletUtil.getWeb3Client();
-                const String privateKey = '9a53609d8e8b37c9fe2265a31e5c9d3d5fda137b205e1389a1fa7fe665a49152';
+                const String privateKey = '0xb4c84ca00778137461d5fb215126e0ba0cb2a0e7650bfa39346a40f25303c7ed';
                 final credentials = await client.credentialsFromPrivateKey(privateKey);
 
                 final address = await credentials.extractAddress();
