@@ -18,6 +18,8 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 class Map3NodeCreateContractPage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
   static const String CONTRACT_PAGE_TYPE_JOIN = "contract_page_type_join";
+  static const String CONTRACT_PAGE_TYPE_COLLECT = "contract_page_type_collect";
+
   String pageType = CONTRACT_PAGE_TYPE_CREATE;
   String contractId;
 
