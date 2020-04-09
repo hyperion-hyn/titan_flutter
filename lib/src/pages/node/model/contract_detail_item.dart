@@ -20,10 +20,10 @@ part 'contract_detail_item.g.dart';
   String amountDelegation;
 
   @JsonKey(name: 'expectedYield')
-  int expectedYield;
+  String expectedYield;
 
   @JsonKey(name: 'commission')
-  int commission;
+  String commission;
 
   @JsonKey(name: 'delegatorCount')
   int delegatorCount;

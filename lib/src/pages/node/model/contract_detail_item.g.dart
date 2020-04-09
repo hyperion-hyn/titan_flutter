@@ -14,8 +14,8 @@ ContractDetailItem _$ContractDetailItemFromJson(Map<String, dynamic> json) {
     json['userAddress'] as String,
     json['ownerAddress'] as String,
     json['amountDelegation'] as String,
-    json['expectedYield'] as int,
-    json['commission'] as int,
+    json['expectedYield'] as String,
+    json['commission'] as String,
     json['delegatorCount'] as int,
     json['state'] as String,
   );
