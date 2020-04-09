@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 
 import '../../../env.dart';
 import 'entity.dart';
@@ -49,6 +49,7 @@ class BaseHttpCore {
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
+    //print('[request] responseEntity.data:${responseEntity.data}');
     return responseEntity.data;
   }
 
@@ -134,7 +135,7 @@ class BaseHttpCore {
 
     statusCode = response.statusCode;
     if (statusCode < 0) {
-      errorMsg = S.of(Keys.mainContextKey.currentContext).network_request_err(statusCode.toString());
+      errorMsg = S.of(Keys.rootKey.currentContext).network_request_err(statusCode.toString());
       throw HttpResponseNot200Exception(errorMsg);
     }
 //    String res2Json = '{"code":0,"msg":"mssss","data":[{"name":"moo"},{"name":"moo2"}]}';
@@ -146,12 +147,12 @@ class BaseHttpCore {
     try {
       map = json.decode(response.data);
     } catch (err) {
-      print('[base_http] json decode 1 err $err');
+      //print('[base_http] json decode 1 err $err');
       //String res2Json = json.encode(response.data);
       try {
         map = json.decode(response.data);
       } catch (err) {
-        print('[base_http] json decode 2 err $err');
+        //print('[base_http] json decode 2 err $err');
       }
     }
 

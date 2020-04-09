@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 
 import '../global.dart';
@@ -8,6 +9,7 @@ class SensorType {
   static const int GPS = -3;
   static const int GNSS = -4;
   static const int CELLULAR = -5;
+  static const int POI = -6;
 
   static String getScanImageName(int type) {
     var _imageName = "wifi";
@@ -33,35 +35,39 @@ class SensorType {
     return _imageName;
   }
 
-  static String getScanName(int type) {
-    var name = '';
+  static String getScanName(BuildContext context, int type) {
+    var name = "";
 
     switch (type) {
       case WIFI:
-        name = S.of(globalContext).scan_name_wifi;
+        name = S.of(context).scan_name_wifi;
         break;
 
       case CELLULAR:
-        name = S.of(globalContext).scan_name_cellular;
+        name = S.of(context).scan_name_cellular;
         break;
 
       case BLUETOOTH:
-        name = S.of(globalContext).scan_name_bluetooth;
+        name = S.of(context).scan_name_bluetooth;
         break;
 
       case GPS:
-        name = S.of(globalContext).scan_name_gps;
+        name = S.of(context).scan_name_gps;
         break;
 
       case GNSS:
 //        name = S.of(globalContext).scan_name_start;
         name = '';
         break;
+
+      case POI:
+        name = "POI";
+        break;
     }
 
     return name;
   }
-  
+
   static String getTypeString(int type) {
     switch (type) {
       case WIFI:
@@ -83,6 +89,10 @@ class SensorType {
       case CELLULAR:
         {
           return "CELLULAR";
+        }
+      case POI:
+        {
+          return "POI";
         }
       default:
         {

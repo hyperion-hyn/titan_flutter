@@ -192,6 +192,26 @@ import CoreBluetooth
         }
     }
 
+    override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        print("[Appdelegate] -->open url, url:\(url)")
+        
+        let urlString = url.absoluteString
+        if urlString.hasPrefix("titan://contract/detail?") {
+            if let detailComponentsLast = urlString.components(separatedBy: "?").last {
+                let components = detailComponentsLast.components(separatedBy: "=")
+                let mapValue: [String:Any] = [
+                    "type": "contract",
+                    "subType": "detail",
+                    "content": [
+                        components.first!: components.last
+                    ]
+                ]
+                self.callChannel.invokeMethod("urlLauncher", arguments: mapValue)
+            }
+        }
+        
+        return true
+    }
 }
 
 

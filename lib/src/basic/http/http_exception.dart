@@ -1,4 +1,5 @@
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 
 class HttpResponseNot200Exception implements Exception {
@@ -58,28 +59,28 @@ class DefineHttpResponseCodeNotSuccess extends HttpResponseCodeNotSuccess {
 //var ERROR_CHECK_IN_LIMIT = HttpResponseCodeNotSuccess(-20009, "check-in reach the upper limit"); //签到达到上限
 //var ERROR_CHECK_IN_INTERVAL = HttpResponseCodeNotSuccess(-20010, "check-in interval is 30 minutes."); //签到时间间隔var
 
-var ERROR_OUT_OF_RANGE = DefineHttpResponseCodeNotSuccess(-1007, () => S.of(globalContext).over_limit_hint);
+var ERROR_OUT_OF_RANGE = DefineHttpResponseCodeNotSuccess(-1007, () => S.of(Keys.materialAppKey.currentContext).over_limit_hint);
 
-var ERROR_FUND_PASSWORD = DefineHttpResponseCodeNotSuccess(-20011, () => S.of(globalContext).fund_pwd_error_hint); //签到时间间隔var
+var ERROR_FUND_PASSWORD = DefineHttpResponseCodeNotSuccess(-20011, () => S.of(Keys.materialAppKey.currentContext).fund_pwd_error_hint); //签到时间间隔var
 
 List<DefineHttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
-  DefineHttpResponseCodeNotSuccess(-10000, () => S.of(globalContext).unknown_error_hint),
-  DefineHttpResponseCodeNotSuccess(-10001, () => S.of(globalContext).para_error_hint),
-  DefineHttpResponseCodeNotSuccess(-10002, () => S.of(globalContext).unauthorized),
-  DefineHttpResponseCodeNotSuccess(-1003, () => S.of(globalContext).insufficient_permission_hint),
-  DefineHttpResponseCodeNotSuccess(-1004, () => S.of(globalContext).content_conflict_hint),
-  DefineHttpResponseCodeNotSuccess(-1005, () => S.of(globalContext).no_content_hint),
-  DefineHttpResponseCodeNotSuccess(-1006, () => S.of(globalContext).net_error_hint),
+  DefineHttpResponseCodeNotSuccess(-10000, () => S.of(Keys.materialAppKey.currentContext).unknown_error_hint),
+  DefineHttpResponseCodeNotSuccess(-10001, () => S.of(Keys.materialAppKey.currentContext).para_error_hint),
+  DefineHttpResponseCodeNotSuccess(-10002, () => S.of(Keys.materialAppKey.currentContext).unauthorized),
+  DefineHttpResponseCodeNotSuccess(-1003, () => S.of(Keys.materialAppKey.currentContext).insufficient_permission_hint),
+  DefineHttpResponseCodeNotSuccess(-1004, () => S.of(Keys.materialAppKey.currentContext).content_conflict_hint),
+  DefineHttpResponseCodeNotSuccess(-1005, () => S.of(Keys.materialAppKey.currentContext).no_content_hint),
+  DefineHttpResponseCodeNotSuccess(-1006, () => S.of(Keys.materialAppKey.currentContext).net_error_hint),
   ERROR_OUT_OF_RANGE,
-  DefineHttpResponseCodeNotSuccess(-20001, () => S.of(globalContext).create_user_fail_hint),
-  DefineHttpResponseCodeNotSuccess(-20002, () => S.of(globalContext).account_exist_hint),
-  DefineHttpResponseCodeNotSuccess(-20004, () => S.of(globalContext).update_user_info_fail_hint),
-  DefineHttpResponseCodeNotSuccess(-20005, () => S.of(globalContext).verify_code_error_hint),
-  DefineHttpResponseCodeNotSuccess(-20006, () => S.of(globalContext).invite_code_error_hint),
-  DefineHttpResponseCodeNotSuccess(-20007, () => S.of(globalContext).username_pwd_not_match_hint),
-  DefineHttpResponseCodeNotSuccess(-20008, () => S.of(globalContext).psw_reset_error_hint),
-  DefineHttpResponseCodeNotSuccess(-20009, () => S.of(globalContext).today_complete_hint),
-  DefineHttpResponseCodeNotSuccess(-20010, () => S.of(globalContext).task_interval_below_limit),
+  DefineHttpResponseCodeNotSuccess(-20001, () => S.of(Keys.materialAppKey.currentContext).create_user_fail_hint),
+  DefineHttpResponseCodeNotSuccess(-20002, () => S.of(Keys.materialAppKey.currentContext).account_exist_hint),
+  DefineHttpResponseCodeNotSuccess(-20004, () => S.of(Keys.materialAppKey.currentContext).update_user_info_fail_hint),
+  DefineHttpResponseCodeNotSuccess(-20005, () => S.of(Keys.materialAppKey.currentContext).verify_code_error_hint),
+  DefineHttpResponseCodeNotSuccess(-20006, () => S.of(Keys.materialAppKey.currentContext).invite_code_error_hint),
+  DefineHttpResponseCodeNotSuccess(-20007, () => S.of(Keys.materialAppKey.currentContext).username_pwd_not_match_hint),
+  DefineHttpResponseCodeNotSuccess(-20008, () => S.of(Keys.materialAppKey.currentContext).psw_reset_error_hint),
+  DefineHttpResponseCodeNotSuccess(-20009, () => S.of(Keys.materialAppKey.currentContext).today_complete_hint),
+  DefineHttpResponseCodeNotSuccess(-20010, () => S.of(Keys.materialAppKey.currentContext).task_interval_below_limit),
   ERROR_FUND_PASSWORD
 ];
 

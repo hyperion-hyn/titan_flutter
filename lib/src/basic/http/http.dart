@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/env.dart';
+import 'package:titan/src/config/consts.dart';
 
-import '../../../env.dart';
 import 'base_http.dart';
 
 class HttpCore extends BaseHttpCore {

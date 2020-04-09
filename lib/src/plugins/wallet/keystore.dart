@@ -15,6 +15,7 @@ class KeyStore {
   Future<dynamic> load() async {
     var map = await WalletChannel.loadKeyStore(this.fileName);
     print(map);
+    return map;
   }
 
   Future<bool> changePassword({

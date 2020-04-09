@@ -1,343 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/business/wallet/etherscan_api.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
-import 'package:titan/config.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
-import '../../global.dart';
 import 'wallet_util.dart';
 
 part 'wallet.g.dart';
-
-class TokenUnit {
-  static const WEI = 1;
-  static const K_WEI = 1000;
-  static const M_WEI = 1000000;
-  static const G_WEI = 1000000000;
-  static const T_WEI = 1000000000000;
-  static const P_WEI = 1000000000000000;
-  static const ETHER = 1000000000000000000;
-}
-
-class EthereumConst {
-  static const LOW_SPEED = 3 * TokenUnit.G_WEI;
-  static const FAST_SPEED = 10 * TokenUnit.G_WEI;
-  static const SUPER_FAST_SPEED = 30 * TokenUnit.G_WEI;
-
-  static const ETH_GAS_LIMIT = 21000;
-  static const ERC20_GAS_LIMIT = 60000;
-
-  static const HYN_ERC20_ABI = '''
-[
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "name",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_spender",
-        "type": "address"
-      },
-      {
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "name": "approve",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "totalSupply",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_from",
-        "type": "address"
-      },
-      {
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "name": "transferFrom",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "INITIAL_SUPPLY",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "decimals",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_spender",
-        "type": "address"
-      },
-      {
-        "name": "_subtractedValue",
-        "type": "uint256"
-      }
-    ],
-    "name": "decreaseApproval",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "symbol",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "name": "transfer",
-    "outputs": [
-
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_spender",
-        "type": "address"
-      },
-      {
-        "name": "_addedValue",
-        "type": "uint256"
-      }
-    ],
-    "name": "increaseApproval",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "name": "_spender",
-        "type": "address"
-      }
-    ],
-    "name": "allowance",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "name": "spender",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "Approval",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "Transfer",
-    "type": "event"
-  }
-]
-  ''';
-}
-
-class WalletError {
-  static const UNKNOWN_ERROR = "0";
-  static const PASSWORD_WRONG = "1";
-  static const PARAMETERS_WRONG = "2";
-}
-
-class WalletConfig {
-  static String get INFURA_MAIN_API => '${Config.INFURA_API_URL}/v3/${Config.INFURA_PRVKEY}';
-
-  static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
-
-  static bool isMainNet = true;
-
-  static String getInfuraApi() {
-    return isMainNet ? INFURA_MAIN_API : INFURA_ROPSTEN_API;
-  }
-}
 
 @JsonSerializable()
 class Wallet {
@@ -350,16 +25,7 @@ class Wallet {
   Future<BigInt> getErc20Balance(String contractAddress) async {
     var account = getEthAccount();
     if (account != null) {
-//      return await EtherscanApi().queryErc20TokenBalance(address: account.address, contractAddress: contractAddress);
-      final contract = WalletUtil.getHynErc20Contract(contractAddress);
-      final balanceFun = contract.function('balanceOf');
-      try {
-        final balance = await WalletUtil.getWeb3Client()
-            .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(account.address)]);
-        return balance.first;
-      } catch (e) {
-        logger.e(e);
-      }
+      return getBalanceByCoinTypeAndAddress(account.coinType, account.address, contractAddress);
     }
 
     return BigInt.from(0);
@@ -374,19 +40,44 @@ class Wallet {
     return null;
   }
 
+  AssetToken getHynToken() {
+    var tokens = getEthAccount()?.contractAssetTokens;
+    if (tokens != null) {
+      for (var token in tokens) {
+        if (token.symbol == 'HYN') {
+          return token;
+        }
+      }
+    }
+    return null;
+  }
+
   ///get balance of account
-  ///black: an integer block number, or the string "latest", "earliest" or "pending"
+  ///@param block: an integer block number, or the string "latest", "earliest" or "pending"
   Future<BigInt> getBalance(Account account, [dynamic block = 'latest']) async {
     if (account != null) {
-      switch (account.coinType) {
-        case CoinType.ETHEREUM:
-//          return await EtherscanApi().queryBalance(account.address, block);
-          var response = await WalletUtil.postInfura(method: "eth_getBalance", params: [account.address, block]);
+      return getBalanceByCoinTypeAndAddress(account.coinType, account.address);
+    }
+    return BigInt.from(0);
+  }
+
+  Future<BigInt> getBalanceByCoinTypeAndAddress(int coinType, String address,
+      [String contractAddress, String block = 'latest']) async {
+    switch (coinType) {
+      case CoinType.ETHEREUM:
+        if (contractAddress == null) {
+          var response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
           if (response['result'] != null) {
             return hexToInt(response['result']);
           }
-          break;
-      }
+        } else {
+          final contract = WalletUtil.getHynErc20Contract(contractAddress);
+          final balanceFun = contract.function('balanceOf');
+          final balance = await WalletUtil.getWeb3Client()
+              .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
+          return balance.first;
+        }
+        break;
     }
     return BigInt.from(0);
   }
@@ -406,9 +97,9 @@ class Wallet {
     if (account != null) {
       if (gasLimit == null) {
         if (data == null) {
-          gasLimit = BigInt.from(EthereumConst.ETH_GAS_LIMIT);
+          gasLimit = BigInt.from(EthereumConst.ETH_TRANSFER_GAS_LIMIT);
         } else {
-          gasLimit = BigInt.from(EthereumConst.ERC20_GAS_LIMIT);
+          gasLimit = BigInt.from(EthereumConst.ERC20_TRANSFER_GAS_LIMIT);
         }
       }
       if (gasPrice == null) {
@@ -425,10 +116,11 @@ class Wallet {
       if (data != null) {
         params['data'] = data;
       }
-      var response = await WalletUtil.postInfura(method: 'eth_estimateGas', params: [params]);
+      var response = await WalletUtil.postToEthereumNetwork(method: 'eth_estimateGas', params: [params]);
       if (response['result'] != null) {
         BigInt amountUsed = hexToInt(response['result']);
-        return amountUsed * gasPrice;
+//        return amountUsed * gasPrice;
+        return amountUsed;
       }
     }
 
@@ -440,6 +132,8 @@ class Wallet {
     String toAddress,
     BigInt value,
     BigInt gasPrice,
+    int nonce,
+    int gasLimit = EthereumConst.ETH_TRANSFER_GAS_LIMIT,
   }) async {
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
@@ -449,8 +143,9 @@ class Wallet {
       web3.Transaction(
         to: web3.EthereumAddress.fromHex(toAddress),
         gasPrice: web3.EtherAmount.inWei(gasPrice),
-        maxGas: EthereumConst.ETH_GAS_LIMIT,
+        maxGas: gasLimit,
         value: web3.EtherAmount.inWei(value),
+        nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
     );
@@ -463,6 +158,8 @@ class Wallet {
     String toAddress,
     BigInt value,
     BigInt gasPrice,
+    int nonce,
+    int gasLimit = EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
   }) async {
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
@@ -475,10 +172,232 @@ class Wallet {
         function: contract.function('transfer'),
         parameters: [web3.EthereumAddress.fromHex(toAddress), value],
         gasPrice: web3.EtherAmount.inWei(gasPrice),
-        maxGas: EthereumConst.ERC20_GAS_LIMIT,
+        maxGas: gasLimit,
+        nonce: nonce,
       ),
       fetchChainIdFromNetworkId: true,
     );
+  }
+
+  Future<web3.Credentials> getCredentials(String password) async {
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client();
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    return credentials;
+  }
+
+  Future<String> sendApproveErc20Token({
+    String contractAddress,
+    String approveToAddress,
+    String password,
+    BigInt amount,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: erc20Contract,
+        function: erc20Contract.function('approve'),
+        parameters: [web3.EthereumAddress.fromHex(approveToAddress), amount],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+  }
+
+  Future<String> signApproveErc20Token({
+    String contractAddress,
+    String approveToAddress,
+    String password,
+    BigInt amount,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
+    var signed = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: erc20Contract,
+        function: erc20Contract.function('approve'),
+        parameters: [web3.EthereumAddress.fromHex(approveToAddress), amount],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  /// stakingAmount: how many amount of hyn do you what to stake.
+  /// type:          what type of contract do you what to stake. [0 for 1 monty, 1 for 3 month, 2 for 6 month]
+  Future<String> sendCreateMap3Node({
+    BigInt stakingAmount,
+    int type,
+    String firstHalfPubKey,
+    String secondHalfPubKey,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('createNode'),
+        parameters: [stakingAmount, BigInt.from(type), hexToBytes(firstHalfPubKey), hexToBytes(secondHalfPubKey)],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+  }
+
+  /// stakingAmount: how many amount of hyn do you what to stake.
+  /// type:          what type of contract do you what to stake. [0 for 1 monty, 1 for 3 month, 2 for 6 month]
+  Future<String> signCreateMap3Node({
+    BigInt stakingAmount,
+    int type,
+    String firstHalfPubKey,
+    String secondHalfPubKey,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    var signed = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('createNode'),
+        parameters: [stakingAmount, BigInt.from(type), hexToBytes(firstHalfPubKey), hexToBytes(secondHalfPubKey)],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  Future<String> sendDelegateMap3Node({
+    String createNodeWalletAddress,
+    BigInt stakingAmount,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('delegate'),
+        parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress), stakingAmount],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+  }
+
+  Future<String> signDelegateMap3Node({
+    String createNodeWalletAddress,
+    BigInt stakingAmount,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    var signed = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('delegate'),
+        parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress), stakingAmount],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signed, include0x: true, padToEvenLength: true);
+  }
+
+  ///Withdraw token
+  Future<String> sendCollectMap3Node({
+    String createNodeWalletAddress,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('collect'),
+        parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress)],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+  }
+
+  ///Withdraw token
+  Future<String> signCollectMap3Node({
+    String createNodeWalletAddress,
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+    int nonce,
+  }) async {
+    final client = WalletUtil.getWeb3Client();
+    var credentials = await getCredentials(password);
+    var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+    var signed = await client.signTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        contract: map3Contract,
+        function: map3Contract.function('collect'),
+        parameters: [web3.EthereumAddress.fromHex(createNodeWalletAddress)],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        nonce: nonce,
+      ),
+      fetchChainIdFromNetworkId: true,
+    );
+    return bytesToHex(signed, include0x: true, padToEvenLength: true);
   }
 
   Future<bool> delete(String password) async {

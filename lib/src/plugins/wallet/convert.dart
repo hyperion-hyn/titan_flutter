@@ -1,6 +1,5 @@
 import 'package:decimal/decimal.dart';
-
-import 'wallet.dart';
+import 'wallet_const.dart';
 
 class ConvertTokenUnit {
   static BigInt numToWei(double num, [int decimals = 18]) {
@@ -17,11 +16,25 @@ class ConvertTokenUnit {
     return wei / Decimal.fromInt(TokenUnit.ETHER);
   }
 
+  static Decimal weiToGWei({BigInt weiBigInt, int weiInt}) {
+    var wei = weiBigInt != null ? Decimal.parse(weiBigInt.toString()) : Decimal.fromInt(weiInt);
+    return wei / Decimal.fromInt(TokenUnit.G_WEI);
+  }
+
   static BigInt etherToWei({Decimal etherDecimal, double etherDouble}) {
     if (etherDecimal != null) {
       return BigInt.parse((etherDecimal * Decimal.fromInt(TokenUnit.ETHER)).toString());
     } else if (etherDouble != null) {
       return BigInt.parse((Decimal.parse('$etherDouble') * Decimal.fromInt(TokenUnit.ETHER)).toString());
+    }
+    return BigInt.from(0);
+  }
+
+  static BigInt etherToGWei({Decimal etherDecimal, double etherDouble}) {
+    if (etherDecimal != null) {
+      return BigInt.parse((etherDecimal * Decimal.fromInt(TokenUnit.ETHER) / Decimal.fromInt(TokenUnit.G_WEI)).toString());
+    } else if (etherDouble != null) {
+      return BigInt.parse((Decimal.parse('$etherDouble') * Decimal.fromInt(TokenUnit.ETHER) / Decimal.fromInt(TokenUnit.G_WEI)).toString());
     }
     return BigInt.from(0);
   }

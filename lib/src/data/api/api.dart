@@ -2,16 +2,19 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/business/me/api/map_rich_http.dart';
-import 'package:titan/src/domain/gaode_model.dart';
+import 'package:titan/src/pages/global_data/model/map3_node_vo.dart';
+import 'package:titan/src/pages/global_data/model/signal_daily_vo.dart';
+import 'package:titan/src/pages/global_data/model/signal_total_vo.dart';
+import 'package:titan/src/pages/global_data/model/signal_weekly_vo.dart';
+import '../../domain/model/photo_poi_list_model.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/model/gaode_poi.dart';
-import 'package:titan/src/model/update.dart';
-import 'package:titan/src/business/contribution/vo/signal_collector.dart';
+import '../entity/poi/photo_simple_poi.dart';
+import '../entity/update.dart';
+import 'package:titan/src/pages/contribution/signal_scan/vo/signal_collector.dart';
 
 class Api {
   ///附近可以分享的位置
-  Future<GaodeModel> searchByGaode({
+  Future<PhotoPoiListResultModel> searchByGaode({
     @required double lat,
     @required double lon,
     int type,
@@ -21,11 +24,11 @@ class Api {
   }) async {
     return await HttpCore.instance.getEntity(
       'map/around',
-      EntityFactory<GaodeModel>((json) {
+      EntityFactory<PhotoPoiListResultModel>((json) {
         var data = (json['data'] as List).map((map) {
-          return GaodePoi.fromJson(map);
+          return SimplePoiWithPhoto.fromJson(map);
         }).toList();
-        var gaodeModel = GaodeModel(page: json['page'], totalPage: json['total_pages'], data: data);
+        var gaodeModel = PhotoPoiListResultModel(page: json['page'], totalPage: json['total_pages'], data: data);
         return gaodeModel;
       }),
       params: {
@@ -40,35 +43,37 @@ class Api {
   }
 
   ///附近可以分享的位置
-  Future<GaodeModel> searchNearByHyn({
+  Future<PhotoPoiListResultModel> searchNearByHyn({
     @required double lat,
     @required double lon,
     String type,
     double radius = 2000,
     int page = 1,
+    String language,
     CancelToken cancelToken,
   }) async {
     var json = await HttpCore.instance.get(
       'titan-map/api/place/nearbysearch/json',
-      params: {"location": "$lat,$lon", "radius": radius, "type": type, "language": appLocale.languageCode},
+      params: {"location": "$lat,$lon", "radius": radius, "type": type, "language": language},
       options: RequestOptions(cancelToken: cancelToken),
     );
 
     var data = (json['results'] as List).map((map) {
-      return GaodePoi.fromGJson(map);
+      return SimplePoiWithPhoto.fromGJson(map);
     }).toList();
 
-    var gaodeModel = GaodeModel(page: 1, totalPage: 1, data: data);
+    var gaodeModel = PhotoPoiListResultModel(page: 1, totalPage: 1, data: data);
     return gaodeModel;
   }
 
   Future<UpdateEntity> update(String channel, String lang, String platform) async {
-    var data = await MapRichHttpCore.instance
-        .getEntity('apps/update', EntityFactory<UpdateEntity>((json) => UpdateEntity.fromJson(json)), params: {
-      'channel': channel,
-      'lang': lang,
-      "platform": platform,
-    });
+    var data = await HttpCore.instance.getEntity(
+        'api/v1/titan/app/update', EntityFactory<UpdateEntity>((json) => UpdateEntity.fromJson(json)),
+        params: {
+          'channel': channel,
+          'lang': lang,
+          "platform": platform,
+        });
 
     return data;
   }
@@ -80,7 +85,7 @@ class Api {
     return data;
   }
 
-  Future<Map<String, dynamic>> searchPoiByTitan(String keyword, String lon , String lat,
+  Future<Map<String, dynamic>> searchPoiByTitan(String keyword, String lon, String lat,
       {String language = "zh-Hans", int radius = 500}) async {
     var data = await HttpCore.instance.get('map-collector/poi/search',
 //        params: {'lon': 113.322201, 'lat': 23.121072, 'language': 'zh-Hans', 'keyword': "高地", 'radius': "500"});
@@ -104,16 +109,6 @@ class Api {
     return data;
   }
 
-  Future<Map<String, dynamic>> getCls(
-      {@required String commitment, @required String pubkey, @required String kid}) async {
-    var data = await HttpCore.instance.get('re/cls', params: {
-      'commitment': commitment,
-      'pubkey': pubkey,
-      'kid': kid,
-    });
-    return data;
-  }
-
   Future<dynamic> requestDianping(double lat, double lon) async {
     return HttpCore.instance.post('index/api/module',
         params: {
@@ -132,9 +127,19 @@ class Api {
         },
         options: RequestOptions(baseUrl: 'https://m.dianping.com/', headers: {
           'User-Agent':
-              'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Mobile Safari/537.36',
+          'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Mobile Safari/537.36',
           'Referer': 'https://m.dianping.com/',
         }));
+  }
+
+  Future<Map<String, dynamic>> getCls(
+      {@required String commitment, @required String pubkey, @required String kid}) async {
+    var data = await HttpCore.instance.get('re/cls', params: {
+      'commitment': commitment,
+      'pubkey': pubkey,
+      'kid': kid,
+    });
+    return data;
   }
 
   ///collect signal
@@ -155,5 +160,73 @@ class Api {
     }
   }
 
+  /// signal total
+  Future<SignalTotalVo> getSignalTotal() async {
+    var model = await HttpCore.instance.getEntity(
+      'map-collector/signal/count',
+      EntityFactory<SignalTotalVo>((json) => SignalTotalVo.fromJson(json)),
+    );
+
+    //print('[api] getSignalTotal, total:${model.blueToothTotal}');
+    return model;
+  }
+
+  /// signal daily
+  Future<List<SignalDailyVo>> getSignalDaily({String language = "zh-Hans"}) async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/signal/count/daily',
+        EntityFactory<List<SignalDailyVo>>((json) {
+          return (json as List).map((levelInfoJson) {
+            return SignalDailyVo.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": language}));
+
+    //print('[api] getSignalDaily, length:${list.length}');
+
+    return list;
+  }
+
+  Future<List<Signal>> getPoiDaily({String language = "zh-Hans"}) async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/poi/count/daily',
+        EntityFactory<List<Signal>>((json) {
+          return (json as List).map((levelInfoJson) {
+            return Signal.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": language})
+    );
+
+    //print('[api] getSignalDaily, length:${list.length}');
+
+    return list;
+  }
+
+  /// signal weekly
+  Future<List<SignalWeeklyVo>> getSignalWeekly({String language = "zh-Hans"}) async {
+    var list = await HttpCore.instance.getEntity(
+        'map-collector/signal/count/weekly',
+        EntityFactory<List<SignalWeeklyVo>>((json) {
+          return (json as List).map((levelInfoJson) {
+            return SignalWeeklyVo.fromJson(levelInfoJson);
+          }).toList();
+        }), options: RequestOptions(headers: {"Lang": language}));
+
+    //print('[api] getSignalWeekly, length:${list.length}');
+
+    return list;
+  }
+
+  //https://api.hyn.space/api/v1/dashboard
+  /// node
+  Future<Map3NodeVo> getMap3NodeData() async {
+    var model = await HttpCore.instance.getEntity(
+      'api/v1/dashboard',
+      EntityFactory<Map3NodeVo>((json) => Map3NodeVo.fromJson(json)),
+    );
+
+    print('[api] getMap3NodeData, length:${model.tiles.length}');
+
+    return model;
+  }
 
 }

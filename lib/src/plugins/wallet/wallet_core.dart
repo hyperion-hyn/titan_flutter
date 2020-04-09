@@ -11,8 +11,7 @@ class WalletCore {
     @required String password,
     @required String mnemonic,
   }) async {
-    return await TitanPlugin.callChannel
-        .invokeMethod("wallet_import_mnemonic", {
+    return await TitanPlugin.callChannel.invokeMethod("wallet_import_mnemonic", {
       'name': name,
       'password': password,
       'mnemonic': mnemonic,
@@ -44,8 +43,7 @@ class WalletCore {
   }
 
   static Future<dynamic> loadKeyStore(String fileName) async {
-    return await TitanPlugin.callChannel
-        .invokeMethod("wallet_load_keystore", {"fileName": fileName});
+    return await TitanPlugin.callChannel.invokeMethod("wallet_load_keystore", {"fileName": fileName});
   }
 
   static Future<dynamic> scanKeyStores() async {
@@ -58,8 +56,7 @@ class WalletCore {
     @required newPassword,
     name,
   }) async {
-    return await TitanPlugin.callChannel
-        .invokeMethod("wallet_change_password", {
+    return await TitanPlugin.callChannel.invokeMethod("wallet_change_password", {
       "fileName": fileName,
       'oldPassword': oldPassword,
       'newPassword': newPassword,
@@ -87,77 +84,8 @@ class WalletCore {
     });
   }
 
-  static Future<BigInt> getBalance({
-    @required String address,
-    @required int coinType,
-    String erc20ContractAddress,
-    bool isMainNet,
-  }) async {
-    var balanceHex =
-        await TitanPlugin.callChannel.invokeMethod("wallet_getBalance", {
-      "address": address,
-      "coinType": coinType,
-      "erc20ContractAddress": erc20ContractAddress,
-      "isMainNet": isMainNet
-    });
-    return BigInt.parse(balanceHex, radix: 16);
-  }
-
-  static Future<BigInt> ethGasPrice({bool isMainNet}) async {
-    var gasPriceStr = await TitanPlugin.callChannel
-        .invokeMethod("wallet_ethGasPrice", {"isMainNet": isMainNet});
-    return BigInt.parse(gasPriceStr, radix: 16);
-  }
-
-  ///删除钱包
+  ///delete wallet
   static Future<bool> delete(String fileName) async {
-    return await TitanPlugin.callChannel
-        .invokeMethod("wallet_delete", {"fileName": fileName});
-  }
-
-  ///计算费用
-  static Future<BigInt> estimateGas({
-    @required String fromAddress,
-    @required String toAddress,
-    @required int coinType,
-    @required String amount,
-    String erc20ContractAddress,
-    bool isMainNet,
-  }) async {
-    var gasLimit =
-        await TitanPlugin.callChannel.invokeMethod("wallet_estimateGas", {
-      "fromAddress": fromAddress,
-      "toAddress": toAddress,
-      "coinType": coinType,
-      "amount": amount,
-      "erc20ContractAddress": erc20ContractAddress,
-      "isMainNet": isMainNet,
-    });
-    return BigInt.parse(gasLimit, radix: 16);
-  }
-
-  static Future<String> transfer({
-    @required String password,
-    @required String fileName,
-    @required String fromAddress,
-    @required String toAddress,
-    @required String amount,
-    @required int coinType,
-    String erc20ContractAddress,
-    bool isMainNet,
-    String data,
-  }) async {
-    var txHash = await TitanPlugin.callChannel.invokeMethod("wallet_transfer", {
-      "password": password,
-      "fileName": fileName,
-      "fromAddress": fromAddress,
-      "toAddress": toAddress,
-      "amount": amount,
-      "coinType": coinType,
-      "erc20ContractAddress": erc20ContractAddress,
-      "isMainNet": isMainNet,
-      "data": data,
-    });
-    return txHash;
+    return await TitanPlugin.callChannel.invokeMethod("wallet_delete", {"fileName": fileName});
   }
 }

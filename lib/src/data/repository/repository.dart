@@ -1,9 +1,9 @@
 import 'package:meta/meta.dart';
-import 'package:titan/src/global.dart';
-import 'package:titan/src/model/dianping_poi.dart';
-import 'package:titan/src/model/update.dart';
 import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/db/search_history_dao.dart';
+import 'package:titan/src/data/entity/poi/dianping_poi.dart';
+import 'package:titan/src/global.dart';
+import '../entity/update.dart';
 
 class Repository {
   Api api;

@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 
+import '../../global.dart';
+
 class AppBlocDelegate extends BlocDelegate {
 
   @override
@@ -16,6 +18,6 @@ class AppBlocDelegate extends BlocDelegate {
   @override
   void onError(Bloc bloc, Object error, StackTrace stacktrace) {
     super.onError(bloc, error, stacktrace);
-    print(error);
+    logger.e(stacktrace);
   }
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 String getExpiredTimeShowTip(BuildContext context, int expireTime) {
@@ -27,14 +26,14 @@ String getExpiredTimeShowTip(BuildContext context, int expireTime) {
   }
 }
 
-String shortEthAddress(String address) {
+String shortBlockChainAddress(String address, {int limitCharsLength=9}) {
   if (address == null || address == "") {
     return "";
   }
-  if (address.length < 9) {
+  if (address.length < limitCharsLength) {
     return address;
   }
-  return address.substring(0, 9) + "..." + address.substring(address.length - 9, address.length);
+  return address.substring(0, limitCharsLength) + "..." + address.substring(address.length - limitCharsLength, address.length);
 }
 
 String shortEmail(String email) {
@@ -77,19 +76,4 @@ Future launchUrl(String url) async {
   }
 }
 
-String getRequestLang() {
-  if (appLocale == null) {
-    return "zh";
-  } else if (appLocale.countryCode == null || appLocale.countryCode == "") {
-    return appLocale.languageCode;
-  } else {
-    return "${appLocale.languageCode}_${appLocale.countryCode}";
-  }
-}
 
-class Utils {
-  /// 后台算力单位转成UI显示单位
-  static double powerForShow(int power) {
-    return power / 10.0;
-  }
-}
