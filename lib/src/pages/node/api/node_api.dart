@@ -38,10 +38,10 @@ class NodeApi {
         options: RequestOptions(headers: {"Address": address}));
   }
 
-  Future<ContractDetailItem> getContractDetail(int contractNodeItemId) async {
+  Future<ContractDetailItem> getContractDetail(int contractNodeItemId, {String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity("delegations/instance/$contractNodeItemId",
         EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data)),
-        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
   Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {

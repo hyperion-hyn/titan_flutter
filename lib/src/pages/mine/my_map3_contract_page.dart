@@ -6,6 +6,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -332,14 +333,14 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           isTransferring = true;
         });
 
-        var gasLimit = 1000000;
-
         ///创建节点合约的钱包地址
         var createNodeWalletAddress = contractNodeItem.owner;
-
+        var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+        var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
+        var gasLimit = EthereumConst.ERC20_APPROVE_GAS_LIMIT;
         var signedHex = await _wallet.signCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
-          gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
+          gasPrice: gasPrice,
           gasLimit: gasLimit,
           password: walletPassword,
         );
