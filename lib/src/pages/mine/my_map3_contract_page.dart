@@ -15,6 +15,7 @@ import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -109,11 +110,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       _currentPage ++;
       loadDataBloc.add(RefreshSuccessEvent());
 
-      // todo: 测试写死
-      dataList.first.state = "Running";
-
       setState(() {
-        _dataArray = dataList;
+        if (mounted) {
+          _dataArray = dataList;
+        }
       });
     }
 
@@ -159,19 +159,19 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         statusColor = HexColor('#EED097');
         break;
 
-      case ContractState.Running:
+      case ContractState.ACTIVE:
         statusColor = HexColor('#3FF78C');
         break;
 
-      case ContractState.Expired:
+      case ContractState.DUE:
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractState.Withdrawal:
+      case ContractState.WITHDRAWN:
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractState.FailRun:
+      case ContractState.CANCELLED:
         statusColor = HexColor('#F22504');
         break;
 
@@ -185,9 +185,49 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     String startAccount = "${contractNodeItem.owner}";
     startAccount = startAccount.substring(0,startAccount.length > 25 ? 25 : startAccount.length);
     startAccount = startAccount + "...";
-    String clickTitle = "增加";
-    if (contractNodeItem.remainDelegation == "0") {
-      clickTitle = isTransferring?S.of(context).please_waiting:"提币";
+    String btnTitle = "查看合约";
+
+    void Function() onPressed = (){};
+    var state = enumContractStateFromString(contractNodeItem.state);
+    print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
+
+    switch (state) {
+      case ContractState.PENDING:
+        btnTitle = "加快启动";
+         onPressed = (){
+           Application.router.navigateTo(context, Routes.map3node_join_contract_page
+               + "?contractId=${contractNodeItem.id}");
+         };
+
+        break;
+
+      case ContractState.ACTIVE:
+
+        break;
+
+      case ContractState.DUE:
+
+        onPressed = (){
+          _collectAction(contractNodeItem);
+        };
+        btnTitle = isTransferring?S.of(context).please_waiting:"查看合约";
+
+        break;
+
+      case ContractState.WITHDRAWN:
+
+        onPressed = (){
+          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
+          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+        };
+        break;
+
+      case ContractState.CANCELLED:
+
+        break;
+
+      default:
+        break;
     }
 
     return Container(
@@ -280,22 +320,14 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 24,
-                  width: 78,
+                  height: 28,
+                  width: 84,
                   child: FlatButton(
                     color: DefaultColors.colorffdb58,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24)),
-                    onPressed: () {
-
-                     if (contractNodeItem.remainDelegation == "0") {
-                       _collectAction(contractNodeItem);
-                     } else {
-                       _navigationAction(contractNodeItem);
-                     }
-                    },
-
-                    child: Text(clickTitle, style: TextStyles.textC906b00S13),
+                        borderRadius: BorderRadius.circular(28)),
+                    onPressed: onPressed,
+                    child: Text(btnTitle, style: TextStyles.textC906b00S13),
                   ),
                 )
               ],
@@ -306,10 +338,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );
   }
 
-  Future _navigationAction(ContractNodeItem contractNodeItem) {
-    Application.router.navigateTo(context, Routes.map3node_join_contract_page
-        + "?contractId=${contractNodeItem.id}");
-  }
 
   Future _collectAction(ContractNodeItem contractNodeItem) async {
 
@@ -330,14 +358,16 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       try {
         setState(() {
-          isTransferring = true;
+          if (mounted) {
+            isTransferring = true;
+          }
         });
 
         ///创建节点合约的钱包地址
         var createNodeWalletAddress = contractNodeItem.owner;
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
-        var gasLimit = EthereumConst.ERC20_APPROVE_GAS_LIMIT;
+        var gasLimit = EthereumConst.COLLECT_MAP3_NODE_GAS_LIMIT;
 
         /*var signedHex = await _wallet.signCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
@@ -351,19 +381,21 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
        */
 
-        var signedHex = await _wallet.sendCollectMap3Node(
+        var collectHex = await _wallet.sendCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
           gasPrice: gasPrice,
           gasLimit: gasLimit,
           password: walletPassword,
         );
-        logger.i('map3 collect, signedHex: $signedHex');
+        logger.i('map3 collect, collectHex: $collectHex');
 
         Application.router.navigateTo(context,Routes.map3node_broadcase_success_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
       } catch (_) {
         logger.e(_);
         setState(() {
-          isTransferring = false;
+          if (mounted) {
+            isTransferring = false;
+          }
         });
         if (_ is PlatformException) {
           if (_.code == WalletError.PASSWORD_WRONG) {
@@ -386,9 +418,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
 }
 
-enum ContractState { PENDING, Running, Expired, Withdrawal, FailRun }
 
 ContractState enumContractStateFromString(String fruit) {
   fruit = 'ContractState.$fruit';
   return ContractState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
+
+enum ContractState { PENDING, ACTIVE, DUE, WITHDRAWN, CANCELLED }

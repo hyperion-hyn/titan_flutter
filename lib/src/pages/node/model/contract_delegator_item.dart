@@ -13,7 +13,7 @@ part 'contract_delegator_item.g.dart';
   String userName;
 
   @JsonKey(name: 'amountDelegation')
-  int amountDelegation;
+  String amountDelegation;
 
   @JsonKey(name: 'createAt')
   int createAt;
