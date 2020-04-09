@@ -1,14 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:web3dart/json_rpc.dart';
+import '../../global.dart';
 import 'node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
@@ -25,12 +37,22 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   List<ContractNodeItem> _dataArray = [];
   LoadDataBloc loadDataBloc = LoadDataBloc();
   var _currentPage = 0;
+  Wallet _wallet;
+  bool isTransferring = false;
 
   var api = NodeApi();
 
   @override
   void initState() {
     super.initState();
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
 
     loadDataBloc.add(LoadingEvent());
     _loadData();
@@ -74,10 +96,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     List<ContractNodeItem> dataList = [];
     if (widget.title.contains("发起")) {
-      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
+      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(address: _wallet.getEthAccount().address);
       dataList  = createContractList;
     } else {
-      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
+      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(address: _wallet.getEthAccount().address);
       dataList = joinContractList;
     }
 
@@ -95,15 +117,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       });
     }
 
-
     print('[map3] widget.title:${widget.title}, _loadData, dataList.length:${dataList.length}');
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +185,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     String startAccount = "${contractNodeItem.owner}";
     startAccount = startAccount.substring(0,startAccount.length > 25 ? 25 : startAccount.length);
     startAccount = startAccount + "...";
+    String clickTitle = "增加";
+    if (contractNodeItem.remainDelegation == "0") {
+      clickTitle = isTransferring?S.of(context).please_waiting:"提币";
+    }
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -266,10 +287,15 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24)),
                     onPressed: () {
-                      Application.router.navigateTo(context, Routes.map3node_join_contract_page
-                          + "?contractId=${contractNodeItem.id}");
+
+                     if (contractNodeItem.remainDelegation == "0") {
+                       _collectAction(contractNodeItem);
+                     } else {
+                       _navigationAction(contractNodeItem);
+                     }
                     },
-                    child: Text("参与", style: TextStyles.textC906b00S13),
+
+                    child: Text(clickTitle, style: TextStyles.textC906b00S13),
                   ),
                 )
               ],
@@ -280,147 +306,72 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );
   }
 
-  /*
-  Widget _buildInfoItem_old(ContractNodeItem model) {
-    return Container(
-      //color: HexColor('#7275A2'),
-      decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(5),
-          color: HexColor('#7275A2')),
-      child: IntrinsicHeight(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Container(
-                  child: Image.asset(
-                    "res/drawable/ic_map3_node_item.png",
-                    width: 55,
-                    height: 55,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 6,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Spacer(),
-                      Text(model.contract.nodeName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: HexColor('#FFFFFF'))),
-                      Spacer(),
-                      Text("发起账户 ${model.ownerName} ${shortBlockChainAddress(model.owner, limitCharsLength: 6)}", style: TextStyle(fontSize: 13, color: HexColor('#FFFFFF'))),
-                      Spacer(),
-                      Text(
-                        FormatUtil.formatDate(model.instanceStartTime),
-                        style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF')),
-                      ),
-                      Spacer(),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 4,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Spacer(),
-                            Container(
-                              width: 8,
-                              height: 8,
-                              //color: Colors.red,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  // todo:
-                                  color: _getStatusColor(model.state),
-                                  border: Border.all(color: Colors.white, width: 1.0)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4),
-                              child: Text("剩下7天启动", style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {
-                          //if (model.state == ContractState.Expired) {
-                          //print('[点击查看收益] id:${model.id}');
-
-                          String jsonString = FluroConvertUtils.object2string(model.toJson());
-                          //print('[xx] param:${jsonString}');
-
-                          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
-
-                          //Navigator.push(context, MaterialPageRoute(builder: (context) => NodeContractDetailPage(model)));
-                          //}
-                        },
-                        child:
-                        (enumContractStateFromString(model.state) == ContractState.PENDING || enumContractStateFromString(model.state) ==  ContractState.FailRun)?
-
-                        Text.rich(TextSpan(
-                            children: [
-                              TextSpan(
-                                  text: "还差",
-                                  style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))
-                              ),
-                              TextSpan(
-                                text: "${FormatUtil.formatNum(int.parse(model.remainDelegation))}",
-                                style: TextStyle(fontSize: 12, color: HexColor('#E39F2D')),
-                              ),
-                              TextSpan(
-                                  text: "HYN",
-                                  style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))
-                              ),
-                            ]
-                        )): // todo:
-                        Text("合约完成", style: TextStyle(fontSize: 12, color: HexColor('#FFFFFF'))) ,
-                      ),
-                      if (enumContractStateFromString(model.state) == ContractState.PENDING) FlatButton(
-                        padding: EdgeInsets.symmetric(horizontal: 4,vertical: 2),
-                        color: Colors.white,
-//                        highlightColor: Colors.black,
-//                        splashColor: Colors.white10,
-                        textColor: HexColor('#3C99FA'),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                        onPressed: (){
-                          //print('加快启动');
-                          Application.router.navigateTo(context, Routes.map3node_join_contract_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN}" + "&contractId=${model.id}");
-                        },
-                        child: Text("加快启动", style: TextStyle(fontSize: 12)),
-                      ),
-                      Spacer(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  Future _navigationAction(ContractNodeItem contractNodeItem) {
+    Application.router.navigateTo(context, Routes.map3node_join_contract_page
+        + "?contractId=${contractNodeItem.id}");
   }
-  */
+
+  Future _collectAction(ContractNodeItem contractNodeItem) async {
+
+    if (_wallet == null) {
+      return;
+    }
+
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        }).then((walletPassword) async {
+
+      if (walletPassword == null) {
+        return;
+      }
+
+      try {
+        setState(() {
+          isTransferring = true;
+        });
+
+        ///创建节点合约的钱包地址
+        var createNodeWalletAddress = contractNodeItem.owner;
+        var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+        var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
+        var gasLimit = EthereumConst.ERC20_APPROVE_GAS_LIMIT;
+        var signedHex = await _wallet.signCollectMap3Node(
+          createNodeWalletAddress: createNodeWalletAddress,
+          gasPrice: gasPrice,
+          gasLimit: gasLimit,
+          password: walletPassword,
+        );
+        var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
+
+        logger.i('map3 collect, result: $ret');
+
+        Application.router.navigateTo(context,Routes.map3node_broadcase_success_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+      } catch (_) {
+        logger.e(_);
+        setState(() {
+          isTransferring = false;
+        });
+        if (_ is PlatformException) {
+          if (_.code == WalletError.PASSWORD_WRONG) {
+            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else if (_ is RPCError) {
+          if (_.errorCode == -32000) {
+            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
+      }
+    });
+  }
 
 }
 

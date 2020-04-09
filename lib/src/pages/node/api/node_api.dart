@@ -19,37 +19,38 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
 
 class NodeApi {
-  Future<List<ContractNodeItem>> getMyCreateNodeContract({int page = 0}) async {
+
+  Future<List<ContractNodeItem>> getMyCreateNodeContract({int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity(
         "delegations/my-create",
         EntityFactory<List<ContractNodeItem>>(
             (list) => (list as List).map((item) => ContractNodeItem.fromJson(item)).toList()),
         params: {"page": page},
-        options: RequestOptions(headers: {"Address": "jifijfkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
-  Future<List<ContractNodeItem>> getMyJoinNodeContract({int page = 0}) async {
+  Future<List<ContractNodeItem>> getMyJoinNodeContract({int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity(
         "delegations/my-join",
         EntityFactory<List<ContractNodeItem>>(
             (list) => (list as List).map((item) => ContractNodeItem.fromJson(item)).toList()),
         params: {"page": page},
-        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
-  Future<ContractDetailItem> getContractDetail(int contractNodeItemId) async {
+  Future<ContractDetailItem> getContractDetail(int contractNodeItemId, {String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity("delegations/instance/$contractNodeItemId",
         EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data)),
-        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
-  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0}) async {
+  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity(
         "delegations/instance/$contractNodeItemId/delegators",
         EntityFactory<List<ContractDelegatorItem>>(
             (list) => (list as List).map((item) => ContractDelegatorItem.fromJson(item)).toList()),
         params: {"page": page},
-        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
   Future<List<NodeItem>> getContractList(int page) async {

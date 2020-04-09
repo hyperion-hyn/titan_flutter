@@ -387,14 +387,14 @@ class _Map3NodeJoinContractState
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 30.0, right: 15),
+              padding: const EdgeInsets.only(left: 25.0, right: 6),
               child: Image.asset("res/drawable/hyn.png", width: 40, height: 40),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text("${contractNodeItem.ownerName}", style: TextStyles.textC333S14),
-                Text("${contractNodeItem.owner}", style: TextStyles.textC9b9b9bS12)
+                Text("${contractNodeItem.owner}", style: TextStyles.textC9b9b9bS12, overflow: TextOverflow.clip,)
               ],
             )
           ],
