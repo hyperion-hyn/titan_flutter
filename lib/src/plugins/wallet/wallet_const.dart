@@ -52,7 +52,8 @@ class WalletConfig {
 
   static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
 
-  static const String LOCAL_API = 'http://116.23.19.213:37545';
+//  static const String LOCAL_API = 'http://116.23.19.213:37545';
+  static const String LOCAL_API = 'http://10.10.1.115:7545';
 
   static EthereumNetType netType = EthereumNetType.main;
 

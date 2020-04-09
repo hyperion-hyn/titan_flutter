@@ -146,7 +146,8 @@ class _Map3NodeJoinContractState
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
           color: Colors.white,
-          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract,showMinDelegation: false )),
+//          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract,showMinDelegation: false )),
+          child: null),
       Container(
         height: 5,
         color: DefaultColors.colorf5f5f5,

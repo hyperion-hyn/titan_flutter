@@ -30,6 +30,11 @@ class FormatUtil{
     return NumberFormat("#,###,###,###").format(doubleValue) + "万";
   }
 
+  static String formatTenThousandNoUnit(String strValue) {
+    var doubleValue = double.parse(strValue) / 10000;
+    return NumberFormat("#,###,###,###").format(doubleValue);
+  }
+
   static String formatDate(int timestamp, {bool isSecond = true}) {
     var multiple = isSecond ? 1000:1;
     timestamp = timestamp * multiple;

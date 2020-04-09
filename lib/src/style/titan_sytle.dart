@@ -20,8 +20,12 @@ class TextStyles {
   static TextStyle textC777S14 = textStyle(color: DefaultColors.color777);
   static TextStyle textC777S16 = textStyle(fontSize: 16, color: DefaultColors.color777);
   static TextStyle textCaaaS14 = textStyle(color: DefaultColors.coloraaa);
+  static TextStyle textCfffS46 = textStyle(fontSize: 46, color: DefaultColors.colorfff);
+  static TextStyle textCfffS24 = textStyle(fontSize: 24, color: DefaultColors.colorfff);
+  static TextStyle textCfffS17 = textStyle(fontSize: 17, color: DefaultColors.colorfff);
   static TextStyle textCfffS14 = textStyle(color: DefaultColors.colorfff);
   static TextStyle textCfffS12 = textStyle(fontSize: 12, color: DefaultColors.colorfff);
+  static TextStyle textCccfffS12 = textStyle(fontSize: 12, color: DefaultColors.colorccfff);
   static TextStyle textC000S16 = textStyle(fontSize: 16, color: DefaultColors.color000);
   static TextStyle textC9b9b9bS12 = textStyle(fontSize: 12, color: DefaultColors.color9b9b9b);//灰色
   static TextStyle textC9b9b9bS14 = textStyle(color: DefaultColors.color9b9b9b);//灰色
@@ -47,6 +51,7 @@ class DefaultColors {
   static Color color777 = HexColor("#777777");
   static Color coloraaa = HexColor("#aaaaaa");
   static Color colorfff = HexColor("#ffffff");
+  static Color colorccfff = HexColor("#ccffffff");
   static Color color000 = HexColor("#000000");
   static Color colorf5f5f5 = HexColor("#f5f5f5");
   static Color color9b9b9b = HexColor("#9b9b9b");
