@@ -10,6 +10,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
+import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -526,7 +527,8 @@ class _WalletDemoState extends State<WalletDemo> {
                 logger.i('请先切换到内外网络');
               } else {
                 final client = WalletUtil.getWeb3Client();
-                const String privateKey = '976c55a80592bdffcd4d5b29d409810518792fed3ec4a0243e4f857e9102d556';
+//                const String privateKey = '976c55a80592bdffcd4d5b29d409810518792fed3ec4a0243e4f857e9102d556';
+                const String privateKey = ContractTestConfig.privateKey;
                 final credentials = await client.credentialsFromPrivateKey(privateKey);
 
                 final address = await credentials.extractAddress();

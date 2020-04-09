@@ -338,7 +338,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
         var gasLimit = EthereumConst.ERC20_APPROVE_GAS_LIMIT;
-        var signedHex = await _wallet.signCollectMap3Node(
+
+        /*var signedHex = await _wallet.signCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
           gasPrice: gasPrice,
           gasLimit: gasLimit,
@@ -347,6 +348,16 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
         logger.i('map3 collect, result: $ret');
+
+       */
+
+        var signedHex = await _wallet.sendCollectMap3Node(
+          createNodeWalletAddress: createNodeWalletAddress,
+          gasPrice: gasPrice,
+          gasLimit: gasLimit,
+          password: walletPassword,
+        );
+        logger.i('map3 collect, signedHex: $signedHex');
 
         Application.router.navigateTo(context,Routes.map3node_broadcase_success_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
       } catch (_) {

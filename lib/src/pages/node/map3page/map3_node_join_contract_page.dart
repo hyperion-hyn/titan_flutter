@@ -102,6 +102,7 @@ class _Map3NodeJoinContractState
     spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
 
     setState(() {
+      if (!mounted) return;
       _joinCoinController.value = TextEditingValue(
       // 设置内容
       text: inputText,

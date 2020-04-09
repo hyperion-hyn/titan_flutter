@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 part 'token.g.dart';
@@ -74,7 +75,7 @@ class SupportedTokens {
   static const HYN_LOCAL = const AssetToken(
       name: 'Hyperion LOCAL',
       decimals: 18,
-      contractAddress: '0x439b5fDA1b9c744ad37D91998Dcb294AFBf9eEf5',
+      contractAddress: ContractTestConfig.ERC20,
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
 

@@ -1,4 +1,5 @@
 import 'package:titan/config.dart';
+import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 class TokenUnit {
   static const WEI = 1;
@@ -66,7 +67,8 @@ class WalletConfig {
         //TODO
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.local:
-        return '0x14D135f91B01db0DF32cdcF7d7e93cc14A9aE3D7';
+        return ContractTestConfig.stakingContract;
+        //return '0x14D135f91B01db0DF32cdcF7d7e93cc14A9aE3D7';
     }
     return '';
   }
