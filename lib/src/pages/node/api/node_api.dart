@@ -83,8 +83,7 @@ class NodeApi {
       int gasPrice, String contractId, StartJoinInstance startJoinInstance) async {
     var wallet = activatedWallet.wallet;
 //    var maxStakingAmount = 1000000; //一百万
-    var maxStakingAmount = double.parse(contractNodeItem.contract.minTotalDelegation); //一百万
-    var myStaking = contractNodeItem.contract.ownerMinDelegationRate * maxStakingAmount; //最小抵押量
+    var myStaking = startJoinInstance.amount;
     var ethAccount = wallet.getEthAccount();
     var hynAssetToken = wallet.getHynToken();
     var hynErc20ContractAddress = hynAssetToken?.contractAddress;
@@ -138,8 +137,7 @@ class NodeApi {
       int gasPrice, createNodeWalletAddress, String contractId, StartJoinInstance startJoinInstance) async {
     var wallet = activatedWallet.wallet;
 
-    var maxStakingAmount = double.parse(contractNodeItem.contract.minTotalDelegation); //一百万
-    var myStaking = contractNodeItem.contract.ownerMinDelegationRate * maxStakingAmount; //最小抵押量
+    var myStaking = startJoinInstance.amount;
     var ethAccount = wallet.getEthAccount();
     var hynErc20ContractAddress = wallet.getEthAccount().contractAssetTokens[0].contractAddress;
     var approveToAddress = WalletConfig.map3ContractAddress;
