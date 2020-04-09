@@ -10,15 +10,21 @@ class InitialAccountState extends AccountState {}
 
 class UserUpdateState extends AccountState {
   final UserInfo userInfo;
-  final UserToken userToken;
 
   UserUpdateState({
     this.userInfo,
-    this.userToken,
   });
 }
 
 class LogoutState extends AccountState {}
+
+class LoggedState extends AccountState {
+  final UserToken userToken;
+
+  LoggedState({
+    this.userToken,
+  });
+}
 
 class UpdateCheckInState extends AccountState {
   final CheckInModel checkInModel;

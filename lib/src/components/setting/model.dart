@@ -106,6 +106,7 @@ class SupportedLanguage {
 
   static List<LanguageModel> all = [
     LanguageModel(name: '简体中文', locale: Locale("zh", "CN")),
+    LanguageModel(name: '繁體中文', locale: Locale("zh", "HK")),
     LanguageModel(name: 'English', locale: Locale('en')),
     LanguageModel(name: '한국어', locale: Locale("ko")),
   ];

@@ -11,6 +11,8 @@ import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/pages/login/register_bloc/bloc.dart';
 import 'package:titan/src/pages/login/register_page.dart';
 import 'package:titan/src/pages/login/reset_password_page.dart';
+import 'package:titan/src/pages/me/components/account/bloc/account_bloc.dart';
+import 'package:titan/src/pages/me/components/account/bloc/account_event.dart';
 import 'package:titan/src/pages/me/util/validator_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
@@ -35,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       listener: (context, state) {
         if (state is LoginState) {
           if (state.status == Status.success) {
+            BlocProvider.of<AccountBloc>(context).add(LoggedEvent(userToken: state.userToken));
             BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
           } else if (state.status == Status.failed) {
             UiUtil.toast(state.msg);

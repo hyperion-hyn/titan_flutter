@@ -8,10 +8,16 @@ abstract class AccountEvent {}
 
 class UpdateUserEvent extends AccountEvent {
   final UserInfo userInfo;
-  final UserToken userToken;
 
   UpdateUserEvent({
     this.userInfo,
+  });
+}
+
+class LoggedEvent extends AccountEvent {
+  final UserToken userToken;
+
+  LoggedEvent({
     this.userToken,
   });
 }

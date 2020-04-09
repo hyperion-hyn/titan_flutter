@@ -19,37 +19,38 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
 
 class NodeApi {
-  Future<List<ContractNodeItem>> getMyCreateNodeContract({int page = 0}) async {
+
+  Future<List<ContractNodeItem>> getMyCreateNodeContract({int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity(
         "delegations/my-create",
         EntityFactory<List<ContractNodeItem>>(
             (list) => (list as List).map((item) => ContractNodeItem.fromJson(item)).toList()),
         params: {"page": page},
-        options: RequestOptions(headers: {"Address": "jifijfkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
-  Future<List<ContractNodeItem>> getMyJoinNodeContract({int page = 0}) async {
+  Future<List<ContractNodeItem>> getMyJoinNodeContract({int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity(
         "delegations/my-join",
         EntityFactory<List<ContractNodeItem>>(
             (list) => (list as List).map((item) => ContractNodeItem.fromJson(item)).toList()),
         params: {"page": page},
-        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
-  Future<ContractDetailItem> getContractDetail(int contractNodeItemId) async {
+  Future<ContractDetailItem> getContractDetail(int contractNodeItemId, {String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity("delegations/instance/$contractNodeItemId",
         EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data)),
-        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
-  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0}) async {
+  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await HttpCore.instance.getEntity(
         "delegations/instance/$contractNodeItemId/delegators",
         EntityFactory<List<ContractDelegatorItem>>(
             (list) => (list as List).map((item) => ContractDelegatorItem.fromJson(item)).toList()),
         params: {"page": page},
-        options: RequestOptions(headers: {"Address": "kkkkkeo904o3jfi0joitqjjfli"}));
+        options: RequestOptions(headers: {"Address": address}));
   }
 
   Future<List<NodeItem>> getContractList(int page) async {
@@ -82,8 +83,7 @@ class NodeApi {
       int gasPrice, String contractId, StartJoinInstance startJoinInstance) async {
     var wallet = activatedWallet.wallet;
 //    var maxStakingAmount = 1000000; //一百万
-    var maxStakingAmount = contractNodeItem.contract.minTotalDelegation; //一百万
-    var myStaking = contractNodeItem.contract.ownerMinDelegationRate * maxStakingAmount; //最小抵押量
+    var myStaking = startJoinInstance.amount;
     var ethAccount = wallet.getEthAccount();
     var hynAssetToken = wallet.getHynToken();
     var hynErc20ContractAddress = hynAssetToken?.contractAddress;
@@ -99,6 +99,7 @@ class NodeApi {
         await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address), atBlock: BlockNum.pending());
 
     //approve
+    print('approve result: $count');
     var approveTx = await wallet.sendApproveErc20Token(
         contractAddress: hynErc20ContractAddress,
         approveToAddress: approveToAddress,
@@ -122,21 +123,21 @@ class NodeApi {
     );
     print('createMap3Hex is: $createMap3Hex');
 
-    startJoinInstance.txHash = createMap3Hex;
-    startJoinInstance.publicKey = nodeKey["publicKey"];
-    String postData = json.encode(startJoinInstance.toJson());
-    print("startContractInstance = $postData");
-    var data = await HttpCore.instance
-        .post("contracts/create/$contractId", data: postData, options: RequestOptions(contentType: "application/json"));
-    return data['msg'];
+//    startJoinInstance.txHash = createMap3Hex;
+//    startJoinInstance.publicKey = nodeKey["publicKey"];
+//    String postData = json.encode(startJoinInstance.toJson());
+//    print("startContractInstance = $postData");
+//    var data = await HttpCore.instance
+//        .post("contracts/create/$contractId", data: postData, options: RequestOptions(contentType: "application/json"));
+//    return data['msg'];
+    return "success";
   }
 
   Future<String> joinContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
       int gasPrice, createNodeWalletAddress, String contractId, StartJoinInstance startJoinInstance) async {
     var wallet = activatedWallet.wallet;
 
-    var maxStakingAmount = contractNodeItem.contract.minTotalDelegation; //一百万
-    var myStaking = contractNodeItem.contract.ownerMinDelegationRate * maxStakingAmount; //最小抵押量
+    var myStaking = startJoinInstance.amount;
     var ethAccount = wallet.getEthAccount();
     var hynErc20ContractAddress = wallet.getEthAccount().contractAssetTokens[0].contractAddress;
     var approveToAddress = WalletConfig.map3ContractAddress;
@@ -167,12 +168,13 @@ class NodeApi {
     );
     print('joinHex is: $joinHex');
 
-    startJoinInstance.txHash = joinHex;
-    String postData = json.encode(startJoinInstance.toJson());
-    print("joinContractInstance = $postData");
-    var data = await HttpCore.instance.post("instances/delegate/$contractId",
-        data: postData, options: RequestOptions(contentType: "application/json"));
-    return data['msg'];
+//    startJoinInstance.txHash = joinHex;
+//    String postData = json.encode(startJoinInstance.toJson());
+//    print("joinContractInstance = $postData");
+//    var data = await HttpCore.instance.post("instances/delegate/$contractId",
+//        data: postData, options: RequestOptions(contentType: "application/json"));
+//    return data['msg'];
+    return "success";
   }
 
   Future<NodePageEntityVo> getNodePageEntityVo() async {

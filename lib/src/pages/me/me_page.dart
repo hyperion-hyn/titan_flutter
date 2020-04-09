@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
@@ -36,15 +37,13 @@ class MePage extends StatefulWidget {
   }
 }
 
-class _MeState extends State<MePage> with RouteAware {
-  UserService _userService = UserService();
-
+class _MeState extends BaseState<MePage> with RouteAware {
 //  int checkInCount = 0;
   String _pubKey = "";
 
   @override
-  void initState() {
-    super.initState();
+  void onCreated() {
+    UserService.syncUserInfo(context);
     _updateCheckInCount();
 
     _loadData();

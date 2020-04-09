@@ -235,7 +235,7 @@ class WalletUtil {
     return NumberFormat("#,###.######").format(coinNum);
   }
 
-  static String formatPrice(double price) {
+  static String formatPrice(price) {
     if (price >= 1) {
       return NumberFormat("#,###.##").format(price);
     } else {

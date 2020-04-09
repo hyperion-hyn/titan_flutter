@@ -66,9 +66,8 @@ class _AccountManagerState extends State<_AccountManager> {
           if (state.userInfo != null) {
             _userInfo = state.userInfo;
           }
-          if (state.userToken != null) {
-            _userToken = state.userToken;
-          }
+        } else if (state is LoggedState) {
+          _userToken = state.userToken;
         } else if (state is LogoutState) {
           _userInfo = null;
           _userToken = null;

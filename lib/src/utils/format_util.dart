@@ -8,6 +8,14 @@ class FormatUtil{
     return NumberFormat("#,###,###,###").format(numValue);
   }
 
+  static String stringFormatNum(String numValue) {
+    return NumberFormat("#,###,###,###").format(int.parse(numValue));
+  }
+
+  static String doubleFormatNum(double numValue) {
+    return NumberFormat("#,###,###,###").format(numValue);
+  }
+
   static String formatNumDecimal(double numValue) {
     return NumberFormat("#,###,###,###.####").format(numValue);
   }
@@ -15,6 +23,16 @@ class FormatUtil{
   static String formatPercent(double doubleValue) {
     doubleValue = doubleValue * 100;
     return NumberFormat("#,###.##").format(doubleValue) + "%";
+  }
+
+  static String formatTenThousand(String strValue) {
+    var doubleValue = double.parse(strValue) / 10000;
+    return NumberFormat("#,###,###,###").format(doubleValue) + "万";
+  }
+
+  static String formatTenThousandNoUnit(String strValue) {
+    var doubleValue = double.parse(strValue) / 10000;
+    return NumberFormat("#,###,###,###").format(doubleValue);
   }
 
   static String formatDate(int timestamp, {bool isSecond = true}) {

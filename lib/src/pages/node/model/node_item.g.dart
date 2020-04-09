@@ -11,7 +11,7 @@ NodeItem _$NodeItemFromJson(Map<String, dynamic> json) {
     json['id'] as int,
     json['nodeName'] as String,
     json['nodeId'] as int,
-    json['minTotalDelegation'] as int,
+    json['minTotalDelegation'] as String,
     (json['ownerMinDelegationRate'] as num)?.toDouble(),
     (json['minDelegationRate'] as num)?.toDouble(),
     (json['annualizedYield'] as num)?.toDouble(),

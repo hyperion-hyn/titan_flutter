@@ -457,7 +457,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   }
 
   int _clickTimes = 0;
-
+  var _isRunningRequestPermissions = false;
   Future _toMyLocation() async {
     _clickTimes++;
     _toLocationEventSubject.sink.add(1);
@@ -466,6 +466,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   void _listenEventBus() {
     _eventBusSubscription = Application.eventBus.on().listen((event) async {
       if (event is ToMyLocationEvent) {
+
         //check location service
         if (!(await Permission.location.serviceStatus.isEnabled)) {
           _showGoToOpenLocationServiceDialog();
@@ -474,10 +475,13 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
         var status = await Permission.location.status;
         if (status.isUndetermined) {
-          PermissionStatus ret = await Permission.location.request();
-          if (ret.isGranted) {
-            _toMyLocation();
+          if (!_isRunningRequestPermissions) {
+            PermissionStatus ret = await Permission.location.request();
+            if (ret.isGranted) {
+              _toMyLocation();
+            }
           }
+          _isRunningRequestPermissions = false;
         } else if (status.isGranted) {
           _toMyLocation();
         } else {

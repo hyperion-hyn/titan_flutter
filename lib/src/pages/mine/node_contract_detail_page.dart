@@ -5,6 +5,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/my_map3_contract_page.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -12,6 +13,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dar
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -20,7 +22,7 @@ import 'package:titan/src/utils/utils.dart';
 
 class NodeContractDetailPage extends StatefulWidget {
 
-  ContractNodeItem contractNodeItem;
+  final ContractNodeItem contractNodeItem;
   NodeContractDetailPage(this.contractNodeItem);
 
   @override
@@ -36,10 +38,21 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
   ContractDetailItem _contractDetailItem;
   List<ContractDelegatorItem> _delegatorList = [];
   int _currentPage = 0;
+  Wallet _wallet;
 
   @override
   void initState() {
     super.initState();
+
+
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
 
     loadDataBloc.add(LoadingEvent());
 
@@ -69,9 +82,9 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
     try{
       _currentPage = 0;
       List<ContractDelegatorItem> list = [];
-
-      list = await api.getContractDelegator(widget.contractNodeItem.id, page: _currentPage);
-      var item = await api.getContractDetail(widget.contractNodeItem.id);
+      var address = _wallet.getEthAccount().address;
+      list = await api.getContractDelegator(widget.contractNodeItem.id, page: _currentPage, address: address);
+      var item = await api.getContractDetail(widget.contractNodeItem.id, address: address);
 
       if (list.length == 0 || item == null) {
         loadDataBloc.add(LoadEmptyEvent());
@@ -80,7 +93,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
           _currentPage += 1;
         }
         loadDataBloc.add(RefreshSuccessEvent());
-        list.insert(0, ContractDelegatorItem("0x","0",0,0));
+        list.insert(0, ContractDelegatorItem("0x","0","0",0));
 
         if (this.mounted) {
           setState(() {
@@ -92,15 +105,11 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
         }
       }
     }catch(e){
+      print(e);
       loadDataBloc.add(LoadFailEvent());
     }
   }
 
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
 
   @override
   void dispose() {
@@ -183,7 +192,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Text("启动共需${FormatUtil.formatNum(widget.contractNodeItem.contract.minTotalDelegation)}HYN", style: TextStyles.textC333S14),
+                        child: Text("启动共需${FormatUtil.stringFormatNum(widget.contractNodeItem.contract.minTotalDelegation)}HYN", style: TextStyles.textC333S14),
                       )
                     ],
                   ),
@@ -383,13 +392,13 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
               switch (value) {
                 case 1:
                   title = "创建时间:";
-                  detail = "${FormatUtil.formatDate(_contractDetailItem?.instance.instanceStartTime)}";
+                  detail = "${FormatUtil.formatDate(_contractDetailItem?.instance?.instanceStartTime)}";
                   bottom = 4.0;
                   break;
 
                 case 2:
                   title = "参与账户:";
-                  detail = "${FormatUtil.formatNum(_contractDetailItem?.instance.amountDelegation)}";
+                  detail = "${FormatUtil.formatNum(int.parse(_contractDetailItem?.instance?.amountDelegation))}";
                   break;
               }
               return Padding(
@@ -451,7 +460,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                             child: Text(shortBlockChainAddress(value.userAddress, limitCharsLength: 6), style: TextStyle(fontSize: 12, color: Colors.grey))),
                       ],
                     ),
-                    Text("${FormatUtil.formatNum(value.amountDelegation)}",
+                    Text("${FormatUtil.formatNum(int.parse(value.amountDelegation))}",
                         style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500)),
                     Text("${FormatUtil.formatDate(value.createAt)}", style: TextStyle(fontSize: 12, color: Colors.grey)),
                   ],
@@ -485,7 +494,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
                     //color: Colors.red,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _getStatusColor(ContractState.Running),
+                        color: _getStatusColor(ContractState.ACTIVE),
                         border: Border.all(color: Colors.grey, width: 1.0)),
                   ),
                 ),
@@ -689,19 +698,19 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
         statusColor = HexColor('#EED097');
         break;
 
-      case ContractState.Running:
+      case ContractState.ACTIVE:
         statusColor = HexColor('#3FF78C');
         break;
 
-      case ContractState.Expired:
+      case ContractState.DUE:
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractState.Withdrawal:
+      case ContractState.WITHDRAWN:
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractState.FailRun:
+      case ContractState.CANCELLED:
         statusColor = HexColor('#F22504');
         break;
 

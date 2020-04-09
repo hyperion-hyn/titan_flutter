@@ -10,6 +10,8 @@ import 'package:titan/src/pages/login/reset_password_page.dart';
 import 'package:titan/src/pages/me/components/account/account_component.dart';
 import 'package:titan/src/pages/me/components/account/bloc/account_event.dart';
 import 'package:titan/src/pages/me/model/user_info.dart';
+import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/extension/navigator_ext.dart';
 
 import 'components/account/bloc/account_bloc.dart';
 
@@ -97,6 +99,7 @@ class _PersonalSettingsState extends State<PersonalSettingsPage> {
               elevation: 1,
               color: Color(0xFFBCC1C7),
               onPressed: () {
+                Navigator.of(context).popUntilRouteName(Routes.root);
                 BlocProvider.of<AccountBloc>(context).add(LogoutUserEvent());
                 BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(
                     page: BlocProvider<LoginBloc>(create: (context) => LoginBloc(), child: LoginPage())));

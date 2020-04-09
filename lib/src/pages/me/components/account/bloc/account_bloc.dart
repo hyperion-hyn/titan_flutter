@@ -15,20 +15,20 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       if (event.userInfo != null) {
         await AppCache.saveValue(PrefsKey.SHARED_PREF_USER_INFO_KEY, json.encode(event.userInfo.toJson()));
       }
-      if (event.userToken != null) {
-        await AppCache.saveValue(PrefsKey.SHARED_PREF_USER_TOKEN_KEY, json.encode(event.userToken.toJson()));
-      }
 
       yield UserUpdateState(
         userInfo: event.userInfo,
-        userToken: event.userToken,
       );
+    } else if (event is LoggedEvent) {
+      await AppCache.saveValue(PrefsKey.SHARED_PREF_USER_TOKEN_KEY, json.encode(event.userToken.toJson()));
+
+      LoggedState(userToken: event.userToken);
     } else if (event is LogoutUserEvent) {
       await AppCache.remove(PrefsKey.SHARED_PREF_USER_INFO_KEY);
       await AppCache.remove(PrefsKey.SHARED_PREF_USER_TOKEN_KEY);
 
       yield LogoutState();
-    } else if(event is UpdateCheckInEvent) {
+    } else if (event is UpdateCheckInEvent) {
       yield UpdateCheckInState(checkInModel: event.checkInModel);
     }
   }

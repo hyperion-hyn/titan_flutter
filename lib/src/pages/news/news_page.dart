@@ -9,6 +9,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 
 import '../../global.dart';
@@ -110,7 +111,7 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
                       _buildTag(S.of(context).latest_news, LAST_NEWS_TAG),
                       _buildTag(S.of(context).official_announcement,
                           OFFICIAL_ANNOUNCEMENT_TAG,
-                          isUpdate: false /*isUpdateAnnounce*/),
+                          isUpdate: Application.isUpdateAnnounce),
                       _buildTag(S.of(context).information_guide, TUTORIAL_TAG),
                       _buildTag(S.of(context).information_video, VIDEO_TAG),
                     ],
@@ -211,6 +212,14 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
     }
 
     setState(() {
+
+      var isUpdate = tagId == OFFICIAL_ANNOUNCEMENT_TAG && Application.isUpdateAnnounce;
+
+      if (isUpdate) {
+        Application.isUpdateAnnounce = false;
+        Application.eventBus.fire(ClearBadgeEvent());
+      }
+
       selectedTag = tagId;
       currentPage = _mapPageVoList[selectedTag];
       if(_mapInfoItemVoList.containsKey(selectedTag)) {

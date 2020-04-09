@@ -14,8 +14,9 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
         : NodeItem.fromJson(json['contract'] as Map<String, dynamic>),
     json['owner'] as String,
     json['ownerName'] as String,
-    json['amountDelegation'] as int,
-    json['remainDelegation'] as int,
+    json['amountDelegation'] as String,
+    json['remainDelegation'] as String,
+    json['expectCancelTime'] as int,
     json['instanceStartTime'] as int,
     json['state'] as String,
   );
@@ -29,6 +30,7 @@ Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
       'ownerName': instance.ownerName,
       'amountDelegation': instance.amountDelegation,
       'remainDelegation': instance.remainDelegation,
+      'expectCancelTime': instance.expectCancelTime,
       'instanceStartTime': instance.instanceStartTime,
       'state': instance.state,
     };

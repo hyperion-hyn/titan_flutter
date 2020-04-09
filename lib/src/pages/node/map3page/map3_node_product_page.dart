@@ -63,12 +63,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
           slivers: <Widget>[
             SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  double topValue = (index == 0) ? 10 : 0;
-                  bool hasRemind = (index == 3) ? true : false;
-                  return Card(
-                      color: Colors.white,
-                      margin: EdgeInsets.only(left: 5.0, right: 5, bottom: 5,  top:topValue),
-                      child: getMap3NodeProductItem(context, nodeList[index],hasRemind: hasRemind));
+                  return getMap3NodeProductItem(context, nodeList[index]);
                 }, childCount: nodeList.length))
           ],
         ),
@@ -111,9 +106,99 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
     loadDataBloc.close();
     super.dispose();
   }
+
+  Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem) {
+    return Container(
+      color: Colors.white,
+      margin: const EdgeInsets.only(bottom: 8),
+      padding:
+      const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Image.asset(
+                "res/drawable/ic_map3_node_item_contract.png",
+                width: 50,
+                height: 50,
+                fit:BoxFit.cover,
+              ),
+              SizedBox(width: 6,),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Expanded(
+                            child: Text("${nodeItem.nodeName}",
+                                style: TextStyles.textCcc000000S16))
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text("最高 ${FormatUtil.formatTenThousand(nodeItem.minTotalDelegation)}",
+                              style: TextStyles.textC99000000S13,maxLines:1,softWrap: true),
+                          Text("  |  ",style: TextStyles.textC9b9b9bS12),
+                          Text("${nodeItem.duration}天",style: TextStyles.textC99000000S13)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                children: <Widget>[
+                  Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
+                  Text("年化奖励", style: TextStyles.textC99000000S13)
+                ],
+              )
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top:9,bottom: 9),
+            child: Divider(height: 1,color: DefaultColors.color1177869e),
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text("")
+              ),
+              SizedBox(
+                height: 24,
+                width: 92,
+                child: FlatButton(
+                  color: DefaultColors.colorffdb58,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24)),
+                  onPressed: () async {
+                    var walletList = await WalletUtil.scanWallets();
+                    if(walletList.length == 0){
+                      Application.router.navigateTo(context, Routes.map3node_create_wallet);
+                    }else{
+                      Application.router.navigateTo(context, Routes.map3node_create_contract_page
+                          + "?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}"
+                          + "&contractId=${nodeItem.id}");
+                    }
+                  },
+                  child: Text("创建合约", style: TextStyles.textC906b00S13),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
 }
 
-Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem,{hasRemind = false,showButton = true}) {
+/*Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem,{hasRemind = false,showButton = true}) {
   return Padding(
     padding: EdgeInsets.only(left: 10.0, right: 10, top: 10, bottom: 10),
     child: Column(
@@ -143,7 +228,7 @@ Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem,{hasRemind 
                         children: <Widget>[
                           Text(nodeItem.nodeName, style: TextStyles.textC333S14bold),
                           SizedBox(height: 5,),
-                          Text("启动共需${FormatUtil.formatNum(nodeItem.minTotalDelegation)}HYN",
+                          Text("启动共需${FormatUtil.stringFormatNum(nodeItem.minTotalDelegation)}HYN",
                               style: TextStyles.textC333S14)
                         ],
                       ),
@@ -218,4 +303,4 @@ Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem,{hasRemind 
       ],
     ),
   );
-}
+}*/

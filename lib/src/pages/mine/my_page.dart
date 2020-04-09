@@ -1,7 +1,9 @@
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
@@ -83,16 +85,33 @@ class _MyPageState extends State<MyPage> {
               color: Colors.white,
               child: Column(
                 children: <Widget>[
-                  _buildMenuBar("我发起的Map3节点抵押合约", Icons.menu,
-                          () => Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我发起的Map3合约")))),
+                  Container(
+                    height: 10,
+                    color: HexColor('#F1EFF2'),
+                  ),
+                  _buildMenuBar("我发起的合约", Icons.menu,
+                          () {
+                        if (_wallet != null) {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我发起的合约")));
+                        } else {
+                          Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
+                        }
+                      }),
                   Padding(
                     padding: const EdgeInsets.only(left: 56.0),
                     child: Divider(height: 0),
                   ),
-                  _buildMenuBar("我参与的Map3节点抵押合约", Icons.menu,
-                          () => Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我参与的Map3合约")))),
-                  Divider(
+                  _buildMenuBar("我参与的合约", Icons.menu,
+                          () {
+                            if (_wallet != null) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我参与的合约")));
+                            }else {
+                              Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
+                            }
+                          }),
+                  Container(
                     height: 10,
+                    color: HexColor('#F1EFF2'),
                   ),
                   _buildMenuBar(S.of(context).share_app, Icons.share, () => shareApp()),
                   Padding(
@@ -262,7 +281,7 @@ class _MyPageState extends State<MyPage> {
                 Application.router
                     .navigateTo(context, Routes.wallet_create+ '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
               },
-              child: Text(S.of(context).create_wallet, style: TextStyle(color: Colors.white70, fontSize: 14))),
+              child: Text(S.of(context).create_wallet, style: TextStyle(color: Colors.white70, fontSize: 17))),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -271,7 +290,7 @@ class _MyPageState extends State<MyPage> {
                 Application.router
                     .navigateTo(context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
               },
-              child: Text(S.of(context).import_wallet, style: TextStyle(color: Colors.white70, fontSize: 14))),
+              child: Text(S.of(context).import_wallet, style: TextStyle(color: Colors.white70, fontSize: 17))),
         ),
         Spacer(),
       ],
