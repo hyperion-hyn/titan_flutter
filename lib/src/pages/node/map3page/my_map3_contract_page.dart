@@ -22,6 +22,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
+import 'map3_node_contract_detail_page.dart';
 import 'node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
@@ -203,8 +204,13 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       case ContractState.ACTIVE:
         onPressed = (){
-          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
-          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+          return Map3NodeContractDetailPage("${contractNodeItem.id}");
+          }));
+
+          //String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
+          //Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
         };
 
 //        onPressed = (){
