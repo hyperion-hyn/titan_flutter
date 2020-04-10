@@ -110,6 +110,15 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
               }
             },
           ),
+          BlocListener<AppTabBarBloc, AppTabBarState>(
+            listener: (context, state) {
+              if (state is ChangeTabBarItemState) {
+                this.setState(() {
+                  this._currentTabIndex = state.index;
+                });
+              }
+            },
+          ),
         ],
         child: Scaffold(
           resizeToAvoidBottomPadding: false,

@@ -25,3 +25,8 @@ class BottomNavigationBarState extends AppTabBarState with EquatableMixin {
   @override
   bool get stringify => true;
 }
+
+class ChangeTabBarItemState extends AppTabBarState {
+  int index;
+  ChangeTabBarItemState({this.index});
+}

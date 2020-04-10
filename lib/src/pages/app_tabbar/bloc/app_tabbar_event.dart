@@ -15,3 +15,8 @@ class BottomNavigationBarEvent extends AppTabBarEvent {
 
   BottomNavigationBarEvent({@required this.isHided});
 }
+
+class ChangeTabBarItemEvent extends AppTabBarEvent {
+  int index;
+  ChangeTabBarItemEvent({this.index});
+}
