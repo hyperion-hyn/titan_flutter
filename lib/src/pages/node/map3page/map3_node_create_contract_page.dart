@@ -381,11 +381,18 @@ Widget getHoldInNum(
       .split(",")
       .map((suggest) => int.parse(suggest))
       .toList();
-  double minTotal = isJoin
-      ? double.parse(contractNodeItem.contract.minTotalDelegation) *
-          contractNodeItem.contract.minDelegationRate
-      : double.parse(contractNodeItem.contract.minTotalDelegation) *
-          contractNodeItem.contract.ownerMinDelegationRate;
+  double minTotal = 0;
+  if(isJoin && double.parse(contractNodeItem.contract.minTotalDelegation) >= double.parse(contractNodeItem.remainDelegation)){
+    double tempMinTotal = double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.minDelegationRate;
+    if(tempMinTotal >= double.parse(contractNodeItem.remainDelegation)){
+      minTotal = tempMinTotal;
+    }else{
+      minTotal = double.parse(contractNodeItem.remainDelegation);
+    }
+  }else{
+    minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.ownerMinDelegationRate;
+  }
+
   var walletName =
       WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
   var balance =
@@ -438,8 +445,8 @@ Widget getHoldInNum(
                                 int.parse(textStr) < minTotal) {
                               return "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
                             } else if (int.parse(textStr) > balance) {
-//                              return "HYN余额不足";
-                              return null;
+                              return "HYN余额不足";
+//                              return null;
                             } else {
                               return null;
                             }

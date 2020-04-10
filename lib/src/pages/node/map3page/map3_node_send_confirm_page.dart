@@ -442,7 +442,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
           }
         } else if (_ is RPCError) {
           if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+//            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+            Fluttertoast.showToast(msg: _.message,toastLength: Toast.LENGTH_LONG);
           } else {
             Fluttertoast.showToast(msg: S.of(context).transfer_fail);
           }
