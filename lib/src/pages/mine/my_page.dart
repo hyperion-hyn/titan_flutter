@@ -281,9 +281,9 @@ class _MyPageState extends State<MyPage> {
                 Application.router
                     .navigateTo(context, Routes.wallet_create+ '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
               },
-              child: Text(S.of(context).create_wallet, style: TextStyle(color: Colors.white70, fontSize: 17))),
+              child: Text("创建/导入钱包账户", style: TextStyle(color: Colors.white70, fontSize: 20))),
         ),
-        Padding(
+        /*Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
               onTap: () {
@@ -291,7 +291,7 @@ class _MyPageState extends State<MyPage> {
                     .navigateTo(context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
               },
               child: Text(S.of(context).import_wallet, style: TextStyle(color: Colors.white70, fontSize: 17))),
-        ),
+        ),*/
         Spacer(),
       ],
     );

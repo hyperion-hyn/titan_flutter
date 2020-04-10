@@ -133,7 +133,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           onLoadData: _loadData,
           onRefresh: _loadData,
           // todo: 服务器暂时没支持page分页
-          //onLoadingMore: _loadMoreData,
+          onLoadingMore: _loadMoreData,
           child: ListView.separated(
               itemBuilder: (context, index) {
                 return _buildInfoItem(_dataArray[index]);
@@ -202,11 +202,20 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         break;
 
       case ContractState.ACTIVE:
+        onPressed = (){
+          _collectAction(contractNodeItem);
+        };
 
+//        onPressed = (){
+//          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+//        };
         break;
 
       case ContractState.DUE:
-
+//        onPressed = (){
+//          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
+//          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+//        };
         onPressed = (){
           _collectAction(contractNodeItem);
         };

@@ -108,7 +108,7 @@ class NodeApi {
         gasPrice: BigInt.from(gasPrice),
         gasLimit: EthereumConst.ERC20_APPROVE_GAS_LIMIT,
         nonce: count);
-    print('approve result: $approveTx');
+    print('approve result: $approveTx， durationType:${durationType}');
 
     //create
     var createMap3Hex = await wallet.sendCreateMap3Node(
