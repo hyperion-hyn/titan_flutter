@@ -203,7 +203,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       case ContractState.ACTIVE:
         onPressed = (){
-          _collectAction(contractNodeItem);
+          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
+          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
         };
 
 //        onPressed = (){
@@ -212,10 +213,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         break;
 
       case ContractState.DUE:
-//        onPressed = (){
-//          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
-//          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
-//        };
+
         onPressed = (){
           _collectAction(contractNodeItem);
         };

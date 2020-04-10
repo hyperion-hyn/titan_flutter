@@ -58,26 +58,51 @@ class _MyPageState extends State<MyPage> {
               alignment: Alignment.centerLeft,
               height: 200.0 + MediaQuery.of(context).padding.top,
               child: Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [/*Color(0xff041528),*/ Theme.of(context).primaryColor, Color(0xff99C3E6)],
-                        begin: FractionalOffset(0, 0.4),
-                        end: FractionalOffset(0, 1))),
+                color: Theme.of(context).primaryColor,
+//                decoration: BoxDecoration(
+//                    gradient: LinearGradient(
+//                        colors: [/*Color(0xff041528),*/ Theme.of(context).primaryColor, Color(0xff99C3E6)],
+//                        begin: FractionalOffset(0, 0.4),
+//                        end: FractionalOffset(0, 1))),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        if (_wallet != null) _buildWalletManagerRow(),
-                        SizedBox(height: 16),
-                        _wallet == null ? _buildWalletCreateRow() : _buildWalletDetailRow(_wallet),
-                        SizedBox(height: 16),
-                        _buildSloganRow(),
-                      ],
-                    ),
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                        width: 216,
+                        //color: HexColor("#D8D8D8").withOpacity(0.1),
+                        decoration: BoxDecoration(
+                          color: HexColor("#D8D8D8").withOpacity(0.1),
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(216), bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        width: 289.39,
+                        //color: HexColor("#D8D8D8").withOpacity(0.1),
+                        decoration: BoxDecoration(
+                          color: HexColor("#D8D8D8").withOpacity(0.1),
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            if (_wallet != null) _buildWalletManagerRow(),
+                            SizedBox(height: 16),
+                            _wallet == null ? _buildWalletCreateRow() : _buildWalletDetailRow(_wallet),
+                            SizedBox(height: 16),
+                            _buildSloganRow(),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -91,26 +116,24 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),
-                  _buildMenuBar("我发起的合约", Icons.menu,
-                          () {
-                        if (_wallet != null) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我发起的合约")));
-                        } else {
-                          Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
-                        }
-                      }),
+                  _buildMenuBar("我发起的合约", Icons.menu, () {
+                    if (_wallet != null) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我发起的合约")));
+                    } else {
+                      Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
+                    }
+                  }),
                   Padding(
                     padding: const EdgeInsets.only(left: 56.0),
                     child: Divider(height: 0),
                   ),
-                  _buildMenuBar("我参与的合约", Icons.menu,
-                          () {
-                            if (_wallet != null) {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我参与的合约")));
-                            }else {
-                              Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
-                            }
-                          }),
+                  _buildMenuBar("我参与的合约", Icons.menu, () {
+                    if (_wallet != null) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我参与的合约")));
+                    } else {
+                      Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
+                    }
+                  }),
                   Container(
                     height: 10,
                     color: HexColor('#F1EFF2'),
@@ -302,7 +325,6 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget _buildWalletDetailRow(Wallet wallet) {
-
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
     String walletName = walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
@@ -387,5 +409,4 @@ class _MyPageState extends State<MyPage> {
     final ByteData imageByte = await rootBundle.load(shareAppImage);
     await Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
   }
-
 }
