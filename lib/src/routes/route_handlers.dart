@@ -148,7 +148,9 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   ContractNodeItem contractNodeItem = ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   return Map3NodeSendConfirmPage(
       params['coinVo']?.first ?? '0', contractNodeItem, double.parse(params['transferAmount']?.first ?? '0'),
-      params['receiverAddress']?.first ?? '0', params['pageType']?.first,params['contractId']?.first);
+      params['receiverAddress']?.first ?? '0', params['pageType']?.first,params['contractId']?.first,
+    provider: params['provider']?.first,region: params['region']?.first,
+  );
 });
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
