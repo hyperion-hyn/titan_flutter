@@ -196,10 +196,13 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        Text("${delegatorItem.userName}",
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                color: HexColor("#000000"))),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left:5.0,right: 5),
+                                          child: Text("${delegatorItem.userName}",
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 13, color: HexColor("#000000"))),
+                                        ),
                                         SizedBox(
                                           height: 3,
                                         ),
@@ -212,7 +215,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                                   ),
                                   if (index == 1)
                                     Positioned(
-                                      top: 20,
+                                      top: 15,
                                       right: 4,
                                       child: Container(
                                           padding: const EdgeInsets.only(
