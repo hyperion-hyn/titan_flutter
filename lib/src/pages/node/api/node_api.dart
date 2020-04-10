@@ -138,9 +138,8 @@ class NodeApi {
     String postData = json.encode(startJoinInstance.toJson());
     print("startContractInstance = $postData");
     var data = await HttpCore.instance
-        .post("node-provider", data: postData, options: RequestOptions(contentType: "application/json"));
+        .post("node-provider/", data: postData, options: RequestOptions(contentType: "application/json"));
     return data['msg'];
-    return "success";
   }
 
   Future<String> joinContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
