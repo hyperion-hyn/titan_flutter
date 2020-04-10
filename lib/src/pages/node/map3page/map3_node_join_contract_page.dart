@@ -209,19 +209,19 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         margin: const EdgeInsets.only(top: 15.0),
         color: DefaultColors.colorf5f5f5,
       ),
-          NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay),
+      NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay),
       Container(
         height: 10,
         color: DefaultColors.colorf5f5f5,
       ),
-          getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
-              _joinCoinController, endProfit, spendManager, true, (textStr) {
-                _filterSubject.sink.add(textStr);
-              }, (textStr) {
-                getCurrentSpend(textStr);
-              },joinEnougnFunction:(){
-                getCurrentSpend(contractNodeItem.remainDelegation);
-              }),
+      getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
+          _joinCoinController, endProfit, spendManager, true, (textStr) {
+        _filterSubject.sink.add(textStr);
+      }, (textStr) {
+        getCurrentSpend(textStr);
+      }, joinEnougnFunction: () {
+        getCurrentSpend(contractNodeItem.remainDelegation);
+      }),
       Container(
         height: 10,
         color: DefaultColors.colorf5f5f5,
@@ -313,5 +313,4 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
       ],
     );
   }
-
 }
