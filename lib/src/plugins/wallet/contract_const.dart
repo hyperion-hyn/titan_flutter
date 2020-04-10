@@ -2,21 +2,21 @@
 
 /*
 
-Wallet Address: 0x64C1ef82898A12AD6587ddA1A440E0EE83Fef534
-Private key: 54c5fa50166fd81cc7a045732ba4b1acff98eb1c21d10956b3d20fd4db18358a
-Staking contract: 0x01422c91C3408604AEcC7E5967Bd6C09Ca07c4e7
-ERC20: 0x0dfFb168dCDa10f03d920de56B6428ebf5989379
-IP: 116.23.19.213
-port: 37545,
+Wallet Address: 0x5767b8B0CD6d1Fb24Ce44d76B24E58008E77a19d
+Private key: 913e63e87a5f491dca320d4cc8a9d5dfada433cfd031f16ebc7b2be33c9f50a6
+Staking contract: 0x301A8856256a8B028C2Da99d2e2379F24E9087B1
+ERC20: 0xe51bae7F7caf6Cb12d5A5e75E0947eC4fAf44688
+IP: 10.10.1.115
+port: 7545,
 network_id: 5777
 */
 
 
 class ContractTestConfig {
 
-  static const String ERC20 = "0x0dfFb168dCDa10f03d920de56B6428ebf5989379";
-  static const String stakingContract = "0x01422c91C3408604AEcC7E5967Bd6C09Ca07c4e7";
-  static const String privateKey = "54c5fa50166fd81cc7a045732ba4b1acff98eb1c21d10956b3d20fd4db18358a";
+  static const String ERC20 = "0xe51bae7F7caf6Cb12d5A5e75E0947eC4fAf44688";
+  static const String stakingContract = "0x301A8856256a8B028C2Da99d2e2379F24E9087B1";
+  static const String privateKey = "913e63e87a5f491dca320d4cc8a9d5dfada433cfd031f16ebc7b2be33c9f50a6";
 
   //static const String walletLocalDomain = "http://116.23.19.213:37545";
   static const String walletLocalDomain = "http://10.10.1.115:7545";

@@ -50,6 +50,8 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 //      widget.fieldCallBack(text);
     });
 
+    getNetworkData();
+
     super.initState();
   }
 
