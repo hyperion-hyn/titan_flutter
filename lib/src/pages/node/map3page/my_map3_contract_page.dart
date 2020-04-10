@@ -21,7 +21,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
-import '../../global.dart';
+import '../../../global.dart';
 import 'node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {

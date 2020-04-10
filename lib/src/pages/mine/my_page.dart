@@ -11,7 +11,7 @@ import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
-import 'package:titan/src/pages/mine/my_map3_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';

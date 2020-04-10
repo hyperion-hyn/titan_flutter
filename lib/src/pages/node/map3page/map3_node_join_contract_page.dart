@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -21,8 +22,8 @@ import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'map3_node_create_contract_page.dart';
 
 class Map3NodeJoinContractPage extends StatefulWidget {
-  String pageType = Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN;
-  String contractId;
+  final String pageType = Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN;
+  final String contractId;
 
   Map3NodeJoinContractPage(this.contractId);
 
@@ -38,12 +39,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   all_page_state.AllPageState currentState = all_page_state.LoadingState();
   NodeApi _nodeApi = NodeApi();
   ContractNodeItem contractNodeItem;
-  List<ContractDelegatorItem> memberList = [];
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
-  int _currentPage = 0;
-  LoadDataBloc loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
@@ -56,7 +54,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 //      widget.fieldCallBack(text);
     });
 
-    getNetworkData();
     super.initState();
   }
 
@@ -74,8 +71,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
       contractNodeItem =
           await _nodeApi.getContractInstanceItem(widget.contractId);
 
-      getJoinMemberData();
-
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
           currentState = null;
@@ -84,34 +79,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     } catch (e) {
       setState(() {
         currentState = all_page_state.LoadFailState();
-      });
-    }
-  }
-
-  void getJoinMemberData() async {
-    _currentPage = 0;
-    List<ContractDelegatorItem> tempMemberList = await _nodeApi
-        .getContractDelegator(int.parse(widget.contractId), page: _currentPage);
-    memberList.addAll(tempMemberList);
-  }
-
-  void getJoinMemberMoreData() async {
-    try {
-      _currentPage++;
-      List<ContractDelegatorItem> tempMemberList =
-          await _nodeApi.getContractDelegator(int.parse(widget.contractId),
-              page: _currentPage);
-
-      if (tempMemberList.length > 0) {
-        memberList.addAll(tempMemberList);
-        loadDataBloc.add(LoadingMoreSuccessEvent());
-      } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
-      }
-      setState(() {});
-    } catch (e) {
-      setState(() {
-        loadDataBloc.add(LoadMoreFailEvent());
       });
     }
   }
@@ -156,15 +123,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     });
   }
 
-//  void pressJoinSuggest(int joinNum){
-//    _joinCoinController.text = joinNum.toString();
-//    _joinCoinController.selection
-//    getCurrentSpend(joinNum.toString());
-//  }
-
   @override
   void dispose() {
-    loadDataBloc.close();
     _filterSubject.close();
     super.dispose();
   }
@@ -175,7 +135,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         setState(() {
           currentState = all_page_state.LoadingState();
         });
-//        getNetworkData();
       });
     }
 
@@ -252,7 +211,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         margin: const EdgeInsets.only(top: 15.0),
         color: DefaultColors.colorf5f5f5,
       ),
-      _getJoinMemberView(),
+          NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay),
       Container(
         height: 10,
         color: DefaultColors.colorf5f5f5,
@@ -357,158 +316,4 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     );
   }
 
-  Widget _getJoinMemberView() {
-    return Container(
-      height: 176,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 20.0, top: 15, bottom: 15),
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                    child: Text("参与成员",
-                        style: TextStyle(
-                            fontSize: 16, color: HexColor("#333333")))),
-                Text(
-                  "剩余时间：${contractNodeItem.remainDay}天",
-                  style: TextStyles.textC999S14,
-                ),
-                SizedBox(
-                  width: 16,
-                )
-              ],
-            ),
-            SizedBox(
-              height: 13,
-            ),
-            Expanded(
-              child: LoadDataContainer(
-                  bloc: loadDataBloc,
-                  enablePullDown: false,
-                  onLoadingMore: () {
-                    getJoinMemberMoreData();
-                  },
-                  child: ListView.builder(
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return Container(
-                          width: 90,
-                          margin: const EdgeInsets.only(right: 12,top:2,bottom:2.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: HexColor("#7B766A"),
-                                  width: 1,
-                                  style: BorderStyle.solid)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Image.asset(
-                                "res/drawable/ic_map3_node_join_add_member.png",
-                                width: 26,
-                                height: 26,
-                              ),
-                              SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                "邀请好友\n参加",
-                                style: TextStyle(
-                                    fontSize: 12, color: HexColor("#7B766A")),
-                                textAlign: TextAlign.center,
-                              )
-                            ],
-                          ),
-                        );
-                      } else {
-                        var delegatorItem = memberList[index - 1];
-                        String showName =
-                            delegatorItem.userName.substring(0, 1);
-                        return Padding(
-                          padding: EdgeInsets.only(top:2,bottom:2.0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Card(
-                              margin: const EdgeInsets.only(right: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20.0)),
-                              ),
-                              child: Stack(
-                                children: <Widget>[
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 40,
-                                          width: 40,
-                                          child: Card(
-                                            elevation: 3,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(13.0)),
-                                            ),
-                                            child: Center(
-                                                child: Text(
-                                              "$showName",
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: HexColor("#000000")),
-                                            )),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text("${delegatorItem.userName}",
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                color: HexColor("#000000"))),
-                                        SizedBox(
-                                          height: 3,
-                                        ),
-                                        Text("${FormatUtil.stringFormatNum(delegatorItem.amountDelegation)}",
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: HexColor("#9B9B9B")))
-                                      ],
-                                    ),
-                                  ),
-                                  if (index == 1)
-                                    Positioned(
-                                      top: 20,
-                                      right: 4,
-                                      child: Container(
-                                          padding: const EdgeInsets.only(
-                                              left: 5, right: 5),
-                                          decoration: BoxDecoration(
-                                            color: DefaultColors.colorffdb58,
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          child: Text("发起人",
-                                              style: TextStyle(
-                                                  fontSize: 8,
-                                                  color: HexColor("#322300")))),
-                                    )
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    itemCount: memberList.length + 1,
-                    scrollDirection: Axis.horizontal,
-                  )),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
