@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
@@ -340,7 +343,9 @@ class _Map3NodeState extends State<Map3NodePage> {
                     onPressed: () async {
                       var walletList = await WalletUtil.scanWallets();
                       if(walletList.length == 0){
-                        Application.router.navigateTo(context, Routes.map3node_create_wallet);
+                        Fluttertoast.showToast(msg: "请导入钱包");
+                        BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
+//                        Application.router.navigateTo(context, Routes.map3node_create_wallet);
                       }else{
                         Application.router.navigateTo(context, Routes.map3node_join_contract_page
                             + "?contractId=${contractNodeItem.id}");

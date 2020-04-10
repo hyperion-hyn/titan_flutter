@@ -97,6 +97,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 
   void getJoinMemberMoreData() async {
     try {
+      _currentPage++;
       List<ContractDelegatorItem> tempMemberList =
           await _nodeApi.getContractDelegator(int.parse(widget.contractId),
               page: _currentPage);
@@ -393,7 +394,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                       if (index == 0) {
                         return Container(
                           width: 90,
-                          margin: const EdgeInsets.only(right: 12),
+                          margin: const EdgeInsets.only(right: 12,top:2,bottom:2.0),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
@@ -424,74 +425,78 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                         var delegatorItem = memberList[index - 1];
                         String showName =
                             delegatorItem.userName.substring(0, 1);
-                        return SizedBox(
-                          width: 100,
-                          child: Card(
-                            margin: const EdgeInsets.only(right: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20.0)),
-                            ),
-                            child: Stack(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 40,
-                                        width: 40,
-                                        child: Card(
-                                          elevation: 3,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(13.0)),
+                        return Padding(
+                          padding: EdgeInsets.only(top:2,bottom:2.0),
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Card(
+                              margin: const EdgeInsets.only(right: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0)),
+                              ),
+                              child: Stack(
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 40,
+                                          width: 40,
+                                          child: Card(
+                                            elevation: 3,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(13.0)),
+                                            ),
+                                            child: Center(
+                                                child: Text(
+                                              "$showName",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: HexColor("#000000")),
+                                            )),
                                           ),
-                                          child: Center(
-                                              child: Text(
-                                            "$showName",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: HexColor("#000000")),
-                                          )),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("${delegatorItem.userName}",
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              color: HexColor("#000000"))),
-                                      SizedBox(
-                                        height: 3,
-                                      ),
-                                      Text("${FormatUtil.stringFormatNum(delegatorItem.amountDelegation)}",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: HexColor("#9B9B9B")))
-                                    ],
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text("${delegatorItem.userName}",
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                color: HexColor("#000000"))),
+                                        SizedBox(
+                                          height: 3,
+                                        ),
+                                        Text("${FormatUtil.stringFormatNum(delegatorItem.amountDelegation)}",
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                color: HexColor("#9B9B9B")))
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                if (index == 1)
-                                  Positioned(
-                                    top: 20,
-                                    right: 4,
-                                    child: Container(
-                                        padding: const EdgeInsets.only(
-                                            left: 5, right: 5),
-                                        decoration: BoxDecoration(
-                                          color: DefaultColors.colorffdb58,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                        child: Text("发起人",
-                                            style: TextStyle(
-                                                fontSize: 8,
-                                                color: HexColor("#322300")))),
-                                  )
-                              ],
+                                  if (index == 1)
+                                    Positioned(
+                                      top: 20,
+                                      right: 4,
+                                      child: Container(
+                                          padding: const EdgeInsets.only(
+                                              left: 5, right: 5),
+                                          decoration: BoxDecoration(
+                                            color: DefaultColors.colorffdb58,
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Text("发起人",
+                                              style: TextStyle(
+                                                  fontSize: 8,
+                                                  color: HexColor("#322300")))),
+                                    )
+                                ],
+                              ),
                             ),
                           ),
                         );
