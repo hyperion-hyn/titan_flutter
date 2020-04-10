@@ -24,7 +24,7 @@ class EthereumConst {
   static const int CREATE_MAP3_NODE_GAS_LIMIT = 480000;
   static const int DELEGATE_MAP3_NODE_GAS_LIMIT = 650000;
   static const int COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT = 4000000;
-  static const int COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT = 3300000; //TODO
+  static const int COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT = 66000;
   static const int COLLECT_HALF_MAP3_NODE_GAS_LIMIT = 120000;
 }
 
