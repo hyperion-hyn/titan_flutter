@@ -17,17 +17,17 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart'
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'map3_node_create_contract_page.dart';
 
-class Map3NodeJoinContractPage extends StatefulWidget {
+class Map3NodeContractDetailPage extends StatefulWidget {
   final String pageType = Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN;
   final String contractId;
 
-  Map3NodeJoinContractPage(this.contractId);
+  Map3NodeContractDetailPage(this.contractId);
 
   @override
-  _Map3NodeJoinContractState createState() => new _Map3NodeJoinContractState();
+  _Map3NodeContractDetailState createState() => new _Map3NodeContractDetailState();
 }
 
-class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
+class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   String pageTitle = "";
@@ -41,7 +41,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 
   @override
   void initState() {
-    pageTitle = "参与Map3节点抵押";
+    pageTitle = "节点抵押合约详情";
     managerTitle = "应付管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
@@ -50,8 +50,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 //      widget.fieldCallBack(text);
     });
 
-    getNetworkData();
-    
     super.initState();
   }
 
