@@ -7,7 +7,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.d
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/mine/my_map3_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
