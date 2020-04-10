@@ -41,4 +41,8 @@ class FormatUtil{
     return DateFormat("yyyy-MM-dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp))??"";
   }
 
+  static String formatDateCircle(int timestamp, {bool isSecond = true}) {
+    return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp))??"";
+  }
+
 }
