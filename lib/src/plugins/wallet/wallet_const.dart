@@ -53,14 +53,16 @@ class WalletConfig {
 
   static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
 
+
 //  static const String LOCAL_API = 'http://116.23.19.213:37545';
-  static const String LOCAL_API = 'http://10.10.1.115:7545';
+//  static const String LOCAL_API = 'http://10.10.1.115:7545';
 
   static EthereumNetType netType = EthereumNetType.main;
 
   static String get map3ContractAddress {
     switch (netType) {
       case EthereumNetType.main:
+
         //TODO
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.repsten:
@@ -80,7 +82,8 @@ class WalletConfig {
       case EthereumNetType.repsten:
         return INFURA_ROPSTEN_API;
       case EthereumNetType.local:
-        return LOCAL_API;
+        return ContractTestConfig.walletLocalDomain;
+        //return LOCAL_API;
     }
     return '';
   }

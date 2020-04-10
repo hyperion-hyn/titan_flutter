@@ -17,6 +17,8 @@ import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:bip39/bip39.dart' as bip39;
 
+import 'contract_const.dart';
+
 class WalletUtil {
   static Future<String> makeMnemonic() {
 //    return WalletChannel.makeMnemonic();
@@ -224,7 +226,8 @@ class WalletUtil {
         return _web3clientRopsten;
       case EthereumNetType.local:
         if (_web3clientLocal == null) {
-          _web3clientLocal = WalletUtil._newWeb3Client(WalletConfig.LOCAL_API);
+          _web3clientLocal = WalletUtil._newWeb3Client(ContractTestConfig.walletLocalDomain);
+          //_web3clientLocal = WalletUtil._newWeb3Client(WalletConfig.LOCAL_API);
         }
         return _web3clientLocal;
     }
