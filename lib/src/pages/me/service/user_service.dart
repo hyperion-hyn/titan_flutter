@@ -39,8 +39,11 @@ import '../model/withdrawal_info_log.dart';
 class UserService {
   MapRichApi _mapRichApi = MapRichApi();
 
-  static syncUserInfo(BuildContext context) async {
+  static syncUserInfo([BuildContext context]) async {
     try {
+      if (context == null) {
+        context = _getRootContext();
+      }
       var userService = UserService();
       var userToken = userService.getUserToken(context);
       var userInfo = await userService.getUserInfo(userToken);
@@ -50,8 +53,11 @@ class UserService {
     }
   }
 
-  static syncCheckInData(BuildContext context) async {
+  static syncCheckInData([BuildContext context]) async {
     try {
+      if (context == null) {
+        context = _getRootContext();
+      }
       var userService = UserService();
       var checkInModel = await userService.checkInCountV2();
       BlocProvider.of<AccountBloc>(context).add(UpdateCheckInEvent(checkInModel: checkInModel));
@@ -60,9 +66,13 @@ class UserService {
     }
   }
 
+  static BuildContext _getRootContext() {
+    return Keys.rootKey.currentContext;
+  }
+
   UserToken getUserToken([BuildContext context]) {
     if (context == null) {
-      context = Keys.rootKey.currentContext;
+      context = _getRootContext();
     }
     UserToken userToken = AccountInheritedModel.of(context).userToken;
     if (userToken == null) {

@@ -18,7 +18,6 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
   Stream<AllPageState> mapEventToState(
     PositionEvent event,
   ) async* {
-    logger.w('TODO');
     try {
       if (event is AddPositionEvent) {
         yield AddPositionState();

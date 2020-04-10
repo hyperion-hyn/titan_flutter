@@ -33,13 +33,13 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
       await walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
-      if(_activatedWalletVo?.wallet != null && _activatedWalletVo?.wallet.getEthAccount() != null
+      if(_activatedWalletVo?.wallet != null && _activatedWalletVo?.wallet?.getEthAccount() != null
       && _activatedWalletVo.wallet.keystore != null) {
         String postData = "{\"address\":\"${_activatedWalletVo.wallet
             .getEthAccount()
             ?.address}\",\"name\":\"${_activatedWalletVo.wallet.keystore
             ?.name}\"}";
-        print("!!!!!$postData");
+
         await HttpCore.instance
             .post("wallets/", data: postData,
             options: RequestOptions(contentType: "application/json"));

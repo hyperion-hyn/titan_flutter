@@ -36,7 +36,7 @@ class _MeSettingState extends State<MeSettingPage> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MePricePage()));
             }),
             Divider(
-              height: 1,
+              height: 8,
             ),
             _buildMemuBar(S.of(context).language, language, () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MeLanguagePage()));

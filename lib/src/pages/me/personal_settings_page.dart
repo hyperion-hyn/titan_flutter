@@ -99,10 +99,10 @@ class _PersonalSettingsState extends State<PersonalSettingsPage> {
               elevation: 1,
               color: Color(0xFFBCC1C7),
               onPressed: () {
-                Navigator.of(context).popUntilRouteName(Routes.root);
                 BlocProvider.of<AccountBloc>(context).add(LogoutUserEvent());
                 BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(
                     page: BlocProvider<LoginBloc>(create: (context) => LoginBloc(), child: LoginPage())));
+                Navigator.of(context).popUntilRouteName(Routes.root);
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),

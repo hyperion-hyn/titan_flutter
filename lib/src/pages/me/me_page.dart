@@ -62,8 +62,12 @@ class _MeState extends BaseState<MePage> with RouteAware {
 
   @override
   void didPopNext() {
-    UserService.syncUserInfo(context);
-    _updateCheckInCount();
+    Future.delayed(Duration(milliseconds: 500)).then((_) {
+      if (mounted) {
+        UserService.syncUserInfo();
+        _updateCheckInCount();
+      }
+    });
   }
 
   @override
@@ -530,7 +534,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
   }
 
   Future _updateCheckInCount() async {
-    UserService.syncCheckInData(context);
+    UserService.syncCheckInData();
   }
 
   @override

@@ -22,7 +22,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     } else if (event is LoggedEvent) {
       await AppCache.saveValue(PrefsKey.SHARED_PREF_USER_TOKEN_KEY, json.encode(event.userToken.toJson()));
 
-      LoggedState(userToken: event.userToken);
+      yield LoggedState(userToken: event.userToken);
     } else if (event is LogoutUserEvent) {
       await AppCache.remove(PrefsKey.SHARED_PREF_USER_INFO_KEY);
       await AppCache.remove(PrefsKey.SHARED_PREF_USER_TOKEN_KEY);
