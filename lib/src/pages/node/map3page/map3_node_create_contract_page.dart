@@ -446,26 +446,11 @@ Widget getHoldInNum(
                           }),
                     ),
                   ),
-                  if (isJoin)
-                    SizedBox(
-                        height: 22,
-                        width: 70,
-                        child: FlatButton(
-                          padding: const EdgeInsets.all(0),
-                          color: HexColor("#FFDE64"),
-                          onPressed: () {
-                            joinEnougnFunction();
-                          },
-                          child: Text("足额买入",
-                              style: TextStyle(
-                                  fontSize: 12, color: HexColor("#5C4304"))),
-                        ))
                 ],
               ),
               SizedBox(
                 height: 17,
               ),
-              if (suggestList.length == 3)
                 Row(
                   children: <Widget>[
                     SizedBox(
@@ -475,62 +460,90 @@ Widget getHoldInNum(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  padding: const EdgeInsets.all(0),
-                                  child: Text(
-                                    "${FormatUtil.formatNum(suggestList[0])}HYN",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: HexColor("#5C4304")),
+                          if(!isJoin && suggestList.length == 3)
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: FlatButton(
+                                    color: HexColor("#FFFBED"),
+                                    padding: const EdgeInsets.all(0),
+                                    child: Text(
+                                      "${FormatUtil.formatNum(suggestList[0])}HYN",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: HexColor("#5C4304")),
+                                    ),
+                                    onPressed: () {
+                                      onPressFunction(suggestList[0].toString());
+                                    },
                                   ),
-                                  onPressed: () {
-                                    onPressFunction(suggestList[0].toString());
-//                                    getCurrentSpend(suggestList[0].toString());
-                                  },
                                 ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  padding: const EdgeInsets.all(0),
-                                  child: Text(
-                                      "${FormatUtil.formatNum(suggestList[1])}HYN",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: HexColor("#5C4304"))),
-                                  onPressed: () {
-                                    onPressFunction(suggestList[1].toString());
-//                                    getCurrentSpend(suggestList[1].toString());
-                                  },
+                                SizedBox(
+                                  width: 15,
                                 ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  padding: const EdgeInsets.all(0),
-                                  child: Text(
-                                      "${FormatUtil.formatNum(suggestList[2])}HYN",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: HexColor("#5C4304"))),
-                                  onPressed: () {
-                                    onPressFunction(suggestList[2].toString());
-//                                    getCurrentSpend(suggestList[2].toString());
-                                  },
+                                Expanded(
+                                  child: FlatButton(
+                                    color: HexColor("#FFFBED"),
+                                    padding: const EdgeInsets.all(0),
+                                    child: Text(
+                                        "${FormatUtil.formatNum(suggestList[1])}HYN",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: HexColor("#5C4304"))),
+                                    onPressed: () {
+                                      onPressFunction(suggestList[1].toString());
+                                    },
+                                  ),
                                 ),
-                              )
-                            ],
-                          ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                  child: FlatButton(
+                                    color: HexColor("#FFFBED"),
+                                    padding: const EdgeInsets.all(0),
+                                    child: Text(
+                                        "${FormatUtil.formatNum(suggestList[2])}HYN",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: HexColor("#5C4304"))),
+                                    onPressed: () {
+                                      onPressFunction(suggestList[2].toString());
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                          if (isJoin)
+                            Row(
+                              children: <Widget>[
+                                RichText(
+                                  text: TextSpan(
+                                      text: "剩余份额(HYN)：",
+                                      style: TextStyle(fontSize: 14,color: HexColor("#333333"),fontWeight: FontWeight.bold),
+                                      children: [
+                                        TextSpan(
+                                          text: "${FormatUtil.stringFormatNum(contractNodeItem.remainDelegation)}",
+                                          style: TextStyle(fontSize: 14,color: HexColor("#333333"),fontWeight: FontWeight.bold),
+                                        )
+                                      ]),
+                                ),
+                                SizedBox(width: 10,),
+                                SizedBox(
+                                    height: 22,
+                                    width: 70,
+                                    child: FlatButton(
+                                      padding: const EdgeInsets.all(0),
+                                      color: HexColor("#FFDE64"),
+                                      onPressed: () {
+                                        joinEnougnFunction();
+                                      },
+                                      child: Text("全部买入",
+                                          style: TextStyle(
+                                              fontSize: 12, color: HexColor("#5C4304"))),
+                                    )),
+                              ],
+                            ),
                           Padding(
                             padding:
                                 const EdgeInsets.only(top: 10.0, bottom: 10),
