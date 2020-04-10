@@ -476,6 +476,13 @@ class _WalletDemoState extends State<WalletDemo> {
                 var result = await wallet.delete(password);
                 print("删除结果 ${wallet.keystore.fileName} $result");
               }
+
+              wallets = await WalletUtil.scanWallets();
+              if (wallets.length == 0) {
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+              } else {
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallets[0]));
+              }
             },
             child: Text('删除所有钱包'),
           ),

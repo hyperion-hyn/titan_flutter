@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:android_intent/android_intent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -82,4 +83,10 @@ class UiUtil {
       intent.launch();
     }
   }
+}
+
+void callLater(FrameCallback callback) {
+  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+    callback(timeStamp);
+  });
 }

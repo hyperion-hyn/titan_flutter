@@ -8,10 +8,10 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class ShowResumeWordPage extends StatefulWidget {
-
   String walletName;
   String password;
-  ShowResumeWordPage(this.walletName,this.password);
+
+  ShowResumeWordPage(this.walletName, this.password);
 
   @override
   State<StatefulWidget> createState() {
@@ -74,6 +74,7 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                   height: 240,
                   width: 360,
                   child: GridView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
@@ -123,8 +124,10 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                     disabledTextColor: Colors.white,
                     onPressed: () {
                       print("zhuji $createWalletMnemonicTemp");
-                      Application.router.navigateTo(context, Routes.wallet_confirm_resume_word
-                          + '?mnemonic=${createWalletMnemonicTemp}&walletName=${widget.walletName}&password=${widget.password}');
+                      Application.router.navigateTo(
+                          context,
+                          Routes.wallet_confirm_resume_word +
+                              '?mnemonic=${createWalletMnemonicTemp}&walletName=${widget.walletName}&password=${widget.password}');
 //                      Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmResumeWordPage("truck impact silver wall hunt orphan squeeze valid boss emotion right hazard")));
                     },
                     child: Padding(

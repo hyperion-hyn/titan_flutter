@@ -25,25 +25,31 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   @override
   Stream<WalletCmpState> mapEventToState(WalletCmpEvent event) async* {
     if (event is ActiveWalletEvent) {
+      var isSameWallet = false;
+
       if (event.wallet == null) {
         _activatedWalletVo = null;
       } else {
+        if (_activatedWalletVo?.wallet?.getEthAccount()?.address == event.wallet.getEthAccount().address) {
+          isSameWallet = true;
+        }
         _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
       }
 
       await walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
-      if(_activatedWalletVo?.wallet != null && _activatedWalletVo?.wallet.getEthAccount() != null
-      && _activatedWalletVo.wallet.keystore != null) {
-        String postData = "{\"address\":\"${_activatedWalletVo.wallet
-            .getEthAccount()
-            ?.address}\",\"name\":\"${_activatedWalletVo.wallet.keystore
-            ?.name}\"}";
-        print("!!!!!$postData");
-        await HttpCore.instance
-            .post("wallets/", data: postData,
-            options: RequestOptions(contentType: "application/json"));
+      if (!isSameWallet) {
+        //sync wallet account to server
+        if (_activatedWalletVo?.wallet != null &&
+            _activatedWalletVo?.wallet?.getEthAccount() != null &&
+            _activatedWalletVo.wallet.keystore != null) {
+          String postData =
+              "{\"address\":\"${_activatedWalletVo.wallet.getEthAccount()?.address}\",\"name\":\"${_activatedWalletVo.wallet.keystore?.name}\"}";
+
+          HttpCore.instance.post("wallets/", data: postData, options: RequestOptions(contentType: "application/json"));
+        }
       }
+
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());
     } else if (event is UpdateActivatedWalletBalanceEvent) {
       if (_activatedWalletVo != null) {
