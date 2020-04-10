@@ -51,7 +51,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     });
 
     getNetworkData();
-    
+
     super.initState();
   }
 
