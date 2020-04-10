@@ -11,6 +11,7 @@ import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
+import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -62,6 +63,15 @@ class NodeApi {
     return contractsList;
   }
 
+  Future<List<NodeProviderEntity>> getNodeProviderList() async {
+    var nodeProviderList =
+    await HttpCore.instance.getEntity("nodes/providers", EntityFactory<List<NodeProviderEntity>>((data) {
+      return (data as List).map((dataItem) => NodeProviderEntity.fromJson(dataItem)).toList();
+    }));
+
+    return nodeProviderList;
+  }
+
   Future<ContractNodeItem> getContractItem(String contractId) async {
     var nodeItem = await HttpCore.instance.getEntity("contracts/detail/$contractId", EntityFactory<NodeItem>((data) {
       return NodeItem.fromJson(data);
@@ -80,10 +90,10 @@ class NodeApi {
   }
 
   Future<String> startContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
-      int gasPrice, String contractId, StartJoinInstance startJoinInstance) async {
+      int gasPrice, String contractId, StartJoinInstance startJoinInstance,double amount) async {
     var wallet = activatedWallet.wallet;
 //    var maxStakingAmount = 1000000; //一百万
-    var myStaking = startJoinInstance.amount;
+    var myStaking = amount;
     var ethAccount = wallet.getEthAccount();
     var hynAssetToken = wallet.getHynToken();
     var hynErc20ContractAddress = hynAssetToken?.contractAddress;
@@ -125,19 +135,19 @@ class NodeApi {
 
 //    startJoinInstance.txHash = createMap3Hex;
 //    startJoinInstance.publicKey = nodeKey["publicKey"];
-//    String postData = json.encode(startJoinInstance.toJson());
-//    print("startContractInstance = $postData");
-//    var data = await HttpCore.instance
-//        .post("contracts/create/$contractId", data: postData, options: RequestOptions(contentType: "application/json"));
-//    return data['msg'];
+    String postData = json.encode(startJoinInstance.toJson());
+    print("startContractInstance = $postData");
+    var data = await HttpCore.instance
+        .post("node-provider", data: postData, options: RequestOptions(contentType: "application/json"));
+    return data['msg'];
     return "success";
   }
 
   Future<String> joinContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
-      int gasPrice, createNodeWalletAddress, String contractId, StartJoinInstance startJoinInstance) async {
+      int gasPrice, createNodeWalletAddress, String contractId, double amount) async {
     var wallet = activatedWallet.wallet;
 
-    var myStaking = startJoinInstance.amount;
+    var myStaking = amount;
     var ethAccount = wallet.getEthAccount();
     var hynErc20ContractAddress = wallet.getEthAccount().contractAssetTokens[0].contractAddress;
     var approveToAddress = WalletConfig.map3ContractAddress;

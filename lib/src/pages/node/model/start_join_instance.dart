@@ -9,17 +9,13 @@ class StartJoinInstance extends Object {
   @JsonKey(name: 'address')
   String address;
 
-  @JsonKey(name: 'name')
-  String name;
+  @JsonKey(name: 'provider')
+  String provider;
 
-  @JsonKey(name: 'amount')
-  double amount;
+  @JsonKey(name: 'region')
+  String region;
 
-  String txHash;
-
-  String publicKey;
-
-  StartJoinInstance(this.address,this.name,this.amount,{this.txHash, this.publicKey});
+  StartJoinInstance(this.address,this.provider,this.region);
 
   factory StartJoinInstance.fromJson(Map<String, dynamic> srcJson) => _$StartJoinInstanceFromJson(srcJson);
 

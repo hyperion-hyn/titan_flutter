@@ -7,6 +7,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
+import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -41,10 +42,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
-  var selectServerItemValue;
-  var selectNodeItemValue;
+  var selectServerItemValue = 0;
+  var selectNodeItemValue = 0;
   List<DropdownMenuItem> serverList;
   List<DropdownMenuItem> nodeList;
+  List<NodeProviderEntity> providerList = [];
 
   @override
   void initState() {
@@ -74,28 +76,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     try {
       contractNodeItem = await _nodeApi.getContractItem(widget.contractId);
 
-      List<String> serverListStr = ["亚马逊云（推荐）", "阿里云", "华为云"];
-      serverList = new List();
-      serverListStr.forEach((value) {
-        DropdownMenuItem item = new DropdownMenuItem(
-            value: value,
-            child: new Text(
-              value,
-              style: TextStyles.textC333S14,
-            ));
-        serverList.add(item);
-      });
-      selectServerItemValue = serverList[0].value;
-
-      List<String> nodeListStr = ["中国深圳（推荐）", "香港", "新加坡"];
-      nodeList = new List();
-      nodeListStr.forEach((value) {
-        DropdownMenuItem item = new DropdownMenuItem(
-            value: value,
-            child: new Text(value, style: TextStyles.textC333S14));
-        nodeList.add(item);
-      });
-      selectNodeItemValue = nodeList[0].value;
+      providerList = await _nodeApi.getNodeProviderList();
+      selectNodeProvider(0,0);
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
@@ -107,6 +89,36 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         currentState = LoadFailState();
       });
     }
+  }
+
+  void selectNodeProvider(int providerIndex,int regionIndex){
+    if(providerList.length == 0){
+      return;
+    }
+
+    serverList = new List();
+    for(int i=0;i < providerList.length;i++){
+      NodeProviderEntity nodeProviderEntity = providerList[i];
+      DropdownMenuItem item = new DropdownMenuItem(
+          value: i,
+          child: new Text(
+            nodeProviderEntity.name,
+            style: TextStyles.textC333S14,
+          ));
+      serverList.add(item);
+    }
+    selectServerItemValue = serverList[providerIndex].value;
+
+    List<Regions> nodeListStr = providerList[providerIndex].regions;
+    nodeList = new List();
+    for(int i=0;i < nodeListStr.length;i++){
+      Regions regions = nodeListStr[i];
+      DropdownMenuItem item = new DropdownMenuItem(
+          value: i,
+          child: new Text(regions.name, style: TextStyles.textC333S14));
+      nodeList.add(item);
+    }
+    selectNodeItemValue = nodeList[regionIndex].value;
   }
 
   void textChangeListener() {
@@ -206,7 +218,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       items: serverList,
                       onChanged: (value) {
                         setState(() {
-                          selectServerItemValue = value;
+                          selectNodeProvider(value,0);
                         });
                       },
                     ),
@@ -232,7 +244,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       items: nodeList,
                       onChanged: (value) {
                         setState(() {
-                          selectNodeItemValue = value;
+                          selectNodeProvider(selectServerItemValue,value);
                         });
                       },
                     ),
@@ -254,156 +266,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       }, (textStr) {
         getCurrentSpend(textStr);
       }),
-      /*Padding(
-        padding: const EdgeInsets.only(left: 15.0, top: 13, bottom: 15),
-        child: Text(
-            "抵押HYN数量  （$walletName钱包HYN余额 ${FormatUtil.formatNumDecimal(balance)}）",
-            style: TextStyles.textC333S14),
-      ),
-      Container(
-          padding: const EdgeInsets.only(left: 15.0, right: 30, bottom: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "HYN",
-                    style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
-                  ),
-                  SizedBox(
-                    width: 11,
-                  ),
-                  Expanded(
-                    child: Form(
-                      key: _joinCoinFormKey,
-                      child: TextFormField(
-                          controller: _joinCoinController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            WhitelistingTextInputFormatter.digitsOnly
-                          ],
-                          onChanged: (textStr) {
-                            _filterSubject.sink.add(textStr);
-                          },
-                          decoration: InputDecoration(
-                            hintStyle: TextStyles.textC9b9b9bS14,
-                            labelStyle: TextStyles.textC333S14,
-                            hintText:
-                                "最低买入${FormatUtil.formatNumDecimal(minTotal)}",
-                          ),
-                          validator: (textStr) {
-                            if (textStr.length == 0 ||
-                                int.parse(textStr) < minTotal) {
-                              return "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
-                            } else if (int.parse(textStr) > balance) {
-//                              return "HYN余额不足";
-                              return null;
-                            } else {
-                              return null;
-                            }
-                          }),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 17,
-              ),
-              if (suggestList.length == 3)
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 49,
-                    ),
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  child: Text(
-                                    "${FormatUtil.formatNum(suggestList[0])}HYN",
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: HexColor("#5C4304")),
-                                  ),
-                                  onPressed: () {
-                                    getCurrentSpend(suggestList[0].toString());
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  child: Text(
-                                      "${FormatUtil.formatNum(suggestList[1])}HYN",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          color: HexColor("#5C4304"))),
-                                  onPressed: () {
-                                    getCurrentSpend(suggestList[1].toString());
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  child: Text(
-                                      "${FormatUtil.formatNum(suggestList[2])}HYN",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          color: HexColor("#5C4304"))),
-                                  onPressed: () {
-                                    getCurrentSpend(suggestList[2].toString());
-                                  },
-                                ),
-                              )
-                            ],
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(top: 10.0, bottom: 10),
-                            child: RichText(
-                              text: TextSpan(
-                                  text: "期满共产生（HYN）：",
-                                  style: TextStyles.textC9b9b9bS12,
-                                  children: [
-                                    TextSpan(
-                                      text: "$endProfit",
-                                      style: TextStyles.textC333S14,
-                                    )
-                                  ]),
-                            ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                                text: managerTitle,
-                                style: TextStyles.textC9b9b9bS12,
-                                children: [
-                                  TextSpan(
-                                    text: "$spendManager",
-                                    style: TextStyles.textC333S14,
-                                  )
-                                ]),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-            ],
-          )),*/
       Container(
         height: 10,
         color: DefaultColors.colorf5f5f5,
@@ -448,12 +310,16 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                 if (!_joinCoinFormKey.currentState.validate()) {
                   return;
                 }
+                String provider = providerList[selectServerItemValue].id;
+                String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
                 Application.router.navigateTo(
                     context,
                     Routes.map3node_send_confirm_page +
                         "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                         "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
                         "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                        "&provider=$provider" +
+                        "&region=$region" +
                         "&pageType=${widget.pageType}" +
                         "&contractId=${widget.contractId}");
               });
@@ -1070,101 +936,3 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
     );
   }
 }
-
-/*Widget getMap3NodeProductHeadItem(BuildContext context,NodeItem nodeItem,{hasRemind = false,showMinDelegation = false}) {
-  return Padding(
-    padding: EdgeInsets.only(left: 10.0, right: 10, top: 20, bottom: 10),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: Image.asset(
-                "res/drawable/ic_map3_node_item.png",
-                width: 50,
-                height: 50,
-                fit:BoxFit.cover,
-              ),
-            ),
-            Flexible(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(nodeItem.nodeName, style: TextStyles.textC333S14bold),
-                          SizedBox(height: 5,),
-                          Text("启动共需${FormatUtil.stringFormatNum(nodeItem.minTotalDelegation)}HYN",
-                              style: TextStyles.textC333S14)
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-        Container(
-          height: 3,
-          margin: EdgeInsets.only(top: 10, bottom: 10),
-          color: DefaultColors.colorf5f5f5,
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text("期满年化奖励", style: TextStyles.textC9b9b9bS12),
-                      Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textC333S14)
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text("合约期限", style: TextStyles.textC9b9b9bS12),
-                      Text("${nodeItem.duration}天", style: TextStyles.textC333S14)
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text("管理费", style: TextStyles.textC9b9b9bS12),
-                      Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textC333S14)
-                    ],
-                  )),
-            ),
-//            if(showMinDelegation)
-              Expanded(
-                child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        Text(showMinDelegation ? "创建最低投入" : "最低投入", style: TextStyles.textC9b9b9bS12),
-                        Text(showMinDelegation ? "${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}"
-                            : "${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textC333S14)
-                      ],
-                    )),
-              )
-          ],
-        ),
-        if(hasRemind)
-          Padding(
-            padding: const EdgeInsets.only(top:8.0),
-            child: Text("注：合约生效满90天后，即可提取50%奖励", style: TextStyles.textCf29a6eS12),
-          )
-      ],
-    ),
-  );
-}*/
