@@ -11,7 +11,7 @@ ContractDelegatorItem _$ContractDelegatorItemFromJson(
   return ContractDelegatorItem(
     json['userAddress'] as String,
     json['userName'] as String,
-    json['amountDelegation'] as int,
+    json['amountDelegation'] as String,
     json['createAt'] as int,
   );
 }

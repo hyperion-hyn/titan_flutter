@@ -1,17 +1,22 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 import '../../env.dart';
 
 class Const {
   static String get DOMAIN {
+
     if(env.buildType == BuildType.DEV){
-      return 'http://10.10.1.115:5000/';
+      return ContractTestConfig.apiLocalDomain;
+      //return 'http://116.23.19.213:35000/';
+      //return 'http://10.10.1.115:5000/';
     }else{
       return 'https://api.hyn.space/';
     }
   }
+
 
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX = "https://www.hyn.space/titan/share?key=";

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_introduction.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 
@@ -12,11 +14,31 @@ class WalletTabsPage extends StatefulWidget {
   }
 }
 
-class _WalletTabsPageState extends State<WalletTabsPage> {
+class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProviderStateMixin{
+  TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = new TabController(
+      initialIndex: 0,
+        vsync: this,
+        length: 2
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
+    return BlocListener<AppTabBarBloc, AppTabBarState>(
+      listener: (context, state) {
+        if (state is ChangeTabBarItemState) {
+          if(state.index == 1){
+            this.setState(() {
+              _tabController.index = 0;
+            });
+          }
+        }
+      },
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
@@ -30,6 +52,7 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
                   Expanded(
                     flex: 3,
                     child: TabBar(
+                      controller: _tabController,
                       labelColor: Colors.black,
                       labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                       indicatorSize: TabBarIndicatorSize.label,
@@ -55,6 +78,7 @@ class _WalletTabsPageState extends State<WalletTabsPage> {
           ),
         ),
         body: TabBarView(
+          controller: _tabController,
           children: [
             WalletPage(),
             Map3NodePage(),

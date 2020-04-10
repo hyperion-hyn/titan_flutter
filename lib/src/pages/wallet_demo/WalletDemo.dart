@@ -10,6 +10,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
+import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -77,9 +78,10 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var wallets = await WalletUtil.scanWallets();
-              if (wallets.length > 0) {
-                var wallet0 = wallets[0];
+//              var wallets = await WalletUtil.scanWallets();
+              var wallets = WalletInheritedModel.of(context).activatedWallet;
+              if (wallets != null) {
+                var wallet0 = wallets.wallet;
 
                 var maxStakingAmount = 1000000; //一百万
                 var myStaking = 0.4 * maxStakingAmount; //最小抵押量
@@ -90,7 +92,7 @@ class _WalletDemoState extends State<WalletDemo> {
                       contractAddress: hynErc20ContractAddress,
                       approveToAddress: approveToAddress,
                       amount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
-                      password: 'my_password',
+                      password: '111111',
                       gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                       gasLimit: 5000000);
                   var ret =
@@ -113,9 +115,10 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               //请注意，要先 approve
               logger.w('请注意，要先 approve');
-              var wallets = await WalletUtil.scanWallets();
-              if (wallets.length > 0) {
-                var wallet0 = wallets[0];
+              var wallets = WalletInheritedModel.of(context).activatedWallet;
+//              var wallets = await WalletUtil.scanWallets();
+              if (wallets != null) {
+                var wallet0 = wallets.wallet;
 
                 var maxStakingAmount = 1000000; //一百万
                 var myStaking = 0.2 * maxStakingAmount; //最小抵押量
@@ -156,7 +159,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   secondHalfPubKey: '0xe5dede8ce87e38149f1e8df57da67d43d12a27f61d11d7f6d14ebbb6132a850d',
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                   gasLimit: gasLimit,
-                  password: 'my_password',
+                  password: '111111',
                 );
                 var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
@@ -167,9 +170,10 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var wallets = await WalletUtil.scanWallets();
-              if (wallets.length > 0) {
-                var wallet0 = wallets[0];
+              var wallets = WalletInheritedModel.of(context).activatedWallet;
+//              var wallets = await WalletUtil.scanWallets();
+              if (wallets != null) {
+                var wallet0 = wallets.wallet;
 
                 var createNodeWalletAddress = wallet0.getEthAccount().address; //创建节点合约的钱包地址
                 double myStaking = 100000; //我要抵押的量
@@ -180,7 +184,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                   gasLimit: gasLimit,
-                  password: 'my_password',
+                  password: '111111',
                 );
                 var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
@@ -523,7 +527,8 @@ class _WalletDemoState extends State<WalletDemo> {
                 logger.i('请先切换到内外网络');
               } else {
                 final client = WalletUtil.getWeb3Client();
-                const String privateKey = 'bbceb86983c2301f76ed4aa49eafed1beea70d4f1fea137890f436d1c31c41fb';
+//                const String privateKey = '976c55a80592bdffcd4d5b29d409810518792fed3ec4a0243e4f857e9102d556';
+                const String privateKey = ContractTestConfig.privateKey;
                 final credentials = await client.credentialsFromPrivateKey(privateKey);
 
                 final address = await credentials.extractAddress();

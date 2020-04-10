@@ -36,9 +36,12 @@ class Map3NodeSendConfirmPage extends StatefulWidget {
   final String receiverAddress;
   final String pageType;
   final String contractId;
+  final String provider;
+  final String region;
   ContractNodeItem contractNodeItem;
 
-  Map3NodeSendConfirmPage(String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress, this.pageType, this.contractId)
+  Map3NodeSendConfirmPage(String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress,
+      this.pageType, this.contractId,{this.provider,this.region})
       : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -414,14 +417,15 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
 
         var startJoin = StartJoinInstance(widget.coinVo.contractAddress,
-            activatedWallet.wallet.keystore.name, widget.transferAmount);
+            widget.provider,widget.region);
         String resultMsg = "";
         if(widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-          resultMsg = await _nodeApi.startContractInstance(widget.contractNodeItem, activatedWallet, walletPassword, gasPrice.toInt(), widget.contractId, startJoin);
+          resultMsg = await _nodeApi.startContractInstance(widget.contractNodeItem, activatedWallet, walletPassword, gasPrice.toInt()
+              , widget.contractId, startJoin,widget.transferAmount);
           print("creat post result = $resultMsg");
         }else{
           resultMsg = await _nodeApi.joinContractInstance(widget.contractNodeItem, activatedWallet, walletPassword, gasPrice.toInt(),
-              widget.contractNodeItem.owner, widget.contractId, startJoin);
+              widget.contractNodeItem.owner, widget.contractId,widget.transferAmount);
           print("join post result = $resultMsg");
         }
         Application.router.navigateTo(context,Routes.map3node_broadcase_success_page + "?pageType=${widget.pageType}");

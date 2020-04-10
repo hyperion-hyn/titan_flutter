@@ -399,5 +399,15 @@
   "epidemic_map_short": "NCP MAP",
   "search_failed": "搜索异常",
   "cannot_get_your_location": "获取不到你当前位置",
-  "wait_min": "${min} 分钟"
+  "wait_min": "${min} min",
+  "global_data": "Global Data",
+  "global_data_map3": "Map3 node",
+  "global_data_signal": "Signal Data",
+  "global_data_poi": "POI data",
+  "signal_chart_desc_map3": "'' The Map3 node network enables a brand-new spatial data model, which aims to increase the infrastructure by 1000 times on a large scale, high performance and low cost. Map3 is a decentralized map / location supported by One Map algorithm technology Service PaaS, designed to support the construction of a large network of Map3 decentralized nodes. ''",
+  "signal_chart_desc_signal": "'' Signal data will effectively improve the positioning accuracy of decentralized maps, as long as there are GPS, Bluetooth, base station or WIFI signal areas, it can provide effective emergency rescue, precise navigation and other positioning functions, suitable for outdoor Multi-scenario applications such as hiking or adventure. ''",
+  "signal_chart_desc_poi": "'' POI contribution is based on the concept of decentralization of crowdsourcing and public governance. In the most effective way of decentralization, users are encouraged to contribute real and detailed location details. To avoid errors in POI information, the game system is launched Network verification, open to all map users to check the authenticity of POI data. In the future, if you want to search for nearby delicious and fun destinations, just enter keywords on the App home page, such as food, hotels, shopping malls, attractions, etc., you can view the location Click for details. ''",
+  "signal_chart_last_month_numbers_func": "Increment of ${scanName} data in the last month:",
+  "signal_total_data": "Total signal data:",
+  "poi_total_data": "POI data distribution:"
 }

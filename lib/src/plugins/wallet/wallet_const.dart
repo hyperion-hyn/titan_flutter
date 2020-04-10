@@ -1,4 +1,5 @@
 import 'package:titan/config.dart';
+import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 class TokenUnit {
   static const WEI = 1;
@@ -16,9 +17,9 @@ class EthereumConst {
   static const SUPER_FAST_SPEED = 30 * TokenUnit.G_WEI;
 
   static const int ETH_TRANSFER_GAS_LIMIT = 21000;
-  static const int ERC20_TRANSFER_GAS_LIMIT = 26000;
+  static const int ERC20_TRANSFER_GAS_LIMIT = 40000;
 
-  static const int ERC20_APPROVE_GAS_LIMIT = 32000;
+  static const int ERC20_APPROVE_GAS_LIMIT = 100000;
 
   //TODO
   static const int CREATE_MAP3_NODE_GAS_LIMIT = 1000000;
@@ -52,20 +53,24 @@ class WalletConfig {
 
   static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
 
-  static const String LOCAL_API = 'http://10.10.1.115:7545';
+
+//  static const String LOCAL_API = 'http://116.23.19.213:37545';
+//  static const String LOCAL_API = 'http://10.10.1.115:7545';
 
   static EthereumNetType netType = EthereumNetType.main;
 
   static String get map3ContractAddress {
     switch (netType) {
       case EthereumNetType.main:
+
         //TODO
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.repsten:
         //TODO
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.local:
-        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
+        return ContractTestConfig.stakingContract;
+        //return '0x14D135f91B01db0DF32cdcF7d7e93cc14A9aE3D7';
     }
     return '';
   }
@@ -77,7 +82,8 @@ class WalletConfig {
       case EthereumNetType.repsten:
         return INFURA_ROPSTEN_API;
       case EthereumNetType.local:
-        return LOCAL_API;
+        return ContractTestConfig.walletLocalDomain;
+        //return LOCAL_API;
     }
     return '';
   }

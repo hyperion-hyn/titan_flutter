@@ -397,7 +397,17 @@
   "data_source_explain": "붉은 POI 점 데이터는 중국 국가 및 각 성 시 위건위& 텐센트 뉴스 등 공식 데이터에서 유래했다.노란색 POI 점 데이터는 타이탄 사용자의 기여에서 유래했다.",
   "source_desc_title": "데이터 소스 설명",
   "epidemic_map_short": "NCP 지도",
-  "search_failed": "搜索异常",
-  "cannot_get_your_location": "获取不到你当前位置",
-  "wait_min": "${min} 分钟"
+  "search_failed": "검색 예외",
+  "cannot_get_your_location": "현재 위치를 얻을 수 없습니다",
+  "wait_min": "${min} 분",
+  "global_data": "글로벌 데이터",
+  "global_data_map3": "Map3 노드",
+  "global_data_signal": "신호 데이터",
+  "global_data_poi": "POI 데이터",
+  "signal_chart_desc_map3": " ''Map3 노드 네트워크는 새로운 공간 데이터 모델을 사용하여 대규모의 고성능 및 저렴한 비용으로 인프라를 1000 배 증가시키는 것을 목표로합니다. Map3은 One Map 알고리즘 기술이 지원하는 분산 맵 / 위치입니다. Map3 분산 노드의 대규모 네트워크 구축을 지원하도록 설계된 서비스 PaaS ''",
+  "signal_chart_desc_signal": " ''GPS, Bluetooth, 기지국 또는 WIFI 신호 영역이있는 한 신호 데이터는 분산 맵의 위치 정확도를 효과적으로 향상 시키며 효과적인 비상 구조, 정확한 내비게이션 및 기타 위치 기능을 제공하며 실외에 적합합니다. 하이킹 또는 모험과 같은 다중 시나리오 응용 프로그램 ''",
+  "signal_chart_desc_poi": " ''POI 기여는 크라우드 소싱 및 공공 거버넌스의 탈 중앙화 개념을 기반으로합니다. 가장 효과적인 탈 중앙화 방법으로 사용자는 실제적이고 자세한 위치 세부 정보를 제공 할 수 있습니다. POI 정보의 오류를 피하기 위해 게임 시스템이 시작됩니다 네트워크 확인, 모든지도 사용자에게 열려 POI 데이터의 진위 여부 확인 향후 맛있고 재미있는 목적지를 검색하려면 앱 홈 페이지에서 음식, 호텔, 쇼핑몰, 관광 명소 등과 같은 키워드를 입력하면 위치를 볼 수 있습니다 자세한 내용을 보려면 클릭하십시오 ''",
+  "signal_chart_last_month_numbers_func": "가장 최근 달에 ${scanName} 데이터 증가 :",
+  "signal_total_data": "총 신호 데이터 :",
+  "poi_total_data": "POI 데이터 배포 :"
 }
