@@ -22,6 +22,7 @@ import 'package:titan/src/pages/news/news_nConv_page.dart';
 import 'package:titan/src/components/scaffold_map/bottom_panels/common_panel.dart';
 import 'package:titan/src/components/scaffold_map/bottom_panels/user_poi_panel.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 import '../../../../widget/draggable_scrollable_sheet.dart' as myWidget;
@@ -520,51 +521,27 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   }
 
   void _fireToMyLocation() async {
-    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
-
-    if (serviceStatus == ServiceStatus.disabled) {
-      _showGoToOpenLocationServceDialog();
+    if (!(await Permission.location.serviceStatus.isEnabled)) {
+      _showGoToOpenAppSettingsDialog();
       return;
     }
 
-    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
-    if (permission == PermissionStatus.granted) {
+    var status = await Permission.location.status;
+    if (status.isUndetermined) {
+      PermissionStatus ret = await Permission.location.request();
+      if (ret.isGranted) {
+        _toMyLocationSink();
+      }
+    } else if (status.isGranted) {
       _toMyLocationSink();
     } else {
-      Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler().requestPermissions([PermissionGroup.location]);
-      if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
-        _toMyLocationSink();
-        Rx.timer('', Duration(milliseconds: 1500)).listen((d) {
-          _toMyLocationSink(); //hack, location not auto move
-        });
-      } else {
-        _showGoToOpenAppSettingsDialog();
-      }
+      _showGoToOpenAppSettingsDialog();
     }
   }
 
   void _showGoToOpenAppSettingsDialog() {
-    _showDialogWidget(
-        title: Text(S.of(context).require_location),
-        content: Text(S.of(context).require_location_message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(S.of(context).cancel),
-            onPressed: () => Navigator.pop(context),
-          ),
-          FlatButton(
-            child: Text(S.of(context).setting),
-            onPressed: () {
-              PermissionHandler().openAppSettings();
-              Navigator.pop(context);
-            },
-          ),
-        ]);
-  }
-
-  void _showGoToOpenLocationServceDialog() {
-    _showDialogWidget(
+    UiUtil.showDialogWidget(
+      context,
       title: Text(S.of(context).open_location_service),
       content: Text(S.of(context).open_location_service_message),
       actions: <Widget>[
@@ -575,14 +552,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
         FlatButton(
           child: Text(S.of(context).setting),
           onPressed: () {
-            if (Platform.isIOS) {
-              PermissionHandler().openAppSettings();
-            } else {
-              AndroidIntent intent = new AndroidIntent(
-                action: 'action_location_source_settings',
-              );
-              intent.launch();
-            }
+            UiUtil.openSettingLocation();
             Navigator.pop(context);
           },
         ),

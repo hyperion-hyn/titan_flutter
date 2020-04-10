@@ -18,6 +18,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../wallet/wallet_manager/wallet_manager_page.dart';
@@ -183,8 +184,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
-                    Application.router.navigateTo(
-                        context, Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+                    Application.router.navigateTo(context,
+                        Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
 
 //                    createWalletPopUtilName = '/data_contribution_page';
 //                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
@@ -212,8 +213,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
-                    Application.router.navigateTo(
-                        context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+                    Application.router.navigateTo(context,
+                        Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
 //                    createWalletPopUtilName = '/data_contribution_page';
 //                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                   },
@@ -333,7 +334,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
     return InkWell(
       onTap: () {
-        Application.router.navigateTo(context,Routes.wallet_manager + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
+        Application.router
+            .navigateTo(context, Routes.wallet_manager + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
 //        Navigator.push(
 //            context,
 //            MaterialPageRoute(
@@ -460,54 +462,40 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
   Future<bool> checkSignalPermission() async {
     //1、检查定位的权限
-
     //check location service
-
-    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
-
-    if (serviceStatus == ServiceStatus.disabled) {
-      _showServceDialog();
+    if (!(await Permission.location.serviceStatus.isEnabled)) {
+      _showServiceDialog();
       return false;
     }
 
-    PermissionStatus locationPermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
-    if (locationPermission != PermissionStatus.granted) {
-      Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler().requestPermissions([PermissionGroup.location]);
-      if (permissions[PermissionGroup.location] != PermissionStatus.granted) {
-        _showAppSettingDialog();
-        return false;
+    var status = await Permission.location.status;
+    if (!status.isGranted) {
+      PermissionStatus ret = await Permission.location.request();
+      if (!ret.isGranted) {
+        UiUtil.toast('获取位置权限失败，无法贡献附近信号信息！');
       }
     }
 
-    PermissionStatus storagePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-    if (storagePermission != PermissionStatus.granted) {
-      Map<PermissionGroup, PermissionStatus> permissions =
-          await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-      if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
-        _showAppSettingDialog();
-        return false;
+    status = await Permission.storage.status;
+    if (!status.isGranted) {
+      PermissionStatus ret = await Permission.location.request();
+      if (!ret.isGranted) {
+        UiUtil.toast('获取读取本地文件权限失败，无法贡献附近信号信息！');
       }
     }
 
     //2. 检查电话权限
-
     if (Platform.isAndroid) {
-      PermissionStatus phonePermission = await PermissionHandler().checkPermissionStatus(PermissionGroup.phone);
-      if (phonePermission != PermissionStatus.granted) {
-        Map<PermissionGroup, PermissionStatus> permissions =
-            await PermissionHandler().requestPermissions([PermissionGroup.phone]);
-        if (permissions[PermissionGroup.phone] != PermissionStatus.granted) {
-          _showDialog(S.of(context).require_permission, S.of(context).collect_signal_require_telephone, () {
-            PermissionHandler().openAppSettings();
-          });
-          return false;
+      status = await Permission.phone.status;
+      if (!status.isGranted) {
+        PermissionStatus ret = await Permission.location.request();
+        if (!ret.isGranted) {
+          UiUtil.toast('获取设备信息权限失败，无法贡献附近信号信息！');
         }
       }
     }
 
     //3. 检查蓝牙权限
-
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
       if (!blueAvaiable) {
@@ -524,8 +512,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
     //4. 安卓增加判断wifi
     if (Platform.isAndroid) {
-      bool wifiAvaiable = await TitanPlugin.wifiEnable();
-      if (!wifiAvaiable) {
+      bool wifiAvailable = await TitanPlugin.wifiEnable();
+      if (!wifiAvailable) {
         _showDialog(S.of(context).open_wifi, S.of(context).please_open_wifi, () {
           AppSettings.openWIFISettings();
         });
@@ -582,36 +570,10 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     );
   }
 
-  void _showServceDialog() {
+  void _showServiceDialog() {
     _showDialog(S.of(context).open_location_service, S.of(context).open_location_service_message, () {
-      if (Platform.isIOS) {
-        PermissionHandler().openAppSettings();
-      } else {
-        AndroidIntent intent = new AndroidIntent(
-          action: 'action_location_source_settings',
-        );
-        intent.launch();
-      }
+      UiUtil.openSettingLocation();
     });
-  }
-
-  void _showAppSettingDialog() {
-    _showDialogWidget(
-        title: Text(S.of(context).require_location),
-        content: Text(S.of(context).require_location_message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(S.of(context).cancel),
-            onPressed: () => Navigator.pop(context),
-          ),
-          FlatButton(
-            child: Text(S.of(context).setting),
-            onPressed: () {
-              PermissionHandler().openAppSettings();
-              Navigator.pop(context);
-            },
-          ),
-        ]);
   }
 
   void _showDialog(String title, String content, Function func) {

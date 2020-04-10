@@ -20,6 +20,7 @@ import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart' as position_model;
+import 'package:titan/src/utils/utile_ui.dart';
 
 import 'bloc/bloc.dart';
 
@@ -40,17 +41,18 @@ class MapContainer extends StatefulWidget {
 //  final DraggableBottomSheetController bottomPanelController;
   final String languageCode;
 
-  MapContainer({Key key,
-    this.heavenDataList,
-    this.routeDataModel,
-    this.style,
-    this.defaultZoom = 13,
+  MapContainer(
+      {Key key,
+      this.heavenDataList,
+      this.routeDataModel,
+      this.style,
+      this.defaultZoom = 13,
 //      this.defaultCenter,
 //    this.bottomPanelController,
-    this.mapClickHandle,
-    this.mapLongPressHandle,
-    this.showCenterMarker,
-    this.languageCode})
+      this.mapClickHandle,
+      this.mapLongPressHandle,
+      this.showCenterMarker,
+      this.languageCode})
       : super(key: key);
 
   @override
@@ -263,13 +265,12 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
     List<SymbolOptions> options = pois
         .map(
-          (poi) =>
-          SymbolOptions(
+          (poi) => SymbolOptions(
               geometry: poi.latLng,
               iconImage: "marker_gray",
               iconAnchor: "center",
               iconSize: Platform.isAndroid ? 1 : 0.4),
-    )
+        )
         .toList();
     var symbolList = await mapboxMapController?.addSymbolList(options);
 
@@ -323,7 +324,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     }
 
     List symbolMarkerFeatures =
-    await mapboxMapController?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
+        await mapboxMapController?.queryRenderedFeaturesInRect(rect, [symbolMarkerLayerId], null);
     if (symbolMarkerFeatures != null && symbolMarkerFeatures.isNotEmpty) {
       print("symbolMarkerFeatures：" + symbolMarkerFeatures[0]);
 
@@ -392,9 +393,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       var coordinatesArray = firstFeature["geometry"]["coordinates"];
       var coordinates = LatLng(coordinatesArray[1], coordinatesArray[0]);
       print("coordinates:$coordinates");
-      var languageCode = Localizations
-          .localeOf(context)
-          .languageCode;
+      var languageCode = Localizations.localeOf(context).languageCode;
       var name = "";
       if (languageCode == "zh") {
         name = firstFeature["properties"]["name:zh"];
@@ -457,6 +456,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
 
   int _clickTimes = 0;
   var _isRunningRequestPermissions = false;
+
   Future _toMyLocation() async {
     _clickTimes++;
     _toLocationEventSubject.sink.add(1);
@@ -465,120 +465,49 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   void _listenEventBus() {
     _eventBusSubscription = Application.eventBus.on().listen((event) async {
       if (event is ToMyLocationEvent) {
-
         //check location service
-        ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.location);
-
-        if (serviceStatus == ServiceStatus.disabled) {
-          _showGoToOpenLocationServceDialog();
+        if (!(await Permission.location.serviceStatus.isEnabled)) {
+          _showGoToOpenLocationServiceDialog();
           return;
         }
 
-        PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
-        if (permission == PermissionStatus.granted) {
-          _toMyLocation();
-        } else {
-
+        var status = await Permission.location.status;
+        if (status.isUndetermined) {
           if (!_isRunningRequestPermissions) {
             _isRunningRequestPermissions = true;
-
-            Map<PermissionGroup, PermissionStatus> permissions =
-            await PermissionHandler().requestPermissions([PermissionGroup.location]);
-
-            if (permissions[PermissionGroup.location] == PermissionStatus.granted) {
+            PermissionStatus ret = await Permission.location.request();
+            if (ret.isGranted) {
               _toMyLocation();
-              Rx.timer('', Duration(milliseconds: 1500)).listen((d) {
-                _toMyLocation(); //hack, location not auto move
-              });
-            } else {
-              _showGoToOpenAppSettingsDialog();
             }
-
-            _isRunningRequestPermissions = false;
           }
+          _isRunningRequestPermissions = false;
+        } else if (status.isGranted) {
+          _toMyLocation();
+        } else {
+          _showGoToOpenLocationServiceDialog();
         }
       }
     });
   }
 
-  void _showGoToOpenAppSettingsDialog() {
-    _showDialogWidget(
-        title: Text(S
-            .of(context)
-            .require_location),
-        content: Text(S
-            .of(context)
-            .require_location_message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(S
-                .of(context)
-                .cancel),
-            onPressed: () => Navigator.pop(context),
-          ),
-          FlatButton(
-            child: Text(S
-                .of(context)
-                .setting),
-            onPressed: () {
-              PermissionHandler().openAppSettings();
-              Navigator.pop(context);
-            },
-          ),
-        ]);
-  }
-
-  void _showGoToOpenLocationServceDialog() {
-    _showDialogWidget(
-      title: Text(S
-          .of(context)
-          .open_location_service),
-      content: Text(S
-          .of(context)
-          .open_location_service_message),
+  void _showGoToOpenLocationServiceDialog() {
+    UiUtil.showDialogWidget(
+      context,
+      title: Text(S.of(context).open_location_service),
+      content: Text(S.of(context).open_location_service_message),
       actions: <Widget>[
         FlatButton(
-          child: Text(S
-              .of(context)
-              .cancel),
+          child: Text(S.of(context).cancel),
           onPressed: () => Navigator.pop(context),
         ),
         FlatButton(
-          child: Text(S
-              .of(context)
-              .setting),
+          child: Text(S.of(context).setting),
           onPressed: () {
-            if (Platform.isIOS) {
-              PermissionHandler().openAppSettings();
-            } else {
-              AndroidIntent intent = new AndroidIntent(
-                action: 'action_location_source_settings',
-              );
-              intent.launch();
-            }
+            UiUtil.openSettingLocation();
             Navigator.pop(context);
           },
         ),
       ],
-    );
-  }
-
-  Widget _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Platform.isIOS
-            ? CupertinoAlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        )
-            : AlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        );
-      },
     );
   }
 
@@ -687,7 +616,6 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                           myLocationTrackingMode: locationTrackingMode,
                           languageCode: widget.languageCode,
                           children: <Widget>[
-
                             ///active plugins
                             HeavenPlugin(models: widget.heavenDataList),
                             RoutePlugin(model: widget.routeDataModel),
@@ -702,9 +630,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
                               Icon(
                                 ExtendsIconFont.position_marker,
                                 size: 64,
-                                color: Theme
-                                    .of(context)
-                                    .primaryColor,
+                                color: Theme.of(context).primaryColor,
                               ),
                               SizedBox(height: 68)
                             ],

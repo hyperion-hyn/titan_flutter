@@ -380,7 +380,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         var createNodeWalletAddress = contractNodeItem.owner;
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
-        var gasLimit = EthereumConst.COLLECT_MAP3_NODE_GAS_LIMIT;
+        //TODO 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
+        var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
 
         /*var signedHex = await _wallet.signCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
