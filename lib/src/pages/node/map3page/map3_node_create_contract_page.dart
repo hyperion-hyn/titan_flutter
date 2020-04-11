@@ -77,7 +77,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       contractNodeItem = await _nodeApi.getContractItem(widget.contractId);
 
       providerList = await _nodeApi.getNodeProviderList();
-      selectNodeProvider(0,0);
+      selectNodeProvider(0, 0);
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
@@ -91,13 +91,13 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     }
   }
 
-  void selectNodeProvider(int providerIndex,int regionIndex){
-    if(providerList.length == 0){
+  void selectNodeProvider(int providerIndex, int regionIndex) {
+    if (providerList.length == 0) {
       return;
     }
 
     serverList = new List();
-    for(int i=0;i < providerList.length;i++){
+    for (int i = 0; i < providerList.length; i++) {
       NodeProviderEntity nodeProviderEntity = providerList[i];
       DropdownMenuItem item = new DropdownMenuItem(
           value: i,
@@ -111,7 +111,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
     List<Regions> nodeListStr = providerList[providerIndex].regions;
     nodeList = new List();
-    for(int i=0;i < nodeListStr.length;i++){
+    for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
       DropdownMenuItem item = new DropdownMenuItem(
           value: i,
@@ -218,7 +218,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       items: serverList,
                       onChanged: (value) {
                         setState(() {
-                          selectNodeProvider(value,0);
+                          selectNodeProvider(value, 0);
                         });
                       },
                     ),
@@ -244,7 +244,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       items: nodeList,
                       onChanged: (value) {
                         setState(() {
-                          selectNodeProvider(selectServerItemValue,value);
+                          selectNodeProvider(selectServerItemValue, value);
                         });
                       },
                     ),
@@ -311,7 +311,9 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                   return;
                 }
                 String provider = providerList[selectServerItemValue].id;
-                String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+                String region = providerList[selectServerItemValue]
+                    .regions[selectNodeItemValue]
+                    .id;
                 Application.router.navigateTo(
                     context,
                     Routes.map3node_send_confirm_page +
@@ -382,15 +384,20 @@ Widget getHoldInNum(
       .map((suggest) => int.parse(suggest))
       .toList();
   double minTotal = 0;
-  if(isJoin && double.parse(contractNodeItem.contract.minTotalDelegation) >= double.parse(contractNodeItem.remainDelegation)){
-    double tempMinTotal = double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.minDelegationRate;
-    if(tempMinTotal >= double.parse(contractNodeItem.remainDelegation)){
+  if (isJoin &&
+      double.parse(contractNodeItem.contract.minTotalDelegation) >=
+          double.parse(contractNodeItem.remainDelegation)) {
+    double tempMinTotal =
+        double.parse(contractNodeItem.contract.minTotalDelegation) *
+            contractNodeItem.contract.minDelegationRate;
+    if (tempMinTotal >= double.parse(contractNodeItem.remainDelegation)) {
       minTotal = tempMinTotal;
-    }else{
+    } else {
       minTotal = double.parse(contractNodeItem.remainDelegation);
     }
-  }else{
-    minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.ownerMinDelegationRate;
+  } else {
+    minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) *
+        contractNodeItem.contract.ownerMinDelegationRate;
   }
 
   var walletName =
@@ -458,130 +465,139 @@ Widget getHoldInNum(
               SizedBox(
                 height: 17,
               ),
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 49,
-                    ),
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          if(!isJoin && suggestList.length == 3)
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text(
-                                      "${FormatUtil.formatNum(suggestList[0])}HYN",
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 49,
+                  ),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        if (!isJoin && suggestList.length == 3)
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: FlatButton(
+                                  color: HexColor("#FFFBED"),
+                                  padding: const EdgeInsets.all(0),
+                                  child: Text(
+                                    "${FormatUtil.formatNum(suggestList[0])}HYN",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: HexColor("#5C4304")),
+                                  ),
+                                  onPressed: () {
+                                    onPressFunction(suggestList[0].toString());
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Expanded(
+                                child: FlatButton(
+                                  color: HexColor("#FFFBED"),
+                                  padding: const EdgeInsets.all(0),
+                                  child: Text(
+                                      "${FormatUtil.formatNum(suggestList[1])}HYN",
                                       style: TextStyle(
                                           fontSize: 12,
-                                          color: HexColor("#5C4304")),
-                                    ),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[0].toString());
-                                    },
-                                  ),
+                                          color: HexColor("#5C4304"))),
+                                  onPressed: () {
+                                    onPressFunction(suggestList[1].toString());
+                                  },
                                 ),
-                                SizedBox(
-                                  width: 15,
+                              ),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Expanded(
+                                child: FlatButton(
+                                  color: HexColor("#FFFBED"),
+                                  padding: const EdgeInsets.all(0),
+                                  child: Text(
+                                      "${FormatUtil.formatNum(suggestList[2])}HYN",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: HexColor("#5C4304"))),
+                                  onPressed: () {
+                                    onPressFunction(suggestList[2].toString());
+                                  },
                                 ),
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text(
-                                        "${FormatUtil.formatNum(suggestList[1])}HYN",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: HexColor("#5C4304"))),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[1].toString());
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text(
-                                        "${FormatUtil.formatNum(suggestList[2])}HYN",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: HexColor("#5C4304"))),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[2].toString());
-                                    },
-                                  ),
-                                )
-                              ],
-                            ),
-                          if (isJoin)
-                            Row(
-                              children: <Widget>[
-                                RichText(
-                                  text: TextSpan(
-                                      text: "剩余份额(HYN)：",
-                                      style: TextStyle(fontSize: 14,color: HexColor("#333333"),fontWeight: FontWeight.bold),
-                                      children: [
-                                        TextSpan(
-                                          text: "${FormatUtil.stringFormatNum(contractNodeItem.remainDelegation)}",
-                                          style: TextStyle(fontSize: 14,color: HexColor("#333333"),fontWeight: FontWeight.bold),
-                                        )
-                                      ]),
-                                ),
-                                SizedBox(width: 10,),
-                                SizedBox(
-                                    height: 22,
-                                    width: 70,
-                                    child: FlatButton(
-                                      padding: const EdgeInsets.all(0),
-                                      color: HexColor("#FFDE64"),
-                                      onPressed: () {
-                                        joinEnougnFunction();
-                                      },
-                                      child: Text("全部买入",
-                                          style: TextStyle(
-                                              fontSize: 12, color: HexColor("#5C4304"))),
-                                    )),
-                              ],
-                            ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(top: 10.0, bottom: 10),
-                            child: RichText(
-                              text: TextSpan(
-                                  text: "期满共产生(HYN)：",
-                                  style: TextStyles.textC9b9b9bS12,
-                                  children: [
-                                    TextSpan(
-                                      text: "$endProfit",
-                                      style: TextStyles.textC333S14,
-                                    )
-                                  ]),
-                            ),
+                              )
+                            ],
                           ),
-                          RichText(
+                        if (isJoin)
+                          Row(
+                            children: <Widget>[
+                              RichText(
+                                text: TextSpan(
+                                    text: "剩余份额(HYN)：",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: HexColor("#333333"),
+                                        fontWeight: FontWeight.bold),
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            "${FormatUtil.stringFormatNum(contractNodeItem.remainDelegation)}",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: HexColor("#333333"),
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ]),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                  height: 22,
+                                  width: 70,
+                                  child: FlatButton(
+                                    padding: const EdgeInsets.all(0),
+                                    color: HexColor("#FFDE64"),
+                                    onPressed: () {
+                                      joinEnougnFunction();
+                                    },
+                                    child: Text("全部买入",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: HexColor("#5C4304"))),
+                                  )),
+                            ],
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                          child: RichText(
                             text: TextSpan(
-                                text: isJoin ? "应付管理费(HYN)：" : "获得管理费(HYN)：",
+                                text: "期满共产生(HYN)：",
                                 style: TextStyles.textC9b9b9bS12,
                                 children: [
                                   TextSpan(
-                                    text: "$spendManager",
+                                    text: "$endProfit",
                                     style: TextStyles.textC333S14,
                                   )
                                 ]),
                           ),
-                        ],
-                      ),
+                        ),
+                        RichText(
+                          text: TextSpan(
+                              text: isJoin ? "应付管理费(HYN)：" : "获得管理费(HYN)：",
+                              style: TextStyles.textC9b9b9bS12,
+                              children: [
+                                TextSpan(
+                                  text: "$spendManager",
+                                  style: TextStyles.textC333S14,
+                                )
+                              ]),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
             ],
           )),
     ],

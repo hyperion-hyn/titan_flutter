@@ -34,7 +34,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   VideoPlayerController _controller;
   NodeApi _nodeApi = NodeApi();
-  NodePageEntityVo _nodePageEntityVo = NodePageEntityVo(null,List());
+  NodePageEntityVo _nodePageEntityVo = NodePageEntityVo(null, List());
   int currentPage = 0;
 
   @override
@@ -66,7 +66,7 @@ class _Map3NodeState extends State<Map3NodePage> {
         onRefresh: () {
           getNetworkData();
         },
-        onLoadingMore: (){
+        onLoadingMore: () {
           getMoreNetworkData();
         },
         child: CustomScrollView(
@@ -74,19 +74,22 @@ class _Map3NodeState extends State<Map3NodePage> {
             SliverToBoxAdapter(child: _map3HeadItem()),
             SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  if(index == 0){
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                            padding:
-                            const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
-                            child: Text("等待启动的节点抵押合约", style: TextStyles.textCcc000000S16)),
-                        _getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])
-                      ],
-                    );
-                  }
-              return _getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]);
+              if (index == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15.0, right: 15, top: 17, bottom: 11),
+                        child: Text("等待启动的节点抵押合约",
+                            style: TextStyles.textCcc000000S16)),
+                    _getMap3NodeWaitItem(
+                        context, _nodePageEntityVo.contractNodeList[index])
+                  ],
+                );
+              }
+              return _getMap3NodeWaitItem(
+                  context, _nodePageEntityVo.contractNodeList[index]);
             }, childCount: _nodePageEntityVo.contractNodeList.length))
           ],
         ),
@@ -95,15 +98,14 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 
   void getNetworkData() async {
-    try{
+    try {
       currentPage = 0;
       _nodePageEntityVo = await _nodeApi.getNodePageEntityVo();
 //      Future.delayed(Duration(seconds: 1), () {
-        loadDataBloc.add(RefreshSuccessEvent());
-        setState(() {
-        });
+      loadDataBloc.add(RefreshSuccessEvent());
+      setState(() {});
 //      });
-    }catch(e){
+    } catch (e) {
       setState(() {
         loadDataBloc.add(LoadFailEvent());
       });
@@ -111,24 +113,24 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 
   void getMoreNetworkData() async {
-    try{
+    try {
       currentPage = currentPage + 1;
-      List<ContractNodeItem> contractNodeList = await _nodeApi.getContractPendingList(currentPage);
-      if(contractNodeList.length > 0){
+      List<ContractNodeItem> contractNodeList =
+          await _nodeApi.getContractPendingList(currentPage);
+      if (contractNodeList.length > 0) {
         _nodePageEntityVo.contractNodeList.addAll(contractNodeList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
-      }else{
+      } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
       }
-      setState(() {
-      });
-    }catch(e){
+      setState(() {});
+    } catch (e) {
       loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 
   Widget _map3HeadItem() {
-    if(_nodePageEntityVo.nodeHeadEntity == null){
+    if (_nodePageEntityVo.nodeHeadEntity == null) {
       return Container();
     }
     return Container(
@@ -136,20 +138,23 @@ class _Map3NodeState extends State<Map3NodePage> {
       child: Stack(
         children: <Widget>[
           Container(
-            color: DefaultColors.color0f95b0,
-            padding: const EdgeInsets.only(top:50,bottom: 50),
-            height: 250,
+              color: DefaultColors.color0f95b0,
+              padding: const EdgeInsets.only(top: 50, bottom: 50),
+              height: 250,
               child: Row(
                 children: <Widget>[
                   Expanded(
                     child: SizedBox(),
                   ),
-                  Image.asset("res/drawable/ic_map3_node_head.png",height:150,),
+                  Image.asset(
+                    "res/drawable/ic_map3_node_head.png",
+                    height: 150,
+                  ),
                 ],
               )),
           Container(
             height: 250,
-            padding: const EdgeInsets.only(left:30,right: 30),
+            padding: const EdgeInsets.only(left: 30, right: 30),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -161,11 +166,13 @@ class _Map3NodeState extends State<Map3NodePage> {
           Card(
             color: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),),
-            margin: const EdgeInsets.only(left: 15, right: 15, top: 220, bottom: 16),
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            margin: const EdgeInsets.only(
+                left: 15, right: 15, top: 220, bottom: 16),
             child: Padding(
-              padding:
-              const EdgeInsets.only(left: 15.0, right: 19, top: 13, bottom: 17),
+              padding: const EdgeInsets.only(
+                  left: 15.0, right: 19, top: 13, bottom: 17),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -175,8 +182,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                             "res/drawable/ic_map3_node_item_2.png",
                             width: 80,
                             height: 80,
-                            fit:BoxFit.cover
-                        ),
+                            fit: BoxFit.cover),
                         borderRadius: BorderRadius.circular(4.0),
                       ),
                       SizedBox(width: 16),
@@ -188,28 +194,43 @@ class _Map3NodeState extends State<Map3NodePage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 Expanded(
-                                    child: Text("${_nodePageEntityVo.nodeHeadEntity.node.name}",
-                                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: DefaultColors.colorcc000000))),
+                                    child: Text(
+                                        "${_nodePageEntityVo.nodeHeadEntity.node.name}",
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                DefaultColors.colorcc000000))),
                                 InkWell(
-                                  onTap: (){
-                                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                                    String webTitle = FluroConvertUtils.fluroCnParamsEncode("如何新开Map3节点");
-                                    Application.router.navigateTo(context, Routes.toolspage_webview_page
-                                        + '?initUrl=$webUrl&title=$webTitle');
+                                  onTap: () {
+                                    String webUrl =
+                                        FluroConvertUtils.fluroCnParamsEncode(
+                                            "http://baidu.com");
+                                    String webTitle =
+                                        FluroConvertUtils.fluroCnParamsEncode(
+                                            "如何新开Map3节点");
+                                    Application.router.navigateTo(
+                                        context,
+                                        Routes.toolspage_webview_page +
+                                            '?initUrl=$webUrl&title=$webTitle');
                                   },
-                                  child: Text("开通教程", style: TextStyle(
-                                      fontSize: 12,
-                                      color: DefaultColors.color66000000,
-                                      decoration: TextDecoration.underline)),
+                                  child: Text("开通教程",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: DefaultColors.color66000000,
+                                          decoration:
+                                              TextDecoration.underline)),
                                 )
                               ],
                             ),
                             Padding(
                               padding:
-                              const EdgeInsets.only(top: 8.0, bottom: 8),
+                                  const EdgeInsets.only(top: 8.0, bottom: 8),
                               child: Text(
                                   "    ${_nodePageEntityVo.nodeHeadEntity.node.content}",
-                                  style: TextStyle(fontSize: 12, color: DefaultColors.color99000000)),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: DefaultColors.color99000000)),
                             ),
                           ],
                         ),
@@ -224,7 +245,8 @@ class _Map3NodeState extends State<Map3NodePage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(36)),
                       onPressed: () {
-                        Application.router.navigateTo(context,Routes.map3node_product_list);
+                        Application.router
+                            .navigateTo(context, Routes.map3node_product_list);
                       },
                       child: Text("创建合约", style: TextStyles.textC906b00S13),
                     ),
@@ -238,18 +260,20 @@ class _Map3NodeState extends State<Map3NodePage> {
     );
   }
 
-  Widget _getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
+  Widget _getMap3NodeWaitItem(
+      BuildContext context, ContractNodeItem contractNodeItem) {
     String startAccount = "${contractNodeItem.owner}";
-    startAccount = startAccount.substring(0,startAccount.length > 25 ? 25 : startAccount.length);
+    startAccount = startAccount.substring(
+        0, startAccount.length > 25 ? 25 : startAccount.length);
     startAccount = startAccount + "...";
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(4.0))),
+          borderRadius: BorderRadius.all(Radius.circular(4.0))),
       color: Colors.white,
       margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9),
       child: Padding(
         padding:
-        const EdgeInsets.only(left: 20.0, right: 13, top: 7, bottom: 7),
+            const EdgeInsets.only(left: 20.0, right: 13, top: 7, bottom: 7),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -261,12 +285,13 @@ class _Map3NodeState extends State<Map3NodePage> {
                 Expanded(
                     child: Text(" $startAccount",
                         style: TextStyles.textC9b9b9bS12)),
-                Text("剩余时间：${contractNodeItem.remainDay}天", style: TextStyles.textC9b9b9bS12)
+                Text("剩余时间：${contractNodeItem.remainDay}天",
+                    style: TextStyles.textC9b9b9bS12)
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top:8,bottom: 16),
-              child: Divider(height: 1,color: DefaultColors.color1177869e),
+              padding: const EdgeInsets.only(top: 8, bottom: 16),
+              child: Divider(height: 1, color: DefaultColors.color1177869e),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,9 +300,11 @@ class _Map3NodeState extends State<Map3NodePage> {
                   "res/drawable/ic_map3_node_item_contract.png",
                   width: 42,
                   height: 42,
-                  fit:BoxFit.cover,
+                  fit: BoxFit.cover,
                 ),
-                SizedBox(width: 6,),
+                SizedBox(
+                  width: 6,
+                ),
                 Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,7 +313,8 @@ class _Map3NodeState extends State<Map3NodePage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                              child: Text("${contractNodeItem.contract.nodeName}",
+                              child: Text(
+                                  "${contractNodeItem.contract.nodeName}",
                                   style: TextStyles.textCcc000000S14))
                         ],
                       ),
@@ -294,10 +322,14 @@ class _Map3NodeState extends State<Map3NodePage> {
                         padding: const EdgeInsets.only(top: 3.0),
                         child: Row(
                           children: <Widget>[
-                            Text("最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
-                                style: TextStyles.textC99000000S10,maxLines:1,softWrap: true),
-                            Text("  |  ",style: TextStyles.textC9b9b9bS12),
-                            Text("${contractNodeItem.contract.duration}天",style: TextStyles.textC99000000S10)
+                            Text(
+                                "最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                                style: TextStyles.textC99000000S10,
+                                maxLines: 1,
+                                softWrap: true),
+                            Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                            Text("${contractNodeItem.contract.duration}天",
+                                style: TextStyles.textC99000000S10)
                           ],
                         ),
                       ),
@@ -306,15 +338,17 @@ class _Map3NodeState extends State<Map3NodePage> {
                 ),
                 Column(
                   children: <Widget>[
-                Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}", style: TextStyles.textCff4c3bS18),
+                    Text(
+                        "${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
+                        style: TextStyles.textCff4c3bS18),
                     Text("年化奖励", style: TextStyles.textC99000000S10)
                   ],
                 )
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top:9,bottom: 9),
-              child: Divider(height: 1,color: DefaultColors.color1177869e),
+              padding: const EdgeInsets.only(top: 9, bottom: 9),
+              child: Divider(height: 1, color: DefaultColors.color1177869e),
             ),
             Row(
               children: <Widget>[
@@ -325,11 +359,11 @@ class _Map3NodeState extends State<Map3NodePage> {
                         style: TextStyles.textC9b9b9bS12,
                         children: <TextSpan>[
                           TextSpan(
-                              text: "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
+                              text:
+                                  "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
                               style: TextStyles.textC7c5b00S12),
                           TextSpan(
-                              text: "HYN",
-                              style: TextStyles.textC9b9b9bS12),
+                              text: "HYN", style: TextStyles.textC9b9b9bS12),
                         ]),
                   ),
                 ),
@@ -342,13 +376,16 @@ class _Map3NodeState extends State<Map3NodePage> {
                         borderRadius: BorderRadius.circular(24)),
                     onPressed: () async {
                       var walletList = await WalletUtil.scanWallets();
-                      if(walletList.length == 0){
-                        Fluttertoast.showToast(msg: "请导入钱包");
-                        BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
-//                        Application.router.navigateTo(context, Routes.map3node_create_wallet);
-                      }else{
-                        Application.router.navigateTo(context, Routes.map3node_join_contract_page
-                            + "?contractId=${contractNodeItem.id}");
+                      if (walletList.length == 0) {
+//                        Fluttertoast.showToast(msg: "请导入钱包");
+//                        BlocProvider.of<AppTabBarBloc>(context)
+//                            .add(ChangeTabBarItemEvent(index: 1));
+                        Application.router.navigateTo(context, Routes.map3node_create_wallet);
+                      } else {
+                        Application.router.navigateTo(
+                            context,
+                            Routes.map3node_join_contract_page +
+                                "?contractId=${contractNodeItem.id}");
                       }
                     },
                     child: Text("参与", style: TextStyles.textC906b00S13),
