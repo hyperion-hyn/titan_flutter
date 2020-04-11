@@ -18,9 +18,9 @@ class ContractTestConfig {
   static const String stakingContract = "0x301A8856256a8B028C2Da99d2e2379F24E9087B1";
   static const String privateKey = "913e63e87a5f491dca320d4cc8a9d5dfada433cfd031f16ebc7b2be33c9f50a6";
 
-  //static const String walletLocalDomain = "http://116.23.19.213:37545";
+//  static const String walletLocalDomain = "http://116.23.19.213:37545";
   static const String walletLocalDomain = "http://10.10.1.115:7545";
 
-  //static const String apiLocalDomain = "http://116.23.19.213:35000/";
+//  static const String apiLocalDomain = "http://116.23.19.213:35000/";
   static const String apiLocalDomain = "http://10.10.1.115:5000/";
 }

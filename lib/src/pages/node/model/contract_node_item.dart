@@ -45,7 +45,9 @@ part 'contract_node_item.g.dart';
 
   Map<String, dynamic> toJson() => _$ContractNodeItemToJson(this);
 
+  // todo: test_jison_0411
   String get remainDay{
+    //return "0";
     double remian = (expectCancelTime - instanceStartTime) / 3600 / 24;
     return FormatUtil.doubleFormatNum(remian);
   }

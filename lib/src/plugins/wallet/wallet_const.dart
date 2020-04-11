@@ -19,9 +19,9 @@ class EthereumConst {
   static const int ETH_TRANSFER_GAS_LIMIT = 21000;
   static const int ERC20_TRANSFER_GAS_LIMIT = 38000;
 
-  static const int ERC20_APPROVE_GAS_LIMIT = 45000;
+  static const int ERC20_APPROVE_GAS_LIMIT = 50000;
 
-  static const int CREATE_MAP3_NODE_GAS_LIMIT = 480000;
+  static const int CREATE_MAP3_NODE_GAS_LIMIT = 500000;
   static const int DELEGATE_MAP3_NODE_GAS_LIMIT = 650000;
   static const int COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT = 4000000;
   static const int COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT = 66000;

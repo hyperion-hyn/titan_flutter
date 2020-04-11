@@ -12,6 +12,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -94,6 +95,20 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
   _loadData() async {
 
+    // todo: test_jison_0411
+
+    setState(() {
+      if (mounted) {
+        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
+        var model = ContractNodeItem(2, item, "0xaaaaa", "bbb", "0", "0", 0, 0, "ACTIVE");
+        _dataArray = [model];
+      }
+    });
+
+    loadDataBloc.add(RefreshSuccessEvent());
+
+    return 
+    
     _currentPage = 0;
 
     List<ContractNodeItem> dataList = [];
@@ -204,6 +219,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       case ContractState.ACTIVE:
         onPressed = (){
+
+          // todo: test_jison_0411
 
           Navigator.of(context).push(MaterialPageRoute(builder: (_) {
           return Map3NodeContractDetailPage("${contractNodeItem.id}");

@@ -6,6 +6,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -66,8 +67,13 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
   void getNetworkData() async {
     try {
-      contractNodeItem =
-          await _nodeApi.getContractInstanceItem(widget.contractId);
+      // todo: test_jison_0411
+
+      var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
+      contractNodeItem = ContractNodeItem(1, item, "0xaaaaa", "bbb", "0", "0", 0, 0, "ACTIVE");
+
+//        contractNodeItem =
+//          await _nodeApi.getContractInstanceItem(widget.contractId);
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
