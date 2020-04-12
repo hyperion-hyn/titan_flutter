@@ -21,8 +21,8 @@ class Map3NodeCreateContractPage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_JOIN = "contract_page_type_join";
   static const String CONTRACT_PAGE_TYPE_COLLECT = "contract_page_type_collect";
 
-  String pageType = CONTRACT_PAGE_TYPE_CREATE;
-  String contractId;
+  final String pageType = CONTRACT_PAGE_TYPE_CREATE;
+  final String contractId;
 
   Map3NodeCreateContractPage(this.contractId);
 
@@ -379,10 +379,13 @@ Widget getHoldInNum(
     Function onChangeFuntion,
     Function onPressFunction,
     {Function joinEnougnFunction}) {
-  List<int> suggestList = contractNodeItem.contract.suggestQuantity
-      .split(",")
-      .map((suggest) => int.parse(suggest))
-      .toList();
+  // todo: test_jison_0411
+  List<int> suggestList = [];
+//  List<int> suggestList = contractNodeItem.contract.suggestQuantity
+//      .split(",")
+//      .map((suggest) => int.parse(suggest))
+//      .toList();
+
   double minTotal = 0;
   if (isJoin &&
       double.parse(contractNodeItem.contract.minTotalDelegation) >=
@@ -605,12 +608,13 @@ Widget getHoldInNum(
 }
 
 Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
-    {isJoin = false}) {
+    {isJoin = false, isDetail = true}) {
+  var title = !isDetail?"节点抵押合约详情":isJoin ? "参与Map3节点抵押" : "创建Map3抵押合约";
   return Stack(
     children: <Widget>[
       Container(
-        height: 280,
-        color: Colors.blue,
+        height: isDetail?280:250,
+        color: Theme.of(context).primaryColor,
       ),
 //      Image.asset("res/drawable/ic_map3_node_head.png",height:280,),
       InkWell(
@@ -630,7 +634,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
         child: Padding(
           padding: const EdgeInsets.only(top: 40.0),
           child: Text(
-            isJoin ? "参与Map3节点抵押" : "创建Map3抵押合约",
+            title,
             style: TextStyles.textCfffS17,
           ),
         ),
@@ -684,7 +688,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 Container(
                   margin: const EdgeInsets.only(left: 10.0, right: 20),
                   width: 1,
-                  height: 50,
+                  height: 40,
                   color: Colors.white,
                 ),
                 Column(
@@ -696,7 +700,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 Container(
                   margin: const EdgeInsets.only(left: 20.0, right: 10),
                   width: 1,
-                  height: 50,
+                  height: 40,
                   color: Colors.white,
                 ),
                 Column(
@@ -708,7 +712,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 ),
               ],
             ),
-            _getHeadItemCard(nodeItem)
+            if (isDetail) _getHeadItemCard(nodeItem),
           ],
         ),
       )

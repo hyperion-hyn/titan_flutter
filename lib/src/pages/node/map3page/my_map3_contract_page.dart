@@ -223,11 +223,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           // todo: test_jison_0411
 
           Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-          return Map3NodeContractDetailPage("${contractNodeItem.id}");
+          return Map3NodeContractDetailPage();
           }));
 
-          //String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
-          //Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+//          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
+//          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
         };
 
 //        onPressed = (){

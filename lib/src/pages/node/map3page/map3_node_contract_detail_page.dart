@@ -1,6 +1,8 @@
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -13,16 +15,16 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart'
-    as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'map3_node_create_contract_page.dart';
+import 'my_map3_contract_page.dart';
 
 class Map3NodeContractDetailPage extends StatefulWidget {
   final String pageType = Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN;
-  final String contractId;
+  final String contractId = "1";
 
-  Map3NodeContractDetailPage(this.contractId);
+  Map3NodeContractDetailPage();
 
   @override
   _Map3NodeContractDetailState createState() => new _Map3NodeContractDetailState();
@@ -59,7 +61,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      appBar: AppBar(centerTitle: true, title: Text(pageTitle)),
       backgroundColor: Colors.white,
       body: _pageView(context),
     );
@@ -68,7 +69,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   void getNetworkData() async {
     try {
       // todo: test_jison_0411
-
       var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
       contractNodeItem = ContractNodeItem(1, item, "0xaaaaa", "bbb", "0", "0", 0, 0, "ACTIVE");
 
@@ -103,11 +103,8 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       return;
     }
     double inputValue = double.parse(inputText);
-    double doubleEndProfit = inputValue *
-            contractNodeItem.contract.annualizedYield *
-            contractNodeItem.contract.duration /
-            365 +
-        inputValue;
+    double doubleEndProfit =
+        inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
     double doubleSpendManager = inputValue *
         contractNodeItem.contract.annualizedYield *
         contractNodeItem.contract.duration /
@@ -122,8 +119,8 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           // 设置内容
           text: inputText,
           // 保持光标在最后
-          selection: TextSelection.fromPosition(TextPosition(
-              affinity: TextAffinity.downstream, offset: inputText.length)));
+          selection:
+              TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
     });
   }
 
@@ -142,6 +139,8 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       });
     }
 
+    // todo: test_jison_0411
+    /*
     List<int> suggestList = contractNodeItem.contract.suggestQuantity
         .split(",")
         .map((suggest) => int.parse(suggest))
@@ -149,105 +148,148 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     double minTotal =
         double.parse(contractNodeItem.contract.minTotalDelegation) *
             contractNodeItem.contract.minDelegationRate;
-
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
     var balance =
         WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
+    */
+    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
           color: Colors.white,
-          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract,
-              isJoin: true)),
-//      Container(
-//        height: 5,
-//        color: DefaultColors.colorf5f5f5,
-//      ),
-//      startAccount(),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text("节点版本",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                new Text("${contractNodeItem.contract.nodeName}",
-                    style: TextStyles.textC333S14)
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0, left: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text("服务商",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                new Text("阿里云", style: TextStyles.textC333S14)
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 15.0, left: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text("节点位置",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                new Text("中国深圳", style: TextStyles.textC333S14)
-              ],
-            ),
-          ),
-        ],
+          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract, isJoin: true, isDetail: false)),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+        child: Row(
+          children: <Widget>[
+            Text("节点配置中", style: TextStyle(fontSize: 14, color: HexColor("#666666"))),
+            Spacer(),
+            Text("点击查看详情", style: TextStyle(fontSize: 14, color: HexColor("#666666")))
+          ],
+        ),
       ),
       Container(
-        height: 10,
-        margin: const EdgeInsets.only(top: 15.0),
+        height: 0.8,
         color: DefaultColors.colorf5f5f5,
       ),
-          NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay),
-      Container(
-        height: 10,
-        color: DefaultColors.colorf5f5f5,
-      ),
-          getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
-              _joinCoinController, endProfit, spendManager, true, (textStr) {
-                _filterSubject.sink.add(textStr);
-              }, (textStr) {
-                getCurrentSpend(textStr);
-              },joinEnougnFunction:(){
-                getCurrentSpend(contractNodeItem.remainDelegation);
-              }),
-      Container(
-        height: 10,
-        color: DefaultColors.colorf5f5f5,
-        margin: EdgeInsets.only(top: 15.0, bottom: 15),
-      ),
-      Container(
-        padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 15),
+      //startAccount(),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(45, 6, 5, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("·  请确保钱包账户（$walletName）的ETH GAS费充足",
-                style: TextStyles.textC999S12),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-              child: Text(
-                  "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
-                  style: TextStyles.textC999S12),
+            Row(
+              children: <Widget>[
+                Container(width: 100, child: Text("节点版本", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                new Text("${contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
+              ],
             ),
-            Text("·  投入Map3节点后不可撤销。", style: TextStyles.textC999S12),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(width: 100, child: Text("服务商", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                  new Text("阿里云", style: TextStyles.textC333S14)
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                      width: 100, child: Text("节点位置", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                  new Text("中国深圳", style: TextStyles.textC333S14)
+                ],
+              ),
+            ),
           ],
+        ),
+      ),
+          _Spacer(),
+
+      _contractActionsWidget(),
+      Container(
+        height: 0.5,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        color: DefaultColors.colorf5f5f5,
+      ),
+      _contractProgressWidget(),
+          _Spacer(),
+          NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay),
+      _Spacer(),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+        child: Row(
+          children: <Widget>[
+            Text("入账流水", style: TextStyle(fontSize: 14, color: HexColor("#333333"))),
+            Spacer(),
+            Text("总额：900,000(HYN)", style: TextStyle(fontSize: 12, color: HexColor("#999999")))
+          ],
+        ),
+      ),
+      Container(
+        height: 50,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                  ),
+                  child: Center(
+                      child: Text(
+                    "M",
+                    style: TextStyle(fontSize: 15, color: HexColor("#000000")),
+                  )),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Column(
+                  children: <Widget>[
+                    RichText(
+                      text:
+                          TextSpan(text: "Moo", style: TextStyle(fontSize: 14, color: HexColor("#000000")), children: [
+                        TextSpan(
+                          text: " oxfdaf89fdaff",
+                          style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
+                        )
+                      ]),
+                    ),
+                    Container(
+                      height: 6.0,
+                    ),
+                    Text("2019-10-02 17:00", style: TextStyle(fontSize: 12, color: HexColor("#333333")))
+                  ],
+                ),
+              ),
+              Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  RichText(
+                    text: TextSpan(
+                      text: "20,000",
+                      style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Container(
+                    height: 6.0,
+                  ),
+                  Text("0xfffsdfsdffsf", style: TextStyle(fontSize: 12, color: HexColor("#333333")))
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       Container(
@@ -258,8 +300,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             textColor: Colors.white,
             color: DefaultColors.color0f95b0,
             shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).primaryColor),
-                borderRadius: BorderRadius.circular(36)),
+                side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
             child: Text("确定"),
             onPressed: () {
               setState(() {
@@ -280,43 +321,240 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     ]));
   }
 
-  Widget startAccount() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text("发起账号"),
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 6),
-              child: Image.asset("res/drawable/hyn.png", width: 40, height: 40),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _contractActionsWidget() {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
               children: <Widget>[
-                Text("${contractNodeItem.ownerName}",
-                    style: TextStyles.textC333S14),
-                Text(
-                  "${contractNodeItem.owner}",
-                  style: TextStyles.textC9b9b9bS12,
-                  overflow: TextOverflow.clip,
-                )
+                Icon(
+                  Icons.volume_up,
+                  color: HexColor("#5C4304"),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    child: Text(
+                      "正在创建中，等待区块链网络验证",
+                      style: TextStyle(fontSize: 14, color: HexColor("#5C4304")),
+                    ),
+                  ),
+                ),
               ],
-            )
-          ],
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Container(
-          height: 5,
-          color: DefaultColors.colorf5f5f5,
-        ),
-      ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
+            child: Row(
+              children: [1, 2, 3].map((value) {
+                String title = "";
+                String detail = "";
+                TextStyle style = TextStyle(fontSize: 12, color: Colors.grey);
+                switch (value) {
+                  case 1:
+                    title = "你已投入(HYN)";
+                    detail = "20,000";
+                    style = TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold);
+                    break;
+
+                  case 2:
+                    title = "预期产出(HYN)";
+                    detail = "21,000";
+                    style = TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold);
+                    break;
+
+                  case 3:
+                    title = "获得管理费(HYN)";
+                    detail = "100";
+                    style = TextStyle(fontSize: 12, color: Colors.red, fontWeight: FontWeight.bold);
+                    break;
+                }
+                return Expanded(
+                  child: Center(
+                      child: Column(
+                    children: <Widget>[
+                      Text(detail, style: style),
+                      Container(
+                        height: 8,
+                      ),
+                      Text(title, style: TextStyles.textC9b9b9bS12),
+                    ],
+                  )),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _contractProgressWidget() {
+    double horizontal = 25;
+    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0) * 0.2;
+    return Container(
+      color: Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left: 18, right: 8.0),
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    //color: Colors.red,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _getStatusColor(enumContractStateFromString(contractNodeItem.state)),
+                        border: Border.all(color: Colors.grey, width: 1.0)),
+                  ),
+                ),
+                Text.rich(TextSpan(children: [
+                  TextSpan(text: "等待启动，剩余", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  TextSpan(
+                    text: "2天",
+                    style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
+                  ),
+                ])),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 48),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text("7天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+                Container(
+                  width: sectionWidth,
+                ),
+                Text("90天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+                Container(
+                  width: sectionWidth * 0.5,
+                ),
+                Text("90天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: horizontal),
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.blue, width: 1.0)),
+              ),
+              Container(
+                height: 2.5,
+                width: sectionWidth,
+                color: Colors.green,
+              ),
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
+              ),
+              Container(
+                height: 2.5,
+                width: sectionWidth,
+                color: Colors.green,
+              ),
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
+              ),
+              Container(
+                height: 2.5,
+                width: sectionWidth,
+                color: Colors.green,
+              ),
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
+              ),
+              Container(
+                height: 2.5,
+                width: sectionWidth,
+                color: Colors.green,
+              ),
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
+              ),
+            ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text("待启动", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+                Text("启动", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 0),
+                  child: Text("中期可取50%奖励",
+                      style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.normal)),
+                ),
+                Text("到期", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+                Text("已提取", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  HexColor _getStatusColor(ContractState status) {
+    var statusColor = HexColor('#EED097');
+
+    switch (status) {
+      case ContractState.PENDING:
+        statusColor = HexColor('#EED097');
+        break;
+
+      case ContractState.ACTIVE:
+        statusColor = HexColor('#3FF78C');
+        break;
+
+      case ContractState.DUE:
+        statusColor = HexColor('#867B7B');
+        break;
+
+      case ContractState.WITHDRAWN:
+        statusColor = HexColor('#867B7B');
+        break;
+
+      case ContractState.CANCELLED:
+        statusColor = HexColor('#F22504');
+        break;
+
+      default:
+        break;
+    }
+    return statusColor;
+  }
+
+  Widget _Spacer() {
+    return Container(
+      height: 10,
+      color: DefaultColors.colorf5f5f5,
     );
   }
 
