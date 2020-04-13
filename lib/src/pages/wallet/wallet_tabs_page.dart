@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_introduction.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 
 import 'wallet_page/wallet_page.dart';
 
@@ -43,34 +45,37 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Container(
+            color: DefaultColors.color0f95b0,
             child: SafeArea(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  Spacer(
-                    flex: 1,
-                  ),
                   Expanded(
-                    flex: 3,
+                    flex: 2,
                     child: TabBar(
                       controller: _tabController,
-                      labelColor: Colors.black,
+                      labelColor: Colors.white,
                       labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: Theme.of(context).primaryColor,
-                      indicatorWeight: 4,
-                      unselectedLabelColor: Colors.grey[400],
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      labelPadding: EdgeInsets.only(left:10,right: 20),
+//                      indicatorColor: Theme.of(context).primaryColor,
+                      indicatorColor: HexColor("#00000000"),
+                      unselectedLabelColor: HexColor("#aaffffff"),
                       tabs: [
                         Tab(
                           text: S.of(context).wallet,
                         ),
                         Tab(
-                          text: S.of(context).map3_node_introduction,
+//                          text: S.of(context).map3_node_introduction,
+                          text: "Map3        ",
                         ),
                       ],
                     ),
                   ),
-                  Spacer(
-                    flex: 1,
+                  Expanded(
+                    flex: 2,
+                    child:Text("")
                   )
                 ],
               ),

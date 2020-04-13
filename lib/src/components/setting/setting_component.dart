@@ -4,6 +4,7 @@ import 'package:titan/config.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/setting/model.dart';
+import 'package:titan/src/config/consts.dart';
 
 import 'bloc/bloc.dart';
 
@@ -97,6 +98,15 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
     return languageModel?.locale?.languageCode;
   }
 
+  String get netLanguageCode {
+    var countryCode = languageModel.locale.countryCode??'';
+    if(languageCode == "zh"){
+      return "${languageCode}_$countryCode";
+    }
+    return languageCode;
+  }
+
+
   @override
   bool updateShouldNotify(SettingInheritedModel oldWidget) {
     return languageModel != oldWidget.languageModel || areaModel != oldWidget.areaModel;
@@ -112,3 +122,4 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
         areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area));
   }
 }
+
