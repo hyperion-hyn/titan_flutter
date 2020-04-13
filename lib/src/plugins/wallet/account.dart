@@ -35,6 +35,8 @@ class Account {
       } else if (netType == EthereumNetType.repsten) {
         erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
+      } else if (netType == EthereumNetType.rinkeby) {
+        erc20Tokens.add(SupportedTokens.HYN_RINKEBY);
       } else {
         erc20Tokens.add(SupportedTokens.HYN_LOCAL);
       }
