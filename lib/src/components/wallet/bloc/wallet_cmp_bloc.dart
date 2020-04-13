@@ -36,9 +36,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
       }
 
-      await walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
-
       if (!isSameWallet) {
+        walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
+
         //sync wallet account to server
         if (_activatedWalletVo?.wallet != null &&
             _activatedWalletVo?.wallet?.getEthAccount() != null &&
