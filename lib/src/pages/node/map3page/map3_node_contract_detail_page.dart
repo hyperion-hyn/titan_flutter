@@ -1,15 +1,19 @@
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -17,66 +21,61 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:web3dart/json_rpc.dart';
+import '../../../global.dart';
 import 'map3_node_create_contract_page.dart';
 import 'my_map3_contract_page.dart';
 
 class Map3NodeContractDetailPage extends StatefulWidget {
-  final String pageType = Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN;
-  final String contractId = "1";
+  final int contractId;
 
-  Map3NodeContractDetailPage();
+  Map3NodeContractDetailPage(this.contractId);
 
   @override
   _Map3NodeContractDetailState createState() => new _Map3NodeContractDetailState();
 }
 
 class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
-  TextEditingController _joinCoinController = new TextEditingController();
-  final _joinCoinFormKey = GlobalKey<FormState>();
-  String pageTitle = "";
-  String managerTitle = "";
+
   all_page_state.AllPageState currentState = all_page_state.LoadingState();
-  NodeApi _nodeApi = NodeApi();
-  ContractNodeItem contractNodeItem;
-  PublishSubject<String> _filterSubject = PublishSubject<String>();
-  String endProfit = "";
-  String spendManager = "";
+  NodeApi api = NodeApi();
+  ContractDetailItem _contractDetailItem;
+  ContractNodeItem _contractNodeItem;
+  Wallet _wallet;
 
   @override
   void initState() {
-    pageTitle = "节点抵押合约详情";
-    managerTitle = "应付管理费（HYN）：";
-    _joinCoinController.addListener(textChangeListener);
-
-    _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
-      getCurrentSpend(text);
-//      widget.fieldCallBack(text);
-    });
-
-    getNetworkData();
-
     super.initState();
+
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: _pageView(context),
-    );
+  void dispose() {
+
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+
+    getNetworkData();
   }
 
   void getNetworkData() async {
     try {
-      // todo: test_jison_0411
-      var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
-      contractNodeItem = ContractNodeItem(1, item, "0xaaaaa", "bbb", "0", "0", 0, 0, "ACTIVE");
+      var address = _wallet.getEthAccount().address;
+      var item = await api.getContractDetail("${widget.contractId}", address: address);
 
-//        contractNodeItem =
-//          await _nodeApi.getContractInstanceItem(widget.contractId);
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
+          print('[map3] _loadLastData , id:${item.instance.id}');
+          _contractDetailItem = item;
+          _contractNodeItem = item.instance;
           currentState = null;
         });
       });
@@ -87,51 +86,18 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     }
   }
 
-  void textChangeListener() {
-    _filterSubject.sink.add(_joinCoinController.text);
-  }
-
-  void getCurrentSpend(String inputText) {
-    if (contractNodeItem == null) {
-      return;
-    }
-    if (inputText == null || inputText == "") {
-      setState(() {
-        endProfit = "";
-        spendManager = "";
-      });
-      return;
-    }
-    double inputValue = double.parse(inputText);
-    double doubleEndProfit =
-        inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
-    double doubleSpendManager = inputValue *
-        contractNodeItem.contract.annualizedYield *
-        contractNodeItem.contract.duration /
-        365 *
-        contractNodeItem.contract.commission;
-    endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
-    spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
-
-    setState(() {
-      if (!mounted) return;
-      _joinCoinController.value = TextEditingValue(
-          // 设置内容
-          text: inputText,
-          // 保持光标在最后
-          selection:
-              TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
-    });
-  }
 
   @override
-  void dispose() {
-    _filterSubject.close();
-    super.dispose();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: _pageView(context),
+    );
   }
 
+
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractNodeItem.contract == null) {
+    if (currentState != null || _contractNodeItem.contract == null) {
       return AllPageStateContainer(currentState, () {
         setState(() {
           currentState = all_page_state.LoadingState();
@@ -139,33 +105,26 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       });
     }
 
-    // todo: test_jison_0411
-    /*
-    List<int> suggestList = contractNodeItem.contract.suggestQuantity
-        .split(",")
-        .map((suggest) => int.parse(suggest))
-        .toList();
-    double minTotal =
-        double.parse(contractNodeItem.contract.minTotalDelegation) *
-            contractNodeItem.contract.minDelegationRate;
-    var balance =
-        WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
-    */
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
 
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
           color: Colors.white,
-          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract, isJoin: true, isDetail: false)),
+          child: getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)),
       Padding(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
         child: Row(
           children: <Widget>[
             Text("节点配置中", style: TextStyle(fontSize: 14, color: HexColor("#666666"))),
             Spacer(),
-            Text("点击查看详情", style: TextStyle(fontSize: 14, color: HexColor("#666666")))
+            InkWell(
+                onTap: (){
+                  String webUrl = FluroConvertUtils.fluroCnParamsEncode("https://www.map3.network");
+                  String webTitle = FluroConvertUtils.fluroCnParamsEncode("Map3节点详情");
+                  Application.router.navigateTo(context, Routes.toolspage_webview_page
+                      + '?initUrl=$webUrl&title=$webTitle');
+                },
+                child: Text("点击查看详情", style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
           ],
         ),
       ),
@@ -183,7 +142,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             Row(
               children: <Widget>[
                 Container(width: 100, child: Text("节点版本", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                new Text("${contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
+                new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
               ],
             ),
             Padding(
@@ -191,7 +150,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
               child: Row(
                 children: <Widget>[
                   Container(width: 100, child: Text("服务商", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                  new Text("阿里云", style: TextStyles.textC333S14)
+                  new Text("${_contractDetailItem}", style: TextStyles.textC333S14)
                 ],
               ),
             ),
@@ -218,7 +177,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       ),
       _contractProgressWidget(),
           _Spacer(),
-          NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay),
+          NodeJoinMemberWidget("${widget.contractId}", _contractNodeItem.remainDay),
       _Spacer(),
       Padding(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
@@ -302,21 +261,8 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
             child: Text("确定"),
-            onPressed: () {
-              setState(() {
-                if (!_joinCoinFormKey.currentState.validate()) {
-                  return;
-                }
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_send_confirm_page +
-                        "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                        "&pageType=${widget.pageType}" +
-                        "&contractId=${widget.contractId}");
-              });
-            }),
+            onPressed: _collectAction,
+        ),
       )
     ]));
   }
@@ -413,7 +359,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                     //color: Colors.red,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _getStatusColor(enumContractStateFromString(contractNodeItem.state)),
+                        color: _getStatusColor(enumContractStateFromString(_contractNodeItem.state)),
                         border: Border.all(color: Colors.grey, width: 1.0)),
                   ),
                 ),
@@ -537,9 +483,9 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractState.WITHDRAWN:
+/*      case ContractState.WITHDRAWN:
         statusColor = HexColor('#867B7B');
-        break;
+        break;*/
 
       case ContractState.CANCELLED:
         statusColor = HexColor('#F22504');
@@ -556,6 +502,88 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       height: 10,
       color: DefaultColors.colorf5f5f5,
     );
+  }
+
+  bool isTransferring = false;
+
+  Future _collectAction() async {
+
+    var btnTitle = isTransferring?S.of(context).please_waiting:"查看合约";
+
+    if (_wallet == null || _contractDetailItem == null) {
+      return;
+    }
+
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        }).then((walletPassword) async {
+
+      if (walletPassword == null) {
+        return;
+      }
+
+      try {
+        setState(() {
+          if (mounted) {
+            isTransferring = true;
+          }
+        });
+
+        ///创建节点合约的钱包地址
+        var createNodeWalletAddress = _contractNodeItem.owner;
+        var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+        var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
+        //TODO 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
+        var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+
+        /*var signedHex = await _wallet.signCollectMap3Node(
+          createNodeWalletAddress: createNodeWalletAddress,
+          gasPrice: gasPrice,
+          gasLimit: gasLimit,
+          password: walletPassword,
+        );
+        var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
+
+        logger.i('map3 collect, result: $ret');
+
+       */
+
+        var collectHex = await _wallet.sendCollectMap3Node(
+          createNodeWalletAddress: createNodeWalletAddress,
+          gasPrice: gasPrice,
+          gasLimit: gasLimit,
+          password: walletPassword,
+        );
+        logger.i('map3 collect, collectHex: $collectHex');
+
+        Application.router.navigateTo(context,Routes.map3node_broadcase_success_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+      } catch (_) {
+        logger.e(_);
+        setState(() {
+          if (mounted) {
+            isTransferring = false;
+          }
+        });
+        if (_ is PlatformException) {
+          if (_.code == WalletError.PASSWORD_WRONG) {
+            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else if (_ is RPCError) {
+          if (_.errorCode == -32000) {
+            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
+      }
+    });
   }
 
 }

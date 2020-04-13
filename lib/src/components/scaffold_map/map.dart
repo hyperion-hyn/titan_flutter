@@ -113,7 +113,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     );
 
     //to my location
-    _toLocationEventSubject.debounceTime(Duration(milliseconds: 500)).listen((_) async {
+    _toLocationEventSubject.debounceTime(Duration(milliseconds: 500)).listen((zoom) async {
       bool needUpdate = enableMyLocation(true);
       bool trackModeChange = updateMyLocationTrackingMode(MyLocationTrackingMode.Tracking);
       if (needUpdate || trackModeChange) {
@@ -126,7 +126,14 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         if (_clickTimes > 1) {
           mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, doubleClickZoom), 1200);
         } else if (!trackModeChange) {
-          mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
+          if (zoom != null) {
+            mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLngZoom(latLng, zoom), 700);
+          } else {
+            mapboxMapController?.animateCameraWithTime(CameraUpdate.newLatLng(latLng), 700);
+          }
+        } else if (zoom != null) {
+          await Future.delayed(Duration(milliseconds: 600));
+          mapboxMapController?.animateCameraWithTime(CameraUpdate.zoomTo(zoom), 700);
         }
       }
       _clickTimes = 0;
@@ -138,6 +145,8 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     });
 
     _saveLastPositionSubject.debounceTime(Duration(milliseconds: 2000)).listen((position) {
+      Application.recentlyLocation = position;
+
       var saveStr = '${position.latitude},${position.longitude}';
       sprfs.setString(PrefsKey.lastPosition, saveStr);
     });
@@ -457,9 +466,9 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
   int _clickTimes = 0;
   var _isRunningRequestPermissions = false;
 
-  Future _toMyLocation() async {
+  Future _toMyLocation(double zoom) async {
     _clickTimes++;
-    _toLocationEventSubject.sink.add(1);
+    _toLocationEventSubject.sink.add(zoom);
   }
 
   void _listenEventBus() {
@@ -477,12 +486,12 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
             _isRunningRequestPermissions = true;
             PermissionStatus ret = await Permission.location.request();
             if (ret.isGranted) {
-              _toMyLocation();
+              _toMyLocation(event.zoom);
             }
           }
           _isRunningRequestPermissions = false;
         } else if (status.isGranted) {
-          _toMyLocation();
+          _toMyLocation(event.zoom);
         } else {
           _showGoToOpenLocationServiceDialog();
         }

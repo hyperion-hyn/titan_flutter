@@ -19,6 +19,7 @@ class _BurningDialogState extends State<BurningDialog> with TickerProviderStateM
 
   @override
   void initState() {
+    super.initState();
     animationController = new AnimationController(
       duration: new Duration(milliseconds: 1500),
       vsync: this,
@@ -100,7 +101,6 @@ class RainDrop extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print("drawRainDrop");
     _paint.color = Color.fromRGBO(255, 255, 255, opacity);
     canvas.drawCircle(Offset(size.width / 2, size.height / 2), radius, _paint); // (4)
   }

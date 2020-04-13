@@ -1,30 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/widget/enter_wallet_password.dart';
-import 'package:web3dart/json_rpc.dart';
-import '../../../global.dart';
 import 'map3_node_contract_detail_page.dart';
-import 'node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
   final String title;
@@ -41,7 +30,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   var _currentPage = 0;
   Wallet _wallet;
-  bool isTransferring = false;
 
   var api = NodeApi();
 
@@ -55,10 +43,12 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+    if (_wallet == null) {
+      _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
 
-    loadDataBloc.add(LoadingEvent());
-    _loadData();
+      loadDataBloc.add(LoadingEvent());
+      _loadData();
+    }
   }
 
   @override
@@ -96,7 +86,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   _loadData() async {
 
     // todo: test_jison_0411
-
+   /*
     setState(() {
       if (mounted) {
         var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
@@ -107,7 +97,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     loadDataBloc.add(RefreshSuccessEvent());
 
-    return 
+    return
+    */
     
     _currentPage = 0;
 
@@ -125,6 +116,13 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     } else {
       _currentPage ++;
       loadDataBloc.add(RefreshSuccessEvent());
+
+      // todo: test_jison_0413
+      if (dataList.length >= ContractState.values.length) {
+        for (int i=0; i< ContractState.values.length; i++) {
+          dataList[i].state = ContractState.values[i].toString().split(".").last;
+        }
+      }
 
       setState(() {
         if (mounted) {
@@ -183,10 +181,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractState.WITHDRAWN:
-        statusColor = HexColor('#867B7B');
-        break;
-
       case ContractState.CANCELLED:
         statusColor = HexColor('#F22504');
         break;
@@ -202,8 +196,17 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     startAccount = startAccount.substring(0,startAccount.length > 25 ? 25 : startAccount.length);
     startAccount = startAccount + "...";
     String btnTitle = "查看合约";
+    void Function() onPressed =  (){
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+        return Map3NodeContractDetailPage(contractNodeItem.id);
+      }));
+    };
 
-    void Function() onPressed = (){};
+    /*onPressed = (){
+          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
+          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+        };*/
+
     var state = enumContractStateFromString(contractNodeItem.state);
     print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
 
@@ -218,41 +221,25 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         break;
 
       case ContractState.ACTIVE:
-        onPressed = (){
 
-          // todo: test_jison_0411
-
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-          return Map3NodeContractDetailPage();
-          }));
-
-//          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
-//          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
-        };
-
-//        onPressed = (){
-//          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-//        };
         break;
 
       case ContractState.DUE:
 
-        onPressed = (){
-          _collectAction(contractNodeItem);
-        };
-        btnTitle = isTransferring?S.of(context).please_waiting:"查看合约";
-
-        break;
-
-      case ContractState.WITHDRAWN:
-
-        onPressed = (){
-          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
-          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
-        };
         break;
 
       case ContractState.CANCELLED:
+        // todo: 取消合约，暂定提示； 应该:"发起提币"
+        /*onPressed = (){
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        };*/
+        break;
+
+      case ContractState.DUE_COMPLETED:
+
+        break;
+
+      case ContractState.CANCELLED_COMPLETED:
 
         break;
 
@@ -369,85 +356,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );
   }
 
-
-  Future _collectAction(ContractNodeItem contractNodeItem) async {
-
-    if (_wallet == null) {
-      return;
-    }
-
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-
-      if (walletPassword == null) {
-        return;
-      }
-
-      try {
-        setState(() {
-          if (mounted) {
-            isTransferring = true;
-          }
-        });
-
-        ///创建节点合约的钱包地址
-        var createNodeWalletAddress = contractNodeItem.owner;
-        var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
-        var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
-        //TODO 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
-        var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
-
-        /*var signedHex = await _wallet.signCollectMap3Node(
-          createNodeWalletAddress: createNodeWalletAddress,
-          gasPrice: gasPrice,
-          gasLimit: gasLimit,
-          password: walletPassword,
-        );
-        var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
-
-        logger.i('map3 collect, result: $ret');
-
-       */
-
-        var collectHex = await _wallet.sendCollectMap3Node(
-          createNodeWalletAddress: createNodeWalletAddress,
-          gasPrice: gasPrice,
-          gasLimit: gasLimit,
-          password: walletPassword,
-        );
-        logger.i('map3 collect, collectHex: $collectHex');
-
-        Application.router.navigateTo(context,Routes.map3node_broadcase_success_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
-      } catch (_) {
-        logger.e(_);
-        setState(() {
-          if (mounted) {
-            isTransferring = false;
-          }
-        });
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
-      }
-    });
-  }
-
 }
 
 
@@ -456,4 +364,11 @@ ContractState enumContractStateFromString(String fruit) {
   return ContractState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
 
-enum ContractState { PENDING, ACTIVE, DUE, WITHDRAWN, CANCELLED }
+enum ContractState { PENDING, ACTIVE, DUE, DUE_COMPLETED, CANCELLED, CANCELLED_COMPLETED}
+
+UserDelegateState enumUerDelegateStateFromString(String fruit) {
+  fruit = 'UserDelegateState.$fruit';
+  return UserDelegateState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+}
+
+enum UserDelegateState { PENDING, ACTIVE, HALFDUE, HALFDUE_COLLECTED, DUE, DUE_COLLECTED, CANCELLED, CANCELLED_COLLECTED }

@@ -61,7 +61,7 @@ class NodeApi {
         ,options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
   }
 
-  Future<ContractDetailItem> getContractDetail(int contractNodeItemId, {String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
+  Future<ContractDetailItem> getContractDetail(String contractNodeItemId, {String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
     return await NodeHttpCore.instance.getEntity("delegations/instance/$contractNodeItemId",
         EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data))
         ,options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));

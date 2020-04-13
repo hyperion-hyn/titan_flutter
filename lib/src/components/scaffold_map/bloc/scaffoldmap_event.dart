@@ -94,7 +94,11 @@ class GoSearchEvent {
   GoSearchEvent({this.searchText});
 }
 
-class ToMyLocationEvent {}
+class ToMyLocationEvent {
+  final double zoom;
+
+  ToMyLocationEvent({this.zoom});
+}
 
 class ClearSelectedPoiEvent {}
 

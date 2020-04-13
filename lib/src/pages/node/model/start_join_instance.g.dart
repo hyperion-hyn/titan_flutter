@@ -10,7 +10,7 @@ StartJoinInstance _$StartJoinInstanceFromJson(Map<String, dynamic> json) {
   return StartJoinInstance(
     json['address'] as String,
     json['provider'] as String,
-    json['region'] as String
+    json['region'] as String,
   );
 }
 
