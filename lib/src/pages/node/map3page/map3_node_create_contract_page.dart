@@ -617,6 +617,63 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
         color: Theme.of(context).primaryColor,
       ),
 //      Image.asset("res/drawable/ic_map3_node_head.png",height:280,),
+      Positioned(
+        top: 60,
+        left: -20,
+        child: Container(
+          height: 120,
+          width: 120,
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  HexColor("#22ffffff"),
+                  HexColor("#00ffffff"),
+                ]),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
+          ),
+        ),
+      ),
+      Positioned(
+        top: 100,
+        right: -20,
+        child: Container(
+          height: 120,
+          width: 120,
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  HexColor("#22ffffff"),
+                  HexColor("#00ffffff"),
+                ]),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
+          ),
+        ),
+      ),
+      Positioned(
+        top: 50,
+        right: 120,
+        child: Container(
+          height: 30,
+          width: 30,
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  HexColor("#22ffffff"),
+                  HexColor("#00ffffff"),
+                ]),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
+          ),
+        ),
+      ),
       InkWell(
         onTap: () {
           Navigator.of(context).pop();
@@ -849,17 +906,23 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  width: 70,
-                  height: 1,
-                  color: HexColor("#ECECEC"),
+                SizedBox(width: 72),
+                Expanded(
+                  child: Container(
+//                    width: 70,
+                    height: 1,
+                    color: HexColor("#ECECEC"),
+                  ),
                 ),
                 SizedBox(width: 42, height: 13),
-                Container(
-                  width: 70,
-                  height: 1,
-                  color: HexColor("#ECECEC"),
+                Expanded(
+                  child: Container(
+//                    width: 70,
+                    height: 1,
+                    color: HexColor("#ECECEC"),
+                  ),
                 ),
+                SizedBox(width: 72),
               ],
             )
           ])),
@@ -976,3 +1039,4 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
     );
   }
 }
+
