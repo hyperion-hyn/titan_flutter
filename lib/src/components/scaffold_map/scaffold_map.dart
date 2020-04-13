@@ -40,17 +40,15 @@ typedef HeightCallBack = void Function(double height);
 class ScaffoldMap extends StatefulWidget {
 //  final DraggableBottomSheetController poiBottomSheetController;
 //
-//  ScaffoldMap({
-//    this.poiBottomSheetController,
-//  });
+  ScaffoldMap({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _ScaffoldMapState();
+    return ScaffoldCmpMapState();
   }
 }
 
-class _ScaffoldMapState extends State<ScaffoldMap> {
+class ScaffoldCmpMapState extends State<ScaffoldMap> {
 //  ScrollController _bottomChildScrollController = ScrollController();
 //  final GlobalKey poiDraggablePanelKey = GlobalKey(debugLabel: 'poiDraggablePanelKey');
 
@@ -137,13 +135,23 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
           _stateStack.removeLast();
         }
       }
-
       _stateStack.add(state);
     }, child: BlocBuilder<ScaffoldMapBloc, ScaffoldMapState>(
       builder: (context, state) {
         return buildMapByState(state);
       },
     ));
+  }
+
+  bool back() {
+    if (_stateStack.length > 0) {
+      var lastRuntimeType = _stateStack.last.runtimeType;
+      if (lastRuntimeType != DefaultScaffoldMapState && lastRuntimeType != FocusingDMapState) {
+        backToPreviewState();
+        return true;
+      }
+    }
+    return false;
   }
 
   Widget buildMapByState(ScaffoldMapState state) {
@@ -357,8 +365,8 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
       OnMapClickHandle onMapClickHandle;
       OnMapLongPressHandle onMapLongPressHandle;
       bool showCenterMarker = false;
-      for(var st in _stateStack) {
-        if(st is FocusingDMapState) {
+      for (var st in _stateStack) {
+        if (st is FocusingDMapState) {
           heavenModelList = st.dMapConfigModel?.heavenDataModelList;
           onMapClickHandle = st.dMapConfigModel?.onMapClickHandle;
           onMapLongPressHandle = st.dMapConfigModel?.onMapLongPressHandle;
@@ -401,7 +409,7 @@ class _ScaffoldMapState extends State<ScaffoldMap> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           myWidget.DraggableScrollableActuator.reset(Keys.mapDraggablePanelKey.currentContext);
         });
-      }else{
+      } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           myWidget.DraggableScrollableActuator.setHide(Keys.mapDraggablePanelKey.currentContext);
         });
