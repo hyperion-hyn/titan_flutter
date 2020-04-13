@@ -98,7 +98,7 @@ dependencies:
   loading: ^1.0.1
   flutter_inappwebview: ^2.1.0+1
   #https://pub.flutter-io.cn/packages/flutter_bugly
-  flutter_bugly: ^0.2.7
+  flutter_bugly: ^0.2.8
   android_intent: ^0.3.4
   app_settings: ^3.0.0
   fluro: ^1.5.1

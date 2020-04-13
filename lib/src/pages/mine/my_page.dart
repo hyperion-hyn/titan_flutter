@@ -122,7 +122,7 @@ class _MyPageState extends State<MyPage> {
                     } else {
                       Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
                     }
-                  }),
+                  }, imageName: "my_contract_create"),
                   Padding(
                     padding: const EdgeInsets.only(left: 56.0),
                     child: Divider(height: 0),
@@ -133,7 +133,7 @@ class _MyPageState extends State<MyPage> {
                     } else {
                       Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
                     }
-                  }),
+                  }, imageName: "my_contract_join"),
                   Container(
                     height: 10,
                     color: HexColor('#F1EFF2'),
@@ -186,7 +186,21 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget _buildMenuBar(String title, IconData iconData, Function onTap) {
+  Widget _buildMenuBar(String title, IconData iconData, Function onTap, {String imageName=""}) {
+
+    Widget iconWidget;
+    if (imageName.length <= 0) {
+      iconWidget = Icon(
+        iconData,
+        color: Color(0xffb4b4b4),
+      );
+    } else {
+      iconWidget = Image.asset(
+        "res/drawable/$imageName.png",
+        width: 20,
+        height: 20,
+      );
+    };
     return Material(
       child: InkWell(
         onTap: onTap,
@@ -195,10 +209,7 @@ class _MyPageState extends State<MyPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Row(
             children: <Widget>[
-              Icon(
-                iconData,
-                color: Color(0xffb4b4b4),
-              ),
+              iconWidget,
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Text(

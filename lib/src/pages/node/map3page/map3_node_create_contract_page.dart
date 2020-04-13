@@ -380,11 +380,11 @@ Widget getHoldInNum(
     Function onPressFunction,
     {Function joinEnougnFunction}) {
   // todo: test_jison_0411
-  List<int> suggestList = [];
-//  List<int> suggestList = contractNodeItem.contract.suggestQuantity
-//      .split(",")
-//      .map((suggest) => int.parse(suggest))
-//      .toList();
+  //List<int> suggestList = [];
+  List<int> suggestList = contractNodeItem.contract.suggestQuantity
+      .split(",")
+      .map((suggest) => int.parse(suggest))
+      .toList();
 
   double minTotal = 0;
   if (isJoin &&
