@@ -40,6 +40,7 @@ class AppTabBarPage extends StatefulWidget {
 
 class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
+  final GlobalKey _discoverKey = GlobalKey(debugLabel: '__discover_key__');
 
   var _fabsHeight = 56;
 
@@ -86,13 +87,11 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     });
   }
 
-
   @override
   void dispose() {
     _clearBadgeSubcription.cancel();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +142,16 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
             },
             child: WillPopScope(
               onWillPop: () async {
+                var isHandled = (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
+                if (isHandled == true) {
+                  return false;
+                }
+
+                isHandled = (_discoverKey.currentState as DiscoverPageState)?.back();
+                if (isHandled == true) {
+                  return false;
+                }
+
                 if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
                   _lastPressedAt = DateTime.now();
                   Fluttertoast.showToast(msg: S.of(context).click_again_to_exist_app);
@@ -150,32 +159,30 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                 }
                 return true;
               },
-              child: BlocBuilder<AppTabBarBloc, AppTabBarState>(
-                builder: (context, state) {
+              child: BlocBuilder<AppTabBarBloc, AppTabBarState>(builder: (context, state) {
+                if (state is CheckNewAnnouncementState && state.announcement != null) {
+                  _isShowAnnounceDialog = true;
+                  Application.isUpdateAnnounce = true;
+                }
 
-                  if(state is CheckNewAnnouncementState && state.announcement != null){
-                    _isShowAnnounceDialog = true;
-                    Application.isUpdateAnnounce = true;
-                  }
-
-                  return Stack(
-                    children: <Widget>[
-                      ScaffoldMap(),
-                      userLocationBar(),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
-                        child: _getTabView(_currentTabIndex),
-                      ),
-                      bottomNavigationBar(),
-                      if(_isShowAnnounceDialog && state is CheckNewAnnouncementState) AnnouncementDialog(
-                          state.announcement,(){
+                return Stack(
+                  children: <Widget>[
+                    ScaffoldMap(key: Keys.scaffoldMap),
+                    userLocationBar(),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
+                      child: _getTabView(_currentTabIndex),
+                    ),
+                    bottomNavigationBar(),
+                    if (_isShowAnnounceDialog && state is CheckNewAnnouncementState)
+                      AnnouncementDialog(state.announcement, () {
                         _isShowAnnounceDialog = false;
                         BlocProvider.of<AppTabBarBloc>(context).add(InitialAppTabBarEvent());
                       })
-                    ],
-                  );
-                }
-              ),
+                  ],
+                );
+              }),
             ),
           ),
         ),
@@ -282,17 +289,18 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                if (Application.isUpdateAnnounce && index == 3) Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                  child: Container(
-                    height: 8,
-                    width: 8,
-                    decoration: BoxDecoration(
-                        color: HexColor("#DA3B2A"),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: HexColor("#DA3B2A"))),
+                if (Application.isUpdateAnnounce && index == 3)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                    child: Container(
+                      height: 8,
+                      width: 8,
+                      decoration: BoxDecoration(
+                          color: HexColor("#DA3B2A"),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: HexColor("#DA3B2A"))),
+                    ),
                   ),
-                ),
                 Icon(
                   iconData,
                   color: selected ? Theme.of(context).primaryColor : Colors.black38,
@@ -329,7 +337,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
       case 1:
         return WalletTabsPage();
       case 2:
-        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage());
+        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage(key: _discoverKey,));
       case 3:
         return InformationPage();
       case 4:
