@@ -22,6 +22,8 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
 
+import 'node_http.dart';
+
 class NodeApi {
 
   Map<String,dynamic> getOptionHeader({hasLang = false,hasAddress = false}){
@@ -43,7 +45,7 @@ class NodeApi {
   }
 
   Future<List<ContractNodeItem>> getMyCreateNodeContract({int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
-    return await HttpCore.instance.getEntity(
+    return await NodeHttpCore.instance.getEntity(
         "delegations/my-create",
         EntityFactory<List<ContractNodeItem>>(
             (list) => (list as List).map((item) => ContractNodeItem.fromJson(item)).toList()),
@@ -51,7 +53,7 @@ class NodeApi {
   }
 
   Future<List<ContractNodeItem>> getMyJoinNodeContract({int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
-    return await HttpCore.instance.getEntity(
+    return await NodeHttpCore.instance.getEntity(
         "delegations/my-join",
         EntityFactory<List<ContractNodeItem>>(
             (list) => (list as List).map((item) => ContractNodeItem.fromJson(item)).toList()),
@@ -60,13 +62,13 @@ class NodeApi {
   }
 
   Future<ContractDetailItem> getContractDetail(int contractNodeItemId, {String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
-    return await HttpCore.instance.getEntity("delegations/instance/$contractNodeItemId",
+    return await NodeHttpCore.instance.getEntity("delegations/instance/$contractNodeItemId",
         EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data))
         ,options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
   }
 
   Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
-    return await HttpCore.instance.getEntity(
+    return await NodeHttpCore.instance.getEntity(
         "delegations/instance/$contractNodeItemId/delegators",
         EntityFactory<List<ContractDelegatorItem>>(
             (list) => (list as List).map((item) => ContractDelegatorItem.fromJson(item)).toList()),
@@ -76,7 +78,7 @@ class NodeApi {
 
   Future<List<NodeItem>> getContractList(int page) async {
     var contractsList =
-        await HttpCore.instance.getEntity("contracts/list?page=$page", EntityFactory<List<NodeItem>>((data) {
+        await NodeHttpCore.instance.getEntity("contracts/list?page=$page", EntityFactory<List<NodeItem>>((data) {
       return (data as List).map((dataItem) => NodeItem.fromJson(dataItem)).toList();
     }),options: RequestOptions(headers: getOptionHeader(hasLang: true)));
 
@@ -85,7 +87,7 @@ class NodeApi {
 
   Future<List<NodeProviderEntity>> getNodeProviderList() async {
     var nodeProviderList =
-    await HttpCore.instance.getEntity("nodes/providers", EntityFactory<List<NodeProviderEntity>>((data) {
+    await NodeHttpCore.instance.getEntity("nodes/providers", EntityFactory<List<NodeProviderEntity>>((data) {
       return (data as List).map((dataItem) => NodeProviderEntity.fromJson(dataItem)).toList();
     }),options: RequestOptions(headers: getOptionHeader(hasLang: true)));
 
@@ -93,7 +95,7 @@ class NodeApi {
   }
 
   Future<ContractNodeItem> getContractItem(String contractId) async {
-    var nodeItem = await HttpCore.instance.getEntity("contracts/detail/$contractId", EntityFactory<NodeItem>((data) {
+    var nodeItem = await NodeHttpCore.instance.getEntity("contracts/detail/$contractId", EntityFactory<NodeItem>((data) {
       return NodeItem.fromJson(data);
     }),options: RequestOptions(headers: getOptionHeader(hasLang: true)));
 
@@ -102,7 +104,7 @@ class NodeApi {
 
   Future<ContractNodeItem> getContractInstanceItem(String contractId) async {
     var contractsItem =
-        await HttpCore.instance.getEntity("instances/detail/$contractId", EntityFactory<ContractNodeItem>((data) {
+        await NodeHttpCore.instance.getEntity("instances/detail/$contractId", EntityFactory<ContractNodeItem>((data) {
       return ContractNodeItem.fromJson(data);
     }),options: RequestOptions(headers: getOptionHeader(hasLang: true)));
 
@@ -119,7 +121,7 @@ class NodeApi {
     var hynErc20ContractAddress = hynAssetToken?.contractAddress;
     var approveToAddress = WalletConfig.map3ContractAddress;
 
-    var nodeKey = await HttpCore.instance.getEntity("nodekey/generate", EntityFactory<Map<String, dynamic>>((data) {
+    var nodeKey = await NodeHttpCore.instance.getEntity("nodekey/generate", EntityFactory<Map<String, dynamic>>((data) {
       return data;
     }));
     int durationType = contractNodeItem.contract.durationType; //0: 1M， 1: 3M， 2: 6M
@@ -157,7 +159,7 @@ class NodeApi {
 //    startJoinInstance.publicKey = nodeKey["publicKey"];
     String postData = json.encode(startJoinInstance.toJson());
     print("startContractInstance = $postData");
-    var data = await HttpCore.instance
+    var data = await NodeHttpCore.instance
         .post("node-provider/", data: postData, options: RequestOptions(contentType: "application/json"));
     return data['msg'];
   }
@@ -200,14 +202,14 @@ class NodeApi {
 //    startJoinInstance.txHash = joinHex;
 //    String postData = json.encode(startJoinInstance.toJson());
 //    print("joinContractInstance = $postData");
-//    var data = await HttpCore.instance.post("instances/delegate/$contractId",
+//    var data = await NodeHttpCore.instance.post("instances/delegate/$contractId",
 //        data: postData, options: RequestOptions(contentType: "application/json"));
 //    return data['msg'];
     return "success";
   }
 
   Future<NodePageEntityVo> getNodePageEntityVo() async {
-    var nodeHeadEntity = await HttpCore.instance.getEntity("nodes/intro", EntityFactory<NodeHeadEntity>((data) {
+    var nodeHeadEntity = await NodeHttpCore.instance.getEntity("nodes/intro", EntityFactory<NodeHeadEntity>((data) {
       return NodeHeadEntity.fromJson(data);
     }),options: RequestOptions(headers: getOptionHeader(hasLang: true)));
 
@@ -218,10 +220,21 @@ class NodeApi {
 
   Future<List<ContractNodeItem>> getContractPendingList(int page) async {
     var contractsList =
-        await HttpCore.instance.getEntity("instances/pending?page=$page", EntityFactory<List<ContractNodeItem>>((data) {
+        await NodeHttpCore.instance.getEntity("instances/pending?page=$page", EntityFactory<List<ContractNodeItem>>((data) {
       return (data as List).map((dataItem) => ContractNodeItem.fromJson(dataItem)).toList();
     }),options: RequestOptions(headers: getOptionHeader(hasLang: true)));
 
     return contractsList;
+  }
+
+  Future postWallets(WalletVo _activatedWalletVo) async {
+    if (_activatedWalletVo?.wallet != null &&
+        _activatedWalletVo?.wallet?.getEthAccount() != null &&
+        _activatedWalletVo.wallet.keystore != null) {
+      String postData =
+          "{\"address\":\"${_activatedWalletVo.wallet.getEthAccount()?.address}\",\"name\":\"${_activatedWalletVo.wallet.keystore?.name}\"}";
+
+      NodeHttpCore.instance.post("wallets/", data: postData, options: RequestOptions(contentType: "application/json"));
+    }
   }
 }
