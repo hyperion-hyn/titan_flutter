@@ -21,13 +21,14 @@ class BottomFabsWidget extends StatefulWidget {
 class BottomFabsWidgetState extends State<BottomFabsWidget> {
   bool _isShow = true;
 
-  void _clean(context) {
+  void _clean(context) async {
     var searchInteractor = Injector.of(context).searchInteractor;
     searchInteractor.deleteAllHistory();
 
-    //TODO UI back to global
-//    BlocProvider.of<home.HomeBloc>(context).add(home.ExistSearchEvent());
-//    BlocProvider.of<map.MapBloc>(context).add(map.ResetMapEvent());
+    BlocProvider.of<ScaffoldMapBloc>(context).add(DefaultMapEvent());
+
+    await Future.delayed(Duration(milliseconds: 1500));
+    Application.eventBus.fire(ToMyLocationEvent(zoom: 14));
   }
 
   void setVisible(bool isVisible) {

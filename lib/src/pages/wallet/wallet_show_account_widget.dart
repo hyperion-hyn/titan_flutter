@@ -76,9 +76,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
         body: BlocListener<WalletCmpBloc, WalletCmpState>(
           listener: (context, state) {
             //update WalletVo total balance
-            if(state is UpdatedWalletBalanceState){
-              for(CoinVo coinVo in state.walletVo.coins){
-                if(coinVo.contractAddress == widget.coinVo.contractAddress){
+            if (state is UpdatedWalletBalanceState) {
+              for (CoinVo coinVo in state.walletVo.coins) {
+                if (coinVo.contractAddress == widget.coinVo.contractAddress) {
                   widget.coinVo = coinVo;
                 }
               }
@@ -295,12 +295,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
         .toList()
         .contains(transactionDetail.toAddress.toLowerCase())) {
       title = S.of(context).contract_call;
+    } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
+      title = 'MAP3合约调用';
     }
 
     var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
     var lastTransactionTime = lastTransactionDetail != null
         ? _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(lastTransactionDetail.time))
-    : null;
+        : null;
     var isShowTime = lastTransactionTime != time;
 
     return Ink(
@@ -342,7 +344,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                       child: Icon(
                         iconData,
                         color: Color(0xFFCDCDCD),
-                        size: ExtendsIconFont.receiver == iconData? 19 : 24,
+                        size: ExtendsIconFont.receiver == iconData ? 19 : 24,
                       ),
                     ),
                     Expanded(
