@@ -67,7 +67,8 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
                           text: S.of(context).wallet,
                         ),
                         Tab(
-                          text: S.of(context).map3_node_introduction,
+//                          text: S.of(context).map3_node_introduction,
+                          text: "Map3        ",
                         ),
                       ],
                     ),
