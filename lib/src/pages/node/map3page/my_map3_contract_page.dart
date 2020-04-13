@@ -208,7 +208,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         };*/
 
     var state = enumContractStateFromString(contractNodeItem.state);
-    print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
+    //print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
 
     switch (state) {
       case ContractState.PENDING:

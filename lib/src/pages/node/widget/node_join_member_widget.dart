@@ -107,7 +107,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   style: TextStyles.textC999S14,
                 ),
                 SizedBox(
-                  width: 16,
+                  width: 14,
                 )
               ],
             ),
