@@ -325,14 +325,16 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
             child: InkWell(
               onTap: () {
                 var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-                var url = EtherscanApi.getTxDetailUrl(context, transactionDetail.hash, isChinaMainland);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WebViewContainer(
-                              initUrl: url,
-                              title: '',
-                            )));
+                var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+                if (url != null) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WebViewContainer(
+                                initUrl: url,
+                                title: '',
+                              )));
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
