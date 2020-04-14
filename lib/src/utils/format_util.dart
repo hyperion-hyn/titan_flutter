@@ -45,4 +45,7 @@ class FormatUtil{
     return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp))??"";
   }
 
+  static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
+
+
 }

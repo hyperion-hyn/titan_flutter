@@ -1,6 +1,9 @@
 
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -12,8 +15,9 @@ import 'package:titan/src/utils/format_util.dart';
 class NodeJoinMemberWidget extends StatefulWidget {
   final String contractId;
   final String remainDay;
+  final String shareUrl;
   final bool isShowInviteItem;
-  NodeJoinMemberWidget(this.contractId, this.remainDay, {this.isShowInviteItem=true});
+  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareUrl, {this.isShowInviteItem=true});
 
   @override
   State<StatefulWidget> createState() {
@@ -59,7 +63,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     _currentPage = 0;
     List<ContractDelegatorItem> tempMemberList = await _nodeApi
         .getContractDelegator(int.parse(widget.contractId), page: _currentPage);
-
 
    // print("[widget] --> build, length:${tempMemberList.length}");
 
@@ -163,24 +166,32 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
               color: HexColor("#7B766A"),
               width: 1,
               style: BorderStyle.solid)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            "res/drawable/ic_map3_node_join_add_member.png",
-            width: 26,
-            height: 26,
-          ),
-          SizedBox(
-            height: 12,
-          ),
-          Text(
-            "邀请好友\n参加",
-            style: TextStyle(
-                fontSize: 12, color: HexColor("#7B766A")),
-            textAlign: TextAlign.center,
-          )
-        ],
+      child: InkWell(
+        onTap: () async{
+          final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
+          Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',text: widget.shareUrl);
+
+//          Share.text(S.of(context).share, widget.shareUrl,'text/plain');
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              "res/drawable/ic_map3_node_join_add_member.png",
+              width: 26,
+              height: 26,
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Text(
+              "邀请好友\n参加",
+              style: TextStyle(
+                  fontSize: 12, color: HexColor("#7B766A")),
+              textAlign: TextAlign.center,
+            )
+          ],
+        ),
       ),
     );
   }

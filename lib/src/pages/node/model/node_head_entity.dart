@@ -6,6 +6,9 @@ part 'node_head_entity.g.dart';
 @JsonSerializable()
 class NodeHeadEntity extends Object {
 
+  @JsonKey(name: 'instanceCount')
+  int instanceCount;
+
   @JsonKey(name: 'lastRecordMessage')
   List<String> lastRecordMessage;
 
@@ -15,7 +18,7 @@ class NodeHeadEntity extends Object {
   @JsonKey(name: 'node')
   Node node;
 
-  NodeHeadEntity(this.lastRecordMessage,this.message,this.node,);
+  NodeHeadEntity(this.instanceCount,this.lastRecordMessage,this.message,this.node,);
 
   NodeHeadEntity.nullEntity();
 

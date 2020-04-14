@@ -8,6 +8,7 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class NodeDelegatorMemberWidget extends StatefulWidget {
   final String contractId;
@@ -25,7 +26,7 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   NodeApi _nodeApi = NodeApi();
-  List<ContractDelegatorItem> memberList = [];
+  List<ContractDelegateRecordItem> memberList = [];
   double _viewHeight = 135;
 
   @override
@@ -59,8 +60,8 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
     try {
       _currentPage = 0;
       memberList = [];
-      List<ContractDelegatorItem> tempMemberList =
-      await _nodeApi.getContractDelegator(int.parse(widget.contractId),
+      List<ContractDelegateRecordItem> tempMemberList =
+      await _nodeApi.getContractDelegateRecord(int.parse(widget.contractId),
           page: _currentPage);
 
       if (tempMemberList.length > 0) {
@@ -89,8 +90,8 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
   void getJoinMemberMoreData() async {
     try {
       _currentPage++;
-      List<ContractDelegatorItem> tempMemberList =
-      await _nodeApi.getContractDelegator(int.parse(widget.contractId),
+      List<ContractDelegateRecordItem> tempMemberList =
+      await _nodeApi.getContractDelegateRecord(int.parse(widget.contractId),
           page: _currentPage);
 
       if (tempMemberList.length > 0) {
@@ -159,14 +160,13 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
     );
   }
 
-  Widget _item(ContractDelegatorItem delegatorItem) {
+  Widget _item(ContractDelegateRecordItem delegatorItem) {
 
     String showName =
     delegatorItem.userName.substring(0, 1);
+    String userAddress = shortBlockChainAddress(" ${delegatorItem.userAddress}", limitCharsLength: 8);
+    String txHash = shortBlockChainAddress(delegatorItem.txHash, limitCharsLength: 6);
 
-    String userAddress = " ${delegatorItem.userAddress}";
-    userAddress = userAddress.substring(0,userAddress.length > 12 ? 12 : userAddress.length);
-    userAddress = userAddress + "...";
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       child: Row(
@@ -217,14 +217,14 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
             children: <Widget>[
               RichText(
                 text: TextSpan(
-                  text: "${FormatUtil.formatNum(int.parse(delegatorItem.amountDelegation))}",
+                  text: FormatUtil.amountToString(delegatorItem.amount),
                   style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                 ),
               ),
                 Container(
                   height: 6.0,
                 ),
-                Text(userAddress, style: TextStyle(fontSize: 12, color: HexColor("#333333")))
+                Text(txHash, style: TextStyle(fontSize: 12, color: HexColor("#333333")))
             ],
           ),
         ],

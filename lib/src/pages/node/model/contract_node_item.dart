@@ -59,6 +59,9 @@ part 'contract_node_item.g.dart';
   @JsonKey(name: 'instanceFinishTime')
   int instanceFinishTime;
 
+  @JsonKey(name: 'shareUrl')
+  String shareUrl;
+
   @JsonKey(name: 'state')
   String state;
 
@@ -79,6 +82,7 @@ part 'contract_node_item.g.dart';
       this.instanceDueTime,
       this.instanceCancelTime,
       this.instanceFinishTime,
+      this.shareUrl,
       this.state
       );
 
@@ -90,11 +94,14 @@ part 'contract_node_item.g.dart';
 
   Map<String, dynamic> toJson() => _$ContractNodeItemToJson(this);
 
-  // todo: test_jison_0411
   String get remainDay{
-    //return "0";
     double remian = (expectCancelTime - instanceStartTime) / 3600 / 24;
     return FormatUtil.doubleFormatNum(remian);
+  }
+
+  String get expectDueDay{
+    double expect = (expectDueTime - instanceActiveTime) / 3600 / 24;
+    return FormatUtil.doubleFormatNum(expect);
   }
 
 }

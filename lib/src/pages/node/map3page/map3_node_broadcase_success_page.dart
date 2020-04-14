@@ -22,7 +22,6 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                   icon: const Icon(Icons.close),
                   onPressed: () {
                     Routes.popUntilCreateOrImportWalletEntryRoute(context);
-//                    Navigator.of(context).pop();
                   },
                 );
               },
@@ -61,7 +60,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Container(
+                      /*Container(
                         padding: EdgeInsets.symmetric(horizontal: 30),
                         constraints: BoxConstraints.expand(height: 48),
                         child: FlatButton(
@@ -73,10 +72,6 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                           onPressed: () {
                             Share.text(S.of(context).share, "http://baidu.com",
                                 'text/plain');
-//                            Application.router.navigateTo(
-//                                context,
-//                                Routes.wallet_create +
-//                                    '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
                           },
                           child: Container(
                             child: Padding(
@@ -90,7 +85,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
                       Padding(
                         padding:
                             EdgeInsets.symmetric(vertical: 16, horizontal: 30),
@@ -103,6 +98,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                     color: DefaultColors.color26ac29),
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
+                              Routes.popUntilCreateOrImportWalletEntryRoute(context);
 //                              Application.router.navigateTo(
 //                                  context,
 //                                  Routes.wallet_import +
@@ -113,7 +109,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 40.0, vertical: 12.0),
                                 child: Text(
-                                  "查看合约详情",
+                                  "完成",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.white),
                                 ),

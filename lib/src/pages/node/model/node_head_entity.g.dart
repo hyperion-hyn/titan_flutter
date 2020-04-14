@@ -8,6 +8,7 @@ part of 'node_head_entity.dart';
 
 NodeHeadEntity _$NodeHeadEntityFromJson(Map<String, dynamic> json) {
   return NodeHeadEntity(
+    json['instanceCount'] as int,
     (json['lastRecordMessage'] as List)?.map((e) => e as String)?.toList(),
     json['message'] as String,
     json['node'] == null
@@ -18,6 +19,7 @@ NodeHeadEntity _$NodeHeadEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$NodeHeadEntityToJson(NodeHeadEntity instance) =>
     <String, dynamic>{
+      'instanceCount': instance.instanceCount,
       'lastRecordMessage': instance.lastRecordMessage,
       'message': instance.message,
       'node': instance.node,

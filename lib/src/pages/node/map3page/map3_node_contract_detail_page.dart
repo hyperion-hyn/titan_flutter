@@ -46,6 +46,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   Wallet _wallet;
   bool _visible = false;
   bool _isTransferring = false;
+  bool _isCreator = false; // 判断当前钱包用户是否是为合约创建者
 
   @override
   void initState() {
@@ -106,18 +107,29 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     return;*/
 
     try {
+
+      var instanceItem = await _api.getContractInstanceItem("${widget.contractId}");
+
       var address = _wallet.getEthAccount().address;
-      var item = await _api.getContractDetail("${widget.contractId}", address: address);
+
+      _isCreator = address == instanceItem.owner;
+
+      if (_isCreator) {
+        var detailItem = await _api.getContractDetail("${widget.contractId}", address: address);
+        _contractDetailItem = detailItem;
+        _contractNodeItem = detailItem.instance;
+        print('[map3] getContractDetail , id:${_contractNodeItem.id}');
+      } else {
+        _contractNodeItem = instanceItem;
+        print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}');
+      }
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
-          print('[map3] _loadLastData , id:${item.instance.id}');
-          _contractDetailItem = item;
-          _contractNodeItem = item.instance;
           // todo： 测试
           //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
           _currentState = null;
-          _visible = true;
+
         });
       });
     } catch (e) {
@@ -156,7 +168,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     var contractStateDesc = "正在创建中，等待区块链网络验证";
     switch (state) {
       case ContractState.PENDING:
-        nodeStateDesc = "节点配置中";
+        nodeStateDesc = "节点待启动";
         contractStateDesc = "正在创建中，等待区块链网络验证";
         break;
 
@@ -205,6 +217,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           NodeJoinMemberWidget(
             "${widget.contractId}",
             _contractNodeItem.remainDay,
+            _contractNodeItem.shareUrl,
             isShowInviteItem: false,
           ),
           _Spacer(),
@@ -282,21 +295,25 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _delegatorListWidget() {
-    var amountDelegation = _amountToString(_contractNodeItem.amountDelegation);
+    var amountDelegation = FormatUtil.amountToString(_contractNodeItem.amountDelegation);
     return NodeDelegatorMemberWidget("${_contractNodeItem.id}", amountDelegation);
   }
 
   Widget _contractActionsWidget({String contractStateDesc = ""}) {
-    var amountDelegation = _amountToString(_contractDetailItem.amountDelegation);
-    var expectedYield = _amountToString(_contractDetailItem.expectedYield);
-    var commission = _amountToString(_contractDetailItem.commission);
+    if (!_isCreator || _contractDetailItem == null) {
+      return Container();
+    }
+
+    var amountDelegation = FormatUtil.amountToString(_contractDetailItem.amountDelegation);
+    var expectedYield = FormatUtil.amountToString(_contractDetailItem.expectedYield);
+    var commission = FormatUtil.amountToString(_contractDetailItem.commission);
 
     return Container(
       color: Colors.white,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(
+          /*Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
@@ -315,7 +332,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 ),
               ],
             ),
-          ),
+          ),*/
           Padding(
             padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
             child: Row(
@@ -366,7 +383,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     double horizontal = 0;
     double lineWidth = 40;
     double gap = 16;
-    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) * 0.125;
+    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) * 0.2;
 
     return Container(
       color: Colors.white,
@@ -404,7 +421,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
           Container(
             height: 110,
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
 //            color: Colors.red,
             child: Stack(
               children: <Widget>[
@@ -414,11 +431,12 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 _lightLine("7天", lineWidth, left: horizontal + sectionWidth + gap * 2.0),
                 _lightItem("启动成功", _contractNodeItem.instanceActiveTime, left: horizontal + sectionWidth + gap * 2.0 + lineWidth * 0.75),
                 _lightLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
-                _midItem("中期可提取50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
+                _midItem("可提50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 0.75),
                 _greyLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 1.75),
                 _greyItem("到期时间", left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 1.75),
                 _greyLine("", lineWidth, left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 2.75),
-                _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 6.0 + lineWidth * 3.75),
+                _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 9.0 + lineWidth * 2.75),
+
 
               ],
             ),
@@ -462,7 +480,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   Widget _greyItem(String name, {double left = 10}) {
     return Positioned(
       left: left,
-      top: 30,
+      top: 32,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -493,7 +511,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   Widget _midItem(String name, {double left = 10}) {
     return Positioned(
       left: left,
-      top: 30,
+      top: 32,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -543,12 +561,11 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
   Widget _greyLine(String name, double width, { double left = 10}) {
     return Positioned(
-      top: 10,
+      top: name.length == 0 ? 12:10,
       left: left,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-
           Text(
             name,
             style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
@@ -616,6 +633,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           Application.router.navigateTo(context, Routes.map3node_join_contract_page
               + "?contractId=${_contractNodeItem.id}");
         };
+        _visible = true;
         break;
 
       case UserDelegateState.ACTIVE:
@@ -623,6 +641,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           Fluttertoast.showToast(msg: "节点正在运行中。。。");
         };
+        _visible = false;
         break;
 
       case UserDelegateState.DUE:
@@ -630,6 +649,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           _collectAction();
         };
+        _visible = true;
         break;
 
       case UserDelegateState.DUE_COLLECTED:
@@ -637,13 +657,15 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           Fluttertoast.showToast(msg: "节点收益已经提取完成。");
         };
+        _visible = false;
         break;
 
       case UserDelegateState.HALFDUE:
-        actionTitle = "提取";
+        actionTitle = "提取50%收益";
         onPressed = (){
           _collectAction();
         };
+        _visible = true;
         break;
 
       case UserDelegateState.HALFDUE_COLLECTED:
@@ -651,6 +673,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           Fluttertoast.showToast(msg: "节点一半的收益已经提取完成。");
         };
+        _visible = false;
         break;
 
       case UserDelegateState.CANCELLED:
@@ -658,6 +681,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           _collectAction();
         };
+        _visible = true;
         break;
 
       case UserDelegateState.CANCELLED_COLLECTED:
@@ -665,6 +689,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           Fluttertoast.showToast(msg: "节点退款已经提取完成。");
         };
+        _visible = false;
         break;
 
       default:
@@ -680,7 +705,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         child: Container(
           child: RaisedButton(
             textColor: Colors.white,
-            color: DefaultColors.color0f95b0,
+            color: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
             child: Text(actionTitle),
@@ -718,8 +743,20 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         var createNodeWalletAddress = _contractNodeItem.owner;
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
+
         //TODO: 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
+
         var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+        if (_contractDetailItem.state == "HALFDUE") {
+          gasLimit = EthereumConst.COLLECT_HALF_MAP3_NODE_GAS_LIMIT;
+        } else {
+          if (_wallet.getEthAccount().address == _contractNodeItem.owner) {
+            gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+          } else {
+            gasLimit = EthereumConst.COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT;
+          }
+        }
+
 
         var collectHex = await _wallet.sendCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
@@ -759,6 +796,5 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     });
   }
 
-  String _amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
 
 }
