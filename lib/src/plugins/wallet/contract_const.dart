@@ -9,7 +9,6 @@ port: 37545,
 network_id: 5777
 */
 
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 class ContractTestConfig {

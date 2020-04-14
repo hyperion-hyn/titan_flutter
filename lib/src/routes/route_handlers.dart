@@ -54,7 +54,7 @@ var importWalletHandler = Handler(handlerFunc: (context, params) {
 
 void _cacheOrClearEntryWalletRouteName(params) {
   var url = params["entryRouteName"]?.first;
-  if (url != null) {
+  if (url != null && url != '') {
     url = Uri.decodeComponent(url);
     Routes.createOrImportWalletEntryRouteName = url;
   }

@@ -40,8 +40,10 @@ class EmptyWalletView extends StatelessWidget {
                 FlatButton(
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
-                  onPressed: (){
-                    Application.router.navigateTo(context, Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
+                  onPressed: () {
+                    var route = ModalRoute.of(context);
+                    Application.router.navigateTo(context,
+                        Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(route.settings?.name?.split('?')[0] ?? '')}');
                   },
                   child: Container(
                     child: Padding(
@@ -59,18 +61,20 @@ class EmptyWalletView extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: FlatButton(
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
+                        side: BorderSide(color: Theme.of(context).primaryColor),
+                        borderRadius: BorderRadius.circular(36)),
                     onPressed: () {
-                      Application.router.navigateTo(
-                          context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
+                      var route = ModalRoute.of(context);
+                      Application.router.navigateTo(context,
+                          Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(route.settings?.name?.split('?')[0] ?? '')}');
                     },
                     child: Container(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                         child: Text(
                           S.of(context).import_wallet,
-                          style:
-                              TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

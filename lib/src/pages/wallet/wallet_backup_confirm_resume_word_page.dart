@@ -140,9 +140,7 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                       //logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
                       if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
                         Fluttertoast.showToast(msg: S.of(context).backup_finish);
-
                         Routes.popUntilCreateOrImportWalletEntryRoute(context);
-//                        Navigator.of(context).popUntil(ModalRoute.withName(Routes.wallet_manager));
                       } else {
                         Fluttertoast.showToast(msg: S.of(context).confirm_mnemonic_incorrect);
                       }

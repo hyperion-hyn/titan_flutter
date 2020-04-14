@@ -38,15 +38,22 @@ class Map3NodeContractDetailPage extends StatefulWidget {
 }
 
 class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
-
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   NodeApi _api = NodeApi();
   ContractDetailItem _contractDetailItem;
   ContractNodeItem _contractNodeItem;
   Wallet _wallet;
+
   bool _visible = false;
   bool _isTransferring = false;
   bool _isCreator = false; // 判断当前钱包用户是否是为合约创建者
+  void Function() onPressed = () {};
+  var _actionTitle = "确定";
+
+  //var amountDelegation = "${FormatUtil.formatNum(int.parse(_contractDetailItem.amountDelegation))}";
+  var _amountDelegation = "0";
+  var _nodeStateDesc = "节点配置中";
+  var _contractStateDesc = "正在创建中，等待区块链网络验证";
 
   @override
   void initState() {
@@ -69,7 +76,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   void getNetworkData() async {
-
     // todo: test_jison_0411
 /*    Future.delayed(Duration(seconds: 1), () {
       setState(() {
@@ -98,7 +104,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         _contractDetailItem = ContractDetailItem(nodeItem, "", "", "0", "0", "0", 0, "ACTIVE");
         _contractNodeItem = nodeItem;
         // todo： 测试
-        //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
+        //_contractDetailItem.userDelegateState = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
         _currentState = null;
         _visible = true;
       });
@@ -108,11 +114,14 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
     try {
 
+      // 0.
       var instanceItem = await _api.getContractInstanceItem("${widget.contractId}");
 
       var address = _wallet.getEthAccount().address;
 
       _isCreator = address == instanceItem.owner;
+      // todo： 测试
+      //_isCreator = false;
 
       if (_isCreator) {
         var detailItem = await _api.getContractDetail("${widget.contractId}", address: address);
@@ -124,12 +133,135 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}');
       }
 
+      // 1.
+      var userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
+
+      switch (userDelegateState) {
+        case UserDelegateState.PENDING:
+          _actionTitle = "增加投入";
+          onPressed = () {
+            Application.router
+                .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.ACTIVE:
+          _actionTitle = "已抵押";
+          onPressed = () {
+            Fluttertoast.showToast(msg: "节点正在运行中。。。");
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.DUE:
+          _actionTitle = "提取";
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.DUE_COLLECTED:
+          _actionTitle = "完成";
+          onPressed = () {
+            Fluttertoast.showToast(msg: "节点收益已经提取完成。");
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.HALFDUE:
+          _actionTitle = "提取50%收益";
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.HALFDUE_COLLECTED:
+          _actionTitle = "完成";
+          onPressed = () {
+            Fluttertoast.showToast(msg: "节点一半的收益已经提取完成。");
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.CANCELLED:
+          _actionTitle = "提取";
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.CANCELLED_COLLECTED:
+          _actionTitle = "完成";
+          onPressed = () {
+            Fluttertoast.showToast(msg: "节点退款已经提取完成。");
+          };
+          _visible = false;
+          break;
+
+        default:
+          break;
+      }
+
+      var contractState = enumContractStateFromString(_contractNodeItem.state);
+      print('[contract] _pageView, stateString:${_contractNodeItem.state},state:$contractState');
+
+
+      if (!_isCreator && contractState == ContractState.PENDING) {
+        _actionTitle = "增加投入";
+        onPressed = () {
+          Application.router
+              .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+        };
+        _visible = true;
+      }
+
+      // 2.
+      switch (contractState) {
+        case ContractState.PENDING:
+          _nodeStateDesc = "节点待启动";
+          _contractStateDesc = "正在创建中，等待区块链网络验证";
+          break;
+
+        case ContractState.ACTIVE:
+          _nodeStateDesc = "节点进行中";
+          _contractStateDesc = "已广播投入$_amountDelegation HYN，等待区块链网络验证";
+          break;
+
+        case ContractState.DUE:
+          _nodeStateDesc = "节点已停止";
+
+          break;
+
+        case ContractState.CANCELLED:
+          _nodeStateDesc = "节点已停止";
+          _contractStateDesc = "启动失败，请申请退款";
+          break;
+
+        case ContractState.DUE_COMPLETED:
+          _nodeStateDesc = "节点已停止";
+          _contractStateDesc = "已取回投入资金";
+          break;
+
+        case ContractState.CANCELLED_COMPLETED:
+          _nodeStateDesc = "节点已停止";
+          _contractStateDesc = "已取回投入资金";
+          break;
+
+        default:
+          break;
+      }
+
+
+      // 3.
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
           // todo： 测试
-          //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
+          //_contractDetailItem.userDelegateState = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
           _currentState = null;
-
         });
       });
     } catch (e) {
@@ -161,72 +293,31 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       });
     }
 
-    var state = enumContractStateFromString(_contractNodeItem.state);
-    print('[contract] _pageView, stateString:${_contractNodeItem.state},state:$state');
-    var amountDelegation = "${FormatUtil.formatNum(int.parse(_contractDetailItem.amountDelegation))}";
-    var nodeStateDesc = "节点配置中";
-    var contractStateDesc = "正在创建中，等待区块链网络验证";
-    switch (state) {
-      case ContractState.PENDING:
-        nodeStateDesc = "节点待启动";
-        contractStateDesc = "正在创建中，等待区块链网络验证";
-        break;
-
-      case ContractState.ACTIVE:
-        nodeStateDesc = "节点进行中";
-        contractStateDesc = "已广播投入$amountDelegation HYN，等待区块链网络验证";
-        break;
-
-      case ContractState.DUE:
-        nodeStateDesc = "节点已停止";
-
-        break;
-
-      case ContractState.CANCELLED:
-        nodeStateDesc = "节点已停止";
-        contractStateDesc = "启动失败，请申请退款";
-        break;
-
-      case ContractState.DUE_COMPLETED:
-        nodeStateDesc = "节点已停止";
-        contractStateDesc = "已取回投入资金";
-        break;
-
-      case ContractState.CANCELLED_COMPLETED:
-        nodeStateDesc = "节点已停止";
-        contractStateDesc = "已取回投入资金";
-        break;
-
-      default:
-        break;
-    }
-
     return SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-        [
-          Container(
-              color: Colors.white,
-              child: getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)
-          ),
-          _nodeInfoWidget(nodeStateDesc),
-          _Spacer(),
-          _contractActionsWidget(contractStateDesc: contractStateDesc),
-          _lineSpacer(),
-          _contractProgressWidget(),
-          _Spacer(),
-          NodeJoinMemberWidget(
-            "${widget.contractId}",
-            _contractNodeItem.remainDay,
-            _contractNodeItem.shareUrl,
-            isShowInviteItem: false,
-          ),
-          _Spacer(),
-          _delegatorListWidget(),
-          _Spacer(),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+            color: Colors.white,
+            child: getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)),
+        _nodeInfoWidget(_nodeStateDesc),
+        _Spacer(),
+        _contractActionsWidget(contractStateDesc: _contractStateDesc),
+        _lineSpacer(),
+        _contractProgressWidget(),
+        _Spacer(),
+        NodeJoinMemberWidget(
+          "${widget.contractId}",
+          _contractNodeItem.remainDay,
+          _contractNodeItem.shareUrl,
+          isShowInviteItem: false,
+        ),
+        _Spacer(),
+        _delegatorListWidget(),
+        _Spacer(),
+        if (_visible)
           Container(
             height: 48,
           ),
-        ]),
+      ]),
     );
   }
 
@@ -417,7 +508,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
               ],
             ),
           ),
-          //_lightItem("创建时间", _contractNodeItem.instanceStartTime),
 
           Container(
             height: 110,
@@ -425,19 +515,16 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 //            color: Colors.red,
             child: Stack(
               children: <Widget>[
-
-
                 _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: horizontal),
                 _lightLine("7天", lineWidth, left: horizontal + sectionWidth + gap * 2.0),
-                _lightItem("启动成功", _contractNodeItem.instanceActiveTime, left: horizontal + sectionWidth + gap * 2.0 + lineWidth * 0.75),
+                _lightItem("启动成功", _contractNodeItem.instanceActiveTime,
+                    left: horizontal + sectionWidth + gap * 2.0 + lineWidth * 0.75),
                 _lightLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
                 _midItem("可提50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 0.75),
                 _greyLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 1.75),
                 _greyItem("到期时间", left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 1.75),
                 _greyLine("", lineWidth, left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 2.75),
                 _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 9.0 + lineWidth * 2.75),
-
-
               ],
             ),
           ),
@@ -461,17 +548,23 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 color: Colors.white,
                 border: Border.all(color: HexColor("#322300"), width: 2.0)),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
           Text(
             name,
             style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
           Text(
             "${FormatUtil.formatDate(date)}",
             style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
         ],
       ),
     );
@@ -492,17 +585,23 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 color: Colors.white,
                 border: Border.all(color: HexColor("#CCCCCC"), width: 2.0)),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
           Text(
             name,
             style: TextStyle(fontSize: 12, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
           Text(
             "",
             style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
         ],
       ),
     );
@@ -523,45 +622,55 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 color: Colors.white,
                 border: Border.all(color: HexColor("#CCCCCC"), width: 2.0)),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
           Text(
             name,
             style: TextStyle(fontSize: 10, color: HexColor("#999999"), fontWeight: FontWeight.normal),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
           Text(
             "",
             style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
           ),
-          Container(height: 8.0,),
+          Container(
+            height: 8.0,
+          ),
         ],
       ),
     );
   }
 
-
-  Widget _lightLine(String name, double width, { double left = 10}) {
+  Widget _lightLine(String name, double width, {double left = 10}) {
     return Positioned(
       top: 10,
       left: left,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-
           Text(
             name,
             style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
           ),
-          Container(height: 8.0,),
-          Container(height: 1.0, width: width, color: HexColor("#322300"),),
+          Container(
+            height: 8.0,
+          ),
+          Container(
+            height: 1.0,
+            width: width,
+            color: HexColor("#322300"),
+          ),
         ],
       ),
     );
   }
 
-  Widget _greyLine(String name, double width, { double left = 10}) {
+  Widget _greyLine(String name, double width, {double left = 10}) {
     return Positioned(
-      top: name.length == 0 ? 12:10,
+      top: name.length == 0 ? 12 : 10,
       left: left,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -570,15 +679,20 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             name,
             style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
           ),
-          Container(height: 8.0,),
-          Container(height: 1.0, width: width, color: HexColor("#ECECEC"),),
+          Container(
+            height: 8.0,
+          ),
+          Container(
+            height: 1.0,
+            width: width,
+            color: HexColor("#ECECEC"),
+          ),
         ],
       ),
     );
   }
 
   HexColor _getStatusColor(ContractState status) {
-
     var statusColor = HexColor('#EED097');
 
     switch (status) {
@@ -622,79 +736,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _bottomSureWidget() {
-    var state = enumUerDelegateStateFromString(_contractDetailItem?.state??"");
-    var actionTitle = _isTransferring ? "提取中...": "确定";
-    void Function() onPressed =  (){};
-
-    switch (state) {
-      case UserDelegateState.PENDING:
-        actionTitle = "增加投入";
-        onPressed = (){
-          Application.router.navigateTo(context, Routes.map3node_join_contract_page
-              + "?contractId=${_contractNodeItem.id}");
-        };
-        _visible = true;
-        break;
-
-      case UserDelegateState.ACTIVE:
-        actionTitle = "已抵押";
-        onPressed = (){
-          Fluttertoast.showToast(msg: "节点正在运行中。。。");
-        };
-        _visible = false;
-        break;
-
-      case UserDelegateState.DUE:
-        actionTitle = "提取";
-        onPressed = (){
-          _collectAction();
-        };
-        _visible = true;
-        break;
-
-      case UserDelegateState.DUE_COLLECTED:
-        actionTitle = "完成";
-        onPressed = (){
-          Fluttertoast.showToast(msg: "节点收益已经提取完成。");
-        };
-        _visible = false;
-        break;
-
-      case UserDelegateState.HALFDUE:
-        actionTitle = "提取50%收益";
-        onPressed = (){
-          _collectAction();
-        };
-        _visible = true;
-        break;
-
-      case UserDelegateState.HALFDUE_COLLECTED:
-        actionTitle = "完成";
-        onPressed = (){
-          Fluttertoast.showToast(msg: "节点一半的收益已经提取完成。");
-        };
-        _visible = false;
-        break;
-
-      case UserDelegateState.CANCELLED:
-        actionTitle = "提取";
-        onPressed = (){
-          _collectAction();
-        };
-        _visible = true;
-        break;
-
-      case UserDelegateState.CANCELLED_COLLECTED:
-        actionTitle = "完成";
-        onPressed = (){
-          Fluttertoast.showToast(msg: "节点退款已经提取完成。");
-        };
-        _visible = false;
-        break;
-
-      default:
-        break;
-    }
+    _actionTitle = _isTransferring ? "提取中..." : _actionTitle;
 
     return Visibility(
       visible: _visible,
@@ -708,7 +750,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             color: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
-            child: Text(actionTitle),
+            child: Text(_actionTitle),
             onPressed: onPressed,
           ),
         ),
@@ -717,7 +759,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Future _collectAction() async {
-
     if (_wallet == null || _contractDetailItem == null) {
       return;
     }
@@ -747,16 +788,15 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         //TODO: 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
 
         var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
-        if (_contractDetailItem.state == "HALFDUE") {
+        if (enumUserDelegateStateFromString(_contractDetailItem?.state) == UserDelegateState.HALFDUE) {
           gasLimit = EthereumConst.COLLECT_HALF_MAP3_NODE_GAS_LIMIT;
         } else {
-          if (_wallet.getEthAccount().address == _contractNodeItem.owner) {
+          if (_isCreator) {
             gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
           } else {
             gasLimit = EthereumConst.COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT;
           }
         }
-
 
         var collectHex = await _wallet.sendCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
@@ -795,6 +835,4 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       }
     });
   }
-
-
 }

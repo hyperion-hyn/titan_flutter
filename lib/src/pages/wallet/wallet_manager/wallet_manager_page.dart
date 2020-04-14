@@ -5,6 +5,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
@@ -114,21 +115,12 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 itemCount: walletList.length,
               );
             } else if (state is WalletEmptyState) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Image.asset('res/drawable/empty_data.png', width: 100.0),
-                    Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Text(
-                        S.of(context).search_empty_data,
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
-              );
+              return Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 32.0),
+                    child: EmptyWalletView(),
+                  ));
             } else {
               return Container();
             }
@@ -213,11 +205,11 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               InkWell(
                 onTap: () {
                   var walletStr = FluroConvertUtils.object2string(wallet.toJson());
+                  var route = ModalRoute.of(context);
                   Application.router.navigateTo(
                       context,
                       Routes.wallet_setting +
-                          '?walletStr=$walletStr&entryRouteName=${Uri.encodeComponent(Routes.wallet_manager)}');
-//                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
+                          '?entryRouteName=${Uri.encodeComponent(route.settings?.name?.split('?')[0] ?? '')}&walletStr=$walletStr');
                 },
                 child: Icon(
                   Icons.info_outline,

@@ -94,7 +94,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          S.of(context).data_contribute,
+          S
+              .of(context)
+              .data_contribute,
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -105,7 +107,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
   }
 
   Widget _buildView(BuildContext context) {
-    var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    var activeWalletVo = WalletInheritedModel
+        .of(context)
+        .activatedWallet;
     if (activeWalletVo == null) {
       return _makeWalletGuideView();
     } else {
@@ -158,14 +162,18 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                 'res/drawable/data_contribution_wallet_check.png',
                 width: 110,
                 height: 108,
-                color: Theme.of(context).primaryColor,
+                color: Theme
+                    .of(context)
+                    .primaryColor,
               ),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 34),
               width: 194,
               child: Text(
-                S.of(context).data_contribution_with_hyn_wallet_tips,
+                S
+                    .of(context)
+                    .data_contribution_with_hyn_wallet_tips,
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -182,7 +190,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 //                width: 152,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
+                      side: BorderSide(color: Theme
+                          .of(context)
+                          .primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
                     Application.router.navigateTo(context,
                         Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
@@ -194,9 +204,13 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
-                        S.of(context).create_wallet,
+                        S
+                            .of(context)
+                            .create_wallet,
                         style:
-                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                        TextStyle(fontSize: 14, color: Theme
+                            .of(context)
+                            .primaryColor, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -211,7 +225,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 //                width: 152,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
+                      side: BorderSide(color: Theme
+                          .of(context)
+                          .primaryColor), borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
                     Application.router.navigateTo(context,
                         Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
@@ -222,9 +238,13 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                       child: Text(
-                        S.of(context).import_wallet,
+                        S
+                            .of(context)
+                            .import_wallet,
                         style:
-                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                        TextStyle(fontSize: 14, color: Theme
+                            .of(context)
+                            .primaryColor, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -250,7 +270,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           height: 8,
           color: Colors.grey[200],
         ),
-        _buildTaskItem('signal', S.of(context).scan_signal_item_title, () async {
+        _buildTaskItem('signal', S
+            .of(context)
+            .scan_signal_item_title, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
 
@@ -269,22 +291,27 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
-        _buildTaskItem('position', S.of(context).add_poi_item_title, () async {
+        _buildTaskItem('position', S
+            .of(context)
+            .add_poi_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SelectPositionPage(
-                  initLocation: latlng,
-                  type: SelectPositionPage.SELECT_PAGE_TYPE_POI,
-                ),
+                builder: (context) =>
+                    SelectPositionPage(
+                      initLocation: latlng,
+                      type: SelectPositionPage.SELECT_PAGE_TYPE_POI,
+                    ),
               ),
             );
           }
         }, isOpen: true),
         _divider(),
-        _buildTaskItem('check', S.of(context).check_poi_item_title, () async {
+        _buildTaskItem('check', S
+            .of(context)
+            .check_poi_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -296,16 +323,19 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
-        _buildTaskItem('ncov', S.of(context).add_ncov_item_title, () async {
+        _buildTaskItem('ncov', S
+            .of(context)
+            .add_ncov_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SelectPositionPage(
-                  initLocation: latlng,
-                  type: SelectPositionPage.SELECT_PAGE_TYPE_NCOV,
-                ),
+                builder: (context) =>
+                    SelectPositionPage(
+                      initLocation: latlng,
+                      type: SelectPositionPage.SELECT_PAGE_TYPE_NCOV,
+                    ),
               ),
             );
           }
@@ -317,31 +347,28 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
   Future<LatLng> getLatlng() async {
     var latlng =
-        await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
+    await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
     if (latlng == null) {
       _showConfirmDialog(
-        title: S.of(context).get_poi_fail_please_again,
+        title: S
+            .of(context)
+            .get_poi_fail_please_again,
       );
     }
     return latlng;
   }
 
   Widget _activatedWalletWidget() {
-    var activeWalletVo = WalletInheritedModel.of(context).activatedWallet;
+    var activeWalletVo = WalletInheritedModel
+        .of(context)
+        .activatedWallet;
     if (activeWalletVo == null) {
       return Container();
     }
 
     return InkWell(
       onTap: () {
-        Application.router
-            .navigateTo(context, Routes.wallet_manager + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
-//        Navigator.push(
-//            context,
-//            MaterialPageRoute(
-//              builder: (context) => WalletManagerPage(),
-//              settings: RouteSettings(name: "/wallet_manager_page"),
-//            ));
+        Application.router.navigateTo(context, Routes.wallet_manager);
       },
       child: SizedBox(
         height: 64,
@@ -353,7 +380,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
               alignment: Alignment.center,
               width: 40,
               height: 40,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Theme
+                  .of(context)
+                  .primaryColor),
               child: Stack(
                 children: <Widget>[
                   Align(
@@ -381,7 +410,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortBlockChainAddress(activeWalletVo?.wallet?.getEthAccount()?.address) ?? "",
+                    shortBlockChainAddress(activeWalletVo?.wallet
+                        ?.getEthAccount()
+                        ?.address) ?? "",
                     style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )
@@ -391,7 +422,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                S.of(context).switch_contribute_address,
+                S
+                    .of(context)
+                    .switch_contribute_address,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: HexColor('#333333'),
@@ -443,7 +476,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Text(
-          S.of(context).coming_soon,
+          S
+              .of(context)
+              .coming_soon,
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#AAAAAA')),
         ),
       );
@@ -499,7 +534,11 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
       if (!blueAvaiable) {
-        _showDialog(S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
+        _showDialog(S
+            .of(context)
+            .open_bluetooth, S
+            .of(context)
+            .please_open_bluetooth, () {
           AppSettings.openBluetoothSettings();
         });
         return false;
@@ -514,7 +553,11 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (Platform.isAndroid) {
       bool wifiAvailable = await TitanPlugin.wifiEnable();
       if (!wifiAvailable) {
-        _showDialog(S.of(context).open_wifi, S.of(context).please_open_wifi, () {
+        _showDialog(S
+            .of(context)
+            .open_wifi, S
+            .of(context)
+            .please_open_wifi, () {
           AppSettings.openWIFISettings();
         });
         return false;
@@ -530,7 +573,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           onPressed: () {
             Navigator.pop(context);
           },
-          child: Text(S.of(context).confirm))
+          child: Text(S
+              .of(context)
+              .confirm))
     ]);
   }
 
@@ -540,13 +585,13 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-                title: title,
-                actions: actions,
-              )
+          title: title,
+          actions: actions,
+        )
             : AlertDialog(
-                title: title,
-                actions: actions,
-              );
+          title: title,
+          actions: actions,
+        );
       },
     );
   }
@@ -557,21 +602,25 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              )
+          title: title,
+          content: content,
+          actions: actions,
+        )
             : AlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              );
+          title: title,
+          content: content,
+          actions: actions,
+        );
       },
     );
   }
 
   void _showServiceDialog() {
-    _showDialog(S.of(context).open_location_service, S.of(context).open_location_service_message, () {
+    _showDialog(S
+        .of(context)
+        .open_location_service, S
+        .of(context)
+        .open_location_service_message, () {
       UiUtil.openSettingLocation();
     });
   }
@@ -582,11 +631,15 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       content: Text(content),
       actions: <Widget>[
         FlatButton(
-          child: Text(S.of(context).cancel),
+          child: Text(S
+              .of(context)
+              .cancel),
           onPressed: () => Navigator.pop(context),
         ),
         FlatButton(
-          child: Text(S.of(context).setting),
+          child: Text(S
+              .of(context)
+              .setting),
           onPressed: () {
             func();
             Navigator.pop(context);

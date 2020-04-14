@@ -391,7 +391,7 @@ enum ContractState { PENDING, ACTIVE, DUE, DUE_COMPLETED, CANCELLED, CANCELLED_C
 
 
 // UserDelegateState
-UserDelegateState enumUerDelegateStateFromString(String fruit) {
+UserDelegateState enumUserDelegateStateFromString(String fruit) {
   fruit = 'UserDelegateState.$fruit';
   return UserDelegateState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
