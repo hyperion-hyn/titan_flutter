@@ -26,4 +26,31 @@ part 'contract_delegator_item.g.dart';
 
 }
 
-  
+@JsonSerializable()
+class ContractDelegateRecordItem extends Object {
+
+  @JsonKey(name: 'userAddress')
+  String userAddress;
+
+  @JsonKey(name: 'userName')
+  String userName;
+
+  @JsonKey(name: 'amount')
+  String amount;
+
+  @JsonKey(name: 'txHash')
+  String txHash;
+
+  @JsonKey(name: 'operaType')
+  String operaType;
+
+  @JsonKey(name: 'createAt')
+  int createAt;
+
+  ContractDelegateRecordItem(this.userAddress, this.userName,this.amount, this.txHash, this.operaType,this.createAt,);
+
+  factory ContractDelegateRecordItem.fromJson(Map<String, dynamic> srcJson) => _$ContractDelegateRecordItemFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$ContractDelegateRecordItemToJson(this);
+
+}

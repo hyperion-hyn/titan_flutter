@@ -76,6 +76,15 @@ class NodeApi {
         options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
   }
 
+  Future<List<ContractDelegateRecordItem>> getContractDelegateRecord(int contractNodeItemId, {int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
+    return await NodeHttpCore.instance.getEntity(
+        "delegations/instance/$contractNodeItemId/delegate_record",
+        EntityFactory<List<ContractDelegateRecordItem>>(
+                (list) => (list as List).map((item) => ContractDelegateRecordItem.fromJson(item)).toList()),
+        params: {"page": page},
+        options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
+  }
+
   Future<List<NodeItem>> getContractList(int page) async {
     var contractsList =
         await NodeHttpCore.instance.getEntity("contracts/list?page=$page", EntityFactory<List<NodeItem>>((data) {

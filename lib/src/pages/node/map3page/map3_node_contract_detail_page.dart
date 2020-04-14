@@ -46,6 +46,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   Wallet _wallet;
   bool _visible = false;
   bool _isTransferring = false;
+  bool _isCreator = false; // 判断当前钱包用户是否是为合约创建者
 
   @override
   void initState() {
@@ -106,18 +107,29 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     return;*/
 
     try {
+
+      var instanceItem = await _api.getContractInstanceItem("${widget.contractId}");
+
       var address = _wallet.getEthAccount().address;
-      var item = await _api.getContractDetail("${widget.contractId}", address: address);
+
+      _isCreator = address == instanceItem.owner;
+
+      if (_isCreator) {
+        var detailItem = await _api.getContractDetail("${widget.contractId}", address: address);
+        _contractDetailItem = detailItem;
+        _contractNodeItem = detailItem.instance;
+        print('[map3] getContractDetail , id:${_contractNodeItem.id}');
+      } else {
+        _contractNodeItem = instanceItem;
+        print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}');
+      }
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
-          print('[map3] _loadLastData , id:${item.instance.id}');
-          _contractDetailItem = item;
-          _contractNodeItem = item.instance;
           // todo： 测试
           //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
           _currentState = null;
-          _visible = true;
+
         });
       });
     } catch (e) {
@@ -198,7 +210,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           ),
           _nodeInfoWidget(nodeStateDesc),
           _Spacer(),
-//          _contractActionsWidget(contractStateDesc: contractStateDesc),
+          _contractActionsWidget(contractStateDesc: contractStateDesc),
           _lineSpacer(),
           _contractProgressWidget(),
           _Spacer(),
@@ -283,21 +295,25 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _delegatorListWidget() {
-    var amountDelegation = _amountToString(_contractNodeItem.amountDelegation);
+    var amountDelegation = FormatUtil.amountToString(_contractNodeItem.amountDelegation);
     return NodeDelegatorMemberWidget("${_contractNodeItem.id}", amountDelegation);
   }
 
   Widget _contractActionsWidget({String contractStateDesc = ""}) {
-    var amountDelegation = _amountToString(_contractDetailItem.amountDelegation);
-    var expectedYield = _amountToString(_contractDetailItem.expectedYield);
-    var commission = _amountToString(_contractDetailItem.commission);
+    if (!_isCreator || _contractDetailItem == null) {
+      return Container();
+    }
+
+    var amountDelegation = FormatUtil.amountToString(_contractDetailItem.amountDelegation);
+    var expectedYield = FormatUtil.amountToString(_contractDetailItem.expectedYield);
+    var commission = FormatUtil.amountToString(_contractDetailItem.commission);
 
     return Container(
       color: Colors.white,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(
+          /*Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
@@ -316,7 +332,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 ),
               ],
             ),
-          ),
+          ),*/
           Padding(
             padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
             child: Row(
@@ -617,6 +633,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           Application.router.navigateTo(context, Routes.map3node_join_contract_page
               + "?contractId=${_contractNodeItem.id}");
         };
+        _visible = true;
         break;
 
       case UserDelegateState.ACTIVE:
@@ -624,6 +641,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           Fluttertoast.showToast(msg: "节点正在运行中。。。");
         };
+        _visible = false;
         break;
 
       case UserDelegateState.DUE:
@@ -631,6 +649,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           _collectAction();
         };
+        _visible = true;
         break;
 
       case UserDelegateState.DUE_COLLECTED:
@@ -638,6 +657,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           Fluttertoast.showToast(msg: "节点收益已经提取完成。");
         };
+        _visible = false;
         break;
 
       case UserDelegateState.HALFDUE:
@@ -645,6 +665,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           _collectAction();
         };
+        _visible = true;
         break;
 
       case UserDelegateState.HALFDUE_COLLECTED:
@@ -652,6 +673,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           Fluttertoast.showToast(msg: "节点一半的收益已经提取完成。");
         };
+        _visible = false;
         break;
 
       case UserDelegateState.CANCELLED:
@@ -659,6 +681,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           _collectAction();
         };
+        _visible = true;
         break;
 
       case UserDelegateState.CANCELLED_COLLECTED:
@@ -666,6 +689,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         onPressed = (){
           Fluttertoast.showToast(msg: "节点退款已经提取完成。");
         };
+        _visible = false;
         break;
 
       default:
@@ -719,7 +743,9 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         var createNodeWalletAddress = _contractNodeItem.owner;
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
+
         //TODO: 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
+
         var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
         if (_contractDetailItem.state == "HALFDUE") {
           gasLimit = EthereumConst.COLLECT_HALF_MAP3_NODE_GAS_LIMIT;
@@ -770,6 +796,5 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     });
   }
 
-  String _amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
 
 }
