@@ -15,6 +15,7 @@ class EtherscanApi {
         return Config.ETHERSCAN_API_URL_ROPSTEN;
       case EthereumNetType.rinkeby:
         return Config.ETHERSCAN_API_URL_RINKEBY;
+
 //      case EthereumNetType.local:
 //        return Config.ETHERSCAN_API_URL;
       default:

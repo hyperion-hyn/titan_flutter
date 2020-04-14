@@ -130,7 +130,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 
   Widget _map3HeadItem() {
-    if (_nodePageEntityVo.nodeHeadEntity == null) {
+    if (_nodePageEntityVo.nodeHeadEntity == null || _nodePageEntityVo == null) {
       return Container();
     }
     return Container(
@@ -158,7 +158,7 @@ class _Map3NodeState extends State<Map3NodePage> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                _nodePageEntityVo.nodeHeadEntity.message,
+                _nodePageEntityVo.nodeHeadEntity.message??"",
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
@@ -262,6 +262,8 @@ class _Map3NodeState extends State<Map3NodePage> {
 
   Widget _getMap3NodeWaitItem(
       BuildContext context, ContractNodeItem contractNodeItem) {
+    if (contractNodeItem == null) return Container();
+
     String startAccount = "${contractNodeItem.owner}";
     startAccount = startAccount.substring(
         0, startAccount.length > 25 ? 25 : startAccount.length);

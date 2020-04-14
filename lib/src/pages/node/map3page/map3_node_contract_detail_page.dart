@@ -38,12 +38,14 @@ class Map3NodeContractDetailPage extends StatefulWidget {
 }
 
 class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
-  all_page_state.AllPageState currentState = all_page_state.LoadingState();
-  NodeApi api = NodeApi();
+
+  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+  NodeApi _api = NodeApi();
   ContractDetailItem _contractDetailItem;
   ContractNodeItem _contractNodeItem;
   Wallet _wallet;
   bool _visible = false;
+  bool _isTransferring = false;
 
   @override
   void initState() {
@@ -66,9 +68,46 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   void getNetworkData() async {
+
+    // todo: test_jison_0411
+/*    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+
+        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
+        var nodeItem = ContractNodeItem(
+            1,
+            item,
+            "0xaaaaa",
+            "bbbbbbb",
+            "0",
+            "0",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "ACTIVE"
+        );
+
+        _contractDetailItem = ContractDetailItem(nodeItem, "", "", "0", "0", "0", 0, "ACTIVE");
+        _contractNodeItem = nodeItem;
+        // todo： 测试
+        //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
+        _currentState = null;
+        _visible = true;
+      });
+    });
+
+    return;*/
+
     try {
       var address = _wallet.getEthAccount().address;
-      var item = await api.getContractDetail("${widget.contractId}", address: address);
+      var item = await _api.getContractDetail("${widget.contractId}", address: address);
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
@@ -77,13 +116,13 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           _contractNodeItem = item.instance;
           // todo： 测试
           //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
-          currentState = null;
+          _currentState = null;
           _visible = true;
         });
       });
     } catch (e) {
       setState(() {
-        currentState = all_page_state.LoadFailState();
+        _currentState = all_page_state.LoadFailState();
       });
     }
   }
@@ -102,10 +141,10 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || _contractNodeItem.contract == null) {
-      return AllPageStateContainer(currentState, () {
+    if (_currentState != null || _contractNodeItem.contract == null) {
+      return AllPageStateContainer(_currentState, () {
         setState(() {
-          currentState = all_page_state.LoadingState();
+          _currentState = all_page_state.LoadingState();
         });
       });
     }
@@ -324,12 +363,16 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _contractProgressWidget() {
-    double horizontal = 25;
-    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0) * 0.2;
+    double horizontal = 0;
+    double lineWidth = 40;
+    double gap = 16;
+    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) * 0.125;
+
     return Container(
       color: Colors.white,
+      //height: 180,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -350,102 +393,168 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 Text.rich(TextSpan(children: [
                   TextSpan(text: "等待启动，剩余", style: TextStyle(fontSize: 12, color: Colors.grey)),
                   TextSpan(
-                    text: "2天",
+                    text: "${_contractNodeItem.remainDay}天",
                     style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
                   ),
                 ])),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 48),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+          //_lightItem("创建时间", _contractNodeItem.instanceStartTime),
+
+          Container(
+            height: 110,
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+//            color: Colors.red,
+            child: Stack(
               children: <Widget>[
-                Text("7天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Container(
-                  width: sectionWidth,
-                ),
-                Text("90天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Container(
-                  width: sectionWidth * 0.5,
-                ),
-                Text("90天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+
+
+                _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: horizontal),
+                _lightLine("7天", lineWidth, left: horizontal + sectionWidth + gap * 2.0),
+                _lightItem("启动成功", _contractNodeItem.instanceActiveTime, left: horizontal + sectionWidth + gap * 2.0 + lineWidth * 0.75),
+                _lightLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
+                _midItem("中期可提取50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
+                _greyLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 1.75),
+                _greyItem("到期时间", left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 1.75),
+                _greyLine("", lineWidth, left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 2.75),
+                _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 6.0 + lineWidth * 3.75),
+
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontal),
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.blue, width: 1.0)),
-              ),
-              Container(
-                height: 2.5,
-                width: sectionWidth,
-                color: Colors.green,
-              ),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
-              ),
-              Container(
-                height: 2.5,
-                width: sectionWidth,
-                color: Colors.green,
-              ),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
-              ),
-              Container(
-                height: 2.5,
-                width: sectionWidth,
-                color: Colors.green,
-              ),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
-              ),
-              Container(
-                height: 2.5,
-                width: sectionWidth,
-                color: Colors.green,
-              ),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
-              ),
-            ]),
+        ],
+      ),
+    );
+  }
+
+  Widget _lightItem(String name, int date, {double left = 10}) {
+    return Positioned(
+      left: left,
+      top: 30,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 11,
+            height: 11,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: HexColor("#322300"), width: 2.0)),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text("待启动", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Text("启动", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Padding(
-                  padding: const EdgeInsets.only(top: 0),
-                  child: Text("中期可取50%奖励",
-                      style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.normal)),
-                ),
-                Text("到期", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Text("已提取", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-              ],
-            ),
+          Container(height: 8.0,),
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
           ),
+          Container(height: 8.0,),
+          Text(
+            "${FormatUtil.formatDate(date)}",
+            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+        ],
+      ),
+    );
+  }
+
+  Widget _greyItem(String name, {double left = 10}) {
+    return Positioned(
+      left: left,
+      top: 30,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: HexColor("#CCCCCC"), width: 2.0)),
+          ),
+          Container(height: 8.0,),
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Text(
+            "",
+            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+        ],
+      ),
+    );
+  }
+
+  Widget _midItem(String name, {double left = 10}) {
+    return Positioned(
+      left: left,
+      top: 30,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: HexColor("#CCCCCC"), width: 2.0)),
+          ),
+          Container(height: 8.0,),
+          Text(
+            name,
+            style: TextStyle(fontSize: 10, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Text(
+            "",
+            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _lightLine(String name, double width, { double left = 10}) {
+    return Positioned(
+      top: 10,
+      left: left,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Container(height: 1.0, width: width, color: HexColor("#322300"),),
+        ],
+      ),
+    );
+  }
+
+  Widget _greyLine(String name, double width, { double left = 10}) {
+    return Positioned(
+      top: 10,
+      left: left,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Container(height: 1.0, width: width, color: HexColor("#ECECEC"),),
         ],
       ),
     );
@@ -497,7 +606,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
   Widget _bottomSureWidget() {
     var state = enumUerDelegateStateFromString(_contractDetailItem?.state??"");
-    var actionTitle = isTransferring ? "提取中...": "确定";
+    var actionTitle = _isTransferring ? "提取中...": "确定";
     void Function() onPressed =  (){};
 
     switch (state) {
@@ -582,10 +691,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     );
   }
 
-  bool isTransferring = false;
-
-
-
   Future _collectAction() async {
 
     if (_wallet == null || _contractDetailItem == null) {
@@ -605,7 +710,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       try {
         setState(() {
           if (mounted) {
-            isTransferring = true;
+            _isTransferring = true;
           }
         });
 
@@ -615,18 +720,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
         //TODO: 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
         var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
-
-        /*var signedHex = await _wallet.signCollectMap3Node(
-          createNodeWalletAddress: createNodeWalletAddress,
-          gasPrice: gasPrice,
-          gasLimit: gasLimit,
-          password: walletPassword,
-        );
-        var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
-
-        logger.i('map3 collect, result: $ret');
-
-       */
 
         var collectHex = await _wallet.sendCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
@@ -644,7 +737,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         logger.e(_);
         setState(() {
           if (mounted) {
-            isTransferring = false;
+            _isTransferring = false;
           }
         });
         if (_ is PlatformException) {
@@ -667,4 +760,5 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   String _amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
+
 }

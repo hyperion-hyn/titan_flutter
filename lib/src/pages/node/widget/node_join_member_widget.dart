@@ -102,8 +102,12 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     child: Text("参与成员",
                         style: TextStyle(
                             fontSize: 16, color: HexColor("#333333")))),
-                Text(
+                /*Text(
                   "剩余时间：${widget.remainDay}天",
+                  style: TextStyles.textC999S14,
+                ),*/
+                Text(
+                  "共：${memberList.length}（人）",
                   style: TextStyles.textC999S14,
                 ),
                 SizedBox(
