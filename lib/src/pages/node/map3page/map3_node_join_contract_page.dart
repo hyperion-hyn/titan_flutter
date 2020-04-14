@@ -4,6 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
@@ -38,6 +39,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
+  bool isMyself = false;
 
   @override
   void initState() {
@@ -66,8 +68,14 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 
   void getNetworkData() async {
     try {
-      contractNodeItem =
-          await _nodeApi.getContractInstanceItem(widget.contractId);
+      contractNodeItem = await _nodeApi.getContractInstanceItem(widget.contractId);
+
+      String myAddress = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getEthAccount().address;
+      if(contractNodeItem.owner == myAddress){
+        isMyself = true;
+      }else{
+        isMyself = false;
+      }
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
@@ -222,7 +230,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                       getCurrentSpend(textStr);
                     }, joinEnougnFunction: () {
                       getCurrentSpend(contractNodeItem.remainDelegation);
-                    }),
+                    },isMyself: isMyself),
             Container(
               height: 10,
               color: DefaultColors.colorf5f5f5,

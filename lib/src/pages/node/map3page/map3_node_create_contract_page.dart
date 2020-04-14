@@ -384,7 +384,7 @@ Widget getHoldInNum(
     bool isJoin,
     Function onChangeFuntion,
     Function onPressFunction,
-    {Function joinEnougnFunction}) {
+    {Function joinEnougnFunction,bool isMyself = false}) {
   // todo: test_jison_0411
   //List<int> suggestList = [];
   List<int> suggestList = contractNodeItem.contract.suggestQuantity
@@ -393,16 +393,14 @@ Widget getHoldInNum(
       .toList();
 
   double minTotal = 0;
-  if (isJoin &&
-      double.parse(contractNodeItem.contract.minTotalDelegation) >=
-          double.parse(contractNodeItem.remainDelegation)) {
+  if (isJoin) {
     double tempMinTotal =
         double.parse(contractNodeItem.contract.minTotalDelegation) *
             contractNodeItem.contract.minDelegationRate;
     if (tempMinTotal >= double.parse(contractNodeItem.remainDelegation)) {
-      minTotal = tempMinTotal;
-    } else {
       minTotal = double.parse(contractNodeItem.remainDelegation);
+    } else {
+      minTotal = tempMinTotal;
     }
   } else {
     minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) *
@@ -591,7 +589,8 @@ Widget getHoldInNum(
                                 ]),
                           ),
                         ),
-                        RichText(
+                        if(!isMyself)
+                          RichText(
                           text: TextSpan(
                               text: isJoin ? "应付管理费(HYN)：" : "获得管理费(HYN)：",
                               style: TextStyles.textC9b9b9bS12,
