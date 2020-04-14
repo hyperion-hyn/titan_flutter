@@ -81,10 +81,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     }
                   },
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                   keyboardType: TextInputType.text),
             ),
@@ -105,8 +103,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             Divider(),
             InkWell(
               onTap: () {
-                var walletStr =
-                    FluroConvertUtils.object2string(widget.wallet.toJson());
+                var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
                 Application.router.navigateTo(
                     context,
                     Routes.wallet_setting_wallet_backup_notice +
@@ -174,8 +171,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
               margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
               constraints: BoxConstraints.expand(height: 48),
               child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 disabledColor: Colors.grey[600],
                 color: Color(0xFF9B9B9B),
                 textColor: Colors.white,
@@ -194,49 +190,36 @@ class _WalletSettingState extends State<WalletSettingPage> {
 
                     try {
                       var result = await widget.wallet.delete(walletPassword);
-                      print(
-                          "del result ${widget.wallet.keystore.fileName} $result");
+                      print("del result ${widget.wallet.keystore.fileName} $result");
                       if (result) {
-                        List<Wallet> walletList =
-                            await WalletUtil.scanWallets();
-                        var activatedWalletVo = WalletInheritedModel.of(context,
-                            aspect: WalletAspect.activatedWallet);
+                        List<Wallet> walletList = await WalletUtil.scanWallets();
+                        var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
 
-                        if (activatedWalletVo
-                                    .activatedWallet.wallet.keystore.fileName ==
+                        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName ==
                                 widget.wallet.keystore.fileName &&
                             walletList.length > 0) {
                           //delete current wallet
-                          BlocProvider.of<WalletCmpBloc>(context)
-                              .add(ActiveWalletEvent(wallet: walletList[0]));
-                          Routes.popUntilCreateOrImportWalletEntryRoute(
-                              context);
+                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
+                          Routes.popUntilCreateOrImportWalletEntryRoute(context);
                         } else if (walletList.length > 0) {
                           //delete other wallet
 //                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: activatedWalletVo.activatedWallet.wallet));
-                          Routes.popUntilCreateOrImportWalletEntryRoute(
-                              context);
+                          Routes.popUntilCreateOrImportWalletEntryRoute(context);
                         } else {
                           //no wallet
-                          BlocProvider.of<WalletCmpBloc>(context)
-                              .add(ActiveWalletEvent(wallet: null));
-                          Routes.popUntilCreateOrImportWalletEntryRoute(
-                              context);
+                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+                          Routes.popUntilCreateOrImportWalletEntryRoute(context);
                         }
-                        Fluttertoast.showToast(
-                            msg: S.of(context).delete_wallet_success);
+                        Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
                       } else {
-                        Fluttertoast.showToast(
-                            msg: S.of(context).delete_wallet_fail);
+                        Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
                       }
                     } catch (_) {
                       logger.e(_);
                       if (_.code == WalletError.PASSWORD_WRONG) {
-                        Fluttertoast.showToast(
-                            msg: S.of(context).wallet_password_error);
+                        Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
                       } else {
-                        Fluttertoast.showToast(
-                            msg: S.of(context).delete_wallet_fail);
+                        Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
                       }
                     }
                   });
@@ -248,8 +231,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     children: <Widget>[
                       Text(
                         S.of(context).delete,
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal, fontSize: 16),
+                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                       ),
                     ],
                   ),

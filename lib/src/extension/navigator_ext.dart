@@ -3,6 +3,10 @@ import 'package:flutter/widgets.dart';
 extension NavigatorExt on NavigatorState {
   void popUntilRouteName<T extends Object>(String routeName, [T result, bool exactMatchRouteName = false]) {
     this.popUntil((r) {
+      if (r.isFirst) {
+        return true;
+      }
+
       if (routeName == r.settings?.name) {
         if (r.settings.arguments is Map) {
           (r.settings.arguments as Map)['result'] = result;

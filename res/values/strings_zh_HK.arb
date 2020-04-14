@@ -1,5 +1,5 @@
 {
-  "app_name": "泰坦",
+  "app_name": "星際掘金",
   "network_request_err": "網絡請求錯誤,狀態碼: $code",
   "route": "路線",
   "no_recommended_route": "暫無推薦路線",
@@ -292,7 +292,7 @@
   "scan_confirm_upload" : "上傳信號數據",
   "scan_collect_signal_func": "已收集到${num}個信號",
   "selected_area": "選擇地區",
-  "what_region_use_titan": "妳在什麽地區使用titan?",
+  "what_region_use_titan": "妳在什麽地區使用${app}?",
   "select_region_tip": "請選擇地區",
   "data_save": "存儲",
   "input_valid_address": "請輸入合法的接收者地址",

@@ -1,24 +1,31 @@
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/mine/my_map3_contract_page.dart';
+import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:web3dart/json_rpc.dart';
 
 class NodeContractDetailPage extends StatefulWidget {
 
@@ -84,7 +91,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
       List<ContractDelegatorItem> list = [];
       var address = _wallet.getEthAccount().address;
       list = await api.getContractDelegator(widget.contractNodeItem.id, page: _currentPage, address: address);
-      var item = await api.getContractDetail(widget.contractNodeItem.id, address: address);
+      var item = await api.getContractDetail("${widget.contractNodeItem.id}", address: address);
 
       if (list.length == 0 || item == null) {
         loadDataBloc.add(LoadEmptyEvent());
@@ -706,10 +713,6 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
         statusColor = HexColor('#867B7B');
         break;
 
-      case ContractState.WITHDRAWN:
-        statusColor = HexColor('#867B7B');
-        break;
-
       case ContractState.CANCELLED:
         statusColor = HexColor('#F22504');
         break;
@@ -718,6 +721,88 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
         break;
     }
     return statusColor;
+  }
+
+  bool isTransferring = false;
+
+  Future _collectAction(ContractNodeItem contractNodeItem) async {
+
+    var btnTitle = isTransferring?S.of(context).please_waiting:"查看合约";
+
+    if (_wallet == null) {
+      return;
+    }
+
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        }).then((walletPassword) async {
+
+      if (walletPassword == null) {
+        return;
+      }
+
+      try {
+        setState(() {
+          if (mounted) {
+            isTransferring = true;
+          }
+        });
+
+        ///创建节点合约的钱包地址
+        var createNodeWalletAddress = contractNodeItem.owner;
+        var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+        var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
+        //TODO 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
+        var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+
+        /*var signedHex = await _wallet.signCollectMap3Node(
+          createNodeWalletAddress: createNodeWalletAddress,
+          gasPrice: gasPrice,
+          gasLimit: gasLimit,
+          password: walletPassword,
+        );
+        var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
+
+        logger.i('map3 collect, result: $ret');
+
+       */
+
+        var collectHex = await _wallet.sendCollectMap3Node(
+          createNodeWalletAddress: createNodeWalletAddress,
+          gasPrice: gasPrice,
+          gasLimit: gasLimit,
+          password: walletPassword,
+        );
+        logger.i('map3 collect, collectHex: $collectHex');
+
+        Application.router.navigateTo(context,Routes.map3node_broadcase_success_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+      } catch (_) {
+        logger.e(_);
+        setState(() {
+          if (mounted) {
+            isTransferring = false;
+          }
+        });
+        if (_ is PlatformException) {
+          if (_.code == WalletError.PASSWORD_WRONG) {
+            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else if (_ is RPCError) {
+          if (_.errorCode == -32000) {
+            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
+      }
+    });
   }
 
 }

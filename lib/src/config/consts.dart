@@ -1,18 +1,22 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 import '../../env.dart';
 
 class Const {
+
   static String get DOMAIN {
-    return 'https://api.hyn.space/';
-//    if(env.buildType == BuildType.DEV){
-////      return 'http://116.23.19.213:35000/';
-//      return 'http://10.10.1.115:5000/';
-//    }else{
-//      return 'https://api.hyn.space/';
-//    }
+      return 'https://api.hyn.space/';
+  }
+
+  static String get NODE_DOMAIN {
+    if(env.buildType == BuildType.DEV){
+      return ContractTestConfig.apiLocalDomain;
+    }else{
+      return 'https://api.hyn.space/';
+    }
   }
 
   static const String MAP_STORE_DOMAIN = "https://store.map3.network/";
@@ -58,6 +62,7 @@ class Keys {
   static final materialAppKey = GlobalKey(debugLabel: '__app__');
   static final rootKey = GlobalKey(debugLabel: '__root_page__');
   static final homePageKey = GlobalKey(debugLabel: '__home_page__');
+  static final scaffoldMap = GlobalKey(debugLabel: '__scaffold_map__');
   static final mapContainerKey = GlobalKey(debugLabel: '__map__');
   static final mapParentKey = GlobalKey(debugLabel: '__map_parent__');
   static final mapHeatKey = GlobalKey(debugLabel: '__map_heat__');

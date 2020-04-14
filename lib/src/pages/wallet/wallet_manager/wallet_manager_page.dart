@@ -116,8 +116,20 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 itemCount: walletList.length,
               );
             } else if (state is WalletEmptyState) {
-              return Container(
-                child: Center(child: Text('Empty wallet TODO!')),
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Image.asset('res/drawable/empty_data.png', width: 100.0),
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        S.of(context).search_empty_data,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  ],
+                ),
               );
             } else {
               return Container();
@@ -127,7 +139,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   }
 
   Widget _buildWallet(Wallet wallet) {
-    bool isSelected = wallet.keystore.fileName == WalletInheritedModel.of(context).activatedWallet?.wallet?.keystore?.fileName;
+    bool isSelected =
+        wallet.keystore.fileName == WalletInheritedModel.of(context).activatedWallet?.wallet?.keystore?.fileName;
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
     return Padding(
@@ -203,7 +216,9 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 onTap: () {
                   var walletStr = FluroConvertUtils.object2string(wallet.toJson());
                   Application.router.navigateTo(
-                      context, Routes.wallet_setting + '?walletStr=$walletStr');
+                      context,
+                      Routes.wallet_setting +
+                          '?walletStr=$walletStr&entryRouteName=${Uri.encodeComponent(Routes.wallet_manager)}');
 //                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
                 },
                 child: Icon(

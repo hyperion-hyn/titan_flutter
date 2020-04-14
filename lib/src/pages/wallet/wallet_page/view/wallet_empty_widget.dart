@@ -3,8 +3,6 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/routes/routes.dart';
 
-import '../../wallet_show_resume_word_page.dart';
-
 class EmptyWalletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

@@ -17,6 +17,8 @@ import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:bip39/bip39.dart' as bip39;
 
+import 'contract_const.dart';
+
 class WalletUtil {
   static Future<String> makeMnemonic() {
 //    return WalletChannel.makeMnemonic();
@@ -194,6 +196,7 @@ class WalletUtil {
 
   static web3.Web3Client _web3clientMain;
   static web3.Web3Client _web3clientRopsten;
+  static web3.Web3Client _web3clientRinkeby;
   static web3.Web3Client _web3clientLocal;
 
   static web3.DeployedContract getHynErc20Contract(String contractAddress) {
@@ -222,9 +225,15 @@ class WalletUtil {
           _web3clientRopsten = WalletUtil._newWeb3Client(WalletConfig.INFURA_ROPSTEN_API);
         }
         return _web3clientRopsten;
+      case EthereumNetType.rinkeby:
+        if (_web3clientRinkeby == null) {
+          _web3clientRinkeby = WalletUtil._newWeb3Client(WalletConfig.INFURA_RINKEBY_API);
+        }
+        return _web3clientRinkeby;
       case EthereumNetType.local:
         if (_web3clientLocal == null) {
-          _web3clientLocal = WalletUtil._newWeb3Client(WalletConfig.LOCAL_API);
+          _web3clientLocal = WalletUtil._newWeb3Client(ContractTestConfig.walletLocalDomain);
+          //_web3clientLocal = WalletUtil._newWeb3Client(WalletConfig.LOCAL_API);
         }
         return _web3clientLocal;
     }

@@ -231,7 +231,7 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var mnemonic =
                   "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal";
-//              var mnemonic = 'rug doctor thing reform minor sunset night raven hungry rival false language';
+//              var mnemonic = 'because certain august huge empower blue half pepper tunnel trust amazing forget';
               if (!bip39.validateMnemonic(mnemonic)) {
                 Fluttertoast.showToast(msg: '不是合法的助记词');
                 return;
@@ -476,6 +476,13 @@ class _WalletDemoState extends State<WalletDemo> {
                 var result = await wallet.delete(password);
                 print("删除结果 ${wallet.keystore.fileName} $result");
               }
+
+              wallets = await WalletUtil.scanWallets();
+              if (wallets.length == 0) {
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+              } else {
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallets[0]));
+              }
             },
             child: Text('删除所有钱包'),
           ),
@@ -523,12 +530,12 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              if (WalletConfig.netType != EthereumNetType.local) {
-                logger.i('请先切换到内外网络');
+              if (WalletConfig.netType == EthereumNetType.main) {
+                logger.i('请先切换到ETH网络到非主网');
               } else {
                 final client = WalletUtil.getWeb3Client();
 //                const String privateKey = '976c55a80592bdffcd4d5b29d409810518792fed3ec4a0243e4f857e9102d556';
-                const String privateKey = ContractTestConfig.privateKey;
+                String privateKey = ContractTestConfig.privateKey;
                 final credentials = await client.credentialsFromPrivateKey(privateKey);
 
                 final address = await credentials.extractAddress();
@@ -538,7 +545,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                 if (activeWallet != null) {
                   var toAddress = activeWallet.getEthAccount().address;
-                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 10); //.toRadixString(16);
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05); //.toRadixString(16);
 
                   var count = await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55),
                       atBlock: BlockNum.pending());
@@ -556,7 +563,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   );
                   logger.i('ETH交易已提交，交易hash $txHash');
 
-                  var hynErc20Contract = WalletUtil.getHynErc20Contract(SupportedTokens.HYN_LOCAL.contractAddress);
+                  var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
                   var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 300000); //三十万
                   txHash = await client.sendTransaction(
                     credentials,
@@ -574,7 +581,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 }
               }
             },
-            child: Text('从内网地址转账到本地钱包测试'),
+            child: Text('转账到本地钱包测试'),
           ),
           RaisedButton(
             onPressed: () async {
