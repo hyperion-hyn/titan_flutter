@@ -147,18 +147,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
       });
     }
 
-    List<int> suggestList = contractNodeItem.contract.suggestQuantity
-        .split(",")
-        .map((suggest) => int.parse(suggest))
-        .toList();
-    double minTotal =
-        double.parse(contractNodeItem.contract.minTotalDelegation) *
-            contractNodeItem.contract.minDelegationRate;
-
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
-    var balance =
-        WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
     return Column(
       children: <Widget>[
         Expanded(
@@ -168,11 +158,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                 color: Colors.white,
                 child: getMap3NodeProductHeadItem(context, contractNodeItem.contract,
                     isJoin: true)),
-//      Container(
-//        height: 5,
-//        color: DefaultColors.colorf5f5f5,
-//      ),
-//      startAccount(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

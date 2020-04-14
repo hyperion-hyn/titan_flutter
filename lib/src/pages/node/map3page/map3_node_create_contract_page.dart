@@ -34,8 +34,6 @@ class Map3NodeCreateContractPage extends StatefulWidget {
 class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
-  String pageTitle = "";
-  String managerTitle = "";
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
   ContractNodeItem contractNodeItem;
@@ -50,8 +48,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   @override
   void initState() {
-    pageTitle = "创建Map3抵押合约";
-    managerTitle = "获得管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
@@ -66,7 +62,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      appBar: AppBar(centerTitle: true, title: Text(pageTitle)),
       backgroundColor: Colors.white,
       body: _pageView(context),
     );
