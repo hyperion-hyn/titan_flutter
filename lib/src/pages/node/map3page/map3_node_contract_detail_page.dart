@@ -720,6 +720,16 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
         //TODO: 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
         var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+        if (_contractDetailItem.state == "HALFDUE") {
+          gasLimit = EthereumConst.COLLECT_HALF_MAP3_NODE_GAS_LIMIT;
+        } else {
+          if (_wallet.getEthAccount().address == _contractNodeItem.owner) {
+            gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+          } else {
+            gasLimit = EthereumConst.COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT;
+          }
+        }
+
 
         var collectHex = await _wallet.sendCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
