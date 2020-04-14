@@ -9,10 +9,12 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'map3_node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
@@ -57,6 +59,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     super.dispose();
   }
 
+
   _loadMoreData() async {
 
     List<ContractNodeItem> dataList = [];
@@ -83,23 +86,41 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
   }
 
+
+
   _loadData() async {
 
     // todo: test_jison_0411
-   /*
-    setState(() {
+/*    setState(() {
       if (mounted) {
         var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
-        var model = ContractNodeItem(2, item, "0xaaaaa", "bbb", "0", "0", 0, 0, "ACTIVE");
+        var model = ContractNodeItem(
+            1,
+            item,
+            "0xaaaaa",
+            "bbbbbbb",
+            "0",
+            "0",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "ACTIVE"
+        );
         _dataArray = [model];
       }
     });
 
     loadDataBloc.add(RefreshSuccessEvent());
 
-    return
-    */
-    
+    return*/
+
     _currentPage = 0;
 
     List<ContractNodeItem> dataList = [];
@@ -118,11 +139,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       loadDataBloc.add(RefreshSuccessEvent());
 
       // todo: test_jison_0413
-      if (dataList.length >= ContractState.values.length) {
+      /*if (dataList.length >= ContractState.values.length) {
         for (int i=0; i< ContractState.values.length; i++) {
           dataList[i].state = ContractState.values[i].toString().split(".").last;
         }
-      }
+      }*/
 
       setState(() {
         if (mounted) {
@@ -192,55 +213,55 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   }
 
   Widget _buildInfoItem(ContractNodeItem contractNodeItem) {
-    String startAccount = "${contractNodeItem.owner}";
-    startAccount = startAccount.substring(0,startAccount.length > 25 ? 25 : startAccount.length);
-    startAccount = startAccount + "...";
-    String btnTitle = "查看合约";
-    void Function() onPressed =  (){
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return Map3NodeContractDetailPage(contractNodeItem.id);
-      }));
-    };
-
-    /*onPressed = (){
-          String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
-          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
-        };*/
-
+    String address = shortBlockChainAddress(contractNodeItem.owner);
+    var dateDesc = "";
+    var amountPre = "";
+    var amount = "";
+    var hyn = "HYN";
     var state = enumContractStateFromString(contractNodeItem.state);
-    print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
+    //print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
 
     switch (state) {
       case ContractState.PENDING:
-        btnTitle = "加快启动";
-         onPressed = (){
-           Application.router.navigateTo(context, Routes.map3node_join_contract_page
-               + "?contractId=${contractNodeItem.id}");
-         };
-
+        dateDesc = "剩余时间：${contractNodeItem.remainDay}天";
+        amountPre = "还差";
+        amount = FormatUtil.amountToString(contractNodeItem.remainDelegation);
+        hyn = "HYN";
         break;
 
       case ContractState.ACTIVE:
-
+        dateDesc = "剩余${contractNodeItem.expectDueDay}天";
+        amountPre = "可提取";
+        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
+        hyn = "HYN";
         break;
 
       case ContractState.DUE:
-
+        dateDesc = "已到期";
+        amountPre = "可提取";
+        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
+        hyn = "HYN";
         break;
 
       case ContractState.CANCELLED:
-        // todo: 取消合约，暂定提示； 应该:"发起提币"
-        /*onPressed = (){
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        };*/
+        dateDesc = "超期启动失败";
+        amountPre = "";
+        amount = "";
+        hyn = "";
         break;
 
       case ContractState.DUE_COMPLETED:
-
+        dateDesc = "已到期";
+        amountPre = "";
+        amount = "";
+        hyn = "";
         break;
 
       case ContractState.CANCELLED_COMPLETED:
-
+        dateDesc = "超期启动失败";
+        amountPre = "";
+        amount = "";
+        hyn = "";
         break;
 
       default:
@@ -262,9 +283,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                 Text("${contractNodeItem.ownerName}",
                     style: TextStyles.textCcc000000S14),
                 Expanded(
-                    child: Text(" $startAccount",
+                    child: Text(" $address",
                         style: TextStyles.textC9b9b9bS12)),
-                Text("剩余时间：${contractNodeItem.remainDay}天", style: TextStyles.textC9b9b9bS12)
+                Text(dateDesc, style: TextStyles.textC9b9b9bS12)
               ],
             ),
             Padding(
@@ -325,14 +346,14 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                 Expanded(
                   child: RichText(
                     text: TextSpan(
-                        text: "还差",
+                        text: amountPre,
                         style: TextStyles.textC9b9b9bS12,
                         children: <TextSpan>[
                           TextSpan(
-                              text: "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
+                              text: amount,
                               style: TextStyles.textC7c5b00S12),
                           TextSpan(
-                              text: "HYN",
+                              text: hyn,
                               style: TextStyles.textC9b9b9bS12),
                         ]),
                   ),
@@ -344,8 +365,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                     color: DefaultColors.colorffdb58,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(28)),
-                    onPressed: onPressed,
-                    child: Text(btnTitle, style: TextStyles.textC906b00S13),
+                    onPressed: (){
+                      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+                    },
+                    child: Text("查看合约", style: TextStyles.textC906b00S13),
                   ),
                 )
               ],
@@ -358,7 +381,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
 }
 
-
+// ContractState
 ContractState enumContractStateFromString(String fruit) {
   fruit = 'ContractState.$fruit';
   return ContractState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
@@ -366,9 +389,20 @@ ContractState enumContractStateFromString(String fruit) {
 
 enum ContractState { PENDING, ACTIVE, DUE, DUE_COMPLETED, CANCELLED, CANCELLED_COMPLETED}
 
+
+// UserDelegateState
 UserDelegateState enumUerDelegateStateFromString(String fruit) {
   fruit = 'UserDelegateState.$fruit';
   return UserDelegateState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
 
 enum UserDelegateState { PENDING, ACTIVE, HALFDUE, HALFDUE_COLLECTED, DUE, DUE_COLLECTED, CANCELLED, CANCELLED_COLLECTED }
+
+
+// BillsOperaState
+BillsOperaState enumBillsOperaStateFromString(String fruit) {
+  fruit = 'BillsOperaState.$fruit';
+  return BillsOperaState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+}
+
+enum BillsOperaState { DELEGATE, WITHDRAW}

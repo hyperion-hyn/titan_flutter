@@ -19,6 +19,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:video_player/video_player.dart';
 
 import 'map3_node_create_contract_page.dart';
@@ -72,25 +73,7 @@ class _Map3NodeState extends State<Map3NodePage> {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverToBoxAdapter(child: _map3HeadItem()),
-            SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-              if (index == 0) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15.0, right: 15, top: 17, bottom: 11),
-                        child: Text("等待启动的节点抵押合约",
-                            style: TextStyles.textCcc000000S16)),
-                    _getMap3NodeWaitItem(
-                        context, _nodePageEntityVo.contractNodeList[index])
-                  ],
-                );
-              }
-              return _getMap3NodeWaitItem(
-                  context, _nodePageEntityVo.contractNodeList[index]);
-            }, childCount: _nodePageEntityVo.contractNodeList.length))
+            _pendingListWidget()
           ],
         ),
       ),
@@ -129,8 +112,52 @@ class _Map3NodeState extends State<Map3NodePage> {
     }
   }
 
+  Widget _pendingListWidget(){
+    if (_nodePageEntityVo.contractNodeList == null
+        || _nodePageEntityVo.contractNodeList.length == 0) {
+      return SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 15, top: 17, bottom: 11),
+                    child: Text("等待启动的节点抵押合约",
+                        style: TextStyles.textCcc000000S16)),
+                Container(
+                    height: 260,
+                    child: Center(child: Text("暂无数据",style: TextStyle(fontSize: 15, color: HexColor("#999999")))))
+              ],
+            );
+          }, childCount: 1));
+//      return Center(
+//        child: Text("暂无数据",style: TextStyle(fontSize: 11,color: HexColor("#999999")),),
+//      );
+    }
+    return SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          if (index == 0) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 15, top: 17, bottom: 11),
+                    child: Text("等待启动的节点抵押合约",
+                        style: TextStyles.textCcc000000S16)),
+                _getMap3NodeWaitItem(
+                    context, _nodePageEntityVo.contractNodeList[index])
+              ],
+            );
+          }
+          return _getMap3NodeWaitItem(
+              context, _nodePageEntityVo.contractNodeList[index]);
+        }, childCount: _nodePageEntityVo.contractNodeList.length));
+  }
+
   Widget _map3HeadItem() {
-    if (_nodePageEntityVo.nodeHeadEntity == null) {
+    if (_nodePageEntityVo.nodeHeadEntity == null || _nodePageEntityVo == null) {
       return Container();
     }
     return Container(
@@ -138,9 +165,8 @@ class _Map3NodeState extends State<Map3NodePage> {
       child: Stack(
         children: <Widget>[
           Container(
-              color: DefaultColors.color0f95b0,
-              padding: const EdgeInsets.only(top: 50, bottom: 50),
-              height: 250,
+              color: Theme.of(context).primaryColor,
+              height: 162,
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -148,19 +174,27 @@ class _Map3NodeState extends State<Map3NodePage> {
                   ),
                   Image.asset(
                     "res/drawable/ic_map3_node_head.png",
-                    height: 150,
+                    width: 230,
+                    height: 135,
                   ),
                 ],
               )),
           Container(
-            height: 250,
+            height: 162,
             padding: const EdgeInsets.only(left: 30, right: 30),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                _nodePageEntityVo.nodeHeadEntity.message,
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "全球超过${_nodePageEntityVo.nodeHeadEntity.instanceCount}个地球服务站点",
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                Text(
+                  "为海伯利安地图提供稳定可靠的地图服务",
+                  style: TextStyle(fontSize: 12, color: HexColor("#e6ffffff")),
+                ),
+              ],
             ),
           ),
           Card(
@@ -169,7 +203,7 @@ class _Map3NodeState extends State<Map3NodePage> {
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
             ),
             margin: const EdgeInsets.only(
-                left: 15, right: 15, top: 220, bottom: 16),
+                left: 15, right: 15, top: 127, bottom: 16),
             child: Padding(
               padding: const EdgeInsets.only(
                   left: 15.0, right: 19, top: 13, bottom: 17),
@@ -201,7 +235,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                                             fontWeight: FontWeight.bold,
                                             color:
                                                 DefaultColors.colorcc000000))),
-                                InkWell(
+                                /*InkWell(
                                   onTap: () {
                                     String webUrl =
                                         FluroConvertUtils.fluroCnParamsEncode(
@@ -220,7 +254,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                                           color: DefaultColors.color66000000,
                                           decoration:
                                               TextDecoration.underline)),
-                                )
+                                )*/
                               ],
                             ),
                             Padding(
@@ -262,10 +296,12 @@ class _Map3NodeState extends State<Map3NodePage> {
 
   Widget _getMap3NodeWaitItem(
       BuildContext context, ContractNodeItem contractNodeItem) {
-    String startAccount = "${contractNodeItem.owner}";
-    startAccount = startAccount.substring(
-        0, startAccount.length > 25 ? 25 : startAccount.length);
-    startAccount = startAccount + "...";
+    if (contractNodeItem == null) return Container();
+
+//    String startAccount = "${contractNodeItem.owner}";
+//    startAccount = startAccount.substring(
+//        0, startAccount.length > 25 ? 25 : startAccount.length);
+//    startAccount = startAccount + "...";
     return Card(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(4.0))),
@@ -283,9 +319,9 @@ class _Map3NodeState extends State<Map3NodePage> {
                 Text("${contractNodeItem.ownerName}",
                     style: TextStyles.textCcc000000S14),
                 Expanded(
-                    child: Text(" $startAccount",
+                    child: Text(" ${UiUtil.shortEthAddress(contractNodeItem.owner)}",
                         style: TextStyles.textC9b9b9bS12)),
-                Text("剩余时间：${contractNodeItem.remainDay}天",
+                Text("剩余：${contractNodeItem.remainDay}天",
                     style: TextStyles.textC9b9b9bS12)
               ],
             ),
@@ -293,58 +329,65 @@ class _Map3NodeState extends State<Map3NodePage> {
               padding: const EdgeInsets.only(top: 8, bottom: 16),
               child: Divider(height: 1, color: DefaultColors.color1177869e),
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Image.asset(
-                  "res/drawable/ic_map3_node_item_contract.png",
-                  width: 42,
-                  height: 42,
-                  fit: BoxFit.cover,
-                ),
-                SizedBox(
-                  width: 6,
-                ),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Expanded(
-                              child: Text(
-                                  "${contractNodeItem.contract.nodeName}",
-                                  style: TextStyles.textCcc000000S14))
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3.0),
-                        child: Row(
+            InkWell(
+              onTap: (){
+                Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+//                String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
+//                Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Image.asset(
+                    "res/drawable/ic_map3_node_item_contract.png",
+                    width: 42,
+                    height: 42,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(
+                    width: 6,
+                  ),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
-                            Text(
-                                "最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
-                                style: TextStyles.textC99000000S10,
-                                maxLines: 1,
-                                softWrap: true),
-                            Text("  |  ", style: TextStyles.textC9b9b9bS12),
-                            Text("${contractNodeItem.contract.duration}天",
-                                style: TextStyles.textC99000000S10)
+                            Expanded(
+                                child: Text(
+                                    "${contractNodeItem.contract.nodeName}",
+                                    style: TextStyles.textCcc000000S14))
                           ],
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                  "最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                                  style: TextStyles.textC99000000S10,
+                                  maxLines: 1,
+                                  softWrap: true),
+                              Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                              Text("${contractNodeItem.contract.duration}天",
+                                  style: TextStyles.textC99000000S10)
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                        "${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
-                        style: TextStyles.textCff4c3bS18),
-                    Text("年化奖励", style: TextStyles.textC99000000S10)
-                  ],
-                )
-              ],
+                  Column(
+                    children: <Widget>[
+                      Text(
+                          "${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
+                          style: TextStyles.textCff4c3bS18),
+                      Text("年化奖励", style: TextStyles.textC99000000S10)
+                    ],
+                  )
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 9, bottom: 9),

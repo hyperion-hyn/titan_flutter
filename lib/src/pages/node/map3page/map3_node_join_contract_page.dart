@@ -45,7 +45,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     managerTitle = "应付管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
-    _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
+    _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       getCurrentSpend(text);
 //      widget.fieldCallBack(text);
     });
@@ -89,6 +89,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     if (contractNodeItem == null) {
       return;
     }
+
+    _joinCoinFormKey.currentState.validate();
+
     if (inputText == null || inputText == "") {
       setState(() {
         endProfit = "";
@@ -148,130 +151,134 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     var walletName = activatedWallet.wallet.keystore.name;
     var balance =
         WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
-    return SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-          color: Colors.white,
-          child: getMap3NodeProductHeadItem(context, contractNodeItem.contract,
-              isJoin: true)),
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: SingleChildScrollView(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+                color: Colors.white,
+                child: getMap3NodeProductHeadItem(context, contractNodeItem.contract,
+                    isJoin: true)),
 //      Container(
 //        height: 5,
 //        color: DefaultColors.colorf5f5f5,
 //      ),
 //      startAccount(),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text("节点版本",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                new Text("${contractNodeItem.contract.nodeName}",
-                    style: TextStyles.textC333S14)
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: 100,
+                          child: Text("节点版本",
+                              style: TextStyle(
+                                  fontSize: 14, color: HexColor("#92979a")))),
+                      new Text("${contractNodeItem.contract.nodeName}",
+                          style: TextStyles.textC333S14)
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0, left: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: 100,
+                          child: Text("服务商",
+                              style: TextStyle(
+                                  fontSize: 14, color: HexColor("#92979a")))),
+                      new Text("${contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 15.0, left: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: 100,
+                          child: Text("节点位置",
+                              style: TextStyle(
+                                  fontSize: 14, color: HexColor("#92979a")))),
+                      new Text("${contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0, left: 15),
-            child: Row(
-              children: <Widget>[
+            Container(
+              height: 10,
+              margin: const EdgeInsets.only(top: 15.0),
+              color: DefaultColors.colorf5f5f5,
+            ),
+                getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
+                    _joinCoinController, endProfit, spendManager, true, (textStr) {
+                      _filterSubject.sink.add(textStr);
+                    }, (textStr) {
+                      getCurrentSpend(textStr);
+                    }, joinEnougnFunction: () {
+                      getCurrentSpend(contractNodeItem.remainDelegation);
+                    }),
+            Container(
+              height: 10,
+              color: DefaultColors.colorf5f5f5,
+            ),
+                NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay,contractNodeItem.shareUrl),
+
                 Container(
-                    width: 100,
-                    child: Text("服务商",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                new Text("阿里云", style: TextStyles.textC333S14)
-              ],
+              height: 10,
+              color: DefaultColors.colorf5f5f5,
+              margin: EdgeInsets.only(top: 15.0, bottom: 15),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 15.0, left: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text("节点位置",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                new Text("中国深圳", style: TextStyles.textC333S14)
-              ],
+            Container(
+              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("·  请确保钱包账户（$walletName）的ETH GAS费充足",
+                      style: TextStyles.textC999S12),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: Text(
+                        "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
+                        style: TextStyles.textC999S12),
+                  ),
+                  Text("·  投入Map3节点后不可撤销。", style: TextStyles.textC999S12),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-      Container(
-        height: 10,
-        margin: const EdgeInsets.only(top: 15.0),
-        color: DefaultColors.colorf5f5f5,
-      ),
-      NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay),
-      Container(
-        height: 10,
-        color: DefaultColors.colorf5f5f5,
-      ),
-      getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
-          _joinCoinController, endProfit, spendManager, true, (textStr) {
-        _filterSubject.sink.add(textStr);
-      }, (textStr) {
-        getCurrentSpend(textStr);
-      }, joinEnougnFunction: () {
-        getCurrentSpend(contractNodeItem.remainDelegation);
-      }),
-      Container(
-        height: 10,
-        color: DefaultColors.colorf5f5f5,
-        margin: EdgeInsets.only(top: 15.0, bottom: 15),
-      ),
-      Container(
-        padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("·  请确保钱包账户（$walletName）的ETH GAS费充足",
-                style: TextStyles.textC999S12),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-              child: Text(
-                  "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
-                  style: TextStyles.textC999S12),
-            ),
-            Text("·  投入Map3节点后不可撤销。", style: TextStyles.textC999S12),
-          ],
+          ])),
         ),
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10, bottom: 10),
-        padding: EdgeInsets.symmetric(horizontal: 30),
-        constraints: BoxConstraints.expand(height: 48),
-        child: RaisedButton(
-            textColor: Colors.white,
-            color: DefaultColors.color0f95b0,
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).primaryColor),
-                borderRadius: BorderRadius.circular(36)),
-            child: Text("确定"),
-            onPressed: () {
-              setState(() {
-                if (!_joinCoinFormKey.currentState.validate()) {
-                  return;
-                }
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_send_confirm_page +
-                        "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                        "&pageType=${widget.pageType}" +
-                        "&contractId=${widget.contractId}");
-              });
-            }),
-      )
-    ]));
+        Container(
+          constraints: BoxConstraints.expand(height: 50),
+          child: RaisedButton(
+              textColor: Colors.white,
+              color: Theme.of(context).primaryColor,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Theme.of(context).primaryColor)),
+              child: Text("确定抵押"),
+              onPressed: () {
+                setState(() {
+                  if (!_joinCoinFormKey.currentState.validate()) {
+                    return;
+                  }
+                  Application.router.navigateTo(
+                      context,
+                      Routes.map3node_send_confirm_page +
+                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+                          "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
+                          "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&pageType=${widget.pageType}" +
+                          "&contractId=${widget.contractId}");
+                });
+              }),
+        )
+      ],
+    );
   }
 
   Widget startAccount() {
