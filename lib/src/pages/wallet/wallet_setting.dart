@@ -168,7 +168,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
 //              ),
 //            ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
+              margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               constraints: BoxConstraints.expand(height: 48),
               child: RaisedButton(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

@@ -70,7 +70,7 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                   ),
                 ),
                 Container(
-                  constraints: BoxConstraints(minHeight: 230),
+                  constraints: BoxConstraints(minHeight: 200),
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -97,7 +97,7 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                       }),
                 ),
                 SizedBox(
-                  height: 36,
+                  height: 32,
                 ),
                 GridView.builder(
                     physics: NeverScrollableScrollPhysics(),
@@ -122,7 +122,7 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                       );
                     }),
                 SizedBox(
-                  height: 36,
+                  height: 32,
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),

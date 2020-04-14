@@ -370,7 +370,7 @@ class _MyPageState extends State<MyPage> {
             children: <Widget>[
               Text(
                 walletName,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white70),
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
               ),
               SizedBox(
                 height: 4,
