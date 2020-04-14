@@ -212,20 +212,21 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         margin: const EdgeInsets.only(top: 15.0),
         color: DefaultColors.colorf5f5f5,
       ),
-      NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay,contractNodeItem.shareUrl),
+          getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
+              _joinCoinController, endProfit, spendManager, true, (textStr) {
+                _filterSubject.sink.add(textStr);
+              }, (textStr) {
+                getCurrentSpend(textStr);
+              }, joinEnougnFunction: () {
+                getCurrentSpend(contractNodeItem.remainDelegation);
+              }),
       Container(
         height: 10,
         color: DefaultColors.colorf5f5f5,
       ),
-      getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
-          _joinCoinController, endProfit, spendManager, true, (textStr) {
-        _filterSubject.sink.add(textStr);
-      }, (textStr) {
-        getCurrentSpend(textStr);
-      }, joinEnougnFunction: () {
-        getCurrentSpend(contractNodeItem.remainDelegation);
-      }),
-      Container(
+          NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay,contractNodeItem.shareUrl),
+
+          Container(
         height: 10,
         color: DefaultColors.colorf5f5f5,
         margin: EdgeInsets.only(top: 15.0, bottom: 15),
@@ -257,7 +258,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: Theme.of(context).primaryColor),
                 borderRadius: BorderRadius.circular(36)),
-            child: Text("确定"),
+            child: Text("确定抵押"),
             onPressed: () {
               setState(() {
                 if (!_joinCoinFormKey.currentState.validate()) {
