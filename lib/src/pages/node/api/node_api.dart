@@ -10,12 +10,14 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/contract_transaction_entity.dart';
 
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -163,6 +165,19 @@ class NodeApi {
     );
     print('createMap3Hex is: $createMap3Hex');
 
+    // todo:create
+    var pubKey = await TitanPlugin.getPublicKey();
+    var name = wallet.keystore.name;
+    var address = wallet.getEthAccount().address;
+    ContractTransactionEntity _entity = ContractTransactionEntity(
+      address,
+      name,
+      amount.toInt(),
+      pubKey,
+      createMap3Hex,
+    );
+    await postCreateContractTransaction(_entity, contractId);
+
 //    startJoinInstance.txHash = createMap3Hex;
 //    startJoinInstance.publicKey = nodeKey["publicKey"];
     String postData = json.encode(startJoinInstance.toJson());
@@ -207,6 +222,19 @@ class NodeApi {
     );
     print('joinHex is: $joinHex');
 
+    // todo: join
+    var pubKey = await TitanPlugin.getPublicKey();
+    var name = wallet.keystore.name;
+    var address = wallet.getEthAccount().address;
+    ContractTransactionEntity _entity = ContractTransactionEntity(
+      address,
+      name,
+      amount.toInt(),
+      pubKey,
+      joinHex,
+    );
+    await postJoinContractTransaction(_entity, contractId);
+
 //    startJoinInstance.txHash = joinHex;
 //    String postData = json.encode(startJoinInstance.toJson());
 //    print("joinContractInstance = $postData");
@@ -245,4 +273,16 @@ class NodeApi {
       NodeHttpCore.instance.post("wallets/", data: postData, options: RequestOptions(contentType: "application/json"));
     }
   }
+
+  Future postJoinContractTransaction(ContractTransactionEntity _entity, String contractId) async {
+
+      NodeHttpCore.instance.post("instances/delegate/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future postCreateContractTransaction(ContractTransactionEntity _entity, String contractId) async {
+
+    NodeHttpCore.instance.post("contracts/create/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
+
+  }
+
 }

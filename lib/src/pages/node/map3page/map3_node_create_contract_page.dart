@@ -312,7 +312,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Text("确定买入"),
               onPressed: () {
                 setState(() {
-                  if (!_joinCoinFormKey.currentState.validate()) {
+                  print('state:${_joinCoinFormKey.currentState.validate()}');
+                  if (!_joinCoinFormKey.currentState.validate() || _joinCoinController.text.isEmpty) {
                     return;
                   }
                   String provider = providerList[selectServerItemValue].id;
@@ -324,7 +325,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                           "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                          "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&transferAmount=${_joinCoinController.text??""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&provider=$provider" +
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +
@@ -385,9 +386,8 @@ Widget getHoldInNum(
     Function onChangeFuntion,
     Function onPressFunction,
     {Function joinEnougnFunction}) {
-  // todo: test_jison_0411
-  //List<int> suggestList = [];
-  List<int> suggestList = contractNodeItem.contract.suggestQuantity
+
+  List<int> suggestList = contractNodeItem?.contract?.suggestQuantity
       .split(",")
       .map((suggest) => int.parse(suggest))
       .toList();

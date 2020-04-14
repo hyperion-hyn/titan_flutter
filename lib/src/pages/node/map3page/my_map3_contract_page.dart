@@ -15,7 +15,6 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'map3_node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
   final String title;
@@ -91,7 +90,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   _loadData() async {
 
     // todo: test_jison_0411
-/*    setState(() {
+    setState(() {
       if (mounted) {
         var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
         var model = ContractNodeItem(
@@ -111,6 +110,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             0,
             0,
             0,
+            "",
             "ACTIVE"
         );
         _dataArray = [model];
@@ -119,7 +119,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     loadDataBloc.add(RefreshSuccessEvent());
 
-    return*/
+    return
 
     _currentPage = 0;
 
@@ -387,7 +387,7 @@ ContractState enumContractStateFromString(String fruit) {
   return ContractState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
 
-enum ContractState { PENDING, ACTIVE, DUE, DUE_COMPLETED, CANCELLED, CANCELLED_COMPLETED}
+enum ContractState { PENDING, CANCELLED, CANCELLED_COMPLETED, ACTIVE, DUE, DUE_COMPLETED}
 
 
 // UserDelegateState
@@ -396,7 +396,7 @@ UserDelegateState enumUserDelegateStateFromString(String fruit) {
   return UserDelegateState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
 
-enum UserDelegateState { PENDING, ACTIVE, HALFDUE, HALFDUE_COLLECTED, DUE, DUE_COLLECTED, CANCELLED, CANCELLED_COLLECTED }
+enum UserDelegateState { PENDING, CANCELLED, CANCELLED_COLLECTED , ACTIVE, HALFDUE, HALFDUE_COLLECTED, DUE, DUE_COLLECTED}
 
 
 // BillsOperaState
@@ -406,3 +406,21 @@ BillsOperaState enumBillsOperaStateFromString(String fruit) {
 }
 
 enum BillsOperaState { DELEGATE, WITHDRAW}
+
+
+// TransactionHistoryState
+enum TransactionHistoryState { PENDING, SUCCESS, FAIL}
+
+TransactionHistoryState enumTransactionHistoryStateFromString(String fruit) {
+  fruit = 'TransactionHistoryState.$fruit';
+  return TransactionHistoryState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+}
+
+
+// TransactionHistoryAction
+enum TransactionHistoryAction { APPROVE, CREATE_NODE, DELEGATE, WITHDRAW}
+TransactionHistoryAction enumTransactionHistoryActionFromString(String fruit) {
+  fruit = 'TransactionHistoryAction.$fruit';
+  return TransactionHistoryAction.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+}
+
