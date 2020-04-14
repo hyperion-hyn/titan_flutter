@@ -45,7 +45,7 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Container(
-            color: DefaultColors.color0f95b0,
+            color: Theme.of(context).primaryColor,
             child: SafeArea(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,

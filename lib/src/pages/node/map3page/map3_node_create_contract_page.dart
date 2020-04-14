@@ -184,153 +184,156 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
 
-    return SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      getMap3NodeProductHeadItem(context, contractNodeItem.contract),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Row(
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: SingleChildScrollView(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            getMap3NodeProductHeadItem(context, contractNodeItem.contract),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text("节点版本",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                Text("${contractNodeItem.contract.nodeName}",
-                    style: TextStyles.textC333S14),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 18.0, left: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text("服务商",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                DropdownButtonHideUnderline(
-                  child: Container(
-                    height: 30,
-                    child: DropdownButton(
-                      value: selectServerItemValue,
-                      items: serverList,
-                      onChanged: (value) {
-                        setState(() {
-                          selectNodeProvider(value, 0);
-                        });
-                      },
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: 100,
+                          child: Text("节点版本",
+                              style: TextStyle(
+                                  fontSize: 14, color: HexColor("#92979a")))),
+                      Text("${contractNodeItem.contract.nodeName}",
+                          style: TextStyles.textC333S14),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 18.0, left: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: 100,
+                          child: Text("服务商",
+                              style: TextStyle(
+                                  fontSize: 14, color: HexColor("#92979a")))),
+                      DropdownButtonHideUnderline(
+                        child: Container(
+                          height: 30,
+                          child: DropdownButton(
+                            value: selectServerItemValue,
+                            items: serverList,
+                            onChanged: (value) {
+                              setState(() {
+                                selectNodeProvider(value, 0);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 18.0, left: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: 100,
+                          child: Text("节点位置",
+                              style: TextStyle(
+                                  fontSize: 14, color: HexColor("#92979a")))),
+                      DropdownButtonHideUnderline(
+                        child: Container(
+                          height: 30,
+                          child: DropdownButton(
+                            value: selectNodeItemValue,
+                            items: nodeList,
+                            onChanged: (value) {
+                              setState(() {
+                                selectNodeProvider(selectServerItemValue, value);
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 18.0, left: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text("节点位置",
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                DropdownButtonHideUnderline(
-                  child: Container(
-                    height: 30,
-                    child: DropdownButton(
-                      value: selectNodeItemValue,
-                      items: nodeList,
-                      onChanged: (value) {
-                        setState(() {
-                          selectNodeProvider(selectServerItemValue, value);
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
+            Container(
+              height: 10,
+              margin: const EdgeInsets.only(top: 16.0),
+              color: DefaultColors.colorf5f5f5,
             ),
-          ),
-        ],
-      ),
-      Container(
-        height: 10,
-        margin: const EdgeInsets.only(top: 16.0),
-        color: DefaultColors.colorf5f5f5,
-      ),
-      getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
-          _joinCoinController, endProfit, spendManager, false, (textStr) {
-        _filterSubject.sink.add(textStr);
-      }, (textStr) {
-        getCurrentSpend(textStr);
-      }),
-      Container(
-        height: 10,
-        color: DefaultColors.colorf5f5f5,
-        margin: EdgeInsets.only(top: 15.0, bottom: 15),
-      ),
-      Container(
-        padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("·  请确保钱包账户（$walletName）的ETH GAS费充足",
-                style: TextStyles.textC999S12),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-              child: Text(
-                  "·  创建后，若7天内没能积攒足够启动所需HYN，则本次Map3节点抵押合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
-                  style: TextStyles.textC999S12),
-            ),
-            Text("·  Map3节点抵押合约创建后不可撤销。", style: TextStyles.textC999S12),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-              child: Text(
-                  "·  创建节点需要暂时冻结500U账户余额，用于支付直推人的贡献奖励。直推人及奖励收取节点总收益的5%。",
-                  style: TextStyles.textC999S12),
-            ),
-          ],
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10, bottom: 10),
-        padding: EdgeInsets.symmetric(horizontal: 30),
-        constraints: BoxConstraints.expand(height: 48),
-        child: RaisedButton(
-            textColor: Colors.white,
-            color: DefaultColors.color0f95b0,
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).primaryColor),
-                borderRadius: BorderRadius.circular(36)),
-            child: Text("确定"),
-            onPressed: () {
-              setState(() {
-                if (!_joinCoinFormKey.currentState.validate()) {
-                  return;
-                }
-                String provider = providerList[selectServerItemValue].id;
-                String region = providerList[selectServerItemValue]
-                    .regions[selectNodeItemValue]
-                    .id;
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_send_confirm_page +
-                        "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                        "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                        "&provider=$provider" +
-                        "&region=$region" +
-                        "&pageType=${widget.pageType}" +
-                        "&contractId=${widget.contractId}");
-              });
+            getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
+                _joinCoinController, endProfit, spendManager, false, (textStr) {
+              _filterSubject.sink.add(textStr);
+            }, (textStr) {
+              getCurrentSpend(textStr);
             }),
-      )
-    ]));
+            Container(
+              height: 10,
+              color: DefaultColors.colorf5f5f5,
+              margin: EdgeInsets.only(top: 15.0, bottom: 15),
+            ),
+            Container(
+              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("·  请确保钱包账户（$walletName）的ETH GAS费充足",
+                      style: TextStyles.textC999S12),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: Text(
+                        "·  创建后，若7天内没能积攒足够启动所需HYN，则本次Map3节点抵押合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
+                        style: TextStyles.textC999S12),
+                  ),
+                  Text("·  Map3节点抵押合约创建后不可撤销。", style: TextStyles.textC999S12),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: Text(
+                        "·  创建节点需要暂时冻结500U账户余额，用于支付直推人的贡献奖励。直推人及奖励收取节点总收益的5%。",
+                        style: TextStyles.textC999S12),
+                  ),
+                ],
+              ),
+            ),
+          ])),
+        ),
+        Container(
+          constraints: BoxConstraints.expand(height: 50),
+          child: RaisedButton(
+              textColor: Colors.white,
+              color: Theme.of(context).primaryColor,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Theme.of(context).primaryColor),),
+              child: Text("确定买入"),
+              onPressed: () {
+                setState(() {
+                  if (!_joinCoinFormKey.currentState.validate()) {
+                    return;
+                  }
+                  String provider = providerList[selectServerItemValue].id;
+                  String region = providerList[selectServerItemValue]
+                      .regions[selectNodeItemValue]
+                      .id;
+                  Application.router.navigateTo(
+                      context,
+                      Routes.map3node_send_confirm_page +
+                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+                          "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
+                          "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&provider=$provider" +
+                          "&region=$region" +
+                          "&pageType=${widget.pageType}" +
+                          "&contractId=${widget.contractId}");
+                });
+              }),
+        )
+      ],
+    );
   }
 
   Widget startAccount() {
@@ -617,9 +620,11 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
     children: <Widget>[
       Container(
         height: isDetail?280:250,
-        color: Theme.of(context).primaryColor,
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+//          borderRadius: BorderRadius.only(bottomLeft:Radius.circular(15),bottomRight:Radius.circular(15),), // 也可控件一边圆角大小
+        )
       ),
-//      Image.asset("res/drawable/ic_map3_node_head.png",height:280,),
       Positioned(
         top: 60,
         left: -20,
@@ -766,7 +771,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 Column(
                   children: <Widget>[
                     Text("管理费", style: TextStyles.textCccfffS12),
-                    Text("${FormatUtil.formatPercent(nodeItem.commission)}收益",
+                    Text("${FormatUtil.formatPercent(nodeItem.commission)}",
                         style: TextStyles.textCfffS14)
                   ],
                 ),
@@ -867,7 +872,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text("锁定期满可结束",
+                            child: Text("期满结束",
                                 style: TextStyle(
                                     fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
@@ -985,7 +990,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text("锁定期满可结束",
+                            child: Text("期满结束",
                                 style: TextStyle(
                                     fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
@@ -1042,4 +1047,3 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
     );
   }
 }
-

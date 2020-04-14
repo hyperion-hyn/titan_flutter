@@ -165,7 +165,7 @@ class _Map3NodeState extends State<Map3NodePage> {
       child: Stack(
         children: <Widget>[
           Container(
-              color: DefaultColors.color0f95b0,
+              color: Theme.of(context).primaryColor,
               height: 162,
               child: Row(
                 children: <Widget>[
@@ -329,58 +329,65 @@ class _Map3NodeState extends State<Map3NodePage> {
               padding: const EdgeInsets.only(top: 8, bottom: 16),
               child: Divider(height: 1, color: DefaultColors.color1177869e),
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Image.asset(
-                  "res/drawable/ic_map3_node_item_contract.png",
-                  width: 42,
-                  height: 42,
-                  fit: BoxFit.cover,
-                ),
-                SizedBox(
-                  width: 6,
-                ),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Expanded(
-                              child: Text(
-                                  "${contractNodeItem.contract.nodeName}",
-                                  style: TextStyles.textCcc000000S14))
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3.0),
-                        child: Row(
+            InkWell(
+              onTap: (){
+                Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+//                String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
+//                Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Image.asset(
+                    "res/drawable/ic_map3_node_item_contract.png",
+                    width: 42,
+                    height: 42,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(
+                    width: 6,
+                  ),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
-                            Text(
-                                "最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
-                                style: TextStyles.textC99000000S10,
-                                maxLines: 1,
-                                softWrap: true),
-                            Text("  |  ", style: TextStyles.textC9b9b9bS12),
-                            Text("${contractNodeItem.contract.duration}天",
-                                style: TextStyles.textC99000000S10)
+                            Expanded(
+                                child: Text(
+                                    "${contractNodeItem.contract.nodeName}",
+                                    style: TextStyles.textCcc000000S14))
                           ],
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                  "最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                                  style: TextStyles.textC99000000S10,
+                                  maxLines: 1,
+                                  softWrap: true),
+                              Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                              Text("${contractNodeItem.contract.duration}天",
+                                  style: TextStyles.textC99000000S10)
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                        "${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
-                        style: TextStyles.textCff4c3bS18),
-                    Text("年化奖励", style: TextStyles.textC99000000S10)
-                  ],
-                )
-              ],
+                  Column(
+                    children: <Widget>[
+                      Text(
+                          "${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
+                          style: TextStyles.textCff4c3bS18),
+                      Text("年化奖励", style: TextStyles.textC99000000S10)
+                    ],
+                  )
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 9, bottom: 9),
