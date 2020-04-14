@@ -54,10 +54,10 @@ var importWalletHandler = Handler(handlerFunc: (context, params) {
 
 void _cacheOrClearEntryWalletRouteName(params) {
   var url = params["entryRouteName"]?.first;
-  if (url != null) {
+  if (url != null && url != '') {
     url = Uri.decodeComponent(url);
+    Routes.createOrImportWalletEntryRouteName = url;
   }
-  Routes.createOrImportWalletEntryRouteName = url;
 }
 
 var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
@@ -85,6 +85,7 @@ var managerWalletHandler = Handler(
 
 var settingWalletHandler = Handler(
     handlerFunc: (context, params) {
+      _cacheOrClearEntryWalletRouteName(params);
       Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
       return WalletSettingPage(wallet);
     });

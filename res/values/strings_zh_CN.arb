@@ -292,7 +292,7 @@
   "scan_confirm_upload" : "上传信号数据",
   "scan_collect_signal_func": "已收集到${num}个信号",
   "selected_area": "选择地区",
-  "what_region_use_titan": "你在什么地区使用titan?",
+  "what_region_use_titan": "你在什么地区使用${app}?",
   "select_region_tip": "请选择地区",
   "data_save": "存储",
   "input_valid_address": "请输入合法的接收者地址",

@@ -292,7 +292,7 @@
   "scan_confirm_upload" : "Upload signal data",
   "scan_collect_signal_func": "${Num} signals collected",
   "selected_area": "Select region",
-  "what_region_use_titan": "What's the region do you use titan?",
+  "what_region_use_titan": "What's the region do you use ${app}?",
   "select_region_tip": "Please select region",
   "data_position_adding": "Pending",
   "data_save": "Save",
