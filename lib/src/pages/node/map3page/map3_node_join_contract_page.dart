@@ -212,7 +212,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         margin: const EdgeInsets.only(top: 15.0),
         color: DefaultColors.colorf5f5f5,
       ),
-      NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay),
+      NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay,contractNodeItem.shareUrl),
       Container(
         height: 10,
         color: DefaultColors.colorf5f5f5,

@@ -205,6 +205,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           NodeJoinMemberWidget(
             "${widget.contractId}",
             _contractNodeItem.remainDay,
+            _contractNodeItem.shareUrl,
             isShowInviteItem: false,
           ),
           _Spacer(),
