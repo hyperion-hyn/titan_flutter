@@ -303,16 +303,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
           ])),
         ),
         Container(
-          height: 50,
-          margin: EdgeInsets.only(top: 10, bottom: 10),
-          padding: EdgeInsets.symmetric(horizontal: 30),
-          constraints: BoxConstraints.expand(height: 48),
+          constraints: BoxConstraints.expand(height: 50),
           child: RaisedButton(
               textColor: Colors.white,
-              color: DefaultColors.color0f95b0,
+              color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Theme.of(context).primaryColor),
-                  borderRadius: BorderRadius.circular(36)),
+                  side: BorderSide(color: Theme.of(context).primaryColor),),
               child: Text("确定买入"),
               onPressed: () {
                 setState(() {
@@ -624,9 +620,11 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
     children: <Widget>[
       Container(
         height: isDetail?280:250,
-        color: Theme.of(context).primaryColor,
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+//          borderRadius: BorderRadius.only(bottomLeft:Radius.circular(15),bottomRight:Radius.circular(15),), // 也可控件一边圆角大小
+        )
       ),
-//      Image.asset("res/drawable/ic_map3_node_head.png",height:280,),
       Positioned(
         top: 60,
         left: -20,
@@ -773,7 +771,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 Column(
                   children: <Widget>[
                     Text("管理费", style: TextStyles.textCccfffS12),
-                    Text("${FormatUtil.formatPercent(nodeItem.commission)}收益",
+                    Text("${FormatUtil.formatPercent(nodeItem.commission)}",
                         style: TextStyles.textCfffS14)
                   ],
                 ),
@@ -874,7 +872,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text("锁定期满可结束",
+                            child: Text("期满结束",
                                 style: TextStyle(
                                     fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
@@ -992,7 +990,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text("锁定期满可结束",
+                            child: Text("期满结束",
                                 style: TextStyle(
                                     fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),

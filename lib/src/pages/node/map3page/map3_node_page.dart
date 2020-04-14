@@ -165,7 +165,7 @@ class _Map3NodeState extends State<Map3NodePage> {
       child: Stack(
         children: <Widget>[
           Container(
-              color: DefaultColors.color0f95b0,
+              color: Theme.of(context).primaryColor,
               height: 162,
               child: Row(
                 children: <Widget>[

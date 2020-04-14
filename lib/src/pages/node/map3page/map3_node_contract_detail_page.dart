@@ -681,7 +681,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         child: Container(
           child: RaisedButton(
             textColor: Colors.white,
-            color: DefaultColors.color0f95b0,
+            color: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
             child: Text(actionTitle),
