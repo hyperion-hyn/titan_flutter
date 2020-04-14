@@ -64,7 +64,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     List<ContractDelegatorItem> tempMemberList = await _nodeApi
         .getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
-
    // print("[widget] --> build, length:${tempMemberList.length}");
 
     setState(() {
