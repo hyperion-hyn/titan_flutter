@@ -123,12 +123,11 @@ class NodeApi {
 
     var nodeKey = await NodeHttpCore.instance.getEntity("nodekey/generate", EntityFactory<Map<String, dynamic>>((data) {
       return data;
-    }));
+    }),options: RequestOptions(headers: {"Address" : ethAccount.address, "appSource" : "TITAN"}));
     int durationType = contractNodeItem.contract.durationType; //0: 1M， 1: 3M， 2: 6M
 
     final client = WalletUtil.getWeb3Client();
-    var count =
-        await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address), atBlock: BlockNum.pending());
+    var count = await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address), atBlock: BlockNum.pending());
 
     //approve
     print('approve result: $count');

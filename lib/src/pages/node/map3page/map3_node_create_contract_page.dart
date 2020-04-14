@@ -54,7 +54,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     managerTitle = "获得管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
-    _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
+    _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       getCurrentSpend(text);
 //      widget.fieldCallBack(text);
     });
@@ -129,6 +129,9 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     if (contractNodeItem == null) {
       return;
     }
+
+    _joinCoinFormKey.currentState.validate();
+
     if (inputText == null || inputText == "") {
       setState(() {
         endProfit = "";
@@ -451,12 +454,12 @@ Widget getHoldInNum(
                                 "最低买入${FormatUtil.formatNumDecimal(minTotal)}",
                           ),
                           validator: (textStr) {
-                            if (textStr.length == 0 ||
-                                int.parse(textStr) < minTotal) {
+                            if(textStr.length == 0){
+                              return null;
+                            } else if (int.parse(textStr) < minTotal) {
                               return "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
                             } else if (int.parse(textStr) > balance) {
                               return "HYN余额不足";
-//                              return null;
                             } else {
                               return null;
                             }
@@ -659,8 +662,8 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
         top: 50,
         right: 120,
         child: Container(
-          height: 30,
-          width: 30,
+          height: 40,
+          width: 40,
           decoration: BoxDecoration(
             gradient: new LinearGradient(
                 begin: Alignment.topCenter,
@@ -679,7 +682,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
           Navigator.of(context).pop();
         },
         child: Padding(
-          padding: const EdgeInsets.only(top: 40.0, left: 15),
+          padding: const EdgeInsets.only(top: 44.0, left: 15),
           child: Icon(
             Icons.arrow_back,
             color: Colors.white,
@@ -689,7 +692,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
       Align(
         alignment: Alignment.topCenter,
         child: Padding(
-          padding: const EdgeInsets.only(top: 40.0),
+          padding: const EdgeInsets.only(top: 44.0),
           child: Text(
             title,
             style: TextStyles.textCfffS17,
@@ -702,7 +705,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(
-              height: 80,
+              height: 90,
             ),
             RichText(
                 text: TextSpan(

@@ -45,7 +45,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     managerTitle = "应付管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
-    _filterSubject.debounceTime(Duration(seconds: 2)).listen((text) {
+    _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       getCurrentSpend(text);
 //      widget.fieldCallBack(text);
     });
@@ -89,6 +89,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     if (contractNodeItem == null) {
       return;
     }
+
+    _joinCoinFormKey.currentState.validate();
+
     if (inputText == null || inputText == "") {
       setState(() {
         endProfit = "";
@@ -185,7 +188,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                     child: Text("服务商",
                         style: TextStyle(
                             fontSize: 14, color: HexColor("#92979a")))),
-                new Text("阿里云", style: TextStyles.textC333S14)
+                new Text("${contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
               ],
             ),
           ),
@@ -198,7 +201,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                     child: Text("节点位置",
                         style: TextStyle(
                             fontSize: 14, color: HexColor("#92979a")))),
-                new Text("中国深圳", style: TextStyles.textC333S14)
+                new Text("${contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
               ],
             ),
           ),
