@@ -127,10 +127,10 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         var detailItem = await _api.getContractDetail("${widget.contractId}", address: address);
         _contractDetailItem = detailItem;
         _contractNodeItem = detailItem.instance;
-        print('[map3] getContractDetail , id:${_contractNodeItem.id}');
+        print('[map3] getContractDetail , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
       } else {
         _contractNodeItem = instanceItem;
-        print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}');
+        print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
       }
 
       // 1.
@@ -470,12 +470,90 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     );
   }
 
-  Widget _contractProgressWidget() {
-    double horizontal = 0;
-    double lineWidth = 40;
-    double gap = 16;
-    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) * 0.2;
 
+
+  Widget _contractProgressWidget() {
+
+    double lineWidth = 40;
+    var durationType = _contractNodeItem.contract.durationType;
+//    durationType = 2;
+//    _isCreator = true;
+
+    double _left(bool isLine, double index) {
+      double horizontal = 0;
+      double gap = 16;
+      double multi = durationType==2?40:8;
+
+      double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) / multi;
+
+      if (!isLine) {
+        return horizontal + sectionWidth * (index-1) + gap * (2.0 * (index -1)) + lineWidth * (index-1);
+      }
+      return horizontal + sectionWidth * (index-1) + gap * (2.0 * (index -1)) + lineWidth * (index);
+    }
+
+
+    List<Widget> children = [];
+    switch (durationType) {
+      case 0:
+        children = [
+          _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+          _lightLine("7天", lineWidth, left: _left(true, 1)),
+          _lightItem("启动成功", _contractNodeItem.instanceActiveTime,
+              left: _left(false, 2)),
+          _lightLine("30天", lineWidth, left: _left(true, 2)),
+          _greyItem("到期时间", left: _left(false, 3)),
+          _greyLine("", lineWidth, left: _left(true, 3)),
+          _greyItem("提取时间", left: _left(false, 4)),
+        ];
+        break;
+
+      case 1:
+        children = [
+          _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+          _lightLine("7天", lineWidth, left: _left(true, 1)),
+          _lightItem("启动成功", _contractNodeItem.instanceActiveTime,
+              left: _left(false, 2)),
+          _lightLine("90天", lineWidth, left: _left(true, 2)),
+          _greyItem("到期时间", left: _left(false, 3)),
+          _greyLine("", lineWidth, left: _left(true, 3)),
+          _greyItem("提取时间", left: _left(false, 4)),
+        ];
+        break;
+
+      case 2:
+
+        if (_isCreator) {
+          children = [
+            _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+            _lightLine("7天", lineWidth, left: _left(true, 1)),
+            _lightItem("启动成功", _contractNodeItem.instanceActiveTime,
+                left: _left(false, 2)),
+            _lightLine("90天", lineWidth, left: _left(true, 2)),
+            _midItem("可提50%奖励", left: _left(false, 3)),
+            _greyLine("90天", lineWidth, left: _left(true, 3)),
+            _greyItem("到期时间", left: _left(false, 4)),
+            _greyLine("", lineWidth, left: _left(true, 4)),
+            _greyItem("提取时间", left: _left(false, 5)),
+          ];
+        }
+        else {
+          children = [
+            _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+            _lightLine("7天", lineWidth, left: _left(true, 1)),
+            _lightItem("启动成功", _contractNodeItem.instanceActiveTime,
+                left: _left(false, 2)),
+            _lightLine("180天", lineWidth, left: _left(true, 2)),
+            _greyItem("到期时间", left: _left(false, 3)),
+            _greyLine("", lineWidth, left: _left(true, 3)),
+            _greyItem("提取时间", left: _left(false, 4)),
+          ];
+        }
+        break;
+
+      default:
+        break;
+    }
     return Container(
       color: Colors.white,
       //height: 180,
@@ -514,18 +592,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
 //            color: Colors.red,
             child: Stack(
-              children: <Widget>[
-                _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: horizontal),
-                _lightLine("7天", lineWidth, left: horizontal + sectionWidth + gap * 2.0),
-                _lightItem("启动成功", _contractNodeItem.instanceActiveTime,
-                    left: horizontal + sectionWidth + gap * 2.0 + lineWidth * 0.75),
-                _lightLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
-                _midItem("可提50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 0.75),
-                _greyLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 1.75),
-                _greyItem("到期时间", left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 1.75),
-                _greyLine("", lineWidth, left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 2.75),
-                _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 9.0 + lineWidth * 2.75),
-              ],
+              children: children,
             ),
           ),
         ],
