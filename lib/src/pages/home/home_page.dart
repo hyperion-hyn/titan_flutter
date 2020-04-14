@@ -112,9 +112,9 @@ class HomePageState extends State<HomePage> {
       print('[Home_page] _urlLauncherAction, values:${values}');
 
       var contractId = content["contractId"];
-      var model = ContractNodeItem.onlyNodeId(int.parse(contractId));
-      String jsonString = FluroConvertUtils.object2string(model.toJson());
-      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
+//      var model = ContractNodeItem.onlyNodeId(int.parse(contractId));
+//      String jsonString = FluroConvertUtils.object2string(model.toJson());
+      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractId}");
     }
   }
 }

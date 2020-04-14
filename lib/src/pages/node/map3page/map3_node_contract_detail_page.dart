@@ -156,7 +156,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     var contractStateDesc = "正在创建中，等待区块链网络验证";
     switch (state) {
       case ContractState.PENDING:
-        nodeStateDesc = "节点配置中";
+        nodeStateDesc = "节点待启动";
         contractStateDesc = "正在创建中，等待区块链网络验证";
         break;
 
@@ -198,7 +198,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           ),
           _nodeInfoWidget(nodeStateDesc),
           _Spacer(),
-          _contractActionsWidget(contractStateDesc: contractStateDesc),
+//          _contractActionsWidget(contractStateDesc: contractStateDesc),
           _lineSpacer(),
           _contractProgressWidget(),
           _Spacer(),
@@ -367,7 +367,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     double horizontal = 0;
     double lineWidth = 40;
     double gap = 16;
-    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) * 0.125;
+    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) * 0.2;
 
     return Container(
       color: Colors.white,
@@ -405,7 +405,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
           Container(
             height: 110,
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
 //            color: Colors.red,
             child: Stack(
               children: <Widget>[
@@ -415,11 +415,12 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 _lightLine("7天", lineWidth, left: horizontal + sectionWidth + gap * 2.0),
                 _lightItem("启动成功", _contractNodeItem.instanceActiveTime, left: horizontal + sectionWidth + gap * 2.0 + lineWidth * 0.75),
                 _lightLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
-                _midItem("中期可提取50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
+                _midItem("可提50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 0.75),
                 _greyLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 1.75),
                 _greyItem("到期时间", left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 1.75),
                 _greyLine("", lineWidth, left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 2.75),
-                _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 6.0 + lineWidth * 3.75),
+                _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 9.0 + lineWidth * 2.75),
+
 
               ],
             ),
@@ -463,7 +464,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   Widget _greyItem(String name, {double left = 10}) {
     return Positioned(
       left: left,
-      top: 30,
+      top: 32,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -494,7 +495,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   Widget _midItem(String name, {double left = 10}) {
     return Positioned(
       left: left,
-      top: 30,
+      top: 32,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -544,12 +545,11 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
   Widget _greyLine(String name, double width, { double left = 10}) {
     return Positioned(
-      top: 10,
+      top: name.length == 0 ? 12:10,
       left: left,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-
           Text(
             name,
             style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
@@ -641,7 +641,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         break;
 
       case UserDelegateState.HALFDUE:
-        actionTitle = "提取";
+        actionTitle = "提取50%收益";
         onPressed = (){
           _collectAction();
         };
