@@ -12,6 +12,7 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
+import 'package:titan/src/pages/node/widget/node_delegator_member_widget.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -37,11 +38,14 @@ class Map3NodeContractDetailPage extends StatefulWidget {
 }
 
 class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
-  all_page_state.AllPageState currentState = all_page_state.LoadingState();
-  NodeApi api = NodeApi();
+
+  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+  NodeApi _api = NodeApi();
   ContractDetailItem _contractDetailItem;
   ContractNodeItem _contractNodeItem;
   Wallet _wallet;
+  bool _visible = false;
+  bool _isTransferring = false;
 
   @override
   void initState() {
@@ -57,27 +61,68 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
-
-    getNetworkData();
+    if (_wallet == null) {
+      _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+      getNetworkData();
+    }
   }
 
   void getNetworkData() async {
+
+    // todo: test_jison_0411
+/*    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+
+        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
+        var nodeItem = ContractNodeItem(
+            1,
+            item,
+            "0xaaaaa",
+            "bbbbbbb",
+            "0",
+            "0",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "ACTIVE"
+        );
+
+        _contractDetailItem = ContractDetailItem(nodeItem, "", "", "0", "0", "0", 0, "ACTIVE");
+        _contractNodeItem = nodeItem;
+        // todo： 测试
+        //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
+        _currentState = null;
+        _visible = true;
+      });
+    });
+
+    return;*/
+
     try {
       var address = _wallet.getEthAccount().address;
-      var item = await api.getContractDetail("${widget.contractId}", address: address);
+      var item = await _api.getContractDetail("${widget.contractId}", address: address);
 
       Future.delayed(Duration(seconds: 1), () {
         setState(() {
           print('[map3] _loadLastData , id:${item.instance.id}');
           _contractDetailItem = item;
           _contractNodeItem = item.instance;
-          currentState = null;
+          // todo： 测试
+          //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
+          _currentState = null;
+          _visible = true;
         });
       });
     } catch (e) {
       setState(() {
-        currentState = all_page_state.LoadFailState();
+        _currentState = all_page_state.LoadFailState();
       });
     }
   }
@@ -95,33 +140,11 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     );
   }
 
-  Widget _bottomSureWidget() {
-    return Positioned(
-      bottom: 0,
-      height: 48,
-      width: MediaQuery.of(context).size.width,
-      child: Container(
-        //padding: EdgeInsets.only(top: 100),
-        //padding: EdgeInsets.symmetric(horizontal: 30),
-        //padding: EdgeInsets.fromLTRB(0, 0, 0, 100),
-        //constraints: BoxConstraints.expand(height: 48),
-        child: RaisedButton(
-          textColor: Colors.white,
-          color: DefaultColors.color0f95b0,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
-          child: Text("确定"),
-          onPressed: _collectAction,
-        ),
-      ),
-    );
-  }
-
   Widget _pageView(BuildContext context) {
-    if (currentState != null || _contractNodeItem.contract == null) {
-      return AllPageStateContainer(currentState, () {
+    if (_currentState != null || _contractNodeItem.contract == null) {
+      return AllPageStateContainer(_currentState, () {
         setState(() {
-          currentState = all_page_state.LoadingState();
+          _currentState = all_page_state.LoadingState();
         });
       });
     }
@@ -167,171 +190,100 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     }
 
     return SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-          color: Colors.white,
-          child: getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
-        child: Row(
-          children: <Widget>[
-            Text(nodeStateDesc, style: TextStyle(fontSize: 14, color: HexColor("#666666"))),
-            Spacer(),
-            InkWell(
-                onTap: () {
-                  String webUrl = FluroConvertUtils.fluroCnParamsEncode("https://www.map3.network");
-                  String webTitle = FluroConvertUtils.fluroCnParamsEncode("Map3节点详情");
-                  Application.router
-                      .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                },
-                child: Text("点击查看详情", style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
-          ],
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+        [
+          Container(
+              color: Colors.white,
+              child: getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)
+          ),
+          _nodeInfoWidget(nodeStateDesc),
+          _Spacer(),
+          _contractActionsWidget(contractStateDesc: contractStateDesc),
+          _lineSpacer(),
+          _contractProgressWidget(),
+          _Spacer(),
+          NodeJoinMemberWidget(
+            "${widget.contractId}",
+            _contractNodeItem.remainDay,
+            isShowInviteItem: false,
+          ),
+          _Spacer(),
+          _delegatorListWidget(),
+          _Spacer(),
+          Container(
+            height: 48,
+          ),
+        ]),
+    );
+  }
+
+  Widget _nodeInfoWidget(String nodeStateDesc) {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+          child: Row(
+            children: <Widget>[
+              Text(nodeStateDesc, style: TextStyle(fontSize: 14, color: HexColor("#666666"))),
+              Spacer(),
+              InkWell(
+                  onTap: () {
+                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("https://www.map3.network");
+                    String webTitle = FluroConvertUtils.fluroCnParamsEncode("Map3节点详情");
+                    Application.router
+                        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                  },
+                  child: Text("点击查看详情", style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
+            ],
+          ),
         ),
-      ),
-      Container(
-        height: 0.8,
-        color: DefaultColors.colorf5f5f5,
-      ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(45, 6, 5, 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(width: 100, child: Text("节点版本", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                children: <Widget>[
-                  Container(width: 100, child: Text("服务商", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                  new Text("${_contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
+        Container(
+          height: 0.8,
+          color: DefaultColors.colorf5f5f5,
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(45, 6, 5, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
                 children: <Widget>[
                   Container(
-                      width: 100, child: Text("节点位置", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                  new Text("${_contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
+                      width: 100, child: Text("节点版本", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                  new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
                 ],
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                        width: 100, child: Text("服务商", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                    new Text("${_contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                        width: 100, child: Text("节点位置", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                    new Text("${_contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      _Spacer(),
-      _contractActionsWidget(contractStateDesc: contractStateDesc),
-      Container(
-        height: 0.5,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        color: DefaultColors.colorf5f5f5,
-      ),
-      _contractProgressWidget(),
-      _Spacer(),
-      NodeJoinMemberWidget(
-        "${widget.contractId}",
-        _contractNodeItem.remainDay,
-        isShowInviteItem: false,
-      ),
-      _Spacer(),
-      _delegatorListWidget(),
-      _Spacer(),
-      Container(
-        height: 48,
-      ),
-    ]));
+      ],
+    );
   }
 
   Widget _delegatorListWidget() {
     var amountDelegation = _amountToString(_contractNodeItem.amountDelegation);
-
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
-            child: Row(
-              children: <Widget>[
-                Text("入账流水", style: TextStyle(fontSize: 14, color: HexColor("#333333"))),
-                Spacer(),
-                Text("总额：${amountDelegation} (HYN)", style: TextStyle(fontSize: 12, color: HexColor("#999999")))
-              ],
-            ),
-          ),
-          Container(
-            height: 50,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: Card(
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(13.0)),
-                      ),
-                      child: Center(
-                          child: Text(
-                        "M",
-                        style: TextStyle(fontSize: 15, color: HexColor("#000000")),
-                      )),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Column(
-                      children: <Widget>[
-                        RichText(
-                          text: TextSpan(
-                              text: "Moo",
-                              style: TextStyle(fontSize: 14, color: HexColor("#000000")),
-                              children: [
-                                TextSpan(
-                                  text: " oxfdaf89fdaff",
-                                  style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
-                                )
-                              ]),
-                        ),
-                        Container(
-                          height: 6.0,
-                        ),
-                        Text("2019-10-02 17:00", style: TextStyle(fontSize: 12, color: HexColor("#333333")))
-                      ],
-                    ),
-                  ),
-                  Spacer(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      RichText(
-                        text: TextSpan(
-                          text: "20,000",
-                          style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        height: 6.0,
-                      ),
-                      Text("0xfffsdfsdffsf", style: TextStyle(fontSize: 12, color: HexColor("#333333")))
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return NodeDelegatorMemberWidget("${_contractNodeItem.id}", amountDelegation);
   }
 
   Widget _contractActionsWidget({String contractStateDesc = ""}) {
@@ -411,12 +363,16 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _contractProgressWidget() {
-    double horizontal = 25;
-    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0) * 0.2;
+    double horizontal = 0;
+    double lineWidth = 40;
+    double gap = 16;
+    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) * 0.125;
+
     return Container(
       color: Colors.white,
+      //height: 180,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -437,99 +393,33 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 Text.rich(TextSpan(children: [
                   TextSpan(text: "等待启动，剩余", style: TextStyle(fontSize: 12, color: Colors.grey)),
                   TextSpan(
-                    text: "2天",
+                    text: "${_contractNodeItem.remainDay}天",
                     style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
                   ),
                 ])),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 48),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+          //_lightItem("创建时间", _contractNodeItem.instanceStartTime),
+
+          Container(
+            height: 110,
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+//            color: Colors.red,
+            child: Stack(
               children: <Widget>[
-                Text("7天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Container(
-                  width: sectionWidth,
-                ),
-                Text("90天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Container(
-                  width: sectionWidth * 0.5,
-                ),
-                Text("90天", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontal),
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.blue, width: 1.0)),
-              ),
-              Container(
-                height: 2.5,
-                width: sectionWidth,
-                color: Colors.green,
-              ),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
-              ),
-              Container(
-                height: 2.5,
-                width: sectionWidth,
-                color: Colors.green,
-              ),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
-              ),
-              Container(
-                height: 2.5,
-                width: sectionWidth,
-                color: Colors.green,
-              ),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
-              ),
-              Container(
-                height: 2.5,
-                width: sectionWidth,
-                color: Colors.green,
-              ),
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white, border: Border.all(color: Colors.grey, width: 1.0)),
-              ),
-            ]),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text("待启动", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Text("启动", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Padding(
-                  padding: const EdgeInsets.only(top: 0),
-                  child: Text("中期可取50%奖励",
-                      style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.normal)),
-                ),
-                Text("到期", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
-                Text("已提取", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.normal)),
+
+
+                _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: horizontal),
+                _lightLine("7天", lineWidth, left: horizontal + sectionWidth + gap * 2.0),
+                _lightItem("启动成功", _contractNodeItem.instanceActiveTime, left: horizontal + sectionWidth + gap * 2.0 + lineWidth * 0.75),
+                _lightLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
+                _midItem("中期可提取50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
+                _greyLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 1.75),
+                _greyItem("到期时间", left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 1.75),
+                _greyLine("", lineWidth, left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 2.75),
+                _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 6.0 + lineWidth * 3.75),
+
               ],
             ),
           ),
@@ -538,7 +428,140 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     );
   }
 
+  Widget _lightItem(String name, int date, {double left = 10}) {
+    return Positioned(
+      left: left,
+      top: 30,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 11,
+            height: 11,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: HexColor("#322300"), width: 2.0)),
+          ),
+          Container(height: 8.0,),
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Text(
+            "${FormatUtil.formatDate(date)}",
+            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+        ],
+      ),
+    );
+  }
+
+  Widget _greyItem(String name, {double left = 10}) {
+    return Positioned(
+      left: left,
+      top: 30,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: HexColor("#CCCCCC"), width: 2.0)),
+          ),
+          Container(height: 8.0,),
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Text(
+            "",
+            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+        ],
+      ),
+    );
+  }
+
+  Widget _midItem(String name, {double left = 10}) {
+    return Positioned(
+      left: left,
+      top: 30,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: HexColor("#CCCCCC"), width: 2.0)),
+          ),
+          Container(height: 8.0,),
+          Text(
+            name,
+            style: TextStyle(fontSize: 10, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Text(
+            "",
+            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _lightLine(String name, double width, { double left = 10}) {
+    return Positioned(
+      top: 10,
+      left: left,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Container(height: 1.0, width: width, color: HexColor("#322300"),),
+        ],
+      ),
+    );
+  }
+
+  Widget _greyLine(String name, double width, { double left = 10}) {
+    return Positioned(
+      top: 10,
+      left: left,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+          ),
+          Container(height: 8.0,),
+          Container(height: 1.0, width: width, color: HexColor("#ECECEC"),),
+        ],
+      ),
+    );
+  }
+
   HexColor _getStatusColor(ContractState status) {
+
     var statusColor = HexColor('#EED097');
 
     switch (status) {
@@ -559,10 +582,19 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         break;
 
       default:
-        statusColor = Theme.of(context).primaryColor;
+        statusColor = HexColor('#867B7B');
+        //statusColor = Theme.of(context).primaryColor;
         break;
     }
     return statusColor;
+  }
+
+  Widget _lineSpacer() {
+    return Container(
+      height: 0.5,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      color: DefaultColors.colorf5f5f5,
+    );
   }
 
   Widget _Spacer() {
@@ -572,10 +604,94 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     );
   }
 
-  bool isTransferring = false;
+  Widget _bottomSureWidget() {
+    var state = enumUerDelegateStateFromString(_contractDetailItem?.state??"");
+    var actionTitle = _isTransferring ? "提取中...": "确定";
+    void Function() onPressed =  (){};
+
+    switch (state) {
+      case UserDelegateState.PENDING:
+        actionTitle = "增加投入";
+        onPressed = (){
+          Application.router.navigateTo(context, Routes.map3node_join_contract_page
+              + "?contractId=${_contractNodeItem.id}");
+        };
+        break;
+
+      case UserDelegateState.ACTIVE:
+        actionTitle = "已抵押";
+        onPressed = (){
+          Fluttertoast.showToast(msg: "节点正在运行中。。。");
+        };
+        break;
+
+      case UserDelegateState.DUE:
+        actionTitle = "提取";
+        onPressed = (){
+          _collectAction();
+        };
+        break;
+
+      case UserDelegateState.DUE_COLLECTED:
+        actionTitle = "完成";
+        onPressed = (){
+          Fluttertoast.showToast(msg: "节点收益已经提取完成。");
+        };
+        break;
+
+      case UserDelegateState.HALFDUE:
+        actionTitle = "提取";
+        onPressed = (){
+          _collectAction();
+        };
+        break;
+
+      case UserDelegateState.HALFDUE_COLLECTED:
+        actionTitle = "完成";
+        onPressed = (){
+          Fluttertoast.showToast(msg: "节点一半的收益已经提取完成。");
+        };
+        break;
+
+      case UserDelegateState.CANCELLED:
+        actionTitle = "提取";
+        onPressed = (){
+          _collectAction();
+        };
+        break;
+
+      case UserDelegateState.CANCELLED_COLLECTED:
+        actionTitle = "完成";
+        onPressed = (){
+          Fluttertoast.showToast(msg: "节点退款已经提取完成。");
+        };
+        break;
+
+      default:
+        break;
+    }
+
+    return Visibility(
+      visible: _visible,
+      child: Positioned(
+        bottom: 0,
+        height: 48,
+        width: MediaQuery.of(context).size.width,
+        child: Container(
+          child: RaisedButton(
+            textColor: Colors.white,
+            color: DefaultColors.color0f95b0,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
+            child: Text(actionTitle),
+            onPressed: onPressed,
+          ),
+        ),
+      ),
+    );
+  }
 
   Future _collectAction() async {
-    var btnTitle = isTransferring ? S.of(context).please_waiting : "查看合约";
 
     if (_wallet == null || _contractDetailItem == null) {
       return;
@@ -594,7 +710,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       try {
         setState(() {
           if (mounted) {
-            isTransferring = true;
+            _isTransferring = true;
           }
         });
 
@@ -602,20 +718,8 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         var createNodeWalletAddress = _contractNodeItem.owner;
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
-        //TODO 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
+        //TODO: 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
         var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
-
-        /*var signedHex = await _wallet.signCollectMap3Node(
-          createNodeWalletAddress: createNodeWalletAddress,
-          gasPrice: gasPrice,
-          gasLimit: gasLimit,
-          password: walletPassword,
-        );
-        var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
-
-        logger.i('map3 collect, result: $ret');
-
-       */
 
         var collectHex = await _wallet.sendCollectMap3Node(
           createNodeWalletAddress: createNodeWalletAddress,
@@ -633,7 +737,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         logger.e(_);
         setState(() {
           if (mounted) {
-            isTransferring = false;
+            _isTransferring = false;
           }
         });
         if (_ is PlatformException) {
@@ -656,4 +760,5 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   String _amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
+
 }

@@ -7,30 +7,35 @@ import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 class EtherscanApi {
-  String host = "";
+  String get host {
+    switch (WalletConfig.netType) {
+      case EthereumNetType.main:
+        return Config.ETHERSCAN_API_URL;
+      case EthereumNetType.repsten:
+        return Config.ETHERSCAN_API_URL_ROPSTEN;
+      case EthereumNetType.rinkeby:
+        return Config.ETHERSCAN_API_URL_RINKEBY;
 
-  EtherscanApi() {
-    if (WalletConfig.netType == EthereumNetType.main) {
-      host = Config.ETHERSCAN_API_URL;
-    } else {
-      host = "https://api-ropsten.etherscan.io";
+//      case EthereumNetType.local:
+//        return Config.ETHERSCAN_API_URL;
+      default:
+        return Config.ETHERSCAN_API_URL;
     }
   }
 
-  static String getTxDetailUrl(BuildContext context, String txHash, bool isChinaMainland) {
-    if (isChinaMainland && WalletConfig.netType == EthereumNetType.main) {
-      return "https://cn.etherscan.com/tx/$txHash";
-    }
-
+  static String getTxDetailUrl(String txHash, bool isChinaMainland) {
     if (WalletConfig.netType == EthereumNetType.main) {
-      if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+      if (isChinaMainland) {
         return 'https://cn.etherscan.com/tx/$txHash';
       } else {
         return "https://etherscan.io/tx/$txHash";
       }
-    } else {
+    } else if (WalletConfig.netType == EthereumNetType.repsten) {
       return "https://ropsten.etherscan.io/tx/$txHash";
+    } else if (WalletConfig.netType == EthereumNetType.rinkeby) {
+      return "https://rinkeby.etherscan.io/tx/$txHash";
     }
+    return null;
   }
 
   Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {

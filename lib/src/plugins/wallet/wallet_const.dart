@@ -37,6 +37,7 @@ class WalletError {
 enum EthereumNetType {
   main,
   repsten,
+  rinkeby,
   local,
 }
 
@@ -54,24 +55,23 @@ class WalletConfig {
 
   static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
 
-
-//  static const String LOCAL_API = 'http://116.23.19.213:37545';
-//  static const String LOCAL_API = 'http://10.10.1.115:7545';
+  static String get INFURA_RINKEBY_API => 'https://rinkeby.infura.io/v3/${Config.INFURA_PRVKEY}';
 
   static EthereumNetType netType = EthereumNetType.main;
 
   static String get map3ContractAddress {
     switch (netType) {
       case EthereumNetType.main:
-
         //TODO
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
       case EthereumNetType.repsten:
         //TODO
         return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
+      case EthereumNetType.rinkeby:
+        return '0xda3df1c86e4976643bfa69b830afa48ef5857d58';
       case EthereumNetType.local:
-        return ContractTestConfig.stakingContract;
-        //return '0x14D135f91B01db0DF32cdcF7d7e93cc14A9aE3D7';
+        return ContractTestConfig.map3ContractAddress;
+      //return '0x14D135f91B01db0DF32cdcF7d7e93cc14A9aE3D7';
     }
     return '';
   }
@@ -82,9 +82,11 @@ class WalletConfig {
         return INFURA_MAIN_API;
       case EthereumNetType.repsten:
         return INFURA_ROPSTEN_API;
+      case EthereumNetType.rinkeby:
+        return INFURA_RINKEBY_API;
       case EthereumNetType.local:
         return ContractTestConfig.walletLocalDomain;
-        //return LOCAL_API;
+      //return LOCAL_API;
     }
     return '';
   }

@@ -9,6 +9,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -83,14 +84,33 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
   }
 
+
+
   _loadData() async {
 
     // todo: test_jison_0411
-   /*
-    setState(() {
+/*    setState(() {
       if (mounted) {
         var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
-        var model = ContractNodeItem(2, item, "0xaaaaa", "bbb", "0", "0", 0, 0, "ACTIVE");
+        var model = ContractNodeItem(
+            1,
+            item,
+            "0xaaaaa",
+            "bbbbbbb",
+            "0",
+            "0",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "ACTIVE"
+        );
         _dataArray = [model];
       }
     });
@@ -99,7 +119,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     return
     */
-    
+
     _currentPage = 0;
 
     List<ContractNodeItem> dataList = [];
@@ -208,7 +228,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         };*/
 
     var state = enumContractStateFromString(contractNodeItem.state);
-    print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
+    //print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
 
     switch (state) {
       case ContractState.PENDING:
