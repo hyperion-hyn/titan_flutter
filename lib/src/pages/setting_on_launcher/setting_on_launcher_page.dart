@@ -3,14 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
@@ -72,7 +70,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
             Padding(
               padding: const EdgeInsets.only(left: 24.0, top: 56, bottom: 16),
               child: Text(
-                S.of(context).what_region_use_titan,
+                S.of(context).what_region_use_titan(S.of(context).app_name),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54),
               ),
             ),
@@ -128,7 +126,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                             await prefs.setBool(PrefsKey.FIRST_TIME_LAUNCHER_KEY, true);
                             BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
                           },
-                          child: Text('${S.of(context).enter} titan'),
+                          child: Text('${S.of(context).enter} ${S.of(context).app_name}'),
                         );
                       },
                     ),

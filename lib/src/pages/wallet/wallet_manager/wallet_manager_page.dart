@@ -5,11 +5,10 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/pages/wallet/wallet_manager/bloc/bloc.dart';
-import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -116,9 +115,12 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 itemCount: walletList.length,
               );
             } else if (state is WalletEmptyState) {
-              return Container(
-                child: Center(child: Text('Empty wallet TODO!')),
-              );
+              return Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 32.0),
+                    child: EmptyWalletView(),
+                  ));
             } else {
               return Container();
             }
@@ -127,7 +129,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   }
 
   Widget _buildWallet(Wallet wallet) {
-    bool isSelected = wallet.keystore.fileName == WalletInheritedModel.of(context).activatedWallet?.wallet?.keystore?.fileName;
+    bool isSelected =
+        wallet.keystore.fileName == WalletInheritedModel.of(context).activatedWallet?.wallet?.keystore?.fileName;
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
     return Padding(
@@ -202,9 +205,11 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               InkWell(
                 onTap: () {
                   var walletStr = FluroConvertUtils.object2string(wallet.toJson());
+                  var route = ModalRoute.of(context);
                   Application.router.navigateTo(
-                      context, Routes.wallet_setting + '?walletStr=$walletStr');
-//                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalletSettingPage(wallet)));
+                      context,
+                      Routes.wallet_setting +
+                          '?entryRouteName=${Uri.encodeComponent(route.settings?.name?.split('?')[0] ?? '')}&walletStr=$walletStr');
                 },
                 child: Icon(
                   Icons.info_outline,

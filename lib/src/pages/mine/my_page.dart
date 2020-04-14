@@ -75,7 +75,8 @@ class _MyPageState extends State<MyPage> {
                         decoration: BoxDecoration(
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(216), bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(216), bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
                         ),
                       ),
                       Container(
@@ -186,8 +187,7 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget _buildMenuBar(String title, IconData iconData, Function onTap, {String imageName=""}) {
-
+  Widget _buildMenuBar(String title, IconData iconData, Function onTap, {String imageName = ""}) {
     Widget iconWidget;
     if (imageName.length <= 0) {
       iconWidget = Icon(
@@ -200,7 +200,8 @@ class _MyPageState extends State<MyPage> {
         width: 20,
         height: 20,
       );
-    };
+    }
+    ;
     return Material(
       child: InkWell(
         onTap: onTap,
@@ -276,8 +277,7 @@ class _MyPageState extends State<MyPage> {
       children: <Widget>[
         InkWell(
             onTap: () {
-              Application.router
-                  .navigateTo(context, Routes.wallet_manager + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
+              Application.router.navigateTo(context, Routes.wallet_manager);
             },
             child: Text(S.of(context).wallet_manage, style: TextStyle(color: Colors.white70, fontSize: 14))),
       ],
@@ -314,10 +314,8 @@ class _MyPageState extends State<MyPage> {
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
               onTap: () {
-                BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
-
-//                Application.router
-//                    .navigateTo(context, Routes.wallet_create+ '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
+//                BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
+                Application.router.navigateTo(context, Routes.wallet_manager);
               },
               child: Text("创建/导入钱包账户", style: TextStyle(color: Colors.white70, fontSize: 20))),
         ),
@@ -393,17 +391,20 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget _buildSloganRow() {
-    return Row(
-      children: <Widget>[
-        //Image.asset('res/drawable/ic_logo.png', width: 40.0),
-        Image.asset(
-          'res/drawable/logo_title.png',
-          width: 72.0,
-          height: 36,
-        ),
-        SizedBox(width: 16),
-        Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70))
-      ],
+    return Opacity(
+      opacity: 0.8,
+      child: Row(
+        children: <Widget>[
+          //Image.asset('res/drawable/ic_logo.png', width: 40.0),
+          Image.asset(
+            'res/drawable/logo_title.png',
+            width: 72.0,
+            height: 36,
+          ),
+          SizedBox(width: 16),
+          Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70))
+        ],
+      ),
     );
   }
 

@@ -491,35 +491,25 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-//              eth_getTransactionCount
               var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
               if (activeWallet != null) {
-//                getTransactionCount
                 final client = WalletUtil.getWeb3Client();
                 var ethAddress = activeWallet.getEthAccount().address;
 
-//                var count =
-//                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.genesis());
-//                logger.i('genesis nonce is $count');
+//                var transactionHash = '0x9f86f325e64a0c9f947141e901575d11f89e3966e9b470662f0af25e9abc8852';
+//                if (transactionHash != null && transactionHash.length > 0) {
+////                  var transaction = await client.getTransactionByHash(transactionHash);
+////                  if(transaction != null) {
+////                    logger.i(transaction);
+////                  }
 //
-//                count =
-//                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.current());
-//                logger.i('current nonce is $count');
-
-                var transactionHash = '0x9f86f325e64a0c9f947141e901575d11f89e3966e9b470662f0af25e9abc8852';
-                if (transactionHash != null && transactionHash.length > 0) {
-//                  var transaction = await client.getTransactionByHash(transactionHash);
-//                  if(transaction != null) {
-//                    logger.i(transaction);
+//                  var transactionReceipt = await client.getTransactionReceipt(transactionHash);
+//                  if (transactionReceipt != null) {
+//                    logger.i("transactionReceipt ${transactionReceipt.status}");
+//                  } else {
+//                    print('transactionReceipt is null');
 //                  }
-
-                  var transactionReceipt = await client.getTransactionReceipt(transactionHash);
-                  if (transactionReceipt != null) {
-                    logger.i("transactionReceipt ${transactionReceipt.status}");
-                  } else {
-                    print('transactionReceipt is null');
-                  }
-                }
+//                }
 
                 var count =
                     await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.pending());
@@ -534,7 +524,6 @@ class _WalletDemoState extends State<WalletDemo> {
                 logger.i('请先切换到ETH网络到非主网');
               } else {
                 final client = WalletUtil.getWeb3Client();
-//                const String privateKey = '976c55a80592bdffcd4d5b29d409810518792fed3ec4a0243e4f857e9102d556';
                 String privateKey = ContractTestConfig.privateKey;
                 final credentials = await client.credentialsFromPrivateKey(privateKey);
 
