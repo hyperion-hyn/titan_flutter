@@ -59,6 +59,9 @@ part 'contract_node_item.g.dart';
   @JsonKey(name: 'instanceFinishTime')
   int instanceFinishTime;
 
+  @JsonKey(name: 'shareUrl')
+  String shareUrl;
+
   @JsonKey(name: 'state')
   String state;
 
@@ -79,6 +82,7 @@ part 'contract_node_item.g.dart';
       this.instanceDueTime,
       this.instanceCancelTime,
       this.instanceFinishTime,
+      this.shareUrl,
       this.state
       );
 
