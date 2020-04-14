@@ -58,6 +58,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     super.dispose();
   }
 
+
   _loadMoreData() async {
 
     List<ContractNodeItem> dataList = [];
@@ -117,8 +118,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     loadDataBloc.add(RefreshSuccessEvent());
 
-    return
-    */
+    return*/
 
     _currentPage = 0;
 
@@ -138,11 +138,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       loadDataBloc.add(RefreshSuccessEvent());
 
       // todo: test_jison_0413
-      if (dataList.length >= ContractState.values.length) {
+      /*if (dataList.length >= ContractState.values.length) {
         for (int i=0; i< ContractState.values.length; i++) {
           dataList[i].state = ContractState.values[i].toString().split(".").last;
         }
-      }
+      }*/
 
       setState(() {
         if (mounted) {
@@ -217,9 +217,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     startAccount = startAccount + "...";
     String btnTitle = "查看合约";
     void Function() onPressed =  (){
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+
+      /*Navigator.of(context).push(MaterialPageRoute(builder: (_) {
         return Map3NodeContractDetailPage(contractNodeItem.id);
-      }));
+      }));*/
     };
 
     /*onPressed = (){
@@ -232,11 +234,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     switch (state) {
       case ContractState.PENDING:
-        btnTitle = "加快启动";
+        /*btnTitle = "加快启动";
          onPressed = (){
            Application.router.navigateTo(context, Routes.map3node_join_contract_page
                + "?contractId=${contractNodeItem.id}");
-         };
+         };*/
 
         break;
 
