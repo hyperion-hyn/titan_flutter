@@ -146,14 +146,14 @@ class _DrawerComponentState extends State<DrawerComponent> {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
                   },
                   leading: Icon(Icons.account_balance_wallet),
-                  title: Text("钱包"),
+                  title: Text(S.of(context).wallet),
                   trailing: Icon(Icons.navigate_next),
                 ),
                 Container(height: 1, color: Colors.grey[100]),
                 ListTile(
                   onTap: () {},
                   leading: Icon(Icons.account_box),
-                  title: Text("我的"),
+                  title: Text(S.of(context).my_page),
                   trailing: Icon(Icons.navigate_next),
                 ),
                 Container(height: 1, color: Colors.grey[100]),

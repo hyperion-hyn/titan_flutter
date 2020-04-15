@@ -192,7 +192,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                         padding: const EdgeInsets.only(top: 3.0),
                         child: Row(
                           children: <Widget>[
-                            Text(S.of(context).highest + " ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                            Text(S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" + S.of(context).ten_thousand,
                                 style: TextStyles.textC99000000S10,maxLines:1,softWrap: true),
                             Text("  |  ",style: TextStyles.textC9b9b9bS12),
                             Text(S.of(context).n_day(contractNodeItem.contract.duration.toString()),style: TextStyles.textC99000000S10)
@@ -280,41 +280,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   }
 
   _loadData() async {
-
-    // todo: test_jison_0411
-    /*
-   setState(() {
-      if (mounted) {
-        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
-        var model = ContractNodeItem(
-            1,
-            item,
-            "0xaaaaa",
-            "bbbbbbb",
-            "0",
-            "0",
-            "",
-            "",
-            "",
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            "",
-            "ACTIVE"
-        );
-        _dataArray = [model];
-      }
-    });
-
-    loadDataBloc.add(RefreshSuccessEvent());
-
-    return
-    */
-
     _currentPage = 0;
 
     List<ContractNodeItem> dataList = [];

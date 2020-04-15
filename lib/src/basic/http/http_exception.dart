@@ -1,3 +1,6 @@
+import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/config/consts.dart';
+
 class HttpResponseNot200Exception implements Exception {
   String cause;
 
@@ -29,7 +32,7 @@ class HttpResponseCodeNotSuccess implements Exception {
 //var CONTENT_CONFLICT = HttpResponseCodeNotSuccess(-1004, "Content conflict");
 //var NO_CONTENT = HttpResponseCodeNotSuccess(-1005, "Not content");
 //var NETWORK_ERROR = HttpResponseCodeNotSuccess(-1006, "network error");
-var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, "超过限制");
+var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, S.of(Keys.rootKey.currentContext).exceed_the_limit);
 //final HttpResponseCodeNotSuccess ERROR_USER_CREATED = HttpResponseCodeNotSuccess(-20001, "create user error"); //用户创建失败
 //var ERROR_USER_EXIST = HttpResponseCodeNotSuccess(-20002, "user already exist"); //用户已存在
 //var ERROR_USER_UPATED = HttpResponseCodeNotSuccess(-20004, "update user error"); //用户更新失败
@@ -39,26 +42,26 @@ var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, "超过限制");
 //var ERROR_RESET_PASSWORD = HttpResponseCodeNotSuccess(-20008, "fail to reset password"); //重置密码错误
 //var ERROR_CHECK_IN_LIMIT = HttpResponseCodeNotSuccess(-20009, "check-in reach the upper limit"); //签到达到上限
 //var ERROR_CHECK_IN_INTERVAL = HttpResponseCodeNotSuccess(-20010, "check-in interval is 30 minutes."); //签到时间间隔var
-var ERROR_FUND_PASSWORD = HttpResponseCodeNotSuccess(-20011, "资金密码错误"); //签到时间间隔var
+var ERROR_FUND_PASSWORD = HttpResponseCodeNotSuccess(-20011, S.of(Keys.rootKey.currentContext).fund_password_error); //签到时间间隔var
 
 List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
-  HttpResponseCodeNotSuccess(-10000, "未知错误"),
-  HttpResponseCodeNotSuccess(-10001, "参数错误"),
-  HttpResponseCodeNotSuccess(-10002, "未授权"),
-  HttpResponseCodeNotSuccess(-1003, "权限不足"),
-  HttpResponseCodeNotSuccess(-1004, "内容冲突"),
-  HttpResponseCodeNotSuccess(-1005, "无内容"),
-  HttpResponseCodeNotSuccess(-1006, "网络错误"),
+  HttpResponseCodeNotSuccess(-10000, S.of(Keys.rootKey.currentContext).unknown_error),
+  HttpResponseCodeNotSuccess(-10001, S.of(Keys.rootKey.currentContext).param_error),
+  HttpResponseCodeNotSuccess(-10002, S.of(Keys.rootKey.currentContext).unauthorized),
+  HttpResponseCodeNotSuccess(-1003, S.of(Keys.rootKey.currentContext).insufficient_permission),
+  HttpResponseCodeNotSuccess(-1004, S.of(Keys.rootKey.currentContext).content_confict),
+  HttpResponseCodeNotSuccess(-1005, S.of(Keys.rootKey.currentContext).no_content),
+  HttpResponseCodeNotSuccess(-1006, S.of(Keys.rootKey.currentContext).network_error),
   ERROR_OUT_OF_RANGE,
-  HttpResponseCodeNotSuccess(-20001, "创建用户失败"),
-  HttpResponseCodeNotSuccess(-20002, "账号已存在，请直接登录账号"),
-  HttpResponseCodeNotSuccess(-20004, "更新用户信息失败"),
-  HttpResponseCodeNotSuccess(-20005, "验证码错误"),
-  HttpResponseCodeNotSuccess(-20006, "邀请码错误"),
-  HttpResponseCodeNotSuccess(-20007, "用户名和密码不匹配"),
-  HttpResponseCodeNotSuccess(-20008, "重置密码错误"),
-  HttpResponseCodeNotSuccess(-20009, "今天打卡任务已完成，请明日再来"),
-  HttpResponseCodeNotSuccess(-20010, "打卡间隔低于30分钟"),
+  HttpResponseCodeNotSuccess(-20001, S.of(Keys.rootKey.currentContext).create_account_fail),
+  HttpResponseCodeNotSuccess(-20002, S.of(Keys.rootKey.currentContext).account_exist_direct_login),
+  HttpResponseCodeNotSuccess(-20004, S.of(Keys.rootKey.currentContext).update_user_info_fail),
+  HttpResponseCodeNotSuccess(-20005, S.of(Keys.rootKey.currentContext).verification_code_error),
+  HttpResponseCodeNotSuccess(-20006, S.of(Keys.rootKey.currentContext).invitation_code_error),
+  HttpResponseCodeNotSuccess(-20007, S.of(Keys.rootKey.currentContext).username_and_password_not_match),
+  HttpResponseCodeNotSuccess(-20008, S.of(Keys.rootKey.currentContext).password_reset_error),
+  HttpResponseCodeNotSuccess(-20009, S.of(Keys.rootKey.currentContext).punch_card_completed_came_tomorrow),
+  HttpResponseCodeNotSuccess(-20010, S.of(Keys.rootKey.currentContext).check_interval_less_thirty_minutes),
   ERROR_FUND_PASSWORD
 ];
 

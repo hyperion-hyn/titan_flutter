@@ -32,7 +32,7 @@ class _MeSettingState extends State<MeSettingPage> {
         ),
         body: Column(
           children: <Widget>[
-            _buildMemuBar("价格显示", quoteStr, () {
+            _buildMemuBar(S.of(context).price_show, quoteStr, () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MePricePage()));
             }),
             Divider(

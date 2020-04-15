@@ -7,7 +7,7 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(centerTitle: true, title: Text("钱包账户")),
+        appBar: AppBar(centerTitle: true, title: Text(S.of(context).wallet_account)),
         body: Container(
           color: Colors.white,
           child: Center(
@@ -29,7 +29,7 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
                 Container(
                   width: 250,
                   child: Text(
-                    "创建Map3抵押节点前，你必须先拥有一个区块链钱包账户。",
+                    S.of(context).create_map_node_must_have_block_account,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),

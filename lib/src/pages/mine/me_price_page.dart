@@ -36,7 +36,7 @@ class _MePriceState extends State<MePricePage> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "价格显示",
+          S.of(context).price_show,
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
