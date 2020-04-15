@@ -95,13 +95,67 @@ part 'contract_node_item.g.dart';
   Map<String, dynamic> toJson() => _$ContractNodeItemToJson(this);
 
   String get remainDay{
-    double remian = (expectCancelTime - instanceStartTime) / 3600 / 24;
-    return FormatUtil.doubleFormatNum(remian);
+    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+    double totalRemain = (expectCancelTime - instanceStartTime) / 3600 / 24;
+    double progress = ((now - instanceStartTime) / 3600 / 24);
+    return FormatUtil.doubleFormatNum(totalRemain>=progress?totalRemain-progress:0);
+  }
+
+  double get remainProgress{
+    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+    //print('now:${now}, \nexpectCancelTime:$expectCancelTime');
+    double totalRemain = (expectCancelTime - instanceStartTime) / 3600 / 24;
+    double progress = (now - instanceStartTime) / 3600 / 24 / totalRemain;
+    if (progress < 0.2) {
+      return 0.2;
+    } else if (progress > 1.0 && progress != double.infinity) {
+      return 1.0;
+    } else if (progress == double.infinity) {
+      return 0.0;
+    }
+    return progress;
   }
 
   String get expectDueDay{
-    double expect = (expectDueTime - instanceActiveTime) / 3600 / 24;
-    return FormatUtil.doubleFormatNum(expect);
+    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+    double totalRemain = (expectDueTime - instanceActiveTime) / 3600 / 24;
+    double progress = ((now - instanceActiveTime) / 3600 / 24);
+    return FormatUtil.doubleFormatNum(totalRemain>=progress?totalRemain-progress:0);
+
+//    double expect = (expectDueTime - instanceActiveTime) / 3600 / 24;
+//    return FormatUtil.doubleFormatNum(expect);
+  }
+
+  double get expectDueProgress{
+    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+    double totalDue = (expectDueTime - instanceActiveTime) / 3600 / 24;
+    double progress = (now - instanceActiveTime) / 3600 / 24 / totalDue;
+    print('now:${now}, \nexpectCancelTime:$expectCancelTime, progress:${progress}');
+
+    if (progress < 0.2) {
+      return 0.2;
+    } else if (progress > 1.0 && progress != double.infinity) {
+      return 1.0;
+    } else if (progress == double.infinity) {
+      return 0.0;
+    }
+    return progress;
+  }
+
+  double get expectHalfDueProgress{
+    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+    //print('now:${now}, \nexpectCancelTime:$expectCancelTime');
+    //double totalDue = (expectDueTime - instanceActiveTime) / 3600 / 24;
+    //double progress = (now - instanceActiveTime) / 3600 / 24 / (totalDue * 0.5);
+    double progress = (now - instanceActiveTime) / 3600 / 24 / 90;
+    if (progress < 0.2) {
+      return 0.2;
+    } else if (progress > 1.0 && progress != double.infinity) {
+      return 1.0;
+    } else if (progress == double.infinity) {
+      return 0.0;
+    }
+    return progress;
   }
 
 }

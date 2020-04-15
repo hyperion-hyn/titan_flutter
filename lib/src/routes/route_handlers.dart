@@ -151,7 +151,7 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeSendConfirmPage(
       params['coinVo']?.first ?? '0', contractNodeItem, double.parse(params['transferAmount']?.first ?? '0'),
       params['receiverAddress']?.first ?? '0', params['pageType']?.first,params['contractId']?.first,
-    provider: params['provider']?.first,region: params['region']?.first,
+    provider: params['provider']?.first ?? "",region: params['region']?.first ?? "",
   );
 });
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -34,8 +35,6 @@ class Map3NodeCreateContractPage extends StatefulWidget {
 class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
-  String pageTitle = "";
-  String managerTitle = "";
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
   ContractNodeItem contractNodeItem;
@@ -50,8 +49,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   @override
   void initState() {
-    pageTitle = "创建Map3抵押合约";
-    managerTitle = "获得管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
@@ -66,7 +63,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      appBar: AppBar(centerTitle: true, title: Text(pageTitle)),
       backgroundColor: Colors.white,
       body: _pageView(context),
     );
@@ -130,7 +126,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       return;
     }
 
-    _joinCoinFormKey.currentState.validate();
+    _joinCoinFormKey.currentState?.validate();
 
     if (inputText == null || inputText == "") {
       setState(() {
@@ -199,7 +195,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                     children: <Widget>[
                       Container(
                           width: 100,
-                          child: Text("节点版本",
+                          child: Text(S.of(context).node_version,
                               style: TextStyle(
                                   fontSize: 14, color: HexColor("#92979a")))),
                       Text("${contractNodeItem.contract.nodeName}",
@@ -213,7 +209,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                     children: <Widget>[
                       Container(
                           width: 100,
-                          child: Text("服务商",
+                          child: Text(S.of(context).service_provider,
                               style: TextStyle(
                                   fontSize: 14, color: HexColor("#92979a")))),
                       DropdownButtonHideUnderline(
@@ -239,7 +235,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                     children: <Widget>[
                       Container(
                           width: 100,
-                          child: Text("节点位置",
+                          child: Text(S.of(context).node_location,
                               style: TextStyle(
                                   fontSize: 14, color: HexColor("#92979a")))),
                       DropdownButtonHideUnderline(
@@ -282,19 +278,19 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("·  请确保钱包账户（$walletName）的ETH GAS费充足",
+                  Text(S.of(context).please_confirm_eth_gas_enough(walletName),
                       style: TextStyles.textC999S12),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                     child: Text(
-                        "·  创建后，若7天内没能积攒足够启动所需HYN，则本次Map3节点抵押合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
+                        S.of(context).create_no_enough_hyn_start_fail,
                         style: TextStyles.textC999S12),
                   ),
-                  Text("·  Map3节点抵押合约创建后不可撤销。", style: TextStyles.textC999S12),
+                  Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                     child: Text(
-                        "·  创建节点需要暂时冻结500U账户余额，用于支付直推人的贡献奖励。直推人及奖励收取节点总收益的5%。",
+                        S.of(context).freeze_balance_reward_direct_push,
                         style: TextStyles.textC999S12),
                   ),
                 ],
@@ -309,7 +305,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(
                   side: BorderSide(color: Theme.of(context).primaryColor),),
-              child: Text("确定买入"),
+              child: Text(S.of(context).confirm_bug),
               onPressed: () {
                 setState(() {
                   if (!_joinCoinFormKey.currentState.validate()) {
@@ -324,7 +320,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                           "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                          "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&transferAmount=${_joinCoinController.text??""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&provider=$provider" +
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +
@@ -336,7 +332,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     );
   }
 
-  Widget startAccount() {
+  /*Widget startAccount() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -371,7 +367,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         ),
       ],
     );
-  }
+  }*/
 }
 
 Widget getHoldInNum(
@@ -384,7 +380,7 @@ Widget getHoldInNum(
     bool isJoin,
     Function onChangeFuntion,
     Function onPressFunction,
-    {Function joinEnougnFunction}) {
+    {Function joinEnougnFunction,bool isMyself = false}) {
   // todo: test_jison_0411
   //List<int> suggestList = [];
   List<int> suggestList = contractNodeItem.contract.suggestQuantity
@@ -393,16 +389,14 @@ Widget getHoldInNum(
       .toList();
 
   double minTotal = 0;
-  if (isJoin &&
-      double.parse(contractNodeItem.contract.minTotalDelegation) >=
-          double.parse(contractNodeItem.remainDelegation)) {
+  if (isJoin) {
     double tempMinTotal =
         double.parse(contractNodeItem.contract.minTotalDelegation) *
             contractNodeItem.contract.minDelegationRate;
     if (tempMinTotal >= double.parse(contractNodeItem.remainDelegation)) {
-      minTotal = tempMinTotal;
-    } else {
       minTotal = double.parse(contractNodeItem.remainDelegation);
+    } else {
+      minTotal = tempMinTotal;
     }
   } else {
     minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) *
@@ -419,7 +413,7 @@ Widget getHoldInNum(
       Padding(
         padding: const EdgeInsets.only(left: 15.0, top: 13, bottom: 15),
         child: Text(
-            "抵押HYN数量  （$walletName钱包HYN余额 ${FormatUtil.formatNumDecimal(balance)}）",
+            S.of(context).mortgage_wallet_balance(walletName,FormatUtil.formatNumDecimal(balance)),
             style: TextStyles.textC333S14),
       ),
       Container(
@@ -454,15 +448,16 @@ Widget getHoldInNum(
                             hintStyle: TextStyles.textC9b9b9bS14,
                             labelStyle: TextStyles.textC333S14,
                             hintText:
-                                "最低买入${FormatUtil.formatNumDecimal(minTotal)}",
+//                                "最低买入${FormatUtil.formatNumDecimal(minTotal)}",
+                              S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
                           ),
                           validator: (textStr) {
                             if(textStr.length == 0){
-                              return null;
+                              return S.of(context).please_input_hyn_count;
                             } else if (int.parse(textStr) < minTotal) {
-                              return "不能少于${FormatUtil.formatNumDecimal(minTotal)}HYN";
+                              return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
                             } else if (int.parse(textStr) > balance) {
-                              return "HYN余额不足";
+                              return S.of(context).hyn_balance_no_enough;
                             } else {
                               return null;
                             }
@@ -542,7 +537,7 @@ Widget getHoldInNum(
                             children: <Widget>[
                               RichText(
                                 text: TextSpan(
-                                    text: "剩余份额(HYN)：",
+                                    text: S.of(context).balance_portion_hyn,
                                     style: TextStyle(
                                         fontSize: 14,
                                         color: HexColor("#333333"),
@@ -570,7 +565,7 @@ Widget getHoldInNum(
                                     onPressed: () {
                                       joinEnougnFunction();
                                     },
-                                    child: Text("全部买入",
+                                    child: Text(S.of(context).all_bug,
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: HexColor("#5C4304"))),
@@ -581,7 +576,7 @@ Widget getHoldInNum(
                           padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                           child: RichText(
                             text: TextSpan(
-                                text: "期满共产生(HYN)：",
+                                text: S.of(context).end_profit_hyn,
                                 style: TextStyles.textC9b9b9bS12,
                                 children: [
                                   TextSpan(
@@ -591,9 +586,10 @@ Widget getHoldInNum(
                                 ]),
                           ),
                         ),
-                        RichText(
+                        if(!isMyself)
+                          RichText(
                           text: TextSpan(
-                              text: isJoin ? "应付管理费(HYN)：" : "获得管理费(HYN)：",
+                              text: isJoin ? S.of(context).spend_manager_hyn : S.of(context).get_manager_hyn,
                               style: TextStyles.textC9b9b9bS12,
                               children: [
                                 TextSpan(
@@ -615,7 +611,7 @@ Widget getHoldInNum(
 
 Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
     {isJoin = false, isDetail = true}) {
-  var title = !isDetail?"节点抵押合约详情":isJoin ? "参与Map3节点抵押" : "创建Map3抵押合约";
+  var title = !isDetail? S.of(context).node_contract_detail : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
   return Stack(
     children: <Widget>[
       Container(
@@ -719,15 +715,14 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                     style: TextStyles.textCfffS46,
                     children: <TextSpan>[
                   TextSpan(
-                    text:
-                        "万/${FormatUtil.formatPercent(nodeItem.annualizedYield)}",
+                    text: S.of(context).ten_thousand_annualizedyield(FormatUtil.formatPercent(nodeItem.annualizedYield)),
                     style: TextStyles.textCfffS24,
                   )
                 ])),
             Padding(
               padding: const EdgeInsets.only(top: 4.0, bottom: 20),
               child:
-                  Text("共需投入资金(HYN) / 期满年化奖励", style: TextStyles.textCccfffS12),
+                  Text(S.of(context).all_join_end_reward, style: TextStyles.textCccfffS12),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -736,7 +731,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 isJoin
                     ? Column(
                         children: <Widget>[
-                          Text("最低投入", style: TextStyles.textCccfffS12),
+                          Text(S.of(context).min_invest, style: TextStyles.textCccfffS12),
                           Text(
                               "${FormatUtil.formatPercent(nodeItem.minDelegationRate)}",
                               style: TextStyles.textCfffS14)
@@ -744,7 +739,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                       )
                     : Column(
                         children: <Widget>[
-                          Text("创建最低投入", style: TextStyles.textCccfffS12),
+                          Text(S.of(context).create_min_invest, style: TextStyles.textCccfffS12),
                           Text(
                               "${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
                               style: TextStyles.textCfffS14)
@@ -758,8 +753,8 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 ),
                 Column(
                   children: <Widget>[
-                    Text("合约期限", style: TextStyles.textCccfffS12),
-                    Text("${nodeItem.duration}天", style: TextStyles.textCfffS14)
+                    Text(S.of(context).contract_deadline, style: TextStyles.textCccfffS12),
+                    Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textCfffS14)
                   ],
                 ),
                 Container(
@@ -770,14 +765,14 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 ),
                 Column(
                   children: <Widget>[
-                    Text("管理费", style: TextStyles.textCccfffS12),
+                    Text(S.of(context).manage_fee, style: TextStyles.textCccfffS12),
                     Text("${FormatUtil.formatPercent(nodeItem.commission)}",
                         style: TextStyles.textCfffS14)
                   ],
                 ),
               ],
             ),
-            if (isDetail) _getHeadItemCard(nodeItem),
+            if (isDetail) _getHeadItemCard(context,nodeItem),
           ],
         ),
       )
@@ -785,7 +780,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
   );
 }
 
-Widget _getHeadItemCard(NodeItem nodeItem) {
+Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
   var currentTime = new DateTime.now().millisecondsSinceEpoch;
   var durationTime = nodeItem.duration * 3600 * 24 * 1000;
   var tempHalfTime = durationTime / 2 + currentTime;
@@ -821,7 +816,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
                             child: Text(
-                              "今日加入",
+                              S.of(context).today_join,
                               style: TextStyle(
                                   fontSize: 12, color: HexColor("#4b4b4b")),
                             ),
@@ -847,7 +842,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text("提取奖励50%",
+                            child: Text(S.of(context).withdraw_reward,
                                 style: TextStyle(
                                     fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
@@ -872,7 +867,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text("期满结束",
+                            child: Text(S.of(context).expire_end,
                                 style: TextStyle(
                                     fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
@@ -898,7 +893,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0, right: 10),
-                      child: Text("具体以实际日期为准",
+                      child: Text(S.of(context).truely_date_accurate,
                           style: TextStyle(
                               fontSize: 12, color: HexColor("#AAAAAA"))),
                     ),
@@ -964,7 +959,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
                             child: Text(
-                              "今日加入",
+                              S.of(context).today_join,
                               style: TextStyle(
                                   fontSize: 12, color: HexColor("#4b4b4b")),
                             ),
@@ -990,7 +985,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text("期满结束",
+                            child: Text(S.of(context).expire_end,
                                 style: TextStyle(
                                     fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
@@ -1017,7 +1012,7 @@ Widget _getHeadItemCard(NodeItem nodeItem) {
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0, right: 10),
                       child: Text(
-                        "具体以实际日期为准",
+                        S.of(context).truely_date_accurate,
                         style:
                             TextStyle(fontSize: 12, color: HexColor("#AAAAAA")),
                       ),

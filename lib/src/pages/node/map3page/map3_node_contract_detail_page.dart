@@ -11,6 +11,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/node_delegator_member_widget.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
@@ -55,6 +56,10 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   var _nodeStateDesc = "节点配置中";
   var _contractStateDesc = "正在创建中，等待区块链网络验证";
 
+  var _contractProgressDesc = "";
+  var _contractProgressDetail = "";
+
+
   @override
   void initState() {
     super.initState();
@@ -76,6 +81,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   void getNetworkData() async {
+
     // todo: test_jison_0411
 /*    Future.delayed(Duration(seconds: 1), () {
       setState(() {
@@ -98,10 +104,12 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             0,
             0,
             0,
-            "ACTIVE"
+            "",
+            ContractState.DUE_COMPLETED.toString().split(".").last
         );
 
-        _contractDetailItem = ContractDetailItem(nodeItem, "", "", "0", "0", "0", 0, "ACTIVE");
+        LatestTransaction _transaction = LatestTransaction("",0,0,"","","");
+        _contractDetailItem = ContractDetailItem(nodeItem, "", "", "0", "0", "0", 0,  _transaction, "ACTIVE");
         _contractNodeItem = nodeItem;
         // todo： 测试
         //_contractDetailItem.userDelegateState = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
@@ -120,17 +128,24 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       var address = _wallet.getEthAccount().address;
 
       _isCreator = address == instanceItem.owner;
+
       // todo： 测试
-      //_isCreator = false;
+      //_isCreator = true;
 
       if (_isCreator) {
         var detailItem = await _api.getContractDetail("${widget.contractId}", address: address);
         _contractDetailItem = detailItem;
         _contractNodeItem = detailItem.instance;
-        print('[map3] getContractDetail , id:${_contractNodeItem.id}');
+        print('[map3] getContractDetail , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
+
+        // todo： 测试
+        _contractNodeItem.contract.durationType = 2;
+        _contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last??"";
       } else {
         _contractNodeItem = instanceItem;
-        print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}');
+        //_contractNodeItem.state = ContractState.DUE_COMPLETED.toString().split(".").last??"";
+
+        print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
       }
 
       // 1.
@@ -224,31 +239,50 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         case ContractState.PENDING:
           _nodeStateDesc = "节点待启动";
           _contractStateDesc = "正在创建中，等待区块链网络验证";
+
+          _contractProgressDesc = "等待启动";
+          _contractProgressDetail = "还差${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}";
           break;
 
         case ContractState.ACTIVE:
           _nodeStateDesc = "节点进行中";
           _contractStateDesc = "已广播投入$_amountDelegation HYN，等待区块链网络验证";
+
+          _contractProgressDesc = "启动成功";
+          _contractProgressDetail = "剩余${_contractNodeItem.expectDueDay}天";
           break;
 
         case ContractState.DUE:
           _nodeStateDesc = "节点已停止";
 
+          _contractProgressDesc = "启动成功";
+          _contractProgressDetail = "已到期,可提全部奖励";
           break;
 
         case ContractState.CANCELLED:
           _nodeStateDesc = "节点已停止";
           _contractStateDesc = "启动失败，请申请退款";
+
+          _contractProgressDesc = "启动失败";
+          _contractProgressDetail = "启动失败";
+
           break;
 
         case ContractState.DUE_COMPLETED:
           _nodeStateDesc = "节点已停止";
           _contractStateDesc = "已取回投入资金";
+
+          _contractProgressDesc = "已获取奖励";
+          _contractProgressDetail = "恭喜，已提取奖励";
+
           break;
 
         case ContractState.CANCELLED_COMPLETED:
           _nodeStateDesc = "节点已停止";
           _contractStateDesc = "已取回投入资金";
+
+          _contractProgressDesc = "启动失败";
+          _contractProgressDetail = "启动失败";
           break;
 
         default:
@@ -271,7 +305,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -285,6 +318,49 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _pageView(BuildContext context) {
+    if (_currentState != null || _contractNodeItem.contract == null) {
+      return AllPageStateContainer(_currentState, () {
+        setState(() {
+          _currentState = all_page_state.LoadingState();
+        });
+      });
+    }
+
+    return CustomScrollView(
+        slivers: <Widget>[
+          SliverToBoxAdapter(
+          child: Container(
+              color: Colors.white,
+              child: getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)),
+        ),
+          SliverToBoxAdapter(child: _nodeInfoWidget(_nodeStateDesc)),
+        _Spacer(),
+          SliverToBoxAdapter(child: _contractActionsWidget(contractStateDesc: _contractStateDesc)),
+          SliverToBoxAdapter(child: _lineSpacer()),
+          SliverToBoxAdapter(child: _contractProgressWidget()),
+        _Spacer(),
+          SliverToBoxAdapter(
+          child: NodeJoinMemberWidget(
+            "${widget.contractId}",
+            _contractNodeItem.remainDay,
+            _contractNodeItem.shareUrl,
+            isShowInviteItem: false,
+          ),
+        ),
+        _Spacer(),
+          SliverToBoxAdapter(child: _delegatorListWidget()),
+        _Spacer(),
+        if (_visible)
+          SliverToBoxAdapter(
+            child: Container(
+              height: 48,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _pageView1(BuildContext context) {
     if (_currentState != null || _contractNodeItem.contract == null) {
       return AllPageStateContainer(_currentState, () {
         setState(() {
@@ -404,7 +480,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          /*Padding(
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
@@ -423,7 +499,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 ),
               ],
             ),
-          ),*/
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
             child: Row(
@@ -470,15 +546,64 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     );
   }
 
+
+
   Widget _contractProgressWidget() {
-    double horizontal = 0;
-    double lineWidth = 40;
-    double gap = 16;
-    double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) * 0.2;
+
+    var durationType = _contractNodeItem.contract.durationType;
+
+    double lineWidth = durationType==2?40:45;
+    double _left(bool isLine, double index) {
+      double horizontal = durationType==2?0:30;
+      double gap = 16;
+      double multi = durationType==2?40:8;
+      double sectionWidth = (MediaQuery.of(context).size.width - horizontal * 2.0 - lineWidth * 4.0 - gap * 8.0) / multi;
+
+      if (!isLine) {
+        return horizontal + sectionWidth * (index-1) + gap * (2.0 * (index -1)) + lineWidth * (index-1);
+      }
+      return horizontal + sectionWidth * (index-1) + gap * (2.0 * (index -1)) + lineWidth * (index);
+    }
+
+
+    List<Widget> children = [];
+
+    if (_isCreator) {
+      var stateIndex = enumUserDelegateStateFromString(_contractDetailItem?.state)?.index??0;
+      children = [
+        _node("创建时间", date:_contractNodeItem.instanceStartTime, left: _left(false, 1)),
+        _line("7天", lineWidth, left: _left(true, 1), progress: stateIndex >= UserDelegateState.ACTIVE.index?1:_contractNodeItem.remainProgress),
+        _node("启动成功", date:_contractNodeItem.instanceActiveTime,
+            left: _left(false, 2), isLight: stateIndex >= UserDelegateState.ACTIVE.index),
+        _line("90天", lineWidth, left: _left(true, 2), progress: stateIndex>=UserDelegateState.HALFDUE.index?1:_contractNodeItem.expectHalfDueProgress),
+        _node("可提50%奖励", left: _left(false, 3), isLight: stateIndex>=UserDelegateState.HALFDUE.index),
+        _line("90天", lineWidth, left: _left(true, 3), progress: stateIndex >= UserDelegateState.DUE.index?1:_contractNodeItem.expectDueProgress),
+        _node("到期时间", date: _contractNodeItem.instanceDueTime,left: _left(false, 4), isLight: stateIndex>=UserDelegateState.DUE.index),
+        _line("", lineWidth, left: _left(true, 4), progress: stateIndex >= UserDelegateState.DUE_COLLECTED.index?1:0.0),
+        _node("提取时间", date: _contractNodeItem.instanceFinishTime,left: _left(false, 5), isLight: stateIndex>=UserDelegateState.DUE_COLLECTED.index),
+        _state(" 已经启动 ", left: _left(false, stateIndex.toDouble()-0.5)),
+        _transform(left: _left(false, stateIndex.toDouble()-0.5)),
+      ];
+    }
+    else {
+      var stateIndex = enumContractStateFromString(_contractNodeItem.state).index;
+      print("is:${stateIndex >= ContractState.DUE.index}, progress:${_contractNodeItem.expectDueProgress}");
+      children = [
+        _node("创建时间", date:_contractNodeItem.instanceStartTime, left: _left(false, 1)),
+        _line("7天", lineWidth, left: _left(true, 1), progress: stateIndex >= ContractState.ACTIVE.index?1:_contractNodeItem.remainProgress),
+        _node("启动成功", date:_contractNodeItem.instanceActiveTime,
+            left: _left(false, 2), isLight: stateIndex >= ContractState.ACTIVE.index),
+        _line("${_contractNodeItem.contract.duration}天", lineWidth, left: _left(true, 2), progress: stateIndex >= ContractState.DUE.index?1.0:_contractNodeItem.expectDueProgress),
+        _node("到期时间", date: _contractNodeItem.instanceDueTime,left: _left(false, 3), isLight: stateIndex >= ContractState.DUE.index),
+        _line("", lineWidth, left: _left(true, 3), progress: stateIndex >= ContractState.DUE_COMPLETED.index?1.0:0.0),
+        _node("提取时间", date: _contractNodeItem.instanceFinishTime,left: _left(false, 4), isLight: stateIndex >= ContractState.DUE_COMPLETED.index),
+        _state(" 已经启动 ", left: _left(false, stateIndex.toDouble()-0.5)),
+        _transform(left: _left(false, stateIndex.toDouble()-0.5)),
+      ];
+    }
 
     return Container(
       color: Colors.white,
-      //height: 180,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -499,9 +624,9 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                   ),
                 ),
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "等待启动，剩余", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  TextSpan(text: _contractProgressDesc, style: TextStyle(fontSize: 12, color: Colors.grey)),
                   TextSpan(
-                    text: "${_contractNodeItem.remainDay}天",
+                    text: _contractProgressDetail,
                     style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
                   ),
                 ])),
@@ -510,22 +635,11 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           ),
 
           Container(
-            height: 110,
+            height: 130,
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
 //            color: Colors.red,
             child: Stack(
-              children: <Widget>[
-                _lightItem("创建时间", _contractNodeItem.instanceStartTime, left: horizontal),
-                _lightLine("7天", lineWidth, left: horizontal + sectionWidth + gap * 2.0),
-                _lightItem("启动成功", _contractNodeItem.instanceActiveTime,
-                    left: horizontal + sectionWidth + gap * 2.0 + lineWidth * 0.75),
-                _lightLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 4.0 + lineWidth * 0.75),
-                _midItem("可提50%奖励", left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 0.75),
-                _greyLine("90天", lineWidth, left: horizontal + sectionWidth * 2.0 + gap * 6.0 + lineWidth * 1.75),
-                _greyItem("到期时间", left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 1.75),
-                _greyLine("", lineWidth, left: horizontal + sectionWidth * 3.0 + gap * 7.0 + lineWidth * 2.75),
-                _greyItem("提取时间", left: horizontal + sectionWidth * 3.0 + gap * 9.0 + lineWidth * 2.75),
-              ],
+              children: children,
             ),
           ),
         ],
@@ -533,147 +647,91 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     );
   }
 
-  Widget _lightItem(String name, int date, {double left = 10}) {
+  Widget _state(String name, {double left = 10}) {
     return Positioned(
       left: left,
-      top: 30,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: 11,
-            height: 11,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(color: HexColor("#322300"), width: 2.0)),
-          ),
-          Container(
-            height: 8.0,
-          ),
-          Text(
-            name,
-            style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
-          ),
-          Container(
-            height: 8.0,
-          ),
-          Text(
-            "${FormatUtil.formatDate(date)}",
-            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
-          ),
-          Container(
-            height: 8.0,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _greyItem(String name, {double left = 10}) {
-    return Positioned(
-      left: left,
-      top: 32,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(color: HexColor("#CCCCCC"), width: 2.0)),
-          ),
-          Container(
-            height: 8.0,
-          ),
-          Text(
-            name,
-            style: TextStyle(fontSize: 12, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
-          ),
-          Container(
-            height: 8.0,
-          ),
-          Text(
-            "",
-            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
-          ),
-          Container(
-            height: 8.0,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _midItem(String name, {double left = 10}) {
-    return Positioned(
-      left: left,
-      top: 32,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(color: HexColor("#CCCCCC"), width: 2.0)),
-          ),
-          Container(
-            height: 8.0,
-          ),
-          Text(
-            name,
-            style: TextStyle(fontSize: 10, color: HexColor("#999999"), fontWeight: FontWeight.normal),
-          ),
-          Container(
-            height: 8.0,
-          ),
-          Text(
-            "",
-            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
-          ),
-          Container(
-            height: 8.0,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _lightLine(String name, double width, {double left = 10}) {
-    return Positioned(
       top: 10,
-      left: left,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
+      child: Container(
+        color: _getStatusColor(enumContractStateFromString(_contractNodeItem.state)),
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
             name,
-            style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+            style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.normal),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _transform({double left = 10}) {
+    return Positioned(
+      left: left,
+      top: 32.5,
+      width: 2.0,
+      height: 30,
+      child: Container(
+        color: _getStatusColor(enumContractStateFromString(_contractNodeItem.state)),
+        // rotationZ 的参数为弧度，1.6 大概等于 90°
+        // 转换公式 ( 度数 * 3.14 / 180 )
+        transform: Matrix4.rotationZ(0.45),
+      ),
+    );
+  }
+
+  Widget _node(String name, {int date = 0, double left = 10, bool isLight= true, bool isMiddle = false}) {
+    double top = isLight?60:62;
+    double wh = isLight?11:6;
+    var circleColor = isLight?HexColor("#322300"):HexColor("#CCCCCC");
+    var textColor = isLight?HexColor("#4B4B4B"):HexColor("#A7A7A7");
+    var dateString = date>0?"${FormatUtil.formatDate(date)}":"";
+
+    return Positioned(
+      left: left,
+      top: top,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: wh,
+            height: wh,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: circleColor, width: 2.0)),
           ),
           Container(
             height: 8.0,
           ),
+          Text(
+            name,
+            style: TextStyle(fontSize: isMiddle?10:12, color: textColor, fontWeight: FontWeight.normal),
+          ),
           Container(
-            height: 1.0,
-            width: width,
-            color: HexColor("#322300"),
+            height: 8.0,
+          ),
+          Text(
+            dateString,
+            style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+          ),
+          Container(
+            height: 8.0,
           ),
         ],
       ),
     );
   }
 
-  Widget _greyLine(String name, double width, {double left = 10}) {
+
+  Widget _line(String name, double width, {double left = 10, double progress= 0.0}) {
+    var lightColor = HexColor("#322300");
+    var greyColor = HexColor("#ECECEC");
+
     return Positioned(
-      top: name.length == 0 ? 12 : 10,
+      top: 38,
       left: left,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
             name,
@@ -682,39 +740,50 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           Container(
             height: 8.0,
           ),
-          Container(
-            height: 1.0,
-            width: width,
-            color: HexColor("#ECECEC"),
+          Stack(
+            children: <Widget>[
+
+              Container(
+                height: 1.0,
+                width: width,
+                color: greyColor,
+              ),
+
+              Container(
+                height: 1.0,
+                width: width * progress == double.infinity?0:width * progress,
+                color: lightColor,
+              ),
+            ],
           ),
         ],
       ),
     );
   }
+
 
   HexColor _getStatusColor(ContractState status) {
-    var statusColor = HexColor('#EED097');
+    var statusColor = HexColor('#EED197');
 
     switch (status) {
       case ContractState.PENDING:
-        statusColor = HexColor('#EED097');
+        statusColor = HexColor('#EED197');
         break;
 
       case ContractState.ACTIVE:
-        statusColor = HexColor('#3FF78C');
+      case ContractState.DUE:
+
+        statusColor = HexColor('#1FB9C7');
         break;
 
-      case ContractState.DUE:
-        statusColor = HexColor('#867B7B');
-        break;
 
       case ContractState.CANCELLED:
-        statusColor = HexColor('#F22504');
+      case ContractState.CANCELLED_COMPLETED:
+        statusColor = HexColor('#F30202');
         break;
 
       default:
-        statusColor = HexColor('#867B7B');
-        //statusColor = Theme.of(context).primaryColor;
+        statusColor = HexColor('#FFDB58');
         break;
     }
     return statusColor;
@@ -729,6 +798,15 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _Spacer() {
+    return SliverToBoxAdapter(
+      child: Container(
+        height: 10,
+        color: DefaultColors.colorf5f5f5,
+      ),
+    );
+  }
+
+  Widget _Spacer1() {
     return Container(
       height: 10,
       color: DefaultColors.colorf5f5f5,
@@ -784,8 +862,6 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         var createNodeWalletAddress = _contractNodeItem.owner;
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = BigInt.from(gasPriceRecommend.average.toInt());
-
-        //TODO: 如果创建者，使用COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT，如果中期取币 COLLECT_HALF_MAP3_NODE_GAS_LIMIT, 如果参与者 COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT
 
         var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
         if (enumUserDelegateStateFromString(_contractDetailItem?.state) == UserDelegateState.HALFDUE) {
