@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -31,8 +32,6 @@ class Map3NodeJoinContractPage extends StatefulWidget {
 class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
-  String pageTitle = "";
-  String managerTitle = "";
   all_page_state.AllPageState currentState = all_page_state.LoadingState();
   NodeApi _nodeApi = NodeApi();
   ContractNodeItem contractNodeItem;
@@ -43,8 +42,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 
   @override
   void initState() {
-    pageTitle = "参与Map3节点抵押";
-    managerTitle = "应付管理费（HYN）：";
     _joinCoinController.addListener(textChangeListener);
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
@@ -167,7 +164,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                     children: <Widget>[
                       Container(
                           width: 100,
-                          child: Text("节点版本",
+                          child: Text(S.of(context).node_version,
                               style: TextStyle(
                                   fontSize: 14, color: HexColor("#92979a")))),
                       new Text("${contractNodeItem.contract.nodeName}",
@@ -181,7 +178,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                     children: <Widget>[
                       Container(
                           width: 100,
-                          child: Text("服务商",
+                          child: Text(S.of(context).service_provider,
                               style: TextStyle(
                                   fontSize: 14, color: HexColor("#92979a")))),
                       new Text("${contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
@@ -194,7 +191,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                     children: <Widget>[
                       Container(
                           width: 100,
-                          child: Text("节点位置",
+                          child: Text(S.of(context).node_location,
                               style: TextStyle(
                                   fontSize: 14, color: HexColor("#92979a")))),
                       new Text("${contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
@@ -232,15 +229,15 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("·  请确保钱包账户（$walletName）的ETH GAS费充足",
+                  Text(S.of(context).please_confirm_eth_gas_enough(walletName),
                       style: TextStyles.textC999S12),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                     child: Text(
-                        "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
+                        S.of(context).no_enough_hyn_fail_invest_extract,
                         style: TextStyles.textC999S12),
                   ),
-                  Text("·  投入Map3节点后不可撤销。", style: TextStyles.textC999S12),
+                  Text(S.of(context).invest_cant_undo, style: TextStyles.textC999S12),
                 ],
               ),
             ),
@@ -253,7 +250,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(
                   side: BorderSide(color: Theme.of(context).primaryColor)),
-              child: Text("确定抵押"),
+              child: Text(S.of(context).confirm_mortgage),
               onPressed: () {
                 setState(() {
                   if (!_joinCoinFormKey.currentState.validate()) {
@@ -270,46 +267,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                 });
               }),
         )
-      ],
-    );
-  }
-
-  Widget startAccount() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text("发起账号"),
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 6),
-              child: Image.asset("res/drawable/hyn.png", width: 40, height: 40),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("${contractNodeItem.ownerName}",
-                    style: TextStyles.textC333S14),
-                Text(
-                  "${contractNodeItem.owner}",
-                  style: TextStyles.textC9b9b9bS12,
-                  overflow: TextOverflow.clip,
-                )
-              ],
-            )
-          ],
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Container(
-          height: 5,
-          color: DefaultColors.colorf5f5f5,
-        ),
       ],
     );
   }

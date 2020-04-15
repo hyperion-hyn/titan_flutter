@@ -190,7 +190,7 @@ class _Map3NodeState extends State<Map3NodePage> {
               children: <Widget>[
                 Text(
                   sprintf(S.of(context).earth_outpace_server_node, [_nodePageEntityVo.nodeHeadEntity.instanceCount]),
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  style: TextStyle(fontSize: 20, color: Colors.white,fontWeight: FontWeight.bold),
                 ),
                 Text(
                   S.of(context).map_provide_stable_server,
