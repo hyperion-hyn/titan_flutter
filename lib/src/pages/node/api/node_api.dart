@@ -65,8 +65,8 @@ class NodeApi {
         ,options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
   }
 
-  Future<ContractDetailItem> getContractDetail(String contractNodeItemId, {String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
-    return await NodeHttpCore.instance.getEntity("delegations/instance/$contractNodeItemId",
+  Future<ContractDetailItem> getContractDetail(int contractId) async {
+    return await NodeHttpCore.instance.getEntity("delegations/instance/$contractId",
         EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data))
         ,options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
   }
@@ -318,6 +318,14 @@ class NodeApi {
         , transactionHistoryAction2String(TransactionHistoryAction.WITHDRAW));
 
     return "success";
+  }
+
+  Future<bool> isDelegatedContractInstance(int contractId) async {
+    var isDelegated = await NodeHttpCore.instance.getEntity("/delegations/instance/$contractId/isdelegated", EntityFactory<bool>((data) {
+      return data;
+    }),options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));
+
+    return isDelegated;
   }
 
 }

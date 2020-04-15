@@ -92,7 +92,7 @@ class _NodeContractDetailState extends State<NodeContractDetailPage> {
       List<ContractDelegatorItem> list = [];
       var address = _wallet.getEthAccount().address;
       list = await api.getContractDelegator(widget.contractNodeItem.id, page: _currentPage, address: address);
-      var item = await api.getContractDetail("${widget.contractNodeItem.id}", address: address);
+      var item = await api.getContractDetail(widget.contractNodeItem.id);
 
       if (list.length == 0 || item == null) {
         loadDataBloc.add(LoadEmptyEvent());

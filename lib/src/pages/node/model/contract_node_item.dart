@@ -106,14 +106,16 @@ part 'contract_node_item.g.dart';
     //print('now:${now}, \nexpectCancelTime:$expectCancelTime');
     double totalRemain = (expectCancelTime - instanceStartTime) / 3600 / 24;
     double progress = (now - instanceStartTime) / 3600 / 24 / totalRemain;
-    if (progress < 0.2) {
-      return 0.2;
-    } else if (progress > 1.0 && progress != double.infinity) {
-      return 1.0;
-    } else if (progress == double.infinity) {
-      return 0.0;
+
+    if (progress != double.infinity) {
+      if (progress > 0.2 && progress <= 1.0) {
+        return progress;
+      } else if (progress > 0 && progress <= 0.2) {
+        return 0.2;
+      }
     }
-    return progress;
+
+    return 0.0;
   }
 
   String get expectDueDay{
@@ -130,32 +132,35 @@ part 'contract_node_item.g.dart';
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     double totalDue = (expectDueTime - instanceActiveTime) / 3600 / 24;
     double progress = (now - instanceActiveTime) / 3600 / 24 / totalDue;
-    print('now:${now}, \nexpectCancelTime:$expectCancelTime, progress:${progress}');
 
-    if (progress < 0.2) {
-      return 0.2;
-    } else if (progress > 1.0 && progress != double.infinity) {
-      return 1.0;
-    } else if (progress == double.infinity) {
-      return 0.0;
+    if (progress != double.infinity) {
+      if (progress > 0.2 && progress <= 1.0) {
+        return progress;
+      } else if (progress > 0 && progress <= 0.2) {
+        return 0.2;
+      }
     }
-    return progress;
+
+    return 0.0;
   }
 
   double get expectHalfDueProgress{
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
-    //print('now:${now}, \nexpectCancelTime:$expectCancelTime');
     //double totalDue = (expectDueTime - instanceActiveTime) / 3600 / 24;
     //double progress = (now - instanceActiveTime) / 3600 / 24 / (totalDue * 0.5);
     double progress = (now - instanceActiveTime) / 3600 / 24 / 90;
-    if (progress < 0.2) {
-      return 0.2;
-    } else if (progress > 1.0 && progress != double.infinity) {
-      return 1.0;
-    } else if (progress == double.infinity) {
-      return 0.0;
+    print('progress:$progress');
+
+
+    if (progress != double.infinity) {
+      if (progress > 0.2 && progress <= 1.0) {
+        return progress;
+      } else if (progress > 0 && progress <= 0.2) {
+        return 0.2;
+      }
     }
-    return progress;
+
+    return 0.0;
   }
 
 }

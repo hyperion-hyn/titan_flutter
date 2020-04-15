@@ -151,14 +151,17 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
     spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
 
-    setState(() {
-      _joinCoinController.value = TextEditingValue(
+    if (mounted) {
+      setState(() {
+        _joinCoinController.value = TextEditingValue(
           // 设置内容
-          text: inputText,
-          // 保持光标在最后
-          selection: TextSelection.fromPosition(TextPosition(
-              affinity: TextAffinity.downstream, offset: inputText.length)));
-    });
+            text: inputText,
+            // 保持光标在最后
+            selection: TextSelection.fromPosition(TextPosition(
+                affinity: TextAffinity.downstream, offset: inputText.length)));
+      });
+    }
+
   }
 
   @override

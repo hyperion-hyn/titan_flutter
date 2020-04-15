@@ -280,41 +280,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   }
 
   _loadData() async {
-
-    // todo: test_jison_0411
-    /*
-   setState(() {
-      if (mounted) {
-        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
-        var model = ContractNodeItem(
-            1,
-            item,
-            "0xaaaaa",
-            "bbbbbbb",
-            "0",
-            "0",
-            "",
-            "",
-            "",
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            "",
-            "ACTIVE"
-        );
-        _dataArray = [model];
-      }
-    });
-
-    loadDataBloc.add(RefreshSuccessEvent());
-
-    return
-    */
-
     _currentPage = 0;
 
     List<ContractNodeItem> dataList = [];

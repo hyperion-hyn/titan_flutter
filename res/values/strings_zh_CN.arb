@@ -410,7 +410,7 @@
   "signal_chart_last_month_numbers_func": "最近一个月${scanName}数据增量：",
   "signal_total_data": "信号数据总量：",
   "poi_total_data": "POI数据分布：",
-  "wait_start_node_contract": "等待启动的节点抵押合约",
+  "wait_start_node_contract": "待启动的合约",
   "earth_outpace_server_node": "全球超过%d个地球服务站点",
   "map_provide_stable_server": "为海伯利安地图提供稳定可靠的地图服务",
   "create_contract": "创建合约",
