@@ -28,8 +28,7 @@ class Map3NodeCreateContractPage extends StatefulWidget {
   Map3NodeCreateContractPage(this.contractId);
 
   @override
-  _Map3NodeCreateContractState createState() =>
-      new _Map3NodeCreateContractState();
+  _Map3NodeCreateContractState createState() => new _Map3NodeCreateContractState();
 }
 
 class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
@@ -63,7 +62,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xffF3F0F5),
       body: _pageView(context),
     );
   }
@@ -109,9 +108,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     nodeList = new List();
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
-      DropdownMenuItem item = new DropdownMenuItem(
-          value: i,
-          child: new Text(regions.name, style: TextStyles.textC333S14));
+      DropdownMenuItem item =
+          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
       nodeList.add(item);
     }
     selectNodeItemValue = nodeList[regionIndex].value;
@@ -136,32 +134,26 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       return;
     }
     double inputValue = double.parse(inputText);
-    double doubleEndProfit = inputValue *
-            contractNodeItem.contract.annualizedYield *
-            contractNodeItem.contract.duration /
-            365 +
-        inputValue;
-    double doubleSpendManager =
-        (double.parse(contractNodeItem.contract.minTotalDelegation) -
-                inputValue) *
-            contractNodeItem.contract.annualizedYield *
-            contractNodeItem.contract.duration /
-            365 *
-            contractNodeItem.contract.commission;
+    double doubleEndProfit =
+        inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
+    double doubleSpendManager = (double.parse(contractNodeItem.contract.minTotalDelegation) - inputValue) *
+        contractNodeItem.contract.annualizedYield *
+        contractNodeItem.contract.duration /
+        365 *
+        contractNodeItem.contract.commission;
     endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
     spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
 
     if (mounted) {
       setState(() {
         _joinCoinController.value = TextEditingValue(
-          // 设置内容
+            // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection: TextSelection.fromPosition(TextPosition(
-                affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection:
+                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
-
   }
 
   @override
@@ -189,112 +181,100 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             getMap3NodeProductHeadItem(context, contractNodeItem.contract),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          width: 100,
-                          child: Text(S.of(context).node_version,
-                              style: TextStyle(
-                                  fontSize: 14, color: HexColor("#92979a")))),
-                      Text("${contractNodeItem.contract.nodeName}",
-                          style: TextStyles.textC333S14),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 18.0, left: 15),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          width: 100,
-                          child: Text(S.of(context).service_provider,
-                              style: TextStyle(
-                                  fontSize: 14, color: HexColor("#92979a")))),
-                      DropdownButtonHideUnderline(
-                        child: Container(
-                          height: 30,
-                          child: DropdownButton(
-                            value: selectServerItemValue,
-                            items: serverList,
-                            onChanged: (value) {
-                              setState(() {
-                                selectNodeProvider(value, 0);
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 18.0, left: 15),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          width: 100,
-                          child: Text(S.of(context).node_location,
-                              style: TextStyle(
-                                  fontSize: 14, color: HexColor("#92979a")))),
-                      DropdownButtonHideUnderline(
-                        child: Container(
-                          height: 30,
-                          child: DropdownButton(
-                            value: selectNodeItemValue,
-                            items: nodeList,
-                            onChanged: (value) {
-                              setState(() {
-                                selectNodeProvider(selectServerItemValue, value);
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+//            SizedBox(height: 16,),
             Container(
-              height: 10,
-              margin: const EdgeInsets.only(top: 16.0),
-              color: DefaultColors.colorf5f5f5,
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15, top: 16),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: 100,
+                            child: Text(S.of(context).node_version,
+                                style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        Text("${contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0, left: 15),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: 100,
+                            child: Text(S.of(context).service_provider,
+                                style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        DropdownButtonHideUnderline(
+                          child: Container(
+                            height: 30,
+                            child: DropdownButton(
+                              value: selectServerItemValue,
+                              items: serverList,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectNodeProvider(value, 0);
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16.0, left: 15, bottom: 6),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: 100,
+                            child: Text(S.of(context).node_location,
+                                style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        DropdownButtonHideUnderline(
+                          child: Container(
+                            height: 30,
+                            child: DropdownButton(
+                              value: selectNodeItemValue,
+                              items: nodeList,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectNodeProvider(selectServerItemValue, value);
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            getHoldInNum(context, contractNodeItem, _joinCoinFormKey,
-                _joinCoinController, endProfit, spendManager, false, (textStr) {
+            SizedBox(height: 8),
+            getHoldInNum(
+                context, contractNodeItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
+                (textStr) {
               _filterSubject.sink.add(textStr);
             }, (textStr) {
               getCurrentSpend(textStr);
             }),
-            Container(
-              height: 10,
-              color: DefaultColors.colorf5f5f5,
-              margin: EdgeInsets.only(top: 15.0, bottom: 15),
-            ),
+            SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).please_confirm_eth_gas_enough(walletName),
-                      style: TextStyles.textC999S12),
+                  Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-                    child: Text(
-                        S.of(context).create_no_enough_hyn_start_fail,
-                        style: TextStyles.textC999S12),
+                    child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
                   ),
                   Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-                    child: Text(
-                        S.of(context).freeze_balance_reward_direct_push,
-                        style: TextStyles.textC999S12),
+                    child: Text(S.of(context).freeze_balance_reward_direct_push, style: TextStyles.textC999S12),
                   ),
                 ],
               ),
@@ -307,7 +287,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               textColor: Colors.white,
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Theme.of(context).primaryColor),),
+                side: BorderSide(color: Theme.of(context).primaryColor),
+              ),
               child: Text(S.of(context).confirm_bug),
               onPressed: () {
                 setState(() {
@@ -315,15 +296,13 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                     return;
                   }
                   String provider = providerList[selectServerItemValue].id;
-                  String region = providerList[selectServerItemValue]
-                      .regions[selectNodeItemValue]
-                      .id;
+                  String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
                   Application.router.navigateTo(
                       context,
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                           "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                          "&transferAmount=${_joinCoinController.text??""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&transferAmount=${_joinCoinController.text ?? ""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&provider=$provider" +
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +
@@ -335,7 +314,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     );
   }
 
-  /*Widget startAccount() {
+/*Widget startAccount() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -383,247 +362,233 @@ Widget getHoldInNum(
     bool isJoin,
     Function onChangeFuntion,
     Function onPressFunction,
-    {Function joinEnougnFunction,bool isMyself = false}) {
+    {Function joinEnougnFunction,
+    bool isMyself = false}) {
   // todo: test_jison_0411
   //List<int> suggestList = [];
-  List<int> suggestList = contractNodeItem.contract.suggestQuantity
-      .split(",")
-      .map((suggest) => int.parse(suggest))
-      .toList();
+  List<int> suggestList =
+      contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
   double minTotal = 0;
   if (isJoin) {
     double tempMinTotal =
-        double.parse(contractNodeItem.contract.minTotalDelegation) *
-            contractNodeItem.contract.minDelegationRate;
+        double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.minDelegationRate;
     if (tempMinTotal >= double.parse(contractNodeItem.remainDelegation)) {
       minTotal = double.parse(contractNodeItem.remainDelegation);
     } else {
       minTotal = tempMinTotal;
     }
   } else {
-    minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) *
-        contractNodeItem.contract.ownerMinDelegationRate;
+    minTotal =
+        double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.ownerMinDelegationRate;
   }
 
-  var walletName =
-      WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
-  var balance =
-      WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Padding(
-        padding: const EdgeInsets.only(left: 15.0, top: 13, bottom: 15),
-        child: Text(
-            S.of(context).mortgage_wallet_balance(walletName,FormatUtil.formatNumDecimal(balance)),
-            style: TextStyles.textC333S14),
-      ),
-      Container(
-          padding: const EdgeInsets.only(left: 15.0, right: 30, bottom: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
+  var balance = WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
+  return Container(
+    color: Colors.white,
+    padding: EdgeInsets.only(top: 16, bottom: 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0, bottom: 15),
+          child: Row(
             children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "HYN",
-                    style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
-                  ),
-                  SizedBox(
-                    width: 11,
-                  ),
-                  Expanded(
-                    child: Form(
-                      key: formKey,
-                      child: TextFormField(
-                          controller: textEditingController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            WhitelistingTextInputFormatter.digitsOnly
-                          ],
-                          onChanged: (textStr) {
-                            onChangeFuntion(textStr);
-//                            _filterSubject.sink.add(textStr);
-                          },
-                          decoration: InputDecoration(
-                            hintStyle: TextStyles.textC9b9b9bS14,
-                            labelStyle: TextStyles.textC333S14,
-                            hintText:
-//                                "最低买入${FormatUtil.formatNumDecimal(minTotal)}",
-                              S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
-                          ),
-                          validator: (textStr) {
-                            if(textStr.length == 0){
-                              return S.of(context).please_input_hyn_count;
-                            } else if (int.parse(textStr) < minTotal) {
-                              return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                            } else if (int.parse(textStr) > balance) {
-                              return S.of(context).hyn_balance_no_enough;
-                            } else {
-                              return null;
-                            }
-                          }),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 17,
-              ),
-              Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 49,
-                  ),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        if (!isJoin && suggestList.length == 3)
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  padding: const EdgeInsets.all(0),
-                                  child: Text(
-                                    "${FormatUtil.formatNum(suggestList[0])}HYN",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: HexColor("#5C4304")),
-                                  ),
-                                  onPressed: () {
-                                    onPressFunction(suggestList[0].toString());
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  padding: const EdgeInsets.all(0),
-                                  child: Text(
-                                      "${FormatUtil.formatNum(suggestList[1])}HYN",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: HexColor("#5C4304"))),
-                                  onPressed: () {
-                                    onPressFunction(suggestList[1].toString());
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Expanded(
-                                child: FlatButton(
-                                  color: HexColor("#FFFBED"),
-                                  padding: const EdgeInsets.all(0),
-                                  child: Text(
-                                      "${FormatUtil.formatNum(suggestList[2])}HYN",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: HexColor("#5C4304"))),
-                                  onPressed: () {
-                                    onPressFunction(suggestList[2].toString());
-                                  },
-                                ),
-                              )
-                            ],
-                          ),
-                        if (isJoin)
-                          Row(
-                            children: <Widget>[
-                              RichText(
-                                text: TextSpan(
-                                    text: S.of(context).balance_portion_hyn,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: HexColor("#333333"),
-                                        fontWeight: FontWeight.bold),
-                                    children: [
-                                      TextSpan(
-                                        text:
-                                            "${FormatUtil.stringFormatNum(contractNodeItem.remainDelegation)}",
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: HexColor("#333333"),
-                                            fontWeight: FontWeight.bold),
-                                      )
-                                    ]),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              SizedBox(
-                                  height: 22,
-                                  width: 70,
-                                  child: FlatButton(
-                                    padding: const EdgeInsets.all(0),
-                                    color: HexColor("#FFDE64"),
-                                    onPressed: () {
-                                      joinEnougnFunction();
-                                    },
-                                    child: Text(S.of(context).all_bug,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: HexColor("#5C4304"))),
-                                  )),
-                            ],
-                          ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-                          child: RichText(
-                            text: TextSpan(
-                                text: S.of(context).end_profit_hyn,
-                                style: TextStyles.textC9b9b9bS12,
-                                children: [
-                                  TextSpan(
-                                    text: "$endProfit",
-                                    style: TextStyles.textC333S14,
-                                  )
-                                ]),
-                          ),
-                        ),
-                        if(!isMyself)
-                          RichText(
-                          text: TextSpan(
-                              text: isJoin ? S.of(context).spend_manager_hyn : S.of(context).get_manager_hyn,
-                              style: TextStyles.textC9b9b9bS12,
-                              children: [
-                                TextSpan(
-                                  text: "$spendManager",
-                                  style: TextStyles.textC333S14,
-                                )
-                              ]),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.formatNumDecimal(balance)),
+                  style: TextStyle(color: Colors.grey[600])),
             ],
-          )),
-    ],
+          ),
+        ),
+        Container(
+            padding: const EdgeInsets.only(left: 15.0, right: 30, bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "HYN",
+                      style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
+                    ),
+                    SizedBox(
+                      width: 11,
+                    ),
+                    Expanded(
+                      child: Form(
+                        key: formKey,
+                        child: TextFormField(
+                            controller: textEditingController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                            onChanged: (textStr) {
+                              onChangeFuntion(textStr);
+//                            _filterSubject.sink.add(textStr);
+                            },
+                            decoration: InputDecoration(
+                              hintStyle: TextStyles.textC9b9b9bS14,
+                              labelStyle: TextStyles.textC333S14,
+                              hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
+                              border: InputBorder.none,
+                            ),
+                            validator: (textStr) {
+                              if (textStr.length == 0) {
+                                return S.of(context).please_input_hyn_count;
+                              } else if (int.parse(textStr) < minTotal) {
+                                return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
+                              } else if (int.parse(textStr) > balance) {
+                                return S.of(context).hyn_balance_no_enough;
+                              } else {
+                                return null;
+                              }
+                            }),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 17,
+                ),
+                Row(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 49,
+                    ),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          if (!isJoin && suggestList.length == 3)
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: FlatButton(
+                                    color: HexColor("#FFFBED"),
+                                    padding: const EdgeInsets.all(0),
+                                    child: Text(
+                                      "${FormatUtil.formatNum(suggestList[0])}HYN",
+                                      style: TextStyle(fontSize: 12, color: HexColor("#5C4304")),
+                                    ),
+                                    onPressed: () {
+                                      onPressFunction(suggestList[0].toString());
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                  child: FlatButton(
+                                    color: HexColor("#FFFBED"),
+                                    padding: const EdgeInsets.all(0),
+                                    child: Text("${FormatUtil.formatNum(suggestList[1])}HYN",
+                                        style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                    onPressed: () {
+                                      onPressFunction(suggestList[1].toString());
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                  child: FlatButton(
+                                    color: HexColor("#FFFBED"),
+                                    padding: const EdgeInsets.all(0),
+                                    child: Text("${FormatUtil.formatNum(suggestList[2])}HYN",
+                                        style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                    onPressed: () {
+                                      onPressFunction(suggestList[2].toString());
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                          if (isJoin)
+                            Row(
+                              children: <Widget>[
+                                RichText(
+                                  text: TextSpan(
+                                      text: S.of(context).balance_portion_hyn,
+                                      style: TextStyle(
+                                          fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                                      children: [
+                                        TextSpan(
+                                          text: "${FormatUtil.stringFormatNum(contractNodeItem.remainDelegation)}",
+                                          style: TextStyle(
+                                              fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                                        )
+                                      ]),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                SizedBox(
+                                    height: 22,
+                                    width: 70,
+                                    child: FlatButton(
+                                      padding: const EdgeInsets.all(0),
+                                      color: HexColor("#FFDE64"),
+                                      onPressed: () {
+                                        joinEnougnFunction();
+                                      },
+                                      child: Text(S.of(context).all_bug,
+                                          style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                    )),
+                              ],
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                            child: RichText(
+                              text: TextSpan(
+                                  text: S.of(context).end_profit_hyn,
+                                  style: TextStyles.textC9b9b9bS12,
+                                  children: [
+                                    TextSpan(
+                                      text: "$endProfit",
+                                      style: TextStyles.textC333S14,
+                                    )
+                                  ]),
+                            ),
+                          ),
+                          if (!isMyself)
+                            RichText(
+                              text: TextSpan(
+                                  text: isJoin ? S.of(context).spend_manager_hyn : S.of(context).get_manager_hyn,
+                                  style: TextStyles.textC9b9b9bS12,
+                                  children: [
+                                    TextSpan(
+                                      text: "$spendManager",
+                                      style: TextStyles.textC333S14,
+                                    )
+                                  ]),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )),
+      ],
+    ),
   );
 }
 
-Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
-    {isJoin = false, isDetail = true}) {
-  var title = !isDetail? S.of(context).node_contract_detail : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
+Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem, {isJoin = false, isDetail = true}) {
+  var title = !isDetail
+      ? S.of(context).node_contract_detail
+      : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
   return Stack(
     children: <Widget>[
       Container(
-        height: isDetail?280:250,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          height: isDetail ? 250 : 250,
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
 //          borderRadius: BorderRadius.only(bottomLeft:Radius.circular(15),bottomRight:Radius.circular(15),), // 也可控件一边圆角大小
-        )
-      ),
+          )),
       Positioned(
         top: 60,
         left: -20,
@@ -631,13 +596,10 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
           height: 120,
           width: 120,
           decoration: BoxDecoration(
-            gradient: new LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  HexColor("#22ffffff"),
-                  HexColor("#00ffffff"),
-                ]),
+            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+              HexColor("#22ffffff"),
+              HexColor("#00ffffff"),
+            ]),
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
           ),
@@ -650,13 +612,10 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
           height: 120,
           width: 120,
           decoration: BoxDecoration(
-            gradient: new LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  HexColor("#22ffffff"),
-                  HexColor("#00ffffff"),
-                ]),
+            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+              HexColor("#22ffffff"),
+              HexColor("#00ffffff"),
+            ]),
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
           ),
@@ -669,13 +628,10 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
           height: 40,
           width: 40,
           decoration: BoxDecoration(
-            gradient: new LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  HexColor("#22ffffff"),
-                  HexColor("#00ffffff"),
-                ]),
+            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+              HexColor("#22ffffff"),
+              HexColor("#00ffffff"),
+            ]),
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
           ),
@@ -713,19 +669,18 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
             ),
             RichText(
                 text: TextSpan(
-                    text:
-                        "${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}",
+                    text: "${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}",
                     style: TextStyles.textCfffS46,
                     children: <TextSpan>[
                   TextSpan(
-                    text: S.of(context).ten_thousand_annualizedyield(FormatUtil.formatPercent(nodeItem.annualizedYield)),
+                    text:
+                        S.of(context).ten_thousand_annualizedyield(FormatUtil.formatPercent(nodeItem.annualizedYield)),
                     style: TextStyles.textCfffS24,
                   )
                 ])),
             Padding(
-              padding: const EdgeInsets.only(top: 4.0, bottom: 20),
-              child:
-                  Text(S.of(context).all_join_end_reward, style: TextStyles.textCccfffS12),
+              padding: const EdgeInsets.only(top: 4.0, bottom: 24),
+              child: Text(S.of(context).all_join_end_reward, style: TextStyles.textCccfffS12),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -735,16 +690,13 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                     ? Column(
                         children: <Widget>[
                           Text(S.of(context).min_invest, style: TextStyles.textCccfffS12),
-                          Text(
-                              "${FormatUtil.formatPercent(nodeItem.minDelegationRate)}",
-                              style: TextStyles.textCfffS14)
+                          Text("${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textCfffS14)
                         ],
                       )
                     : Column(
                         children: <Widget>[
                           Text(S.of(context).create_min_invest, style: TextStyles.textCccfffS12),
-                          Text(
-                              "${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
+                          Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
                               style: TextStyles.textCfffS14)
                         ],
                       ),
@@ -769,13 +721,12 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
                 Column(
                   children: <Widget>[
                     Text(S.of(context).manage_fee, style: TextStyles.textCccfffS12),
-                    Text("${FormatUtil.formatPercent(nodeItem.commission)}",
-                        style: TextStyles.textCfffS14)
+                    Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textCfffS14)
                   ],
                 ),
               ],
             ),
-            if (isDetail) _getHeadItemCard(context,nodeItem),
+//            if (isDetail) _getHeadItemCard(context,nodeItem),
           ],
         ),
       )
@@ -783,7 +734,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem,
   );
 }
 
-Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
+Widget _getHeadItemCard(BuildContext context, NodeItem nodeItem) {
   var currentTime = new DateTime.now().millisecondsSinceEpoch;
   var durationTime = nodeItem.duration * 3600 * 24 * 1000;
   var tempHalfTime = durationTime / 2 + currentTime;
@@ -792,13 +743,11 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
 
   if (nodeItem.halfCollected) {
     return Card(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
       color: Colors.white,
       margin: const EdgeInsets.only(left: 14.0, right: 14, bottom: 16, top: 16),
       child: Padding(
-          padding:
-              const EdgeInsets.only(left: 22.0, right: 22, top: 21, bottom: 21),
+          padding: const EdgeInsets.only(left: 22.0, right: 22, top: 21, bottom: 21),
           child: Stack(alignment: Alignment.topCenter, children: <Widget>[
             Column(
               children: <Widget>[
@@ -813,21 +762,17 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(7),
-                                border: Border.all(
-                                    color: HexColor("#322300"), width: 2)),
+                                border: Border.all(color: HexColor("#322300"), width: 2)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
                             child: Text(
                               S.of(context).today_join,
-                              style: TextStyle(
-                                  fontSize: 12, color: HexColor("#4b4b4b")),
+                              style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b")),
                             ),
                           ),
-                          Text(
-                              "${FormatUtil.formatDateCircle(currentTime, isSecond: false)}",
-                              style: TextStyle(
-                                  fontSize: 10, color: HexColor("#a7a7a7")))
+                          Text("${FormatUtil.formatDateCircle(currentTime, isSecond: false)}",
+                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
                         ],
                       ),
                     ),
@@ -840,19 +785,15 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(7),
-                                border: Border.all(
-                                    color: HexColor("#322300"), width: 2)),
+                                border: Border.all(color: HexColor("#322300"), width: 2)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
                             child: Text(S.of(context).withdraw_reward,
-                                style: TextStyle(
-                                    fontSize: 12, color: HexColor("#4b4b4b"))),
+                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
-                          Text(
-                              "${FormatUtil.formatDateCircle(halfTime, isSecond: false)}",
-                              style: TextStyle(
-                                  fontSize: 10, color: HexColor("#a7a7a7")))
+                          Text("${FormatUtil.formatDateCircle(halfTime, isSecond: false)}",
+                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
                         ],
                       ),
                     ),
@@ -865,19 +806,15 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(7),
-                                border: Border.all(
-                                    color: HexColor("#322300"), width: 2)),
+                                border: Border.all(color: HexColor("#322300"), width: 2)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
                             child: Text(S.of(context).expire_end,
-                                style: TextStyle(
-                                    fontSize: 12, color: HexColor("#4b4b4b"))),
+                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
-                          Text(
-                              "${FormatUtil.formatDateCircle(endTime, isSecond: false)}",
-                              style: TextStyle(
-                                  fontSize: 10, color: HexColor("#a7a7a7")))
+                          Text("${FormatUtil.formatDateCircle(endTime, isSecond: false)}",
+                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
                         ],
                       ),
                     )
@@ -897,8 +834,7 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0, right: 10),
                       child: Text(S.of(context).truely_date_accurate,
-                          style: TextStyle(
-                              fontSize: 12, color: HexColor("#AAAAAA"))),
+                          style: TextStyle(fontSize: 12, color: HexColor("#AAAAAA"))),
                     ),
                     Container(
                       width: 23,
@@ -935,13 +871,11 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
     );
   } else {
     return Card(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
       color: Colors.white,
       margin: const EdgeInsets.only(left: 14.0, right: 14, bottom: 16, top: 16),
       child: Padding(
-          padding:
-              const EdgeInsets.only(left: 22.0, right: 22, top: 21, bottom: 21),
+          padding: const EdgeInsets.only(left: 22.0, right: 22, top: 21, bottom: 21),
           child: Stack(alignment: Alignment.topCenter, children: <Widget>[
             Column(
               children: <Widget>[
@@ -956,21 +890,17 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(7),
-                                border: Border.all(
-                                    color: HexColor("#322300"), width: 2)),
+                                border: Border.all(color: HexColor("#322300"), width: 2)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
                             child: Text(
                               S.of(context).today_join,
-                              style: TextStyle(
-                                  fontSize: 12, color: HexColor("#4b4b4b")),
+                              style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b")),
                             ),
                           ),
-                          Text(
-                              "${FormatUtil.formatDateCircle(currentTime, isSecond: false)}",
-                              style: TextStyle(
-                                  fontSize: 10, color: HexColor("#a7a7a7")))
+                          Text("${FormatUtil.formatDateCircle(currentTime, isSecond: false)}",
+                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
                         ],
                       ),
                     ),
@@ -983,19 +913,15 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(7),
-                                border: Border.all(
-                                    color: HexColor("#322300"), width: 2)),
+                                border: Border.all(color: HexColor("#322300"), width: 2)),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 9.0, bottom: 9),
                             child: Text(S.of(context).expire_end,
-                                style: TextStyle(
-                                    fontSize: 12, color: HexColor("#4b4b4b"))),
+                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
                           ),
-                          Text(
-                              "${FormatUtil.formatDateCircle(endTime, isSecond: false)}",
-                              style: TextStyle(
-                                  fontSize: 10, color: HexColor("#a7a7a7")))
+                          Text("${FormatUtil.formatDateCircle(endTime, isSecond: false)}",
+                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
                         ],
                       ),
                     )
@@ -1016,8 +942,7 @@ Widget _getHeadItemCard(BuildContext context,NodeItem nodeItem) {
                       padding: const EdgeInsets.only(left: 10.0, right: 10),
                       child: Text(
                         S.of(context).truely_date_accurate,
-                        style:
-                            TextStyle(fontSize: 12, color: HexColor("#AAAAAA")),
+                        style: TextStyle(fontSize: 12, color: HexColor("#AAAAAA")),
                       ),
                     ),
                     Container(

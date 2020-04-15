@@ -164,7 +164,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top:8,bottom: 16),
-              child: Divider(height: 1,color: DefaultColors.color1177869e),
+              child: Divider(height: 1,color: DefaultColors.color2277869e),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,7 +192,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                         padding: const EdgeInsets.only(top: 3.0),
                         child: Row(
                           children: <Widget>[
-                            Text(S.of(context).highest + " ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                            Text(S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" + S.of(context).ten_thousand,
                                 style: TextStyles.textC99000000S10,maxLines:1,softWrap: true),
                             Text("  |  ",style: TextStyles.textC9b9b9bS12),
                             Text(S.of(context).n_day(contractNodeItem.contract.duration.toString()),style: TextStyles.textC99000000S10)
@@ -213,7 +213,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top:9,bottom: 9),
-              child: Divider(height: 1,color: DefaultColors.color1177869e),
+              child: Divider(height: 1,color: DefaultColors.color2277869e),
             ),
             Row(
               children: <Widget>[

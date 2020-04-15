@@ -175,15 +175,15 @@ class LoadDataContainerState extends State<LoadDataContainer> {
             body = CupertinoActivityIndicator();
           } else if (mode == LoadStatus.failed) {
             body = Text(
-              '加载失败，点击重试',
-              style: TextStyle(color: Colors.grey),
+              S.of(context).load_failed_click_retry,
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             );
           } else if (mode == LoadStatus.canLoading) {
             body = Container();
           } else {
             body = Text(
-              "没有更多数据了~",
-              style: TextStyle(color: Colors.grey),
+              S.of(context).no_more_data,
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             );
           }
           return Container(
