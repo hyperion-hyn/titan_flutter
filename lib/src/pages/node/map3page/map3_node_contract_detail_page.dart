@@ -812,8 +812,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        List<ContractDelegateRecordItem> filterMemberList;
-        _delegateRecordList.addAll(tempMemberList);
+        List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
+          return enumBillsOperaStateFromString(element.operaType) == BillsOperaState.DELEGATE;
+        });
+        print("length: ${filterMemberList.length}");
+
+        _delegateRecordList.addAll(filterMemberList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
