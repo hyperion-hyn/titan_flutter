@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -44,7 +45,7 @@ class Map3NodeContractDetailPage extends StatefulWidget {
   _Map3NodeContractDetailState createState() => new _Map3NodeContractDetailState();
 }
 
-class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
+class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   NodeApi _api = NodeApi();
   ContractDetailItem _contractDetailItem;
@@ -71,6 +72,14 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   List<ContractDelegateRecordItem> _delegateRecordList = [];
 
   @override
+  void onCreated() {
+    _actionTitle = S.of(context).confirm;
+    _nodeStateDesc = S.of(context).node_in_configuration;
+    _contractStateDesc = S.of(context).wait_block_chain_verification;
+    super.onCreated();
+  }
+
+  @override
   void initState() {
     super.initState();
   }
@@ -89,6 +98,231 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
       getContractInstanceItem();
       getJoinMemberData();
+    }
+  }
+
+  void getContractInstanceItem() async {
+    // todo: test_jison_0411
+/*    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+
+        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
+        var nodeItem = ContractNodeItem(
+            1,
+            item,
+            "0xaaaaa",
+            "bbbbbbb",
+            "0",
+            "0",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "",
+            ContractState.DUE_COMPLETED.toString().split(".").last
+        );
+
+        LatestTransaction _transaction = LatestTransaction("",0,0,"","","");
+        _contractDetailItem = ContractDetailItem(nodeItem, "", "", "0", "0", "0", 0,  _transaction, "ACTIVE");
+        _contractNodeItem = nodeItem;
+        // todo： 测试
+        //_contractDetailItem.userDelegateState = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
+        _currentState = null;
+        _visible = true;
+      });
+    });
+
+    return;*/
+
+    try {
+      // 0.
+      var instanceItem = await _api.getContractInstanceItem("${widget.contractId}");
+
+      var address = _wallet.getEthAccount().address;
+
+      _isCreator = address == instanceItem.owner;
+
+      // todo： 测试
+      //_isCreator = true;
+
+      if (_isCreator) {
+        var detailItem = await _api.getContractDetail("${widget.contractId}", address: address);
+        _contractDetailItem = detailItem;
+        _contractNodeItem = detailItem.instance;
+        print('[map3] getContractDetail , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
+
+        // todo： 测试
+        _contractNodeItem.contract.durationType = 2;
+        _contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last ?? "";
+      } else {
+        _contractNodeItem = instanceItem;
+        //_contractNodeItem.state = ContractState.DUE_COMPLETED.toString().split(".").last??"";
+
+        print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
+      }
+
+      // 1.
+      var userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
+
+      switch (userDelegateState) {
+        case UserDelegateState.PENDING:
+          _actionTitle = S.of(context).increase_investment;
+          onPressed = () {
+            Application.router
+                .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.ACTIVE:
+          _actionTitle = S.of(context).mortgaged;
+          onPressed = () {
+            Fluttertoast.showToast(msg: S.of(context).node_is_running);
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.DUE:
+          _actionTitle = S.of(context).extract;
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.DUE_COLLECTED:
+          _actionTitle = S.of(context).finish;
+          onPressed = () {
+            Fluttertoast.showToast(msg: S.of(context).node_revenue_extracted);
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.HALFDUE:
+          _actionTitle = S.of(context).withdraw_fifty_revenue;
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.HALFDUE_COLLECTED:
+          _actionTitle = S.of(context).finish;
+          onPressed = () {
+            Fluttertoast.showToast(msg: S.of(context).node_half_revenue_had_withdraw);
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.CANCELLED:
+          _actionTitle = S.of(context).extract;
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.CANCELLED_COLLECTED:
+          _actionTitle = S.of(context).finish;
+          onPressed = () {
+            Fluttertoast.showToast(msg: S.of(context).node_return_had_withdraw_finish);
+          };
+          _visible = false;
+          break;
+
+        default:
+          break;
+      }
+
+      var contractState = enumContractStateFromString(_contractNodeItem.state);
+      print('[contract] _pageView, stateString:${_contractNodeItem.state},state:$contractState');
+
+      if (!_isCreator && contractState == ContractState.PENDING) {
+        _actionTitle = S.of(context).increase_investment;
+        onPressed = () {
+          Application.router
+              .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+        };
+        _visible = true;
+      }
+
+      // 2.
+      switch (contractState) {
+        case ContractState.PENDING:
+          _nodeStateDesc = S.of(context).node_wait_to_launch;
+          _contractStateDesc = S.of(context).wait_block_chain_verification;
+
+          _contractProgressDesc = S.of(context).wait_to_launch;
+          _contractProgressDetail = S.of(context).remain + "${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
+          _contractProgressIndex = 3.0;
+          break;
+
+        case ContractState.ACTIVE:
+          _nodeStateDesc = S.of(context).node_in_progress;
+          _contractStateDesc = S.of(context).broadcase_sponsor_wait_net_verify(_amountDelegation);
+
+          _contractProgressDesc = S.of(context).launch_success;
+          _contractProgressDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay);
+          _contractProgressIndex = 3.0;
+          break;
+
+        case ContractState.DUE:
+          _nodeStateDesc = S.of(context).node_had_stop;
+
+          _contractProgressDesc = S.of(context).launch_success;
+          _contractProgressDetail = S.of(context).expired_can_withdraw_rewards;
+          _contractProgressIndex = 4.0;
+          break;
+
+        case ContractState.CANCELLED:
+          _nodeStateDesc = S.of(context).node_had_stop;
+          _contractStateDesc = S.of(context).launch_fail_request_refund;
+
+          _contractProgressDesc = S.of(context).launch_fail;
+          _contractProgressDetail = S.of(context).launch_fail;
+          _contractProgressIndex = 3.0;
+          break;
+
+        case ContractState.DUE_COMPLETED:
+          _nodeStateDesc = S.of(context).node_had_stop;
+          _contractStateDesc = S.of(context).recovered_invested_capital;
+
+          _contractProgressDesc = S.of(context).earned_rewards;
+          _contractProgressDetail = S.of(context).congratulation_reward_withdrawn;
+          _contractProgressIndex = 5.0;
+          break;
+
+        case ContractState.CANCELLED_COMPLETED:
+          _nodeStateDesc = S.of(context).node_had_stop;
+          _contractStateDesc = S.of(context).recovered_invested_capital;
+
+          _contractProgressDesc = S.of(context).launch_fail;
+          _contractProgressDetail = S.of(context).launch_fail;
+          _contractProgressIndex = 3.0;
+          break;
+
+        default:
+          break;
+      }
+
+      // 3.
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          // todo： 测试
+          //_contractDetailItem.userDelegateState = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
+          _currentState = null;
+        });
+      });
+    } catch (e) {
+      setState(() {
+        _currentState = all_page_state.LoadFailState();
+      });
     }
   }
 
@@ -167,7 +401,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
   Widget _bottomSureButtonWidget() {
     _actionTitle = _isTransferring ? "提取中..." : _actionTitle;
- 
+
     return Visibility(
       visible: _visible,
       child: Positioned(
@@ -200,11 +434,11 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
               InkWell(
                   onTap: () {
                     String webUrl = FluroConvertUtils.fluroCnParamsEncode("https://www.map3.network");
-                    String webTitle = FluroConvertUtils.fluroCnParamsEncode("Map3节点详情");
+                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).map_node_detail);
                     Application.router
                         .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                   },
-                  child: Text("点击查看详情", style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
+                  child: Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
             ],
           ),
         ),
@@ -221,7 +455,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
               Row(
                 children: <Widget>[
                   Container(
-                      width: 100, child: Text("节点版本", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                      width: 100, child: Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                   new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
                 ],
               ),
@@ -230,7 +464,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 child: Row(
                   children: <Widget>[
                     Container(
-                        width: 100, child: Text("服务商", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        width: 100, child: Text(S.of(context).service_provider, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                     new Text("${_contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
                   ],
                 ),
@@ -240,7 +474,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 child: Row(
                   children: <Widget>[
                     Container(
-                        width: 100, child: Text("节点位置", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        width: 100, child: Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                     new Text("${_contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
                   ],
                 ),
@@ -295,19 +529,19 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 TextStyle style = TextStyle(fontSize: 19, color: HexColor("#000000"), fontWeight: FontWeight.w600);
                 switch (value) {
                   case 1:
-                    title = "你已投入(HYN)";
+                    title = S.of(context).you_have_invested_hyn;
                     detail = amountDelegation;
                     //style = TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold);
                     break;
 
                   case 2:
-                    title = "预期产出(HYN)";
+                    title = S.of(context).expected_output_hyn;
                     detail = expectedYield;
                     //style = TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold);
                     break;
 
                   case 3:
-                    title = "获得管理费(HYN)";
+                    title = S.of(context).get_manager_hyn;
                     detail = commission;
                     //style = TextStyle(fontSize: 12, color: Colors.red, fontWeight: FontWeight.bold);
                     break;
@@ -354,28 +588,28 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     if (_isCreator) {
       var stateIndex = enumUserDelegateStateFromString(_contractDetailItem?.state)?.index ?? 0;
       children = [
-        _nodeWidget("创建时间", date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
-        _lineWidget("7天", lineWidth,
+        _nodeWidget(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+        _lineWidget(S.of(context).n_day(7.toString()), lineWidth,
             left: _left(true, 1),
             progress: stateIndex >= UserDelegateState.ACTIVE.index ? 1 : _contractNodeItem.remainProgress),
-        _nodeWidget("启动成功",
+        _nodeWidget(S.of(context).launch_success,
             date: _contractNodeItem.instanceActiveTime,
             left: _left(false, 2),
             isLight: stateIndex >= UserDelegateState.ACTIVE.index),
-        _lineWidget("90天", lineWidth,
+        _lineWidget(S.of(context).n_day(90.toString()), lineWidth,
             left: _left(true, 2),
             progress: stateIndex >= UserDelegateState.HALFDUE.index ? 1 : _contractNodeItem.expectHalfDueProgress),
-        _nodeWidget("可提50%奖励", left: _left(false, 3) - 10, isLight: stateIndex >= UserDelegateState.HALFDUE.index),
-        _lineWidget("90天", lineWidth,
+        _nodeWidget(S.of(context).can_withdraw_fifty_reward, left: _left(false, 3)-10, isLight: stateIndex >= UserDelegateState.HALFDUE.index),
+        _lineWidget(S.of(context).n_day(90.toString()), lineWidth,
             left: _left(true, 3),
             progress: stateIndex >= UserDelegateState.DUE.index ? 1 : _contractNodeItem.expectDueProgress),
-        _nodeWidget("到期时间",
+        _nodeWidget(S.of(context).expire_date,
             date: _contractNodeItem.instanceDueTime,
             left: _left(false, 4),
             isLight: stateIndex >= UserDelegateState.DUE.index),
         _lineWidget("", lineWidth,
             left: _left(true, 4), progress: stateIndex >= UserDelegateState.DUE_COLLECTED.index ? 1 : 0.0),
-        _nodeWidget("提取时间",
+        _nodeWidget(S.of(context).extract_time,
             date: _contractNodeItem.instanceFinishTime,
             left: _left(false, 5),
             isLight: stateIndex >= UserDelegateState.DUE_COLLECTED.index),
@@ -386,24 +620,24 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       var stateIndex = enumContractStateFromString(_contractNodeItem.state).index;
       //print("is:${stateIndex >= ContractState.DUE.index}, progress:${_contractNodeItem.expectDueProgress}");
       children = [
-        _nodeWidget("创建时间", date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
-        _lineWidget("7天", lineWidth,
+        _nodeWidget(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+        _lineWidget(S.of(context).n_day(7.toString()), lineWidth,
             left: _left(true, 1),
             progress: stateIndex >= ContractState.ACTIVE.index ? 1 : _contractNodeItem.remainProgress),
-        _nodeWidget("启动成功",
+        _nodeWidget(S.of(context).launch_success,
             date: _contractNodeItem.instanceActiveTime,
             left: _left(false, 2),
             isLight: stateIndex >= ContractState.ACTIVE.index),
-        _lineWidget("${_contractNodeItem.contract.duration}天", lineWidth,
+        _lineWidget(S.of(context).n_day(_contractNodeItem.contract.duration.toString()), lineWidth,
             left: _left(true, 2),
             progress: stateIndex >= ContractState.DUE.index ? 1.0 : _contractNodeItem.expectDueProgress),
-        _nodeWidget("到期时间",
+        _nodeWidget(S.of(context).expire_date,
             date: _contractNodeItem.instanceDueTime,
             left: _left(false, 3),
             isLight: stateIndex >= ContractState.DUE.index),
         _lineWidget("", lineWidth,
             left: _left(true, 3), progress: stateIndex >= ContractState.DUE_COMPLETED.index ? 1.0 : 0.0),
-        _nodeWidget("提取时间",
+        _nodeWidget(S.of(context).extract_time,
             date: _contractNodeItem.instanceFinishTime,
             left: _left(false, 4),
             isLight: stateIndex >= ContractState.DUE_COMPLETED.index),
@@ -836,7 +1070,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     }
   }
 
-  void getContractInstanceItem() async {
+  void getContractInstanceItemOld() async {
     // todo: test_jison_0411
   /*
   Future.delayed(Duration(seconds: 1), () {

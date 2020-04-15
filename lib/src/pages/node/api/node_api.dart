@@ -314,6 +314,9 @@ class NodeApi {
     );
     print('collectHex is: $collectHex');
 
+    await postTransactionHistory(_wallet.getEthAccount().address, int.parse(_contractNodeItem.id.toString()), collectHex
+        , transactionHistoryAction2String(TransactionHistoryAction.WITHDRAW));
+
     return "success";
   }
 
