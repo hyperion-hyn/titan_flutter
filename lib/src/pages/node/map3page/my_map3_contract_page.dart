@@ -164,7 +164,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top:8,bottom: 16),
-              child: Divider(height: 1,color: DefaultColors.color1177869e),
+              child: Divider(height: 1,color: DefaultColors.color2277869e),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +213,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top:9,bottom: 9),
-              child: Divider(height: 1,color: DefaultColors.color1177869e),
+              child: Divider(height: 1,color: DefaultColors.color2277869e),
             ),
             Row(
               children: <Widget>[

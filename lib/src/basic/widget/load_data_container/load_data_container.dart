@@ -176,14 +176,14 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           } else if (mode == LoadStatus.failed) {
             body = Text(
               '加载失败，点击重试',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             );
           } else if (mode == LoadStatus.canLoading) {
             body = Container();
           } else {
             body = Text(
               "没有更多数据了~",
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             );
           }
           return Container(

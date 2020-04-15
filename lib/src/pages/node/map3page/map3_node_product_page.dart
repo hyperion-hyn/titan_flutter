@@ -111,7 +111,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem) {
     return Container(
       color: Colors.white,
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(top: 8),
       padding:
       const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
       child: Column(
@@ -136,7 +136,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                       children: <Widget>[
                         Expanded(
                             child: Text("${nodeItem.nodeName}",
-                                style: TextStyles.textCcc000000S16))
+                                style: TextStyle(fontWeight: FontWeight.bold)))
                       ],
                     ),
                     Padding(
@@ -163,7 +163,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
           ),
           Padding(
             padding: const EdgeInsets.only(top:9,bottom: 9),
-            child: Divider(height: 1,color: DefaultColors.color1177869e),
+            child: Divider(height: 1,color: DefaultColors.color2277869e),
           ),
           Row(
             children: <Widget>[
