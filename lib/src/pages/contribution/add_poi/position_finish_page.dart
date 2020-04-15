@@ -51,7 +51,7 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: (){
-                  Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                  Routes.popUntilCachedEntryRouteName(context);
                 },
               );
             },
@@ -99,7 +99,7 @@ class _FinishAddPositionState extends State<FinishAddPositionPage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: (){
-                      Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                      Routes.popUntilCachedEntryRouteName(context);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

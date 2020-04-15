@@ -9,13 +9,13 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'map3_node_contract_detail_page.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
   final String title;
@@ -91,7 +91,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   _loadData() async {
 
     // todo: test_jison_0411
-/*    setState(() {
+   /*
+   setState(() {
       if (mounted) {
         var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
         var model = ContractNodeItem(
@@ -111,6 +112,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             0,
             0,
             0,
+            "",
             "ACTIVE"
         );
         _dataArray = [model];
@@ -119,7 +121,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     loadDataBloc.add(RefreshSuccessEvent());
 
-    return*/
+    return
+    */
 
     _currentPage = 0;
 
@@ -380,29 +383,3 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   }
 
 }
-
-// ContractState
-ContractState enumContractStateFromString(String fruit) {
-  fruit = 'ContractState.$fruit';
-  return ContractState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
-}
-
-enum ContractState { PENDING, ACTIVE, DUE, DUE_COMPLETED, CANCELLED, CANCELLED_COMPLETED}
-
-
-// UserDelegateState
-UserDelegateState enumUserDelegateStateFromString(String fruit) {
-  fruit = 'UserDelegateState.$fruit';
-  return UserDelegateState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
-}
-
-enum UserDelegateState { PENDING, ACTIVE, HALFDUE, HALFDUE_COLLECTED, DUE, DUE_COLLECTED, CANCELLED, CANCELLED_COLLECTED }
-
-
-// BillsOperaState
-BillsOperaState enumBillsOperaStateFromString(String fruit) {
-  fruit = 'BillsOperaState.$fruit';
-  return BillsOperaState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
-}
-
-enum BillsOperaState { DELEGATE, WITHDRAW}

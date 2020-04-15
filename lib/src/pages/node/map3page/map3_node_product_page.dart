@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -39,7 +40,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text("Map3节点抵押合约")),
+      appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_mortgage_contract)),
       body: _pageView(),
     );
   }
@@ -142,10 +143,10 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                       padding: const EdgeInsets.only(top: 3.0),
                       child: Row(
                         children: <Widget>[
-                          Text("最高 ${FormatUtil.formatTenThousand(nodeItem.minTotalDelegation)}",
+                          Text(S.of(context).highest + " ${FormatUtil.formatTenThousand(nodeItem.minTotalDelegation)}",
                               style: TextStyles.textC99000000S13,maxLines:1,softWrap: true),
                           Text("  |  ",style: TextStyles.textC9b9b9bS12),
-                          Text("${nodeItem.duration}天",style: TextStyles.textC99000000S13)
+                          Text(S.of(context).n_day(nodeItem.duration.toString()),style: TextStyles.textC99000000S13)
                         ],
                       ),
                     ),
@@ -155,7 +156,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
               Column(
                 children: <Widget>[
                   Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
-                  Text("年化奖励", style: TextStyles.textC99000000S13)
+                  Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13)
                 ],
               )
             ],
@@ -186,7 +187,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                           + "&contractId=${nodeItem.id}");
                     }
                   },
-                  child: Text("创建合约", style: TextStyles.textC906b00S13),
+                  child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
                 ),
               )
             ],

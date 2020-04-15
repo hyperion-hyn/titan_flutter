@@ -44,20 +44,20 @@ var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<S
 
 //wallet
 var createWalletHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return CreateAccountPage();
 });
 
 var importWalletHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return ImportAccountPage();
 });
 
-void _cacheOrClearEntryWalletRouteName(params) {
+void _cacheEntryRouteName(params) {
   var url = params["entryRouteName"]?.first;
   if (url != null && url != '') {
     url = Uri.decodeComponent(url);
-    Routes.createOrImportWalletEntryRouteName = url;
+    Routes.cachedEntryRouteName = url;
   }
 }
 
@@ -72,7 +72,7 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
 });
 
 var walletAccountSendTransactionHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return WalletSendPage(params['coinVo']?.first, params['toAddress']?.first);
 });
 
@@ -85,17 +85,19 @@ var managerWalletHandler = Handler(
     handlerFunc: (context, params) =>
         BlocProvider<WalletManagerBloc>(create: (context) => WalletManagerBloc(), child: WalletManagerPage()));
 
-var settingWalletHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
-  Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
-  return WalletSettingPage(wallet);
-});
+var settingWalletHandler = Handler(
+    handlerFunc: (context, params) {
+      _cacheEntryRouteName(params);
+      Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+      return WalletSettingPage(wallet);
+    });
 
-var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
-  Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
-  return WalletBackupNoticePage(wallet);
-});
+var settingBackupNoticeWalletHandler = Handler(
+    handlerFunc: (context, params) {
+      _cacheEntryRouteName(params);
+      Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+      return WalletBackupNoticePage(wallet);
+    });
 
 var backUpMnemoicNoticeForCreation = Handler(handlerFunc: (context, params) {
   return CreateWalletBackupNoticePage(params['walletName']?.first, params['password']?.first);
@@ -123,7 +125,7 @@ var contributionScanSignalHandler = Handler(handlerFunc: (context, params) {
 });
 
 var contributionPositionFinishHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return FinishAddPositionPage(params['pageType']?.first);
 });
 
@@ -136,12 +138,12 @@ var map3NodeCreateWalletHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return Map3NodeCreateContractPage(params['contractId']?.first);
 });
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return Map3NodeJoinContractPage(params['contractId']?.first);
 });
 
@@ -149,14 +151,9 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   ContractNodeItem contractNodeItem =
       ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   return Map3NodeSendConfirmPage(
-    params['coinVo']?.first ?? '0',
-    contractNodeItem,
-    double.parse(params['transferAmount']?.first ?? '0'),
-    params['receiverAddress']?.first ?? '0',
-    params['pageType']?.first,
-    params['contractId']?.first,
-    provider: params['provider']?.first,
-    region: params['region']?.first,
+      params['coinVo']?.first ?? '0', contractNodeItem, double.parse(params['transferAmount']?.first ?? '0'),
+      params['receiverAddress']?.first ?? '0', params['pageType']?.first,params['contractId']?.first,
+    provider: params['provider']?.first ?? "",region: params['region']?.first ?? "",
   );
 });
 

@@ -21,7 +21,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 return IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
-                    Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                    Routes.popUntilCachedEntryRouteName(context);
                   },
                 );
               },
@@ -98,7 +98,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                     color: DefaultColors.color26ac29),
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
-                              Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                              Routes.popUntilCachedEntryRouteName(context);
 //                              Application.router.navigateTo(
 //                                  context,
 //                                  Routes.wallet_import +

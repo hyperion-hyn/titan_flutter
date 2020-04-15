@@ -48,6 +48,7 @@ void main() {
     )),
     debugUpload: env.buildType == BuildType.PROD,
     handler: (FlutterErrorDetails detail) {
+      print(detail.toString());
       logger.e(detail.exception?.message, detail.exception, detail.stack);
     },
   );

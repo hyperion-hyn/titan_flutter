@@ -17,6 +17,10 @@ ContractDetailItem _$ContractDetailItemFromJson(Map<String, dynamic> json) {
     json['expectedYield'] as String,
     json['commission'] as String,
     json['delegatorCount'] as int,
+    json['latestTransaction'] == null
+        ? null
+        : LatestTransaction.fromJson(
+            json['latestTransaction'] as Map<String, dynamic>),
     json['state'] as String,
   );
 }
@@ -30,5 +34,27 @@ Map<String, dynamic> _$ContractDetailItemToJson(ContractDetailItem instance) =>
       'expectedYield': instance.expectedYield,
       'commission': instance.commission,
       'delegatorCount': instance.delegatorCount,
+      'latestTransaction': instance.latestTransaction,
+      'state': instance.state,
+    };
+
+LatestTransaction _$LatestTransactionFromJson(Map<String, dynamic> json) {
+  return LatestTransaction(
+    json['userAddress'] as String,
+    json['instanceId'] as int,
+    json['delegationId'] as int,
+    json['txhash'] as String,
+    json['operaType'] as String,
+    json['state'] as String,
+  );
+}
+
+Map<String, dynamic> _$LatestTransactionToJson(LatestTransaction instance) =>
+    <String, dynamic>{
+      'userAddress': instance.userAddress,
+      'instanceId': instance.instanceId,
+      'delegationId': instance.delegationId,
+      'txhash': instance.txhash,
+      'operaType': instance.operaType,
       'state': instance.state,
     };

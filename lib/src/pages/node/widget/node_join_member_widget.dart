@@ -102,7 +102,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
             Row(
               children: <Widget>[
                 Expanded(
-                    child: Text("参与成员",
+                    child: Text(S.of(context).part_member,
                         style: TextStyle(
                             fontSize: 16, color: HexColor("#333333")))),
                 /*Text(
@@ -110,7 +110,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   style: TextStyles.textC999S14,
                 ),*/
                 Text(
-                  "共：${memberList.length}（人）",
+                  S.of(context).total_member_count(memberList.length.toString()),
                   style: TextStyles.textC999S14,
                 ),
                 SizedBox(
@@ -185,7 +185,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
               height: 12,
             ),
             Text(
-              "邀请好友\n参加",
+              S.of(context).invite_friend_join,
               style: TextStyle(
                   fontSize: 12, color: HexColor("#7B766A")),
               textAlign: TextAlign.center,
@@ -268,7 +268,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                         borderRadius:
                         BorderRadius.circular(6),
                       ),
-                      child: Text("发起人",
+                      child: Text(S.of(context).sponsor,
                           style: TextStyle(
                               fontSize: 8,
                               color: HexColor("#322300")))),
