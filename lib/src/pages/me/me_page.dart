@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -22,6 +23,7 @@ import 'package:titan/src/pages/me/util/me_util.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -93,6 +95,8 @@ class _MeState extends BaseState<MePage> with RouteAware {
               height: 0,
             ),
             _buildWalletSection(),
+            _dividerView(isBottom: true),
+            _buildContractSection(),
             _dividerView(isBottom: true),
             _buildSettingSection(),
             _dividerView(),
@@ -362,6 +366,35 @@ class _MeState extends BaseState<MePage> with RouteAware {
       child: _buildMemuBar(S.of(context).wallet, 'ic_wallet', () {
         Application.router.navigateTo(context, Routes.wallet_manager);
       }, wallet?.wallet?.keystore?.name ?? S.of(context).wallet_manage),
+    );
+  }
+
+  Widget _buildContractSection() {
+    var _wallet = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    return Container(
+      padding: EdgeInsets.only(left: 16, right: 8),
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
+      child: Column(
+        children: <Widget>[
+          _buildMemuBar('我发起的Map3合约', "ic_create", () {
+            if (_wallet != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我发起的Map3合约")));
+            } else {
+              Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
+            }
+          }),
+          Divider(
+            height: 2,
+          ),
+          _buildMemuBar('我参与的Map3合约', "ic_delegate", () {
+            if (_wallet != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我参与的Map3合约")));
+            } else {
+              Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
+            }
+          }),
+        ],
+      ),
     );
   }
 
