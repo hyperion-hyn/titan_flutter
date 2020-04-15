@@ -527,5 +527,6 @@
   "wallet_account": "钱包账户",
   "create_map_node_must_have_block_account": "创建Map3抵押节点前，你必须先拥有一个区块链钱包账户。",
   "undefind_error": "未定义错误",
-  "ten_thousand": "万"
+  "ten_thousand": "万",
+  "join_delegate": "参与抵押"
 }

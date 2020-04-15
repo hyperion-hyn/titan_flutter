@@ -60,14 +60,18 @@ class _Map3NodeState extends State<Map3NodePage> {
     try {
       currentPage = 0;
       _nodePageEntityVo = await _nodeApi.getNodePageEntityVo();
-//      Future.delayed(Duration(seconds: 1), () {
+
       loadDataBloc.add(RefreshSuccessEvent());
-      setState(() {});
-//      });
+
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
-      setState(() {
-        loadDataBloc.add(LoadFailEvent());
-      });
+      if (mounted) {
+        setState(() {
+          loadDataBloc.add(LoadFailEvent());
+        });
+      }
     }
   }
 
