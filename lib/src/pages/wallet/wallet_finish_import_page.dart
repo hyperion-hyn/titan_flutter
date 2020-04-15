@@ -25,6 +25,9 @@ class FinishImportPage extends StatelessWidget {
                   List<Wallet> walletList = await WalletUtil.scanWallets();
                   if(walletList.length == 1){
                     BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+
+                    await Future.delayed(Duration(milliseconds: 300));
+                    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
                   }
                   Routes.popUntilCachedEntryRouteName(context);
                 },
@@ -76,6 +79,9 @@ class FinishImportPage extends StatelessWidget {
                     disabledTextColor: Colors.white,
                     onPressed: () async {
                       BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+
+                      await Future.delayed(Duration(milliseconds: 300));
+                      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
 
                       Routes.popUntilCachedEntryRouteName(context);
                     },

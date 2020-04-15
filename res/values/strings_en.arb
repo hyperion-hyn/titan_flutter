@@ -343,7 +343,6 @@
   "fail_get_user_recharge_address_hint": "Top-up address could not be found",
   "current_exchange_rate": "Current ${to} Exchange ${currency} Rate:",
   "Tips": "Tips",
-  "no_wallet_hint": "You don't have a wallet yet, please create or import it first.",
   "create": "Create",
   "recharge_success_hint": "Top-up successful",
   "transfer_warning_hint": "The above address only accepts HYN or USDT (ERC20) assets. Do not charge other assets, otherwise the assets will not be recovered. After you transfer-in, you need to wait for the entire network nodes to confirm, which takes about 10-30 minutes",

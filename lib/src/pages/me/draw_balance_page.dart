@@ -9,10 +9,12 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/me/enter_fund_password.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/routes/routes.dart';
 
 import 'model/quotes.dart';
 import 'model/withdrawal_info.dart';
@@ -550,13 +552,13 @@ class _DrawBalanceState extends BaseState<DrawBalancePage> {
 //                        },
 //                        child: new Text(S.of(context).create),
 //                      ),
-//                      new FlatButton(
-//                        onPressed: () {
-////                          createWalletPopUtilName = "/draw_balance_page";
-//                          Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
-//                        },
-//                        child: new Text(S.of(context).import),
-//                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Application.router.navigateTo(context, Routes.wallet_manager);
+                        },
+                        child: new Text(S.of(context).wallet_manage),
+                      ),
                       new FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -576,13 +578,13 @@ class _DrawBalanceState extends BaseState<DrawBalancePage> {
 //                        },
 //                        child: new Text(S.of(context).create),
 //                      ),
-//                      new FlatButton(
-//                        onPressed: () {
-////                          createWalletPopUtilName = "/draw_balance_page";
-//                          Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
-//                        },
-//                        child: new Text(S.of(context).import),
-//                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Application.router.navigateTo(context, Routes.wallet_manager);
+                        },
+                        child: new Text(S.of(context).wallet_manage),
+                      ),
                       new FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop();

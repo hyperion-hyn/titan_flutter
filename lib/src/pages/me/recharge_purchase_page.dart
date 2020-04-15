@@ -208,7 +208,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                             return Platform.isIOS
                                 ? CupertinoAlertDialog(
                                     title: Text(S.of(context).Tips),
-                                    content: Text(S.of(context).no_wallet_hint),
+                                    content: Text(S.of(context).without_hyn_wallet),
                                     actions: <Widget>[
 //                                      new FlatButton(
 //                                        onPressed: () {
@@ -218,14 +218,13 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 //                                        },
 //                                        child: new Text(S.of(context).create),
 //                                      ),
-//                                      new FlatButton(
-//                                        onPressed: () {
-//                                          createWalletPopUtilName = "/recharge_purchase_page";
-//                                          Navigator.push(
-//                                              context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
-//                                        },
-//                                        child: new Text(S.of(context).import),
-//                                      ),
+                                      new FlatButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Application.router.navigateTo(context, Routes.wallet_manager);
+                                        },
+                                        child: new Text(S.of(context).wallet_manage),
+                                      ),
                                       new FlatButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
@@ -236,7 +235,7 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                   )
                                 : AlertDialog(
                                     title: new Text(S.of(context).tips),
-                                    content: new Text(S.of(context).no_wallet_hint),
+                                    content: new Text(S.of(context).without_hyn_wallet),
                                     actions: <Widget>[
 //                                      new FlatButton(
 //                                        onPressed: () {
@@ -246,14 +245,13 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
 //                                        },
 //                                        child: new Text(S.of(context).create),
 //                                      ),
-//                                      new FlatButton(
-//                                        onPressed: () {
-//                                          createWalletPopUtilName = "/recharge_purchase_page";
-//                                          Navigator.push(
-//                                              context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
-//                                        },
-//                                        child: new Text(S.of(context).import),
-//                                      ),
+                                      new FlatButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Application.router.navigateTo(context, Routes.wallet_manager);
+                                        },
+                                        child: new Text(S.of(context).wallet_manage),
+                                      ),
                                       new FlatButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
