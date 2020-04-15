@@ -93,11 +93,10 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
   @override
   void dispose() {
-    super.dispose();
-
     subscription?.cancel();
     progressStreamController.close();
     _sensorPlugin.destory();
+    super.dispose();
   }
 
   void initSensorChangeCallBack() {
@@ -303,58 +302,64 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: _showCloseDialog,
-            );
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        _showCloseDialog();
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: _showCloseDialog,
+              );
+            },
+          ),
+          elevation: 0,
+          title: Text(
+            S.of(context).scan_name_title,
+            style: TextStyle(color: Colors.white),
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+          centerTitle: true,
         ),
-        elevation: 0,
-        title: Text(
-          S.of(context).scan_name_title,
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
-      ),
-      body: Stack(
-        children: <Widget>[
-          _mapView(),
-          RadarScan(),
-          StreamBuilder<double>(
-              stream: progressStreamController.stream,
-              builder: (context, snapshot) {
-                return Stack(
-                  fit: StackFit.expand,
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    _buildStatusListView(),
-                    Positioned(
-                      child: SizedBox(
-                        height: 3,
-                        child: LinearProgressIndicator(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          value: snapshot?.data ?? 0.0,
-                          valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+        body: Stack(
+          children: <Widget>[
+            _mapView(),
+            RadarScan(),
+            StreamBuilder<double>(
+                stream: progressStreamController.stream,
+                builder: (context, snapshot) {
+                  return Stack(
+                    fit: StackFit.expand,
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      _buildStatusListView(),
+                      Positioned(
+                        child: SizedBox(
+                          height: 3,
+                          child: LinearProgressIndicator(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            value: snapshot?.data ?? 0.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(HexColor("#FFFFFF")),
+                          ),
                         ),
+                        top: 0,
+                        left: 0,
+                        right: 0,
                       ),
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                    ),
-                    Image.asset(
-                      'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
-                      scale: 2,
-                    ),
-                    _confirmView(),
-                  ],
-                );
-              }),
-        ],
+                      Image.asset(
+                        'res/drawable/${SensorType.getScanImageName(_currentScanType)}_scan.png',
+                        scale: 2,
+                      ),
+                      _confirmView(),
+                    ],
+                  );
+                }),
+          ],
+        ),
       ),
     );
   }
