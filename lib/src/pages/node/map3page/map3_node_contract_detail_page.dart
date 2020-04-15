@@ -68,7 +68,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   NodeApi _nodeApi = NodeApi();
-  List<ContractDelegateRecordItem> delegateRecordList = [];
+  List<ContractDelegateRecordItem> _delegateRecordList = [];
 
   @override
   void initState() {
@@ -127,11 +127,14 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                   child:
                       getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)),
             ),
+
             SliverToBoxAdapter(child: _nodeInfoWidget(_nodeStateDesc)),
+
             _Spacer(),
             SliverToBoxAdapter(child: _contractActionsWidget(contractStateDesc: _contractStateDesc)),
             SliverToBoxAdapter(child: _lineSpacer()),
             SliverToBoxAdapter(child: _contractProgressWidget()),
+
             _Spacer(),
             SliverToBoxAdapter(
               child: NodeJoinMemberWidget(
@@ -143,21 +146,21 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
               ),
             ),
             _Spacer(),
-            //SliverToBoxAdapter(child: _delegatorListWidget()),
+
             SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
             SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-              return _delegateRecordItemWidget(delegateRecordList[index]);
-            }, childCount: delegateRecordList.length)),
-            //_Spacer(),
-            SliverToBoxAdapter(
+              return _delegateRecordItemWidget(_delegateRecordList[index]);
+            }, childCount: _delegateRecordList.length)),
+            _Spacer(),
+            /*SliverToBoxAdapter(
               child: Visibility(
                 visible: _visible,
                 child: Container(
                   height: 48,
                 ),
               ),
-            )
+            )*/
           ],
         ));
   }
@@ -362,7 +365,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         _lineWidget("90天", lineWidth,
             left: _left(true, 2),
             progress: stateIndex >= UserDelegateState.HALFDUE.index ? 1 : _contractNodeItem.expectHalfDueProgress),
-        _nodeWidget("可提50%奖励", left: _left(false, 3), isLight: stateIndex >= UserDelegateState.HALFDUE.index),
+        _nodeWidget("可提50%奖励", left: _left(false, 3) - 10, isLight: stateIndex >= UserDelegateState.HALFDUE.index),
         _lineWidget("90天", lineWidth,
             left: _left(true, 3),
             progress: stateIndex >= UserDelegateState.DUE.index ? 1 : _contractNodeItem.expectDueProgress),
@@ -376,12 +379,12 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             date: _contractNodeItem.instanceFinishTime,
             left: _left(false, 5),
             isLight: stateIndex >= UserDelegateState.DUE_COLLECTED.index),
-        _stateWidget(_contractProgressDetail, left: _left(false, _contractProgressIndex - 0.5)),
-        _transformWidget(left: _left(false, _contractProgressIndex - 0.5)),
+        _stateWidget(_contractProgressDetail, left: _left(false, _contractProgressIndex - 0.75)),
+        _transformWidget(left: _left(false, _contractProgressIndex - 0.75)),
       ];
     } else {
       var stateIndex = enumContractStateFromString(_contractNodeItem.state).index;
-      print("is:${stateIndex >= ContractState.DUE.index}, progress:${_contractNodeItem.expectDueProgress}");
+      //print("is:${stateIndex >= ContractState.DUE.index}, progress:${_contractNodeItem.expectDueProgress}");
       children = [
         _nodeWidget("创建时间", date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
         _lineWidget("7天", lineWidth,
@@ -531,7 +534,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     var greyColor = HexColor("#ECECEC");
 
     return Positioned(
-      top: 38,
+      top: name.isNotEmpty?38:42,
       left: left,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -792,12 +795,13 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   void getJoinMemberData() async {
     try {
       _currentPage = 0;
-      delegateRecordList = [];
+      _delegateRecordList = [];
       List<ContractDelegateRecordItem> tempMemberList =
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        delegateRecordList.addAll(tempMemberList);
+        List<ContractDelegateRecordItem> filterMemberList;
+        _delegateRecordList.addAll(tempMemberList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
@@ -818,7 +822,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        delegateRecordList.addAll(tempMemberList);
+        _delegateRecordList.addAll(tempMemberList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
@@ -834,7 +838,8 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
   void getContractInstanceItem() async {
     // todo: test_jison_0411
-/*    Future.delayed(Duration(seconds: 1), () {
+  /*
+  Future.delayed(Duration(seconds: 1), () {
       setState(() {
 
         var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
@@ -869,7 +874,8 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       });
     });
 
-    return;*/
+    return;
+    */
 
     try {
       // 0.
@@ -889,13 +895,13 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         print('[map3] getContractDetail , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
 
         // todo： 测试
-        _contractNodeItem.contract.durationType = 2;
-        _contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last ?? "";
+        //_contractNodeItem.contract.durationType = 2;
+        //_contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last ?? "";
       } else {
         _contractNodeItem = instanceItem;
 
         // todo： 测试
-        _contractNodeItem.state = ContractState.DUE.toString().split(".").last ?? "";
+        //_contractNodeItem.state = ContractState.DUE.toString().split(".").last ?? "";
 
         print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
       }
@@ -977,7 +983,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       print('[contract] _pageView, stateString:${_contractNodeItem.state},state:$contractState');
 
       if (!_isCreator && contractState == ContractState.PENDING) {
-        _actionTitle = "增加投入";
+        _actionTitle = "参与投入";
         onPressed = () {
           Application.router
               .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
