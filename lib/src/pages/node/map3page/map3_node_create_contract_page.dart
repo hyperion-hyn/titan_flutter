@@ -262,7 +262,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             }),
             SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 15),
+              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -272,10 +272,10 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                     child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
                   ),
                   Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-                    child: Text(S.of(context).freeze_balance_reward_direct_push, style: TextStyles.textC999S12),
-                  ),
+//                  Padding(
+//                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+//                    child: Text(S.of(context).freeze_balance_reward_direct_push, style: TextStyles.textC999S12),
+//                  ),
                 ],
               ),
             ),
