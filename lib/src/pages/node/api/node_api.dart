@@ -11,6 +11,7 @@ import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/contract_transaction_entity.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
@@ -284,6 +285,21 @@ class NodeApi {
 
   Future postTransactionHistory(ContractTransactionEntity _entity, String contractId) async {
     NodeHttpCore.instance.post("contracts/create/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<String> withdrawContractInstance(ContractNodeItem _contractNodeItem, WalletVo activatedWallet, String password,
+      int gasPrice, int gasLimit) async {
+    var _wallet = activatedWallet.wallet;
+    var createNodeWalletAddress = _contractNodeItem.owner;
+    var collectHex = await _wallet.sendCollectMap3Node(
+      createNodeWalletAddress: createNodeWalletAddress,
+      gasPrice: BigInt.from(gasPrice),
+      gasLimit: gasLimit,
+      password: password,
+    );
+    print('collectHex is: $collectHex');
+
+    return "success";
   }
 
 }
