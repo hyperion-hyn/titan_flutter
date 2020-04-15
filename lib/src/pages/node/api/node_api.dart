@@ -302,4 +302,19 @@ class NodeApi {
     NodeHttpCore.instance.post("eth-transaction-history/", data: historyEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
+  Future<String> withdrawContractInstance(ContractNodeItem _contractNodeItem, WalletVo activatedWallet, String password,
+      int gasPrice, int gasLimit) async {
+    var _wallet = activatedWallet.wallet;
+    var createNodeWalletAddress = _contractNodeItem.owner;
+    var collectHex = await _wallet.sendCollectMap3Node(
+      createNodeWalletAddress: createNodeWalletAddress,
+      gasPrice: BigInt.from(gasPrice),
+      gasLimit: gasLimit,
+      password: password,
+    );
+    print('collectHex is: $collectHex');
+
+    return "success";
+  }
+
 }
