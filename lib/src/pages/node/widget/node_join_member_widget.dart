@@ -15,9 +15,10 @@ import 'package:titan/src/utils/format_util.dart';
 class NodeJoinMemberWidget extends StatefulWidget {
   final String contractId;
   final String remainDay;
+  final String shareName;
   final String shareUrl;
   final bool isShowInviteItem;
-  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareUrl, {this.isShowInviteItem=true});
+  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl, {this.isShowInviteItem=true});
 
   @override
   State<StatefulWidget> createState() {
@@ -169,7 +170,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
       child: InkWell(
         onTap: () async{
           final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
-          Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',text: widget.shareUrl);
+          Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',text: "${widget.shareUrl}?name=${widget.shareName}");
 
 //          Share.text(S.of(context).share, widget.shareUrl,'text/plain');
         },

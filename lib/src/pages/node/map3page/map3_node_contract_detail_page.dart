@@ -343,6 +343,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           child: NodeJoinMemberWidget(
             "${widget.contractId}",
             _contractNodeItem.remainDay,
+            _contractNodeItem.ownerName,
             _contractNodeItem.shareUrl,
             isShowInviteItem: false,
           ),
@@ -383,6 +384,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
         NodeJoinMemberWidget(
           "${widget.contractId}",
           _contractNodeItem.remainDay,
+          _contractNodeItem.ownerName,
           _contractNodeItem.shareUrl,
           isShowInviteItem: false,
         ),
