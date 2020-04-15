@@ -32,7 +32,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   var _currentPage = 0;
   Wallet _wallet;
-
   var api = NodeApi();
 
   @override
@@ -59,105 +58,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     super.dispose();
   }
 
-
-  _loadMoreData() async {
-
-    List<ContractNodeItem> dataList = [];
-    if (widget.title.contains("发起")) {
-      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);
-      dataList  = createContractList;
-    } else {
-      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(page: _currentPage);
-      dataList = joinContractList;
-    }
-
-    if (dataList.length == 0) {
-      loadDataBloc.add(LoadMoreEmptyEvent());
-    } else {
-      _currentPage += 1;
-      loadDataBloc.add(LoadingMoreSuccessEvent());
-
-      setState(() {
-        _dataArray.addAll(dataList);
-      });
-    }
-
-    print('[map3] _loadMoreData, list.length:${dataList.length}');
-
-  }
-
-
-  _loadData() async {
-
-    // todo: test_jison_0411
-   /*
-   setState(() {
-      if (mounted) {
-        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
-        var model = ContractNodeItem(
-            1,
-            item,
-            "0xaaaaa",
-            "bbbbbbb",
-            "0",
-            "0",
-            "",
-            "",
-            "",
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            "",
-            "ACTIVE"
-        );
-        _dataArray = [model];
-      }
-    });
-
-    loadDataBloc.add(RefreshSuccessEvent());
-
-    return
-    */
-
-    _currentPage = 0;
-
-    List<ContractNodeItem> dataList = [];
-    if (widget.title.contains("发起")) {
-      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(address: _wallet.getEthAccount().address);
-      dataList  = createContractList;
-    } else {
-      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(address: _wallet.getEthAccount().address);
-      dataList = joinContractList;
-    }
-
-    if (dataList.length == 0) {
-      loadDataBloc.add(LoadEmptyEvent());
-    } else {
-      _currentPage ++;
-      loadDataBloc.add(RefreshSuccessEvent());
-
-      // todo: test_jison_0413
-      /*if (dataList.length >= ContractState.values.length) {
-        for (int i=0; i< ContractState.values.length; i++) {
-          dataList[i].state = ContractState.values[i].toString().split(".").last;
-        }
-      }*/
-
-      setState(() {
-        if (mounted) {
-          _dataArray = dataList;
-        }
-      });
-    }
-
-    print('[map3] widget.title:${widget.title}, _loadData, dataList.length:${dataList.length}');
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,7 +69,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           bloc: loadDataBloc,
           onLoadData: _loadData,
           onRefresh: _loadData,
-          // todo: 服务器暂时没支持page分页
           onLoadingMore: _loadMoreData,
           child: ListView.separated(
               itemBuilder: (context, index) {
@@ -185,33 +84,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         ),
       ),
     );
-  }
-
-  HexColor _getStatusColor(String stateString) {
-    var state = enumContractStateFromString(stateString);
-    var statusColor = HexColor('#EED097');
-
-    switch (state) {
-      case ContractState.PENDING:
-        statusColor = HexColor('#EED097');
-        break;
-
-      case ContractState.ACTIVE:
-        statusColor = HexColor('#3FF78C');
-        break;
-
-      case ContractState.DUE:
-        statusColor = HexColor('#867B7B');
-        break;
-
-      case ContractState.CANCELLED:
-        statusColor = HexColor('#F22504');
-        break;
-
-      default:
-        break;
-    }
-    return statusColor;
   }
 
   Widget _buildInfoItem(ContractNodeItem contractNodeItem) {
@@ -379,6 +251,102 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         ),
       ),
     );
+  }
+
+  _loadMoreData() async {
+
+    List<ContractNodeItem> dataList = [];
+    if (widget.title.contains("发起")) {
+      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);
+      dataList  = createContractList;
+    } else {
+      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(page: _currentPage);
+      dataList = joinContractList;
+    }
+
+    if (dataList.length == 0) {
+      loadDataBloc.add(LoadMoreEmptyEvent());
+    } else {
+      _currentPage += 1;
+      loadDataBloc.add(LoadingMoreSuccessEvent());
+
+      setState(() {
+        _dataArray.addAll(dataList);
+      });
+    }
+
+    print('[map3] _loadMoreData, list.length:${dataList.length}');
+
+  }
+
+  _loadData() async {
+
+    // todo: test_jison_0411
+    /*
+   setState(() {
+      if (mounted) {
+        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
+        var model = ContractNodeItem(
+            1,
+            item,
+            "0xaaaaa",
+            "bbbbbbb",
+            "0",
+            "0",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "",
+            "ACTIVE"
+        );
+        _dataArray = [model];
+      }
+    });
+
+    loadDataBloc.add(RefreshSuccessEvent());
+
+    return
+    */
+
+    _currentPage = 0;
+
+    List<ContractNodeItem> dataList = [];
+    if (widget.title.contains("发起")) {
+      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(address: _wallet.getEthAccount().address);
+      dataList  = createContractList;
+    } else {
+      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(address: _wallet.getEthAccount().address);
+      dataList = joinContractList;
+    }
+
+    if (dataList.length == 0) {
+      loadDataBloc.add(LoadEmptyEvent());
+    } else {
+      _currentPage ++;
+      loadDataBloc.add(RefreshSuccessEvent());
+
+      // todo: test_jison_0413
+      /*if (dataList.length >= ContractState.values.length) {
+        for (int i=0; i< ContractState.values.length; i++) {
+          dataList[i].state = ContractState.values[i].toString().split(".").last;
+        }
+      }*/
+
+      setState(() {
+        if (mounted) {
+          _dataArray = dataList;
+        }
+      });
+    }
+
+    print('[map3] widget.title:${widget.title}, _loadData, dataList.length:${dataList.length}');
   }
 
 }
