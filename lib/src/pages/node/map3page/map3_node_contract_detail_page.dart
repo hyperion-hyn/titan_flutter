@@ -137,6 +137,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
               child: NodeJoinMemberWidget(
                 "${widget.contractId}",
                 _contractNodeItem.remainDay,
+                _contractNodeItem.ownerName,
                 _contractNodeItem.shareUrl,
                 isShowInviteItem: false,
               ),
@@ -163,7 +164,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
   Widget _bottomSureButtonWidget() {
     _actionTitle = _isTransferring ? "提取中..." : _actionTitle;
-
+ 
     return Visibility(
       visible: _visible,
       child: Positioned(
@@ -787,6 +788,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     });
   }
 
+
   void getJoinMemberData() async {
     try {
       _currentPage = 0;
@@ -1061,4 +1063,5 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       });
     }
   }
+
 }

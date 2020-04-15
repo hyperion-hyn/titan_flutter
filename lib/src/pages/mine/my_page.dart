@@ -117,9 +117,9 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),
-                  _buildMenuBar("我发起的合约", Icons.menu, () {
+                  _buildMenuBar("我发起的Map3合约", Icons.menu, () {
                     if (_wallet != null) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我发起的合约")));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我发起的Map3合约")));
                     } else {
                       Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
                     }
@@ -128,9 +128,9 @@ class _MyPageState extends State<MyPage> {
                     padding: const EdgeInsets.only(left: 56.0),
                     child: Divider(height: 0),
                   ),
-                  _buildMenuBar("我参与的合约", Icons.menu, () {
+                  _buildMenuBar("我参与的Map3合约", Icons.menu, () {
                     if (_wallet != null) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我参与的合约")));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我参与的Map3合约")));
                     } else {
                       Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
                     }
