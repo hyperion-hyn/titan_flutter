@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sprintf/sprintf.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -123,11 +125,11 @@ class _Map3NodeState extends State<Map3NodePage> {
                 Padding(
                     padding: const EdgeInsets.only(
                         left: 15.0, right: 15, top: 17, bottom: 11),
-                    child: Text("等待启动的节点抵押合约",
+                    child: Text(S.of(context).wait_start_node_contract,
                         style: TextStyles.textCcc000000S16)),
                 Container(
                     height: 260,
-                    child: Center(child: Text("暂无数据",style: TextStyle(fontSize: 15, color: HexColor("#999999")))))
+                    child: Center(child: Text(S.of(context).search_empty_data,style: TextStyle(fontSize: 15, color: HexColor("#999999")))))
               ],
             );
           }, childCount: 1));
@@ -144,7 +146,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                 Padding(
                     padding: const EdgeInsets.only(
                         left: 15.0, right: 15, top: 17, bottom: 11),
-                    child: Text("等待启动的节点抵押合约",
+                    child: Text(S.of(context).wait_start_node_contract,
                         style: TextStyles.textCcc000000S16)),
                 _getMap3NodeWaitItem(
                     context, _nodePageEntityVo.contractNodeList[index])
@@ -187,11 +189,11 @@ class _Map3NodeState extends State<Map3NodePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "全球超过${_nodePageEntityVo.nodeHeadEntity.instanceCount}个地球服务站点",
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  sprintf(S.of(context).earth_outpace_server_node, [_nodePageEntityVo.nodeHeadEntity.instanceCount]),
+                  style: TextStyle(fontSize: 20, color: Colors.white,fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "为海伯利安地图提供稳定可靠的地图服务",
+                  S.of(context).map_provide_stable_server,
                   style: TextStyle(fontSize: 12, color: HexColor("#e6ffffff")),
                 ),
               ],
@@ -282,7 +284,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                         Application.router
                             .navigateTo(context, Routes.map3node_product_list);
                       },
-                      child: Text("创建合约", style: TextStyles.textC906b00S13),
+                      child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
                     ),
                   )
                 ],
@@ -321,7 +323,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                 Expanded(
                     child: Text(" ${UiUtil.shortEthAddress(contractNodeItem.owner)}",
                         style: TextStyles.textC9b9b9bS12)),
-                Text("剩余：${contractNodeItem.remainDay}天",
+                Text(sprintf(S.of(context).remain_day, [contractNodeItem.remainDay]),
                     style: TextStyles.textC9b9b9bS12)
               ],
             ),
@@ -365,12 +367,12 @@ class _Map3NodeState extends State<Map3NodePage> {
                           child: Row(
                             children: <Widget>[
                               Text(
-                                  "最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                                  S.of(context).highest + " ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
                                   style: TextStyles.textC99000000S10,
                                   maxLines: 1,
                                   softWrap: true),
                               Text("  |  ", style: TextStyles.textC9b9b9bS12),
-                              Text("${contractNodeItem.contract.duration}天",
+                              Text(S.of(context).n_day('${contractNodeItem.contract.duration}'),
                                   style: TextStyles.textC99000000S10)
                             ],
                           ),
@@ -383,7 +385,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                       Text(
                           "${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
                           style: TextStyles.textCff4c3bS18),
-                      Text("年化奖励", style: TextStyles.textC99000000S10)
+                      Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S10)
                     ],
                   )
                 ],
@@ -398,7 +400,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                 Expanded(
                   child: RichText(
                     text: TextSpan(
-                        text: "还差",
+                        text: S.of(context).remain,
                         style: TextStyles.textC9b9b9bS12,
                         children: <TextSpan>[
                           TextSpan(
@@ -431,7 +433,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                                 "?contractId=${contractNodeItem.id}");
                       }
                     },
-                    child: Text("参与", style: TextStyles.textC906b00S13),
+                    child: Text(S.of(context).join, style: TextStyles.textC906b00S13),
                   ),
                 )
               ],

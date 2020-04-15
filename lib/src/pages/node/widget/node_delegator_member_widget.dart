@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -120,9 +121,9 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
             child: Row(
               children: <Widget>[
-                Text("入账流水", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 Spacer(),
-                Text("总额：${widget.amountDelegation} (HYN)", style: TextStyle(fontSize: 14, color: HexColor("#999999")))
+                Text(S.of(context).total + "：${widget.amountDelegation} (HYN)", style: TextStyle(fontSize: 14, color: HexColor("#999999")))
               ],
             ),
           ),
