@@ -42,15 +42,15 @@ class Routes {
   static const String map3node_broadcase_success_page = '/map3node/broadcase_success_page';
   static const String map3node_contract_detail_page = '/map3node/contract_detail_page';
 
-  static String createOrImportWalletEntryRouteName;
+  static String cachedEntryRouteName;
 
-  static void popUntilCreateOrImportWalletEntryRoute<T extends Object>(BuildContext context, [T result]) {
-    if (Routes.createOrImportWalletEntryRouteName == null) {
+  static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
+    if (Routes.cachedEntryRouteName == null) {
       //back to root
       Navigator.of(context).popUntilRouteName(Routes.root, result);
     } else {
-      Navigator.of(context).popUntilRouteName(Routes.createOrImportWalletEntryRouteName, result);
-      Routes.createOrImportWalletEntryRouteName = null;
+      Navigator.of(context).popUntilRouteName(Routes.cachedEntryRouteName, result);
+      Routes.cachedEntryRouteName = null;
     }
   }
 

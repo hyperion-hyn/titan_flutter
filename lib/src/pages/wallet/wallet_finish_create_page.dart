@@ -20,7 +20,7 @@ class FinishCreatePage extends StatelessWidget {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  Routes.popUntilCreateOrImportWalletEntryRoute(context, wallet);
+                  Routes.popUntilCachedEntryRouteName(context, wallet);
                 },
               );
             },
@@ -71,7 +71,7 @@ class FinishCreatePage extends StatelessWidget {
                     onPressed: () async {
                       BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
-                      Routes.popUntilCreateOrImportWalletEntryRoute(context, wallet);
+                      Routes.popUntilCachedEntryRouteName(context, wallet);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
