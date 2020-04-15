@@ -130,7 +130,7 @@ part 'contract_node_item.g.dart';
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     double totalDue = (expectDueTime - instanceActiveTime) / 3600 / 24;
     double progress = (now - instanceActiveTime) / 3600 / 24 / totalDue;
-    print('now:${now}, \nexpectCancelTime:$expectCancelTime, progress:${progress}');
+    //print('now:${now}, \nexpectCancelTime:$expectCancelTime, progress:${progress}');
 
     if (progress < 0.2) {
       return 0.2;
