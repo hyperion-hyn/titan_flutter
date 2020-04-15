@@ -143,7 +143,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                       padding: const EdgeInsets.only(top: 3.0),
                       child: Row(
                         children: <Widget>[
-                          Text(S.of(context).highest + " ${FormatUtil.formatTenThousand(nodeItem.minTotalDelegation)}",
+                          Text(S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" + S.of(context).ten_thousand,
                               style: TextStyles.textC99000000S13,maxLines:1,softWrap: true),
                           Text("  |  ",style: TextStyles.textC9b9b9bS12),
                           Text(S.of(context).n_day(nodeItem.duration.toString()),style: TextStyles.textC99000000S13)

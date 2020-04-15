@@ -192,7 +192,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                         padding: const EdgeInsets.only(top: 3.0),
                         child: Row(
                           children: <Widget>[
-                            Text(S.of(context).highest + " ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                            Text(S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" + S.of(context).ten_thousand,
                                 style: TextStyles.textC99000000S10,maxLines:1,softWrap: true),
                             Text("  |  ",style: TextStyles.textC9b9b9bS12),
                             Text(S.of(context).n_day(contractNodeItem.contract.duration.toString()),style: TextStyles.textC99000000S10)
