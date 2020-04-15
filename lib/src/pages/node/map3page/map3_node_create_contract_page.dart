@@ -282,14 +282,21 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
           ])),
         ),
         Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black38,
+                blurRadius: 4.0,
+              ),
+            ],
+          ),
           constraints: BoxConstraints.expand(height: 50),
           child: RaisedButton(
               textColor: Colors.white,
               color: Theme.of(context).primaryColor,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).primaryColor),
-              ),
-              child: Text(S.of(context).confirm_bug),
+              shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
+              child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
                 setState(() {
                   if (!_joinCoinFormKey.currentState.validate()) {
@@ -431,7 +438,7 @@ Widget getHoldInNum(
                               hintStyle: TextStyles.textC9b9b9bS14,
                               labelStyle: TextStyles.textC333S14,
                               hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
-                              border: InputBorder.none,
+//                              border: InputBorder.none,
                             ),
                             validator: (textStr) {
                               if (textStr.length == 0) {
@@ -451,6 +458,46 @@ Widget getHoldInNum(
                 SizedBox(
                   height: 17,
                 ),
+                if (!isJoin)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 49.0),
+                    child: Row(
+                      children: <Widget>[
+                        InkWell(
+                          child: Container(
+                            color: Color(0xFFFFF9E9),
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Text('200,000', style: TextStyle(fontSize: 12)),
+                          ),
+                          onTap: () {
+                            textEditingController.text = '200000';
+                          },
+                        ),
+                        SizedBox(width: 16),
+                        InkWell(
+                          child: Container(
+                            color: Color(0xFFFFF9E9),
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Text('400,000', style: TextStyle(fontSize: 12)),
+                          ),
+                          onTap: () {
+                            textEditingController.text = '400000';
+                          },
+                        ),
+                        SizedBox(width: 16),
+                        InkWell(
+                          child: Container(
+                            color: Color(0xFFFFF9E9),
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Text('600,000', style: TextStyle(fontSize: 12)),
+                          ),
+                          onTap: () {
+                            textEditingController.text = '600000';
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 Row(
                   children: <Widget>[
                     SizedBox(
@@ -690,12 +737,14 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem, {isJo
                     ? Column(
                         children: <Widget>[
                           Text(S.of(context).min_invest, style: TextStyles.textCccfffS12),
+                          SizedBox(height: 4),
                           Text("${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textCfffS14)
                         ],
                       )
                     : Column(
                         children: <Widget>[
                           Text(S.of(context).create_min_invest, style: TextStyles.textCccfffS12),
+                          SizedBox(height: 4),
                           Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
                               style: TextStyles.textCfffS14)
                         ],
@@ -703,24 +752,26 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem, {isJo
                 Container(
                   margin: const EdgeInsets.only(left: 10.0, right: 20),
                   width: 1,
-                  height: 40,
-                  color: Colors.white,
+                  height: 32,
+                  color: Colors.white70,
                 ),
                 Column(
                   children: <Widget>[
                     Text(S.of(context).contract_deadline, style: TextStyles.textCccfffS12),
+                    SizedBox(height: 4),
                     Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textCfffS14)
                   ],
                 ),
                 Container(
                   margin: const EdgeInsets.only(left: 20.0, right: 10),
                   width: 1,
-                  height: 40,
-                  color: Colors.white,
+                  height: 32,
+                  color: Colors.white70,
                 ),
                 Column(
                   children: <Widget>[
                     Text(S.of(context).manage_fee, style: TextStyles.textCccfffS12),
+                    SizedBox(height: 4),
                     Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textCfffS14)
                   ],
                 ),
