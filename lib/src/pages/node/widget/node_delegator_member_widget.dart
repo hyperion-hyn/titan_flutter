@@ -114,7 +114,8 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
 
   Widget _getJoinMemberView() {
     return Container(
-      height: _viewHeight > 300 ? 300:_viewHeight,
+      height: _viewHeight,
+      //height: _viewHeight > 300 ? 300:_viewHeight,
       child: Column(
         children: <Widget>[
           Padding(
@@ -130,7 +131,7 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
           Expanded(
             child: LoadDataContainer(
                 bloc: loadDataBloc,
-                enablePullDown: true,
+                enablePullDown: false,
                 //onLoadData: getJoinMemberData,
                 onLoadingMore: () {
                   getJoinMemberMoreData();
