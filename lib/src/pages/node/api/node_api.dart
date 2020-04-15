@@ -275,14 +275,15 @@ class NodeApi {
   }
 
   Future postJoinContractTransaction(ContractTransactionEntity _entity, String contractId) async {
-
       NodeHttpCore.instance.post("instances/delegate/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
   Future postCreateContractTransaction(ContractTransactionEntity _entity, String contractId) async {
-
     NodeHttpCore.instance.post("contracts/create/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
 
+  Future postTransactionHistory(ContractTransactionEntity _entity, String contractId) async {
+    NodeHttpCore.instance.post("contracts/create/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
 }
