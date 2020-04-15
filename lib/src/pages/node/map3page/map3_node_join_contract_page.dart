@@ -222,10 +222,11 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                 Container(
               height: 10,
               color: DefaultColors.colorf5f5f5,
-              margin: EdgeInsets.only(top: 15.0, bottom: 15),
+              margin: EdgeInsets.only(top: 15.0, bottom: 0),
             ),
             Container(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 15),
+              color: DefaultColors.colorf5f5f5,
+              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24, top:15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -245,12 +246,21 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         ),
         Container(
           constraints: BoxConstraints.expand(height: 50),
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black38,
+                blurRadius: 4.0,
+              ),
+            ],
+          ),
           child: RaisedButton(
               textColor: Colors.white,
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(
                   side: BorderSide(color: Theme.of(context).primaryColor)),
-              child: Text(S.of(context).confirm_mortgage),
+              child: Text(S.of(context).confirm_mortgage, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
                 setState(() {
                   if (!_joinCoinFormKey.currentState.validate()) {

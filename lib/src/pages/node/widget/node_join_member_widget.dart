@@ -1,4 +1,3 @@
-
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +17,8 @@ class NodeJoinMemberWidget extends StatefulWidget {
   final String shareName;
   final String shareUrl;
   final bool isShowInviteItem;
-  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl, {this.isShowInviteItem=true});
+
+  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl, {this.isShowInviteItem = true});
 
   @override
   State<StatefulWidget> createState() {
@@ -27,7 +27,6 @@ class NodeJoinMemberWidget extends StatefulWidget {
 }
 
 class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
-
   LoadDataBloc loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   NodeApi _nodeApi = NodeApi();
@@ -43,7 +42,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
   }
 
   @override
@@ -53,19 +51,17 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return _getJoinMemberView();
   }
 
   void getJoinMemberData() async {
     _currentPage = 0;
-    List<ContractDelegatorItem> tempMemberList = await _nodeApi
-        .getContractDelegator(int.parse(widget.contractId), page: _currentPage);
+    List<ContractDelegatorItem> tempMemberList =
+        await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
-   // print("[widget] --> build, length:${tempMemberList.length}");
+    // print("[widget] --> build, length:${tempMemberList.length}");
 
     setState(() {
       memberList.addAll(tempMemberList);
@@ -76,8 +72,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     try {
       _currentPage++;
       List<ContractDelegatorItem> tempMemberList =
-      await _nodeApi.getContractDelegator(int.parse(widget.contractId),
-          page: _currentPage);
+          await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -95,17 +90,15 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 
   Widget _getJoinMemberView() {
     return Container(
-      height: 176,
+      height: 160,
       child: Padding(
-        padding: const EdgeInsets.only(left: 20.0, top: 15, bottom: 15),
+        padding: const EdgeInsets.only(left: 20.0, top: 15, bottom: 8),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
                 Expanded(
-                    child: Text(S.of(context).part_member,
-                        style: TextStyle(
-                            fontSize: 16, color: HexColor("#333333")))),
+                    child: Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
                 /*Text(
                   "剩余时间：${widget.remainDay}天",
                   style: TextStyles.textC999S14,
@@ -132,22 +125,25 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   },
                   child: ListView.builder(
                     itemBuilder: (context, index) {
-                      if (widget.isShowInviteItem) {
-                        if (index == 0) {
-                          return _firstItem();
-                        } else {
-                          var i = index - 1;
-                          var delegatorItem = memberList[i];
-                          return _item(delegatorItem,i==1);
-                        }
-                      }
-                      else {
-                        var i = index;
-                        var delegatorItem = memberList[i];
-                        return _item(delegatorItem, i==0);
-                      }
+                      var i = index;
+                      var delegatorItem = memberList[i];
+                      return _item(delegatorItem, i == 0);
+//                      if (widget.isShowInviteItem) {
+//                        if (index == 0) {
+//                          return _firstItem();
+//                        } else {
+//                          var i = index - 1;
+//                          var delegatorItem = memberList[i];
+//                          return _item(delegatorItem,i==1);
+//                        }
+//                      }
+//                      else {
+//                        var i = index;
+//                        var delegatorItem = memberList[i];
+//                        return _item(delegatorItem, i==0);
+//                      }
                     },
-                    itemCount: widget.isShowInviteItem?memberList.length + 1:memberList.length,
+                    itemCount: widget.isShowInviteItem ? memberList.length : memberList.length,
                     scrollDirection: Axis.horizontal,
                   )),
             ),
@@ -160,17 +156,15 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   Widget _firstItem() {
     return Container(
       width: 90,
-      margin: const EdgeInsets.only(right: 12,top:2,bottom:2.0),
+      margin: const EdgeInsets.only(right: 12, top: 2, bottom: 2.0),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: HexColor("#7B766A"),
-              width: 1,
-              style: BorderStyle.solid)),
+          border: Border.all(color: HexColor("#7B766A"), width: 1, style: BorderStyle.solid)),
       child: InkWell(
-        onTap: () async{
+        onTap: () async {
           final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
-          Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',text: "${widget.shareUrl}?name=${widget.shareName}");
+          Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
+              text: "${widget.shareUrl}?name=${widget.shareName}");
 
 //          Share.text(S.of(context).share, widget.shareUrl,'text/plain');
         },
@@ -187,8 +181,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
             ),
             Text(
               S.of(context).invite_friend_join,
-              style: TextStyle(
-                  fontSize: 12, color: HexColor("#7B766A")),
+              style: TextStyle(fontSize: 12, color: HexColor("#7B766A")),
               textAlign: TextAlign.center,
             )
           ],
@@ -198,20 +191,24 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 
   Widget _item(ContractDelegatorItem delegatorItem, bool isFirst) {
-
-    String showName =
-    delegatorItem.userName.substring(0, 1);
+    String showName = delegatorItem.userName.substring(0, 1);
     return Padding(
-      padding: EdgeInsets.only(top:2,bottom:2.0),
+      padding: EdgeInsets.only(top: 2, bottom: 2.0),
       child: SizedBox(
         width: 100,
         height: 100,
-        child: Card(
-          margin: const EdgeInsets.only(right: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius:
-            BorderRadius.all(Radius.circular(20.0)),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[300],
+                blurRadius: 8.0,
+              ),
+            ],
           ),
+          margin: const EdgeInsets.only(right: 12),
           child: Stack(
             children: <Widget>[
               Align(
@@ -220,40 +217,36 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
-                      height: 40,
-                      width: 40,
+                      height: 50,
+                      width: 50,
                       child: Card(
-                        elevation: 3,
+                        elevation: 2,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
                               Radius.circular(13.0)),
                         ),
                         child: Center(
                             child: Text(
-                              "$showName",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: HexColor("#000000")),
-                            )),
+                          "$showName",
+                          style: TextStyle(fontSize: 15, color: HexColor("#000000")),
+                        )),
                       ),
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 8,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left:5.0,right: 5),
+                      padding: const EdgeInsets.only(left: 5.0, right: 5),
                       child: Text("${delegatorItem.userName}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 13, color: HexColor("#000000"))),
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
                     ),
-                    SizedBox(
-                      height: 3,
-                    ),
+//                    SizedBox(
+//                      height: 4,
+//                    ),
                     Text("${FormatUtil.stringFormatNum(delegatorItem.amountDelegation)}",
-                        style: TextStyle(
-                            fontSize: 10,
-                            color: HexColor("#9B9B9B")))
+                        style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                   ],
                 ),
               ),
@@ -262,17 +255,12 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   top: 15,
                   right: 4,
                   child: Container(
-                      padding: const EdgeInsets.only(
-                          left: 5, right: 5),
+                      padding: const EdgeInsets.only(left: 5, right: 5),
                       decoration: BoxDecoration(
                         color: DefaultColors.colorffdb58,
-                        borderRadius:
-                        BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Text(S.of(context).sponsor,
-                          style: TextStyle(
-                              fontSize: 8,
-                              color: HexColor("#322300")))),
+                      child: Text(S.of(context).sponsor, style: TextStyle(fontSize: 8, color: HexColor("#322300")))),
                 )
             ],
           ),
@@ -280,5 +268,4 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
       ),
     );
   }
-
 }
