@@ -453,7 +453,7 @@ Widget getHoldInNum(
                           ),
                           validator: (textStr) {
                             if(textStr.length == 0){
-                              return "请输入HYN数量";
+                              return S.of(context).please_input_hyn_count;
                             } else if (int.parse(textStr) < minTotal) {
                               return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
                             } else if (int.parse(textStr) > balance) {

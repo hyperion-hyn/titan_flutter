@@ -457,5 +457,6 @@
   "part_member": "参与成员",
   "invite_friend_join": "邀请好友\n参加",
   "sponsor": "发起人",
-  "node_mortgage_contract": "Map3节点抵押合约"
+  "node_mortgage_contract": "Map3节点抵押合约",
+  "please_input_hyn_count": "请输入HYN数量"
 }
