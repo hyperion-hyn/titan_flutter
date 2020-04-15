@@ -18,6 +18,7 @@ import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
+import 'package:titan/src/pages/node/model/transaction_history_entity.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -143,7 +144,7 @@ class NodeApi {
 
     //approve
     print('approve result: $count');
-    var approveTx = await wallet.sendApproveErc20Token(
+    var approveHex = await wallet.sendApproveErc20Token(
         contractAddress: hynErc20ContractAddress,
         approveToAddress: approveToAddress,
         amount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
@@ -151,7 +152,9 @@ class NodeApi {
         gasPrice: BigInt.from(gasPrice),
         gasLimit: EthereumConst.ERC20_APPROVE_GAS_LIMIT,
         nonce: count);
-    print('approve result: $approveTx， durationType:${durationType}');
+    print('approve result: $approveHex， durationType:${durationType}');
+    await postTransactionHistory(wallet.getEthAccount().address, int.parse(contractId), approveHex
+        , transactionHistoryAction2String(TransactionHistoryAction.APPROVE));
 
     //create
     var createMap3Hex = await wallet.sendCreateMap3Node(
@@ -166,8 +169,7 @@ class NodeApi {
     );
     print('createMap3Hex is: $createMap3Hex');
 
-    // todo:create
-    var pubKey = await TitanPlugin.getPublicKey();
+    /*var pubKey = await TitanPlugin.getPublicKey();
     var name = wallet.keystore.name;
     var address = wallet.getEthAccount().address;
     ContractTransactionEntity _entity = ContractTransactionEntity(
@@ -177,7 +179,9 @@ class NodeApi {
       pubKey,
       createMap3Hex,
     );
-    await postCreateContractTransaction(_entity, contractId);
+    await postCreateContractTransaction(_entity, contractId);*/
+    await postTransactionHistory(wallet.getEthAccount().address, int.parse(contractId), createMap3Hex
+        , transactionHistoryAction2String(TransactionHistoryAction.CREATE_NODE));
 
 //    startJoinInstance.txHash = createMap3Hex;
 //    startJoinInstance.publicKey = nodeKey["publicKey"];
@@ -212,6 +216,8 @@ class NodeApi {
       nonce: count,
     );
     print('approveHex is: $approveHex');
+    await postTransactionHistory(wallet.getEthAccount().address, int.parse(contractId), approveHex
+        , transactionHistoryAction2String(TransactionHistoryAction.APPROVE));
 
     var joinHex = await wallet.sendDelegateMap3Node(
       createNodeWalletAddress: createNodeWalletAddress,
@@ -222,9 +228,10 @@ class NodeApi {
       nonce: count + 1,
     );
     print('joinHex is: $joinHex');
+    await postTransactionHistory(wallet.getEthAccount().address, int.parse(contractId), joinHex
+        , transactionHistoryAction2String(TransactionHistoryAction.DELEGATE));
 
-    // todo: join
-    var pubKey = await TitanPlugin.getPublicKey();
+    /*var pubKey = await TitanPlugin.getPublicKey();
     var name = wallet.keystore.name;
     var address = wallet.getEthAccount().address;
     ContractTransactionEntity _entity = ContractTransactionEntity(
@@ -234,7 +241,7 @@ class NodeApi {
       pubKey,
       joinHex,
     );
-    await postJoinContractTransaction(_entity, contractId);
+    await postJoinContractTransaction(_entity, contractId);*/
 
 //    startJoinInstance.txHash = joinHex;
 //    String postData = json.encode(startJoinInstance.toJson());
@@ -275,16 +282,24 @@ class NodeApi {
     }
   }
 
+  @deprecated
   Future postJoinContractTransaction(ContractTransactionEntity _entity, String contractId) async {
       NodeHttpCore.instance.post("instances/delegate/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
+  @deprecated
   Future postCreateContractTransaction(ContractTransactionEntity _entity, String contractId) async {
     NodeHttpCore.instance.post("contracts/create/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
-  Future postTransactionHistory(ContractTransactionEntity _entity, String contractId) async {
-    NodeHttpCore.instance.post("contracts/create/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
+  Future postTransactionHistory(String address, int instanceId,String txhash,String operaType) async {
+    TransactionHistoryEntity historyEntity = TransactionHistoryEntity(
+      address,
+      instanceId,
+      txhash,
+      operaType
+    );
+    NodeHttpCore.instance.post("eth-transaction-history/", data: historyEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
   Future<String> withdrawContractInstance(ContractNodeItem _contractNodeItem, WalletVo activatedWallet, String password,
