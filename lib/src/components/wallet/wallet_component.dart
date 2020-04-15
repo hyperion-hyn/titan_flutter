@@ -143,6 +143,17 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
     return null;
   }
 
+  CoinVo getCoinVoBySymbol(String symbol) {
+    if (this.activatedWallet != null) {
+      for (var coin in this.activatedWallet.coins) {
+        if (coin.symbol == symbol) {
+          return coin;
+        }
+      }
+    }
+    return null;
+  }
+
   @override
   bool updateShouldNotify(WalletInheritedModel oldWidget) {
     return activatedWallet != oldWidget.activatedWallet;

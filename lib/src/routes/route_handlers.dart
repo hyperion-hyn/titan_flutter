@@ -43,20 +43,20 @@ var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<S
 
 //wallet
 var createWalletHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return CreateAccountPage();
 });
 
 var importWalletHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return ImportAccountPage();
 });
 
-void _cacheOrClearEntryWalletRouteName(params) {
+void _cacheEntryRouteName(params) {
   var url = params["entryRouteName"]?.first;
   if (url != null && url != '') {
     url = Uri.decodeComponent(url);
-    Routes.createOrImportWalletEntryRouteName = url;
+    Routes.cachedEntryRouteName = url;
   }
 }
 
@@ -70,8 +70,8 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
 });
 
 var walletAccountSendTransactionHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
-  return WalletSendPage(params['coinVo']?.first);
+  _cacheEntryRouteName(params);
+  return WalletSendPage(params['coinVo']?.first, params['toAddress']?.first);
 });
 
 var transferConfirmHandler = Handler(handlerFunc: (context, params) {
@@ -85,14 +85,14 @@ var managerWalletHandler = Handler(
 
 var settingWalletHandler = Handler(
     handlerFunc: (context, params) {
-      _cacheOrClearEntryWalletRouteName(params);
+      _cacheEntryRouteName(params);
       Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
       return WalletSettingPage(wallet);
     });
 
 var settingBackupNoticeWalletHandler = Handler(
     handlerFunc: (context, params) {
-      _cacheOrClearEntryWalletRouteName(params);
+      _cacheEntryRouteName(params);
       Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
       return WalletBackupNoticePage(wallet);
     });
@@ -123,7 +123,7 @@ var contributionScanSignalHandler = Handler(handlerFunc: (context, params) {
 });
 
 var contributionPositionFinishHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return FinishAddPositionPage(params['pageType']?.first);
 });
 
@@ -137,12 +137,12 @@ var map3NodeCreateWalletHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return Map3NodeCreateContractPage(params['contractId']?.first);
 });
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
-  _cacheOrClearEntryWalletRouteName(params);
+  _cacheEntryRouteName(params);
   return Map3NodeJoinContractPage(params['contractId']?.first);
 });
 

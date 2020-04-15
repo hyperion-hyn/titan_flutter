@@ -18,8 +18,11 @@ import '../../global.dart';
 
 class WalletSendPage extends StatefulWidget {
   final CoinVo coinVo;
+  final String toAddress;
 
-  WalletSendPage(String coinVo) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
+  WalletSendPage(String coinVo, [String toAddress])
+      : this.coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo)),
+        this.toAddress = toAddress;
 
   @override
   State<StatefulWidget> createState() {
@@ -45,12 +48,15 @@ class _WalletSendState extends State<WalletSendPage> {
         _notionalValue = double.parse(_amountController.text) * quotePrice;
       });
     });
+    if (widget.toAddress != null) {
+      _receiverAddressController.text = widget.toAddress;
+    }
   }
 
   @override
   void dispose() {
-    super.dispose();
     _amountController.dispose();
+    super.dispose();
   }
 
   @override

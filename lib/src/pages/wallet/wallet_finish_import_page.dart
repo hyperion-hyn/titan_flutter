@@ -26,7 +26,7 @@ class FinishImportPage extends StatelessWidget {
                   if(walletList.length == 1){
                     BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
                   }
-                  Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                  Routes.popUntilCachedEntryRouteName(context);
                 },
               );
             },
@@ -77,7 +77,7 @@ class FinishImportPage extends StatelessWidget {
                     onPressed: () async {
                       BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
-                      Routes.popUntilCreateOrImportWalletEntryRoute(context);
+                      Routes.popUntilCachedEntryRouteName(context);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
