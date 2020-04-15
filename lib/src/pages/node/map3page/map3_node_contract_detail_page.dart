@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -44,7 +45,7 @@ class Map3NodeContractDetailPage extends StatefulWidget {
   _Map3NodeContractDetailState createState() => new _Map3NodeContractDetailState();
 }
 
-class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
+class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   NodeApi _api = NodeApi();
   ContractDetailItem _contractDetailItem;
@@ -55,11 +56,11 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   bool _isTransferring = false;
   bool _isCreator = false; // 判断当前钱包用户是否是为合约创建者
   void Function() onPressed = () {};
-  var _actionTitle = "确定";
+  var _actionTitle = "";
 
   var _amountDelegation = "0";
-  var _nodeStateDesc = "节点配置中";
-  var _contractStateDesc = "正在创建中，等待区块链网络验证";
+  var _nodeStateDesc = "";
+  var _contractStateDesc = "";
 
   var _contractProgressDesc = "";
   var _contractProgressDetail = "";
@@ -70,6 +71,14 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   NodeApi _nodeApi = NodeApi();
   List<ContractDelegateRecordItem> memberList = [];
 
+  @override
+  void onCreated() {
+    _actionTitle = S.of(context).confirm;
+    _nodeStateDesc = S.of(context).node_in_configuration;
+    _contractStateDesc = S.of(context).wait_block_chain_verification;
+    super.onCreated();
+  }
+  
   @override
   void initState() {
     super.initState();
@@ -163,7 +172,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
 
       switch (userDelegateState) {
         case UserDelegateState.PENDING:
-          _actionTitle = "增加投入";
+          _actionTitle = S.of(context).increase_investment;
           onPressed = () {
             Application.router
                 .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
@@ -172,15 +181,15 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           break;
 
         case UserDelegateState.ACTIVE:
-          _actionTitle = "已抵押";
+          _actionTitle = S.of(context).mortgaged;
           onPressed = () {
-            Fluttertoast.showToast(msg: "节点正在运行中。。。");
+            Fluttertoast.showToast(msg: S.of(context).node_is_running);
           };
           _visible = false;
           break;
 
         case UserDelegateState.DUE:
-          _actionTitle = "提取";
+          _actionTitle = S.of(context).extract;
           onPressed = () {
             _collectAction();
           };
@@ -188,15 +197,15 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           break;
 
         case UserDelegateState.DUE_COLLECTED:
-          _actionTitle = "完成";
+          _actionTitle = S.of(context).finish;
           onPressed = () {
-            Fluttertoast.showToast(msg: "节点收益已经提取完成。");
+            Fluttertoast.showToast(msg: S.of(context).node_revenue_extracted);
           };
           _visible = false;
           break;
 
         case UserDelegateState.HALFDUE:
-          _actionTitle = "提取50%收益";
+          _actionTitle = S.of(context).withdraw_fifty_revenue;
           onPressed = () {
             _collectAction();
           };
@@ -204,15 +213,15 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           break;
 
         case UserDelegateState.HALFDUE_COLLECTED:
-          _actionTitle = "完成";
+          _actionTitle = S.of(context).finish;
           onPressed = () {
-            Fluttertoast.showToast(msg: "节点一半的收益已经提取完成。");
+            Fluttertoast.showToast(msg: S.of(context).node_half_revenue_had_withdraw);
           };
           _visible = false;
           break;
 
         case UserDelegateState.CANCELLED:
-          _actionTitle = "提取";
+          _actionTitle = S.of(context).extract;
           onPressed = () {
             _collectAction();
           };
@@ -220,9 +229,9 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
           break;
 
         case UserDelegateState.CANCELLED_COLLECTED:
-          _actionTitle = "完成";
+          _actionTitle = S.of(context).finish;
           onPressed = () {
-            Fluttertoast.showToast(msg: "节点退款已经提取完成。");
+            Fluttertoast.showToast(msg: S.of(context).node_return_had_withdraw_finish);
           };
           _visible = false;
           break;
@@ -235,7 +244,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       print('[contract] _pageView, stateString:${_contractNodeItem.state},state:$contractState');
 
       if (!_isCreator && contractState == ContractState.PENDING) {
-        _actionTitle = "增加投入";
+        _actionTitle = S.of(context).increase_investment;
         onPressed = () {
           Application.router
               .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
@@ -246,55 +255,55 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       // 2.
       switch (contractState) {
         case ContractState.PENDING:
-          _nodeStateDesc = "节点待启动";
-          _contractStateDesc = "正在创建中，等待区块链网络验证";
+          _nodeStateDesc = S.of(context).node_wait_to_launch;
+          _contractStateDesc = S.of(context).wait_block_chain_verification;
 
-          _contractProgressDesc = "等待启动";
-          _contractProgressDetail = "还差${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
+          _contractProgressDesc = S.of(context).wait_to_launch;
+          _contractProgressDetail = S.of(context).remain + "${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
           _contractProgressIndex = 3.0;
           break;
 
         case ContractState.ACTIVE:
-          _nodeStateDesc = "节点进行中";
-          _contractStateDesc = "已广播投入$_amountDelegation HYN，等待区块链网络验证";
+          _nodeStateDesc = S.of(context).node_in_progress;
+          _contractStateDesc = S.of(context).broadcase_sponsor_wait_net_verify(_amountDelegation);
 
-          _contractProgressDesc = "启动成功";
-          _contractProgressDetail = "剩余${_contractNodeItem.expectDueDay}天";
+          _contractProgressDesc = S.of(context).launch_success;
+          _contractProgressDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay);
           _contractProgressIndex = 3.0;
           break;
 
         case ContractState.DUE:
-          _nodeStateDesc = "节点已停止";
+          _nodeStateDesc = S.of(context).node_had_stop;
 
-          _contractProgressDesc = "启动成功";
-          _contractProgressDetail = "已到期,可提全部奖励";
+          _contractProgressDesc = S.of(context).launch_success;
+          _contractProgressDetail = S.of(context).expired_can_withdraw_rewards;
           _contractProgressIndex = 4.0;
           break;
 
         case ContractState.CANCELLED:
-          _nodeStateDesc = "节点已停止";
-          _contractStateDesc = "启动失败，请申请退款";
+          _nodeStateDesc = S.of(context).node_had_stop;
+          _contractStateDesc = S.of(context).launch_fail_request_refund;
 
-          _contractProgressDesc = "启动失败";
-          _contractProgressDetail = "启动失败";
+          _contractProgressDesc = S.of(context).launch_fail;
+          _contractProgressDetail = S.of(context).launch_fail;
           _contractProgressIndex = 3.0;
           break;
 
         case ContractState.DUE_COMPLETED:
-          _nodeStateDesc = "节点已停止";
-          _contractStateDesc = "已取回投入资金";
+          _nodeStateDesc = S.of(context).node_had_stop;
+          _contractStateDesc = S.of(context).recovered_invested_capital;
 
-          _contractProgressDesc = "已获取奖励";
-          _contractProgressDetail = "恭喜，已提取奖励";
+          _contractProgressDesc = S.of(context).earned_rewards;
+          _contractProgressDetail = S.of(context).congratulation_reward_withdrawn;
           _contractProgressIndex = 5.0;
           break;
 
         case ContractState.CANCELLED_COMPLETED:
-          _nodeStateDesc = "节点已停止";
-          _contractStateDesc = "已取回投入资金";
+          _nodeStateDesc = S.of(context).node_had_stop;
+          _contractStateDesc = S.of(context).recovered_invested_capital;
 
-          _contractProgressDesc = "启动失败";
-          _contractProgressDetail = "启动失败";
+          _contractProgressDesc = S.of(context).launch_fail;
+          _contractProgressDetail = S.of(context).launch_fail;
           _contractProgressIndex = 3.0;
           break;
 
@@ -430,11 +439,11 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
               InkWell(
                   onTap: () {
                     String webUrl = FluroConvertUtils.fluroCnParamsEncode("https://www.map3.network");
-                    String webTitle = FluroConvertUtils.fluroCnParamsEncode("Map3节点详情");
+                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).map_node_detail);
                     Application.router
                         .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                   },
-                  child: Text("点击查看详情", style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
+                  child: Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
             ],
           ),
         ),
@@ -451,7 +460,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
               Row(
                 children: <Widget>[
                   Container(
-                      width: 100, child: Text("节点版本", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                      width: 100, child: Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                   new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
                 ],
               ),
@@ -460,7 +469,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 child: Row(
                   children: <Widget>[
                     Container(
-                        width: 100, child: Text("服务商", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        width: 100, child: Text(S.of(context).service_provider, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                     new Text("${_contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
                   ],
                 ),
@@ -470,7 +479,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 child: Row(
                   children: <Widget>[
                     Container(
-                        width: 100, child: Text("节点位置", style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        width: 100, child: Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                     new Text("${_contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
                   ],
                 ),
@@ -530,19 +539,19 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
                 TextStyle style = TextStyle(fontSize: 19, color: HexColor("#000000"), fontWeight: FontWeight.w600);
                 switch (value) {
                   case 1:
-                    title = "你已投入(HYN)";
+                    title = S.of(context).you_have_invested_hyn;
                     detail = amountDelegation;
                     //style = TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold);
                     break;
 
                   case 2:
-                    title = "预期产出(HYN)";
+                    title = S.of(context).expected_output_hyn;
                     detail = expectedYield;
                     //style = TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold);
                     break;
 
                   case 3:
-                    title = "获得管理费(HYN)";
+                    title = S.of(context).get_manager_hyn;
                     detail = commission;
                     //style = TextStyle(fontSize: 12, color: Colors.red, fontWeight: FontWeight.bold);
                     break;
@@ -589,28 +598,28 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
     if (_isCreator) {
       var stateIndex = enumUserDelegateStateFromString(_contractDetailItem?.state)?.index ?? 0;
       children = [
-        _node("创建时间", date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
-        _line("7天", lineWidth,
+        _node(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+        _line(S.of(context).n_day(7.toString()), lineWidth,
             left: _left(true, 1),
             progress: stateIndex >= UserDelegateState.ACTIVE.index ? 1 : _contractNodeItem.remainProgress),
-        _node("启动成功",
+        _node(S.of(context).launch_success,
             date: _contractNodeItem.instanceActiveTime,
             left: _left(false, 2),
             isLight: stateIndex >= UserDelegateState.ACTIVE.index),
-        _line("90天", lineWidth,
+        _line(S.of(context).n_day(90.toString()), lineWidth,
             left: _left(true, 2),
             progress: stateIndex >= UserDelegateState.HALFDUE.index ? 1 : _contractNodeItem.expectHalfDueProgress),
-        _node("可提50%奖励", left: _left(false, 3), isLight: stateIndex >= UserDelegateState.HALFDUE.index),
-        _line("90天", lineWidth,
+        _node(S.of(context).can_withdraw_fifty_reward, left: _left(false, 3), isLight: stateIndex >= UserDelegateState.HALFDUE.index),
+        _line(S.of(context).n_day(90.toString()), lineWidth,
             left: _left(true, 3),
             progress: stateIndex >= UserDelegateState.DUE.index ? 1 : _contractNodeItem.expectDueProgress),
-        _node("到期时间",
+        _node(S.of(context).expire_date,
             date: _contractNodeItem.instanceDueTime,
             left: _left(false, 4),
             isLight: stateIndex >= UserDelegateState.DUE.index),
         _line("", lineWidth,
             left: _left(true, 4), progress: stateIndex >= UserDelegateState.DUE_COLLECTED.index ? 1 : 0.0),
-        _node("提取时间",
+        _node(S.of(context).extract_time,
             date: _contractNodeItem.instanceFinishTime,
             left: _left(false, 5),
             isLight: stateIndex >= UserDelegateState.DUE_COLLECTED.index),
@@ -621,24 +630,24 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       var stateIndex = enumContractStateFromString(_contractNodeItem.state).index;
       print("is:${stateIndex >= ContractState.DUE.index}, progress:${_contractNodeItem.expectDueProgress}");
       children = [
-        _node("创建时间", date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
-        _line("7天", lineWidth,
+        _node(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+        _line(S.of(context).n_day(7.toString()), lineWidth,
             left: _left(true, 1),
             progress: stateIndex >= ContractState.ACTIVE.index ? 1 : _contractNodeItem.remainProgress),
-        _node("启动成功",
+        _node(S.of(context).launch_success,
             date: _contractNodeItem.instanceActiveTime,
             left: _left(false, 2),
             isLight: stateIndex >= ContractState.ACTIVE.index),
-        _line("${_contractNodeItem.contract.duration}天", lineWidth,
+        _line(S.of(context).n_day(_contractNodeItem.contract.duration.toString()), lineWidth,
             left: _left(true, 2),
             progress: stateIndex >= ContractState.DUE.index ? 1.0 : _contractNodeItem.expectDueProgress),
-        _node("到期时间",
+        _node(S.of(context).expire_date,
             date: _contractNodeItem.instanceDueTime,
             left: _left(false, 3),
             isLight: stateIndex >= ContractState.DUE.index),
         _line("", lineWidth,
             left: _left(true, 3), progress: stateIndex >= ContractState.DUE_COMPLETED.index ? 1.0 : 0.0),
-        _node("提取时间",
+        _node(S.of(context).extract_time,
             date: _contractNodeItem.instanceFinishTime,
             left: _left(false, 4),
             isLight: stateIndex >= ContractState.DUE_COMPLETED.index),
@@ -850,7 +859,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   Widget _bottomSureWidget() {
-    _actionTitle = _isTransferring ? "提取中..." : _actionTitle;
+    _actionTitle = _isTransferring ? S.of(context).extracting : _actionTitle;
 
     return Visibility(
       visible: _visible,

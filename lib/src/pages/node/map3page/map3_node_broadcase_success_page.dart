@@ -27,7 +27,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
               },
             ),
             centerTitle: true,
-            title: Text("广播成功")),
+            title: Text(S.of(context).broadcase_success)),
         body: Container(
           color: Colors.white,
           child: Center(
@@ -50,8 +50,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 Container(
                   width: 250,
                   child: Text(
-                    "已在区块链上网络广播 ${pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE ? "创建" : "参加"}"
-                        + " Map3节点抵押合约的消息，区块链网络需要5-30分钟开采验证。",
+                    S.of(context).map_node_broadcase_success_description(pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE ? S.of(context).create : S.of(context).join),
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -109,7 +108,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 40.0, vertical: 12.0),
                                 child: Text(
-                                  "完成",
+                                  S.of(context).finish,
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.white),
                                 ),

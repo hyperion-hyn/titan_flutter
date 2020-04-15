@@ -63,7 +63,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   _loadMoreData() async {
 
     List<ContractNodeItem> dataList = [];
-    if (widget.title.contains("发起")) {
+    if (widget.title.contains(S.of(context).launch)) {
       List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);
       dataList  = createContractList;
     } else {
@@ -126,7 +126,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     _currentPage = 0;
 
     List<ContractNodeItem> dataList = [];
-    if (widget.title.contains("发起")) {
+    if (widget.title.contains(S.of(context).launch)) {
       List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(address: _wallet.getEthAccount().address);
       dataList  = createContractList;
     } else {
@@ -225,42 +225,42 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     switch (state) {
       case ContractState.PENDING:
-        dateDesc = "剩余时间：${contractNodeItem.remainDay}天";
-        amountPre = "还差";
+        dateDesc = S.of(context).remain_day(contractNodeItem.remainDay);
+        amountPre = S.of(context).remain;
         amount = FormatUtil.amountToString(contractNodeItem.remainDelegation);
         hyn = "HYN";
         break;
 
       case ContractState.ACTIVE:
-        dateDesc = "剩余${contractNodeItem.expectDueDay}天";
-        amountPre = "可提取";
+        dateDesc = S.of(context).remain_day(contractNodeItem.expectDueDay);
+        amountPre = S.of(context).can_extract;
         amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
         hyn = "HYN";
         break;
 
       case ContractState.DUE:
-        dateDesc = "已到期";
-        amountPre = "可提取";
+        dateDesc = S.of(context).be_expired;
+        amountPre = S.of(context).can_extract;
         amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
         hyn = "HYN";
         break;
 
       case ContractState.CANCELLED:
-        dateDesc = "超期启动失败";
+        dateDesc = S.of(context).overdue_start_failed;
         amountPre = "";
         amount = "";
         hyn = "";
         break;
 
       case ContractState.DUE_COMPLETED:
-        dateDesc = "已到期";
+        dateDesc = S.of(context).be_expired;
         amountPre = "";
         amount = "";
         hyn = "";
         break;
 
       case ContractState.CANCELLED_COMPLETED:
-        dateDesc = "超期启动失败";
+        dateDesc = S.of(context).overdue_start_failed;
         amountPre = "";
         amount = "";
         hyn = "";
@@ -320,10 +320,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                         padding: const EdgeInsets.only(top: 3.0),
                         child: Row(
                           children: <Widget>[
-                            Text("最高 ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                            Text(S.of(context).highest + " ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
                                 style: TextStyles.textC99000000S10,maxLines:1,softWrap: true),
                             Text("  |  ",style: TextStyles.textC9b9b9bS12),
-                            Text("${contractNodeItem.contract.duration}天",style: TextStyles.textC99000000S10)
+                            Text(S.of(context).n_day(contractNodeItem.contract.duration.toString()),style: TextStyles.textC99000000S10)
                           ],
                         ),
                       ),
@@ -334,7 +334,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                 Column(
                   children: <Widget>[
                     Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}", style: TextStyles.textCff4c3bS18),
-                    Text("年化奖励", style: TextStyles.textC99000000S10)
+                    Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S10)
                   ],
                 )
               ],
@@ -370,7 +370,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                     onPressed: (){
                       Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                     },
-                    child: Text("查看合约", style: TextStyles.textC906b00S13),
+                    child: Text(S.of(context).view_contract, style: TextStyles.textC906b00S13),
                   ),
                 )
               ],

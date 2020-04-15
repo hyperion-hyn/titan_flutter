@@ -199,7 +199,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          "Map3节点合约(${shortBlockChainAddress(widget.receiverAddress)})",
+                          S.of(context).map_node_contract_address(shortBlockChainAddress(widget.receiverAddress)),
                           style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                         ),
                       )
