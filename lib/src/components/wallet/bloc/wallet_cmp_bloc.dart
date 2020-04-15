@@ -25,6 +25,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   NodeApi _nodeApi = NodeApi();
 
+  int _lastUpdateBalanceTime = 0;
+
   @override
   Stream<WalletCmpState> mapEventToState(WalletCmpEvent event) async* {
     if (event is ActiveWalletEvent) {
@@ -40,6 +42,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       }
 
       if (!isSameWallet) {
+        _lastUpdateBalanceTime = 0; //set can update balance in time.
         walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
         //sync wallet account to server
@@ -48,7 +51,11 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());
     } else if (event is UpdateActivatedWalletBalanceEvent) {
-      if (_activatedWalletVo != null) {
+      var nowTime = DateTime.now().millisecondsSinceEpoch;
+      //30 second cache time
+      bool isOutOfCacheTme = nowTime - _lastUpdateBalanceTime > 30 * 1000;
+      if (_activatedWalletVo != null && isOutOfCacheTme) {
+        _lastUpdateBalanceTime = nowTime;
         yield UpdatingWalletBalanceState();
 
         try {
