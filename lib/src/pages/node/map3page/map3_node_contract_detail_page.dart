@@ -11,6 +11,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/node_delegator_member_widget.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
@@ -80,8 +81,9 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
   }
 
   void getNetworkData() async {
+
     // todo: test_jison_0411
-    Future.delayed(Duration(seconds: 1), () {
+/*    Future.delayed(Duration(seconds: 1), () {
       setState(() {
 
         var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
@@ -103,7 +105,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
             0,
             0,
             "",
-            ContractState.PENDING.toString().split(".").last
+            ContractState.DUE_COMPLETED.toString().split(".").last
         );
 
         LatestTransaction _transaction = LatestTransaction("",0,0,"","","");
@@ -116,7 +118,7 @@ class _Map3NodeContractDetailState extends State<Map3NodeContractDetailPage> {
       });
     });
 
-    return;
+    return;*/
 
     try {
 
