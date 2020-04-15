@@ -330,8 +330,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                           child: Row(
                             children: <Widget>[
                               Text(
-                                  S.of(context).highest +
-                                      " ${FormatUtil.formatTenThousand(contractNodeItem.contract.minTotalDelegation)}",
+                                  S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" + S.of(context).ten_thousand,
                                   style: TextStyles.textC99000000S10,
                                   maxLines: 1,
                                   softWrap: true),
