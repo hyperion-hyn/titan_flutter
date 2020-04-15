@@ -11,6 +11,7 @@ class Const {
       return 'https://api.hyn.space/';
   }
 
+
   static String get NODE_DOMAIN {
     if(env.buildType == BuildType.DEV){
       return ContractTestConfig.apiLocalDomain;
