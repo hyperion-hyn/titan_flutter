@@ -414,7 +414,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         }
         Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
 
-        Routes.popUntilCreateOrImportWalletEntryRoute(context);
+        Routes.popUntilCreateOrImportWalletEntryRoute(context, true);
 //        if (widget.backRouteName == null) {
 //          Navigator.of(context).popUntilRouteName(Routes.wallet_account_detail);
 //        } else {

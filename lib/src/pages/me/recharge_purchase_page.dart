@@ -9,11 +9,15 @@ import 'package:intl/intl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/me/components/account/account_component.dart';
 import 'package:titan/src/pages/me/model/user_eth_address.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
 import 'model/quotes.dart';
+import 'recharge_by_titan_finish_page.dart';
 import 'service/user_service.dart';
 
 class RechargePurchasePage extends StatefulWidget {
@@ -260,7 +264,6 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
                                   );
                           });
                     } else {
-//                      isRechargeByTianWalletFinish = false;
                       showModalBottomSheet(
                           context: context,
                           builder: (ctx) {
@@ -379,7 +382,23 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
   }
 
   void _transferToken(BuildContext context, String symbol) {
-    UiUtil.toast('TODO push transfer page');
+    var coinVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbol(symbol);
+    if (coinVo != null) {
+      var route = ModalRoute.of(context);
+      var routeName = Uri.encodeComponent(route.settings?.name?.split('?')[0] ?? '');
+      Application.router
+          .navigateTo(
+              context,
+              Routes.wallet_account_send_transaction +
+                  '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=$routeName&toAddress=${userEthAddress.address}')
+          .then((_) {
+        final arguments = ModalRoute.of(context).settings.arguments as Map;
+        final result = arguments['result'];
+        if (result == true) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RechargeByTitanFinishPage()));
+        }
+      });
+    }
 //    Navigator.push(
 //        context,
 //        MaterialPageRoute(

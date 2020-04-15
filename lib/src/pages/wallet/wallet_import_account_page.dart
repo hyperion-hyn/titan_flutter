@@ -248,7 +248,12 @@ class _ImportAccountState extends State<ImportAccountPage> {
                       if (_formKey.currentState.validate()) {
                         var walletName = _walletNameController.text;
                         var password = _walletPasswordController.text;
-                        var mnemonic = _mnemonicController.text;
+                        var mnemonic = _mnemonicController.text.trim();
+
+                        if (!bip39.validateMnemonic(mnemonic)) {
+                          Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                          return;
+                        }
 
                         try {
                           var wallet = await WalletUtil.storeByMnemonic(

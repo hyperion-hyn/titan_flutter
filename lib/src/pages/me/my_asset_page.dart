@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -15,6 +16,7 @@ import 'package:titan/src/pages/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/pages/me/recharge_purchase_page.dart';
 import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/routes/routes.dart';
 
 class MyAssetPage extends StatefulWidget {
   @override
@@ -23,13 +25,13 @@ class MyAssetPage extends StatefulWidget {
   }
 }
 
-class _MyAssetState extends State<MyAssetPage> with TickerProviderStateMixin {
+class _MyAssetState extends BaseState<MyAssetPage> with TickerProviderStateMixin {
   TabController _tabController;
   List<DailyBillsModel> _dailyBillsModels;
 
   @override
-  void initState() {
-    super.initState();
+  void onCreated() {
+    UserService.syncUserInfo(context);
   }
 
   @override
@@ -78,19 +80,25 @@ class _MyAssetState extends State<MyAssetPage> with TickerProviderStateMixin {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => RechargePurchasePage(),
-                                  settings: RouteSettings(name: "/recharge_purchase_page")))
-                          .then((isSuccess) async {
-                        if (isSuccess != null && isSuccess) {
+                      Application.router.navigateTo(context, Routes.recharge_purchase).then((isSuccess) async {
+                        if (isSuccess == true) {
                           await UserService.syncUserInfo(context);
-//                          setState(() {});
-//                          _tabController.index = 0;
                           Application.eventBus.fire(Refresh());
                         }
                       });
+//                      Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                  builder: (context) => RechargePurchasePage(),
+//                                  settings: RouteSettings(name: "/recharge_purchase_page")))
+//                          .then((isSuccess) async {
+//                        if (isSuccess != null && isSuccess) {
+//                          await UserService.syncUserInfo(context);
+////                          setState(() {});
+////                          _tabController.index = 0;
+//                          Application.eventBus.fire(Refresh());
+//                        }
+//                      });
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -438,6 +446,9 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
 
   @override
   Future<List> onLoadData(int page) async {
+    if(page == getStartPage()) {
+      UserService.syncUserInfo(context);
+    }
     PageResponse<WithdrawalInfoLog> _pageResponse = await _userService.getWithdrawalLogList(page);
     var dataList = _pageResponse.data;
     return dataList;

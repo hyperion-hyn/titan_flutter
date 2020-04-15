@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/me/components/account/account_component.dart';
 import 'package:titan/src/pages/me/my_node_mortgage_page.dart';
 import 'package:titan/src/pages/me/recharge_purchase_page.dart';
 import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/routes/routes.dart';
 
 import 'enter_fund_password.dart';
 import 'model/mortgage_info_v2.dart';
@@ -159,17 +161,24 @@ class _MortgageSnapUpPageState extends State<MortgageSnapUpPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RechargePurchasePage(),
-                                settings: RouteSettings(name: "/recharge_purchase_page")))
-                        .then((value) {
+                    Application.router.navigateTo(context, Routes.recharge_purchase).then((value) {
                       if (value == null || value == false) {
                         return;
                       }
                       UserService.syncUserInfo(context);
                     });
+
+//                    Navigator.push(
+//                            context,
+//                            MaterialPageRoute(
+//                                builder: (context) => RechargePurchasePage(),
+//                                settings: RouteSettings(name: "/recharge_purchase_page")))
+//                        .then((value) {
+//                      if (value == null || value == false) {
+//                        return;
+//                      }
+//                      UserService.syncUserInfo(context);
+//                    });
                   },
                   child: Text(
                     S.of(context).click_charge,
