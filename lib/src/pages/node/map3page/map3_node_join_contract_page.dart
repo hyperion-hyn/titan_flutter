@@ -159,7 +159,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(left: 15),
+                  padding: const EdgeInsets.only(top: 16,left: 16),
                   child: Row(
                     children: <Widget>[
                       Container(
@@ -173,7 +173,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 15.0, left: 15),
+                  padding: const EdgeInsets.only(top: 16.0, left: 16),
                   child: Row(
                     children: <Widget>[
                       Container(
@@ -186,7 +186,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 15.0, left: 15),
+                  padding: EdgeInsets.only(top: 16.0, left: 16),
                   child: Row(
                     children: <Widget>[
                       Container(

@@ -46,10 +46,16 @@ class Map3NodeContractDetailPage extends StatefulWidget {
 }
 
 class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage> {
+
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   NodeApi _api = NodeApi();
+
   ContractDetailItem _contractDetailItem;
+  UserDelegateState _userDelegateState;
+
   ContractNodeItem _contractNodeItem;
+  ContractState _contractState;
+
   Wallet _wallet;
 
   bool _visible = false;
@@ -70,6 +76,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   int _currentPage = 0;
   NodeApi _nodeApi = NodeApi();
   List<ContractDelegateRecordItem> _delegateRecordList = [];
+
+  BillsOperaState _currentOperaState = BillsOperaState.DELEGATE;
 
   @override
   void onCreated() {
@@ -97,7 +105,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     if (_wallet == null) {
       _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
       getContractInstanceItem();
-      getJoinMemberData();
     }
   }
 
@@ -361,9 +368,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     List<Widget> children = [];
 
-    if (_isDelegated) {
-      var stateIndex = enumUserDelegateStateFromString(_contractDetailItem?.state)?.index ?? 0;
-      print("is:${stateIndex >= UserDelegateState.HALFDUE.index}, progress:${_contractNodeItem.expectHalfDueProgress}");
+    if (_isDelegated && durationType == 2) {
+      var stateIndex = _userDelegateState?.index ?? 0;
+      print("【Detail】_contractProgressWidget，1,is:${stateIndex >= UserDelegateState.HALFDUE.index}, progress:${_contractNodeItem.expectHalfDueProgress}");
 
       children = [
         _nodeWidget(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
@@ -395,8 +402,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _transformWidget(left: _left(false, _contractProgressIndex - 0.75)),
       ];
     } else {
-      var stateIndex = enumContractStateFromString(_contractNodeItem.state).index;
-      print("is:${stateIndex >= ContractState.DUE.index}, progress:${_contractNodeItem.expectDueProgress}");
+      var stateIndex = _contractState?.index ?? 0;
+      print("【Detail】_contractProgressWidget，2,is:${stateIndex >= ContractState.DUE.index}, progress:${_contractNodeItem.expectDueProgress}");
       children = [
         _nodeWidget(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
         _lineWidget(S.of(context).n_day(7.toString()), lineWidth,
@@ -441,7 +448,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     //color: Colors.red,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _getStatusColor(enumContractStateFromString(_contractNodeItem.state)),
+                        color: _getStatusColor(),
                         border: Border.all(color: Colors.grey, width: 1.0)),
                   ),
                 ),
@@ -473,7 +480,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       left: left,
       top: 10,
       child: Container(
-        color: _getStatusColor(enumContractStateFromString(_contractNodeItem.state)),
+        color: _getStatusColor(),
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: Text(
@@ -492,7 +499,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       width: 2.0,
       height: 30,
       child: Container(
-        color: _getStatusColor(enumContractStateFromString(_contractNodeItem.state)),
+        color: _getStatusColor(),
         // rotationZ 的参数为弧度，1.6 大概等于 90°
         // 转换公式 ( 度数 * 3.14 / 180 )
         transform: Matrix4.rotationZ(0.45),
@@ -600,9 +607,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
         child: Row(
           children: <Widget>[
-            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-            Spacer(),
-            Text(S.of(context).total + "：${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
+            Text(_currentOperaState == BillsOperaState.DELEGATE? S.of(context).account_flow:"奖励流水", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            if (_currentOperaState == BillsOperaState.DELEGATE) Spacer(),
+            if (_currentOperaState == BillsOperaState.DELEGATE) Text(S.of(context).total + "：${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
                 style: TextStyle(fontSize: 14, color: HexColor("#999999")))
           ],
         ),
@@ -706,10 +713,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
-  HexColor _getStatusColor(ContractState status) {
+  HexColor _getStatusColor() {
     var statusColor = HexColor('#EED197');
 
-    switch (status) {
+    switch (_contractState) {
       case ContractState.PENDING:
         statusColor = HexColor('#EED197');
         break;
@@ -742,6 +749,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         builder: (BuildContext context) {
           return EnterWalletPasswordWidget();
         }).then((walletPassword) async {
+
       if (walletPassword == null) {
         return;
       }
@@ -753,13 +761,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           }
         });
 
-        ///创建节点合约的钱包地址
-
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = gasPriceRecommend.average.toInt();
 
         var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
-        if (enumUserDelegateStateFromString(_contractDetailItem?.state) == UserDelegateState.HALFDUE) {
+        if (_userDelegateState == UserDelegateState.HALFDUE) {
           gasLimit = EthereumConst.COLLECT_HALF_MAP3_NODE_GAS_LIMIT;
         } else {
           if (_isDelegated) {
@@ -803,20 +809,43 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     });
   }
 
-
-  void getJoinMemberData() async {
+  Future getJoinMemberData() async {
     try {
       _currentPage = 0;
       _delegateRecordList = [];
+
+      List<ContractDelegateRecordItem> tempMemberList =
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+
+      if (tempMemberList.length > 0) {
+
+        List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
+          return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
+        }).toList();
+        _delegateRecordList.addAll(filterMemberList);
+        loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+
+      //setState(() {});
+    } catch (e) {
+      loadDataBloc.add(LoadMoreFailEvent());
+
+      //setState(() {});
+    }
+  }
+
+  void getJoinMemberMoreData() async {
+    try {
+      _currentPage++;
       List<ContractDelegateRecordItem> tempMemberList =
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
-          return enumBillsOperaStateFromString(element.operaType) == BillsOperaState.DELEGATE;
-        });
-        print("length: ${filterMemberList.length}");
-
+          return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
+        }).toList();
         _delegateRecordList.addAll(filterMemberList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
@@ -831,28 +860,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  void getJoinMemberMoreData() async {
-    try {
-      _currentPage++;
-      List<ContractDelegateRecordItem> tempMemberList =
-          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
-
-      if (tempMemberList.length > 0) {
-        _delegateRecordList.addAll(tempMemberList);
-        loadDataBloc.add(LoadingMoreSuccessEvent());
-      } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
-      }
-
-      setState(() {});
-    } catch (e) {
-      setState(() {
-        loadDataBloc.add(LoadMoreFailEvent());
-      });
-    }
-  }
-
-  void getContractInstanceItem() async {
+  Future getContractInstanceItem() async {
 
     try {
       // 0.
@@ -879,9 +887,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       }
 
       // 1.
-      var userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
+      _userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
+      _contractState = enumContractStateFromString(_contractNodeItem.state);
+      _currentOperaState = _contractState == ContractState.DUE_COMPLETED?BillsOperaState.WITHDRAW:BillsOperaState.DELEGATE;
 
-      switch (userDelegateState) {
+      print('[contract] _pageView, contractState:$_contractState, userDelegateState:$_userDelegateState');
+
+      await getJoinMemberData();
+
+      switch (_userDelegateState) {
         case UserDelegateState.PENDING:
           _actionTitle = S.of(context).increase_investment;
           onPressed = () {
@@ -951,10 +965,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
       }
 
-      var contractState = enumContractStateFromString(_contractNodeItem.state);
-      print('[contract] _pageView, stateString:${_contractNodeItem.state},state:$contractState');
-
-      if (!_isDelegated && contractState == ContractState.PENDING) {
+      if (!_isDelegated && _contractState == ContractState.PENDING) {
         _actionTitle = S.of(context).increase_investment;
         onPressed = () {
           Application.router
@@ -964,7 +975,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       }
 
       // 2.
-      switch (contractState) {
+      switch (_contractState) {
         case ContractState.PENDING:
           _nodeStateDesc = S.of(context).node_wait_to_launch;
           _contractStateDesc = S.of(context).wait_block_chain_verification;
@@ -1007,6 +1018,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           _contractProgressDesc = S.of(context).earned_rewards;
           _contractProgressDetail = S.of(context).congratulation_reward_withdrawn;
           _contractProgressIndex = 5.0;
+
           break;
 
         case ContractState.CANCELLED_COMPLETED:
