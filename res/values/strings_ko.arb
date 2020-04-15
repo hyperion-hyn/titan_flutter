@@ -581,7 +581,6 @@
   "task_un_finished_func": "${todayTimes}/${times}회를 미완성한다",
   "task_is_finished_func": "${todayTimes}/${times}회를 완성했다",
   "task_to_standard": "임무가 표준에 달하다:",
-  "task_to_standard_rules": "임무 달성 기준 규칙은 2020년 설 정월대보름 이후 합리적인 범위에서 조정될 것이다.",
   "task_to_standard_func": "${times1}회 [근처 신호를 스캔함], ${times2}회 [근처 지점을 추가함] 및${times3}회 [근처 지점을 검증함]을 완료해야 한다.더 많은 기여한 횟수는 기준 달성에 에 영향을 미치지 않는다.",
   "recharge_tips": "충전 알림:",
   "this_address": "이 주소",

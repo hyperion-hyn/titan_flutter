@@ -580,7 +580,6 @@
   "task_un_finished_func": "${todayTimes}/${times}times，unfinished",
   "task_is_finished_func": "${todayTimes}/${times}times，completed",
   "task_to_standard": "How to achieve your goals:",
-  "task_to_standard_rules": "Reasonable revision of the task rules will be applied after the Lantern Festival in 2020。",
   "task_to_standard_func": "Must complete ${times1}time【Signal Scan】,${times2}times【Add POI】,${times3}times【Verify POI】。Excessive contributions will not count in the final result。",
   "recharge_tips": "Top-up reminder",
   "this_address": "The wallet address",

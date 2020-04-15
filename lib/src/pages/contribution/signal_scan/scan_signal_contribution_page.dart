@@ -13,6 +13,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/api/api.dart';
@@ -20,7 +21,9 @@ import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/sensor_plugin.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/scan_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 import 'vo/latlng.dart' as contributionLatlng;
 import 'vo/signal_collector.dart';
@@ -368,14 +371,24 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     var isFinish = await _uploadCollectData();
     //print('[Request] --> isFinish: ${isFinish}');
     if (isFinish) {
-//      createWalletPopUtilName = '/data_contribution_page';
-//      Navigator.push(context, MaterialPageRoute(builder: (context) => FinishUploadPage()));
+      _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+
       Application.router.navigateTo(context, Routes.contribute_done, replace: true);
     } else {
       Fluttertoast.showToast(msg: S.of(context).scan_upload_error);
       setState(() {
         _isOnPressed = false;
       });
+    }
+  }
+
+  Future _finishCheckIn(String successTip) async {
+    try {
+      await UserService.checkInV2('scanSignal');
+      UiUtil.toast(successTip);
+    } catch (e) {
+      print('$runtimeType --> e:$e');
+      ExceptionProcess.process(e, isThrow: false);
     }
   }
 

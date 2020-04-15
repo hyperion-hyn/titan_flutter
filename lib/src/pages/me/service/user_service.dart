@@ -37,7 +37,7 @@ import '../model/withdrawal_info.dart';
 import '../model/withdrawal_info_log.dart';
 
 class UserService {
-  MapRichApi _mapRichApi = MapRichApi();
+  static MapRichApi _mapRichApi = MapRichApi();
 
   static syncUserInfo([BuildContext context]) async {
     try {
@@ -45,7 +45,7 @@ class UserService {
         context = _getRootContext();
       }
       var userService = UserService();
-      var userToken = userService.getUserToken(context);
+      var userToken = getUserToken(context);
       var userInfo = await userService.getUserInfo(userToken);
       BlocProvider.of<AccountBloc>(context).add(UpdateUserEvent(userInfo: userInfo));
     } catch (e) {
@@ -70,7 +70,7 @@ class UserService {
     return Keys.rootKey.currentContext;
   }
 
-  UserToken getUserToken([BuildContext context]) {
+  static UserToken getUserToken([BuildContext context]) {
     if (context == null) {
       context = _getRootContext();
     }
@@ -124,7 +124,7 @@ class UserService {
     await _mapRichApi.checkIn(userToken.token, userToken.userId);
   }
 
-  Future checkInV2(String type) async {
+  static Future checkInV2(String type) async {
     UserToken userToken = getUserToken();
     if (userToken == null) {
       throw new Exception("not login");
