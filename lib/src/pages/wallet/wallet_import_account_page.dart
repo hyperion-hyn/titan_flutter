@@ -236,7 +236,7 @@ class _ImportAccountState extends State<ImportAccountPage> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.fromLTRB(0, 24, 0, 48),
+                  margin: EdgeInsets.fromLTRB(16, 24, 16, 48),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

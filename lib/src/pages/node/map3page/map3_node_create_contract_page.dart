@@ -320,7 +320,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                           "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                          "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&transferAmount=${_joinCoinController.text??""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&provider=$provider" +
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +
@@ -453,7 +453,7 @@ Widget getHoldInNum(
                           ),
                           validator: (textStr) {
                             if(textStr.length == 0){
-                              return null;
+                              return "请输入HYN数量";
                             } else if (int.parse(textStr) < minTotal) {
                               return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
                             } else if (int.parse(textStr) > balance) {

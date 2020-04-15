@@ -188,45 +188,52 @@ class _NodeDelegatorMemberState extends State<NodeDelegatorMemberWidget> {
                   )),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Flexible(
+            flex: 6,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
 
+                children: <Widget>[
+                  RichText(
+                    text: TextSpan(
+                        text: "${delegatorItem.userName}",
+                        style: TextStyle(fontSize: 14, color: HexColor("#000000")),
+                        children: [
+                          TextSpan(
+                            text: userAddress,
+                            style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
+                          )
+                        ]),
+                  ),
+                  Container(
+                    height: 6.0,
+                  ),
+                  Text("${FormatUtil.formatDate(delegatorItem.createAt)}", style: TextStyle(fontSize: 12, color: HexColor("#333333")))
+                ],
+              ),
+            ),
+          ),
+          //Spacer(),
+          Container(width: 8,),
+          Flexible(
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 RichText(
                   text: TextSpan(
-                      text: "${delegatorItem.userName}",
-                      style: TextStyle(fontSize: 14, color: HexColor("#000000")),
-                      children: [
-                        TextSpan(
-                          text: userAddress,
-                          style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
-                        )
-                      ]),
+                    text: FormatUtil.amountToString(delegatorItem.amount),
+                    style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                  ),
                 ),
-                Container(
-                  height: 6.0,
-                ),
-                Text("${FormatUtil.formatDate(delegatorItem.createAt)}", style: TextStyle(fontSize: 12, color: HexColor("#333333")))
+                  Container(
+                    height: 6.0,
+                  ),
+                  Text(txHash, style: TextStyle(fontSize: 12, color: HexColor("#333333")))
               ],
             ),
-          ),
-          Spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              RichText(
-                text: TextSpan(
-                  text: FormatUtil.amountToString(delegatorItem.amount),
-                  style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
-                ),
-              ),
-                Container(
-                  height: 6.0,
-                ),
-                Text(txHash, style: TextStyle(fontSize: 12, color: HexColor("#333333")))
-            ],
           ),
         ],
       ),

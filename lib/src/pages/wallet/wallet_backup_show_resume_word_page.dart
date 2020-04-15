@@ -67,9 +67,10 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                   height: 8,
                 ),
                 Container(
-                  height: 240,
+                  height: 200,
                   width: 360,
                   child: GridView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
