@@ -105,81 +105,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return statusColor;
   }
 
-  /*get _stateFactor {
-    double value;
-
-    if (_isPercent50) {
-      switch (_userDelegateState) {
-        case UserDelegateState.PENDING:
-          value = 2.65;
-          break;
-
-        case UserDelegateState.ACTIVE:
-          value = 3;
-          break;
-
-        case UserDelegateState.DUE:
-          value = 4.05;
-          break;
-
-        case UserDelegateState.DUE_COLLECTED:
-          value = 4.05;
-          break;
-
-        case UserDelegateState.HALFDUE:
-          value = 4;
-
-          break;
-
-        case UserDelegateState.HALFDUE_COLLECTED:
-          value = 4;
-
-          break;
-
-        case UserDelegateState.CANCELLED:
-          value = 2.65;
-
-          break;
-
-        case UserDelegateState.CANCELLED_COLLECTED:
-          value = 2.65;
-
-          break;
-
-        default:
-          break;
-      }
-    }
-    else {
-      switch (_contractState) {
-        case ContractState.PENDING:
-        case ContractState.CANCELLED:
-        case ContractState.CANCELLED_COMPLETED:
-          value = 1.5;
-          break;
-
-        case ContractState.ACTIVE:
-          value = 2;
-          break;
-
-        case ContractState.DUE:
-          value = 3;
-          break;
-
-        case ContractState.DUE_COMPLETED:
-          value = 3.5;
-          break;
-
-        default:
-          value = 4.0;
-          break;
-      }
-    }
-
-    return value;
-  }
-*/
-
   get _stateFactor {
     double value;
 
@@ -240,15 +165,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
       }
     }
-
-    return value;
-  }
-
-  get _transformFactor {
-    double value = _stateFactor;
-
-    if (_contractState == ContractState.DUE_COMPLETED) value = value + 1.35;
-    if (_contractState == ContractState.DUE) value = value + 0.75;
 
     return value;
   }
@@ -675,6 +591,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
+/*
   Widget _transformWidget({double left = 10}) {
     var rotation = (_contractState==ContractState.DUE_COMPLETED || _contractState==ContractState.DUE)?5.50:0.45;
     return Positioned(
@@ -690,6 +607,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       ),
     );
   }
+*/
 
   Widget _nodeWidget(String name, {int date = 0, double left = 10, bool isLight = true, bool isMiddle = false}) {
     double top = isLight ? 60 : 62;
@@ -1210,7 +1128,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _contractProgressDetail = S.of(context).remain_day_has_colon(_contractNodeItem.remainHalfDueDay);
       }
     }
-
   }
 
 }
