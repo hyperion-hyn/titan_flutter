@@ -69,7 +69,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   LoadDataBloc loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   NodeApi _nodeApi = NodeApi();
-  List<ContractDelegateRecordItem> memberList = [];
+  List<ContractDelegateRecordItem> delegateRecordList = [];
 
   @override
   void onCreated() {
@@ -78,7 +78,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     _contractStateDesc = S.of(context).wait_block_chain_verification;
     super.onCreated();
   }
-  
+
   @override
   void initState() {
     super.initState();
@@ -86,6 +86,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   @override
   void dispose() {
+    loadDataBloc.close();
     super.dispose();
   }
 
@@ -95,13 +96,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     if (_wallet == null) {
       _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
-      getNetworkData();
-
+      getContractInstanceItem();
       getJoinMemberData();
     }
   }
 
-  void getNetworkData() async {
+  void getContractInstanceItem() async {
     // todo: test_jison_0411
 /*    Future.delayed(Duration(seconds: 1), () {
       setState(() {
@@ -331,14 +331,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
-          _pageView(context),
-          _bottomSureWidget(),
+          _pageWidget(context),
+          _bottomSureButtonWidget(),
         ],
       ),
     );
   }
 
-  Widget _pageView(BuildContext context) {
+  Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _contractNodeItem.contract == null) {
       return AllPageStateContainer(_currentState, () {
         setState(() {
@@ -350,7 +350,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return LoadDataContainer(
         bloc: loadDataBloc,
         enablePullDown: false,
-        //onLoadData: getJoinMemberData,
         onLoadingMore: () {
           getJoinMemberMoreData();
         },
@@ -379,51 +378,44 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             ),
             _Spacer(),
             //SliverToBoxAdapter(child: _delegatorListWidget()),
-            SliverToBoxAdapter(child: _joinMemberHeaderView()),
+            SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
             SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  return _item(memberList[index]);
-                }, childCount: memberList.length)),
-            _Spacer(),
+              return _delegateRecordItemWidget(delegateRecordList[index]);
+            }, childCount: delegateRecordList.length)),
+            //_Spacer(),
+            SliverToBoxAdapter(
+              child: Visibility(
+                visible: _visible,
+                child: Container(
+                  height: 48,
+                ),
+              ),
+            )
           ],
         ));
   }
 
-  Widget _pageView1(BuildContext context) {
-    if (_currentState != null || _contractNodeItem.contract == null) {
-      return AllPageStateContainer(_currentState, () {
-        setState(() {
-          _currentState = all_page_state.LoadingState();
-        });
-      });
-    }
+  Widget _bottomSureButtonWidget() {
+    _actionTitle = _isTransferring ? "提取中..." : _actionTitle;
 
-    return SingleChildScrollView(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            color: Colors.white,
-            child: getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)),
-        _nodeInfoWidget(_nodeStateDesc),
-        _Spacer(),
-        _contractActionsWidget(contractStateDesc: _contractStateDesc),
-        _lineSpacer(),
-        _contractProgressWidget(),
-        _Spacer(),
-        NodeJoinMemberWidget(
-          "${widget.contractId}",
-          _contractNodeItem.remainDay,
-          _contractNodeItem.ownerName,
-          _contractNodeItem.shareUrl,
-          isShowInviteItem: false,
-        ),
-        _Spacer(),
-        _delegatorListWidget(),
-        _Spacer(),
-        if (_visible)
-          Container(
-            height: 48,
+    return Visibility(
+      visible: _visible,
+      child: Positioned(
+        bottom: 0,
+        height: 48,
+        width: MediaQuery.of(context).size.width,
+        child: Container(
+          child: RaisedButton(
+            textColor: Colors.white,
+            color: Theme.of(context).primaryColor,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
+            child: Text(_actionTitle),
+            onPressed: onPressed,
           ),
-      ]),
+        ),
+      ),
     );
   }
 
@@ -489,11 +481,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         ),
       ],
     );
-  }
-
-  Widget _delegatorListWidget() {
-    var amountDelegation = FormatUtil.amountToString(_contractNodeItem.amountDelegation);
-    return NodeDelegatorMemberWidget("${_contractNodeItem.id}", amountDelegation);
   }
 
   Widget _contractActionsWidget({String contractStateDesc = ""}) {
@@ -598,61 +585,61 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     if (_isCreator) {
       var stateIndex = enumUserDelegateStateFromString(_contractDetailItem?.state)?.index ?? 0;
       children = [
-        _node(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
-        _line(S.of(context).n_day(7.toString()), lineWidth,
+        _nodeWidget(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+        _lineWidget(S.of(context).n_day(7.toString()), lineWidth,
             left: _left(true, 1),
             progress: stateIndex >= UserDelegateState.ACTIVE.index ? 1 : _contractNodeItem.remainProgress),
-        _node(S.of(context).launch_success,
+        _nodeWidget(S.of(context).launch_success,
             date: _contractNodeItem.instanceActiveTime,
             left: _left(false, 2),
             isLight: stateIndex >= UserDelegateState.ACTIVE.index),
-        _line(S.of(context).n_day(90.toString()), lineWidth,
+        _lineWidget(S.of(context).n_day(90.toString()), lineWidth,
             left: _left(true, 2),
             progress: stateIndex >= UserDelegateState.HALFDUE.index ? 1 : _contractNodeItem.expectHalfDueProgress),
-        _node(S.of(context).can_withdraw_fifty_reward, left: _left(false, 3), isLight: stateIndex >= UserDelegateState.HALFDUE.index),
-        _line(S.of(context).n_day(90.toString()), lineWidth,
+        _nodeWidget(S.of(context).can_withdraw_fifty_reward, left: _left(false, 3), isLight: stateIndex >= UserDelegateState.HALFDUE.index),
+        _lineWidget(S.of(context).n_day(90.toString()), lineWidth,
             left: _left(true, 3),
             progress: stateIndex >= UserDelegateState.DUE.index ? 1 : _contractNodeItem.expectDueProgress),
-        _node(S.of(context).expire_date,
+        _nodeWidget(S.of(context).expire_date,
             date: _contractNodeItem.instanceDueTime,
             left: _left(false, 4),
             isLight: stateIndex >= UserDelegateState.DUE.index),
-        _line("", lineWidth,
+        _lineWidget("", lineWidth,
             left: _left(true, 4), progress: stateIndex >= UserDelegateState.DUE_COLLECTED.index ? 1 : 0.0),
-        _node(S.of(context).extract_time,
+        _nodeWidget(S.of(context).extract_time,
             date: _contractNodeItem.instanceFinishTime,
             left: _left(false, 5),
             isLight: stateIndex >= UserDelegateState.DUE_COLLECTED.index),
-        _state(_contractProgressDetail, left: _left(false, _contractProgressIndex - 0.5)),
-        _transform(left: _left(false, _contractProgressIndex - 0.5)),
+        _stateWidget(_contractProgressDetail, left: _left(false, _contractProgressIndex - 0.5)),
+        _transformWidget(left: _left(false, _contractProgressIndex - 0.5)),
       ];
     } else {
       var stateIndex = enumContractStateFromString(_contractNodeItem.state).index;
       print("is:${stateIndex >= ContractState.DUE.index}, progress:${_contractNodeItem.expectDueProgress}");
       children = [
-        _node(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
-        _line(S.of(context).n_day(7.toString()), lineWidth,
+        _nodeWidget(S.of(context).create_time, date: _contractNodeItem.instanceStartTime, left: _left(false, 1)),
+        _lineWidget(S.of(context).n_day(7.toString()), lineWidth,
             left: _left(true, 1),
             progress: stateIndex >= ContractState.ACTIVE.index ? 1 : _contractNodeItem.remainProgress),
-        _node(S.of(context).launch_success,
+        _nodeWidget(S.of(context).launch_success,
             date: _contractNodeItem.instanceActiveTime,
             left: _left(false, 2),
             isLight: stateIndex >= ContractState.ACTIVE.index),
-        _line(S.of(context).n_day(_contractNodeItem.contract.duration.toString()), lineWidth,
+        _lineWidget(S.of(context).n_day(_contractNodeItem.contract.duration.toString()), lineWidth,
             left: _left(true, 2),
             progress: stateIndex >= ContractState.DUE.index ? 1.0 : _contractNodeItem.expectDueProgress),
-        _node(S.of(context).expire_date,
+        _nodeWidget(S.of(context).expire_date,
             date: _contractNodeItem.instanceDueTime,
             left: _left(false, 3),
             isLight: stateIndex >= ContractState.DUE.index),
-        _line("", lineWidth,
+        _lineWidget("", lineWidth,
             left: _left(true, 3), progress: stateIndex >= ContractState.DUE_COMPLETED.index ? 1.0 : 0.0),
-        _node(S.of(context).extract_time,
+        _nodeWidget(S.of(context).extract_time,
             date: _contractNodeItem.instanceFinishTime,
             left: _left(false, 4),
             isLight: stateIndex >= ContractState.DUE_COMPLETED.index),
-        _state(_contractProgressDetail, left: _left(false, _contractProgressIndex - 0.75)),
-        _transform(left: _left(false, _contractProgressIndex - 0.75)),
+        _stateWidget(_contractProgressDetail, left: _left(false, _contractProgressIndex - 0.75)),
+        _transformWidget(left: _left(false, _contractProgressIndex - 0.75)),
       ];
     }
 
@@ -688,7 +675,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             ),
           ),
           Container(
-            height: 130,
+            height: 140,
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
 //            color: Colors.red,
             child: Stack(
@@ -700,7 +687,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
-  Widget _state(String name, {double left = 10}) {
+  Widget _stateWidget(String name, {double left = 10}) {
     return Positioned(
       left: left,
       top: 10,
@@ -717,7 +704,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
-  Widget _transform({double left = 10}) {
+  Widget _transformWidget({double left = 10}) {
     return Positioned(
       left: left,
       top: 32.5,
@@ -732,7 +719,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
-  Widget _node(String name, {int date = 0, double left = 10, bool isLight = true, bool isMiddle = false}) {
+  Widget _nodeWidget(String name, {int date = 0, double left = 10, bool isLight = true, bool isMiddle = false}) {
     double top = isLight ? 60 : 62;
     double wh = isLight ? 11 : 6;
     var circleColor = isLight ? HexColor("#322300") : HexColor("#CCCCCC");
@@ -773,7 +760,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
-  Widget _line(String name, double width, {double left = 10, double progress = 0.0}) {
+  Widget _lineWidget(String name, double width, {double left = 10, double progress = 0.0}) {
     var lightColor = HexColor("#322300");
     var greyColor = HexColor("#ECECEC");
 
@@ -809,6 +796,135 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
+  Widget _lineSpacer() {
+    return Container(
+      height: 0.5,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      color: DefaultColors.colorf5f5f5,
+    );
+  }
+
+  Widget _Spacer() {
+    return SliverToBoxAdapter(
+      child: Container(
+        height: 10,
+        color: DefaultColors.colorf5f5f5,
+      ),
+    );
+  }
+
+  Widget _delegateRecordHeaderWidget() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+        child: Row(
+          children: <Widget>[
+            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            Spacer(),
+            Text(S.of(context).total + "：${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
+                style: TextStyle(fontSize: 14, color: HexColor("#999999")))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _delegateRecordItemWidget(ContractDelegateRecordItem delegateItem) {
+    String showName = delegateItem.userName.substring(0, 1);
+    String userAddress = shortBlockChainAddress(" ${delegateItem.userAddress}", limitCharsLength: 8);
+    String txHash = shortBlockChainAddress(delegateItem.txHash, limitCharsLength: 6);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      child: Stack(
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+                  ),
+                  child: Center(
+                      child: Text(
+                    showName,
+                    style: TextStyle(fontSize: 15, color: HexColor("#000000")),
+                  )),
+                ),
+              ),
+              Flexible(
+                flex: 4,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      RichText(
+                        text: TextSpan(
+                            text: "${delegateItem.userName}",
+                            style: TextStyle(fontSize: 14, color: HexColor("#000000")),
+                            children: [
+                              TextSpan(
+                                text: userAddress,
+                                style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
+                              )
+                            ]),
+                      ),
+                      Container(
+                        height: 6.0,
+                      ),
+                      Text("${FormatUtil.formatDate(delegateItem.createAt)}",
+                          style: TextStyle(fontSize: 12, color: HexColor("#333333"))),
+                      Container(
+                        height: 6.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              //Spacer(),
+              Container(
+                width: 8,
+              ),
+              Flexible(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    RichText(
+                      text: TextSpan(
+                        text: FormatUtil.amountToString(delegateItem.amount),
+                        style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      height: 6.0,
+                    ),
+                    Text(txHash, style: TextStyle(fontSize: 12, color: HexColor("#333333")))
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            bottom: 0,
+            left: 40,
+            right: 8,
+            child: Container(
+              height: 0.5,
+              color: DefaultColors.colorf5f5f5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   HexColor _getStatusColor(ContractState status) {
     var statusColor = HexColor('#EED197');
 
@@ -832,192 +948,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
     return statusColor;
-  }
-
-  Widget _lineSpacer() {
-    return Container(
-      height: 0.5,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      color: DefaultColors.colorf5f5f5,
-    );
-  }
-
-  Widget _Spacer() {
-    return SliverToBoxAdapter(
-      child: Container(
-        height: 10,
-        color: DefaultColors.colorf5f5f5,
-      ),
-    );
-  }
-
-  Widget _Spacer1() {
-    return Container(
-      height: 10,
-      color: DefaultColors.colorf5f5f5,
-    );
-  }
-
-  Widget _bottomSureWidget() {
-    _actionTitle = _isTransferring ? S.of(context).extracting : _actionTitle;
-
-    return Visibility(
-      visible: _visible,
-      child: Positioned(
-        bottom: 0,
-        height: 48,
-        width: MediaQuery.of(context).size.width,
-        child: Container(
-          child: RaisedButton(
-            textColor: Colors.white,
-            color: Theme.of(context).primaryColor,
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
-            child: Text(_actionTitle),
-            onPressed: onPressed,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void getJoinMemberData() async {
-    try {
-      _currentPage = 0;
-      memberList = [];
-      List<ContractDelegateRecordItem> tempMemberList =
-          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
-
-      if (tempMemberList.length > 0) {
-        memberList.addAll(tempMemberList);
-        loadDataBloc.add(LoadingMoreSuccessEvent());
-      } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
-      }
-
-      setState(() {
-      });
-    } catch (e) {
-      setState(() {
-        loadDataBloc.add(LoadMoreFailEvent());
-      });
-    }
-  }
-
-  void getJoinMemberMoreData() async {
-    try {
-      _currentPage++;
-      List<ContractDelegateRecordItem> tempMemberList =
-          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
-
-      if (tempMemberList.length > 0) {
-        memberList.addAll(tempMemberList);
-        loadDataBloc.add(LoadingMoreSuccessEvent());
-      } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
-      }
-
-
-    } catch (e) {
-      setState(() {
-        loadDataBloc.add(LoadMoreFailEvent());
-      });
-    }
-  }
-
-  Widget _joinMemberHeaderView() {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
-        child: Row(
-          children: <Widget>[
-            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-            Spacer(),
-            Text(S.of(context).total + "：${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
-                style: TextStyle(fontSize: 14, color: HexColor("#999999")))
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _item(ContractDelegateRecordItem delegatorItem) {
-    String showName = delegatorItem.userName.substring(0, 1);
-    String userAddress = shortBlockChainAddress(" ${delegatorItem.userAddress}", limitCharsLength: 8);
-    String txHash = shortBlockChainAddress(delegatorItem.txHash, limitCharsLength: 6);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            height: 40,
-            width: 40,
-            child: Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(13.0)),
-              ),
-              child: Center(
-                  child: Text(
-                showName,
-                style: TextStyle(fontSize: 15, color: HexColor("#000000")),
-              )),
-            ),
-          ),
-          Flexible(
-            flex: 6,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  RichText(
-                    text: TextSpan(
-                        text: "${delegatorItem.userName}",
-                        style: TextStyle(fontSize: 14, color: HexColor("#000000")),
-                        children: [
-                          TextSpan(
-                            text: userAddress,
-                            style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
-                          )
-                        ]),
-                  ),
-                  Container(
-                    height: 6.0,
-                  ),
-                  Text("${FormatUtil.formatDate(delegatorItem.createAt)}",
-                      style: TextStyle(fontSize: 12, color: HexColor("#333333")))
-                ],
-              ),
-            ),
-          ),
-          //Spacer(),
-          Container(
-            width: 8,
-          ),
-          Flexible(
-            flex: 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                RichText(
-                  text: TextSpan(
-                    text: FormatUtil.amountToString(delegatorItem.amount),
-                    style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  height: 6.0,
-                ),
-                Text(txHash, style: TextStyle(fontSize: 12, color: HexColor("#333333")))
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Future _collectAction() async {
@@ -1092,5 +1022,280 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     });
   }
 
+
+  void getJoinMemberData() async {
+    try {
+      _currentPage = 0;
+      delegateRecordList = [];
+      List<ContractDelegateRecordItem> tempMemberList =
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+
+      if (tempMemberList.length > 0) {
+        delegateRecordList.addAll(tempMemberList);
+        loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        loadDataBloc.add(LoadMoreFailEvent());
+      });
+    }
+  }
+
+  void getJoinMemberMoreData() async {
+    try {
+      _currentPage++;
+      List<ContractDelegateRecordItem> tempMemberList =
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+
+      if (tempMemberList.length > 0) {
+        delegateRecordList.addAll(tempMemberList);
+        loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        loadDataBloc.add(LoadMoreFailEvent());
+      });
+    }
+  }
+
+  void getContractInstanceItemOld() async {
+    // todo: test_jison_0411
+/*    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+
+        var item = NodeItem(1, "aaa", 1, "0", 0.0, 0.0, 0.0, 1, 0, 0.0, false, "0.5", "", "");
+        var nodeItem = ContractNodeItem(
+            1,
+            item,
+            "0xaaaaa",
+            "bbbbbbb",
+            "0",
+            "0",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "",
+            ContractState.DUE_COMPLETED.toString().split(".").last
+        );
+
+        LatestTransaction _transaction = LatestTransaction("",0,0,"","","");
+        _contractDetailItem = ContractDetailItem(nodeItem, "", "", "0", "0", "0", 0,  _transaction, "ACTIVE");
+        _contractNodeItem = nodeItem;
+        // todo： 测试
+        //_contractDetailItem.userDelegateState = UserDelegateState.DUE_COLLECTED.toString().split(".").last;
+        _currentState = null;
+        _visible = true;
+      });
+    });
+
+    return;*/
+
+    try {
+      // 0.
+      var instanceItem = await _api.getContractInstanceItem("${widget.contractId}");
+
+      var address = _wallet.getEthAccount().address;
+
+      _isCreator = address == instanceItem.owner;
+
+      // todo： 测试
+      //_isCreator = true;
+
+      if (_isCreator) {
+        var detailItem = await _api.getContractDetail("${widget.contractId}", address: address);
+        _contractDetailItem = detailItem;
+        _contractNodeItem = detailItem.instance;
+        print('[map3] getContractDetail , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
+
+        // todo： 测试
+        _contractNodeItem.contract.durationType = 2;
+        _contractDetailItem.state = UserDelegateState.DUE_COLLECTED.toString().split(".").last ?? "";
+      } else {
+        _contractNodeItem = instanceItem;
+
+        // todo： 测试
+        _contractNodeItem.state = ContractState.DUE.toString().split(".").last ?? "";
+
+        print('[map3] getContractInstanceItem , id:${_contractNodeItem.id}, _isCreator:${_isCreator}');
+      }
+
+      // 1.
+      var userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
+
+      switch (userDelegateState) {
+        case UserDelegateState.PENDING:
+          _actionTitle = "增加投入";
+          onPressed = () {
+            Application.router
+                .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.ACTIVE:
+          _actionTitle = "已抵押";
+          onPressed = () {
+            Fluttertoast.showToast(msg: "节点正在运行中。。。");
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.DUE:
+          _actionTitle = "提取";
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.DUE_COLLECTED:
+          _actionTitle = "完成";
+          onPressed = () {
+            Fluttertoast.showToast(msg: "节点收益已经提取完成。");
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.HALFDUE:
+          _actionTitle = "提取50%收益";
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.HALFDUE_COLLECTED:
+          _actionTitle = "完成";
+          onPressed = () {
+            Fluttertoast.showToast(msg: "节点一半的收益已经提取完成。");
+          };
+          _visible = false;
+          break;
+
+        case UserDelegateState.CANCELLED:
+          _actionTitle = "提取";
+          onPressed = () {
+            _collectAction();
+          };
+          _visible = true;
+          break;
+
+        case UserDelegateState.CANCELLED_COLLECTED:
+          _actionTitle = "完成";
+          onPressed = () {
+            Fluttertoast.showToast(msg: "节点退款已经提取完成。");
+          };
+          _visible = false;
+          break;
+
+        default:
+          break;
+      }
+
+      var contractState = enumContractStateFromString(_contractNodeItem.state);
+      print('[contract] _pageView, stateString:${_contractNodeItem.state},state:$contractState');
+
+      if (!_isCreator && contractState == ContractState.PENDING) {
+        _actionTitle = "增加投入";
+        onPressed = () {
+          Application.router
+              .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+        };
+        _visible = true;
+      }
+
+      // 2.
+      switch (contractState) {
+        case ContractState.PENDING:
+          _nodeStateDesc = "节点待启动";
+          _contractStateDesc = "正在创建中，等待区块链网络验证";
+
+          _contractProgressDesc = "等待启动";
+          _contractProgressDetail = "还差${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
+          _contractProgressIndex = 3.0;
+          break;
+
+        case ContractState.ACTIVE:
+          _nodeStateDesc = "节点进行中";
+          _contractStateDesc = "已广播投入$_amountDelegation HYN，等待区块链网络验证";
+
+          _contractProgressDesc = "启动成功";
+          _contractProgressDetail = "剩余${_contractNodeItem.expectDueDay}天";
+          _contractProgressIndex = 3.0;
+          break;
+
+        case ContractState.DUE:
+          _nodeStateDesc = "节点已停止";
+
+          _contractProgressDesc = "启动成功";
+          _contractProgressDetail = "已到期,可提全部奖励";
+          _contractProgressIndex = 4.0;
+          break;
+
+        case ContractState.CANCELLED:
+          _nodeStateDesc = "节点已停止";
+          _contractStateDesc = "启动失败，请申请退款";
+
+          _contractProgressDesc = "启动失败";
+          _contractProgressDetail = "启动失败";
+          _contractProgressIndex = 3.0;
+          break;
+
+        case ContractState.DUE_COMPLETED:
+          _nodeStateDesc = "节点已停止";
+          _contractStateDesc = "已取回投入资金";
+
+          _contractProgressDesc = "已获取奖励";
+          _contractProgressDetail = "恭喜，已提取奖励";
+          _contractProgressIndex = 5.0;
+          break;
+
+        case ContractState.CANCELLED_COMPLETED:
+          _nodeStateDesc = "节点已停止";
+          _contractStateDesc = "已取回投入资金";
+
+          _contractProgressDesc = "启动失败";
+          _contractProgressDetail = "启动失败";
+          _contractProgressIndex = 3.0;
+          break;
+
+        default:
+          break;
+      }
+
+      if (_isCreator &&
+          UserDelegateState.HALFDUE_COLLECTED == enumUserDelegateStateFromString(_contractDetailItem?.state ?? "")) {
+        _contractProgressDesc = "启动成功";
+        _contractProgressDetail = "可提取50%奖励";
+        _contractProgressIndex = 4.0;
+      }
+
+      // 3.
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          _currentState = null;
+        });
+      });
+    } catch (e) {
+      setState(() {
+        _currentState = all_page_state.LoadFailState();
+      });
+    }
+  }
 
 }
