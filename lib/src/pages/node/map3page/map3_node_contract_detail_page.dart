@@ -34,7 +34,6 @@ import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_contract_page.dart';
-import 'my_map3_contract_page.dart';
 
 class Map3NodeContractDetailPage extends StatefulWidget {
   final int contractId;
@@ -176,7 +175,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _bottomSureButtonWidget() {
-    _actionTitle = _isTransferring ? "提取中..." : _actionTitle;
+    _actionTitle = _isTransferring ? S.of(context).extracting : _actionTitle;
 
     return Visibility(
       visible: _visible,

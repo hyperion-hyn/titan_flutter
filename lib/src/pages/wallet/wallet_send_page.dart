@@ -138,7 +138,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           },
                           controller: _receiverAddressController,
                           decoration: InputDecoration(
-                            hintText: '如: 0x81e7A0529AC1726e...',
+                            hintText: S.of(context).example+': 0x81e7A0529AC1726e...',
                             hintStyle: TextStyle(color: Colors.black12),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -158,7 +158,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           ),
                         ),
                         Text(
-                          '(可用 ${WalletUtil.formatCoinNum(widget.coinVo.balance)})',
+                          '(' + S.of(context).can_use + ' ${WalletUtil.formatCoinNum(widget.coinVo.balance)})',
                           style: TextStyle(fontSize: 12, color: Colors.black38),
                         ),
                         Spacer(),
@@ -197,7 +197,7 @@ class _WalletSendState extends State<WalletSendPage> {
                         },
                         controller: _amountController,
                         decoration: InputDecoration(
-                          hintText: '输入转账数量',
+                          hintText: S.of(context).input_transfer_num,
                           hintStyle: TextStyle(color: Colors.black12),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -259,7 +259,7 @@ class _WalletSendState extends State<WalletSendPage> {
     if (_fromKey.currentState.validate()) {
       var count = double.parse(_amountController.text);
       if (count <= 0) {
-        Fluttertoast.showToast(msg: '转账数目必须大于0');
+        Fluttertoast.showToast(msg: S.of(context).transfer_num_bigger_zero);
         return;
       }
 

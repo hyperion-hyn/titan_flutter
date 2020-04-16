@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/i18n.dart';
 
 class EmptyView extends StatelessWidget {
   final Function reload;
@@ -18,14 +19,14 @@ class EmptyView extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  '暂无数据',
+                  S.of(context).search_empty_data,
                   style: TextStyle(color: Colors.grey),
                 ),
                 if (reload != null)
                   FlatButton(
                       onPressed: reload,
                       child: Text(
-                        '，点击刷新',
+                        '，' + S.of(context).click_refresh,
                         style: TextStyle(color: Colors.blue),
                       )),
               ],

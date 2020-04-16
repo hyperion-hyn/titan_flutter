@@ -149,7 +149,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) => BackupShowResumeWordPage(wallet, mnemonic)));
                         } else {
-                          print('不是TrustWallet钱包，不支持导出助记词');
+                          print(S.of(context).isnt_trustwallet_cant_export);
                         }
                       } catch (_) {
                         _ as PlatformException;

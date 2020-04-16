@@ -93,7 +93,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: Text(
-              '网络请求异常~',
+              S.of(context).network_request_error,
               style: TextStyle(color: Colors.grey),
             ),
           ),
@@ -102,7 +102,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
                 widget.bloc.add(LoadingEvent());
               },
               child: Text(
-                '点击重试',
+                S.of(context).click_retry,
                 style: TextStyle(
                   color: Theme.of(context).accentColor,
                   fontSize: 16,

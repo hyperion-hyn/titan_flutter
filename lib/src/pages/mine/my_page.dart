@@ -317,7 +317,7 @@ class _MyPageState extends State<MyPage> {
 //                BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
                 Application.router.navigateTo(context, Routes.wallet_manager);
               },
-              child: Text("创建/导入钱包账户", style: TextStyle(color: Colors.white70, fontSize: 20))),
+              child: Text(S.of(context).create_import_wallet_account, style: TextStyle(color: Colors.white70, fontSize: 20))),
         ),
         /*Padding(
           padding: const EdgeInsets.all(8.0),
