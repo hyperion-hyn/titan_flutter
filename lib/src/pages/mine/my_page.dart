@@ -121,7 +121,8 @@ class _MyPageState extends State<MyPage> {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_initiated_map_contract)));
                     } else {
-                      Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
+                      Application.router.navigateTo(context, Routes.wallet_manager);
+                      //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
                     }
                   }, imageName: "my_contract_create"),
                   Padding(
@@ -132,7 +133,8 @@ class _MyPageState extends State<MyPage> {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_join_map_contract)));
                     } else {
-                      Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
+                      Application.router.navigateTo(context, Routes.wallet_manager);
+                      //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
                     }
                   }, imageName: "my_contract_join"),
                   Container(
@@ -319,15 +321,6 @@ class _MyPageState extends State<MyPage> {
               },
               child: Text(S.of(context).create_import_wallet_account, style: TextStyle(color: Colors.white70, fontSize: 20))),
         ),
-        /*Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: InkWell(
-              onTap: () {
-                Application.router
-                    .navigateTo(context, Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
-              },
-              child: Text(S.of(context).import_wallet, style: TextStyle(color: Colors.white70, fontSize: 17))),
-        ),*/
         Spacer(),
       ],
     );

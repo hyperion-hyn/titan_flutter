@@ -320,7 +320,7 @@ class NodeApi {
     return "success";
   }
 
-  Future<bool> isDelegatedContractInstance(int contractId) async {
+  Future<bool> checkIsDelegatedContractInstance(int contractId) async {
     var isDelegated = await NodeHttpCore.instance.getEntity("/delegations/instance/$contractId/isdelegated", EntityFactory<bool>((data) {
       return data;
     }),options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));
