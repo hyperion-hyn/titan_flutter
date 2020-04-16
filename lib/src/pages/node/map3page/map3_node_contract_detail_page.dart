@@ -82,7 +82,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   get _isPercent50 => _isDelegated && (_durationType == 2);
 
-  get  _stateColor {
+  get _stateColor {
     var statusColor = HexColor('#EED197');
 
     switch (_contractState) {
@@ -142,8 +142,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         default:
           break;
       }
-    }
-    else {
+    } else {
       switch (_contractState) {
         case ContractState.PENDING:
         case ContractState.CANCELLED:
@@ -238,12 +237,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                         getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)),
               ),
               SliverToBoxAdapter(child: _nodeInfoWidget(_nodeStateDesc)),
-
               _Spacer(),
               SliverToBoxAdapter(child: _contractActionsWidget(contractStateDesc: _contractStateDesc)),
               SliverToBoxAdapter(child: _lineSpacer()),
               SliverToBoxAdapter(child: _contractProgressWidget()),
-
               _Spacer(),
               SliverToBoxAdapter(
                 child: NodeJoinMemberWidget(
@@ -254,12 +251,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   isShowInviteItem: false,
                 ),
               ),
-
               _Spacer(),
               SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
               SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
-                return _delegateRecordItemWidget(_delegateRecordList[index], index:index);
+                return _delegateRecordItemWidget(_delegateRecordList[index], index: index);
               }, childCount: _delegateRecordList.length)),
             ],
           )),
@@ -367,7 +363,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var amountDelegation = FormatUtil.amountToString(_contractDetailItem.amountDelegation);
     var expectedYield = FormatUtil.amountToString(_contractDetailItem.expectedYield);
     var commission = FormatUtil.amountToString(_contractDetailItem.commission);
-
+    var textColor = _userDelegateState == UserDelegateState.CANCELLED ? HexColor("#B51414") : HexColor("#5C4304");
     return Container(
       color: Colors.white,
       child: Column(
@@ -379,19 +375,17 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
             child: Row(
               children: <Widget>[
-                // todo: test
-                /*Icon(
-                  Icons.volume_up,
-                  color: HexColor("#5C4304"),
-                  size: 28,
-                ),*/
-                Image.asset("res/drawable/volume.png", width: 15, height: 14,),
+                Image.asset(
+                  "res/drawable/volume.png",
+                  width: 15,
+                  height: 14,
+                ),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     child: Text(
                       contractStateDesc,
-                      style: TextStyle(fontSize: 14, color: HexColor("#5C4304")),
+                      style: TextStyle(fontSize: 14, color: textColor),
                     ),
                   ),
                 ),
@@ -461,9 +455,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     List<Widget> children = [];
 
-
     // todo: 测试
- /*   if (_isPercent50) {
+    /*   if (_isPercent50) {
       _userDelegateState = UserDelegateState.DUE;
       _contractState = ContractState.DUE;
     } else {
@@ -553,9 +546,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     height: 10,
                     //color: Colors.red,
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _stateColor,
-                        border: Border.all(color: Colors.grey, width: 1.0)),
+                        shape: BoxShape.circle, color: _stateColor, border: Border.all(color: Colors.grey, width: 1.0)),
                   ),
                 ),
                 Text.rich(TextSpan(children: [
@@ -597,24 +588,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       ),
     );
   }
-
-/*
-  Widget _transformWidget({double left = 10}) {
-    var rotation = (_contractState==ContractState.DUE_COMPLETED || _contractState==ContractState.DUE)?5.50:0.45;
-    return Positioned(
-      left: left,
-      top: 32.5,
-      width: 2.0,
-      height: 30,
-      child: Container(
-        color: _stateColor,
-        // rotationZ 的参数为弧度，1.6 大概等于 90°
-        // 转换公式 ( 度数 * 3.14 / 180 )
-        transform: Matrix4.rotationZ(rotation),
-      ),
-    );
-  }
-*/
 
   Widget _nodeWidget(String name, {int date = 0, double left = 10, bool isLight = true, bool isMiddle = false}) {
     double top = isLight ? 60 : 62;
@@ -716,9 +689,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
         child: Row(
           children: <Widget>[
-            Text(_currentOperaState == BillsOperaState.DELEGATE ? S.of(context).account_flow : "奖励流水",
+            Text(S.of(context).account_flow,
                 style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-            if (_currentOperaState == BillsOperaState.DELEGATE) Spacer(),
+            /*if (_currentOperaState == BillsOperaState.DELEGATE) Spacer(),
             if (_currentOperaState == BillsOperaState.DELEGATE)
               RichText(
                 text: TextSpan(
@@ -732,9 +705,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   ]
                 ),
 
-              )
-//              Text(S.of(context).total + "：${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
-//                  style: TextStyle(fontSize: 14, color: HexColor("#999999")))
+              )*/
           ],
         ),
       ),
@@ -744,14 +715,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   Widget _delegateRecordItemWidget(ContractDelegateRecordItem delegateItem, {int index = 0}) {
     String shortName = delegateItem.userName.substring(0, 1);
     String userAddress = shortBlockChainAddress(" ${delegateItem.userAddress}", limitCharsLength: 8);
-    String txHash = shortBlockChainAddress(delegateItem.txHash, limitCharsLength: 6);
+    //String txHash = shortBlockChainAddress(delegateItem.txHash, limitCharsLength: 6);
 
     return Container(
       //padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       child: Stack(
         children: <Widget>[
           InkWell(
-            onTap: (){
+            onTap: () {
               _pushWebView(delegateItem);
             },
             child: Padding(
@@ -774,9 +745,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                         children: <Widget>[
                           RichText(
                             text: TextSpan(
-                                text: "${delegateItem.userName}",
-                                style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
-                                ),
+                              text: "${delegateItem.userName}",
+                              style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+                            ),
                           ),
                           Container(
                             height: 8.0,
@@ -785,7 +756,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                             userAddress,
                             style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                           ),
-
                         ],
                       ),
                     ),
@@ -809,15 +779,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                                 style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                               ),
                             ),
-//                            _billStateWidget("入账中..."),
-//                            _billStateWidget("入账失败"),
-                            if (index == 0)_billStateWidget("已入账") else if (index == 1) _billStateWidget("入账中...") else if (index == 2) _billStateWidget("入账失败"),
+                            // todo: test
+                            _billStateWidget(delegateItem)
+
+//                            if (index == 0)
+//                              _billStateWidget("已入账")
+//                            else if (index == 1)
+//                              _billStateWidget("已出账")
+//                            else if (index == 2)
+//                              _billStateWidget("入账失败"),
                           ],
                         ),
                         Container(
                           height: 8.0,
                         ),
-                        Text(FormatUtil.formatDate(delegateItem.createAt, isSecond:true), style: TextStyle(fontSize: 10, color: HexColor("#999999")))
+                        Text(FormatUtil.formatDate(delegateItem.createAt, isSecond: true),
+                            style: TextStyle(fontSize: 10, color: HexColor("#999999")))
                       ],
                     ),
                   ),
@@ -852,7 +829,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             blurRadius: 8.0,
           ),
         ],
-    ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
@@ -863,7 +840,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         ),
       ),
     );
-
+/*
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
@@ -874,17 +851,21 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             shortName,
             style: TextStyle(fontSize: 15, color: HexColor("#000000"), fontWeight: FontWeight.w500),
           )),
-    );
+    );*/
   }
 
-  Widget _billStateWidget(String state) {
+  Widget _billStateWidget(ContractDelegateRecordItem item) {
+    // todo: test
+    var state = enumBillsOperaStateFromString(item.operaType) == BillsOperaState.DELEGATE?"已转入":"已提取";
     switch (state) {
       case "入账中...":
         return Container(
-          decoration: BoxDecoration(gradient: LinearGradient(
-              colors: [HexColor("#F3D35D"), HexColor("#E0B102")],
-              begin: FractionalOffset(1, 0.5),
-              end: FractionalOffset(0, 0.5)), borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [HexColor("#F3D35D"), HexColor("#E0B102")],
+                  begin: FractionalOffset(1, 0.5),
+                  end: FractionalOffset(0, 0.5)),
+              borderRadius: BorderRadius.all(Radius.circular(12.0))),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
             child: Text(
@@ -921,9 +902,19 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         );
         break;
 
-        return Container();
+      default:
+        return Container(
+          decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+            child: Text(
+              state,
+              style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+            ),
+          ),
+        );
+        break;
     }
-
   }
 
   Future _collectAction() async {
@@ -973,9 +964,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       } catch (_) {
         logger.e(_);
         setState(() {
-          if (mounted) {
-            _isTransferring = false;
-          }
+          _isTransferring = false;
         });
         if (_ is PlatformException) {
           if (_.code == WalletError.PASSWORD_WRONG) {
@@ -1005,10 +994,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
+        /*List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
           return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
-        }).toList();
-        _delegateRecordList.addAll(filterMemberList);
+        }).toList();*/
+        _delegateRecordList.addAll(tempMemberList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
@@ -1029,10 +1018,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
+        /* List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
           return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
-        }).toList();
-        _delegateRecordList.addAll(filterMemberList);
+        }).toList();*/
+        _delegateRecordList.addAll(tempMemberList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
@@ -1140,7 +1129,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       case UserDelegateState.CANCELLED:
-        _actionTitle = S.of(context).extract;
+        _actionTitle = S.of(context).withdrawRefund;
         onPressed = () {
           _collectAction();
         };
@@ -1189,6 +1178,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       case ContractState.DUE:
         _nodeStateDesc = S.of(context).node_had_stop;
+        _contractStateDesc = "已到期，可提取奖励"+ "${FormatUtil.amountToString(_contractDetailItem.expectedYield)}HYN";
 
         _contractProgressDesc = S.of(context).launch_success;
         _contractProgressDetail = S.of(context).expired_can_withdraw_rewards;
@@ -1206,7 +1196,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _nodeStateDesc = S.of(context).node_had_stop;
         _contractStateDesc = S.of(context).recovered_invested_capital;
 
-        _contractProgressDesc = S.of(context).earned_rewards;
+        //_contractProgressDesc = S.of(context).earned_rewards;
+        _contractProgressDesc = "合约已结束";
         _contractProgressDetail = S.of(context).congratulation_reward_withdrawn;
 
         break;
@@ -1225,14 +1216,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     if (_isDelegated) {
       if (_userDelegateState == UserDelegateState.HALFDUE) {
+        _contractStateDesc = S.of(context).can_withdraw_fifty_reward;
+
         _contractProgressDesc = S.of(context).launch_success;
         _contractProgressDetail = S.of(context).can_withdraw_fifty_reward;
-      }
-      else if (_userDelegateState == UserDelegateState.HALFDUE_COLLECTED) {
+      } else if (_userDelegateState == UserDelegateState.HALFDUE_COLLECTED) {
         _contractProgressDesc = S.of(context).launch_success;
         _contractProgressDetail = "恭喜你获得一半奖励";
-      }
-      else if (_userDelegateState == UserDelegateState.ACTIVE) {
+      } else if (_userDelegateState == UserDelegateState.ACTIVE) {
         _contractProgressDesc = S.of(context).launch_success;
         _contractProgressDetail = S.of(context).remain_day_has_colon(_contractNodeItem.remainHalfDueDay);
       }
@@ -1243,7 +1234,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
     var url = EtherscanApi.getTxDetailUrl(delegateItem.txHash, isChinaMainland);
     if (url != null) {
-     /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
+      /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
       String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
       Application.router.navigateTo(context, Routes.toolspage_webview_page
           + '?initUrl=$webUrl&title=$webTitle');*/
@@ -1252,10 +1243,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: url,
-                title: S.of(context).detail,
-              )));
+                    initUrl: url,
+                    title: S.of(context).detail,
+                  )));
     }
   }
-
 }

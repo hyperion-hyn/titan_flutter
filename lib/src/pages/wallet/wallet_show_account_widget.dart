@@ -117,7 +117,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${WalletUtil.formatPrice((widget.coinVo.balance ?? 0.0) * activeQuoteVoAndSign?.quoteVo?.price)}",
+                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${WalletUtil.formatPrice((widget.coinVo.balance ?? 0.0) * activeQuoteVoAndSign?.quoteVo?.price ?? 0.0)}",
                               style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                             ),
                           ),

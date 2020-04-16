@@ -104,6 +104,31 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );
   }
 
+  HexColor  _stateColor(ContractState _contractState) {
+    var statusColor = HexColor('#EED197');
+
+    switch (_contractState) {
+      case ContractState.PENDING:
+        statusColor = HexColor('#EED197');
+        break;
+
+      case ContractState.ACTIVE:
+      case ContractState.DUE:
+        statusColor = HexColor('#1FB9C7');
+        break;
+
+      case ContractState.CANCELLED:
+      case ContractState.CANCELLED_COMPLETED:
+        statusColor = HexColor('#F30202');
+        break;
+
+      default:
+        statusColor = HexColor('#FFDB58');
+        break;
+    }
+    return statusColor;
+  }
+  
   Widget _buildInfoItem(ContractNodeItem contractNodeItem) {
     String address = shortBlockChainAddress(contractNodeItem.owner);
     var dateDesc = "";
@@ -111,7 +136,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     var amount = "";
     var hyn = "HYN";
     var state = enumContractStateFromString(contractNodeItem.state);
-    //print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
+    print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
 
     switch (state) {
       case ContractState.PENDING:
@@ -133,9 +158,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       case ContractState.DUE:
         dateDesc = S.of(context).be_expired;
-        amountPre = S.of(context).can_extract;
-        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
-        hyn = "HYN";
+//        amountPre = S.of(context).can_extract;
+//        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
+        amountPre = "";
+        amount = "";
+        hyn = "";
         break;
 
       case ContractState.CANCELLED:
@@ -184,7 +211,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                   Expanded(
                       child: Text(" $address",
                           style: TextStyles.textC9b9b9bS12)),
-                  Text(dateDesc, style: TextStyles.textC9b9b9bS12)
+                  Text(dateDesc,
+                    style: TextStyle(fontSize: 12, color: _stateColor(state)),
+                  )
                 ],
               ),
               Padding(
