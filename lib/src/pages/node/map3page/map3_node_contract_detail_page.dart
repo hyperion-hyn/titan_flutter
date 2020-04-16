@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -21,6 +22,8 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/node_delegator_member_widget.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
+import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -256,7 +259,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
               SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
-                return _delegateRecordItemWidget(_delegateRecordList[index]);
+                return _delegateRecordItemWidget(_delegateRecordList[index], index:index);
               }, childCount: _delegateRecordList.length)),
             ],
           )),
@@ -370,14 +373,19 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          Container(
+            color: HexColor("#1FB9C7").withOpacity(0.08),
+            margin: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
             child: Row(
               children: <Widget>[
-                Icon(
+                // todo: test
+                /*Icon(
                   Icons.volume_up,
                   color: HexColor("#5C4304"),
-                ),
+                  size: 28,
+                ),*/
+                Image.asset("res/drawable/volume.png", width: 15, height: 14,),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -411,7 +419,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     break;
 
                   case 3:
-                    title = S.of(context).get_manager_hyn;
+                    title = S.of(context).manager_tip_hyn;
                     detail = commission;
                     //style = TextStyle(fontSize: 12, color: Colors.red, fontWeight: FontWeight.bold);
                     break;
@@ -439,7 +447,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   Widget _contractProgressWidget() {
     double lineWidth = _durationType == 2 ? 40 : 45;
     double _left(bool isLine, double index) {
-      double horizontal = _durationType == 2 ? 0 : 30;
+      double horizontal = _durationType == 2 ? 0 : 40;
       double gap = 16;
       double multi = _durationType == 2 ? 40 : 8;
       double sectionWidth =
@@ -712,95 +720,110 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
             if (_currentOperaState == BillsOperaState.DELEGATE) Spacer(),
             if (_currentOperaState == BillsOperaState.DELEGATE)
-              Text(S.of(context).total + "：${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
-                  style: TextStyle(fontSize: 14, color: HexColor("#999999")))
+              RichText(
+                text: TextSpan(
+                  text: "${S.of(context).total}：",
+                  style: TextStyle(fontSize: 12, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                  children: [
+                    TextSpan(
+                      text: "${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
+                      style: TextStyle(fontSize: 12, color: HexColor("#FF4C3B"), fontWeight: FontWeight.normal),
+                    )
+                  ]
+                ),
+
+              )
+//              Text(S.of(context).total + "：${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
+//                  style: TextStyle(fontSize: 14, color: HexColor("#999999")))
           ],
         ),
       ),
     );
   }
 
-  Widget _delegateRecordItemWidget(ContractDelegateRecordItem delegateItem) {
-    String showName = delegateItem.userName.substring(0, 1);
+  Widget _delegateRecordItemWidget(ContractDelegateRecordItem delegateItem, {int index = 0}) {
+    String shortName = delegateItem.userName.substring(0, 1);
     String userAddress = shortBlockChainAddress(" ${delegateItem.userAddress}", limitCharsLength: 8);
     String txHash = shortBlockChainAddress(delegateItem.txHash, limitCharsLength: 6);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      //padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       child: Stack(
         children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 40,
-                width: 40,
-                child: Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(13.0)),
+          InkWell(
+            onTap: (){
+              _pushWebView(delegateItem);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: _iconWidget(shortName),
                   ),
-                  child: Center(
-                      child: Text(
-                    showName,
-                    style: TextStyle(fontSize: 15, color: HexColor("#000000")),
-                  )),
-                ),
-              ),
-              Flexible(
-                flex: 4,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      RichText(
-                        text: TextSpan(
-                            text: "${delegateItem.userName}",
-                            style: TextStyle(fontSize: 14, color: HexColor("#000000")),
-                            children: [
-                              TextSpan(
-                                text: userAddress,
-                                style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
-                              )
-                            ]),
-                      ),
-                      Container(
-                        height: 6.0,
-                      ),
-                      Text("${FormatUtil.formatDate(delegateItem.createAt)}",
-                          style: TextStyle(fontSize: 12, color: HexColor("#333333"))),
-                      Container(
-                        height: 6.0,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              //Spacer(),
-              Container(
-                width: 8,
-              ),
-              Flexible(
-                flex: 4,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    RichText(
-                      text: TextSpan(
-                        text: FormatUtil.amountToString(delegateItem.amount),
-                        style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                  Flexible(
+                    flex: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          RichText(
+                            text: TextSpan(
+                                text: "${delegateItem.userName}",
+                                style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+                                ),
+                          ),
+                          Container(
+                            height: 8.0,
+                          ),
+                          Text(
+                            userAddress,
+                            style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                          ),
+
+                        ],
                       ),
                     ),
-                    Container(
-                      height: 6.0,
+                  ),
+                  //Spacer(),
+                  Container(
+                    width: 8,
+                  ),
+                  Flexible(
+                    flex: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: Text(
+                                FormatUtil.amountToString(delegateItem.amount),
+                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                              ),
+                            ),
+//                            _billStateWidget("入账中..."),
+//                            _billStateWidget("入账失败"),
+                            if (index == 0)_billStateWidget("已入账") else if (index == 1) _billStateWidget("入账中...") else if (index == 2) _billStateWidget("入账失败"),
+                          ],
+                        ),
+                        Container(
+                          height: 8.0,
+                        ),
+                        Text(FormatUtil.formatDate(delegateItem.createAt, isSecond:true), style: TextStyle(fontSize: 10, color: HexColor("#999999")))
+                      ],
                     ),
-                    Text(txHash, style: TextStyle(fontSize: 12, color: HexColor("#333333")))
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
           Positioned(
             bottom: 0,
@@ -814,6 +837,93 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         ],
       ),
     );
+  }
+
+  Widget _iconWidget(String shortName) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: HexColor("#FFFFFF"),
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey[300],
+            blurRadius: 8.0,
+          ),
+        ],
+    ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text(
+            shortName,
+            style: TextStyle(fontSize: 15, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+          ),
+        ),
+      ),
+    );
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(13.0),
+      ),
+      child: Center(
+          child: Text(
+            shortName,
+            style: TextStyle(fontSize: 15, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+          )),
+    );
+  }
+
+  Widget _billStateWidget(String state) {
+    switch (state) {
+      case "入账中...":
+        return Container(
+          decoration: BoxDecoration(gradient: LinearGradient(
+              colors: [HexColor("#F3D35D"), HexColor("#E0B102")],
+              begin: FractionalOffset(1, 0.5),
+              end: FractionalOffset(0, 0.5)), borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+            child: Text(
+              state,
+              style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
+            ),
+          ),
+        );
+        break;
+
+      case "已入账":
+        return Container(
+          decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+            child: Text(
+              state,
+              style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+            ),
+          ),
+        );
+        break;
+
+      case "入账失败":
+        return Container(
+          decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+            child: Text(
+              state,
+              style: TextStyle(fontSize: 6, color: HexColor("#CC2D1E"), fontWeight: FontWeight.normal),
+            ),
+          ),
+        );
+        break;
+
+        return Container();
+    }
+
   }
 
   Future _collectAction() async {
@@ -912,7 +1022,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  void getJoinMemberMoreData() async {
+  Future getJoinMemberMoreData() async {
     try {
       _currentPage++;
       List<ContractDelegateRecordItem> tempMemberList =
@@ -1126,6 +1236,25 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _contractProgressDesc = S.of(context).launch_success;
         _contractProgressDetail = S.of(context).remain_day_has_colon(_contractNodeItem.remainHalfDueDay);
       }
+    }
+  }
+
+  void _pushWebView(ContractDelegateRecordItem delegateItem) {
+    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
+    var url = EtherscanApi.getTxDetailUrl(delegateItem.txHash, isChinaMainland);
+    if (url != null) {
+     /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
+      String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
+      Application.router.navigateTo(context, Routes.toolspage_webview_page
+          + '?initUrl=$webUrl&title=$webTitle');*/
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WebViewContainer(
+                initUrl: url,
+                title: S.of(context).detail,
+              )));
     }
   }
 

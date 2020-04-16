@@ -19,6 +19,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
@@ -396,6 +397,8 @@ Widget getHoldInNum(
   }
 
   var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
+  walletName = UiUtil.shortString(walletName, limitLength:3);
+
   var balance = WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
   return Container(
     color: Colors.white,
