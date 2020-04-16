@@ -39,6 +39,7 @@ class _Map3NodeState extends State<Map3NodePage> {
     return Container(
       color: Color(0xffFDFAFF),
       child: LoadDataContainer(
+        enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
         bloc: loadDataBloc,
         onLoadData: () async {
           getNetworkData();
@@ -50,7 +51,10 @@ class _Map3NodeState extends State<Map3NodePage> {
           getMoreNetworkData();
         },
         child: CustomScrollView(
-          slivers: <Widget>[SliverToBoxAdapter(child: _map3HeadItem()), _pendingListWidget()],
+          slivers: <Widget>[
+            SliverToBoxAdapter(child: _map3HeadItem()),
+            _pendingListWidget(),
+          ],
         ),
       ),
     );
@@ -93,22 +97,29 @@ class _Map3NodeState extends State<Map3NodePage> {
 
   Widget _pendingListWidget() {
     if (_nodePageEntityVo.contractNodeList == null || _nodePageEntityVo.contractNodeList.length == 0) {
-      return SliverList(
-          delegate: SliverChildBuilderDelegate((context, index) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
-                child: Text(S.of(context).wait_start_node_contract, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54))),
-            Container(
-                height: 260,
-                child: Center(
-                    child: Text(S.of(context).search_empty_data,
-                        style: TextStyle(fontSize: 15, color: HexColor("#999999")))))
-          ],
-        );
-      }, childCount: 1));
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 48.0),
+          child: Column(
+            children: <Widget>[
+              Image.asset(
+                'res/drawable/ic_empty_contract.png',
+                width: 120,
+                height: 120,
+              ),
+              SizedBox(height: 8),
+              SizedBox(
+                child: Text(
+                  '没有待启动的节点合约\n您可以创建合约',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  textAlign: TextAlign.center,
+                ),
+                width: 160,
+              )
+            ],
+          ),
+        ),
+      );
     }
 
     return SliverList(
@@ -119,7 +130,8 @@ class _Map3NodeState extends State<Map3NodePage> {
           children: <Widget>[
             Padding(
                 padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
-                child: Text(S.of(context).wait_start_node_contract, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54))),
+                child: Text(S.of(context).wait_start_node_contract,
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54))),
             _getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])
           ],
         );
@@ -334,7 +346,9 @@ class _Map3NodeState extends State<Map3NodePage> {
                           child: Row(
                             children: <Widget>[
                               Text(
-                                  S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" + S.of(context).ten_thousand,
+                                  S.of(context).highest +
+                                      " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" +
+                                      S.of(context).ten_thousand,
                                   style: TextStyles.textC99000000S10,
                                   maxLines: 1,
                                   softWrap: true),
