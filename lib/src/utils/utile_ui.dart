@@ -42,6 +42,16 @@ class UiUtil {
     return address.substring(0, 9) + "..." + address.substring(address.length - 9, address.length);
   }
 
+  static String shortString(String address, {int limitLength = 9}) {
+    if (address == null || address == "") {
+      return "";
+    }
+    if (address.length < limitLength) {
+      return address;
+    }
+    return address.substring(0, limitLength) + "..." ;
+  }
+
   static String shortEmail(String email) {
     if (email == null || email == "") {
       return "";

@@ -127,7 +127,7 @@ class _WalletDemoState extends State<WalletDemo> {
 //
                 var signedHex;
 
-//                var credentials = await wallet0.getCredentials('my_password');
+//                var credentials = await wallet0.getCredentials('111111');
 //                final client = WalletUtil.getWeb3Client();
 //                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
 //                var signed = await client.signTransaction(
@@ -207,7 +207,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   createNodeWalletAddress: createNodeWalletAddress,
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                   gasLimit: gasLimit,
-                  password: 'my_password',
+                  password: '111111',
                 );
                 var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
@@ -238,7 +238,7 @@ class _WalletDemoState extends State<WalletDemo> {
               }
 
               var walletName = "我的助记词钱包1";
-              var password = 'my_password';
+              var password = '111111';
               var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: mnemonic);
               if (wallet != null) {
                 logger.i("已经导入助记词钱包 ${wallet.keystore.fileName}");
@@ -255,7 +255,7 @@ class _WalletDemoState extends State<WalletDemo> {
 //              var prvKey = "92e06b7043c2edc07de56fd1f22764d9d7927a386e6efc0632f74a1141291ec6";
 //              var prvKey = "0x311add4073c265380aafab346b31bb0a22ca0ad7b6f544cb4a16b88f864526a3";  //moo
               var walletName = "我的私钥钱包1";
-              var password = 'my_password';
+              var password = '111111';
               var wallet = await WalletUtil.storePrivateKey(name: walletName, password: password, prvKeyHex: prvKey);
               if (wallet != null) {
                 logger.i("已经导入密码钱包 ${wallet.keystore.fileName}");
@@ -278,7 +278,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   var json =
                       '{"activeAccounts":[{"address":"0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7","derivationPath":"m/44\'/60\'/0\'/0/0"}],"crypto":{"cipher":"aes-128-ctr","cipherparams":{"iv":"1d2961149ff69d0a01a617ba89f968a2"},"ciphertext":"674ea349cfd925da4665fecf5f02caa6aedd917f537af9d7f70de57d28bb97d098266f52cdf7570d083702586e30095eb368b5486395414ab6698e319dc991ed2a9076d108a68ac611f9d54a1ee6519448ab5f16c759c3531af6e9a6","kdf":"scrypt","kdfparams":{"dklen":32,"n":4096,"p":6,"r":8,"salt":"0f9004a05b80711c4b40b5106758337b6c310444d02f2102f34867e361d7a343"},"mac":"af45e8dff47c52e13842d74359bdc102f6c1ce2cec1fc3cfb4390e571a3aa948"},"id":"a2ba2052-7586-46c8-a7c6-4294f5802671","name":"我的钱包1","type":"mnemonic","version":3}';
                   var oldPassword = 'my password';
-                  var newPassword = 'my_password';
+                  var newPassword = '111111';
 
                   var walletName = "我的JSON钱包1";
                   try {
@@ -305,8 +305,8 @@ class _WalletDemoState extends State<WalletDemo> {
 
                   var json =
                       '{"activeAccounts":[{"address":"0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7","derivationPath":"m/44\'/60\'/0\'/0/0"}],"crypto":{"cipher":"aes-128-ctr","cipherparams":{"iv":"1d2961149ff69d0a01a617ba89f968a2"},"ciphertext":"674ea349cfd925da4665fecf5f02caa6aedd917f537af9d7f70de57d28bb97d098266f52cdf7570d083702586e30095eb368b5486395414ab6698e319dc991ed2a9076d108a68ac611f9d54a1ee6519448ab5f16c759c3531af6e9a6","kdf":"scrypt","kdfparams":{"dklen":32,"n":4096,"p":6,"r":8,"salt":"0f9004a05b80711c4b40b5106758337b6c310444d02f2102f34867e361d7a343"},"mac":"af45e8dff47c52e13842d74359bdc102f6c1ce2cec1fc3cfb4390e571a3aa948"},"id":"a2ba2052-7586-46c8-a7c6-4294f5802671","name":"我的钱包1","type":"mnemonic","version":3}';
-                  var oldPassword = 'my_password_wrong';
-                  var newPassword = 'my_password';
+                  var oldPassword = '111111_wrong';
+                  var newPassword = '111111';
 
                   var walletName = "我的JSON钱包1";
                   try {
@@ -358,9 +358,9 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     print('即将修改${wallet.keystore.fileName} 的密码');
                     var success = await WalletUtil.changePassword(
-                        wallet: wallet, oldPassword: 'my_password', newPassword: "new password", name: '修改的钱包');
+                        wallet: wallet, oldPassword: '111111', newPassword: "new password", name: '修改的钱包');
 //                    var success = await WalletUtil.changePassword(
-//                        wallet: wallet, oldPassword: 'new password', newPassword: "my_password", name: '修改的钱包');
+//                        wallet: wallet, oldPassword: 'new password', newPassword: "111111", name: '修改的钱包');
                     if (success) {
                       print('修改密码成功');
                       print('最后成为${wallet.keystore.fileName}');
@@ -377,7 +377,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     print('即将修改${wallet.keystore.fileName} 的密码');
                     var success = await WalletUtil.changePassword(
-                        wallet: wallet, oldPassword: 'my_password_wrong', newPassword: "new password", name: '修改的钱包');
+                        wallet: wallet, oldPassword: '111111_wrong', newPassword: "new password", name: '修改的钱包');
                     if (success) {
                       print('修改密码成功');
                       print('最后成为${wallet.keystore.fileName}');
@@ -397,7 +397,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     try {
                       var prvKey = await WalletUtil.exportPrivateKey(
-                          fileName: wallet.keystore.fileName, password: 'my_password');
+                          fileName: wallet.keystore.fileName, password: '111111');
                       logger.i('your prvKey is: $prvKey');
                     } catch (e) {
                       logger.e(e);
@@ -413,7 +413,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     try {
                       var prvKey = await WalletUtil.exportPrivateKey(
-                          fileName: wallet.keystore.fileName, password: 'my_password_wrong');
+                          fileName: wallet.keystore.fileName, password: '111111_wrong');
                       logger.i('your prvKey is: $prvKey');
                     } catch (e) {
                       logger.e(e);
@@ -434,7 +434,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     try {
                       if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
                         var mnemonic = await WalletUtil.exportMnemonic(
-                            fileName: wallet.keystore.fileName, password: 'my_password');
+                            fileName: wallet.keystore.fileName, password: '111111');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
                         print('不是TrustWallet钱包，不支持导出助记词');
@@ -454,7 +454,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     try {
                       if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
                         var mnemonic = await WalletUtil.exportMnemonic(
-                            fileName: wallet.keystore.fileName, password: 'my_password_wrong');
+                            fileName: wallet.keystore.fileName, password: '111111_wrong');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
                         print('不是TrustWallet钱包，不支持导出助记词');
@@ -470,7 +470,7 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var password = 'my_password';
+              var password = '111111';
               var wallets = await WalletUtil.scanWallets();
               for (var wallet in wallets) {
                 var result = await wallet.delete(password);
@@ -637,7 +637,7 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               try {
-                var password = 'my_password';
+                var password = '111111';
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.01); //.toRadixString(16);
                 var wallets = await WalletUtil.scanWallets();
                 if (wallets.length > 0) {
@@ -665,7 +665,7 @@ class _WalletDemoState extends State<WalletDemo> {
               try {
                 var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                 if (activeWallet != null) {
-                  var password = 'my_password';
+                  var password = '111111';
                   var amount = ConvertTokenUnit.etherToWei(etherDouble: 1000000000000000); //.toRadixString(16);
                   var hynErc20ContractAddress = activeWallet.getEthAccount().contractAssetTokens[0].contractAddress;
 

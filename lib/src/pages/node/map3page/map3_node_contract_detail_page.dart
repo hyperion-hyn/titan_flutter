@@ -34,7 +34,6 @@ import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_contract_page.dart';
-import 'my_map3_contract_page.dart';
 
 class Map3NodeContractDetailPage extends StatefulWidget {
   final int contractId;
@@ -913,7 +912,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  void getJoinMemberMoreData() async {
+  Future getJoinMemberMoreData() async {
     try {
       _currentPage++;
       List<ContractDelegateRecordItem> tempMemberList =

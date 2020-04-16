@@ -16,6 +16,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class ShowWalletView extends StatelessWidget {
   final WalletVo walletVo;
@@ -82,7 +83,7 @@ class ShowWalletView extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Text(
-                                "${walletVo.wallet.keystore.name}",
+                                "${UiUtil.shortString(walletVo.wallet.keystore.name, limitLength: 6)}",
                                 style: TextStyle(color: Color(0xFF252525)),
                               ),
                               Icon(
