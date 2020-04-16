@@ -1,5 +1,7 @@
 
 
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 
 class FormatUtil{
@@ -47,5 +49,14 @@ class FormatUtil{
 
   static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
 
+  static String encodeBase64(String data){
+    var content = utf8.encode(data);
+    var digest = base64Encode(content);
+    return digest;
+  }
+
+  static String decodeBase64(String data){
+    return String.fromCharCodes(base64Decode(data));
+  }
 
 }

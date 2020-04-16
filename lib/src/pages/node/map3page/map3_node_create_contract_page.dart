@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,6 +12,8 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
+import 'package:titan/src/pages/node/model/node_share_entity.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -181,7 +186,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         Expanded(
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            getMap3NodeProductHeadItem(context, contractNodeItem.contract),
+            getMap3NodeProductHeadItem(context, contractNodeItem),
 //            SizedBox(height: 16,),
             Container(
               color: Colors.white,
@@ -627,10 +632,11 @@ Widget getHoldInNum(
   );
 }
 
-Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem, {isJoin = false, isDetail = true}) {
+Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem, {isJoin = false, isDetail = true, hasShare = false}) {
   var title = !isDetail
       ? S.of(context).node_contract_detail
       : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
+  var nodeItem = contractNodeItem.contract;
   return Stack(
     children: <Widget>[
       Container(
@@ -699,6 +705,30 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem, {isJo
           ),
         ),
       ),
+      if(hasShare)
+        Positioned(
+          top:0,
+          right: 0,
+          child: InkWell(
+            onTap: () async {
+              final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
+
+              Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+              bool isFromOwn = wallet.getEthAccount().address == contractNodeItem.owner;
+              NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address,"detail",isFromOwn);
+              String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
+              Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
+                  text: "${contractNodeItem.shareUrl}?name=${contractNodeItem.ownerName}&key=$encodeStr");
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 44.0, right: 15),
+              child: Icon(
+                Icons.share,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
       Align(
         alignment: Alignment.topCenter,
         child: Padding(

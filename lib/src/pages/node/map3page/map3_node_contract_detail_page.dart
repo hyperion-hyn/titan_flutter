@@ -234,7 +234,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 child: Container(
                     color: Colors.white,
                     child:
-                        getMap3NodeProductHeadItem(context, _contractNodeItem.contract, isJoin: true, isDetail: false)),
+                        getMap3NodeProductHeadItem(context, _contractNodeItem, isJoin: true, isDetail: false, hasShare: true)),
               ),
               SliverToBoxAdapter(child: _nodeInfoWidget(_nodeStateDesc)),
               _Spacer(),
