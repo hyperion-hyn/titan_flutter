@@ -410,7 +410,7 @@ Widget getHoldInNum(
           child: Row(
             children: <Widget>[
               Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.formatNumDecimal(balance)),
+              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.formatNumDecimal(balance.toInt().toDouble())),
                   style: TextStyle(color: Colors.grey[600])),
             ],
           ),

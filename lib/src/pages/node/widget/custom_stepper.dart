@@ -863,7 +863,7 @@ class _TickPainter extends CustomPainter {
 
   final Color bgColor;
   final int direction; // 0: 左边， 1： right
-  _TickPainter({this.bgColor, this.direction});
+  _TickPainter({this.bgColor, this.direction=0});
 
   @override
   bool hitTest(Offset point) => true; // Hitting the rectangle is fine enough.
@@ -879,10 +879,10 @@ class _TickPainter extends CustomPainter {
     //canvas.drawLine(new Offset(size.width, 0), new Offset(size.width / 4, size.height), _paint);
 
     if (direction == 0) {
-      print("[pain] --0000, left");
+      //print("[pain] --0000, left");
       canvas.drawLine(Offset(size.width, 0), Offset(size.width / 4, size.height), _paint);
     } else {
-      print("[pain] --1111, right");
+      //print("[pain] --1111, right");
       canvas.drawLine(Offset(size.width * 1.5, size.height),Offset(size.width / 8, 0), _paint);
     }
   }

@@ -62,6 +62,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   bool _visible = false;
   bool _isTransferring = false;
+  String _lastActionTitle = "";
   bool _isDelegated = false; // 判断当前(钱包=用户)是否参与抵押
   void Function() onPressed = () {};
   var _actionTitle = "";
@@ -176,7 +177,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.PENDING:
         case UserDelegateState.CANCELLED:
         case UserDelegateState.CANCELLED_COLLECTED:
-          value = _contractNodeItem.remainProgress;
+          //value = _contractNodeItem.remainProgress;
+          value = 0.8;
           break;
 
         case UserDelegateState.ACTIVE:
@@ -203,8 +205,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case ContractState.PENDING:
         case ContractState.CANCELLED:
         case ContractState.CANCELLED_COMPLETED:
-        value = _contractNodeItem.remainProgress;
-          break;
+        //value = _contractNodeItem.remainProgress;
+        value = 0.8;
+
+        break;
 
         case ContractState.ACTIVE:
           value = _contractNodeItem.expectDueProgress;
@@ -255,13 +259,16 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: <Widget>[
-          _pageWidget(context),
-          _bottomSureButtonWidget(),
-        ],
+    return WillPopScope(
+      onWillPop: () async => !_isTransferring,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: <Widget>[
+            _pageWidget(context),
+            _bottomSureButtonWidget(),
+          ],
+        ),
       ),
     );
   }
@@ -318,7 +325,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _bottomSureButtonWidget() {
-    _actionTitle = _isTransferring ? S.of(context).extracting : _actionTitle;
+    print("update----_bottomSureButtonWidget, _isTransferring:$_isTransferring");
+    _actionTitle = _isTransferring ? S.of(context).extracting : _lastActionTitle;
     return Visibility(
       visible: _visible,
       child: Positioned(
@@ -553,7 +561,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _contractNodeItem.instanceActiveTime,
         0,
         _contractNodeItem.instanceDueTime,
-        _contractNodeItem.instanceFinishTime,
+        _userDelegateState.index<UserDelegateState.ACTIVE.index? 0:_contractNodeItem.instanceFinishTime,
       ];
       progressHints = [
         S.of(context).n_day(7.toString()),
@@ -573,7 +581,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _contractNodeItem.instanceStartTime,
         _contractNodeItem.instanceActiveTime,
         _contractNodeItem.instanceDueTime,
-        _contractNodeItem.instanceFinishTime,
+        _contractState.index<ContractState.ACTIVE.index? 0:_contractNodeItem.instanceFinishTime,
       ];
       progressHints = [
         S.of(context).n_day(7.toString()),
@@ -588,7 +596,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       tickColor: _stateColor,
       tickText: _contractStateDetail,
       currentStepProgress: _currentStepProgress,
-      currentStep: 1,
+      currentStep: _currentStep,
       steps: titles
           .map(
             (title) {
@@ -687,7 +695,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: _iconWidget(shortName),
+                    child: circleIconWidget(shortName),
                   ),
                   Flexible(
                     flex: 4,
@@ -757,32 +765,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _iconWidget(String shortName) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: HexColor("#FFFFFF"),
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey[300],
-            blurRadius: 8.0,
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Text(
-            shortName,
-            style: TextStyle(fontSize: 15, color: HexColor("#000000"), fontWeight: FontWeight.w500),
-          ),
-        ),
       ),
     );
   }
@@ -868,6 +850,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       try {
         setState(() {
           if (mounted) {
+            _lastActionTitle = _actionTitle;
             _isTransferring = true;
           }
         });
@@ -1101,7 +1084,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       case ContractState.ACTIVE:
         _nodeStateDesc = S.of(context).node_in_progress;
-        _contractNotifyDetail = S.of(context).broadcase_sponsor_wait_net_verify(_amountDelegation);
+        _contractNotifyDetail = S.of(context).broadcase_sponsor_wait_net_verify("${FormatUtil.amountToString(_contractDetailItem.amountDelegation)}");
 
         _contractStateDesc = S.of(context).launch_success;
         _contractStateDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay);
@@ -1158,9 +1141,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       } else if (_userDelegateState == UserDelegateState.ACTIVE) {
 
         _contractStateDesc = S.of(context).launch_success;
-        _contractStateDetail = S.of(context).remain_day_has_colon(_contractNodeItem.remainHalfDueDay);
+        _contractStateDetail =  "可提50奖励的时间，"+S.of(context).remain_day_has_colon(_contractNodeItem.remainHalfDueDay);
       }
     }
+
+    _lastActionTitle = _actionTitle;
   }
 
   void _pushWebView(ContractDelegateRecordItem delegateItem) {
