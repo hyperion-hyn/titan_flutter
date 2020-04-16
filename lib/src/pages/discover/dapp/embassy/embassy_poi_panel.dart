@@ -110,7 +110,7 @@ class EmbassyPoiPanelState extends State<EmbassyPoiPanel> {
                               buildHeadItem(Icons.location_on, widget.poi.address,
                                   hint: S.of(context).no_detail_address),
 //                  if (widget.poi.remark != null && widget.poi.remark.length > 0)
-//                    buildHeadItem(Icons.message, widget.poi.remark, hint: '无备注'),
+//                    buildHeadItem(Icons.message, widget.poi.remark, hint: '-无备注'),
                             ],
                           ),
                         ),

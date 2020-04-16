@@ -35,6 +35,7 @@ class _CreateWalletBackupNoticePageState extends State<CreateWalletBackupNoticeP
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   S.of(context).account_backup_notice,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.normal, fontSize: 20),
                 ),
               ),

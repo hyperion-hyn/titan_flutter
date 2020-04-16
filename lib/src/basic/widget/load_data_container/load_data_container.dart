@@ -175,15 +175,15 @@ class LoadDataContainerState extends State<LoadDataContainer> {
             body = CupertinoActivityIndicator();
           } else if (mode == LoadStatus.failed) {
             body = Text(
-              S.of(context).load_fail_click_hint,
-              style: TextStyle(color: Colors.grey),
+              S.of(context).load_failed_click_retry,
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             );
           } else if (mode == LoadStatus.canLoading) {
             body = Container();
           } else {
             body = Text(
-              S.of(context).the_horizon_hint,
-              style: TextStyle(color: Colors.grey),
+              S.of(context).no_more_data,
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             );
           }
           return Container(

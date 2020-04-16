@@ -1,6 +1,5 @@
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/global.dart';
 
 class HttpResponseNot200Exception implements Exception {
   String cause;
@@ -49,6 +48,7 @@ class DefineHttpResponseCodeNotSuccess extends HttpResponseCodeNotSuccess {
 //var CONTENT_CONFLICT = HttpResponseCodeNotSuccess(-1004, "Content conflict");
 //var NO_CONTENT = HttpResponseCodeNotSuccess(-1005, "Not content");
 //var NETWORK_ERROR = HttpResponseCodeNotSuccess(-1006, "network error");
+var ERROR_OUT_OF_RANGE = HttpResponseCodeNotSuccess(-1007, S.of(Keys.rootKey.currentContext).exceed_the_limit);
 //final HttpResponseCodeNotSuccess ERROR_USER_CREATED = HttpResponseCodeNotSuccess(-20001, "create user error"); //用户创建失败
 //var ERROR_USER_EXIST = HttpResponseCodeNotSuccess(-20002, "user already exist"); //用户已存在
 //var ERROR_USER_UPATED = HttpResponseCodeNotSuccess(-20004, "update user error"); //用户更新失败
@@ -58,29 +58,26 @@ class DefineHttpResponseCodeNotSuccess extends HttpResponseCodeNotSuccess {
 //var ERROR_RESET_PASSWORD = HttpResponseCodeNotSuccess(-20008, "fail to reset password"); //重置密码错误
 //var ERROR_CHECK_IN_LIMIT = HttpResponseCodeNotSuccess(-20009, "check-in reach the upper limit"); //签到达到上限
 //var ERROR_CHECK_IN_INTERVAL = HttpResponseCodeNotSuccess(-20010, "check-in interval is 30 minutes."); //签到时间间隔var
+var ERROR_FUND_PASSWORD = HttpResponseCodeNotSuccess(-20011, S.of(Keys.rootKey.currentContext).fund_password_error); //签到时间间隔var
 
-var ERROR_OUT_OF_RANGE = DefineHttpResponseCodeNotSuccess(-1007, () => S.of(Keys.materialAppKey.currentContext).over_limit_hint);
-
-var ERROR_FUND_PASSWORD = DefineHttpResponseCodeNotSuccess(-20011, () => S.of(Keys.materialAppKey.currentContext).fund_pwd_error_hint); //签到时间间隔var
-
-List<DefineHttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
-  DefineHttpResponseCodeNotSuccess(-10000, () => S.of(Keys.materialAppKey.currentContext).unknown_error_hint),
-  DefineHttpResponseCodeNotSuccess(-10001, () => S.of(Keys.materialAppKey.currentContext).para_error_hint),
-  DefineHttpResponseCodeNotSuccess(-10002, () => S.of(Keys.materialAppKey.currentContext).unauthorized),
-  DefineHttpResponseCodeNotSuccess(-1003, () => S.of(Keys.materialAppKey.currentContext).insufficient_permission_hint),
-  DefineHttpResponseCodeNotSuccess(-1004, () => S.of(Keys.materialAppKey.currentContext).content_conflict_hint),
-  DefineHttpResponseCodeNotSuccess(-1005, () => S.of(Keys.materialAppKey.currentContext).no_content_hint),
-  DefineHttpResponseCodeNotSuccess(-1006, () => S.of(Keys.materialAppKey.currentContext).net_error_hint),
+List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
+  HttpResponseCodeNotSuccess(-10000, S.of(Keys.rootKey.currentContext).unknown_error),
+  HttpResponseCodeNotSuccess(-10001, S.of(Keys.rootKey.currentContext).param_error),
+  HttpResponseCodeNotSuccess(-10002, S.of(Keys.rootKey.currentContext).unauthorized),
+  HttpResponseCodeNotSuccess(-1003, S.of(Keys.rootKey.currentContext).insufficient_permission),
+  HttpResponseCodeNotSuccess(-1004, S.of(Keys.rootKey.currentContext).content_confict),
+  HttpResponseCodeNotSuccess(-1005, S.of(Keys.rootKey.currentContext).no_content),
+  HttpResponseCodeNotSuccess(-1006, S.of(Keys.rootKey.currentContext).network_error),
   ERROR_OUT_OF_RANGE,
-  DefineHttpResponseCodeNotSuccess(-20001, () => S.of(Keys.materialAppKey.currentContext).create_user_fail_hint),
-  DefineHttpResponseCodeNotSuccess(-20002, () => S.of(Keys.materialAppKey.currentContext).account_exist_hint),
-  DefineHttpResponseCodeNotSuccess(-20004, () => S.of(Keys.materialAppKey.currentContext).update_user_info_fail_hint),
-  DefineHttpResponseCodeNotSuccess(-20005, () => S.of(Keys.materialAppKey.currentContext).verify_code_error_hint),
-  DefineHttpResponseCodeNotSuccess(-20006, () => S.of(Keys.materialAppKey.currentContext).invite_code_error_hint),
-  DefineHttpResponseCodeNotSuccess(-20007, () => S.of(Keys.materialAppKey.currentContext).username_pwd_not_match_hint),
-  DefineHttpResponseCodeNotSuccess(-20008, () => S.of(Keys.materialAppKey.currentContext).psw_reset_error_hint),
-  DefineHttpResponseCodeNotSuccess(-20009, () => S.of(Keys.materialAppKey.currentContext).today_complete_hint),
-  DefineHttpResponseCodeNotSuccess(-20010, () => S.of(Keys.materialAppKey.currentContext).task_interval_below_limit),
+  HttpResponseCodeNotSuccess(-20001, S.of(Keys.rootKey.currentContext).create_account_fail),
+  HttpResponseCodeNotSuccess(-20002, S.of(Keys.rootKey.currentContext).account_exist_direct_login),
+  HttpResponseCodeNotSuccess(-20004, S.of(Keys.rootKey.currentContext).update_user_info_fail),
+  HttpResponseCodeNotSuccess(-20005, S.of(Keys.rootKey.currentContext).verification_code_error),
+  HttpResponseCodeNotSuccess(-20006, S.of(Keys.rootKey.currentContext).invitation_code_error),
+  HttpResponseCodeNotSuccess(-20007, S.of(Keys.rootKey.currentContext).username_and_password_not_match),
+  HttpResponseCodeNotSuccess(-20008, S.of(Keys.rootKey.currentContext).password_reset_error),
+  HttpResponseCodeNotSuccess(-20009, S.of(Keys.rootKey.currentContext).punch_card_completed_came_tomorrow),
+  HttpResponseCodeNotSuccess(-20010, S.of(Keys.rootKey.currentContext).check_interval_less_thirty_minutes),
   ERROR_FUND_PASSWORD
 ];
 

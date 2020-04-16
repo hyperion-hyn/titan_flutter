@@ -11,6 +11,7 @@ class Const {
       return 'https://api.hyn.space/';
   }
 
+
   static String get NODE_DOMAIN {
     if(env.buildType == BuildType.DEV){
       return ContractTestConfig.apiLocalDomain;
@@ -47,12 +48,6 @@ class Const {
   static const kBlackMapStyleCn = "https://cn.tile.map3.network/fiord-color.json";
   static const kBlackMapStyle = "https://static.hyn.space/maptiles/fiord-color.json";
   static const kNCovMapStyle = 'https://cn.tile.map3.network/ncov_v1.json';
-
-  static const Map LANGUAGE_NAME_MAP = {
-    "zh_CN": "简体中文",
-    "ko_": "한글",
-    "en_": "English",
-  };
 
   static const String POI_POLICY = "https://api.hyn.space/map-collector/pol-policy";
   static const String PRIVACY_POLICY = "https://api.hyn.space/map-collector/upload/privacy-policy";
