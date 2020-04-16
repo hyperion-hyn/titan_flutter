@@ -26,6 +26,10 @@ import org.hyn.titan.umenglib.push.UMengPushImpl
 import org.hyn.titan.utils.AppToolsPlugin
 import org.hyn.titan.wallet.WalletPluginInterface
 import java.io.File
+import androidx.core.app.NotificationCompat.getExtras
+import androidx.core.content.ContextCompat.getSystemService
+
+
 
 
 class MainActivity : FlutterActivity() {
@@ -45,7 +49,9 @@ class MainActivity : FlutterActivity() {
         GlobalScope.launch {
             Thread.sleep(2000)
             withContext(Dispatchers.Main) {
-                AppToolsPlugin.deeplinkStart(intent.data)
+                var data = intent.data
+                AppPrintTools.printLog("main onCreate = $data")
+                AppToolsPlugin.deeplinkStart(data)
             }
             Thread.sleep(10000)
             withContext(Dispatchers.Main){
@@ -145,6 +151,14 @@ class MainActivity : FlutterActivity() {
             }
         }
 
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        var data = intent?.data
+        AppPrintTools.printLog("main onNewIntent = $data")
+        AppToolsPlugin.deeplinkStart(data)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

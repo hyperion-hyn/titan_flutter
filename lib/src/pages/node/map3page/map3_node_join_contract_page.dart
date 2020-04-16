@@ -153,7 +153,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
                 color: Colors.white,
-                child: getMap3NodeProductHeadItem(context, contractNodeItem.contract,
+                child: getMap3NodeProductHeadItem(context, contractNodeItem,
                     isJoin: true)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

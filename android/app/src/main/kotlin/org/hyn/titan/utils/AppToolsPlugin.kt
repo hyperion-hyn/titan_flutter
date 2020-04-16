@@ -34,7 +34,8 @@ class AppToolsPlugin : MethodChannel.MethodCallHandler {
                 var params = data.pathSegments
                 if(params.size == 1){
                     var contractId = data.getQueryParameter("contractId")
-                    var mapValue = mapOf("type" to host,"subType" to params[0],"content" to mapOf("contractId" to contractId))
+                    var key = data.getQueryParameter("key")
+                    var mapValue = mapOf("type" to host,"subType" to params[0],"content" to mapOf("contractId" to contractId,"key" to key))
                     methodChannel.invokeMethod("urlLauncher",mapValue)
                 }
             }

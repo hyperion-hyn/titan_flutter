@@ -416,7 +416,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 //        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
 
 
-        var startJoin = StartJoinInstance(widget.coinVo.contractAddress,
+        var startJoin = StartJoinInstance(activatedWallet.wallet.getEthAccount().address,
             widget.provider,widget.region);
         String resultMsg = "";
         if(widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
