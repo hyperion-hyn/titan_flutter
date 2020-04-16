@@ -913,7 +913,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  void getJoinMemberMoreData() async {
+  Future getJoinMemberMoreData() async {
     try {
       _currentPage++;
       List<ContractDelegateRecordItem> tempMemberList =

@@ -68,7 +68,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           _currentState = all_page_state.LoadingState();
         });
 
-        _loadData();
+        //_loadData();
       });
     }
 
@@ -326,13 +326,13 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             _dataArray = dataList;
           }
         });
-
-        Future.delayed(Duration(seconds: 1), () {
-          setState(() {
-            _currentState = null;
-          });
-        });
       }
+
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          _currentState = null;
+        });
+      });
     } catch (e) {
 
       setState(() {
