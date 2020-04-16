@@ -73,8 +73,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     }
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-      color: HexColor('#E2E0E3'),
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+      color: DefaultColors.colorf5f5f5,
       child: LoadDataContainer(
         bloc: loadDataBloc,
         onLoadData: _loadData,
@@ -87,7 +87,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             separatorBuilder: (context, index) {
               return Container(
                 height: 8,
-                color: Colors.white10,
+                color: DefaultColors.colorf5f5f5,
               );
             },
             itemCount: _dataArray.length),
@@ -123,9 +123,12 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       case ContractState.ACTIVE:
         dateDesc = S.of(context).remain_day(contractNodeItem.expectDueDay);
-        amountPre = S.of(context).can_extract;
-        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
-        hyn = "HYN";
+//        amountPre = S.of(context).can_extract;
+//        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
+//        hyn = "HYN";
+        amountPre = "";
+        amount = "";
+        hyn = "";
         break;
 
       case ContractState.DUE:
@@ -277,6 +280,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   }
 
   _loadMoreData() async {
+    print('[map3] _loadMoreData, l');
 
     List<ContractNodeItem> dataList = [];
     if (widget.title.contains(S.of(context).launch)) {

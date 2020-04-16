@@ -35,10 +35,10 @@ class FormatUtil{
     return NumberFormat("#,###,###,###").format(doubleValue);
   }
 
-  static String formatDate(int timestamp, {bool isSecond = true}) {
-    var multiple = isSecond ? 1000:1;
-    timestamp = timestamp * multiple;
-    return DateFormat("yyyy-MM-dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp))??"";
+  static String formatDate(int timestamp, {bool isSecond = false}) {
+    var format = isSecond ? "yyyy-MM-dd HH:MM":"yyyy-MM-dd";
+    timestamp = timestamp * 1000;
+    return DateFormat(format).format(DateTime.fromMillisecondsSinceEpoch(timestamp))??"";
   }
 
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {

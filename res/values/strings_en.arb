@@ -547,5 +547,6 @@
   "not_legal_public_key": "不是合法的公钥",
   "ciphertext_has_expired": "密文无效或已过期",
   "click_refresh": "点击刷新",
-  "join_delegate": "参与抵押"
+  "join_delegate": "参与抵押",
+  "manager_tip_hyn": "管理费(HYN)"
 }
