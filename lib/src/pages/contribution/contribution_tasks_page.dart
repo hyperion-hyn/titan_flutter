@@ -507,7 +507,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (!status.isGranted) {
       PermissionStatus ret = await Permission.location.request();
       if (!ret.isGranted) {
-        UiUtil.toast('获取位置权限失败，无法贡献附近信号信息！');
+        UiUtil.toast(S.of(context).get_position_error_cant_contribution);
       }
     }
 
@@ -515,7 +515,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (!status.isGranted) {
       PermissionStatus ret = await Permission.location.request();
       if (!ret.isGranted) {
-        UiUtil.toast('获取读取本地文件权限失败，无法贡献附近信号信息！');
+        UiUtil.toast(S.of(context).get_local_file_fail_cant_contribution);
       }
     }
 
@@ -525,7 +525,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       if (!status.isGranted) {
         PermissionStatus ret = await Permission.location.request();
         if (!ret.isGranted) {
-          UiUtil.toast('获取设备信息权限失败，无法贡献附近信号信息！');
+          UiUtil.toast(S.of(context).get_device_fail_cant_contribution);
         }
       }
     }
