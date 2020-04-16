@@ -548,5 +548,7 @@
   "click_refresh": "点击刷新",
   "join_delegate": "参与抵押",
   "manager_tip_hyn": "管理费(HYN)",
-  "withdrawRefund": "申请退款"
+  "withdrawRefund": "申请退款",
+  "contract_had_stop": "合约已结束",
+  "contract_had_expired": "合约已到期"
 }

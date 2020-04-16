@@ -377,8 +377,7 @@ Widget getHoldInNum(
     Function onPressFunction,
     {Function joinEnougnFunction,
     bool isMyself = false}) {
-  // todo: test_jison_0411
-  //List<int> suggestList = [];
+
   List<int> suggestList =
       contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
