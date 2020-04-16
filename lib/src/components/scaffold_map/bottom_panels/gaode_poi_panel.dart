@@ -106,7 +106,7 @@ class _GaodePoiPanelState extends State<GaodePoiPanel> {
                         SizedBox(
                           height: 8,
                         ),
-                        buildHeadItem(Icons.location_on, widget.poi.address, hint: '暂无详细地址'),
+                        buildHeadItem(Icons.location_on, widget.poi.address, hint: S.of(context).no_detail_address),
                         if (widget.poi.remark != null && widget.poi.remark.length > 0)
                           buildHeadItem(Icons.message, widget.poi.remark, hint: S.of(context).no_remark),
                       ],

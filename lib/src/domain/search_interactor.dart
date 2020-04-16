@@ -5,6 +5,8 @@ import 'package:titan/src/data/repository/repository.dart';
 import '../data/entity/history_search.dart';
 import '../data/entity/poi/mapbox_poi.dart';
 import '../data/entity/poi/poi_interface.dart';
+import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/config/consts.dart';
 
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 
@@ -132,7 +134,7 @@ class SearchInteractor {
         var contexts = feature['context'];
         if (contexts is List<dynamic> && contexts.length > 0 && contexts.last['id'] == 'country.6316601538527180') {
           // 台湾id
-          address = '$address 中国';
+          address = '$address '+ S.of(Keys.rootKey.currentContext).china;
         }
       }
       String tel = feature['properties']['tel'] ?? '';

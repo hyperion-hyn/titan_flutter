@@ -296,7 +296,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
         .contains(transactionDetail.toAddress.toLowerCase())) {
       title = S.of(context).contract_call;
     } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
-      title = 'MAP3合约调用';
+      title = S.of(context).map_contract_execution;
     }
 
     var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));

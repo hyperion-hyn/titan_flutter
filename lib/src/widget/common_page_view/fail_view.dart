@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/i18n.dart';
 
 class FailView extends StatelessWidget {
   final Function onRetry;
@@ -24,7 +25,7 @@ class FailView extends StatelessWidget {
           FlatButton(
               onPressed: onRetry,
               child: Text(
-                '点击重试',
+                S.of(context).click_retry,
                 style: TextStyle(
                   color: Theme.of(context).accentColor,
                   fontSize: 16,
