@@ -9,6 +9,9 @@ class FluroConvertUtils {
 
   /// fluro 传递后取出参数，解析
   static String fluroCnParamsDecode(String encodeCn) {
+    if(encodeCn == null || encodeCn == ""){
+      return "";
+    }
     var list = List<int>();
 
     ///字符串解码

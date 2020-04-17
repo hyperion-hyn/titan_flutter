@@ -40,10 +40,11 @@ class NodeApi {
 
     headMap.putIfAbsent("appSource", ()=> "TITAN");
 
-    if(hasAddress){
-      var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    if(hasAddress && activeWalletVo != null){
       headMap.putIfAbsent("Address", () => activeWalletVo.wallet.getEthAccount().address);
     }
+
     if(hasLang){
       var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
       headMap.putIfAbsent("Lang", () => language);
@@ -376,7 +377,7 @@ class NodeApi {
   Future<bool> checkIsDelegatedContractInstance(int contractId) async {
     var isDelegated = await NodeHttpCore.instance.getEntity("/delegations/instance/$contractId/isdelegated", EntityFactory<bool>((data) {
       return data;
-    }),options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));
+    }),options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: false)));
 
     return isDelegated;
   }

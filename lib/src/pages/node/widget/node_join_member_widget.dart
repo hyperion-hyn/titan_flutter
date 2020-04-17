@@ -212,7 +212,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
             SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
         url = FluroConvertUtils.fluroCnParamsEncode(url);
         Application.router.navigateTo(context,
-            Routes.toolspage_webview_page + '?initUrl=$url&title=${FluroConvertUtils.fluroCnParamsEncode('')}');
+            Routes.toolspage_webview_page + '?initUrl=$url');
       },
       child: Padding(
         padding: EdgeInsets.only(top: 2, bottom: 2.0),
