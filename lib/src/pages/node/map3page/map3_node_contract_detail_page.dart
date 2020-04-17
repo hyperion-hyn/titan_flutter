@@ -509,9 +509,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
           child: Row(
             children: <Widget>[
-              Text(_nodeStateDesc, style: TextStyle(fontSize: 14, color: HexColor("#666666"))),
+              Text(_nodeStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
               Spacer(),
-              InkWell(
+              if (_contractNodeItem.remoteNodeUrl?.isNotEmpty ==true && _contractState == ContractState.ACTIVE)InkWell(
                   onTap: _pushNodeInfoWebView,
                   child:
                       Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
@@ -598,7 +598,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     child: Text(
                       _contractNotifyDetail,
-                      style: TextStyle(fontSize: 14, color: textColor),
+                      style: TextStyle(fontSize: 12, color: textColor),
                     ),
                   ),
                 ),
@@ -920,10 +920,16 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _billStateWidget(ContractDelegateRecordItem item) {
+
+    var operaState = enumBillsOperaStateFromString(item.operaType);
+    var recordState = enumBillsRecordStateFromString(item.state);
+
     // todo: test
-    var state = enumBillsOperaStateFromString(item.operaType) == BillsOperaState.DELEGATE?"已转入":"已提取";
-    switch (state) {
-      case "入账中...":
+//    operaState = BillsOperaState.DELEGATE;
+//    recordState = BillsRecordState.PRE_CREATE;
+
+    switch (recordState) {
+      case BillsRecordState.PRE_CREATE:
         return Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -934,33 +940,20 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
             child: Text(
-              state,
+              operaState == BillsOperaState.DELEGATE?"转入待确认中":"提取待确认中",
               style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
             ),
           ),
         );
         break;
 
-      case "已入账":
+      case BillsRecordState.FAIL:
         return Container(
           decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
             child: Text(
-              state,
-              style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
-            ),
-          ),
-        );
-        break;
-
-      case "入账失败":
-        return Container(
-          decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
-            child: Text(
-              state,
+              operaState == BillsOperaState.DELEGATE?"转入失败":"提取失败",
               style: TextStyle(fontSize: 6, color: HexColor("#CC2D1E"), fontWeight: FontWeight.normal),
             ),
           ),
@@ -973,7 +966,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
             child: Text(
-              state,
+              operaState == BillsOperaState.DELEGATE?"已转入":"已提取",
               style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
             ),
           ),

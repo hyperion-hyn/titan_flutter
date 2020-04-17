@@ -726,7 +726,7 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
           Container(
             child: Text(
               widget.tickText,
-              style: TextStyle(color: Colors.white70, fontSize: 12),
+              style: TextStyle(color: Colors.white70, fontSize: 11),
             ),
             color: widget.tickColor,
             padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),

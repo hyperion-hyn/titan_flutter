@@ -25,6 +25,13 @@ BillsOperaState enumBillsOperaStateFromString(String fruit) {
 
 enum BillsOperaState { DELEGATE, WITHDRAW}
 
+// BillsRecordState
+BillsRecordState enumBillsRecordStateFromString(String fruit) {
+  fruit = 'BillsRecordState.$fruit';
+  return BillsRecordState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+}
+
+enum BillsRecordState { PRE_CREATE, CONFIRMED, FAIL}
 
 // TransactionHistoryState
 enum TransactionHistoryState { PENDING, SUCCESS, FAIL}

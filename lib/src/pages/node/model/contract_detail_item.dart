@@ -56,6 +56,12 @@ class LatestTransaction extends Object {
   @JsonKey(name: 'delegationId')
   int delegationId;
 
+  @JsonKey(name: 'amount')
+  String amount;
+
+  @JsonKey(name: 'shareKey')
+  String shareKey;
+
   @JsonKey(name: 'txhash')
   String txhash;
 
@@ -65,7 +71,7 @@ class LatestTransaction extends Object {
   @JsonKey(name: 'state')
   String state;
 
-  LatestTransaction(this.userAddress,this.instanceId,this.delegationId,this.txhash,this.operaType,this.state,);
+  LatestTransaction(this.userAddress,this.instanceId,this.delegationId, this.amount, this.shareKey,this.txhash,this.operaType,this.state,);
 
   factory LatestTransaction.fromJson(Map<String, dynamic> srcJson) => _$LatestTransactionFromJson(srcJson);
 

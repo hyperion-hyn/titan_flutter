@@ -272,7 +272,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
+                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S14medium),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                     child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
