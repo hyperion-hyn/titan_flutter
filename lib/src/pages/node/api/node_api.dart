@@ -7,6 +7,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -153,8 +154,8 @@ class NodeApi {
         gasLimit: EthereumConst.ERC20_APPROVE_GAS_LIMIT,
         nonce: count);
     print('approve result: $approveHex， durationType:${durationType}');
-    await postTransactionHistory(wallet.getEthAccount().address, int.parse(contractId), approveHex
-        , transactionHistoryAction2String(TransactionHistoryAction.APPROVE));
+    await postTransactionHistory(wallet.getEthAccount().address, contractNodeItem.id, approveHex
+        , transactionHistoryAction2String(TransactionHistoryAction.APPROVE), contractNodeItem.amountDelegation);
 
     //create
     var createMap3Hex = await wallet.sendCreateMap3Node(
@@ -180,8 +181,8 @@ class NodeApi {
       createMap3Hex,
     );
     await postCreateContractTransaction(_entity, contractId);*/
-    await postTransactionHistory(wallet.getEthAccount().address, int.parse(contractId), createMap3Hex
-        , transactionHistoryAction2String(TransactionHistoryAction.CREATE_NODE));
+    await postTransactionHistory(wallet.getEthAccount().address, contractNodeItem.id, createMap3Hex
+        , transactionHistoryAction2String(TransactionHistoryAction.CREATE_NODE), contractNodeItem.amountDelegation);
 
 //    startJoinInstance.txHash = createMap3Hex;
 //    startJoinInstance.publicKey = nodeKey["publicKey"];
@@ -216,8 +217,8 @@ class NodeApi {
       nonce: count,
     );
     print('approveHex is: $approveHex');
-    await postTransactionHistory(wallet.getEthAccount().address, int.parse(contractId), approveHex
-        , transactionHistoryAction2String(TransactionHistoryAction.APPROVE));
+    await postTransactionHistory(wallet.getEthAccount().address, contractNodeItem.id, approveHex
+        , transactionHistoryAction2String(TransactionHistoryAction.APPROVE), contractNodeItem.amountDelegation);
 
     var joinHex = await wallet.sendDelegateMap3Node(
       createNodeWalletAddress: createNodeWalletAddress,
@@ -228,8 +229,8 @@ class NodeApi {
       nonce: count + 1,
     );
     print('joinHex is: $joinHex');
-    await postTransactionHistory(wallet.getEthAccount().address, int.parse(contractId), joinHex
-        , transactionHistoryAction2String(TransactionHistoryAction.DELEGATE));
+    await postTransactionHistory(wallet.getEthAccount().address,contractNodeItem.id, joinHex
+        , transactionHistoryAction2String(TransactionHistoryAction.DELEGATE),contractNodeItem.amountDelegation);
 
     /*var pubKey = await TitanPlugin.getPublicKey();
     var name = wallet.keystore.name;
@@ -292,12 +293,14 @@ class NodeApi {
     NodeHttpCore.instance.post("/contracts/create/$contractId", data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
-  Future postTransactionHistory(String address, int instanceId,String txhash,String operaType) async {
+  Future postTransactionHistory(String address, int instanceId,String txhash,String operaType, String amount) async {
     TransactionHistoryEntity historyEntity = TransactionHistoryEntity(
       address,
       instanceId,
       txhash,
-      operaType
+      operaType,
+      int.parse(amount),
+      MemoryCache.shareKey
     );
     NodeHttpCore.instance.post("eth-transaction-history/", data: historyEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
@@ -314,8 +317,8 @@ class NodeApi {
     );
     print('collectHex is: $collectHex');
 
-    await postTransactionHistory(_wallet.getEthAccount().address, int.parse(_contractNodeItem.id.toString()), collectHex
-        , transactionHistoryAction2String(TransactionHistoryAction.WITHDRAW));
+    await postTransactionHistory(_wallet.getEthAccount().address, _contractNodeItem.id, collectHex
+        , transactionHistoryAction2String(TransactionHistoryAction.WITHDRAW), _contractNodeItem.amountDelegation);
 
     return "success";
   }
