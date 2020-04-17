@@ -196,7 +196,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           value = 0;
           break;
 
-
         default:
           break;
       }
