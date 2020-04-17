@@ -7,7 +7,7 @@ import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 class EtherscanApi {
-  String get host {
+  String get apiHost {
     switch (WalletConfig.netType) {
       case EthereumNetType.main:
         return Config.ETHERSCAN_API_URL;
@@ -23,23 +23,31 @@ class EtherscanApi {
     }
   }
 
-  static String getTxDetailUrl(String txHash, bool isChinaMainland) {
+  static String getWebHost(bool isChinaMainland) {
     if (WalletConfig.netType == EthereumNetType.main) {
       if (isChinaMainland) {
-        return 'https://cn.etherscan.com/tx/$txHash';
+        return 'https://cn.etherscan.com';
       } else {
-        return "https://etherscan.io/tx/$txHash";
+        return "https://etherscan.io";
       }
     } else if (WalletConfig.netType == EthereumNetType.repsten) {
-      return "https://ropsten.etherscan.io/tx/$txHash";
+      return "https://ropsten.etherscan.io";
     } else if (WalletConfig.netType == EthereumNetType.rinkeby) {
-      return "https://rinkeby.etherscan.io/tx/$txHash";
+      return "https://rinkeby.etherscan.io";
     }
-    return null;
+    return '';
+  }
+
+  static String getTxDetailUrl(String txHash, bool isChinaMainland) {
+    return '${getWebHost(isChinaMainland)}/tx/$txHash';
+  }
+
+  static String getAddressDetailUrl(String address, bool isChinaMainland) {
+    return '${getWebHost(isChinaMainland)}/address/$address';
   }
 
   Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {
-    Map result = await HttpCore.instance.get("$host/api", params: {
+    Map result = await HttpCore.instance.get("$apiHost/api", params: {
       "module": "account",
       "action": "txlist",
       "address": address,
@@ -60,7 +68,7 @@ class EtherscanApi {
   }
 
   Future<List<Erc20TransferHistory>> queryErc20History(String contractAddress, String address, int page) async {
-    Map result = await HttpCore.instance.get("$host/api", params: {
+    Map result = await HttpCore.instance.get("$apiHost/api", params: {
       "module": "account",
       "action": "tokentx",
       "contractaddress": contractAddress,
