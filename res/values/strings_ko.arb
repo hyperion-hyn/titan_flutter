@@ -554,5 +554,14 @@
   "contract_had_expired": "合约已到期",
   "create_contract_only_one_hint": "• 一个钱包有且只能创建一个Map3节点抵押合约。合约到期后可再创建一个。",
   "contract_running": "合约运行中",
-  "check_is_create_contract_hint": "你的Map3抵押合约正在创建中，请稍等"
+  "check_is_create_contract_hint": "你的Map3抵押合约正在创建中，请稍等",
+  "happy_get_half_reward_hint": "恭喜你获得一半奖励",
+  "get_manage_tip_hyn": "获得管理费(HYN)",
+  "out_mange_tip_hyn": "支出管理费(HYN)",
+  "input_confirm_pending": "转入待确认中",
+  "output_confirm_pending": "提取待确认中",
+  "input_confirm_fail": "转入失败",
+  "output_confirm_fail": "提取失败",
+  "input_confirm_success": "已转入",
+  "output_confirm_success": "已提取"
 }
