@@ -64,9 +64,10 @@ class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHan
                 // 从数据集中获取（粘贴）第一条文本数据
                 for(i in 0 until clipData.itemCount){
                     var item = clipData.getItemAt(0)
-                    if(item?.text?.contains("###titan=") == true){
-                        var shareUser = item.text.split("###titan=")[1]
+                    if(item?.text?.contains("titan://contract/detail") == true){
+                        var shareUser = item.text.split("key=")[1]
 
+                        clipboardManager.text = null
                         var mapValue = mapOf("type" to "save","subType" to "shareUser","content" to mapOf("shareUserValue" to shareUser))
                         methodChannel.invokeMethod("urlLauncher",mapValue)
                         return

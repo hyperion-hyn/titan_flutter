@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
@@ -401,9 +402,9 @@ Widget getHoldInNum(
   }
 
   var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
-  walletName = UiUtil.shortString(walletName, limitLength:3);
+  walletName = UiUtil.shortString(walletName, limitLength: 3);
 
-  var balance = WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
+  var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
   return Container(
     color: Colors.white,
     padding: EdgeInsets.only(top: 16, bottom: 16),
@@ -415,7 +416,7 @@ Widget getHoldInNum(
           child: Row(
             children: <Widget>[
               Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.formatNumDecimal(balance.toInt().toDouble())),
+              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                   style: TextStyle(color: Colors.grey[600])),
             ],
           ),
@@ -457,7 +458,8 @@ Widget getHoldInNum(
                                 return S.of(context).please_input_hyn_count;
                               } else if (int.parse(textStr) < minTotal) {
                                 return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                              } else if (int.parse(textStr) > balance) {
+                              } else if (Decimal.parse(textStr) >
+                                  Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
                                 return S.of(context).hyn_balance_no_enough;
                               } else {
                                 return null;

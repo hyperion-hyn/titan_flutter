@@ -128,11 +128,12 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
       var contractId = content["contractId"];
       var key = content["key"];
       MemoryCache.shareKey = key;
+      print("shareuser jump $key");
       Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
     }else if(type == "save" && subType == "shareUser"){
       var shareUser = content["shareUserValue"];
       MemoryCache.shareKey = shareUser;
-      print("[Home_page] _urlLauncherAction, save:$shareUser");
+      print("shareuser clipboard $shareUser");
     }
   }
 

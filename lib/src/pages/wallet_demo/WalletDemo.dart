@@ -52,7 +52,7 @@ class _WalletDemoState extends State<WalletDemo> {
           Divider(
             height: 16,
           ),
-/*          RaisedButton(
+          RaisedButton(
             onPressed: () async {
               var wallets = await WalletUtil.scanWallets();
               if (wallets.length > 0) {
@@ -60,7 +60,7 @@ class _WalletDemoState extends State<WalletDemo> {
               }
             },
             child: Text('激活一个钱包'),
-          ),*/
+          ),
           RaisedButton(
             onPressed: () async {
               _mnemonic = await WalletUtil.makeMnemonic();
