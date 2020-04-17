@@ -67,10 +67,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   void Function() onPressed = () {};
   var _actionTitle = "";
 
-  var _amountDelegation = "0";
-  var _contractNotifyDetail = "";
-
-  var _contractStateDesc = "";
   var _contractStateDetail = "";
 
   LoadDataBloc loadDataBloc = LoadDataBloc();
@@ -252,131 +248,164 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return _nodeStateDesc;
   }
 
-/*
-  get _nodeStateDesc {
-    var _nodeStateDesc = "";
+
+  get _contractStateDesc {
+    if (_contractState == null) {
+      return S.of(context).wait_to_launch;
+    };
+    
+    var _contractStateDesc = "";
 
     switch (_contractState) {
+      case ContractState.PRE_CREATE:
       case ContractState.PENDING:
-        _nodeStateDesc = S.of(context).node_wait_to_launch;
+        _contractStateDesc = S.of(context).wait_to_launch;
+        break;
+
+      case ContractState.ACTIVE:
+        _contractStateDesc = S.of(context).contract_running;
+        break;
+
+      case ContractState.DUE:
+        _contractStateDesc = S.of(context).contract_had_expired;
+        break;
+
+      case ContractState.CANCELLED:
+      case ContractState.CANCELLED_COMPLETED:
+      case ContractState.FAIL:
+        _contractStateDesc = S.of(context).launch_fail;
+        break;
+
+      case ContractState.DUE_COMPLETED:
+        _contractStateDesc = S.of(context).contract_had_stop;
+        break;
+
+      default:
+        break;
+    }
+    return _contractStateDesc;
+  }
+
+  get _contractNotifyDetail {
+    var _contractNotifyDetail = "";
+    switch (_contractState) {
+      case ContractState.PENDING:
+        _contractNotifyDetail = S.of(context).wait_block_chain_verification;
+        break;
+
+      case ContractState.ACTIVE:
+        _contractNotifyDetail = S.of(context).broadcase_sponsor_wait_net_verify("${FormatUtil.amountToString(_contractDetailItem.amountDelegation)}");
+
+        break;
+
+      case ContractState.DUE:
+        _contractNotifyDetail = "已到期，可提取奖励"+ "${FormatUtil.amountToString(_contractDetailItem.expectedYield)}HYN";
+
+        break;
+
+      case ContractState.CANCELLED:
+        _contractNotifyDetail = S.of(context).launch_fail_request_refund;
+
+        break;
+
+      case ContractState.DUE_COMPLETED:
+        _contractNotifyDetail = S.of(context).recovered_invested_capital;
+
+
+        break;
+
+      case ContractState.CANCELLED_COMPLETED:
+        _contractNotifyDetail = S.of(context).recovered_invested_capital;
+
+        break;
+
+      default:
+        break;
+    }
+
+    if (_isDelegated) {
+      if (_userDelegateState == UserDelegateState.HALFDUE) {
+        _contractNotifyDetail = S.of(context).can_withdraw_fifty_reward;
+
+      } else if (_userDelegateState == UserDelegateState.HALFDUE_COLLECTED) {
+        _contractNotifyDetail = "已成功提取一半奖励";
+
+      } else if (_userDelegateState == UserDelegateState.ACTIVE) {
+
+        //_contractStateDetail =  "可提50%奖励的时间";
+      }
+    }
+
+    return _contractNotifyDetail;
+  }
+
+  /*get _nodeStateDesc {
+    var _nodeStateDesc = "";
+    switch (_contractState) {
+      case ContractState.PENDING:
         _contractNotifyDetail = S.of(context).wait_block_chain_verification;
 
-        _contractStateDesc = S.of(context).wait_to_launch;
         _contractStateDetail =
             S.of(context).remain + "${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
         break;
 
       case ContractState.ACTIVE:
-        _nodeStateDesc = S.of(context).node_in_progress;
         _contractNotifyDetail = S.of(context).broadcase_sponsor_wait_net_verify("${FormatUtil.amountToString(_contractDetailItem.amountDelegation)}");
 
-        _contractStateDesc = S.of(context).launch_success;
         _contractStateDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay);
         break;
 
       case ContractState.DUE:
-        _nodeStateDesc = S.of(context).node_had_stop;
         _contractNotifyDetail = "已到期，可提取奖励"+ "${FormatUtil.amountToString(_contractDetailItem.expectedYield)}HYN";
 
-        _contractStateDesc = S.of(context).contract_had_expired;
         _contractStateDetail = S.of(context).expired_can_withdraw_rewards;
         break;
 
       case ContractState.CANCELLED:
-        _nodeStateDesc = S.of(context).node_had_stop;
         _contractNotifyDetail = S.of(context).launch_fail_request_refund;
 
-        _contractStateDesc = S.of(context).launch_fail;
         _contractStateDetail = S.of(context).launch_fail;
         break;
 
       case ContractState.DUE_COMPLETED:
-        _nodeStateDesc = S.of(context).node_had_stop;
         _contractNotifyDetail = S.of(context).recovered_invested_capital;
 
-        _contractStateDesc = S.of(context).contract_had_stop;
         _contractStateDetail = S.of(context).congratulation_reward_withdrawn;
 
         break;
 
       case ContractState.CANCELLED_COMPLETED:
-        _nodeStateDesc = S.of(context).node_had_stop;
         _contractNotifyDetail = S.of(context).recovered_invested_capital;
 
-        _contractStateDesc = S.of(context).launch_fail;
         _contractStateDetail = S.of(context).launch_fail;
         break;
 
       default:
         break;
     }
-  };
 
-  get _nodeStateDesc {
-    var _nodeStateDesc = "";
+    if (_isDelegated) {
+      if (_userDelegateState == UserDelegateState.HALFDUE) {
+        _contractNotifyDetail = S.of(context).can_withdraw_fifty_reward;
 
-    switch (_contractState) {
-      case ContractState.PENDING:
-        _nodeStateDesc = S.of(context).node_wait_to_launch;
-        _contractNotifyDetail = S.of(context).wait_block_chain_verification;
+        _contractStateDetail = S.of(context).can_withdraw_fifty_reward;
+      } else if (_userDelegateState == UserDelegateState.HALFDUE_COLLECTED) {
+        _contractNotifyDetail = "已成功提取一半奖励";
 
-        _contractStateDesc = S.of(context).wait_to_launch;
-        _contractStateDetail =
-            S.of(context).remain + "${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
-        break;
+        _contractStateDetail = "恭喜你获得一半奖励";
+      } else if (_userDelegateState == UserDelegateState.ACTIVE) {
 
-      case ContractState.ACTIVE:
-        _nodeStateDesc = S.of(context).node_in_progress;
-        _contractNotifyDetail = S.of(context).broadcase_sponsor_wait_net_verify("${FormatUtil.amountToString(_contractDetailItem.amountDelegation)}");
-
-        _contractStateDesc = S.of(context).launch_success;
-        _contractStateDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay);
-        break;
-
-      case ContractState.DUE:
-        _nodeStateDesc = S.of(context).node_had_stop;
-        _contractNotifyDetail = "已到期，可提取奖励"+ "${FormatUtil.amountToString(_contractDetailItem.expectedYield)}HYN";
-
-        _contractStateDesc = S.of(context).contract_had_expired;
-        _contractStateDetail = S.of(context).expired_can_withdraw_rewards;
-        break;
-
-      case ContractState.CANCELLED:
-        _nodeStateDesc = S.of(context).node_had_stop;
-        _contractNotifyDetail = S.of(context).launch_fail_request_refund;
-
-        _contractStateDesc = S.of(context).launch_fail;
-        _contractStateDetail = S.of(context).launch_fail;
-        break;
-
-      case ContractState.DUE_COMPLETED:
-        _nodeStateDesc = S.of(context).node_had_stop;
-        _contractNotifyDetail = S.of(context).recovered_invested_capital;
-
-        _contractStateDesc = S.of(context).contract_had_stop;
-        _contractStateDetail = S.of(context).congratulation_reward_withdrawn;
-
-        break;
-
-      case ContractState.CANCELLED_COMPLETED:
-        _nodeStateDesc = S.of(context).node_had_stop;
-        _contractNotifyDetail = S.of(context).recovered_invested_capital;
-
-        _contractStateDesc = S.of(context).launch_fail;
-        _contractStateDetail = S.of(context).launch_fail;
-        break;
-
-      default:
-        break;
+        _contractStateDetail =  "可提50%奖励的时间";
+      }
     }
-  };
-  */
+
+  }*/
 
   @override
   void onCreated() {
     _actionTitle = S.of(context).confirm;
     //_nodeStateDesc = S.of(context).node_in_configuration;
-    _contractNotifyDetail = S.of(context).wait_block_chain_verification;
+    //_contractNotifyDetail = S.of(context).wait_block_chain_verification;
     super.onCreated();
   }
 
@@ -673,7 +702,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   ),
                 ),
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
                   /*TextSpan(
                     text: _contractProgressDetail,
                     style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
@@ -1219,7 +1248,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case ContractState.PENDING:
         _contractNotifyDetail = S.of(context).wait_block_chain_verification;
 
-        _contractStateDesc = S.of(context).wait_to_launch;
         _contractStateDetail =
             S.of(context).remain + "${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
         break;
@@ -1227,28 +1255,24 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case ContractState.ACTIVE:
         _contractNotifyDetail = S.of(context).broadcase_sponsor_wait_net_verify("${FormatUtil.amountToString(_contractDetailItem.amountDelegation)}");
 
-        _contractStateDesc = S.of(context).launch_success;
         _contractStateDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay);
         break;
 
       case ContractState.DUE:
         _contractNotifyDetail = "已到期，可提取奖励"+ "${FormatUtil.amountToString(_contractDetailItem.expectedYield)}HYN";
 
-        _contractStateDesc = S.of(context).contract_had_expired;
         _contractStateDetail = S.of(context).expired_can_withdraw_rewards;
         break;
 
       case ContractState.CANCELLED:
         _contractNotifyDetail = S.of(context).launch_fail_request_refund;
 
-        _contractStateDesc = S.of(context).launch_fail;
         _contractStateDetail = S.of(context).launch_fail;
         break;
 
       case ContractState.DUE_COMPLETED:
         _contractNotifyDetail = S.of(context).recovered_invested_capital;
 
-        _contractStateDesc = S.of(context).contract_had_stop;
         _contractStateDetail = S.of(context).congratulation_reward_withdrawn;
 
         break;
@@ -1256,7 +1280,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case ContractState.CANCELLED_COMPLETED:
         _contractNotifyDetail = S.of(context).recovered_invested_capital;
 
-        _contractStateDesc = S.of(context).launch_fail;
         _contractStateDetail = S.of(context).launch_fail;
         break;
 
@@ -1268,17 +1291,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       if (_userDelegateState == UserDelegateState.HALFDUE) {
         _contractNotifyDetail = S.of(context).can_withdraw_fifty_reward;
 
-        _contractStateDesc = S.of(context).launch_success;
         _contractStateDetail = S.of(context).can_withdraw_fifty_reward;
       } else if (_userDelegateState == UserDelegateState.HALFDUE_COLLECTED) {
         _contractNotifyDetail = "已成功提取一半奖励";
 
-        _contractStateDesc = S.of(context).launch_success;
         _contractStateDetail = "恭喜你获得一半奖励";
       } else if (_userDelegateState == UserDelegateState.ACTIVE) {
 
-        _contractStateDesc = S.of(context).launch_success;
-        _contractStateDetail =  "可提50奖励的时间，"+S.of(context).remain_day_has_colon(_contractNodeItem.remainHalfDueDay);
+        _contractStateDetail =  "可提50%奖励的时间";
       }
     }
 

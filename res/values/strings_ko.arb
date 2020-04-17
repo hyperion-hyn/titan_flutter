@@ -552,5 +552,6 @@
   "withdrawRefund": "申请退款",
   "contract_had_stop": "合约已结束",
   "contract_had_expired": "合约已到期",
-  "create_contract_only_one_hint": "• 一个钱包有且只能创建一个Map3节点抵押合约。"
+  "create_contract_only_one_hint": "• 一个钱包有且只能创建一个Map3节点抵押合约。合约到期后可再创建一个。",
+  "contract_running": "合约运行中"
 }
