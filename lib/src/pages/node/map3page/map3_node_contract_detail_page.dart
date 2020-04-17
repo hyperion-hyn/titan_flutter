@@ -404,6 +404,105 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return _contractStateDetail;
   }
 
+  void _initBottomSourceData() {
+
+    if (_isDelegated) {
+      if (_isPercent50) {
+        switch (_userDelegateState) {
+          case UserDelegateState.PENDING:
+            _actionTitle = S.of(context).increase_investment;
+            onPressed = () {
+              if (!_isNoWallet) {
+                Application.router.navigateTo(context, Routes.wallet_manager);
+              } else {
+                Application.router
+                    .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+              }
+            };
+            _visible = true;
+            break;
+
+          case UserDelegateState.DUE:
+            _actionTitle = S.of(context).extract;
+            onPressed = () {
+              _collectAction();
+            };
+            _visible = true;
+            break;
+
+
+          case UserDelegateState.HALFDUE:
+            _actionTitle = S.of(context).withdraw_fifty_revenue;
+            onPressed = () {
+              _collectAction();
+            };
+            _visible = true;
+            break;
+
+          case UserDelegateState.CANCELLED:
+            _actionTitle = S.of(context).withdrawRefund;
+            onPressed = () {
+              _collectAction();
+            };
+            _visible = true;
+            break;
+
+
+          default:
+            _visible = false;
+            break;
+        }
+      } else {
+        switch (_contractState) {
+
+          case ContractState.PENDING:
+            _actionTitle = S.of(context).increase_investment;
+            onPressed = () {
+              if (!_isNoWallet) {
+                Application.router.navigateTo(context, Routes.wallet_manager);
+              } else {
+                Application.router
+                    .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+              }
+            };
+            _visible = true;
+            break;
+
+          case ContractState.CANCELLED:
+            _actionTitle = S.of(context).withdrawRefund;
+            onPressed = () {
+              _collectAction();
+            };
+            _visible = true;
+            break;
+
+          case ContractState.DUE:
+            _actionTitle = S.of(context).extract;
+            onPressed = () {
+              _collectAction();
+            };
+            _visible = true;
+            break;
+
+          default:
+            _visible = false;
+            break;
+        }
+      }
+    } else {
+      if (_contractState == ContractState.PENDING) {
+        _actionTitle = S.of(context).join_delegate;
+        onPressed = () {
+          Application.router
+              .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+        };
+        _visible = true;
+      }
+    }
+
+    _lastActionTitle = _actionTitle;
+  }
+
   @override
   void onCreated() {
     _actionTitle = S.of(context).confirm;
@@ -1127,9 +1226,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        /* List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
-          return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
-        }).toList();*/
         _delegateRecordList.addAll(tempMemberList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
@@ -1172,7 +1268,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       // 2.
       await getJoinMemberData();
 
-      _setupData();
+      _initBottomSourceData();
 
       // 3.
       Future.delayed(Duration(seconds: 1), () {
@@ -1187,73 +1283,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  void _setupData() {
-    // 1.底部操作按钮相关数据
-    switch (_userDelegateState) {
-      case UserDelegateState.PENDING:
-        _actionTitle = S.of(context).increase_investment;
-        onPressed = () {
-          if (_wallet == null) {
-            Application.router.navigateTo(context, Routes.wallet_manager);
-          } else {
-            Application.router
-                .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
-          }
-        };
-        _visible = true;
-        break;
-
-      case UserDelegateState.ACTIVE:
-      case UserDelegateState.DUE_COLLECTED:
-      case UserDelegateState.HALFDUE_COLLECTED:
-      case UserDelegateState.CANCELLED_COLLECTED:
-
-        _visible = false;
-        break;
-
-      case UserDelegateState.DUE:
-        _actionTitle = S.of(context).extract;
-        onPressed = () {
-          _collectAction();
-        };
-        _visible = true;
-        break;
-
-
-      case UserDelegateState.HALFDUE:
-        _actionTitle = S.of(context).withdraw_fifty_revenue;
-        onPressed = () {
-          _collectAction();
-        };
-        _visible = true;
-        break;
-
-
-
-      case UserDelegateState.CANCELLED:
-        _actionTitle = S.of(context).withdrawRefund;
-        onPressed = () {
-          _collectAction();
-        };
-        _visible = true;
-        break;
-
-
-      default:
-        break;
-    }
-
-    if (!_isDelegated && _contractState == ContractState.PENDING) {
-      _actionTitle = S.of(context).join_delegate;
-      onPressed = () {
-        Application.router
-            .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
-      };
-      _visible = true;
-    }
-
-    _lastActionTitle = _actionTitle;
-  }
 
   void _pushNodeInfoWebView() {
     String webUrl = FluroConvertUtils.fluroCnParamsEncode(_contractNodeItem.remoteNodeUrl??"https://www.map3.network");
