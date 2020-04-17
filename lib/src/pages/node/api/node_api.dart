@@ -36,8 +36,10 @@ class NodeApi {
     if(!hasLang && !hasAddress){
       return null;
     }
-
     Map<String,dynamic> headMap = Map();
+
+    headMap.putIfAbsent("appSource", ()=> "TITAN");
+
     if(hasAddress){
       var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       headMap.putIfAbsent("Address", () => activeWalletVo.wallet.getEthAccount().address);
@@ -140,7 +142,7 @@ class NodeApi {
 
     var nodeKey = await NodeHttpCore.instance.getEntity("/nodekey/generate", EntityFactory<Map<String, dynamic>>((data) {
       return data;
-    }),options: RequestOptions(headers: {"Address" : walletHynAddress, "appSource" : "TITAN"}));
+    }),options: RequestOptions(headers: getOptionHeader(hasAddress: true, hasLang: true)));
     int durationType = contractNodeItem.contract.durationType; //0: 1M， 1: 3M， 2: 6M
 
     final client = WalletUtil.getWeb3Client();
@@ -377,4 +379,11 @@ class NodeApi {
     return isDelegated;
   }
 
+  Future<bool> checkIsCreateContractInstance(int contractId) async {
+    var isDelegated = await NodeHttpCore.instance.getEntity("/contracts/isUserCreatable", EntityFactory<bool>((data) {
+      return data;
+    }),options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));
+
+    return isDelegated;
+  }
 }

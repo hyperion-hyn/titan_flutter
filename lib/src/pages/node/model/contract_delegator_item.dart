@@ -41,13 +41,15 @@ class ContractDelegateRecordItem extends Object {
   @JsonKey(name: 'txHash')
   String txHash;
 
-  @JsonKey(name: 'operaType')
+//  enum BillsOperaState { DELEGATE, WITHDRAW}
+@JsonKey(name: 'operaType')
   String operaType;
 
   @JsonKey(name: 'createAt')
   int createAt;
 
-  @JsonKey(name: 'state')
+//  enum BillsRecordState { PRE_CREATE, CONFIRMED, FAIL}
+@JsonKey(name: 'state')
   String state;
 
   ContractDelegateRecordItem(this.userAddress, this.userName,this.amount, this.txHash, this.operaType,this.createAt, this.state);
