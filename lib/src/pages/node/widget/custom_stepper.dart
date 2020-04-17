@@ -686,7 +686,7 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 4.0),
                             height: 1.0,
-                            color: i < widget.currentStep ? Theme.of(context).primaryColor : Colors.grey.shade400,
+                            color: i <= widget.currentStep ? Theme.of(context).primaryColor : Colors.grey.shade400,
                           ),
                         ),
                       ),
