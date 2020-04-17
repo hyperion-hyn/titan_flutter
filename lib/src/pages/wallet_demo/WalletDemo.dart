@@ -100,8 +100,8 @@ class _WalletDemoState extends State<WalletDemo> {
                 var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                 if (activeWallet != null) {
                   var toAddress = activeWallet.getEthAccount().address;
-//                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05); //.toRadixString(16);
-                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.5); //.toRadixString(16);
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05); //.toRadixString(16);
+//                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.5); //.toRadixString(16);
 
                   var count = await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55),
                       atBlock: BlockNum.pending());
