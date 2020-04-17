@@ -412,11 +412,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           case UserDelegateState.PENDING:
             _actionTitle = S.of(context).increase_investment;
             onPressed = () {
-              if (!_isNoWallet) {
-                Application.router.navigateTo(context, Routes.wallet_manager);
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
               } else {
-                Application.router
-                    .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+                _joinContractAction();
               }
             };
             _visible = true;
@@ -425,7 +424,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           case UserDelegateState.DUE:
             _actionTitle = S.of(context).extract;
             onPressed = () {
-              _collectAction();
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+              } else {
+                _collectAction();
+              }
             };
             _visible = true;
             break;
@@ -434,7 +437,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           case UserDelegateState.HALFDUE:
             _actionTitle = S.of(context).withdraw_fifty_revenue;
             onPressed = () {
-              _collectAction();
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+              } else {
+                _collectAction();
+              }
             };
             _visible = true;
             break;
@@ -442,7 +449,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           case UserDelegateState.CANCELLED:
             _actionTitle = S.of(context).withdrawRefund;
             onPressed = () {
-              _collectAction();
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+              } else {
+                _collectAction();
+              }
             };
             _visible = true;
             break;
@@ -458,11 +469,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           case ContractState.PENDING:
             _actionTitle = S.of(context).increase_investment;
             onPressed = () {
-              if (!_isNoWallet) {
-                Application.router.navigateTo(context, Routes.wallet_manager);
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
               } else {
-                Application.router
-                    .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+                _joinContractAction();
               }
             };
             _visible = true;
@@ -471,7 +481,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           case ContractState.CANCELLED:
             _actionTitle = S.of(context).withdrawRefund;
             onPressed = () {
-              _collectAction();
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+              } else {
+                _collectAction();
+              }
             };
             _visible = true;
             break;
@@ -479,7 +493,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           case ContractState.DUE:
             _actionTitle = S.of(context).extract;
             onPressed = () {
-              _collectAction();
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+              } else {
+                _collectAction();
+              }
             };
             _visible = true;
             break;
@@ -490,17 +508,31 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         }
       }
     } else {
+
       if (_contractState == ContractState.PENDING) {
         _actionTitle = S.of(context).join_delegate;
         onPressed = () {
-          Application.router
-              .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+          if (_isNoWallet) {
+            _pushWalletManagerAction();
+          } else {
+            _joinContractAction();
+          }
         };
         _visible = true;
       }
     }
 
     _lastActionTitle = _actionTitle;
+  }
+
+  _pushWalletManagerAction() {
+    Application.router.navigateTo(context, Routes.map3node_create_wallet);
+    //Application.router.navigateTo(context, Routes.wallet_manager);
+  }
+
+  _joinContractAction() {
+    Application.router
+        .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
   }
 
   @override
@@ -1282,7 +1314,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       });
     }
   }
-
 
   void _pushNodeInfoWebView() {
     String webUrl = FluroConvertUtils.fluroCnParamsEncode(_contractNodeItem.remoteNodeUrl??"https://www.map3.network");
