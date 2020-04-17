@@ -68,13 +68,13 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           _currentState = all_page_state.LoadingState();
         });
 
-        _loadData();
+        //_loadData();
       });
     }
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-      color: HexColor('#E2E0E3'),
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+      color: DefaultColors.colorf5f5f5,
       child: LoadDataContainer(
         bloc: loadDataBloc,
         onLoadData: _loadData,
@@ -87,7 +87,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             separatorBuilder: (context, index) {
               return Container(
                 height: 8,
-                color: Colors.white10,
+                color: DefaultColors.colorf5f5f5,
               );
             },
             itemCount: _dataArray.length),
@@ -104,6 +104,31 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );
   }
 
+  HexColor  _stateColor(ContractState _contractState) {
+    var statusColor = HexColor('#EED197');
+
+    switch (_contractState) {
+      case ContractState.PENDING:
+        statusColor = HexColor('#EED197');
+        break;
+
+      case ContractState.ACTIVE:
+      case ContractState.DUE:
+        statusColor = HexColor('#1FB9C7');
+        break;
+
+      case ContractState.CANCELLED:
+      case ContractState.CANCELLED_COMPLETED:
+        statusColor = HexColor('#F30202');
+        break;
+
+      default:
+        statusColor = HexColor('#FFDB58');
+        break;
+    }
+    return statusColor;
+  }
+  
   Widget _buildInfoItem(ContractNodeItem contractNodeItem) {
     String address = shortBlockChainAddress(contractNodeItem.owner);
     var dateDesc = "";
@@ -111,7 +136,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     var amount = "";
     var hyn = "HYN";
     var state = enumContractStateFromString(contractNodeItem.state);
-    //print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
+    print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
 
     switch (state) {
       case ContractState.PENDING:
@@ -123,16 +148,21 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       case ContractState.ACTIVE:
         dateDesc = S.of(context).remain_day(contractNodeItem.expectDueDay);
-        amountPre = S.of(context).can_extract;
-        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
-        hyn = "HYN";
+//        amountPre = S.of(context).can_extract;
+//        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
+//        hyn = "HYN";
+        amountPre = "";
+        amount = "";
+        hyn = "";
         break;
 
       case ContractState.DUE:
         dateDesc = S.of(context).be_expired;
-        amountPre = S.of(context).can_extract;
-        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
-        hyn = "HYN";
+//        amountPre = S.of(context).can_extract;
+//        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
+        amountPre = "";
+        amount = "";
+        hyn = "";
         break;
 
       case ContractState.CANCELLED:
@@ -181,7 +211,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                   Expanded(
                       child: Text(" $address",
                           style: TextStyles.textC9b9b9bS12)),
-                  Text(dateDesc, style: TextStyles.textC9b9b9bS12)
+                  Text(dateDesc,
+                    style: TextStyle(fontSize: 12, color: _stateColor(state)),
+                  )
                 ],
               ),
               Padding(
@@ -277,6 +309,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   }
 
   _loadMoreData() async {
+    print('[map3] _loadMoreData, l');
 
     List<ContractNodeItem> dataList = [];
     if (widget.title.contains(S.of(context).launch)) {
@@ -308,10 +341,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       List<ContractNodeItem> dataList = [];
       if (widget.title.contains(S.of(context).launch)) {
-        List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(address: _wallet.getEthAccount().address);
+        List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
         dataList  = createContractList;
       } else {
-        List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(address: _wallet.getEthAccount().address);
+        List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
         dataList = joinContractList;
       }
 
@@ -326,13 +359,13 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
             _dataArray = dataList;
           }
         });
-
-        Future.delayed(Duration(seconds: 1), () {
-          setState(() {
-            _currentState = null;
-          });
-        });
       }
+
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          _currentState = null;
+        });
+      });
     } catch (e) {
 
       setState(() {

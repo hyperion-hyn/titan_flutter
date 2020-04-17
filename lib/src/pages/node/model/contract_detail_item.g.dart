@@ -38,11 +38,14 @@ Map<String, dynamic> _$ContractDetailItemToJson(ContractDetailItem instance) =>
       'state': instance.state,
     };
 
+
 LatestTransaction _$LatestTransactionFromJson(Map<String, dynamic> json) {
   return LatestTransaction(
     json['userAddress'] as String,
     json['instanceId'] as int,
     json['delegationId'] as int,
+    json['amount'] as String,
+    json['shareKey'] as String,
     json['txhash'] as String,
     json['operaType'] as String,
     json['state'] as String,
@@ -53,6 +56,8 @@ Map<String, dynamic> _$LatestTransactionToJson(LatestTransaction instance) =>
     <String, dynamic>{
       'userAddress': instance.userAddress,
       'instanceId': instance.instanceId,
+      'amount': instance.amount,
+      'shareKey': instance.shareKey,
       'delegationId': instance.delegationId,
       'txhash': instance.txhash,
       'operaType': instance.operaType,

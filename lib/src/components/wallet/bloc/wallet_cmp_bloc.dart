@@ -53,7 +53,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     } else if (event is UpdateActivatedWalletBalanceEvent) {
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       //30 second cache time
-      bool isOutOfCacheTme = nowTime - _lastUpdateBalanceTime > 30 * 1000;
+      bool isOutOfCacheTme = nowTime - _lastUpdateBalanceTime > 10 * 1000;
       if (_activatedWalletVo != null && isOutOfCacheTme) {
         _lastUpdateBalanceTime = nowTime;
         yield UpdatingWalletBalanceState();
@@ -97,7 +97,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         decimals: account.token.decimals,
         logo: account.token.logo,
         contractAddress: null,
-        balance: 0,
+        balance: BigInt.from(0),
       );
       coins.add(coin);
 
@@ -111,7 +111,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           decimals: asset.decimals,
           contractAddress: asset.contractAddress,
           logo: asset.logo,
-          balance: 0,
+          balance: BigInt.from(0),
         );
         coins.add(contractCoin);
       }

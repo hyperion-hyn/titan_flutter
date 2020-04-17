@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,11 +13,14 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
+import 'package:titan/src/pages/node/model/node_share_entity.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
@@ -180,7 +187,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         Expanded(
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            getMap3NodeProductHeadItem(context, contractNodeItem.contract),
+            getMap3NodeProductHeadItem(context, contractNodeItem),
 //            SizedBox(height: 16,),
             Container(
               color: Colors.white,
@@ -266,7 +273,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
+                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S14medium),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                     child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
@@ -371,8 +383,7 @@ Widget getHoldInNum(
     Function onPressFunction,
     {Function joinEnougnFunction,
     bool isMyself = false}) {
-  // todo: test_jison_0411
-  //List<int> suggestList = [];
+
   List<int> suggestList =
       contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
@@ -391,7 +402,9 @@ Widget getHoldInNum(
   }
 
   var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
-  var balance = WalletInheritedModel.of(context).activatedWallet.coins[1].balance;
+  walletName = UiUtil.shortString(walletName, limitLength: 3);
+
+  var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
   return Container(
     color: Colors.white,
     padding: EdgeInsets.only(top: 16, bottom: 16),
@@ -403,7 +416,7 @@ Widget getHoldInNum(
           child: Row(
             children: <Widget>[
               Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.formatNumDecimal(balance)),
+              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                   style: TextStyle(color: Colors.grey[600])),
             ],
           ),
@@ -445,7 +458,8 @@ Widget getHoldInNum(
                                 return S.of(context).please_input_hyn_count;
                               } else if (int.parse(textStr) < minTotal) {
                                 return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                              } else if (int.parse(textStr) > balance) {
+                              } else if (Decimal.parse(textStr) >
+                                  Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
                                 return S.of(context).hyn_balance_no_enough;
                               } else {
                                 return null;
@@ -624,10 +638,11 @@ Widget getHoldInNum(
   );
 }
 
-Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem, {isJoin = false, isDetail = true}) {
+Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem, {isJoin = false, isDetail = true, hasShare = false}) {
   var title = !isDetail
       ? S.of(context).node_contract_detail
       : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
+  var nodeItem = contractNodeItem.contract;
   return Stack(
     children: <Widget>[
       Container(
@@ -696,6 +711,30 @@ Widget getMap3NodeProductHeadItem(BuildContext context, NodeItem nodeItem, {isJo
           ),
         ),
       ),
+      if(hasShare)
+        Positioned(
+          top:0,
+          right: 0,
+          child: InkWell(
+            onTap: () async {
+              final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
+
+              Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+              bool isFromOwn = wallet.getEthAccount().address == contractNodeItem.owner;
+              NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address,"detail",isFromOwn);
+              String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
+              Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
+                  text: "${contractNodeItem.shareUrl}?name=${contractNodeItem.ownerName}&key=$encodeStr");
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 44.0, right: 15),
+              child: Icon(
+                Icons.share,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
       Align(
         alignment: Alignment.topCenter,
         child: Padding(

@@ -5,7 +5,7 @@ ContractState enumContractStateFromString(String fruit) {
   return ContractState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
 
-enum ContractState { PENDING, CANCELLED, CANCELLED_COMPLETED, ACTIVE, DUE, DUE_COMPLETED}
+enum ContractState { PRE_CREATE, PENDING, CANCELLED, CANCELLED_COMPLETED, ACTIVE, DUE, DUE_COMPLETED, FAIL}
 
 
 // UserDelegateState
@@ -14,7 +14,7 @@ UserDelegateState enumUserDelegateStateFromString(String fruit) {
   return UserDelegateState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
 
-enum UserDelegateState { PENDING, CANCELLED, CANCELLED_COLLECTED , ACTIVE, HALFDUE, HALFDUE_COLLECTED, DUE, DUE_COLLECTED}
+enum UserDelegateState { PRE_CREATE, PENDING, CANCELLED, PRE_CANCELLED_COLLECTED, CANCELLED_COLLECTED , ACTIVE, HALFDUE, PRE_HALFDUE_COLLECTED, HALFDUE_COLLECTED, DUE, PRE_DUE_COLLECTED, DUE_COLLECTED,FAIL}
 
 
 // BillsOperaState
@@ -25,6 +25,13 @@ BillsOperaState enumBillsOperaStateFromString(String fruit) {
 
 enum BillsOperaState { DELEGATE, WITHDRAW}
 
+// BillsRecordState
+BillsRecordState enumBillsRecordStateFromString(String fruit) {
+  fruit = 'BillsRecordState.$fruit';
+  return BillsRecordState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+}
+
+enum BillsRecordState { PRE_CREATE, CONFIRMED, FAIL}
 
 // TransactionHistoryState
 enum TransactionHistoryState { PENDING, SUCCESS, FAIL}

@@ -23,7 +23,7 @@ import org.maprich.app.push.UMengPluginInterface
 import org.hyn.titan.push.UmengPlugin
 import org.maprich.app.sensor.SensorPluginInterface
 import org.hyn.titan.umenglib.push.UMengPushImpl
-import org.hyn.titan.utils.AppToolsPlugin
+import org.maprich.app.utils.AppToolsPlugin
 import org.maprich.app.wallet.WalletPluginInterface
 import java.io.File
 
@@ -45,8 +45,12 @@ class MainActivity : FlutterActivity() {
         GlobalScope.launch {
             Thread.sleep(2000)
             withContext(Dispatchers.Main) {
-                AppToolsPlugin.deeplinkStart(intent.data)
+                var data = intent.data
+                if(data != null){
+                    AppToolsPlugin.deeplinkStart(data)
+                }
             }
+
             Thread.sleep(10000)
             withContext(Dispatchers.Main){
                 AppPrintTools.printLog(UMengPushImpl.umengToken)
@@ -57,9 +61,11 @@ class MainActivity : FlutterActivity() {
         val walletPluginInterface = WalletPluginInterface(this, flutterView)
         val sensorPluginInterface = SensorPluginInterface(this, flutterView)
         val umengPluginInterface = UMengPluginInterface(this, flutterView)
+        val appToolsPlugin = AppToolsPlugin(this)
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
+            appToolsPlugin.setMethodCallHandler(call, result)
             if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
             }
@@ -145,6 +151,13 @@ class MainActivity : FlutterActivity() {
             }
         }
 
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        var data = intent?.data
+        AppToolsPlugin.deeplinkStart(data)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

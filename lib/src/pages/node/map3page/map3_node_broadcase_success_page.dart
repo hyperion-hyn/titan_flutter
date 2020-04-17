@@ -38,12 +38,15 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(50.0),
                   child: Container(
-                    width: 200,
-                    height: 200,
-                    child: Image.asset(
-                      "res/drawable/ic_map3_node_item.png",
-                      fit: BoxFit.cover,
-                      width: 72,
+                    width: 240,
+                    height: 180,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4.0),
+                      child: Image.asset(
+                        "res/drawable/ic_map3_node_item.png",
+                        fit: BoxFit.cover,
+                        width: 72,
+                      ),
                     ),
                   ),
                 ),
@@ -87,7 +90,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                       ),*/
                       Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                            EdgeInsets.symmetric(vertical: 16, horizontal: 48),
                         child: Container(
                           constraints: BoxConstraints.expand(height: 48),
                           child: FlatButton(

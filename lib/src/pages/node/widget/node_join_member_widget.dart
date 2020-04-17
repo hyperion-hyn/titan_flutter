@@ -6,8 +6,13 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
+import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -192,80 +197,126 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 
   Widget _item(ContractDelegatorItem delegatorItem, bool isFirst) {
     String showName = delegatorItem.userName.substring(0, 1);
-    return Padding(
-      padding: EdgeInsets.only(top: 2, bottom: 2.0),
-      child: SizedBox(
-        width: 100,
-        height: 100,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey[300],
-                blurRadius: 8.0,
-              ),
-            ],
-          ),
-          margin: const EdgeInsets.only(right: 12),
-          child: Stack(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(13.0)),
-                        ),
-                        child: Center(
-                            child: Text(
-                          "$showName",
-                          style: TextStyle(fontSize: 15, color: HexColor("#000000")),
-                        )),
+    Color color;
+    int index = memberList.indexOf(delegatorItem);
+    if (index % 3 == 0) {
+      color = HexColor("#CAF0FF");
+    } else if (index % 3 == 1) {
+      color = HexColor("#FFD7D7");
+    } else {
+      color = HexColor("#FFE87D");
+    }
+    return InkWell(
+      onTap: () {
+        var url = EtherscanApi.getAddressDetailUrl(delegatorItem.userAddress,
+            SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
+        url = FluroConvertUtils.fluroCnParamsEncode(url);
+        Application.router.navigateTo(context,
+            Routes.toolspage_webview_page + '?initUrl=$url&title=${FluroConvertUtils.fluroCnParamsEncode('')}');
+      },
+      child: Padding(
+        padding: EdgeInsets.only(top: 2, bottom: 2.0),
+        child: SizedBox(
+          width: 91,
+          height: 111,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[300],
+                  blurRadius: 40.0,
+                ),
+              ],
+            ),
+            margin: const EdgeInsets.only(right: 12),
+            child: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+//                      height: 50,
+//                      width: 50,
+                        child: circleIconWidget(showName, isShowShape: false, color: color)
+                        /*Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(13.0)),
+                          ),
+                          child: Center(
+                              child: Text(
+                            "$showName",
+                            style: TextStyle(fontSize: 15, color: HexColor("#000000")),
+                          )),
+                        )*/
+                        ,
                       ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5.0, right: 5),
-                      child: Text("${delegatorItem.userName}",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
-                    ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5.0, right: 5),
+                        child: Text("${delegatorItem.userName}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
+                      ),
 //                    SizedBox(
 //                      height: 4,
 //                    ),
-                    Text("${FormatUtil.stringFormatNum(delegatorItem.amountDelegation)}",
-                        style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
-                  ],
+                      Text("${FormatUtil.stringFormatNum(delegatorItem.amountDelegation)}",
+                          style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
+                    ],
+                  ),
                 ),
-              ),
-              if (isFirst)
-                Positioned(
-                  top: 15,
-                  right: 4,
-                  child: Container(
-                      padding: const EdgeInsets.only(left: 5, right: 5),
-                      decoration: BoxDecoration(
-                        color: DefaultColors.colorffdb58,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(S.of(context).sponsor, style: TextStyle(fontSize: 8, color: HexColor("#322300")))),
-                )
-            ],
+                if (isFirst)
+                  Positioned(
+                    top: 15,
+                    right: 4,
+                    child: Container(
+                        padding: const EdgeInsets.only(left: 5, right: 5),
+                        decoration: BoxDecoration(
+                          color: DefaultColors.colorffdb58,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(S.of(context).sponsor, style: TextStyle(fontSize: 8, color: HexColor("#322300")))),
+                  )
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+Widget circleIconWidget(String shortName, {bool isShowShape = true, Color color = Colors.white}) {
+  return Container(
+    width: 40,
+    height: 40,
+    decoration: BoxDecoration(
+      color: color,
+      shape: BoxShape.circle,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey[300],
+          blurRadius: 8.0,
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: Text(
+          shortName,
+          style: TextStyle(fontSize: 15, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+        ),
+      ),
+    ),
+  );
 }

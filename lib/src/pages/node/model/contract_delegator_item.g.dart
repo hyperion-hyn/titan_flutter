@@ -34,6 +34,7 @@ ContractDelegateRecordItem _$ContractDelegateRecordItemFromJson(
     json['txHash'] as String,
     json['operaType'] as String,
     json['createAt'] as int,
+    json['state'] as String,
   );
 }
 
@@ -46,4 +47,5 @@ Map<String, dynamic> _$ContractDelegateRecordItemToJson(
       'txHash': instance.txHash,
       'operaType': instance.operaType,
       'createAt': instance.createAt,
+      'state': instance.state,
     };

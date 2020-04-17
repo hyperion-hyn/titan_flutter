@@ -1,14 +1,16 @@
-package org.hyn.titan.utils
+package org.maprich.app.utils
 
+import android.content.ClipboardManager
+import android.content.Context
 import android.net.Uri
 import com.hyn.titan.tools.AppPrintInterface
 import com.hyn.titan.tools.AppPrintTools
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
-import org.bouncycastle.asn1.x500.style.RFC4519Style.title
+import org.maprich.app.TitanApp
 
-class AppToolsPlugin : MethodChannel.MethodCallHandler {
+class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHandler {
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     }
@@ -34,8 +36,42 @@ class AppToolsPlugin : MethodChannel.MethodCallHandler {
                 var params = data.pathSegments
                 if(params.size == 1){
                     var contractId = data.getQueryParameter("contractId")
-                    var mapValue = mapOf("type" to host,"subType" to params[0],"content" to mapOf("contractId" to contractId))
+                    var key = data.getQueryParameter("key")
+                    var mapValue = mapOf("type" to host,"subType" to params[0],"content" to mapOf("contractId" to contractId,"key" to key))
                     methodChannel.invokeMethod("urlLauncher",mapValue)
+                }
+            }
+        }
+    }
+
+    fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
+        return when (call.method) {
+            "clipboardData" -> {
+                getClipboardData()
+                true
+            }
+            else -> false
+        }
+    }
+
+    fun getClipboardData(){
+        //获取系统剪贴板服务
+        var clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        if (null != clipboardManager) {
+            // 获取剪贴板的剪贴数据集
+            var clipData = clipboardManager.primaryClip
+            if (null != clipData && clipData.itemCount > 0) {
+                // 从数据集中获取（粘贴）第一条文本数据
+                for(i in 0 until clipData.itemCount){
+                    var item = clipData.getItemAt(0)
+                    if(item?.text?.contains("titan://contract/detail") == true){
+                        var shareUser = item.text.split("key=")[1]
+
+                        clipboardManager.text = null
+                        var mapValue = mapOf("type" to "save","subType" to "shareUser","content" to mapOf("shareUserValue" to shareUser))
+                        methodChannel.invokeMethod("urlLauncher",mapValue)
+                        return
+                    }
                 }
             }
         }

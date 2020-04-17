@@ -71,52 +71,6 @@ class HomePageState extends State<HomePage> {
       },
     );
   }
-
-
-  @override
-  void initState() {
-    super.initState();
-
-    TitanPlugin.msgPushChangeCallBack = (Map values) {
-      _pushWebView(values);
-    };
-
-    TitanPlugin.urlLauncherCallBack = (Map values) {
-      _urlLauncherAction(values);
-    };
-  }
-
-
-  void _pushWebView(Map values) {
-    var url = values["out_link"];
-    var title = values["title"];
-    var content = values["content"];
-    print("[dd] content:${content}");
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => InfoDetailPage(
-              id: 0,
-              url: url,
-              title: title,
-              content: content,
-            )));
-  }
-
-  void _urlLauncherAction(Map values) {
-    var type = values["type"];
-    var subType = values["subType"];
-    var content = values["content"];
-    if (type == "contract" && subType == "detail") {
-      print('[Home_page] _urlLauncherAction, values:${values}');
-
-      var contractId = content["contractId"];
-//      var model = ContractNodeItem.onlyNodeId(int.parse(contractId));
-//      String jsonString = FluroConvertUtils.object2string(model.toJson());
-      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractId}");
-    }
-  }
 }
 
 

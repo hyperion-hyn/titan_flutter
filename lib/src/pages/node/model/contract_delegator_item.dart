@@ -47,7 +47,10 @@ class ContractDelegateRecordItem extends Object {
   @JsonKey(name: 'createAt')
   int createAt;
 
-  ContractDelegateRecordItem(this.userAddress, this.userName,this.amount, this.txHash, this.operaType,this.createAt,);
+  @JsonKey(name: 'state')
+  String state;
+
+  ContractDelegateRecordItem(this.userAddress, this.userName,this.amount, this.txHash, this.operaType,this.createAt, this.state);
 
   factory ContractDelegateRecordItem.fromJson(Map<String, dynamic> srcJson) => _$ContractDelegateRecordItemFromJson(srcJson);
 

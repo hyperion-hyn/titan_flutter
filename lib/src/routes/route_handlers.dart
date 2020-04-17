@@ -8,7 +8,6 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/me/recharge_purchase_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page.dart';
-import 'package:titan/src/pages/node/map3page/node_contract_detail_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
@@ -16,6 +15,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_join_contract_page.dart'
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
@@ -78,26 +78,24 @@ var walletAccountSendTransactionHandler = Handler(handlerFunc: (context, params)
 
 var transferConfirmHandler = Handler(handlerFunc: (context, params) {
   return WalletSendConfirmPage(
-      params['coinVo']?.first, double.parse(params['transferAmount']?.first ?? '0'), params['receiverAddress']?.first);
+      params['coinVo']?.first, '${params['transferAmount']?.first ?? 0}', params['receiverAddress']?.first);
 });
 
 var managerWalletHandler = Handler(
     handlerFunc: (context, params) =>
         BlocProvider<WalletManagerBloc>(create: (context) => WalletManagerBloc(), child: WalletManagerPage()));
 
-var settingWalletHandler = Handler(
-    handlerFunc: (context, params) {
-      _cacheEntryRouteName(params);
-      Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
-      return WalletSettingPage(wallet);
-    });
+var settingWalletHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+  return WalletSettingPage(wallet);
+});
 
-var settingBackupNoticeWalletHandler = Handler(
-    handlerFunc: (context, params) {
-      _cacheEntryRouteName(params);
-      Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
-      return WalletBackupNoticePage(wallet);
-    });
+var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+  return WalletBackupNoticePage(wallet);
+});
 
 var backUpMnemoicNoticeForCreation = Handler(handlerFunc: (context, params) {
   return CreateWalletBackupNoticePage(params['walletName']?.first, params['password']?.first);
@@ -109,6 +107,10 @@ var showResumeWordForCreation = Handler(handlerFunc: (context, params) {
 
 var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
   return ConfirmResumeWordPage(params['mnemonic']?.first, params['walletName']?.first, params['password']?.first);
+});
+
+var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
+  return ConfirmSuccessPage();
 });
 
 //contribution
@@ -151,9 +153,14 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   ContractNodeItem contractNodeItem =
       ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   return Map3NodeSendConfirmPage(
-      params['coinVo']?.first ?? '0', contractNodeItem, double.parse(params['transferAmount']?.first ?? '0'),
-      params['receiverAddress']?.first ?? '0', params['pageType']?.first,params['contractId']?.first,
-    provider: params['provider']?.first ?? "",region: params['region']?.first ?? "",
+    params['coinVo']?.first ?? '0',
+    contractNodeItem,
+    double.parse(params['transferAmount']?.first ?? '0'),
+    params['receiverAddress']?.first ?? '0',
+    params['pageType']?.first,
+    params['contractId']?.first,
+    provider: params['provider']?.first ?? "",
+    region: params['region']?.first ?? "",
   );
 });
 

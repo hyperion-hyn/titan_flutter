@@ -18,7 +18,13 @@ part 'transaction_history_entity.g.dart';
   @JsonKey(name: 'operaType')
   String operaType;
 
-  TransactionHistoryEntity(this.userAddress,this.instanceId,this.txhash,this.operaType,);
+  @JsonKey(name: 'amount')
+  int amount;
+
+  @JsonKey(name: 'shareKey')
+  String shareKey;
+
+  TransactionHistoryEntity(this.userAddress,this.instanceId,this.txhash,this.operaType, this.amount, this.shareKey);
 
   factory TransactionHistoryEntity.fromJson(Map<String, dynamic> srcJson) => _$TransactionHistoryEntityFromJson(srcJson);
 

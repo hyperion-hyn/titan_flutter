@@ -452,7 +452,7 @@
   "confirm_mortgage": "确定抵押",
   "no_enough_hyn_fail_invest_extract": "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
   "invest_cant_undo": "·  投入Map3节点后不可撤销。",
-  "account_flow": "入账流水",
+  "account_flow": "合约流水",
   "total": "总额",
   "part_member": "参与成员",
   "invite_friend_join": "邀请好友\n参加",
@@ -461,6 +461,7 @@
   "please_input_hyn_count": "请输入HYN数量",
   "broadcase_success": "广播成功",
   "map_node_broadcase_success_description": "已在区块链上网络广播 ${actionType} Map3节点抵押合约的消息，区块链网络需要5-30分钟开采验证。",
+  "transfer_broadcase_success_description": "已在区块链上网络广播转账的消息，区块链网络需要5-30分钟开采验证。",
   "create": "创建",
   "map_node_contract_address": "Map3节点合约(${receiverAddress})",
   "launch": "发起",
@@ -481,7 +482,7 @@
   "node_half_revenue_had_withdraw": "节点一半的收益已经提取完成。",
   "node_return_had_withdraw_finish": "节点退款已经提取完成。",
   "node_wait_to_launch": "节点待启动",
-  "wait_to_launch": "等待启动",
+  "wait_to_launch": "合约等待启动",
   "node_in_progress": "节点进行中",
   "broadcase_sponsor_wait_net_verify": "已广播投入${amountDelegation} HYN，等待区块链网络验证",
   "launch_success": "启动成功",
@@ -546,5 +547,11 @@
   "not_legal_public_key": "不是合法的公钥",
   "ciphertext_has_expired": "密文无效或已过期",
   "click_refresh": "点击刷新",
-  "join_delegate": "参与抵押"
+  "join_delegate": "参与抵押",
+  "manager_tip_hyn": "管理费(HYN)",
+  "withdrawRefund": "申请退款",
+  "contract_had_stop": "合约已结束",
+  "contract_had_expired": "合约已到期",
+  "create_contract_only_one_hint": "• 一个钱包地址同一时间内只能创建一个Map3节点合约。合约到期后可再创建一个。",
+  "contract_running": "合约运行中"
 }
