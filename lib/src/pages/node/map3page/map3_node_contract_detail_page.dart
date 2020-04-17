@@ -118,9 +118,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     if (_canGetPercent50Rewards) {
       switch (_userDelegateState) {
+        case UserDelegateState.PRE_CREATE:
         case UserDelegateState.PENDING:
         case UserDelegateState.CANCELLED:
         case UserDelegateState.CANCELLED_COLLECTED:
+        case UserDelegateState.PRE_CANCELLED_COLLECTED:
+        case UserDelegateState.FAIL:
           value = 0;
           break;
 
@@ -129,6 +132,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
 
         case UserDelegateState.HALFDUE:
+        case UserDelegateState.PRE_HALFDUE_COLLECTED:
         case UserDelegateState.HALFDUE_COLLECTED:
           value = 2;
           break;
@@ -137,6 +141,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           value = 3;
           break;
 
+        case UserDelegateState.PRE_DUE_COLLECTED:
         case UserDelegateState.DUE_COLLECTED:
           value = 4;
           break;
@@ -146,9 +151,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       }
     } else {
       switch (_contractState) {
+        case ContractState.PRE_CREATE:
         case ContractState.PENDING:
         case ContractState.CANCELLED:
         case ContractState.CANCELLED_COMPLETED:
+        case ContractState.FAIL:
           value = 0;
           break;
 
@@ -178,10 +185,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     if (_canGetPercent50Rewards) {
       switch (_userDelegateState) {
+        case UserDelegateState.PRE_CREATE:
         case UserDelegateState.PENDING:
         case UserDelegateState.CANCELLED:
-        case UserDelegateState.PRE_CANCELLED_COLLECTED:
         case UserDelegateState.CANCELLED_COLLECTED:
+        case UserDelegateState.PRE_CANCELLED_COLLECTED:
+        case UserDelegateState.FAIL:
           value = _contractNodeItem.remainProgress;
 //          value = 0.8;
           break;
@@ -211,7 +220,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case ContractState.PENDING:
         case ContractState.CANCELLED:
         case ContractState.CANCELLED_COMPLETED:
-        value = _contractNodeItem.remainProgress;
+        case ContractState.FAIL:
+
+          value = _contractNodeItem.remainProgress;
 //        value = 0.75;
 
         break;
