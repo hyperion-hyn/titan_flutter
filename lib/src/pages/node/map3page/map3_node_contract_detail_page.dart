@@ -368,12 +368,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               Text(_nodeStateDesc, style: TextStyle(fontSize: 14, color: HexColor("#666666"))),
               Spacer(),
               InkWell(
-                  onTap: () {
-                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("https://www.map3.network");
-                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).map_node_detail);
-                    Application.router
-                        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                  },
+                  onTap: _pushNodeInfoWebView,
                   child:
                       Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
             ],
@@ -695,7 +690,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         children: <Widget>[
           InkWell(
             onTap: () {
-              _pushWebView(delegateItem);
+              _pushTransactionDetailWebView(delegateItem);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
@@ -1159,7 +1154,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     _lastActionTitle = _actionTitle;
   }
 
-  void _pushWebView(ContractDelegateRecordItem delegateItem) {
+  void _pushNodeInfoWebView() {
+    String webUrl = FluroConvertUtils.fluroCnParamsEncode(_contractNodeItem.remoteNodeUrl??"https://www.map3.network");
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).map_node_detail);
+    Application.router
+        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+  }
+
+  void _pushTransactionDetailWebView(ContractDelegateRecordItem delegateItem) {
     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
     var url = EtherscanApi.getTxDetailUrl(delegateItem.txHash, isChinaMainland);
     if (url != null) {

@@ -344,10 +344,10 @@ class NodeApi {
     NodeHttpCore.instance.post("instances/precollect/$contractInstanceId", data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<String> withdrawContractInstance(ContractNodeItem _contractNodeItem, WalletVo activatedWallet, String password,
+  Future<String> withdrawContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
       int gasPrice, int gasLimit) async {
     var _wallet = activatedWallet.wallet;
-    var createNodeWalletAddress = _contractNodeItem.owner;
+    var createNodeWalletAddress = contractNodeItem.owner;
     var collectHex = await _wallet.sendCollectMap3Node(
       createNodeWalletAddress: createNodeWalletAddress,
       gasPrice: BigInt.from(gasPrice),
@@ -356,8 +356,10 @@ class NodeApi {
     );
     print('collectHex is: $collectHex');
 
-    await postTransactionHistory(_wallet.getEthAccount().address, _contractNodeItem.id, collectHex
-        , transactionHistoryAction2String(TransactionHistoryAction.WITHDRAW), _contractNodeItem.amountDelegation);
+    await postTransactionHistory(_wallet.getEthAccount().address, contractNodeItem.id, collectHex
+        , transactionHistoryAction2String(TransactionHistoryAction.WITHDRAW), contractNodeItem.amountDelegation);
+
+    await postWithdrawDefaultInstance(contractNodeItem.id, _wallet.getEthAccount().address, collectHex);
 
     return "success";
   }
