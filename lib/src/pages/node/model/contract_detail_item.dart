@@ -32,7 +32,8 @@ part 'contract_detail_item.g.dart';
   @JsonKey(name: 'latestTransaction')
   LatestTransaction latestTransaction;
 
-  @JsonKey(name: 'state')
+//  enum UserDelegateState { PRE_CREATE, PENDING, CANCELLED, PRE_CANCELLED_COLLECTED, CANCELLED_COLLECTED , ACTIVE, HALFDUE, PRE_HALFDUE_COLLECTED, HALFDUE_COLLECTED, DUE, PRE_DUE_COLLECTED, DUE_COLLECTED,FAIL}
+@JsonKey(name: 'state')
   String state;
 
   ContractDetailItem(this.instance,this.userAddress,this.ownerAddress,this.amountDelegation,this.expectedYield,this.commission,this.delegatorCount, this.latestTransaction,this.state,);
@@ -68,7 +69,8 @@ class LatestTransaction extends Object {
   @JsonKey(name: 'operaType')
   String operaType;
 
-  @JsonKey(name: 'state')
+//  enum TransactionHistoryState { PENDING, SUCCESS, FAIL}
+@JsonKey(name: 'state')
   String state;
 
   LatestTransaction(this.userAddress,this.instanceId,this.delegationId, this.amount, this.shareKey,this.txhash,this.operaType,this.state,);

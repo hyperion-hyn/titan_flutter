@@ -65,7 +65,8 @@ part 'contract_node_item.g.dart';
   @JsonKey(name: 'remoteNodeUrl')
   String remoteNodeUrl;
 
-  @JsonKey(name: 'state')
+//  enum ContractState { PRE_CREATE, PENDING, CANCELLED, CANCELLED_COMPLETED, ACTIVE, DUE, DUE_COMPLETED, FAIL}
+@JsonKey(name: 'state')
   String state;
 
 
