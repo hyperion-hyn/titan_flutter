@@ -11,7 +11,7 @@ NodeDefaultEntity _$NodeDefaultEntityFromJson(Map<String, dynamic> json) {
     json['address'] as String,
     json['txHash'] as String,
     name: json['name'] as String,
-    amount: json['amount'] as int,
+    amount: json['amount'] as double,
     publicKey: json['publicKey'] as String,
     nodeProvider: json['nodeProvider'] as String,
     nodeRegion: json['nodeRegion'] as String,

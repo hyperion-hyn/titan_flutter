@@ -13,7 +13,7 @@ class NodeDefaultEntity extends Object {
   String name;
 
   @JsonKey(name: 'amount')
-  int amount;
+  double amount;
 
   @JsonKey(name: 'publicKey')
   String publicKey;
