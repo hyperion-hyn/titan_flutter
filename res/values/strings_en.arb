@@ -452,7 +452,7 @@
   "confirm_mortgage": "确定抵押",
   "no_enough_hyn_fail_invest_extract": "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
   "invest_cant_undo": "·  投入Map3节点后不可撤销。",
-  "account_flow": "入账流水",
+  "account_flow": "合约流水",
   "total": "总额",
   "part_member": "参与成员",
   "total_member_count": "共：$memberCount（人）",
@@ -548,5 +548,9 @@
   "not_legal_public_key": "不是合法的公钥",
   "ciphertext_has_expired": "密文无效或已过期",
   "click_refresh": "点击刷新",
-  "join_delegate": "参与抵押"
+  "join_delegate": "参与抵押",
+  "manager_tip_hyn": "管理费(HYN)",
+  "withdrawRefund": "申请退款",
+  "contract_had_stop": "合约已结束",
+  "contract_had_expired": "合约已到期"
 }

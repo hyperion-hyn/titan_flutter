@@ -80,6 +80,11 @@ class TitanPlugin {
     return await callChannel.invokeMethod('initKeyPair', expired);
   }
 
+  static Future<String> getClipboardData() async {
+    print("main onMethodCall111");
+    return await callChannel.invokeMethod('clipboardData');
+  }
+
   static Future<String> genKeyPair({int expired = 0}) async {
     if (expired == 0) {
       expired = DateTime.now().millisecondsSinceEpoch + 3600 * 24 * 1000;

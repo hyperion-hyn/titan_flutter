@@ -192,11 +192,20 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 
   Widget _item(ContractDelegatorItem delegatorItem, bool isFirst) {
     String showName = delegatorItem.userName.substring(0, 1);
+    Color color;
+    int index = memberList.indexOf(delegatorItem);
+    if (index%3==0) {
+      color = HexColor("#CAF0FF");
+    } else if (index%3==1) {
+      color = HexColor("#FFD7D7");
+    } else {
+      color = HexColor("#FFE87D");
+    }
     return Padding(
       padding: EdgeInsets.only(top: 2, bottom: 2.0),
       child: SizedBox(
-        width: 100,
-        height: 100,
+        width: 91,
+        height: 111,
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -204,7 +213,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
             boxShadow: [
               BoxShadow(
                 color: Colors.grey[300],
-                blurRadius: 8.0,
+                blurRadius: 40.0,
               ),
             ],
           ),
@@ -217,9 +226,10 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Card(
+//                      height: 50,
+//                      width: 50,
+                      child: circleIconWidget(showName, isShowShape: false, color: color)
+                      /*Card(
                         elevation: 2,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
@@ -230,7 +240,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                           "$showName",
                           style: TextStyle(fontSize: 15, color: HexColor("#000000")),
                         )),
-                      ),
+                      )*/,
                     ),
                     SizedBox(
                       height: 8,
@@ -268,4 +278,31 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
       ),
     );
   }
+
+}
+
+Widget circleIconWidget(String shortName, {bool isShowShape=true, Color color = Colors.white}) {
+  return Container(
+    width: 40,
+    height: 40,
+    decoration: BoxDecoration(
+      color: color,
+      shape: BoxShape.circle,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey[300],
+          blurRadius: 8.0,
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: Text(
+          shortName,
+          style: TextStyle(fontSize: 15, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+        ),
+      ),
+    ),
+  );
 }

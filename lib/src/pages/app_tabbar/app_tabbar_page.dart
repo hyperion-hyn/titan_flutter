@@ -13,11 +13,15 @@ import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
+import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/routes/routes.dart';
 
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
@@ -58,6 +62,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
   void initState() {
     super.initState();
 
+    TitanPlugin.getClipboardData();
+
     _bottomBarPositionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       value: 0.0,
@@ -85,6 +91,49 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
         BlocProvider.of<AppTabBarBloc>(context).add(InitialAppTabBarEvent());
       }
     });
+
+    TitanPlugin.msgPushChangeCallBack = (Map values) {
+      _pushWebView(values);
+    };
+
+    TitanPlugin.urlLauncherCallBack = (Map values) {
+      _urlLauncherAction(values);
+    };
+  }
+
+  void _pushWebView(Map values) {
+    var url = values["out_link"];
+    var title = values["title"];
+    var content = values["content"];
+    print("[dd] content:${content}");
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => InfoDetailPage(
+              id: 0,
+              url: url,
+              title: title,
+              content: content,
+            )));
+  }
+
+  void _urlLauncherAction(Map values) {
+    var type = values["type"];
+    var subType = values["subType"];
+    var content = values["content"];
+    print('[Home_page] _urlLauncherAction, values:${values}');
+    if (type == "contract" && subType == "detail") {
+
+      var contractId = content["contractId"];
+      var key = content["key"];
+      MemoryCache.shareKey = key;
+      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+    }else if(type == "save" && subType == "shareUser"){
+      var shareUser = content["shareUserValue"];
+      MemoryCache.shareKey = shareUser;
+      print("[Home_page] _urlLauncherAction, save:$shareUser");
+    }
   }
 
   @override

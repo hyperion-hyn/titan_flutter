@@ -27,6 +27,9 @@ class WalletDemo extends StatefulWidget {
 }
 
 class _WalletDemoState extends State<WalletDemo> {
+
+  var _mnemonic = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,26 +224,48 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var mnemonic = await WalletUtil.makeMnemonic();
-              logger.i(mnemonic);
-              Fluttertoast.showToast(msg: mnemonic);
-            },
-            child: Text('产生助记词'),
-          ),
-          RaisedButton(
-            onPressed: () async {
-              var mnemonic =
-                  "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal";
-//              var mnemonic = 'because certain august huge empower blue half pepper tunnel trust amazing forget';
-              if (!bip39.validateMnemonic(mnemonic)) {
+              _mnemonic = await WalletUtil.makeMnemonic();
+
+              if (!bip39.validateMnemonic(_mnemonic)) {
                 Fluttertoast.showToast(msg: '不是合法的助记词');
                 return;
               }
 
               var walletName = "我的助记词钱包1";
               var password = '111111';
-              var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: mnemonic);
+              var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: _mnemonic);
               if (wallet != null) {
+                _mnemonic = null;
+                logger.i("快捷一步，创建一个新钱包： ${wallet.keystore.fileName}， 成功！");
+              } else {
+                logger.i("快捷一步，创建一个新钱包：错误 ");
+              }
+            },
+            child: Text('快捷一步，创建一个新钱包'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              _mnemonic = await WalletUtil.makeMnemonic();
+              logger.i(_mnemonic);
+              Fluttertoast.showToast(msg: _mnemonic);
+            },
+            child: Text('产生助记词'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+//              var mnemonic =
+//                  "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal";
+//              var mnemonic = 'because certain august huge empower blue half pepper tunnel trust amazing forget';
+              if (!bip39.validateMnemonic(_mnemonic)) {
+                Fluttertoast.showToast(msg: '不是合法的助记词');
+                return;
+              }
+
+              var walletName = "我的助记词钱包1";
+              var password = '111111';
+              var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: _mnemonic);
+              if (wallet != null) {
+                _mnemonic = null;
                 logger.i("已经导入助记词钱包 ${wallet.keystore.fileName}");
               } else {
                 logger.i("导入助记词钱包错误 ");
