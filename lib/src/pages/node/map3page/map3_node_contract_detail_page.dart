@@ -301,18 +301,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     };
 
     var _contractNotifyDetail = "";
-    var sub = _lastTransactionHistoryState == TransactionHistoryState.PENDING?"待处理中":"处理完成";
+    var sub = _lastTransactionHistoryState == TransactionHistoryState.PENDING?S.of(context).task_pending:S.of(context).task_finished;
     var input = "${FormatUtil.amountToString(_contractDetailItem.latestTransaction?.amount??"0")}HYN";
 
 
     switch (_userDelegateState) {
       // create
       case UserDelegateState.PRE_CREATE:
-        _contractNotifyDetail = "你的最新抵押：${input}, 待处理中";
+        _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
         break;
 
       case UserDelegateState.PENDING:
-        _contractNotifyDetail = "你的最新抵押：${input}, $sub";
+        _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, sub);
         break;
 
         // cancel
@@ -325,7 +325,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case UserDelegateState.PRE_CANCELLED_COLLECTED:
       case UserDelegateState.PRE_HALFDUE_COLLECTED:
       case UserDelegateState.PRE_DUE_COLLECTED:
-        _contractNotifyDetail = "提取请求已提交，请耐心等候";
+        _contractNotifyDetail = S.of(context).collect_request_have_post_please_wait_hint;
         break;
 
       case UserDelegateState.CANCELLED_COLLECTED:
@@ -333,13 +333,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       case UserDelegateState.HALFDUE_COLLECTED:
-        _contractNotifyDetail = "恭喜你成功提取一半奖励";
+        _contractNotifyDetail = S.of(context).happy_get_half_reward_hint;
         break;
 
       case UserDelegateState.DUE_COLLECTED:
-        var total = double.parse(_contractDetailItem.expectedYield) + double.parse(_contractDetailItem.amountDelegation);
-        var expectedYield = FormatUtil.amountToString(total.toString());
-        _contractNotifyDetail = "恭喜你成功提取奖励:${expectedYield}HYN";
+//        var total = double.parse(_contractDetailItem.expectedYield) + double.parse(_contractDetailItem.amountDelegation);
+//        var expectedYield = FormatUtil.amountToString(total.toString());
+//        _contractNotifyDetail = "恭喜你成功提取奖励:${expectedYield}HYN";
+        _contractNotifyDetail = S.of(context).happy_get_all_reward_hint;
 
         break;
 
