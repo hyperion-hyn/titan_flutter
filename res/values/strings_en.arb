@@ -483,7 +483,7 @@
   "node_half_revenue_had_withdraw": "节点一半的收益已经提取完成。",
   "node_return_had_withdraw_finish": "节点退款已经提取完成。",
   "node_wait_to_launch": "节点待启动",
-  "wait_to_launch": "等待启动",
+  "wait_to_launch": "合约等待启动",
   "node_in_progress": "节点进行中",
   "broadcase_sponsor_wait_net_verify": "已广播投入${amountDelegation} HYN，等待区块链网络验证",
   "launch_success": "启动成功",

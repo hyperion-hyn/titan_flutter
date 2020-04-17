@@ -70,14 +70,15 @@ class _WalletDemoState extends State<WalletDemo> {
                 return;
               }
 
-              var walletName = "我的助记词钱包1";
+              //var walletName = "我的助记词钱包1";
+              var walletName = _mnemonic.split(" ").first;
               var password = '111111';
               var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: _mnemonic);
               if (wallet != null) {
                 _mnemonic = null;
                 BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
-                logger.i("快捷一步，创建一个新钱包： ${wallet.keystore.fileName}， 成功！");
+                logger.i("快捷一步，创建一个新钱包, name:$walletName, keystore: ${wallet.keystore.fileName}， 成功！");
               } else {
                 logger.i("快捷一步，创建一个新钱包：错误 ");
               }

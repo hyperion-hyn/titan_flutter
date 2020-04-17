@@ -327,6 +327,7 @@ class NodeApi {
         nodeProvider:nodeProvider,
         nodeRegion:nodeRegion
     );
+    print("[api] postStart , nodeDefaultEntity.toJson():${nodeDefaultEntity.toJson()}");
     NodeHttpCore.instance.post("contracts/precreate/$contractId", data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
