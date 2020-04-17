@@ -13,6 +13,7 @@ import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/contract_transaction_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/node/model/node_default_entity.dart';
 
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
@@ -130,18 +131,20 @@ class NodeApi {
     var wallet = activatedWallet.wallet;
 //    var maxStakingAmount = 1000000; //一百万
     var myStaking = amount;
-    var ethAccount = wallet.getEthAccount();
     var hynAssetToken = wallet.getHynToken();
     var hynErc20ContractAddress = hynAssetToken?.contractAddress;
     var approveToAddress = WalletConfig.map3ContractAddress;
+    var walletHynAddress = wallet.getEthAccount().address;
+    var walletName = wallet.keystore.name;
+    var pubKey = await TitanPlugin.getPublicKey();
 
     var nodeKey = await NodeHttpCore.instance.getEntity("/nodekey/generate", EntityFactory<Map<String, dynamic>>((data) {
       return data;
-    }),options: RequestOptions(headers: {"Address" : ethAccount.address, "appSource" : "TITAN"}));
+    }),options: RequestOptions(headers: {"Address" : walletHynAddress, "appSource" : "TITAN"}));
     int durationType = contractNodeItem.contract.durationType; //0: 1M， 1: 3M， 2: 6M
 
     final client = WalletUtil.getWeb3Client();
-    var count = await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address), atBlock: BlockNum.pending());
+    var count = await client.getTransactionCount(EthereumAddress.fromHex(walletHynAddress), atBlock: BlockNum.pending());
 
     //approve
     print('approve result: $count');
@@ -154,7 +157,7 @@ class NodeApi {
         gasLimit: EthereumConst.ERC20_APPROVE_GAS_LIMIT,
         nonce: count);
     print('approve result: $approveHex， durationType:${durationType}');
-    await postTransactionHistory(wallet.getEthAccount().address, contractNodeItem.id, approveHex
+    await postTransactionHistory(walletHynAddress, contractNodeItem.id, approveHex
         , transactionHistoryAction2String(TransactionHistoryAction.APPROVE), contractNodeItem.amountDelegation);
 
     //create
@@ -172,7 +175,7 @@ class NodeApi {
 
     /*var pubKey = await TitanPlugin.getPublicKey();
     var name = wallet.keystore.name;
-    var address = wallet.getEthAccount().address;
+    var address = walletHynAddress;
     ContractTransactionEntity _entity = ContractTransactionEntity(
       address,
       name,
@@ -181,9 +184,11 @@ class NodeApi {
       createMap3Hex,
     );
     await postCreateContractTransaction(_entity, contractId);*/
-    await postTransactionHistory(wallet.getEthAccount().address, contractNodeItem.id, createMap3Hex
+    await postTransactionHistory(walletHynAddress, contractNodeItem.id, createMap3Hex
         , transactionHistoryAction2String(TransactionHistoryAction.CREATE_NODE), contractNodeItem.amountDelegation);
 
+    await postStartDefaultInstance(walletHynAddress,walletName,amount,pubKey,createMap3Hex
+        ,startJoinInstance.provider,startJoinInstance.region);
 //    startJoinInstance.txHash = createMap3Hex;
 //    startJoinInstance.publicKey = nodeKey["publicKey"];
     String postData = json.encode(startJoinInstance.toJson());
@@ -201,6 +206,8 @@ class NodeApi {
     var ethAccount = wallet.getEthAccount();
     var hynErc20ContractAddress = wallet.getEthAccount().contractAssetTokens[0].contractAddress;
     var approveToAddress = WalletConfig.map3ContractAddress;
+    var walletHynAddress = wallet.getEthAccount().address;
+    var walletName = wallet.keystore.name;
 
     final client = WalletUtil.getWeb3Client();
     var count =
@@ -232,6 +239,7 @@ class NodeApi {
     await postTransactionHistory(wallet.getEthAccount().address,contractNodeItem.id, joinHex
         , transactionHistoryAction2String(TransactionHistoryAction.DELEGATE),contractNodeItem.amountDelegation);
 
+    await postJoinDefaultInstance(walletHynAddress,walletName,amount,joinHex);
     /*var pubKey = await TitanPlugin.getPublicKey();
     var name = wallet.keystore.name;
     var address = wallet.getEthAccount().address;
@@ -303,6 +311,37 @@ class NodeApi {
       MemoryCache.shareKey
     );
     NodeHttpCore.instance.post("eth-transaction-history/", data: historyEntity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future postStartDefaultInstance(String address, String name, double amount, String publicKey, String txHash, String nodeProvider, String nodeRegion,) async {
+    NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
+        address,
+        txHash,
+        name:name,
+        amount:amount,
+        publicKey:publicKey,
+        nodeProvider:nodeProvider,
+        nodeRegion:nodeRegion
+    );
+    NodeHttpCore.instance.post("eth-transaction-history/", data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future postJoinDefaultInstance(String address, String name, double amount, String txHash) async {
+    NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
+        address,
+        txHash,
+        name:name,
+        amount:amount,
+    );
+    NodeHttpCore.instance.post("eth-transaction-history/", data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future postWithdrawDefaultInstance(String address, String txHash) async {
+    NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
+      address,
+      txHash,
+    );
+    NodeHttpCore.instance.post("eth-transaction-history/", data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
   Future<String> withdrawContractInstance(ContractNodeItem _contractNodeItem, WalletVo activatedWallet, String password,

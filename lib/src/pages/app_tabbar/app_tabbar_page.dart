@@ -62,6 +62,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
   void initState() {
     super.initState();
 
+    TitanPlugin.getClipboardData();
+
     _bottomBarPositionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       value: 0.0,
@@ -120,16 +122,17 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     var type = values["type"];
     var subType = values["subType"];
     var content = values["content"];
+    print('[Home_page] _urlLauncherAction, values:${values}');
     if (type == "contract" && subType == "detail") {
-      print('[Home_page] _urlLauncherAction, values:${values}');
 
       var contractId = content["contractId"];
       var key = content["key"];
       MemoryCache.shareKey = key;
-
-//      var model = ContractNodeItem.onlyNodeId(int.parse(contractId));
-//      String jsonString = FluroConvertUtils.object2string(model.toJson());
       Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+    }else if(type == "save" && subType == "shareUser"){
+      var shareUser = content["shareUserValue"];
+      MemoryCache.shareKey = shareUser;
+      print("[Home_page] _urlLauncherAction, save:$shareUser");
     }
   }
 
