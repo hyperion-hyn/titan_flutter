@@ -138,12 +138,14 @@ class NodeApi {
     var approveToAddress = WalletConfig.map3ContractAddress;
     var walletHynAddress = wallet.getEthAccount().address;
     var walletName = wallet.keystore.name;
-    var pubKey = await TitanPlugin.getPublicKey();
 
     var nodeKey = await NodeHttpCore.instance.getEntity("/nodekey/generate", EntityFactory<Map<String, dynamic>>((data) {
       return data;
     }),options: RequestOptions(headers: getOptionHeader(hasAddress: true, hasLang: true)));
     int durationType = contractNodeItem.contract.durationType; //0: 1M， 1: 3M， 2: 6M
+    var firstHalfPubKey = nodeKey["firstHalfPubKey"];
+    var secondHalfPubKey = nodeKey["secondHalfPubKey"];
+    var publicKey = nodeKey["publicKey"];
 
     final client = WalletUtil.getWeb3Client();
     var count = await client.getTransactionCount(EthereumAddress.fromHex(walletHynAddress), atBlock: BlockNum.pending());
@@ -167,8 +169,8 @@ class NodeApi {
     var createMap3Hex = await wallet.sendCreateMap3Node(
       stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
       type: durationType,
-      firstHalfPubKey: nodeKey["firstHalfPubKey"],
-      secondHalfPubKey: nodeKey["secondHalfPubKey"],
+      firstHalfPubKey: firstHalfPubKey,
+      secondHalfPubKey: secondHalfPubKey,
       gasPrice: BigInt.from(gasPrice),
       gasLimit: EthereumConst.CREATE_MAP3_NODE_GAS_LIMIT,
       password: password,
@@ -190,7 +192,7 @@ class NodeApi {
     await postTransactionHistory(walletHynAddress, contractNodeItem.id, createMap3Hex
         , transactionHistoryAction2String(TransactionHistoryAction.CREATE_NODE), amount);
 
-    await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress,walletName,amount,pubKey,createMap3Hex
+    await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress,walletName,amount,publicKey,createMap3Hex
         ,startJoinInstance.provider,startJoinInstance.region);
 //    startJoinInstance.txHash = createMap3Hex;
 //    startJoinInstance.publicKey = nodeKey["publicKey"];

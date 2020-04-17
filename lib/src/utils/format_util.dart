@@ -58,11 +58,11 @@ class FormatUtil {
     return String.fromCharCodes(base64Decode(data));
   }
   static double coinBalanceDouble(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals).toDouble();
+    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toDouble();
   }
 
   static String coinBalanceHumanRead(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals).toString();
+    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toString();
   }
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo) {

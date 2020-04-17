@@ -742,7 +742,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
               NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address,"detail",isFromOwn);
               String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
               Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
-                  text: "${contractNodeItem.shareUrl}?name=${contractNodeItem.ownerName}&key=$encodeStr");
+                  text: "${contractNodeItem.shareUrl}&key=$encodeStr");
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 44.0, right: 15),
