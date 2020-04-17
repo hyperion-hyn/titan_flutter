@@ -76,6 +76,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   //BillsOperaState _currentOperaState = BillsOperaState.DELEGATE;
   int _durationType = 0;
 
+  get _isNoWallet {
+    return _wallet == null;
+  }
+
   get _isPercent50 => _isDelegated && (_durationType == 2);
 
   get _stateColor {
@@ -1126,16 +1130,20 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   Future getContractInstanceItem() async {
     try {
       // 0.
-      _isDelegated = await _api.checkIsDelegatedContractInstance(widget.contractId);
-      print('[detail] check , isDelegated:$_isDelegated');
-
-      if (_isDelegated && _wallet != null) {
-        _contractDetailItem = await _api.getContractDetail(widget.contractId);
-        _contractNodeItem = _contractDetailItem?.instance;
-      } else {
+      if (_isNoWallet) {
         _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
-      }
+      } else {
+        _isDelegated = await _api.checkIsDelegatedContractInstance(widget.contractId);
+        print('[detail] getContractInstanceItem , isDelegated:$_isDelegated');
 
+        if (_isDelegated) {
+          _contractDetailItem = await _api.getContractDetail(widget.contractId);
+          _contractNodeItem = _contractDetailItem?.instance;
+        } else {
+          _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
+        }
+      }
+      
       // 1.
       _userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
       _contractState = enumContractStateFromString(_contractNodeItem.state);
@@ -1179,10 +1187,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       case UserDelegateState.ACTIVE:
-        _actionTitle = S.of(context).mortgaged;
-        onPressed = () {
-          Fluttertoast.showToast(msg: S.of(context).node_is_running);
-        };
+      case UserDelegateState.DUE_COLLECTED:
+      case UserDelegateState.HALFDUE_COLLECTED:
+      case UserDelegateState.CANCELLED_COLLECTED:
+
         _visible = false;
         break;
 
@@ -1194,13 +1202,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _visible = true;
         break;
 
-      case UserDelegateState.DUE_COLLECTED:
-        _actionTitle = S.of(context).finish;
-        onPressed = () {
-          Fluttertoast.showToast(msg: S.of(context).node_revenue_extracted);
-        };
-        _visible = false;
-        break;
 
       case UserDelegateState.HALFDUE:
         _actionTitle = S.of(context).withdraw_fifty_revenue;
@@ -1210,13 +1211,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _visible = true;
         break;
 
-      case UserDelegateState.HALFDUE_COLLECTED:
-        _actionTitle = S.of(context).finish;
-        onPressed = () {
-          Fluttertoast.showToast(msg: S.of(context).node_half_revenue_had_withdraw);
-        };
-        _visible = false;
-        break;
+
 
       case UserDelegateState.CANCELLED:
         _actionTitle = S.of(context).withdrawRefund;
@@ -1226,13 +1221,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _visible = true;
         break;
 
-      case UserDelegateState.CANCELLED_COLLECTED:
-        _actionTitle = S.of(context).finish;
-        onPressed = () {
-          Fluttertoast.showToast(msg: S.of(context).node_return_had_withdraw_finish);
-        };
-        _visible = false;
-        break;
 
       default:
         break;
