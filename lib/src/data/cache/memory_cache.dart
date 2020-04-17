@@ -16,7 +16,9 @@ class MemoryCache {
   }
 
   static get shareKey {
-    return instance.getMemoryMap(MemoryCache.NODE_SHARE_USER_KEY);
+    return instance.getMemoryMap(NODE_SHARE_USER_KEY);
   }
+
+  static set shareKey(String value) => instance.setMemoryMap(NODE_SHARE_USER_KEY, value);
 
 }

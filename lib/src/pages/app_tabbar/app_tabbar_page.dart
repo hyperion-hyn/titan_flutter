@@ -125,7 +125,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
       var contractId = content["contractId"];
       var key = content["key"];
-      setMemoryMap(NODE_SHARE_USER_KEY,key);
+      MemoryCache.shareKey = key;
+
 //      var model = ContractNodeItem.onlyNodeId(int.parse(contractId));
 //      String jsonString = FluroConvertUtils.object2string(model.toJson());
       Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
