@@ -19,7 +19,8 @@ class WalletRepository {
 
   Future updateCoinBalance(Wallet wallet, CoinVo coin) async {
     var balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
-    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();
+    coin.balance = balance;
+//    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();
   }
 
   Future<Wallet> getActivatedWalletFormLocalDisk() async {

@@ -17,7 +17,7 @@ class EthereumConst {
   static const SUPER_FAST_SPEED = 30 * TokenUnit.G_WEI;
 
   static const int ETH_TRANSFER_GAS_LIMIT = 21000;
-  static const int ERC20_TRANSFER_GAS_LIMIT = 38000;
+  static const int ERC20_TRANSFER_GAS_LIMIT = 55000;
 
   static const int ERC20_APPROVE_GAS_LIMIT = 50000;
 
@@ -63,10 +63,9 @@ class WalletConfig {
     switch (netType) {
       case EthereumNetType.main:
         //TODO
-        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
+        return '';
       case EthereumNetType.repsten:
-        //TODO
-        return '0x194205c8e943E8540Ea937fc940B09b3B155E10a';
+        return '0x498382ADfea3124B290696C54205b8a9B738A8e5';
       case EthereumNetType.rinkeby:
         return '0xda3df1c86e4976643bfa69b830afa48ef5857d58';
       case EthereumNetType.local:

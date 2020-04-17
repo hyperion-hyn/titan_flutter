@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class EmptyWalletView extends StatelessWidget {
@@ -41,9 +42,9 @@ class EmptyWalletView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
-                    var route = ModalRoute.of(context);
+                    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
                     Application.router.navigateTo(context,
-                        Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(route.settings?.name?.split('?')[0] ?? '')}');
+                        Routes.wallet_create + '?entryRouteName=$currentRouteName');
                   },
                   child: Container(
                     child: Padding(
@@ -64,9 +65,9 @@ class EmptyWalletView extends StatelessWidget {
                         side: BorderSide(color: Theme.of(context).primaryColor),
                         borderRadius: BorderRadius.circular(36)),
                     onPressed: () {
-                      var route = ModalRoute.of(context);
+                      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
                       Application.router.navigateTo(context,
-                          Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(route.settings?.name?.split('?')[0] ?? '')}');
+                          Routes.wallet_import + '?entryRouteName=$currentRouteName');
                     },
                     child: Container(
                       child: Padding(
