@@ -13,6 +13,8 @@ TransactionHistoryEntity _$TransactionHistoryEntityFromJson(
     json['instanceId'] as int,
     json['txhash'] as String,
     json['operaType'] as String,
+    json['amount'] as int,
+    json['shareKey'] as String,
   );
 }
 
@@ -23,4 +25,6 @@ Map<String, dynamic> _$TransactionHistoryEntityToJson(
       'instanceId': instance.instanceId,
       'txhash': instance.txhash,
       'operaType': instance.operaType,
+      "amount": instance.amount,
+      "shareKey": instance.shareKey
     };

@@ -147,7 +147,7 @@ part 'contract_node_item.g.dart';
   String get remainHalfDueDay{
 
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
-    double totalRemain = (expectDueTime - instanceActiveTime) / 3600 / 24;
+    double totalRemain = (expectDueTime - instanceActiveTime) / 3600 / 24 / 2;
     double progress = ((now - instanceStartTime) / 3600 / 24);
     return FormatUtil.doubleFormatNum(totalRemain>=progress?totalRemain-progress:0);
   }
