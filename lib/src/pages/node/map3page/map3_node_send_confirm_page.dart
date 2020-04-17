@@ -98,9 +98,9 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
-    var gasLimit = widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_TRANSFER_GAS_LIMIT : EthereumConst.ERC20_TRANSFER_GAS_LIMIT;
+    var totalGasLimit = EthereumConst.ERC20_TRANSFER_GAS_LIMIT + EthereumConst.CREATE_MAP3_NODE_GAS_LIMIT;
     var gasEstimate =
-        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
 
     var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
 
