@@ -433,7 +433,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: DefaultColors.colorf5f5f5,
         body: Stack(
           children: <Widget>[
             _pageWidget(context),
@@ -474,7 +474,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
               // 2.节点信息
               SliverToBoxAdapter(child: _nodeInfoWidget()),
-              _Spacer(),
+              _spacer(),
 
               // 3.合约状态信息
               // 3.1最近已操作状态通知 + 总参与抵押金额及期望收益
@@ -482,19 +482,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               SliverToBoxAdapter(child: _lineSpacer()),
               // 3.1合约进度状态
               SliverToBoxAdapter(child: _contractProgressWidget()),
-              _Spacer(),
+              _spacer(),
 
               // 4.参与人员列表信息
               SliverToBoxAdapter(
-                child: NodeJoinMemberWidget(
-                  "${widget.contractId}",
-                  _contractNodeItem.remainDay,
-                  _contractNodeItem.ownerName,
-                  _contractNodeItem.shareUrl,
-                  isShowInviteItem: false,
+                child: Material(
+                  color: Colors.white,
+                  child: NodeJoinMemberWidget(
+                    "${widget.contractId}",
+                    _contractNodeItem.remainDay,
+                    _contractNodeItem.ownerName,
+                    _contractNodeItem.shareUrl,
+                    isShowInviteItem: false,
+                  ),
                 ),
               ),
-              _Spacer(),
+              _spacer(),
 
               // 5.合约流水信息
               SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
@@ -517,6 +520,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         height: 48,
         width: MediaQuery.of(context).size.width,
         child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black38,
+                blurRadius: 4.0,
+              ),
+            ],
+          ),
           child: RaisedButton(
             textColor: Colors.white,
             color: Theme.of(context).primaryColor,
@@ -531,68 +543,71 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _nodeInfoWidget() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
-          child: Row(
-            children: <Widget>[
-              Text(_nodeStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
-              Spacer(),
-              if (_contractNodeItem.remoteNodeUrl?.isNotEmpty ==true && _contractState == ContractState.ACTIVE)InkWell(
-                  onTap: _pushNodeInfoWebView,
-                  child:
-                      Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
-            ],
+    return Material(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+            child: Row(
+              children: <Widget>[
+                Text(_nodeStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
+                Spacer(),
+                if (_contractNodeItem.remoteNodeUrl?.isNotEmpty ==true && _contractState == ContractState.ACTIVE)InkWell(
+                    onTap: _pushNodeInfoWebView,
+                    child:
+                        Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
+              ],
+            ),
           ),
-        ),
-        Container(
-          height: 0.8,
-          color: DefaultColors.colorf5f5f5,
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(45, 6, 5, 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Container(
-                      width: 100,
-                      child:
-                          Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                  new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Row(
+          Container(
+            height: 0.8,
+            color: DefaultColors.colorf5f5f5,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(45, 6, 5, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
                   children: <Widget>[
                     Container(
                         width: 100,
-                        child: Text(S.of(context).service_provider,
-                            style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                    new Text("${_contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
+                        child:
+                            Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                    new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                        width: 100,
-                        child: Text(S.of(context).node_location,
-                            style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                    new Text("${_contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: 100,
+                          child: Text(S.of(context).service_provider,
+                              style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                      new Text("${_contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: 100,
+                          child: Text(S.of(context).node_location,
+                              style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                      new Text("${_contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -810,21 +825,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return Container(
       height: 0.5,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      color: DefaultColors.colorf5f5f5,
+//      color: DefaultColors.colorf5f5f5,
     );
   }
 
-  Widget _Spacer() {
+  Widget _spacer() {
     return SliverToBoxAdapter(
       child: Container(
         height: 10,
-        color: DefaultColors.colorf5f5f5,
+//        color: DefaultColors.colorf5f5f5,
       ),
     );
   }
 
   Widget _delegateRecordHeaderWidget() {
     return Container(
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
         child: Row(
@@ -858,6 +874,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     return Container(
       //padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      color: Colors.white,
       child: Stack(
         children: <Widget>[
           InkWell(
