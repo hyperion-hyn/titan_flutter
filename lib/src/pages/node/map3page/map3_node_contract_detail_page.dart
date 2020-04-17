@@ -291,18 +291,28 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           },
           child: CustomScrollView(
             slivers: <Widget>[
+
+              // 0.合约介绍信息
               SliverToBoxAdapter(
                 child: Container(
                     color: Colors.white,
                     child:
                         getMap3NodeProductHeadItem(context, _contractNodeItem, isJoin: true, isDetail: false, hasShare: true)),
               ),
+
+              // 2.节点信息
               SliverToBoxAdapter(child: _nodeInfoWidget()),
               _Spacer(),
+
+              // 3.合约状态信息
+              // 3.1最近已操作状态通知 + 总参与抵押金额及期望收益
               SliverToBoxAdapter(child: _contractNotifyWidget()),
               SliverToBoxAdapter(child: _lineSpacer()),
+              // 3.1合约进度状态
               SliverToBoxAdapter(child: _contractProgressWidget()),
               _Spacer(),
+
+              // 4.参与人员列表信息
               SliverToBoxAdapter(
                 child: NodeJoinMemberWidget(
                   "${widget.contractId}",
@@ -313,6 +323,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 ),
               ),
               _Spacer(),
+
+              // 5.合约流水信息
               SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
               SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
@@ -356,12 +368,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               Text(_nodeStateDesc, style: TextStyle(fontSize: 14, color: HexColor("#666666"))),
               Spacer(),
               InkWell(
-                  onTap: () {
-                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("https://www.map3.network");
-                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).map_node_detail);
-                    Application.router
-                        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                  },
+                  onTap: _pushNodeInfoWebView,
                   child:
                       Text(S.of(context).click_view_detail, style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
             ],
@@ -683,7 +690,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         children: <Widget>[
           InkWell(
             onTap: () {
-              _pushWebView(delegateItem);
+              _pushTransactionDetailWebView(delegateItem);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
@@ -1147,7 +1154,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     _lastActionTitle = _actionTitle;
   }
 
-  void _pushWebView(ContractDelegateRecordItem delegateItem) {
+  void _pushNodeInfoWebView() {
+    String webUrl = FluroConvertUtils.fluroCnParamsEncode(_contractNodeItem.remoteNodeUrl??"https://www.map3.network");
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).map_node_detail);
+    Application.router
+        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+  }
+
+  void _pushTransactionDetailWebView(ContractDelegateRecordItem delegateItem) {
     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
     var url = EtherscanApi.getTxDetailUrl(delegateItem.txHash, isChinaMainland);
     if (url != null) {

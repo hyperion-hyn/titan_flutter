@@ -42,3 +42,10 @@ class ContractTestConfig {
 //  static const String apiLocalDomain = "http://10.10.1.115:5000/";
   static const String apiLocalDomain = "https://staking.map3.network/";
 }
+
+/*
+{
+"protocol": "https",
+"server": "staking.map3.network"
+}
+*/

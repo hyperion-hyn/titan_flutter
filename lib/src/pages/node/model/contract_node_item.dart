@@ -62,8 +62,12 @@ part 'contract_node_item.g.dart';
   @JsonKey(name: 'shareUrl')
   String shareUrl;
 
+  @JsonKey(name: 'remoteNodeUrl')
+  String remoteNodeUrl;
+
   @JsonKey(name: 'state')
   String state;
+
 
   ContractNodeItem(
       this.id,
@@ -83,7 +87,8 @@ part 'contract_node_item.g.dart';
       this.instanceCancelTime,
       this.instanceFinishTime,
       this.shareUrl,
-      this.state
+      this.remoteNodeUrl,
+      this.state,
       );
 
   ContractNodeItem.onlyNodeItem(this.contract);

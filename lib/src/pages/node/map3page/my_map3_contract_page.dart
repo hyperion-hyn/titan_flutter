@@ -341,10 +341,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       List<ContractNodeItem> dataList = [];
       if (widget.title.contains(S.of(context).launch)) {
-        List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(address: _wallet.getEthAccount().address);
+        List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
         dataList  = createContractList;
       } else {
-        List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(address: _wallet.getEthAccount().address);
+        List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
         dataList = joinContractList;
       }
 
