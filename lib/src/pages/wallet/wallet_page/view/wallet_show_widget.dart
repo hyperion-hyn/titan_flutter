@@ -1,21 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
-import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
-import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
 class ShowWalletView extends StatelessWidget {
@@ -176,7 +169,7 @@ class ShowWalletView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "${WalletUtil.formatCoinNum(coin.balance)}",
+                  "${FormatUtil.coinBalanceHumanReadFormat(coin)}",
                   style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                 ),
                 SizedBox(
@@ -185,7 +178,7 @@ class ShowWalletView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(coin.balance * (symbolQuote?.quoteVo?.price ?? 0))}",
+                    "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}",
                     style: TextStyles.textC9b9b9bS12,
                   ),
                 ),

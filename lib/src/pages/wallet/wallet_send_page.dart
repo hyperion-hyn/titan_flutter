@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -13,6 +14,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 import '../../global.dart';
 
@@ -42,11 +44,13 @@ class _WalletSendState extends State<WalletSendPage> {
   void initState() {
     super.initState();
     _amountController.addListener(() {
-      var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
-      var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
-      setState(() {
-        _notionalValue = double.parse(_amountController.text) * quotePrice;
-      });
+      if (_amountController.text != null && _amountController.text.length > 0) {
+        var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+        var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+        setState(() {
+          _notionalValue = double.parse(_amountController.text) * quotePrice;
+        });
+      }
     });
     if (widget.toAddress != null) {
       _receiverAddressController.text = widget.toAddress;
@@ -138,7 +142,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           },
                           controller: _receiverAddressController,
                           decoration: InputDecoration(
-                            hintText: S.of(context).example+': 0x81e7A0529AC1726e...',
+                            hintText: S.of(context).example + ': 0x81e7A0529AC1726e...',
                             hintStyle: TextStyle(color: Colors.black12),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -158,13 +162,14 @@ class _WalletSendState extends State<WalletSendPage> {
                           ),
                         ),
                         Text(
-                          '(' + S.of(context).can_use + ' ${WalletUtil.formatCoinNum(widget.coinVo.balance)})',
+                          '(' + S.of(context).can_use + ' ${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)})',
                           style: TextStyle(fontSize: 12, color: Colors.black38),
                         ),
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            _amountController.text = WalletUtil.formatCoinNum(widget.coinVo.balance);
+                            print('xxx balance ${widget.coinVo.balance}');
+                            _amountController.text = FormatUtil.coinBalanceHumanRead(widget.coinVo);
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
@@ -190,7 +195,7 @@ class _WalletSendState extends State<WalletSendPage> {
                           if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
                             return S.of(context).input_corrent_count_hint;
                           }
-                          if (double.parse(value) > widget.coinVo.balance) {
+                          if (Decimal.parse(value) > Decimal.parse(FormatUtil.coinBalanceHumanRead(widget.coinVo))) {
                             return S.of(context).input_count_over_balance;
                           }
                           return null;
@@ -257,7 +262,8 @@ class _WalletSendState extends State<WalletSendPage> {
 
   void submit() {
     if (_fromKey.currentState.validate()) {
-      var count = double.parse(_amountController.text);
+      var amountTrim = _amountController.text.trim();
+      var count = double.parse(amountTrim);
       if (count <= 0) {
         Fluttertoast.showToast(msg: S.of(context).transfer_num_bigger_zero);
         return;
@@ -267,7 +273,7 @@ class _WalletSendState extends State<WalletSendPage> {
       Application.router.navigateTo(
           context,
           Routes.wallet_transfer_token_confirm +
-              "?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=${_receiverAddressController.text}");
+              "?coinVo=$voStr&transferAmount=$amountTrim&receiverAddress=${_receiverAddressController.text}");
     }
   }
 

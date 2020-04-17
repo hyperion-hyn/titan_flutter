@@ -462,6 +462,7 @@
   "please_input_hyn_count": "请输入HYN数量",
   "broadcase_success": "广播成功",
   "map_node_broadcase_success_description": "已在区块链上网络广播 ${actionType} Map3节点抵押合约的消息，区块链网络需要5-30分钟开采验证。",
+  "transfer_broadcase_success_description": "已在区块链上网络广播转账的消息，区块链网络需要5-30分钟开采验证。",
   "create": "创建",
   "map_node_contract_address": "Map3节点合约(${receiverAddress})",
   "launch": "发起",
