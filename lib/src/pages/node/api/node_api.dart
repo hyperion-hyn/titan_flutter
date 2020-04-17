@@ -50,7 +50,7 @@ class NodeApi {
     return headMap;
   }
 
-  Future<List<ContractNodeItem>> getMyCreateNodeContract({int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
+  Future<List<ContractNodeItem>> getMyCreateNodeContract({int page = 0}) async {
     return await NodeHttpCore.instance.getEntity(
         "/delegations/my-create",
         EntityFactory<List<ContractNodeItem>>(
@@ -58,7 +58,7 @@ class NodeApi {
         params: {"page": page},options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
   }
 
-  Future<List<ContractNodeItem>> getMyJoinNodeContract({int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
+  Future<List<ContractNodeItem>> getMyJoinNodeContract({int page = 0}) async {
     return await NodeHttpCore.instance.getEntity(
         "/delegations/my-join",
         EntityFactory<List<ContractNodeItem>>(
@@ -73,7 +73,7 @@ class NodeApi {
         ,options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
   }
 
-  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
+  Future<List<ContractDelegatorItem>> getContractDelegator(int contractNodeItemId, {int page = 0}) async {
     return await NodeHttpCore.instance.getEntity(
         "/delegations/instance/$contractNodeItemId/delegators",
         EntityFactory<List<ContractDelegatorItem>>(
@@ -82,7 +82,7 @@ class NodeApi {
         options: RequestOptions(headers: getOptionHeader(hasAddress:true,hasLang: true)));
   }
 
-  Future<List<ContractDelegateRecordItem>> getContractDelegateRecord(int contractNodeItemId, {int page = 0, String address = "jifijfkeo904o3jfi0joitqjjfli"}) async {
+  Future<List<ContractDelegateRecordItem>> getContractDelegateRecord(int contractNodeItemId, {int page = 0}) async {
     return await NodeHttpCore.instance.getEntity(
         "/delegations/instance/$contractNodeItemId/delegate_record",
         EntityFactory<List<ContractDelegateRecordItem>>(
