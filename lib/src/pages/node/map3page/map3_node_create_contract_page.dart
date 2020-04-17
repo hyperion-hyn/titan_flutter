@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -47,6 +49,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
+  bool _isHaveCreateContract = false;
   var selectServerItemValue = 0;
   var selectNodeItemValue = 0;
   List<DropdownMenuItem> serverList;
@@ -63,6 +66,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     });
 
     getNetworkData();
+    checkIsCreateContract();
     super.initState();
   }
 
@@ -90,6 +94,15 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       setState(() {
         currentState = LoadFailState();
       });
+    }
+  }
+
+  Future checkIsCreateContract() async {
+    try {
+      _isHaveCreateContract = await _nodeApi.checkIsCreateContractInstance();
+      
+    } catch (e) {
+      log(e);
     }
   }
 
@@ -311,6 +324,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
                 setState(() {
+                  if (_isHaveCreateContract) {
+                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+                    return;
+                  }
+                  
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
                   }
@@ -824,6 +842,8 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
   );
 }
 
+/*
+
 Widget _getHeadItemCard(BuildContext context, NodeItem nodeItem) {
   var currentTime = new DateTime.now().millisecondsSinceEpoch;
   var durationTime = nodeItem.duration * 3600 * 24 * 1000;
@@ -1060,3 +1080,4 @@ Widget _getHeadItemCard(BuildContext context, NodeItem nodeItem) {
     );
   }
 }
+*/
