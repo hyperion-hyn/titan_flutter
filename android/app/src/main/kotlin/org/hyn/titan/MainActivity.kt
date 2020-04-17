@@ -26,8 +26,6 @@ import org.hyn.titan.umenglib.push.UMengPushImpl
 import org.hyn.titan.utils.AppToolsPlugin
 import org.hyn.titan.wallet.WalletPluginInterface
 import java.io.File
-import androidx.core.app.NotificationCompat.getExtras
-import androidx.core.content.ContextCompat.getSystemService
 
 
 
@@ -50,9 +48,11 @@ class MainActivity : FlutterActivity() {
             Thread.sleep(2000)
             withContext(Dispatchers.Main) {
                 var data = intent.data
-                AppPrintTools.printLog("main onCreate = $data")
-                AppToolsPlugin.deeplinkStart(data)
+                if(data != null){
+                    AppToolsPlugin.deeplinkStart(data)
+                }
             }
+
             Thread.sleep(10000)
             withContext(Dispatchers.Main){
                 AppPrintTools.printLog(UMengPushImpl.umengToken)
@@ -63,9 +63,11 @@ class MainActivity : FlutterActivity() {
         val walletPluginInterface = WalletPluginInterface(this, flutterView)
         val sensorPluginInterface = SensorPluginInterface(this, flutterView)
         val umengPluginInterface = UMengPluginInterface(this, flutterView)
+        val appToolsPlugin = AppToolsPlugin(this)
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
+            appToolsPlugin.setMethodCallHandler(call, result)
             if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
             }
@@ -157,7 +159,6 @@ class MainActivity : FlutterActivity() {
         super.onNewIntent(intent)
 
         var data = intent?.data
-        AppPrintTools.printLog("main onNewIntent = $data")
         AppToolsPlugin.deeplinkStart(data)
     }
 

@@ -12,6 +12,7 @@ import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/contract_transaction_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/node/model/node_default_entity.dart';
 
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
@@ -300,6 +301,37 @@ class NodeApi {
       operaType
     );
     NodeHttpCore.instance.post("eth-transaction-history/", data: historyEntity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future postStartDefaultInstance(String address, String name, int amount, String publicKey, String txHash, String nodeProvider, String nodeRegion,) async {
+    NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
+        address,
+        txHash,
+        name:name,
+        amount:amount,
+        publicKey:publicKey,
+        nodeProvider:nodeProvider,
+        nodeRegion:nodeRegion
+    );
+    NodeHttpCore.instance.post("eth-transaction-history/", data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future postJoinDefaultInstance(String address, String name, int amount, String txHash) async {
+    NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
+        address,
+        txHash,
+        name:name,
+        amount:amount,
+    );
+    NodeHttpCore.instance.post("eth-transaction-history/", data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future postWithdrawDefaultInstance(String address, String txHash) async {
+    NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
+      address,
+      txHash,
+    );
+    NodeHttpCore.instance.post("eth-transaction-history/", data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
   Future<String> withdrawContractInstance(ContractNodeItem _contractNodeItem, WalletVo activatedWallet, String password,
