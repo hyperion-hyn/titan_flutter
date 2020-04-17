@@ -275,10 +275,6 @@ class _Map3NodeState extends State<Map3NodePage> {
   Widget _getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
     if (contractNodeItem == null) return Container();
 
-//    String startAccount = "${contractNodeItem.owner}";
-//    startAccount = startAccount.substring(
-//        0, startAccount.length > 25 ? 25 : startAccount.length);
-//    startAccount = startAccount + "...";
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -299,7 +295,7 @@ class _Map3NodeState extends State<Map3NodePage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                Text("${contractNodeItem.ownerName}", style: TextStyle(fontWeight: FontWeight.w600)),
+                Text("${contractNodeItem.shortOwnerName}", style: TextStyle(fontWeight: FontWeight.w600)),
                 Expanded(
                     child:
                         Text(" ${UiUtil.shortEthAddress(contractNodeItem.owner)}", style: TextStyles.textC9b9b9bS12)),
