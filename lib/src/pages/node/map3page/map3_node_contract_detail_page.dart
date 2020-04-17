@@ -789,7 +789,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       tickColor: _stateColor,
       tickText: _contractStateDetail,
       currentStepProgress: _currentStepProgress,
-      currentStep: 3,
+      currentStep: _currentStep,
       steps: titles
           .map(
             (title) {
