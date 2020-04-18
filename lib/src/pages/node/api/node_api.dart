@@ -381,12 +381,12 @@ class NodeApi {
   Future<bool> checkIsDelegatedContractInstance(int contractId) async {
     var isDelegated = await NodeHttpCore.instance.getEntity("/delegations/instance/$contractId/isdelegated", EntityFactory<bool>((data) {
       return data;
-    }),options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: false)));
+    }),options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));
 
     return isDelegated;
   }
 
-  Future<bool> checkIsCreateContractInstance() async {
+  Future<bool> checkIsUserCreatableContractInstance() async {
     var isCreate = await NodeHttpCore.instance.getEntity("/contracts/isUserCreatable", EntityFactory<bool>((data) {
       return data;
     }),options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));

@@ -687,6 +687,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Widget _contractNotifyWidget() {
     if (!_isDelegated || _contractDetailItem == null || _userDelegateState == null) {
+      print("ddd , _isDelegated:${_isDelegated}");
       return Container();
     }
 
@@ -1158,8 +1159,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     try {
       // 0.
       if (_isNoWallet) {
+        print("111");
         _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
       } else {
+        print("222");
+
         _isDelegated = await _api.checkIsDelegatedContractInstance(widget.contractId);
         if (_isDelegated) {
           _contractDetailItem = await _api.getContractDetail(widget.contractId);
