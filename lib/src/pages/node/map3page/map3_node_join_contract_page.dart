@@ -95,7 +95,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
       return;
     }
 
-    _joinCoinFormKey.currentState.validate();
+    _joinCoinFormKey.currentState?.validate();
 
     if (inputText == null || inputText == "") {
       setState(() {
