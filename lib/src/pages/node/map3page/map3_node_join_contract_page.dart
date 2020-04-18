@@ -91,7 +91,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractNodeItem == null) {
+    if (contractNodeItem == null || !mounted) {
       return;
     }
 
