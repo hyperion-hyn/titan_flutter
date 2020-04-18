@@ -97,28 +97,31 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     return Container(
       height: 160,
       child: Padding(
-        padding: const EdgeInsets.only(left: 20.0, top: 15, bottom: 8),
+        padding: const EdgeInsets.only(top: 16, bottom: 8),
         child: Column(
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                    child: Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
-                /*Text(
-                  "剩余时间：${widget.remainDay}天",
-                  style: TextStyles.textC999S14,
-                ),*/
-                Text(
-                  S.of(context).total_member_count(memberList.length.toString()),
-                  style: TextStyles.textC999S14,
-                ),
-                SizedBox(
-                  width: 14,
-                )
-              ],
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
+                  /*Text(
+                    "剩余时间：${widget.remainDay}天",
+                    style: TextStyles.textC999S14,
+                  ),*/
+                  Text(
+                    S.of(context).total_member_count(memberList.length.toString()),
+                    style: TextStyles.textC999S14,
+                  ),
+                  SizedBox(
+                    width: 14,
+                  )
+                ],
+              ),
             ),
             SizedBox(
-              height: 13,
+              height: 16,
             ),
             Expanded(
               child: LoadDataContainer(
@@ -129,6 +132,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     getJoinMemberMoreData();
                   },
                   child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     itemBuilder: (context, index) {
                       var i = index;
                       var delegatorItem = memberList[i];
@@ -158,7 +162,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     );
   }
 
-  Widget _firstItem() {
+  /*Widget _firstItem() {
     return Container(
       width: 90,
       margin: const EdgeInsets.only(right: 12, top: 2, bottom: 2.0),
@@ -193,19 +197,21 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
         ),
       ),
     );
-  }
+  }*/
 
-  Widget _item(ContractDelegatorItem delegatorItem, bool isFirst) {
-    String showName = delegatorItem.userName.substring(0, 1);
-    Color color;
-    int index = memberList.indexOf(delegatorItem);
+  /* int index = memberList.indexOf(delegatorItem);
     if (index % 3 == 0) {
       color = HexColor("#CAF0FF");
     } else if (index % 3 == 1) {
       color = HexColor("#FFD7D7");
     } else {
       color = HexColor("#FFE87D");
-    }
+    }*/
+
+  Widget _item(ContractDelegatorItem delegatorItem, bool isFirst) {
+    String showName = delegatorItem.userName.substring(0, 1);
+
+
     return InkWell(
       onTap: () {
         var url = EtherscanApi.getAddressDetailUrl(delegatorItem.userAddress,
@@ -241,7 +247,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       SizedBox(
 //                      height: 50,
 //                      width: 50,
-                        child: circleIconWidget(showName, isShowShape: false, color: color)
+                        child: circleIconWidget(showName, isShowShape: false, address: delegatorItem.userAddress)
                         /*Card(
                           elevation: 2,
                           shape: RoundedRectangleBorder(
@@ -295,7 +301,12 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 }
 
-Widget circleIconWidget(String shortName, {bool isShowShape = true, Color color = Colors.white}) {
+Widget circleIconWidget(String shortName, {bool isShowShape = true, String address = "#000000"}) {
+  String hexColor = address;
+  if (address.length>6) {
+    hexColor = "#"+address.substring(address.length-6);
+  }
+  HexColor color = HexColor(hexColor);
   return Container(
     width: 40,
     height: 40,
@@ -314,7 +325,7 @@ Widget circleIconWidget(String shortName, {bool isShowShape = true, Color color 
       child: Center(
         child: Text(
           shortName,
-          style: TextStyle(fontSize: 15, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 15, color: HexColor("#FFFFFF"), fontWeight: FontWeight.w500),
         ),
       ),
     ),

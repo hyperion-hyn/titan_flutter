@@ -49,7 +49,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
-  bool _isHaveCreateContract = false;
+  bool _isUserCreatable = false;
   var selectServerItemValue = 0;
   var selectNodeItemValue = 0;
   List<DropdownMenuItem> serverList;
@@ -99,7 +99,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   Future checkIsCreateContract() async {
     try {
-      _isHaveCreateContract = await _nodeApi.checkIsCreateContractInstance();
+      _isUserCreatable = await _nodeApi.checkIsUserCreatableContractInstance();
       
     } catch (e) {
       log(e);
@@ -324,7 +324,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
                 setState(() {
-                  if (_isHaveCreateContract) {
+                  if (!_isUserCreatable) {
                     Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
                     return;
                   }

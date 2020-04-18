@@ -568,5 +568,6 @@
   "task_finished": "处理完成",
   "your_last_input_to_contract_func": "你的最新抵押：${input}, ${task_pending}",
   "collect_request_have_post_please_wait_hint": "提取请求已提交，请耐心等候",
-  "happy_get_all_reward_hint": "恭喜你成功提取所有奖励"
+  "happy_get_all_reward_hint": "恭喜你成功提取所有奖励",
+  "your_last_output_to_contract_func": "你的最新提取：$input, ${task_pending}"
 }

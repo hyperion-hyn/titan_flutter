@@ -54,8 +54,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   ContractDetailItem _contractDetailItem;
   UserDelegateState _userDelegateState;
-  TransactionHistoryState _lastTransactionHistoryState;
-  BillsOperaState _lastOperaState;
+//  TransactionHistoryState _lastTransactionHistoryState;
+//  BillsOperaState _lastOperaState;
   ContractNodeItem _contractNodeItem;
   ContractState _contractState;
 
@@ -312,19 +312,21 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     };
 
     var _contractNotifyDetail = "";
-    var sub = _lastTransactionHistoryState == TransactionHistoryState.PENDING?S.of(context).task_pending:S.of(context).task_finished;
-    var input = "${FormatUtil.amountToString(_contractDetailItem.latestTransaction?.amount??"0")}HYN";
-
 
     switch (_userDelegateState) {
       // create
       case UserDelegateState.PRE_CREATE:
-        _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
+      case UserDelegateState.PENDING:
+
+        if (_contractDetailItem.amountPreDelegation == "0") {
+          _contractNotifyDetail = "";
+        } else {
+          var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
+          _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
+        }
+
         break;
 
-      case UserDelegateState.PENDING:
-        _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, sub);
-        break;
 
         // cancel
       case UserDelegateState.CANCELLED:
@@ -336,7 +338,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case UserDelegateState.PRE_CANCELLED_COLLECTED:
       case UserDelegateState.PRE_HALFDUE_COLLECTED:
       case UserDelegateState.PRE_DUE_COLLECTED:
-        _contractNotifyDetail = S.of(context).collect_request_have_post_please_wait_hint;
+      if (_contractDetailItem.preWithdrawn == "0") {
+        _contractNotifyDetail = "";
+      } else {
+        var output = "${FormatUtil.amountToString(_contractDetailItem.preWithdrawn)}HYN";
+        _contractNotifyDetail = S.of(context).your_last_output_to_contract_func(output, S.of(context).task_pending);
+      }
+        //_contractNotifyDetail = S.of(context).collect_request_have_post_please_wait_hint;
         break;
 
       case UserDelegateState.CANCELLED_COLLECTED:
@@ -351,8 +359,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 //        var total = double.parse(_contractDetailItem.expectedYield) + double.parse(_contractDetailItem.amountDelegation);
 //        var expectedYield = FormatUtil.amountToString(total.toString());
 //        _contractNotifyDetail = "恭喜你成功提取奖励:${expectedYield}HYN";
-        _contractNotifyDetail = S.of(context).happy_get_all_reward_hint;
+        //_contractNotifyDetail = S.of(context).happy_get_all_reward_hint;
 
+        if (_contractDetailItem.withdrawn == "0") {
+          _contractNotifyDetail = "";
+        } else {
+          var output = "${FormatUtil.amountToString(_contractDetailItem.withdrawn)}HYN";
+          _contractNotifyDetail = S.of(context).your_last_output_to_contract_func(output, S.of(context).task_finished);
+        }
         break;
 
       default:
@@ -751,10 +765,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 }
 
                 var isPreCreate = (_userDelegateState == UserDelegateState.PRE_CREATE);
-                var isPending = (_lastTransactionHistoryState == TransactionHistoryState.PENDING &&
-                _lastOperaState == BillsOperaState.DELEGATE);
-                //print('[cell] isPreCreate:$isPreCreate, isPending:$isPending');
-                if (isPreCreate || isPending)
+                if (isPreCreate)
                      {
                   detail = "0";
                 }
@@ -871,7 +882,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       ];
     }
 
-    print('[detail] _currentStep:$_currentStep， _currentStepProgress：${_currentStepProgress}');
+    //print('[detail] _currentStep:$_currentStep， _currentStepProgress：${_currentStepProgress}');
     return CustomStepper(
       tickColor: _stateColor,
       tickText: _contractStateDetail,
@@ -977,7 +988,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: circleIconWidget(shortName),
+                    child: circleIconWidget(shortName, address: item.userAddress),
                   ),
                   Flexible(
                     flex: 4,
@@ -1166,9 +1177,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           _contractNodeItem = _contractDetailItem?.instance;
 
           _userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
-
-          _lastTransactionHistoryState = enumTransactionHistoryStateFromString(_contractDetailItem?.latestTransaction?.state??"");
-          _lastOperaState = enumBillsOperaStateFromString(_contractDetailItem?.latestTransaction?.operaType??"");
         } else {
           _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
         }
