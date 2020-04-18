@@ -46,7 +46,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
         //sync wallet account to server
-        _nodeApi.postWallets(_activatedWalletVo);
+//        _nodeApi.postWallets(_activatedWalletVo);
       }
 
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());
