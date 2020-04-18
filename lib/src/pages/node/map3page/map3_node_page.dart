@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:sprintf/sprintf.dart';
@@ -6,6 +8,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
@@ -14,6 +17,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:collection/collection.dart';
 
 class Map3NodePage extends StatefulWidget {
   @override
@@ -25,13 +29,17 @@ class Map3NodePage extends StatefulWidget {
 class _Map3NodeState extends State<Map3NodePage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   NodeApi _nodeApi = NodeApi();
-  NodePageEntityVo _nodePageEntityVo = NodePageEntityVo(null, List());
+  NodePageEntityVo _nodePageEntityVo = MemoryCache.nodePageData;
   int currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    loadDataBloc.add(LoadingEvent());
+    if(!MemoryCache.hasNodePageData){
+      loadDataBloc.add(LoadingEvent());
+    }else{
+      getNetworkData();
+    }
   }
 
   @override
@@ -63,13 +71,20 @@ class _Map3NodeState extends State<Map3NodePage> {
   void getNetworkData() async {
     try {
       currentPage = 0;
-      _nodePageEntityVo = await _nodeApi.getNodePageEntityVo();
 
-      loadDataBloc.add(RefreshSuccessEvent());
+      NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
 
+      NodePageEntityVo cloneData = netData.clone();
+      cloneData.nodeHeadEntity.lastRecordMessage = null;
+      if (!cloneData.isEqual(MemoryCache.nodePageData)){
+        _nodePageEntityVo = netData;
+        MemoryCache.nodePageData = cloneData;
+        loadDataBloc.add(RefreshSuccessEvent());
+      }
       if (mounted) {
         setState(() {});
       }
+
     } catch (e) {
       if (mounted) {
         setState(() {
