@@ -10,11 +10,14 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
+import 'package:titan/src/pages/node/model/node_product_page_vo.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:collection/collection.dart';
 
 class Map3NodeProductPage extends StatefulWidget {
   @override
@@ -26,13 +29,16 @@ class Map3NodeProductPage extends StatefulWidget {
 class _Map3NodeProductState extends State<Map3NodeProductPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   NodeApi _nodeApi = NodeApi();
-  List<NodeItem> nodeList = List();
+  List<NodeItem> nodeList = MemoryCache.nodeProductPageData.nodeItemList;
   int currentPage = 0;
 
   @override
   void initState() {
-    loadDataBloc.add(LoadingEvent());
-    getNetworkData();
+    if(!MemoryCache.hasNodeProductPageData){
+      loadDataBloc.add(LoadingEvent());
+    }else{
+      getNetworkData();
+    }
 
     super.initState();
   }
@@ -74,12 +80,15 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
 
   void getNetworkData() async {
     try{
-      nodeList = await _nodeApi.getContractList(currentPage);
-      Future.delayed(Duration(seconds: 1), () {
+      var netData = await _nodeApi.getContractList(currentPage);
+      if(!NodeProductPageVo(netData).isEqual(MemoryCache.nodeProductPageData)){
+        nodeList = netData;
+        MemoryCache.nodeProductPageData = netData;
         loadDataBloc.add(RefreshSuccessEvent());
-        setState(() {
-        });
-      });
+        if (mounted) {
+          setState(() {});
+        }
+      }
     }catch(e){
       loadDataBloc.add(LoadFailEvent());
     }
