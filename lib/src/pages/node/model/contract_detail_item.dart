@@ -66,6 +66,7 @@ class LatestTransaction extends Object {
   @JsonKey(name: 'txhash')
   String txhash;
 
+//  enum BillsOperaState { DELEGATE, WITHDRAW}
   @JsonKey(name: 'operaType')
   String operaType;
 

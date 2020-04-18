@@ -134,9 +134,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     var dateDesc = "";
     var amountPre = "";
     var amount = "";
-    var hyn = "HYN";
+    var hyn = "";
     var state = enumContractStateFromString(contractNodeItem.state);
-    print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
+    //print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
 
     switch (state) {
       case ContractState.PENDING:
@@ -148,42 +148,22 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       case ContractState.ACTIVE:
         dateDesc = S.of(context).remain_day(contractNodeItem.expectDueDay);
-//        amountPre = S.of(context).can_extract;
-//        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
-//        hyn = "HYN";
-        amountPre = "";
-        amount = "";
-        hyn = "";
         break;
 
       case ContractState.DUE:
         dateDesc = S.of(context).be_expired;
-//        amountPre = S.of(context).can_extract;
-//        amount = FormatUtil.amountToString("${contractNodeItem.contract.commission}");
-        amountPre = "";
-        amount = "";
-        hyn = "";
         break;
 
       case ContractState.CANCELLED:
         dateDesc = S.of(context).overdue_start_failed;
-        amountPre = "";
-        amount = "";
-        hyn = "";
         break;
 
       case ContractState.DUE_COMPLETED:
         dateDesc = S.of(context).be_expired;
-        amountPre = "";
-        amount = "";
-        hyn = "";
         break;
 
       case ContractState.CANCELLED_COMPLETED:
         dateDesc = S.of(context).overdue_start_failed;
-        amountPre = "";
-        amount = "";
-        hyn = "";
         break;
 
       default:
