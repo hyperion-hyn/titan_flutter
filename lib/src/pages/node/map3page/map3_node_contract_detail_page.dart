@@ -318,7 +318,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case UserDelegateState.PRE_CREATE:
       case UserDelegateState.PENDING:
 
-        if (_contractDetailItem.amountPreDelegation == "0") {
+        if (double.parse(_contractDetailItem?.amountPreDelegation??"0") == 0) {
           _contractNotifyDetail = "";
         } else {
           var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
@@ -338,13 +338,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case UserDelegateState.PRE_CANCELLED_COLLECTED:
       case UserDelegateState.PRE_HALFDUE_COLLECTED:
       case UserDelegateState.PRE_DUE_COLLECTED:
-      if (_contractDetailItem.preWithdrawn == "0") {
-        _contractNotifyDetail = "";
-      } else {
-        var output = "${FormatUtil.amountToString(_contractDetailItem.preWithdrawn)}HYN";
-        _contractNotifyDetail = S.of(context).your_last_output_to_contract_func(output, S.of(context).task_pending);
-      }
-        //_contractNotifyDetail = S.of(context).collect_request_have_post_please_wait_hint;
+        _contractNotifyDetail = S.of(context).collect_request_have_post_please_wait_hint;
         break;
 
       case UserDelegateState.CANCELLED_COLLECTED:
@@ -361,7 +355,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 //        _contractNotifyDetail = "恭喜你成功提取奖励:${expectedYield}HYN";
         //_contractNotifyDetail = S.of(context).happy_get_all_reward_hint;
 
-        if (_contractDetailItem.withdrawn == "0") {
+        if (double.parse(_contractDetailItem?.withdrawn??"0") == 0) {
           _contractNotifyDetail = "";
         } else {
           var output = "${FormatUtil.amountToString(_contractDetailItem.withdrawn)}HYN";
@@ -384,6 +378,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     var _contractStateDetail = "";
     switch (_contractState) {
+      case ContractState.PRE_CREATE:
       case ContractState.PENDING:
 
         _contractStateDetail =
@@ -426,16 +421,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.HALFDUE:
           _contractStateDetail = S.of(context).can_withdraw_fifty_reward;
           break;
-          
-        case UserDelegateState.HALFDUE_COLLECTED:
-          //_contractStateDetail = S.of(context).happy_get_half_reward_hint;
-          _contractStateDetail = S.of(context).remain_day(_contractNodeItem.remainHalfDueDay);
-          break;
-          
+
         case UserDelegateState.ACTIVE:
+        case UserDelegateState.HALFDUE_COLLECTED:
+        case UserDelegateState.PRE_HALFDUE_COLLECTED:
           _contractStateDetail = S.of(context).remain_day(_contractNodeItem.remainHalfDueDay);
           break;
-          
+
         default: 
           break;
       }
@@ -969,6 +961,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   Widget _delegateRecordItemWidget(ContractDelegateRecordItem item) {
     String shortName = item.userName.substring(0, 1);
     String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
+    var operaState = enumBillsOperaStateFromString(item.operaType);
+    var recordState = enumBillsRecordStateFromString(item.state);
+    var isPengding = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
 
     return Container(
       //padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
@@ -1029,7 +1024,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                             Padding(
                               padding: const EdgeInsets.only(right: 6),
                               child: Text(
-                                FormatUtil.amountToString(item.amount),
+                                isPengding?"*":FormatUtil.amountToString(item.amount),
                                 style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1069,7 +1064,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     // todo: test
 //    operaState = BillsOperaState.WITHDRAW;
-//    recordState = BillsRecordState.CONFIRMED;
+//    recordState = BillsRecordState.FAIL;
 
     switch (recordState) {
       case BillsRecordState.PRE_CREATE:
@@ -1104,16 +1099,30 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       default:
-        return Container(
-          decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
-            child: Text(
-              operaState == BillsOperaState.DELEGATE?S.of(context).input_confirm_success:S.of(context).output_confirm_success,
-              style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+        if (operaState == BillsOperaState.DELEGATE) {
+          return Container(
+            decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+              child: Text(
+                S.of(context).input_confirm_success,
+                style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+              ),
             ),
-          ),
-        );
+          );
+        }
+        else {
+          return Container(
+            decoration: BoxDecoration(color: HexColor("#1FB9C7"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+              child: Text(
+                S.of(context).output_confirm_success,
+                style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
+              ),
+            ),
+          );
+        }
         break;
     }
   }

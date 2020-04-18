@@ -324,7 +324,7 @@ Widget circleIconWidget(String shortName, {bool isShowShape = true, String addre
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: Text(
-          shortName,
+          shortName.toUpperCase(),
           style: TextStyle(fontSize: 15, color: HexColor("#FFFFFF"), fontWeight: FontWeight.w500),
         ),
       ),

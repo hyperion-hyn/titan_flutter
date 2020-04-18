@@ -139,6 +139,10 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     //print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
 
     switch (state) {
+      case ContractState.PRE_CREATE:
+        dateDesc = S.of(context).task_pending;
+        break;
+
       case ContractState.PENDING:
         dateDesc = S.of(context).remain_day(contractNodeItem.remainDay);
         amountPre = S.of(context).remain;
@@ -155,6 +159,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         break;
 
       case ContractState.CANCELLED:
+      case ContractState.FAIL:
         dateDesc = S.of(context).overdue_start_failed;
         break;
 
