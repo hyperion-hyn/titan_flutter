@@ -125,7 +125,7 @@ class _Map3NodeState extends State<Map3NodePage> {
               SizedBox(height: 8),
               SizedBox(
                 child: Text(
-                  '没有待启动的节点合约\n您可以创建合约',
+                  S.of(context).no_pengding_node_contract_hint,
                   style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                   textAlign: TextAlign.center,
                 ),

@@ -155,15 +155,17 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       return;
     }
     double inputValue = double.parse(inputText);
-/*    double doubleEndProfit =
+        /*
+        double doubleEndProfit =
         inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
     double doubleSpendManager = (double.parse(contractNodeItem.contract.minTotalDelegation) - inputValue) *
         contractNodeItem.contract.annualizedYield *
         contractNodeItem.contract.duration /
         365 *
-        contractNodeItem.contract.commission;*/
+        contractNodeItem.contract.commission;
+        */
     endProfit = Map3NodeUtil.getEndProfit(contractNodeItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManegerTip(contractNodeItem.contract, inputValue);
+    spendManager = Map3NodeUtil.getManagerTip(contractNodeItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
@@ -422,7 +424,7 @@ Widget getHoldInNum(
   }
 
   var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
-  walletName = UiUtil.shortString(walletName, limitLength: 3);
+  walletName = UiUtil.shortString(walletName, limitLength: 6);
 
   var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
   return Container(

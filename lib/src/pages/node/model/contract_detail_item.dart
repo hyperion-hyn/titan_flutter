@@ -37,10 +37,11 @@ part 'contract_detail_item.g.dart';
   @JsonKey(name: 'preWithdrawn')
   String preWithdrawn;
 
+  @JsonKey(name: 'isOwner')
+  bool isOwner;
 
-
-  @JsonKey(name: 'latestTransaction')
-  LatestTransaction latestTransaction;
+//  @JsonKey(name: 'latestTransaction')
+//  LatestTransaction latestTransaction;
 
 //  enum UserDelegateState { PRE_CREATE, PENDING, CANCELLED, PRE_CANCELLED_COLLECTED, CANCELLED_COLLECTED , ACTIVE, HALFDUE, PRE_HALFDUE_COLLECTED, HALFDUE_COLLECTED, DUE, PRE_DUE_COLLECTED, DUE_COLLECTED,FAIL}
 @JsonKey(name: 'state')
@@ -57,7 +58,7 @@ part 'contract_detail_item.g.dart';
       this.delegatorCount,
       this.withdrawn,
       this.preWithdrawn,
-      this.latestTransaction,
+      this.isOwner,
       this.state,
       );
 
