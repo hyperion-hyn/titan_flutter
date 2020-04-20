@@ -1,4 +1,8 @@
 
+import 'dart:ui';
+
+import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -55,6 +59,35 @@ class Map3NodeUtil {
     double profit =
         inputValue * (contract.annualizedYield) * contract.duration / 365 + inputValue;
     return FormatUtil.formatNumDecimal(profit);
+  }
+
+  static HexColor stateColor(ContractState state) {
+    if (state == null) return HexColor('#1FB9C7');
+
+    Color statusColor = HexColor('#EED197');
+
+    switch (state) {
+      case ContractState.PRE_CREATE:
+      case ContractState.PENDING:
+        statusColor = HexColor('#EED197');
+        break;
+
+      case ContractState.ACTIVE:
+      case ContractState.DUE:
+        statusColor = HexColor('#1FB9C7');
+        break;
+
+      case ContractState.CANCELLED:
+      case ContractState.CANCELLED_COMPLETED:
+      case ContractState.FAIL:
+        statusColor = HexColor('#F30202');
+        break;
+
+      default:
+        statusColor = HexColor('#999999');
+        break;
+    }
+    return statusColor;
   }
 
 }

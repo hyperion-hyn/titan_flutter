@@ -73,6 +73,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   NodeApi _nodeApi = NodeApi();
   List<ContractDelegateRecordItem> _delegateRecordList = [];
 
+  get _stateColor {
+    return Map3NodeUtil.stateColor(_contractState);
+  }
+
   get _durationType {
     return _contractNodeItem?.contract?.durationType??0;
   }
@@ -91,30 +95,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   get _canGetPercent50Rewards => _isDelegated && (_durationType == 2);
 
-  get _stateColor {
-    var statusColor = HexColor('#EED197');
 
-    switch (_contractState) {
-      case ContractState.PENDING:
-        statusColor = HexColor('#EED197');
-        break;
-
-      case ContractState.ACTIVE:
-      case ContractState.DUE:
-        statusColor = HexColor('#1FB9C7');
-        break;
-
-      case ContractState.CANCELLED:
-      case ContractState.CANCELLED_COMPLETED:
-        statusColor = HexColor('#F30202');
-        break;
-
-      default:
-        statusColor = HexColor('#FFDB58');
-        break;
-    }
-    return statusColor;
-  }
 
   get _currentStep {
     int value = 0;
@@ -468,9 +449,23 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
 
-    if (_userDelegateState != null && _userDelegateState == UserDelegateState.HALFDUE && _canGetPercent50Rewards ) {
-      _actionTitle = S.of(context).withdraw_fifty_revenue;
-      _visible = true;
+    if (_userDelegateState != null && _canGetPercent50Rewards ) {
+
+      switch (_userDelegateState) {
+        case UserDelegateState.HALFDUE:
+          _actionTitle = S.of(context).withdraw_fifty_revenue;
+          _visible = true;
+          break;
+
+        case UserDelegateState.PRE_CANCELLED_COLLECTED:
+        case UserDelegateState.PRE_HALFDUE_COLLECTED:
+        case UserDelegateState.PRE_DUE_COLLECTED:
+        _visible = false;
+          break;
+
+        default:
+          break;
+      }
     }
 
     if (_visible) {
@@ -495,6 +490,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           };
           break;
       }
+
+      // todo: test_jison_0420
+      /*onPressed = (){
+
+        Application.router.navigateTo(
+            context,
+            Routes.map3node_broadcase_success_page +
+                "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+
+        return;
+      };*/
+
       _lastActionTitle = _actionTitle;
     } else { 
       _actionTitle = "";
@@ -503,11 +510,21 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   
-  @override
+/*  @override
   void onCreated() {
+
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
     getContractDetailData();
+
     super.onCreated();
+  }*/
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+    getContractDetailData();
   }
 
   @override
@@ -1244,6 +1261,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Future _collectAction() async {
+
     if (_wallet == null || _contractDetailItem == null) {
 
       return;

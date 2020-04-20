@@ -21,7 +21,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 return IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
-                    Routes.popUntilCachedEntryRouteName(context);
+                    _pop(context);
                   },
                 );
               },
@@ -100,7 +100,11 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                     color: DefaultColors.color26ac29),
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
-                              Routes.popUntilCachedEntryRouteName(context);
+
+                              _pop(context);
+
+                              //Routes.popUntilCachedEntryRouteName(context);
+
 //                              Application.router.navigateTo(
 //                                  context,
 //                                  Routes.wallet_import +
@@ -128,4 +132,14 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
           ),
         ));
   }
+
+  void _pop(BuildContext context) {
+    if (this.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT) {
+      //print("[detail] --> pop");
+      Navigator.of(context).pop();
+    } else {
+      Routes.popUntilCachedEntryRouteName(context);
+    }
+  }
+
 }
