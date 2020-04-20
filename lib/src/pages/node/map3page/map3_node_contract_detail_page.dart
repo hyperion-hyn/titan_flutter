@@ -54,8 +54,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   ContractDetailItem _contractDetailItem;
   UserDelegateState _userDelegateState;
-//  TransactionHistoryState _lastTransactionHistoryState;
-//  BillsOperaState _lastOperaState;
   ContractNodeItem _contractNodeItem;
   ContractState _contractState;
 
@@ -731,9 +729,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
+            padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
             child: Row(
-              children: [1, 2, 3].map((value) {
+
+              children: [1, 0.5, 2, 0.5, 3].map((value) {
                 String title = "";
                 String detail = "0";
                 Color color = HexColor("#000000");
@@ -754,6 +753,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     title = _isCreator?S.of(context).get_manage_tip_hyn:S.of(context).out_mange_tip_hyn;
                     detail = commission;
                     break;
+
+                  default:
+                    return Container(
+                      height: 20,
+                      width: 1.0,
+                      color: HexColor("#000000").withOpacity(0.2),
+                    );
+                    break;
                 }
 
                 var isPreCreate = (_userDelegateState == UserDelegateState.PRE_CREATE);
@@ -770,7 +777,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     children: <Widget>[
                       Text(detail, style: style),
                       Container(
-                        height: 8,
+                        height: 4,
                       ),
                       Text(title, style: TextStyles.textC333S11),
                     ],

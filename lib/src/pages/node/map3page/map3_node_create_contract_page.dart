@@ -13,6 +13,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/pages/node/model/node_share_entity.dart';
@@ -154,15 +155,15 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       return;
     }
     double inputValue = double.parse(inputText);
-    double doubleEndProfit =
+/*    double doubleEndProfit =
         inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
     double doubleSpendManager = (double.parse(contractNodeItem.contract.minTotalDelegation) - inputValue) *
         contractNodeItem.contract.annualizedYield *
         contractNodeItem.contract.duration /
         365 *
-        contractNodeItem.contract.commission;
-    endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
-    spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
+        contractNodeItem.contract.commission;*/
+    endProfit = Map3NodeUtil.getEndProfit(contractNodeItem.contract, inputValue);
+    spendManager = Map3NodeUtil.getManegerTip(contractNodeItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
@@ -175,6 +176,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       });
     }
   }
+
 
   @override
   void dispose() {
@@ -737,12 +739,29 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
             onTap: () async {
               final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
 
-              Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-              bool isFromOwn = wallet.getEthAccount().address == contractNodeItem.owner;
-              NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address,"detail",isFromOwn);
-              String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
-              Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
-                  text: "${contractNodeItem.shareUrl}&key=$encodeStr");
+              var activityWallet = WalletInheritedModel.of(context).activatedWallet;
+              if(activityWallet != null) {
+                Wallet wallet = WalletInheritedModel
+                    .of(context)
+                    .activatedWallet
+                    .wallet;
+                bool isFromOwn = wallet
+                    .getEthAccount()
+                    .address == contractNodeItem.owner;
+                NodeShareEntity nodeShareEntity = NodeShareEntity(wallet
+                    .getEthAccount()
+                    .address, "detail", isFromOwn);
+                String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
+                Share.file(S
+                    .of(context)
+                    .nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
+                    text: "${contractNodeItem.shareUrl}&key=$encodeStr");
+              }else{
+                Share.file(S
+                    .of(context)
+                    .nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
+                    text: "${contractNodeItem.shareUrl}");
+              }
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 44.0, right: 15),
