@@ -1,5 +1,5 @@
 {
-  "app_name": "泰坦",
+  "app_name": "泰坦地圖",
   "network_request_err": "網絡請求錯誤,狀態碼: $code",
   "route": "路線",
   "no_recommended_route": "暫無推薦路線",
