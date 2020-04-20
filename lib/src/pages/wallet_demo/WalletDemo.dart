@@ -64,6 +64,20 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               _mnemonic = await WalletUtil.makeMnemonic();
+//              print('xxx $_mnemonic');
+//              return ;
+
+//              ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal  //常用的测试网
+//              because certain august huge empower blue half pepper tunnel trust amazing forget  //测试网私钥
+
+//              _mnemonic = 'motion clip lunch rebel use bag fashion indicate ten mushroom loop miracle'; //1
+//              _mnemonic = 'pizza another fault reduce choose bronze zebra attitude pottery repair spider person'; //2
+//              _mnemonic = 'enrich rail nature figure legend bright bird habit page project silk wrap'; //3
+//              _mnemonic = 'rifle beyond crime insect spider mention mirror ripple mixed pulse perfect nerve';//4
+//              _mnemonic = 'like parent salmon record drop weapon friend obey planet raven desert grit';  //5
+//              _mnemonic = 'post diamond chimney type armed seed absurd doll dream law fan hollow';//6
+//              _mnemonic = 'park vapor mind eagle depth witness liquid effort helmet margin attitude topple';//7
+//              _mnemonic = 'rebel stand list ladder argue sentence night episode aisle steel amateur bid';//8
 
               if (!bip39.validateMnemonic(_mnemonic)) {
                 Fluttertoast.showToast(msg: '不是合法的助记词');
@@ -98,7 +112,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 print(address.hexEip55);
                 print(await client.getBalance(address));
 
-                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
                 if (activeWallet != null) {
                   var toAddress = activeWallet.getEthAccount().address;
                   var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05); //.toRadixString(16);
@@ -121,7 +135,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   logger.i('ETH交易已提交，交易hash $txHash');
 
                   var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
-                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 1000000); //三十万
+                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 205000); //三十万
                   txHash = await client.sendTransaction(
                     credentials,
                     Transaction.callContract(
@@ -142,18 +156,19 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var wallets = await WalletUtil.scanWallets();
-              for (var wallet in wallets) {
+//              var wallets = await WalletUtil.scanWallets();
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              if (activeWallet != null) {
                 var balance;
-                Account account = wallet.getEthAccount();
+                Account account = activeWallet.getEthAccount();
                 if (account != null) {
-                  balance = await wallet.getBalance(account);
+                  balance = await activeWallet.getBalance(account);
                   print(
                       "账户${account.address} ${account.token.symbol} 余额是 ${balance / BigInt.from(pow(10, account.token.decimals))}");
 
                   //获取erc20账户余额
                   for (var token in account.contractAssetTokens) {
-                    balance = await wallet.getErc20Balance(token.contractAddress);
+                    balance = await activeWallet.getErc20Balance(token.contractAddress);
                     print(
                         "ERC20账户${account.address} ${token.symbol} 余额是 ${balance / BigInt.from(pow(10, token.decimals))}");
                   }
@@ -251,7 +266,6 @@ class _WalletDemoState extends State<WalletDemo> {
 //                  fetchChainIdFromNetworkId: true,
 //                );
 //                signedHex = bytesToHex(signed, include0x: true, padToEvenLength: true);
-//                logger.i('xxx 1 $signedHex');
 //                var ret = await WalletUtil.postToEthereumNetwork(
 //                    method: 'eth_sendRawTransaction',
 //                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);

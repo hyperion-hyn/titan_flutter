@@ -121,7 +121,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
               ),
             ),
             SizedBox(
-              height: 16,
+              height: 12,
             ),
             Expanded(
               child: LoadDataContainer(
@@ -221,7 +221,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
             Routes.toolspage_webview_page + '?initUrl=$url');
       },
       child: Padding(
-        padding: EdgeInsets.only(top: 2, bottom: 2.0),
+        padding: EdgeInsets.only(top: 4, bottom: 4.0),
         child: SizedBox(
           width: 91,
           height: 111,
