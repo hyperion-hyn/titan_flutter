@@ -719,7 +719,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Widget _contractNotifyWidget() {
     if (!_isDelegated || _contractDetailItem == null || _userDelegateState == null) {
-      return Container();
+      return Container(
+//        color: Colors.white,
+//        padding: EdgeInsets.only(top: 8),
+      );
     }
 
     var amountDelegation = FormatUtil.amountToString(_contractDetailItem.amountDelegation);
@@ -828,6 +831,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     return Container(
       color: Colors.white,
+      padding: EdgeInsets.only(top: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
