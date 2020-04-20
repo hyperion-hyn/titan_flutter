@@ -225,17 +225,26 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
         child: SizedBox(
           width: 91,
           height: 111,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
+          child: Card(
+            /*decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey[300],
-                  blurRadius: 40.0,
+                  color: Colors.black12,
+                  offset: Offset(-0.01, -0.01),
+                  blurRadius: 0.5,
+                ),
+                BoxShadow(
+                  color: Colors.black12,
+                  offset: Offset(0.3, 0.3),
+                  blurRadius: 1,
+                ),
+                BoxShadow(
+                  color: Colors.white,
                 ),
               ],
-            ),
+            ),*/
+            elevation: 2,
             margin: const EdgeInsets.only(right: 12),
             child: Stack(
               children: <Widget>[

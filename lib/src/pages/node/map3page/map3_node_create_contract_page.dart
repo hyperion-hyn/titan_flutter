@@ -737,12 +737,29 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
             onTap: () async {
               final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
 
-              Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-              bool isFromOwn = wallet.getEthAccount().address == contractNodeItem.owner;
-              NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address,"detail",isFromOwn);
-              String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
-              Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
-                  text: "${contractNodeItem.shareUrl}&key=$encodeStr");
+              var activityWallet = WalletInheritedModel.of(context).activatedWallet;
+              if(activityWallet != null) {
+                Wallet wallet = WalletInheritedModel
+                    .of(context)
+                    .activatedWallet
+                    .wallet;
+                bool isFromOwn = wallet
+                    .getEthAccount()
+                    .address == contractNodeItem.owner;
+                NodeShareEntity nodeShareEntity = NodeShareEntity(wallet
+                    .getEthAccount()
+                    .address, "detail", isFromOwn);
+                String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
+                Share.file(S
+                    .of(context)
+                    .nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
+                    text: "${contractNodeItem.shareUrl}&key=$encodeStr");
+              }else{
+                Share.file(S
+                    .of(context)
+                    .nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
+                    text: "${contractNodeItem.shareUrl}");
+              }
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 44.0, right: 15),
