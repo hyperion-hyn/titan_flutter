@@ -226,6 +226,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                       child: _getTabView(_currentTabIndex),
                     ),
                     bottomNavigationBar(),
+                    
                     if (_isShowAnnounceDialog && state is CheckNewAnnouncementState)
                       AnnouncementDialog(state.announcement, () {
                         _isShowAnnounceDialog = false;

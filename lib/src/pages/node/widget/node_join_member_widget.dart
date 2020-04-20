@@ -64,7 +64,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   void getJoinMemberData() async {
     _currentPage = 0;
     List<ContractDelegatorItem> tempMemberList =
-        await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
+    await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
 
@@ -77,7 +77,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     try {
       _currentPage++;
       List<ContractDelegatorItem> tempMemberList =
-          await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
+      await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -127,6 +127,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
               child: LoadDataContainer(
                   bloc: loadDataBloc,
                   enablePullDown: false,
+                  hasFootView: false,
                   //onLoadData: getJoinMemberData,
                   onLoadingMore: () {
                     getJoinMemberMoreData();
@@ -231,7 +232,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey[300],
+                  color: Colors.grey[200],
                   blurRadius: 40.0,
                 ),
               ],
