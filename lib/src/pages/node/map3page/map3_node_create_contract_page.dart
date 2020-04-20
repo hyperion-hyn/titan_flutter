@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -47,6 +49,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
+  bool _isUserCreatable = false;
   var selectServerItemValue = 0;
   var selectNodeItemValue = 0;
   List<DropdownMenuItem> serverList;
@@ -63,6 +66,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     });
 
     getNetworkData();
+    checkIsCreateContract();
     super.initState();
   }
 
@@ -90,6 +94,15 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       setState(() {
         currentState = LoadFailState();
       });
+    }
+  }
+
+  Future checkIsCreateContract() async {
+    try {
+      _isUserCreatable = await _nodeApi.checkIsUserCreatableContractInstance();
+      
+    } catch (e) {
+      log(e);
     }
   }
 
@@ -127,7 +140,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractNodeItem == null) {
+    if (contractNodeItem == null || !mounted) {
       return;
     }
 
@@ -311,6 +324,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
                 setState(() {
+                  if (!_isUserCreatable) {
+                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+                    return;
+                  }
+                  
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
                   }
@@ -724,7 +742,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
               NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address,"detail",isFromOwn);
               String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
               Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
-                  text: "${contractNodeItem.shareUrl}?name=${contractNodeItem.ownerName}&key=$encodeStr");
+                  text: "${contractNodeItem.shareUrl}&key=$encodeStr");
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 44.0, right: 15),
@@ -823,6 +841,8 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
     ],
   );
 }
+
+/*
 
 Widget _getHeadItemCard(BuildContext context, NodeItem nodeItem) {
   var currentTime = new DateTime.now().millisecondsSinceEpoch;
@@ -1060,3 +1080,4 @@ Widget _getHeadItemCard(BuildContext context, NodeItem nodeItem) {
     );
   }
 }
+*/

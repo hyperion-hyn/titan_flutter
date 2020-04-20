@@ -682,7 +682,7 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
                         padding: const EdgeInsets.only(top: 16.0),
                         child: FractionallySizedBox(
                           //widthFactor: 1,
-                          widthFactor: i < widget.currentStep ?1:widget.currentStepProgress,
+                          widthFactor: i < widget.currentStep ? 1 : widget.currentStepProgress,
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 4.0),
                             height: 1.0,
@@ -714,11 +714,11 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
             child: Opacity(
               opacity: 0.24,
               child: Container(
-                //color: Colors.red,
+//                color: Colors.red,
                 width: 12,
                 height: 18,
                 child: CustomPaint(
-                  painter: _TickPainter(bgColor: widget.tickColor),
+                  painter: _TickPainter(bgColor: widget.tickColor, direction: 0),
                 ),
               ),
             ),
@@ -746,28 +746,31 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
             padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 28.0),
+            padding: const EdgeInsets.only(top: 24.0),
             child: Opacity(
               opacity: 0.24,
               child: Container(
-                //color: Colors.red,
+//                color: Colors.red,
                 width: 12,
                 height: 18,
                 child: CustomPaint(
-                  painter: _TickPainter(bgColor: widget.tickColor, direction: widget.currentStep>2?1:0),
+                  painter: _TickPainter(bgColor: widget.tickColor, direction: 1),
                 ),
               ),
             ),
           ),
-
         ],
       );
 
-      Widget tick = widget.currentStep>2?rightTick:leftTick;
-      var multi = widget.currentStep>2?-2:1;
+      var isRightTick = widget.currentStep >= widget.steps.length ~/ 2;
+      Widget tick = isRightTick ? rightTick : leftTick;
+
       double itemWidth = maxWidth / widget.steps.length;
-      double tickLeft = itemWidth * widget.currentStep + itemWidth * multi / 2;
-      tickLeft += itemWidth * widget.currentStepProgress;
+      double tickLeft = itemWidth * (widget.currentStep + 0.5 + widget.currentStepProgress);
+      double tickRight = 0;
+      if(isRightTick) {
+        tickRight = maxWidth - tickLeft;
+      }
 
       return Material(
         color: Colors.white,
@@ -793,7 +796,8 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
             ),
             Positioned(
               child: tick,
-              left: tickLeft,
+              left: isRightTick ? null: tickLeft,
+              right: isRightTick ? tickRight : null,
               top: 12,
             ),
           ],
@@ -860,10 +864,9 @@ class _TrianglePainter extends CustomPainter {
 }
 
 class _TickPainter extends CustomPainter {
-
   final Color bgColor;
   final int direction; // 0: 左边， 1： right
-  _TickPainter({this.bgColor, this.direction=0});
+  _TickPainter({this.bgColor, this.direction = 0});
 
   @override
   bool hitTest(Offset point) => true; // Hitting the rectangle is fine enough.
@@ -880,10 +883,10 @@ class _TickPainter extends CustomPainter {
 
     if (direction == 0) {
       //print("[pain] --0000, left");
-      canvas.drawLine(Offset(size.width, 0), Offset(size.width / 4, size.height), _paint);
+      canvas.drawLine(Offset(size.width, 0), Offset(size.width/4, size.height), _paint);
     } else {
       //print("[pain] --1111, right");
-      canvas.drawLine(Offset(size.width * 1.5, size.height),Offset(size.width / 8, 0), _paint);
+      canvas.drawLine(Offset(0, 0), Offset(size.width, size.height), _paint);
     }
   }
 

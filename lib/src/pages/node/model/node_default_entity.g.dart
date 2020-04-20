@@ -15,6 +15,7 @@ NodeDefaultEntity _$NodeDefaultEntityFromJson(Map<String, dynamic> json) {
     publicKey: json['publicKey'] as String,
     nodeProvider: json['nodeProvider'] as String,
     nodeRegion: json['nodeRegion'] as String,
+    shareKey: json['shareKey'] as String,
   );
 }
 
@@ -27,4 +28,5 @@ Map<String, dynamic> _$NodeDefaultEntityToJson(NodeDefaultEntity instance) =>
       'txHash': instance.txHash,
       'nodeProvider': instance.nodeProvider,
       'nodeRegion': instance.nodeRegion,
+      'shareKey': instance.shareKey,
     };

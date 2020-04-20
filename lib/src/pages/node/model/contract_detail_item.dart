@@ -19,6 +19,9 @@ part 'contract_detail_item.g.dart';
   @JsonKey(name: 'amountDelegation')
   String amountDelegation;
 
+  @JsonKey(name: 'amountPreDelegation')
+  String amountPreDelegation;
+
   @JsonKey(name: 'expectedYield')
   String expectedYield;
 
@@ -28,6 +31,13 @@ part 'contract_detail_item.g.dart';
   @JsonKey(name: 'delegatorCount')
   int delegatorCount;
 
+  @JsonKey(name: 'withdrawn')
+  String withdrawn;
+
+  @JsonKey(name: 'preWithdrawn')
+  String preWithdrawn;
+
+
 
   @JsonKey(name: 'latestTransaction')
   LatestTransaction latestTransaction;
@@ -36,7 +46,20 @@ part 'contract_detail_item.g.dart';
 @JsonKey(name: 'state')
   String state;
 
-  ContractDetailItem(this.instance,this.userAddress,this.ownerAddress,this.amountDelegation,this.expectedYield,this.commission,this.delegatorCount, this.latestTransaction,this.state,);
+  ContractDetailItem(
+      this.instance,
+      this.userAddress,
+      this.ownerAddress,
+      this.amountDelegation,
+      this.amountPreDelegation,
+      this.expectedYield,
+      this.commission,
+      this.delegatorCount,
+      this.withdrawn,
+      this.preWithdrawn,
+      this.latestTransaction,
+      this.state,
+      );
 
   factory ContractDetailItem.fromJson(Map<String, dynamic> srcJson) => _$ContractDetailItemFromJson(srcJson);
 
@@ -66,6 +89,7 @@ class LatestTransaction extends Object {
   @JsonKey(name: 'txhash')
   String txhash;
 
+//  enum BillsOperaState { DELEGATE, WITHDRAW}
   @JsonKey(name: 'operaType')
   String operaType;
 

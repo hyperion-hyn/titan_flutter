@@ -553,5 +553,21 @@
   "contract_had_stop": "合约已结束",
   "contract_had_expired": "合约已到期",
   "create_contract_only_one_hint": "• 一个钱包地址同一时间内只能创建一个Map3节点合约。合约到期后可再创建一个。",
-  "contract_running": "合约运行中"
+  "contract_running": "合约运行中",
+  "check_is_create_contract_hint": "你已有一个创建合约的请求正处理中",
+  "happy_get_half_reward_hint": "恭喜你获得一半奖励",
+  "get_manage_tip_hyn": "获得管理费(HYN)",
+  "out_mange_tip_hyn": "支出管理费(HYN)",
+  "input_confirm_pending": "转入待确认中",
+  "output_confirm_pending": "提取待确认中",
+  "input_confirm_fail": "转入失败",
+  "output_confirm_fail": "提取失败",
+  "input_confirm_success": "已转入",
+  "output_confirm_success": "已提取",
+  "task_pending": "待处理中",
+  "task_finished": "处理完成",
+  "your_last_input_to_contract_func": "你的最新抵押：${input}, ${task_pending}",
+  "collect_request_have_post_please_wait_hint": "提取请求已提交，请耐心等候",
+  "happy_get_all_reward_hint": "恭喜你成功提取所有奖励",
+  "your_last_output_to_contract_func": "你的最新提取：$input, ${task_pending}"
 }

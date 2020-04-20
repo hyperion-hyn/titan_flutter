@@ -91,11 +91,11 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractNodeItem == null) {
+    if (contractNodeItem == null || !mounted) {
       return;
     }
 
-    _joinCoinFormKey.currentState.validate();
+    _joinCoinFormKey.currentState?.validate();
 
     if (inputText == null || inputText == "") {
       setState(() {
@@ -219,11 +219,11 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
             ),
                 NodeJoinMemberWidget(widget.contractId, contractNodeItem.remainDay,contractNodeItem.ownerName,contractNodeItem.shareUrl),
 
-                Container(
+              /*  Container(
               height: 10,
               color: DefaultColors.colorf5f5f5,
               margin: EdgeInsets.only(top: 15.0, bottom: 0),
-            ),
+            ),*/
             Container(
               color: DefaultColors.colorf5f5f5,
               padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24, top:15),
