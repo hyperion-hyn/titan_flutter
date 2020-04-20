@@ -20,10 +20,11 @@ ContractDetailItem _$ContractDetailItemFromJson(Map<String, dynamic> json) {
     json['delegatorCount'] as int,
     json['withdrawn'] as String,
     json['preWithdrawn'] as String,
-    json['latestTransaction'] == null
+    json['isOwner'] as bool,
+    /*json['latestTransaction'] == null
         ? null
         : LatestTransaction.fromJson(
-            json['latestTransaction'] as Map<String, dynamic>),
+            json['latestTransaction'] as Map<String, dynamic>),*/
     json['state'] as String,
   );
 }
@@ -41,7 +42,7 @@ Map<String, dynamic> _$ContractDetailItemToJson(ContractDetailItem instance) =>
       'delegatorCount': instance.delegatorCount,
       'withdrawn': instance.withdrawn,
       'preWithdrawn': instance.preWithdrawn,
-      'latestTransaction': instance.latestTransaction,
+      'isOwner': instance.isOwner,
       'state': instance.state,
     };
 

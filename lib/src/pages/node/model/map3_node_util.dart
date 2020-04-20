@@ -6,7 +6,7 @@ class Map3NodeUtil {
 
   // input
 
-  static String getManegerTip(NodeItem contract, double inputValue) {
+  static String getManagerTip(NodeItem contract, double inputValue) {
     if (contract == null) return "*";
 
     double doubleSpendManager = (double.parse(contract.minTotalDelegation) - inputValue) *
@@ -28,6 +28,12 @@ class Map3NodeUtil {
         365 *
         contract.commission;
     return FormatUtil.formatNumDecimal(tip);
+  }
+
+  static String managerTip(NodeItem contract, double inputValue, {bool isOwner = false}) {
+    if (contract == null) return "*";
+
+    return isOwner?getManagerTip(contract, inputValue):spendManagerTip(contract, inputValue);
   }
 
   // expect yeild

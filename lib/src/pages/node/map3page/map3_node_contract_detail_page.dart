@@ -19,6 +19,7 @@ import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/custom_stepper.dart';
 import 'package:titan/src/pages/node/widget/node_delegator_member_widget.dart';
@@ -80,9 +81,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return _wallet == null;
   }
 
-  get _isCreator {
+ /* get _isCreator {
     return _wallet != null && _contractNodeItem != null && _wallet.getEthAccount().address == _contractNodeItem.owner;
-  }
+  }*/
+
+ get _isOwner {
+   return _contractDetailItem != null && _contractDetailItem.isOwner;
+ }
 
   get _canGetPercent50Rewards => _isDelegated && (_durationType == 2);
 
@@ -379,8 +384,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case ContractState.PRE_CREATE:
       case ContractState.PENDING:
 
-        _contractStateDetail =
-            S.of(context).remain + "${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
+        if (double.parse(_contractNodeItem.remainDelegation) > 0) {
+          var remainDelegation = FormatUtil.amountToString(_contractNodeItem.remainDelegation) + "HYN";
+          _contractStateDetail =
+              S.of(context).remain + remainDelegation;
+        } else {
+          _contractStateDetail = S.of(context).delegation_full_will_active_hint;
+        }
+       
         break;
 
       case ContractState.ACTIVE:
@@ -702,7 +713,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var expectedYield = FormatUtil.amountToString(total.toString());
     var commission = FormatUtil.amountToString(_contractDetailItem.commission);
     var textColor = _userDelegateState == UserDelegateState.CANCELLED ? HexColor("#B51414") : HexColor("#5C4304");
-    //print('[ddd] expectedYield:$expectedYield');
+    var withdrawn = FormatUtil.amountToString(_contractDetailItem.withdrawn) + "HYN";
+    var managerTip = Map3NodeUtil.managerTip(_contractNodeItem.contract, double.parse(_contractDetailItem.amountDelegation), isOwner: _isOwner);
+    var endProfit = Map3NodeUtil.getEndProfit(_contractNodeItem.contract, double.parse(_contractDetailItem.amountDelegation));
+    print('[Detail] commission:$commission vs $managerTip, expectedYield:$expectedYield vs $endProfit ,withdrawn: $withdrawn}');
+
+
     return Container(
       color: Colors.white,
       child: Column(
@@ -753,7 +769,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     break;
 
                   case 3:
-                    title = _isCreator?S.of(context).get_manage_tip_hyn:S.of(context).out_mange_tip_hyn;
+                    title = _isOwner?S.of(context).get_manage_tip_hyn:S.of(context).out_mange_tip_hyn;
                     detail = commission;
                     break;
 
