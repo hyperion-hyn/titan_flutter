@@ -78,6 +78,7 @@ class _AccountManagerState extends State<_AccountManager> {
         return AccountInheritedModel(
           userInfo: _userInfo,
           userToken: _userToken,
+          checkInModel: _checkInModel,
           child: widget.child,
         );
       },

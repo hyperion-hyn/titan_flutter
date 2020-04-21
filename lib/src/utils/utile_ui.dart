@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:android_intent/android_intent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -55,6 +56,16 @@ class UiUtil {
     return address.substring(0, 9) + "..." + address.substring(address.length - 9, address.length);
   }
 
+  static String shortString(String address, {int limitLength = 9}) {
+    if (address == null || address == "") {
+      return "";
+    }
+    if (address.length < limitLength) {
+      return address;
+    }
+    return address.substring(0, limitLength) + "..." ;
+  }
+
   static String shortEmail(String email) {
     if (email == null || email == "") {
       return "";
@@ -96,4 +107,10 @@ class UiUtil {
       intent.launch();
     }
   }
+}
+
+void callLater(FrameCallback callback) {
+  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+    callback(timeStamp);
+  });
 }

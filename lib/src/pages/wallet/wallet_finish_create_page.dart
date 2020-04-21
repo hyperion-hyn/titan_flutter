@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
@@ -19,8 +20,16 @@ class FinishCreatePage extends StatelessWidget {
             builder: (BuildContext context) {
               return IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Routes.popUntilCreateOrImportWalletEntryRoute(context, wallet);
+                onPressed: () async {
+                  List<Wallet> walletList = await WalletUtil.scanWallets();
+                  if (walletList.length == 1) {
+                    BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+
+                    await Future.delayed(Duration(milliseconds: 300));
+                    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+                  }
+
+                  Routes.popUntilCachedEntryRouteName(context, wallet);
                 },
               );
             },
@@ -71,7 +80,10 @@ class FinishCreatePage extends StatelessWidget {
                     onPressed: () async {
                       BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
-                      Routes.popUntilCreateOrImportWalletEntryRoute(context, wallet);
+                      await Future.delayed(Duration(milliseconds: 300));
+                      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+
+                      Routes.popUntilCachedEntryRouteName(context, wallet);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

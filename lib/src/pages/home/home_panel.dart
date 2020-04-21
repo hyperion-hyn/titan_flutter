@@ -355,17 +355,24 @@ class HomePanelState extends State<HomePanel> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(4.0)),
                     onTap: () {
-                      /*Navigator.push(
+
+                      // old version
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => WebViewContainer(
                                     initUrl: 'https://news.hyn.space/react-reduction/',
                                     title: S.of(context).map3_global_nodes,
-                                  )));*/
+                                  )));
 
                       print('[Home_panel] -->focusArea， 数组展示');
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => GlobalDataPage()));
+                      // new version
+                      /*Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GlobalDataPage()));*/
+
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -524,25 +531,24 @@ class HomePanelState extends State<HomePanel> {
   }
 
   Widget poiRow1(context) {
+    var center = Application.recentlyLocation;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         _buildPoiItem('res/drawable/ic_food.png', S.of(context).foods, onTap: () async {
-          var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                 isCategorySearch: true, gaodeType: 1, center: center, searchText: '美食', typeOfNearBy: "restaurant"));
           }
         }),
         _buildPoiItem('res/drawable/ic_hotel.png', S.of(context).hotel, onTap: () async {
-          var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                 isCategorySearch: true, gaodeType: 2, center: center, searchText: '酒店', typeOfNearBy: "lodging"));
           }
         }),
         _buildPoiItem('res/drawable/ic_scenic_spotx.png', S.of(context).attraction, onTap: () async {
-          var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                 isCategorySearch: true,
@@ -553,14 +559,12 @@ class HomePanelState extends State<HomePanel> {
           }
         }),
         _buildPoiItem('res/drawable/ic_park.png', S.of(context).paking, onTap: () async {
-          var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                 isCategorySearch: true, gaodeType: 4, center: center, searchText: '停车场', typeOfNearBy: "parking"));
           }
         }),
         _buildPoiItem('res/drawable/ic_gas_station.png', S.of(context).gas_station, onTap: () async {
-          var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                 isCategorySearch: true, gaodeType: 5, center: center, searchText: '加油站', typeOfNearBy: "gas_station"));
@@ -570,27 +574,26 @@ class HomePanelState extends State<HomePanel> {
     );
   }
 
-  get mapCenter async {
-    var center =
-        await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.getCameraPosition();
-    return center?.target;
-  }
+//  get mapCenter async {
+//    var center =
+//        await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.getCameraPosition();
+//    return center?.target;
+//  }
 
   Widget poiRow2(context) {
     bool isChinaMainland = SettingInheritedModel.of(context).areaModel.isChinaMainland;
+    var center = Application.recentlyLocation;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         _buildPoiItem('res/drawable/ic_bank.png', S.of(context).bank, onTap: () async {
-          var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                 isCategorySearch: true, gaodeType: 6, center: center, searchText: '银行', typeOfNearBy: "bank"));
           }
         }),
         _buildPoiItem('res/drawable/ic_supermarket.png', S.of(context).supermarket, onTap: () async {
-          var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                 isCategorySearch: true,
@@ -601,7 +604,6 @@ class HomePanelState extends State<HomePanel> {
           }
         }),
         _buildPoiItem('res/drawable/ic_market.png', S.of(context).mall, onTap: () async {
-          var center = await mapCenter;
           if (center != null) {
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                 isCategorySearch: true, gaodeType: 8, center: center, searchText: '商场', typeOfNearBy: "shopping_mall"));
@@ -609,7 +611,6 @@ class HomePanelState extends State<HomePanel> {
         }),
         if (isChinaMainland)
           _buildPoiItem('res/drawable/ic_cybercafe.png', S.of(context).internet_bar, onTap: () async {
-            var center = await mapCenter;
             if (center != null) {
               BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                   isCategorySearch: true, gaodeType: 9, center: center, searchText: '网吧', typeOfNearBy: "cafe"));
@@ -617,23 +618,20 @@ class HomePanelState extends State<HomePanel> {
           }),
         if (isChinaMainland)
           _buildPoiItem('res/drawable/ic_wc.png', S.of(context).toilet, onTap: () async {
-            var center = await mapCenter;
             if (center != null) {
               BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                   isCategorySearch: true, gaodeType: 10, center: center, searchText: '厕所', typeOfNearBy: "night_club"));
             }
           }),
-        if (isChinaMainland)
+        if (!isChinaMainland)
           _buildPoiItem('res/drawable/ic_cafe.png', S.of(context).cafe, onTap: () async {
-            var center = await mapCenter;
             if (center != null) {
               BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                   isCategorySearch: true, gaodeType: 9, center: center, searchText: '咖啡馆', typeOfNearBy: "cafe"));
             }
           }),
-        if (isChinaMainland)
+        if (!isChinaMainland)
           _buildPoiItem('res/drawable/ic_hospital.png', S.of(context).hospital, onTap: () async {
-            var center = await mapCenter;
             if (center != null) {
               BlocProvider.of<ScaffoldMapBloc>(context).add(SearchTextEvent(
                   isCategorySearch: true, gaodeType: 10, center: center, searchText: '医院', typeOfNearBy: "hospital"));

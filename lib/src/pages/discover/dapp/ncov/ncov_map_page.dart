@@ -522,7 +522,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
 
   void _fireToMyLocation() async {
     if (!(await Permission.location.serviceStatus.isEnabled)) {
-      _showGoToOpenLocationServiceDialog();
+      _showGoToOpenAppSettingsDialog();
       return;
     }
 
@@ -540,25 +540,6 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
   }
 
   void _showGoToOpenAppSettingsDialog() {
-    UiUtil.showDialogWidget(context,
-        title: Text(S.of(context).require_location),
-        content: Text(S.of(context).require_location_message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(S.of(context).cancel),
-            onPressed: () => Navigator.pop(context),
-          ),
-          FlatButton(
-            child: Text(S.of(context).setting),
-            onPressed: () {
-              UiUtil.openSettingLocation();
-              Navigator.pop(context);
-            },
-          ),
-        ]);
-  }
-
-  void _showGoToOpenLocationServiceDialog() {
     UiUtil.showDialogWidget(
       context,
       title: Text(S.of(context).open_location_service),

@@ -19,6 +19,9 @@ part 'contract_detail_item.g.dart';
   @JsonKey(name: 'amountDelegation')
   String amountDelegation;
 
+  @JsonKey(name: 'amountPreDelegation')
+  String amountPreDelegation;
+
   @JsonKey(name: 'expectedYield')
   String expectedYield;
 
@@ -28,10 +31,36 @@ part 'contract_detail_item.g.dart';
   @JsonKey(name: 'delegatorCount')
   int delegatorCount;
 
-  @JsonKey(name: 'state')
+  @JsonKey(name: 'withdrawn')
+  String withdrawn;
+
+  @JsonKey(name: 'preWithdrawn')
+  String preWithdrawn;
+
+  @JsonKey(name: 'isOwner')
+  bool isOwner;
+
+//  @JsonKey(name: 'latestTransaction')
+//  LatestTransaction latestTransaction;
+
+//  enum UserDelegateState { PRE_CREATE, PENDING, CANCELLED, PRE_CANCELLED_COLLECTED, CANCELLED_COLLECTED , ACTIVE, HALFDUE, PRE_HALFDUE_COLLECTED, HALFDUE_COLLECTED, DUE, PRE_DUE_COLLECTED, DUE_COLLECTED,FAIL}
+@JsonKey(name: 'state')
   String state;
 
-  ContractDetailItem(this.instance,this.userAddress,this.ownerAddress,this.amountDelegation,this.expectedYield,this.commission,this.delegatorCount,this.state,);
+  ContractDetailItem(
+      this.instance,
+      this.userAddress,
+      this.ownerAddress,
+      this.amountDelegation,
+      this.amountPreDelegation,
+      this.expectedYield,
+      this.commission,
+      this.delegatorCount,
+      this.withdrawn,
+      this.preWithdrawn,
+      this.isOwner,
+      this.state,
+      );
 
   factory ContractDetailItem.fromJson(Map<String, dynamic> srcJson) => _$ContractDetailItemFromJson(srcJson);
 
@@ -39,3 +68,40 @@ part 'contract_detail_item.g.dart';
 
 }
 
+
+@JsonSerializable()
+class LatestTransaction extends Object {
+
+  @JsonKey(name: 'userAddress')
+  String userAddress;
+
+  @JsonKey(name: 'instanceId')
+  int instanceId;
+
+  @JsonKey(name: 'delegationId')
+  int delegationId;
+
+  @JsonKey(name: 'amount')
+  String amount;
+
+  @JsonKey(name: 'shareKey')
+  String shareKey;
+
+  @JsonKey(name: 'txhash')
+  String txhash;
+
+//  enum BillsOperaState { DELEGATE, WITHDRAW}
+  @JsonKey(name: 'operaType')
+  String operaType;
+
+//  enum TransactionHistoryState { PENDING, SUCCESS, FAIL}
+@JsonKey(name: 'state')
+  String state;
+
+  LatestTransaction(this.userAddress,this.instanceId,this.delegationId, this.amount, this.shareKey,this.txhash,this.operaType,this.state,);
+
+  factory LatestTransaction.fromJson(Map<String, dynamic> srcJson) => _$LatestTransactionFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$LatestTransactionToJson(this);
+
+}

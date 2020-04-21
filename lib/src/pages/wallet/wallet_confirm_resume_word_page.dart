@@ -203,12 +203,10 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
   }
 
   Future _submit() async {
-    logger.w('TODO');
     var selectedMnemonitc = "";
     _selectedResumeWords.forEach(
         (word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
 
-    logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
     if (selectedMnemonitc.trim() == widget.createWalletMnemonicTemp.trim()) {
       var wallet = await WalletUtil.storeByMnemonic(
           name: widget.walletName,

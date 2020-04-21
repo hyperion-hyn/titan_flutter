@@ -15,6 +15,8 @@ import 'package:titan/src/pages/news/model/focus_response.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 
 class DiscoverPage extends StatefulWidget {
+  DiscoverPage({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return DiscoverPageState();
@@ -48,6 +50,15 @@ class DiscoverPageState extends State<DiscoverPage> {
         }
       }
     }
+  }
+
+  bool back() {
+    var state = BlocProvider.of<DiscoverBloc>(context).state;
+    if(state is ActiveDMapState) {
+      BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
+      return true;
+    }
+    return false;
   }
 
   @override

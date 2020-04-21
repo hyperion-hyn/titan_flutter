@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/me/components/account/account_component.dart';
 import 'package:titan/src/pages/me/model/user_info.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/routes/routes.dart';
 
 import '../../global.dart';
 import 'enter_fund_password.dart';
@@ -398,18 +400,21 @@ class _PurchaseState extends State<PurchasePage> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RechargePurchasePage(),
-                                      settings: RouteSettings(name: "/recharge_purchase_page")))
-                              .then((value) async {
-//                            userInfo = await service.getUserInfo();
-                            //payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
-                            //payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_USDT_100;
-//                            setState(() {});
-                            UserService.syncCheckInData(context);
+                          Application.router.navigateTo(context, Routes.recharge_purchase).then((_) {
+//                            UserService.syncCheckInData(context);
                           });
+//                          Navigator.push(
+//                                  context,
+//                                  MaterialPageRoute(
+//                                      builder: (context) => RechargePurchasePage(),
+//                                      settings: RouteSettings(name: "/recharge_purchase_page")))
+//                              .then((value) async {
+////                            userInfo = await service.getUserInfo();
+//                            //payBalanceType = PAY_BALANCE_TYPE_RECHARGE;
+//                            //payBalanceType_recharge = PAY_BALANCE_TYPE_RECHARGE_USDT_100;
+////                            setState(() {});
+//                            UserService.syncCheckInData(context);
+//                          });
                         },
                         child: Text(
                           S.of(context).click_charge,

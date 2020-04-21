@@ -419,7 +419,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         var date = DateTime.parse(item.day);
         var languageCode = Localizations.localeOf(context).languageCode;
 
-        var dateText = date.month.toString() + '月' + date.day.toString() + '日';
+        var dateText = date.month.toString() + S.of(context).month + date.day.toString() + S.of(context).day;
         if (languageCode != 'zh') {
           dateText = date.month.toString() + '-' + date.day.toString();
         }

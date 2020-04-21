@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -9,11 +10,14 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
+import 'package:titan/src/pages/node/model/node_product_page_vo.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:collection/collection.dart';
 
 class Map3NodeProductPage extends StatefulWidget {
   @override
@@ -25,13 +29,16 @@ class Map3NodeProductPage extends StatefulWidget {
 class _Map3NodeProductState extends State<Map3NodeProductPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   NodeApi _nodeApi = NodeApi();
-  List<NodeItem> nodeList = List();
+  List<NodeItem> nodeList = MemoryCache.nodeProductPageData.nodeItemList;
   int currentPage = 0;
 
   @override
   void initState() {
-    loadDataBloc.add(LoadingEvent());
-    getNetworkData();
+    if(!MemoryCache.hasNodeProductPageData){
+      loadDataBloc.add(LoadingEvent());
+    }else{
+      getNetworkData();
+    }
 
     super.initState();
   }
@@ -39,7 +46,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text("Map3节点抵押合约")),
+      appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_mortgage_contract)),
       body: _pageView(),
     );
   }
@@ -73,12 +80,15 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
 
   void getNetworkData() async {
     try{
-      nodeList = await _nodeApi.getContractList(currentPage);
-      Future.delayed(Duration(seconds: 1), () {
+      var netData = await _nodeApi.getContractList(currentPage);
+      if(!NodeProductPageVo(netData).isEqual(MemoryCache.nodeProductPageData)){
+        nodeList = netData;
+        MemoryCache.nodeProductPageData = netData;
         loadDataBloc.add(RefreshSuccessEvent());
-        setState(() {
-        });
-      });
+        if (mounted) {
+          setState(() {});
+        }
+      }
     }catch(e){
       loadDataBloc.add(LoadFailEvent());
     }
@@ -110,7 +120,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem) {
     return Container(
       color: Colors.white,
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(top: 8),
       padding:
       const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
       child: Column(
@@ -119,11 +129,17 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Image.asset(
-                "res/drawable/ic_map3_node_item_contract.png",
-                width: 50,
-                height: 50,
-                fit:BoxFit.cover,
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                  border: Border.all(color: Color(0x22B7B7B7), width: 1),
+                ),
+                child: Image.asset(
+                  "res/drawable/ic_map3_node_item_contract.png",
+                  width: 50,
+                  height: 50,
+                  fit:BoxFit.cover,
+                ),
               ),
               SizedBox(width: 6,),
               Flexible(
@@ -135,17 +151,17 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                       children: <Widget>[
                         Expanded(
                             child: Text("${nodeItem.nodeName}",
-                                style: TextStyles.textCcc000000S16))
+                                style: TextStyle(fontWeight: FontWeight.bold)))
                       ],
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 3.0),
                       child: Row(
                         children: <Widget>[
-                          Text("最高 ${FormatUtil.formatTenThousand(nodeItem.minTotalDelegation)}",
+                          Text(S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" + S.of(context).ten_thousand,
                               style: TextStyles.textC99000000S13,maxLines:1,softWrap: true),
                           Text("  |  ",style: TextStyles.textC9b9b9bS12),
-                          Text("${nodeItem.duration}天",style: TextStyles.textC99000000S13)
+                          Text(S.of(context).n_day(nodeItem.duration.toString()),style: TextStyles.textC99000000S13)
                         ],
                       ),
                     ),
@@ -155,14 +171,14 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
               Column(
                 children: <Widget>[
                   Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
-                  Text("年化奖励", style: TextStyles.textC99000000S13)
+                  Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13)
                 ],
               )
             ],
           ),
           Padding(
             padding: const EdgeInsets.only(top:9,bottom: 9),
-            child: Divider(height: 1,color: DefaultColors.color1177869e),
+            child: Divider(height: 1,color: DefaultColors.color2277869e),
           ),
           Row(
             children: <Widget>[
@@ -186,7 +202,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                           + "&contractId=${nodeItem.id}");
                     }
                   },
-                  child: Text("创建合约", style: TextStyles.textC906b00S13),
+                  child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
                 ),
               )
             ],

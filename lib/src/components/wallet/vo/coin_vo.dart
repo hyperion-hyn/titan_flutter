@@ -13,7 +13,7 @@ class CoinVo {
   final int decimals;
   final int coinType;
 
-  double balance;
+  BigInt balance;
 
   CoinVo(
       {this.decimals,

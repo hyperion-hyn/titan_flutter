@@ -24,3 +24,28 @@ Map<String, dynamic> _$ContractDelegatorItemToJson(
       'amountDelegation': instance.amountDelegation,
       'createAt': instance.createAt,
     };
+
+ContractDelegateRecordItem _$ContractDelegateRecordItemFromJson(
+    Map<String, dynamic> json) {
+  return ContractDelegateRecordItem(
+    json['userAddress'] as String,
+    json['userName'] as String,
+    json['amount'] as String,
+    json['txHash'] as String,
+    json['operaType'] as String,
+    json['createAt'] as int,
+    json['state'] as String,
+  );
+}
+
+Map<String, dynamic> _$ContractDelegateRecordItemToJson(
+        ContractDelegateRecordItem instance) =>
+    <String, dynamic>{
+      'userAddress': instance.userAddress,
+      'userName': instance.userName,
+      'amount': instance.amount,
+      'txHash': instance.txHash,
+      'operaType': instance.operaType,
+      'createAt': instance.createAt,
+      'state': instance.state,
+    };

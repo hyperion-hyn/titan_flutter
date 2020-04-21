@@ -12,6 +12,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -24,10 +25,9 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
 
-
 class WalletSendConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
-  final double transferAmount;
+  final String transferAmount;
   final String receiverAddress;
 
   WalletSendConfirmPage(String coinVo, this.transferAmount, this.receiverAddress)
@@ -97,7 +97,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 //    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
-    var gasLimit = widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_TRANSFER_GAS_LIMIT : EthereumConst.ERC20_TRANSFER_GAS_LIMIT;
+    var gasLimit =
+        widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_TRANSFER_GAS_LIMIT : EthereumConst.ERC20_TRANSFER_GAS_LIMIT;
     var gasEstimate =
         ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 
@@ -141,7 +142,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           ),
                         ),
                         Text(
-                          "≈ $quoteSign${WalletUtil.formatPrice(widget.transferAmount * quotePrice)}",
+                          "≈ $quoteSign${WalletUtil.formatPrice(double.parse(widget.transferAmount) * quotePrice)}",
                           style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
@@ -408,18 +409,22 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         });
         var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
         if (widget.coinVo.symbol == "ETH") {
-          await _transferEth(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
+          await _transferEth(
+              walletPassword,
+              ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
+              widget.receiverAddress,
+              activatedWallet.wallet);
         } else {
-          await _transferErc20(walletPassword, widget.transferAmount, widget.receiverAddress, activatedWallet.wallet);
+          await _transferErc20(
+              walletPassword,
+              ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
+              widget.receiverAddress,
+              activatedWallet.wallet);
         }
-        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
 
-        Routes.popUntilCreateOrImportWalletEntryRoute(context);
-//        if (widget.backRouteName == null) {
-//          Navigator.of(context).popUntilRouteName(Routes.wallet_account_detail);
-//        } else {
-//          Navigator.of(context).popUntilRouteName(Uri.decodeComponent(widget.backRouteName));
-//        }
+        Application.router.navigateTo(context, Routes.confirm_success_papge);
+//        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
+//        Routes.popUntilCachedEntryRouteName(context, true);
       } catch (_) {
         logger.e(_);
         setState(() {
@@ -444,9 +449,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     });
   }
 
-  Future _transferEth(String password, double etherDouble, String toAddress, Wallet wallet) async {
-    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
-
+  Future _transferEth(String password, BigInt amount, String toAddress, Wallet wallet) async {
+//    var amount = ConvertTokenUnit.etherToWei(etherDecimal: transferAmount);
     final txHash = await wallet.sendEthTransaction(
       password: password,
       toAddress: toAddress,
@@ -457,8 +461,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     logger.i('ETH transaction committed，txhash $txHash');
   }
 
-  Future _transferErc20(String password, double etherDouble, String toAddress, Wallet wallet) async {
-    var amount = ConvertTokenUnit.etherToWei(etherDouble: etherDouble);
+  Future _transferErc20(String password, BigInt amount, String toAddress, Wallet wallet) async {
+//    var amount = ConvertTokenUnit.etherToWei(etherDecimal: transferAmount);
     var contractAddress = widget.coinVo.contractAddress;
 
     final txHash = await wallet.sendErc20Transaction(

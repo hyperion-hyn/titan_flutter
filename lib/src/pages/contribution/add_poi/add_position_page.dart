@@ -25,9 +25,12 @@ import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/select_category_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/exception_process.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 
 class AddPositionPage extends StatefulWidget {
@@ -131,23 +134,27 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     );
   }
 
+  Future _finishCheckIn(String successTip) async {
+    try {
+      await UserService.checkInV2('postPOI');
+      UiUtil.toast(successTip);
+    } catch (e) {
+      print('$runtimeType --> e:$e');
+      ExceptionProcess.process(e, isThrow: false);
+    }
+  }
+
   // build view
   Widget _buildView(BuildContext context) {
     return BlocBuilder<PositionBloc, AllPageState>(
       bloc: _positionBloc,
       condition: (AllPageState fromState, AllPageState state) {
-        //print('[add] --> state:${fromState}, toState:${state}');
-
         if (state is SuccessPostPoiDataState) {
-//          createWalletPopUtilName = '/data_contribution_page';
+          _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+
           Application.router.navigateTo(context,Routes.contribute_position_finish
               + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
-//          Navigator.push(
-//            context,
-//            MaterialPageRoute(
-//              builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_ADD),
-//            ),
-//          );
+
         } else if (state is FailPostPoiDataState) {
           setState(() {
             _isUploading = false;

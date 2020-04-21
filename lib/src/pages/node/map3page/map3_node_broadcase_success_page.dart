@@ -21,14 +21,13 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 return IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
-                    Routes.popUntilCreateOrImportWalletEntryRoute(context);
-//                    Navigator.of(context).pop();
+                    _pop(context);
                   },
                 );
               },
             ),
             centerTitle: true,
-            title: Text("广播成功")),
+            title: Text(S.of(context).broadcase_success)),
         body: Container(
           color: Colors.white,
           child: Center(
@@ -39,20 +38,22 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(50.0),
                   child: Container(
-                    width: 200,
-                    height: 200,
-                    child: Image.asset(
-                      "res/drawable/ic_map3_node_item.png",
-                      fit: BoxFit.cover,
-                      width: 72,
+                    width: 240,
+                    height: 180,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4.0),
+                      child: Image.asset(
+                        "res/drawable/ic_map3_node_item.png",
+                        fit: BoxFit.cover,
+                        width: 72,
+                      ),
                     ),
                   ),
                 ),
                 Container(
                   width: 250,
                   child: Text(
-                    "已在区块链上网络广播 ${pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE ? "创建" : "参加"}"
-                        + " Map3节点抵押合约的消息，区块链网络需要5-30分钟开采验证。",
+                    S.of(context).map_node_broadcase_success_description(pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE ? S.of(context).create : S.of(context).join),
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -61,7 +62,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Container(
+                      /*Container(
                         padding: EdgeInsets.symmetric(horizontal: 30),
                         constraints: BoxConstraints.expand(height: 48),
                         child: FlatButton(
@@ -73,10 +74,6 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                           onPressed: () {
                             Share.text(S.of(context).share, "http://baidu.com",
                                 'text/plain');
-//                            Application.router.navigateTo(
-//                                context,
-//                                Routes.wallet_create +
-//                                    '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
                           },
                           child: Container(
                             child: Padding(
@@ -90,10 +87,10 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
                       Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                            EdgeInsets.symmetric(vertical: 16, horizontal: 48),
                         child: Container(
                           constraints: BoxConstraints.expand(height: 48),
                           child: FlatButton(
@@ -103,6 +100,11 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                     color: DefaultColors.color26ac29),
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
+
+                              _pop(context);
+
+                              //Routes.popUntilCachedEntryRouteName(context);
+
 //                              Application.router.navigateTo(
 //                                  context,
 //                                  Routes.wallet_import +
@@ -113,7 +115,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 40.0, vertical: 12.0),
                                 child: Text(
-                                  "查看合约详情",
+                                  S.of(context).finish,
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.white),
                                 ),
@@ -130,4 +132,14 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
           ),
         ));
   }
+
+  void _pop(BuildContext context) {
+    if (this.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT) {
+      //print("[detail] --> pop");
+      Navigator.of(context).pop();
+    } else {
+      Routes.popUntilCachedEntryRouteName(context);
+    }
+  }
+
 }

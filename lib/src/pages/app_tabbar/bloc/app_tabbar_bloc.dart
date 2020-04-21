@@ -39,6 +39,8 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
       }
     } else if (event is BottomNavigationBarEvent) {
       yield BottomNavigationBarState(isHided: event.isHided);
+    } else if (event is ChangeTabBarItemEvent) {
+      yield ChangeTabBarItemState(index: event.index);
     }
   }
 }

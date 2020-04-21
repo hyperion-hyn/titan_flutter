@@ -16,9 +16,13 @@ class TextStyles {
 
   static TextStyle textC333S14 = textStyle(color: DefaultColors.color333);
   static TextStyle textC333S14bold = textStyle(color: DefaultColors.color333,fontWeight: FontWeight.bold);
+  static TextStyle textC333S11 = textStyle(fontSize: 11, color: DefaultColors.color333);
   static TextStyle textC333S12 = textStyle(fontSize: 12, color: DefaultColors.color333);
   static TextStyle textC777S14 = textStyle(color: DefaultColors.color777);
   static TextStyle textC777S16 = textStyle(fontSize: 16, color: DefaultColors.color777);
+  static TextStyle textC999S14 = textStyle(color: DefaultColors.color999);
+  static TextStyle textC999S14medium = textStyle(color: DefaultColors.color999,fontWeight: FontWeight.w500);
+  static TextStyle textC999S12 = textStyle(fontSize: 12, color: DefaultColors.color999);
   static TextStyle textCaaaS14 = textStyle(color: DefaultColors.coloraaa);
   static TextStyle textCfffS46 = textStyle(fontSize: 46, color: DefaultColors.colorfff);
   static TextStyle textCfffS24 = textStyle(fontSize: 24, color: DefaultColors.colorfff);
@@ -49,6 +53,7 @@ class TextStyles {
 class DefaultColors {
   static Color color333 = HexColor("#333333");
   static Color color777 = HexColor("#777777");
+  static Color color999 = HexColor("#999999");
   static Color coloraaa = HexColor("#aaaaaa");
   static Color colorfff = HexColor("#ffffff");
   static Color colorccfff = HexColor("#ccffffff");
@@ -67,5 +72,5 @@ class DefaultColors {
   static Color color906b00 = HexColor("#906b00");
   static Color colorff4c3b = HexColor("#ff4c3b");
   static Color color7c5b00 = HexColor("#7c5b00");
-  static Color color1177869e = HexColor("#1177869e");
+  static Color color2277869e = HexColor("#2277869e");
 }

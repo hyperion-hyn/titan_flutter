@@ -23,6 +23,7 @@ class Routes {
   static const String wallet_backup_notice_for_creation = '/wallet/create/backup_notice';
   static const String wallet_show_resume_word = '/wallet/create/show_resume_word';
   static const String wallet_confirm_resume_word = '/wallet/create/confirm_resume_word';
+  static const String confirm_success_papge = '/wallet/transfer/success_page';
 
   //contribution
   static const String contribute_tasks_list = '/contribution/tasks';
@@ -42,15 +43,19 @@ class Routes {
   static const String map3node_broadcase_success_page = '/map3node/broadcase_success_page';
   static const String map3node_contract_detail_page = '/map3node/contract_detail_page';
 
-  static String createOrImportWalletEntryRouteName;
+  //maprich
+  static const String recharge_purchase = '/me/recharge_purchase'; //充值
 
-  static void popUntilCreateOrImportWalletEntryRoute<T extends Object>(BuildContext context, [T result]) {
-    if (Routes.createOrImportWalletEntryRouteName == null) {
+
+  static String cachedEntryRouteName;
+
+  static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
+    if (Routes.cachedEntryRouteName == null) {
       //back to root
       Navigator.of(context).popUntilRouteName(Routes.root, result);
     } else {
-      Navigator.of(context).popUntilRouteName(Routes.createOrImportWalletEntryRouteName, result);
-      Routes.createOrImportWalletEntryRouteName = null;
+      Navigator.of(context).popUntilRouteName(Routes.cachedEntryRouteName, result);
+      Routes.cachedEntryRouteName = null;
     }
   }
 
@@ -81,6 +86,7 @@ class Routes {
     router.define(wallet_backup_notice_for_creation, handler: backUpMnemoicNoticeForCreation, transitionType: TransitionType.inFromRight);
     router.define(wallet_show_resume_word, handler: showResumeWordForCreation, transitionType: TransitionType.inFromRight);
     router.define(wallet_confirm_resume_word, handler: confirmResumeWordForCreation, transitionType: TransitionType.inFromRight);
+    router.define(confirm_success_papge, handler: confirmSuccessHandler, transitionType: TransitionType.inFromRight);
 
     //contribution
     router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: TransitionType.inFromRight);
@@ -96,6 +102,10 @@ class Routes {
     router.define(map3node_send_confirm_page, handler: map3NodeSendConfirmHandler, transitionType: TransitionType.inFromRight);
     router.define(map3node_broadcase_success_page, handler: map3NodeBroadcaseSuccessHandler, transitionType: TransitionType.inFromRight);
     router.define(map3node_contract_detail_page, handler: map3NodeContractDetailHandler, transitionType: TransitionType.inFromRight);
+
+    //maprich
+    router.define(recharge_purchase, handler: rechargePurchaseHandler, transitionType: TransitionType.inFromRight);
+
 
   }
 

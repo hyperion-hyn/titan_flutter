@@ -1,21 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
-import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
-import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class ShowWalletView extends StatelessWidget {
   final WalletVo walletVo;
@@ -37,8 +31,7 @@ class ShowWalletView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 elevation: 10,
                 child: Container(
-                  padding:
-                      EdgeInsets.only(top: 16, bottom: 16, left: 24, right: 16),
+                  padding: EdgeInsets.only(top: 16, bottom: 16, left: 24, right: 16),
                   child: Row(
                     children: <Widget>[
                       //balance
@@ -48,8 +41,7 @@ class ShowWalletView extends StatelessWidget {
                         children: <Widget>[
                           Text(
                             "${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.quote ?? ''}",
-                            style: TextStyle(
-                                color: Color(0xFF9B9B9B), fontSize: 16),
+                            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 16),
                           ),
                           SizedBox(
                             height: 8,
@@ -57,13 +49,9 @@ class ShowWalletView extends StatelessWidget {
                           Row(
                             children: <Widget>[
                               Text(
-                                QuotesInheritedModel.of(context,
-                                            aspect: QuotesAspect.quote)
-                                        .activeQuotesSign
-                                        ?.sign ??
+                                QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.sign ??
                                     '',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                               SizedBox(
                                 width: 8,
@@ -71,9 +59,7 @@ class ShowWalletView extends StatelessWidget {
                               Text(
                                 "${WalletUtil.formatPrice(walletVo.balance)}",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 24,
-                                    color: Theme.of(context).primaryColor),
+                                    fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
                               ),
                             ],
                           ),
@@ -82,10 +68,7 @@ class ShowWalletView extends StatelessWidget {
                       Spacer(),
                       InkWell(
                         onTap: () {
-                          Application.router.navigateTo(
-                              context,
-                              Routes.wallet_manager +
-                                  '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
+                          Application.router.navigateTo(context, Routes.wallet_manager);
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -93,7 +76,7 @@ class ShowWalletView extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Text(
-                                "${walletVo.wallet.keystore.name}",
+                                "${UiUtil.shortString(walletVo.wallet.keystore.name, limitLength: 6)}",
                                 style: TextStyle(color: Color(0xFF252525)),
                               ),
                               Icon(
@@ -119,12 +102,8 @@ class ShowWalletView extends StatelessWidget {
                 return InkWell(
                     onTap: () {
                       var coinVo = walletVo.coins[index];
-                      var coinVoJsonStr =
-                          FluroConvertUtils.object2string(coinVo.toJson());
-                      Application.router.navigateTo(
-                          context,
-                          Routes.wallet_account_detail +
-                              '?coinVo=$coinVoJsonStr');
+                      var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
+                      Application.router.navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
                     },
                     child: _buildAccountItem(context, walletVo.coins[index]));
               },
@@ -135,8 +114,7 @@ class ShowWalletView extends StatelessWidget {
   }
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
-    var symbolQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
+    var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
     var isNetworkUrl = coin.logo.contains("http");
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -162,10 +140,7 @@ class ShowWalletView extends StatelessWidget {
               children: <Widget>[
                 Text(
                   coin.symbol,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF252525)),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
                 ),
                 SizedBox(
                   height: 4,
@@ -180,7 +155,7 @@ class ShowWalletView extends StatelessWidget {
                         style: TextStyles.textC9b9b9bS12,
                       ),
                     ),
-                    if(symbolQuote?.quoteVo?.percentChange24h != null)
+                    if (symbolQuote?.quoteVo?.percentChange24h != null)
                       getPercentChange(symbolQuote?.quoteVo?.percentChange24h)
                   ],
                 )
@@ -194,7 +169,7 @@ class ShowWalletView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "${WalletUtil.formatCoinNum(coin.balance)}",
+                  "${FormatUtil.coinBalanceHumanReadFormat(coin)}",
                   style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                 ),
                 SizedBox(
@@ -203,7 +178,7 @@ class ShowWalletView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(coin.balance * (symbolQuote?.quoteVo?.price ?? 0))}",
+                    "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}",
                     style: TextStyles.textC9b9b9bS12,
                   ),
                 ),
@@ -216,23 +191,23 @@ class ShowWalletView extends StatelessWidget {
   }
 
   Widget getPercentChange(double percentChange) {
-      if (percentChange > 0) {
-        return Padding(
-          padding: const EdgeInsets.only(left: 6),
-          child: Text(
-            "+${WalletUtil.formatPercentChange(percentChange)}",
-            style: TextStyles.textC00ec00S12,
-          ),
-        );
-      } else {
-        return Padding(
-          padding: const EdgeInsets.only(left: 6),
-          child: Text(
-            "${WalletUtil.formatPercentChange(percentChange)}",
-            style: TextStyles.textCff2d2dS12,
-          ),
-        );
-      }
+    if (percentChange > 0) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 6),
+        child: Text(
+          "+${WalletUtil.formatPercentChange(percentChange)}",
+          style: TextStyles.textC00ec00S12,
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(left: 6),
+        child: Text(
+          "${WalletUtil.formatPercentChange(percentChange)}",
+          style: TextStyles.textCff2d2dS12,
+        ),
+      );
+    }
   }
 
   Widget getCoinImage(bool isNetworkUrl, String imageUrl) {

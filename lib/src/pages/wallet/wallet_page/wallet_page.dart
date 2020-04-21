@@ -15,6 +15,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -40,14 +41,9 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
 
   @override
   void didPopNext() async {
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
-    super.didPushNext();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-//    loadDataBloc.add(LoadingEvent());
+    callLater((_) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    });
   }
 
   @override
@@ -61,50 +57,11 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
-
     return Column(
       children: <Widget>[
         Expanded(child: _buildWalletView(context)),
         //hyn quotes view
-        Container(
-          padding: EdgeInsets.all(8),
-          color: Color(0xFFF5F5F5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Image.asset(
-                        'res/drawable/ic_hyperion.png',
-                        width: 20,
-                        height: 20,
-                      ),
-                    ),
-                    Text(
-                      S.of(context).hyn_price,
-                      style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14),
-                    ),
-                    //Container(width: 100,),
-                    Spacer(),
-                    //quote
-                    Text(
-                      '${hynQuoteSign != null ? '${WalletUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
-                      style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        )
+        hynQuotesView(),
       ],
     );
   }
@@ -138,6 +95,47 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
             return EmptyWalletView();
         }
       },
+    );
+  }
+
+  Widget hynQuotesView() {
+    //hyn quote
+    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    return Container(
+      padding: EdgeInsets.all(8),
+      color: Color(0xFFF5F5F5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Image.asset(
+                    'res/drawable/ic_hyperion.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                ),
+                Text(
+                  S.of(context).hyn_price,
+                  style: TextStyle(color: Color(0xFF6D6D6D), fontSize: 14),
+                ),
+                //Container(width: 100,),
+                Spacer(),
+                //quote
+                Text(
+                  '${hynQuoteSign != null ? '${WalletUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
+                  style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 

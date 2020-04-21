@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
-import 'package:titan/src/pages/contribution/contribution_tasks_page.dart';
 import 'package:titan/src/pages/contribution/signal_scan/vo/check_in_model.dart';
 import 'package:titan/src/pages/me/components/account/account_component.dart';
 import 'package:titan/src/pages/me/grade_page.dart';
@@ -19,9 +23,11 @@ import 'package:titan/src/pages/me/util/me_util.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import '../../../config.dart';
@@ -52,6 +58,11 @@ class _MeState extends BaseState<MePage> with RouteAware {
   Future _loadData() async {
     _pubKey = await TitanPlugin.getPublicKey();
     setState(() {});
+
+    //update quotes
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    //update all coin balance
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
@@ -79,6 +90,13 @@ class _MeState extends BaseState<MePage> with RouteAware {
           children: <Widget>[
             _buildHeaderSection(),
             _buildPohNodeSection(),
+            _dividerView(isBottom: true),
+            Divider(
+              height: 0,
+            ),
+            _buildWalletSection(),
+            _dividerView(isBottom: true),
+            _buildContractSection(),
             _dividerView(isBottom: true),
             _buildSettingSection(),
             _dividerView(),
@@ -185,7 +203,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
                                   border: Border.all(color: HexColor("#DADFE4")),
                                   shape: BoxShape.rectangle),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 child: Text(
                                   userInfo?.level ?? S.of(context).no_level,
                                   style: TextStyle(fontSize: 10, color: HexColor("#F9F9F9")),
@@ -230,7 +248,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
                                 ],
                               ),
                             )),
-                        onTap: _checkIn,
+                        onTap: _doTask,
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
@@ -340,9 +358,51 @@ class _MeState extends BaseState<MePage> with RouteAware {
     );
   }
 
+  Widget _buildWalletSection() {
+    var wallet = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.only(left: 16, right: 8, top: 4, bottom: 4),
+      child: _buildMemuBar(S.of(context).wallet, 'ic_wallet', () {
+        Application.router.navigateTo(context, Routes.wallet_manager);
+      }, wallet?.wallet?.keystore?.name ?? S.of(context).wallet_manage),
+    );
+  }
+
+  Widget _buildContractSection() {
+    var _wallet = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    return Container(
+      padding: EdgeInsets.only(left: 16, right: 8),
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
+      child: Column(
+        children: <Widget>[
+          _buildMemuBar(S.of(context).my_initiated_map_contract, "ic_create", () {
+            if (_wallet != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_initiated_map_contract)));
+            } else {
+              Application.router.navigateTo(context, Routes.wallet_manager);
+              //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
+            }
+          }),
+          Divider(
+            height: 2,
+          ),
+          _buildMemuBar(S.of(context).my_join_map_contract, "ic_delegate", () {
+            if (_wallet != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_join_map_contract)));
+            } else {
+              Application.router.navigateTo(context, Routes.wallet_manager);
+              //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
+            }
+          }),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSettingSection() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.only(left: 16, right: 8),
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
       child: Column(
         children: <Widget>[
@@ -443,7 +503,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
     );
   }
 
-  Widget _buildMemuBar(String title, String iconData, Function onTap) {
+  Widget _buildMemuBar(String title, String iconData, Function onTap, [String subText]) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -467,6 +527,11 @@ class _MeState extends BaseState<MePage> with RouteAware {
               ),
             ),
             Spacer(),
+            if (subText != null)
+              Text(
+                subText,
+                style: TextStyle(color: Colors.black38),
+              ),
             Icon(
               Icons.chevron_right,
               color: Colors.black54,
@@ -524,18 +589,21 @@ class _MeState extends BaseState<MePage> with RouteAware {
     );
   }
 
-  Future _checkIn() async {
-    await Navigator.push(
-        context,
-        MaterialPageRoute(
-            /*settings: RouteSettings(name: '/data_contribution_page'),*/
-            builder: (context) => ContributionTasksPage()));
+  Future _doTask() async {
+    Application.router.navigateTo(context, Routes.contribute_tasks_list);
+//    await Navigator.push(
+//        context,
+//        MaterialPageRoute(
+//            /*settings: RouteSettings(name: '/data_contribution_page'),*/
+//            builder: (context) => ContributionTasksPage()));
 //    _finishCheckIn();
   }
 
   Future _updateCheckInCount() async {
     UserService.syncCheckInData();
   }
+
+  void _managerWallet() {}
 
   @override
   void dispose() {

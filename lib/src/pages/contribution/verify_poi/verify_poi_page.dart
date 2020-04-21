@@ -12,8 +12,11 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
+import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/exception_process.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
@@ -60,7 +63,6 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
 
   @override
   void initState() {
-
     _positionBloc.listen((state) {
       if (state is ConfirmPositionPageState) {
         confirmPoiItem = state.confirmPoiItem;
@@ -73,6 +75,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
+                        _finishCheckIn(S.of(context).thank_you_for_contribute_data);
                         Navigator.of(context)..pop()..pop();
                       },
                       child: Text(S.of(context).confirm))
@@ -85,13 +88,10 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
         }
       } else if (state is ConfirmPositionResultState) {
         if (state.confirmResult) {
+          _finishCheckIn(S.of(context).thank_you_for_contribute_data);
+
           Application.router.navigateTo(context,Routes.contribute_position_finish
               + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM}');
-//          Navigator.pushReplacement(
-//            context,
-//            MaterialPageRoute(
-//                builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-//          );
         }
       }
     });
@@ -110,6 +110,16 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
     });
 
     super.initState();
+  }
+
+  Future _finishCheckIn(String successTip) async {
+    try {
+      await UserService.checkInV2('confirmPOI');
+      UiUtil.toast(successTip);
+    } catch (e) {
+      print('$runtimeType --> e:$e');
+      ExceptionProcess.process(e, isThrow: false);
+    }
   }
 
   void _loadOnePoiNeedToBeVerify(LatLng position) async {

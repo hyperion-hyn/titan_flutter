@@ -33,10 +33,10 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
         System.loadLibrary("TrustWalletCore")
     }
 
-    //ropsten api
-    private val ETH_ROPSTEN_API = "https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
-    //main net api
-    private val ETH_MAIN_API = "https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
+//    //ropsten api
+//    private val ETH_ROPSTEN_API = "https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
+//    //main net api
+//    private val ETH_MAIN_API = "https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
 
 //    private val objectMapper by lazy {
 //        val om = ObjectMapper()

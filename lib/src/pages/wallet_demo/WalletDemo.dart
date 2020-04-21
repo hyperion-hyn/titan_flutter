@@ -27,6 +27,9 @@ class WalletDemo extends StatefulWidget {
 }
 
 class _WalletDemoState extends State<WalletDemo> {
+
+  var _mnemonic = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,6 +60,122 @@ class _WalletDemoState extends State<WalletDemo> {
               }
             },
             child: Text('激活一个钱包'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              _mnemonic = await WalletUtil.makeMnemonic();
+//              print('xxx $_mnemonic');
+//              return ;
+
+//              ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal  //常用的测试网
+//              because certain august huge empower blue half pepper tunnel trust amazing forget  //测试网私钥
+
+//              _mnemonic = 'motion clip lunch rebel use bag fashion indicate ten mushroom loop miracle'; //1
+//              _mnemonic = 'pizza another fault reduce choose bronze zebra attitude pottery repair spider person'; //2
+//              _mnemonic = 'enrich rail nature figure legend bright bird habit page project silk wrap'; //3
+//              _mnemonic = 'rifle beyond crime insect spider mention mirror ripple mixed pulse perfect nerve';//4
+//              _mnemonic = 'like parent salmon record drop weapon friend obey planet raven desert grit';  //5
+//              _mnemonic = 'post diamond chimney type armed seed absurd doll dream law fan hollow';//6
+//              _mnemonic = 'park vapor mind eagle depth witness liquid effort helmet margin attitude topple';//7
+//              _mnemonic = 'rebel stand list ladder argue sentence night episode aisle steel amateur bid';//8
+
+              if (!bip39.validateMnemonic(_mnemonic)) {
+                Fluttertoast.showToast(msg: '不是合法的助记词');
+                return;
+              }
+
+              //var walletName = "我的助记词钱包1";
+              var walletName = _mnemonic.split(" ").first;
+              var password = '111111';
+              var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: _mnemonic);
+              if (wallet != null) {
+                _mnemonic = null;
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+
+                logger.i("快捷一步，创建一个新钱包, name:$walletName, keystore: ${wallet.keystore.fileName}， 成功！");
+              } else {
+                logger.i("快捷一步，创建一个新钱包：错误 ");
+              }
+            },
+            child: Text('快捷一步，创建一个新钱包, 并且激活新钱包'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              if (WalletConfig.netType == EthereumNetType.main) {
+                logger.i('请先切换到ETH网络到非主网');
+              } else {
+                final client = WalletUtil.getWeb3Client();
+                String privateKey = ContractTestConfig.privateKey;
+                final credentials = await client.credentialsFromPrivateKey(privateKey);
+
+                final address = await credentials.extractAddress();
+                print(address.hexEip55);
+                print(await client.getBalance(address));
+
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+                if (activeWallet != null) {
+                  var toAddress = activeWallet.getEthAccount().address;
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05); //.toRadixString(16);
+//                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.5); //.toRadixString(16);
+
+                  var count = await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55),
+                      atBlock: BlockNum.pending());
+
+                  var txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction(
+                      to: EthereumAddress.fromHex(toAddress),
+                      value: EtherAmount.inWei(amount),
+                      nonce: count,
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  logger.i('ETH交易已提交，交易hash $txHash');
+
+                  var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
+                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 205000); //三十万
+                  txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction.callContract(
+                      contract: hynErc20Contract,
+                      function: hynErc20Contract.function('transfer'),
+                      parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
+                      nonce: count + 1,
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: 500000,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  logger.i('HYN交易已提交，交易hash $txHash');
+                }
+              }
+            },
+            child: Text('转账到本地钱包测试'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+//              var wallets = await WalletUtil.scanWallets();
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              if (activeWallet != null) {
+                var balance;
+                Account account = activeWallet.getEthAccount();
+                if (account != null) {
+                  balance = await activeWallet.getBalance(account);
+                  print(
+                      "账户${account.address} ${account.token.symbol} 余额是 ${balance / BigInt.from(pow(10, account.token.decimals))}");
+
+                  //获取erc20账户余额
+                  for (var token in account.contractAssetTokens) {
+                    balance = await activeWallet.getErc20Balance(token.contractAddress);
+                    print(
+                        "ERC20账户${account.address} ${token.symbol} 余额是 ${balance / BigInt.from(pow(10, token.decimals))}");
+                  }
+                }
+              }
+            },
+            child: Text('查看钱包余额'),
           ),
           Divider(
             height: 16,
@@ -127,7 +246,7 @@ class _WalletDemoState extends State<WalletDemo> {
 //
                 var signedHex;
 
-//                var credentials = await wallet0.getCredentials('my_password');
+//                var credentials = await wallet0.getCredentials('111111');
 //                final client = WalletUtil.getWeb3Client();
 //                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
 //                var signed = await client.signTransaction(
@@ -147,7 +266,6 @@ class _WalletDemoState extends State<WalletDemo> {
 //                  fetchChainIdFromNetworkId: true,
 //                );
 //                signedHex = bytesToHex(signed, include0x: true, padToEvenLength: true);
-//                logger.i('xxx 1 $signedHex');
 //                var ret = await WalletUtil.postToEthereumNetwork(
 //                    method: 'eth_sendRawTransaction',
 //                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
@@ -207,7 +325,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   createNodeWalletAddress: createNodeWalletAddress,
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                   gasLimit: gasLimit,
-                  password: 'my_password',
+                  password: '111111',
                 );
                 var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
 
@@ -219,28 +337,31 @@ class _WalletDemoState extends State<WalletDemo> {
           Divider(
             height: 16,
           ),
+
+          /*
           RaisedButton(
             onPressed: () async {
-              var mnemonic = await WalletUtil.makeMnemonic();
-              logger.i(mnemonic);
-              Fluttertoast.showToast(msg: mnemonic);
+              _mnemonic = await WalletUtil.makeMnemonic();
+              logger.i(_mnemonic);
+              Fluttertoast.showToast(msg: _mnemonic);
             },
             child: Text('产生助记词'),
           ),
           RaisedButton(
             onPressed: () async {
-              var mnemonic =
-                  "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal";
-//              var mnemonic = 'rug doctor thing reform minor sunset night raven hungry rival false language';
-              if (!bip39.validateMnemonic(mnemonic)) {
+//              var mnemonic =
+//                  "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal";
+//              var mnemonic = 'because certain august huge empower blue half pepper tunnel trust amazing forget';
+              if (!bip39.validateMnemonic(_mnemonic)) {
                 Fluttertoast.showToast(msg: '不是合法的助记词');
                 return;
               }
 
               var walletName = "我的助记词钱包1";
-              var password = 'my_password';
-              var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: mnemonic);
+              var password = '111111';
+              var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: _mnemonic);
               if (wallet != null) {
+                _mnemonic = null;
                 logger.i("已经导入助记词钱包 ${wallet.keystore.fileName}");
               } else {
                 logger.i("导入助记词钱包错误 ");
@@ -255,7 +376,7 @@ class _WalletDemoState extends State<WalletDemo> {
 //              var prvKey = "92e06b7043c2edc07de56fd1f22764d9d7927a386e6efc0632f74a1141291ec6";
 //              var prvKey = "0x311add4073c265380aafab346b31bb0a22ca0ad7b6f544cb4a16b88f864526a3";  //moo
               var walletName = "我的私钥钱包1";
-              var password = 'my_password';
+              var password = '111111';
               var wallet = await WalletUtil.storePrivateKey(name: walletName, password: password, prvKeyHex: prvKey);
               if (wallet != null) {
                 logger.i("已经导入密码钱包 ${wallet.keystore.fileName}");
@@ -278,7 +399,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   var json =
                       '{"activeAccounts":[{"address":"0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7","derivationPath":"m/44\'/60\'/0\'/0/0"}],"crypto":{"cipher":"aes-128-ctr","cipherparams":{"iv":"1d2961149ff69d0a01a617ba89f968a2"},"ciphertext":"674ea349cfd925da4665fecf5f02caa6aedd917f537af9d7f70de57d28bb97d098266f52cdf7570d083702586e30095eb368b5486395414ab6698e319dc991ed2a9076d108a68ac611f9d54a1ee6519448ab5f16c759c3531af6e9a6","kdf":"scrypt","kdfparams":{"dklen":32,"n":4096,"p":6,"r":8,"salt":"0f9004a05b80711c4b40b5106758337b6c310444d02f2102f34867e361d7a343"},"mac":"af45e8dff47c52e13842d74359bdc102f6c1ce2cec1fc3cfb4390e571a3aa948"},"id":"a2ba2052-7586-46c8-a7c6-4294f5802671","name":"我的钱包1","type":"mnemonic","version":3}';
                   var oldPassword = 'my password';
-                  var newPassword = 'my_password';
+                  var newPassword = '111111';
 
                   var walletName = "我的JSON钱包1";
                   try {
@@ -305,8 +426,8 @@ class _WalletDemoState extends State<WalletDemo> {
 
                   var json =
                       '{"activeAccounts":[{"address":"0xA3Dcd899C0f3832DFDFed9479a9d828c6A4EB2A7","derivationPath":"m/44\'/60\'/0\'/0/0"}],"crypto":{"cipher":"aes-128-ctr","cipherparams":{"iv":"1d2961149ff69d0a01a617ba89f968a2"},"ciphertext":"674ea349cfd925da4665fecf5f02caa6aedd917f537af9d7f70de57d28bb97d098266f52cdf7570d083702586e30095eb368b5486395414ab6698e319dc991ed2a9076d108a68ac611f9d54a1ee6519448ab5f16c759c3531af6e9a6","kdf":"scrypt","kdfparams":{"dklen":32,"n":4096,"p":6,"r":8,"salt":"0f9004a05b80711c4b40b5106758337b6c310444d02f2102f34867e361d7a343"},"mac":"af45e8dff47c52e13842d74359bdc102f6c1ce2cec1fc3cfb4390e571a3aa948"},"id":"a2ba2052-7586-46c8-a7c6-4294f5802671","name":"我的钱包1","type":"mnemonic","version":3}';
-                  var oldPassword = 'my_password_wrong';
-                  var newPassword = 'my_password';
+                  var oldPassword = '111111_wrong';
+                  var newPassword = '111111';
 
                   var walletName = "我的JSON钱包1";
                   try {
@@ -325,6 +446,7 @@ class _WalletDemoState extends State<WalletDemo> {
               ),
             ],
           ),
+          */
           RaisedButton(
             onPressed: () async {
               var wallets = await WalletUtil.scanWallets();
@@ -358,9 +480,9 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     print('即将修改${wallet.keystore.fileName} 的密码');
                     var success = await WalletUtil.changePassword(
-                        wallet: wallet, oldPassword: 'my_password', newPassword: "new password", name: '修改的钱包');
+                        wallet: wallet, oldPassword: '111111', newPassword: "new password", name: '修改的钱包');
 //                    var success = await WalletUtil.changePassword(
-//                        wallet: wallet, oldPassword: 'new password', newPassword: "my_password", name: '修改的钱包');
+//                        wallet: wallet, oldPassword: 'new password', newPassword: "111111", name: '修改的钱包');
                     if (success) {
                       print('修改密码成功');
                       print('最后成为${wallet.keystore.fileName}');
@@ -377,7 +499,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     print('即将修改${wallet.keystore.fileName} 的密码');
                     var success = await WalletUtil.changePassword(
-                        wallet: wallet, oldPassword: 'my_password_wrong', newPassword: "new password", name: '修改的钱包');
+                        wallet: wallet, oldPassword: '111111_wrong', newPassword: "new password", name: '修改的钱包');
                     if (success) {
                       print('修改密码成功');
                       print('最后成为${wallet.keystore.fileName}');
@@ -397,7 +519,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     try {
                       var prvKey = await WalletUtil.exportPrivateKey(
-                          fileName: wallet.keystore.fileName, password: 'my_password');
+                          fileName: wallet.keystore.fileName, password: '111111');
                       logger.i('your prvKey is: $prvKey');
                     } catch (e) {
                       logger.e(e);
@@ -413,7 +535,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     try {
                       var prvKey = await WalletUtil.exportPrivateKey(
-                          fileName: wallet.keystore.fileName, password: 'my_password_wrong');
+                          fileName: wallet.keystore.fileName, password: '111111_wrong');
                       logger.i('your prvKey is: $prvKey');
                     } catch (e) {
                       logger.e(e);
@@ -434,7 +556,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     try {
                       if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
                         var mnemonic = await WalletUtil.exportMnemonic(
-                            fileName: wallet.keystore.fileName, password: 'my_password');
+                            fileName: wallet.keystore.fileName, password: '111111');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
                         print('不是TrustWallet钱包，不支持导出助记词');
@@ -454,7 +576,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     try {
                       if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
                         var mnemonic = await WalletUtil.exportMnemonic(
-                            fileName: wallet.keystore.fileName, password: 'my_password_wrong');
+                            fileName: wallet.keystore.fileName, password: '111111_wrong');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
                         print('不是TrustWallet钱包，不支持导出助记词');
@@ -470,11 +592,18 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var password = 'my_password';
+              var password = '111111';
               var wallets = await WalletUtil.scanWallets();
               for (var wallet in wallets) {
                 var result = await wallet.delete(password);
                 print("删除结果 ${wallet.keystore.fileName} $result");
+              }
+
+              wallets = await WalletUtil.scanWallets();
+              if (wallets.length == 0) {
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+              } else {
+                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallets[0]));
               }
             },
             child: Text('删除所有钱包'),
@@ -484,35 +613,25 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-//              eth_getTransactionCount
               var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
               if (activeWallet != null) {
-//                getTransactionCount
                 final client = WalletUtil.getWeb3Client();
                 var ethAddress = activeWallet.getEthAccount().address;
 
-//                var count =
-//                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.genesis());
-//                logger.i('genesis nonce is $count');
+//                var transactionHash = '0x9f86f325e64a0c9f947141e901575d11f89e3966e9b470662f0af25e9abc8852';
+//                if (transactionHash != null && transactionHash.length > 0) {
+////                  var transaction = await client.getTransactionByHash(transactionHash);
+////                  if(transaction != null) {
+////                    logger.i(transaction);
+////                  }
 //
-//                count =
-//                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.current());
-//                logger.i('current nonce is $count');
-
-                var transactionHash = '0x9f86f325e64a0c9f947141e901575d11f89e3966e9b470662f0af25e9abc8852';
-                if (transactionHash != null && transactionHash.length > 0) {
-//                  var transaction = await client.getTransactionByHash(transactionHash);
-//                  if(transaction != null) {
-//                    logger.i(transaction);
+//                  var transactionReceipt = await client.getTransactionReceipt(transactionHash);
+//                  if (transactionReceipt != null) {
+//                    logger.i("transactionReceipt ${transactionReceipt.status}");
+//                  } else {
+//                    print('transactionReceipt is null');
 //                  }
-
-                  var transactionReceipt = await client.getTransactionReceipt(transactionHash);
-                  if (transactionReceipt != null) {
-                    logger.i("transactionReceipt ${transactionReceipt.status}");
-                  } else {
-                    print('transactionReceipt is null');
-                  }
-                }
+//                }
 
                 var count =
                     await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.pending());
@@ -521,83 +640,7 @@ class _WalletDemoState extends State<WalletDemo> {
             },
             child: Text('查看nonce'),
           ),
-          RaisedButton(
-            onPressed: () async {
-              if (WalletConfig.netType != EthereumNetType.local) {
-                logger.i('请先切换到内外网络');
-              } else {
-                final client = WalletUtil.getWeb3Client();
-//                const String privateKey = '976c55a80592bdffcd4d5b29d409810518792fed3ec4a0243e4f857e9102d556';
-                const String privateKey = ContractTestConfig.privateKey;
-                final credentials = await client.credentialsFromPrivateKey(privateKey);
 
-                final address = await credentials.extractAddress();
-                print(address.hexEip55);
-                print(await client.getBalance(address));
-
-                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-                if (activeWallet != null) {
-                  var toAddress = activeWallet.getEthAccount().address;
-                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 10); //.toRadixString(16);
-
-                  var count = await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55),
-                      atBlock: BlockNum.pending());
-
-                  var txHash = await client.sendTransaction(
-                    credentials,
-                    Transaction(
-                      to: EthereumAddress.fromHex(toAddress),
-                      value: EtherAmount.inWei(amount),
-                      nonce: count,
-                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                      maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
-                    ),
-                    fetchChainIdFromNetworkId: true,
-                  );
-                  logger.i('ETH交易已提交，交易hash $txHash');
-
-                  var hynErc20Contract = WalletUtil.getHynErc20Contract(SupportedTokens.HYN_LOCAL.contractAddress);
-                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 300000); //三十万
-                  txHash = await client.sendTransaction(
-                    credentials,
-                    Transaction.callContract(
-                      contract: hynErc20Contract,
-                      function: hynErc20Contract.function('transfer'),
-                      parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
-                      nonce: count + 1,
-                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                      maxGas: 500000,
-                    ),
-                    fetchChainIdFromNetworkId: true,
-                  );
-                  logger.i('HYN交易已提交，交易hash $txHash');
-                }
-              }
-            },
-            child: Text('从内网地址转账到本地钱包测试'),
-          ),
-          RaisedButton(
-            onPressed: () async {
-              var wallets = await WalletUtil.scanWallets();
-              for (var wallet in wallets) {
-                var balance;
-                Account account = wallet.getEthAccount();
-                if (account != null) {
-                  balance = await wallet.getBalance(account);
-                  print(
-                      "账户${account.address} ${account.token.symbol} 余额是 ${balance / BigInt.from(pow(10, account.token.decimals))}");
-
-                  //获取erc20账户余额
-                  for (var token in account.contractAssetTokens) {
-                    balance = await wallet.getErc20Balance(token.contractAddress);
-                    print(
-                        "ERC20账户${account.address} ${token.symbol} 余额是 ${balance / BigInt.from(pow(10, token.decimals))}");
-                  }
-                }
-              }
-            },
-            child: Text('查看钱包余额'),
-          ),
           RaisedButton(
             onPressed: () async {
               var gas = await WalletUtil.ethGasPrice();
@@ -641,7 +684,7 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               try {
-                var password = 'my_password';
+                var password = '111111';
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.01); //.toRadixString(16);
                 var wallets = await WalletUtil.scanWallets();
                 if (wallets.length > 0) {
@@ -669,7 +712,7 @@ class _WalletDemoState extends State<WalletDemo> {
               try {
                 var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                 if (activeWallet != null) {
-                  var password = 'my_password';
+                  var password = '111111';
                   var amount = ConvertTokenUnit.etherToWei(etherDouble: 1000000000000000); //.toRadixString(16);
                   var hynErc20ContractAddress = activeWallet.getEthAccount().contractAssetTokens[0].contractAddress;
 

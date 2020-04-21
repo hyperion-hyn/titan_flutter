@@ -71,7 +71,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
             Padding(
               padding: const EdgeInsets.only(left: 24.0, top: 56, bottom: 16),
               child: Text(
-                S.of(context).what_region_use_titan,
+                S.of(context).what_region_use_titan(S.of(context).app_name),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54),
               ),
             ),
@@ -133,7 +133,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                               child: LoginPage(),
                             )));
                           },
-                          child: Text('${S.of(context).enter} titan'),
+                          child: Text('${S.of(context).enter} ${S.of(context).app_name}'),
                         );
                       },
                     ),

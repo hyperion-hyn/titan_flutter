@@ -6,7 +6,9 @@ import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 import 'bloc/bloc.dart';
 import 'wallet_repository.dart';
@@ -97,7 +99,7 @@ class _WalletManagerState extends State<_WalletManager> {
       for (var coin in walletVo.coins) {
         var vo = _getQuoteVoPriceBySign(coin, _quoteModel, _quotesSign);
         if (vo != null) {
-          totalBalance += vo.price * coin.balance;
+          totalBalance += vo.price * FormatUtil.coinBalanceDouble(coin);
         }
       }
       return totalBalance;
@@ -137,6 +139,28 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
       for (var coin in this.activatedWallet.coins) {
         if (coin.symbol == SupportedTokens.HYN.symbol) {
           return coin.address;
+        }
+      }
+    }
+    return null;
+  }
+
+  CoinVo getCoinVoBySymbol(String symbol) {
+    if (this.activatedWallet != null) {
+      for (var coin in this.activatedWallet.coins) {
+        if (coin.symbol == symbol) {
+          return coin;
+        }
+      }
+    }
+    return null;
+  }
+
+  CoinVo getCoinVoOfHyn() {
+    if (this.activatedWallet != null) {
+      for (var coin in this.activatedWallet.coins) {
+        if (coin.symbol == SupportedTokens.HYN.symbol) {
+          return coin;
         }
       }
     }

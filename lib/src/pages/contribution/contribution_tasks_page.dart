@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:android_intent/android_intent.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +14,8 @@ import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/me/components/account/account_component.dart';
+import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -37,6 +38,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 //  StreamSubscription _eventbusSubcription;
 //  WalletService _walletService = WalletService();
 
+  final int TAST_TIMES = 1;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -45,11 +48,11 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
   @override
   void didPopNext() {
-    //print("didPopNext");
     doDidPopNext();
   }
 
   Future doDidPopNext() async {
+    UserService.syncCheckInData();
 //    if (currentWalletVo != null) {
 //      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
 //      //logger.i("defaultWalletFileName:$defaultWalletFileName");
@@ -196,7 +199,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                       child: Text(
                         S.of(context).create_wallet,
                         style:
-                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -224,7 +227,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                       child: Text(
                         S.of(context).import_wallet,
                         style:
-                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -239,6 +242,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
   }
 
   Widget _taskListView() {
+    var checkInModel = AccountInheritedModel.of(context, aspect: AccountAspect.checkInModel).checkInModel;
     return ListView(
       children: <Widget>[
         Container(
@@ -250,7 +254,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           height: 8,
           color: Colors.grey[200],
         ),
-        _buildTaskItem('signal', S.of(context).scan_signal_item_title, () async {
+        _buildTaskItem('signal', S.of(context).scan_signal_item_title, checkInModel?.detail?.scanTimes ?? 0, () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
 
@@ -269,7 +273,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
-        _buildTaskItem('position', S.of(context).add_poi_item_title, () async {
+        _buildTaskItem('position', S.of(context).add_poi_item_title, checkInModel?.detail?.addPoiTimes ?? 0, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -284,7 +288,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
-        _buildTaskItem('check', S.of(context).check_poi_item_title, () async {
+        _buildTaskItem('check', S.of(context).check_poi_item_title, checkInModel?.detail?.verifyPoiTimes ?? 0, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -296,7 +300,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
-        _buildTaskItem('ncov', S.of(context).add_ncov_item_title, () async {
+        _buildTaskItem('ncov', S.of(context).add_ncov_item_title, -1, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
             Navigator.push(
@@ -311,6 +315,32 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                S.of(context).task_to_standard,
+                style: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                S.of(context).task_to_standard_func(TAST_TIMES.toString(), TAST_TIMES.toString(), TAST_TIMES.toString()),
+                style: TextStyle(fontSize: 13),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+//              Text(
+//                S.of(context).task_to_standard_rules,
+//                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+//              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -334,14 +364,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
     return InkWell(
       onTap: () {
-        Application.router
-            .navigateTo(context, Routes.wallet_manager + '?entryRouteName=${Uri.encodeComponent(Routes.root)}');
-//        Navigator.push(
-//            context,
-//            MaterialPageRoute(
-//              builder: (context) => WalletManagerPage(),
-//              settings: RouteSettings(name: "/wallet_manager_page"),
-//            ));
+        Application.router.navigateTo(context, Routes.wallet_manager);
       },
       child: SizedBox(
         height: 64,
@@ -405,7 +428,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     );
   }
 
-  Widget _buildTaskItem(String iconName, String title, Function ontap, {bool isOpen = false}) {
+  Widget _buildTaskItem(String iconName, String title, int todayTimes, Function ontap, {bool isOpen = false}) {
     return InkWell(
       onTap: ontap,
       child: Row(
@@ -424,24 +447,50 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: HexColor('#333333')),
           ),
           Spacer(),
-          _end(isOpen: isOpen),
+          Flexible(
+            fit: FlexFit.loose,
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                _end(todayTimes, isOpen: isOpen),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _end({bool isOpen = false}) {
+  Widget _end(int todayTimes, {bool isOpen = false}) {
     if (isOpen) {
       return Padding(
-        padding: const EdgeInsets.all(14),
-        child: Icon(
-          Icons.chevron_right,
-          color: HexColor('#E9E9E9'),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            if(todayTimes < 0)
+              Container()
+            else if (todayTimes < TAST_TIMES)
+              Text(
+                S.of(context).task_un_finished_func(todayTimes.toString(), TAST_TIMES.toString()),
+                style: TextStyle(fontSize: 12, color: Colors.red[600]),
+              )
+            else
+              Text(
+                S.of(context).task_is_finished_func(todayTimes.toString(), TAST_TIMES.toString()),
+                style: TextStyle(fontSize: 12, color: Colors.green[600]),
+              ),
+            Icon(
+              Icons.chevron_right,
+              color: HexColor('#E9E9E9'),
+            ),
+          ],
         ),
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Text(
           S.of(context).coming_soon,
           style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor('#AAAAAA')),
@@ -472,7 +521,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (!status.isGranted) {
       PermissionStatus ret = await Permission.location.request();
       if (!ret.isGranted) {
-        UiUtil.toast('获取位置权限失败，无法贡献附近信号信息！');
+        UiUtil.toast(S.of(context).get_position_error_cant_contribution);
       }
     }
 
@@ -480,7 +529,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (!status.isGranted) {
       PermissionStatus ret = await Permission.location.request();
       if (!ret.isGranted) {
-        UiUtil.toast('获取读取本地文件权限失败，无法贡献附近信号信息！');
+        UiUtil.toast(S.of(context).get_local_file_fail_cant_contribution);
       }
     }
 
@@ -490,7 +539,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
       if (!status.isGranted) {
         PermissionStatus ret = await Permission.location.request();
         if (!ret.isGranted) {
-          UiUtil.toast('获取设备信息权限失败，无法贡献附近信号信息！');
+          UiUtil.toast(S.of(context).get_device_fail_cant_contribution);
         }
       }
     }
