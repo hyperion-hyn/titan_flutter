@@ -47,7 +47,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       getCurrentSpend(text);
-//      widget.fieldCallBack(text);
     });
 
     getNetworkData();
@@ -107,18 +106,6 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     }
     double inputValue = double.parse(inputText);
 
-/*
-   double doubleEndProfit = inputValue *
-            contractNodeItem.contract.annualizedYield *
-            contractNodeItem.contract.duration /
-            365 +
-        inputValue;
-    double doubleSpendManager = inputValue *
-        contractNodeItem.contract.annualizedYield *
-        contractNodeItem.contract.duration /
-        365 *
-        contractNodeItem.contract.commission;
-    */
     endProfit = Map3NodeUtil.getEndProfit(contractNodeItem.contract, inputValue);
     spendManager = Map3NodeUtil.spendManagerTip(contractNodeItem.contract, inputValue);
 
@@ -268,30 +255,24 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               onPressed: () {
                 setState(() {
 
-                  // todo: test_jison_0420
+                  print("1111");
+                  if (!_joinCoinFormKey.currentState.validate()) {
+                    return;
+                  }
+                  print("222");
+
                   var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
+                  print("333, transferAmount:$transferAmount, contractNodeItem:${WalletConfig.map3ContractAddress}");
+
                   Application.router.navigateTo(
                       context,
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                           "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                          "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&transferAmount=$transferAmount" +
+                           "&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&pageType=${widget.pageType}" +
                           "&contractId=${widget.contractId}");
-
-                  return;
-
-//                  if (!_joinCoinFormKey.currentState.validate()) {
-//                    return;
-//                  }
-//                  Application.router.navigateTo(
-//                      context,
-//                      Routes.map3node_send_confirm_page +
-//                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-//                          "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-//                          "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-//                          "&pageType=${widget.pageType}" +
-//                          "&contractId=${widget.contractId}");
                 });
               }),
         )

@@ -65,7 +65,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   bool _isTransferring = false;
   String _lastActionTitle = "";
   bool _isDelegated = false; // todo:判断当前(钱包=用户)是否参与抵押, 不一定是180天
-  void Function() onPressed = () {};
+  VoidCallback onPressed = () {};
   var _actionTitle = "";
 
 
@@ -299,6 +299,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         if (double.parse(_contractDetailItem?.amountPreDelegation??"0") == 0) {
           _contractNotifyDetail = "";
         } else {
+          _visible = false;
+          _actionTitle = "";
           var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
           _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
         }
@@ -444,12 +446,19 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
 
-    if (_userDelegateState != null && _canGetPercent50Rewards ) {
+    if (_userDelegateState != null && _isDelegated) {
 
       switch (_userDelegateState) {
         case UserDelegateState.HALFDUE:
           _actionTitle = S.of(context).withdraw_fifty_revenue;
-          _visible = true;
+          _visible = _canGetPercent50Rewards;
+          break;
+
+        case UserDelegateState.PENDING:
+          if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+            _visible = false;
+            _actionTitle = "";
+          }
           break;
 
         case UserDelegateState.PRE_CREATE:
@@ -468,7 +477,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
       }
     }
-
 
 
     if (_visible) {
@@ -499,12 +507,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       _actionTitle = "";
       _lastActionTitle = "";
     }
-
-
-    // todo: test_jison_0420
-//    _actionTitle = "确定";
-//    _visible = true;
-//    onPressed = _joinContractAction;
 
   }
 
@@ -634,7 +636,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       visible: _visible,
       child: Positioned(
         bottom: 0,
-        height: 48,
+        height: _visible?48:0.01,
         width: MediaQuery.of(context).size.width,
         child: Container(
           decoration: BoxDecoration(
@@ -1016,7 +1018,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _delegateRecordItemWidget(ContractDelegateRecordItem item) {
-    String shortName = item.userName.substring(0, 1);
+    String shortName = item.userName;
+    //print("item.userName:${item.userName}");
+
+    if (shortName.isNotEmpty) {
+      shortName = item.userName.substring(0, 1);
+    }
     String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
     var operaState = enumBillsOperaStateFromString(item.operaType);
     var recordState = enumBillsRecordStateFromString(item.state);
@@ -1118,10 +1125,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     var operaState = enumBillsOperaStateFromString(item.operaType);
     var recordState = enumBillsRecordStateFromString(item.state);
-
-    // todo: test
-//    operaState = BillsOperaState.WITHDRAW;
-//    recordState = BillsRecordState.FAIL;
 
     switch (recordState) {
       case BillsRecordState.PRE_CREATE:
@@ -1317,14 +1320,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           }
         }
 
-         await _api.withdrawContractInstance(
+         var success = await _api.withdrawContractInstance(
             _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
-          _broadcaseContractAction();
-//        Application.router.navigateTo(
-//            context,
-//            Routes.map3node_broadcase_success_page +
-//                "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
-
+         if (success == "success") {
+           _broadcaseContractAction();
+         }
+         else {
+           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+         }
         _isTransferring = false;
 
       } catch (_) {
@@ -1397,9 +1400,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   void _joinContractAction() async {
     //entryRouteName
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    //print("[detail] entryRouteName,$entryRouteName");
+
     await Application.router
         .navigateTo(context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
-    _didPopNext();
+    final result = ModalRoute.of(context).settings?.arguments;
+    //print("[detail] result:$result");
+    if(result != null) {
+      getContractDetailData();
+    }
   }
 
   void _broadcaseContractAction() async {
@@ -1408,16 +1417,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         context,
         Routes.map3node_broadcase_success_page +
             "?entryRouteName=$entryRouteName&pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
-    _didPopNext();
-  }
-
-  _didPopNext() {
     final result = ModalRoute.of(context).settings?.arguments;
-    print("[detail] -----> back, _broadcaseContractAction, result:${result}");
-
+    //print("[detail] result:$result");
     if(result != null) {
       getContractDetailData();
     }
   }
+
 
 }

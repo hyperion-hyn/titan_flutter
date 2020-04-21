@@ -422,22 +422,9 @@ class _Map3NodeState extends State<Map3NodePage> {
     );
   }
 
-  Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
-    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
-    /*
-    var walletList = await WalletUtil.scanWallets();
-    if (walletList.length == 0) {
-      Application.router.navigateTo(context, Routes.map3node_create_wallet);
-    } else {
-      Application.router.navigateTo(
-          context, Routes.map3node_join_contract_page + "?contractId=${contractNodeItem.id}");
-    }*/
-  }
-
   Future _pushContractListAction() async {
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
     await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
-
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
 
@@ -446,6 +433,10 @@ class _Map3NodeState extends State<Map3NodePage> {
         _pushContractDetail(result);
       }
     }
+  }
+
+  Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
+    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
   }
 
   @override

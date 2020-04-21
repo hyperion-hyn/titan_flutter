@@ -11,9 +11,9 @@ import 'map3_node_contract_detail_page.dart';
 import 'map3_node_create_contract_page.dart';
 
 class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
-  String pageType;
-
-  Map3NodeBroadcaseSuccessPage(this.pageType);
+  final String pageType;
+  final ContractNodeItem contractNodeItem;
+  Map3NodeBroadcaseSuccessPage(this.pageType, {this.contractNodeItem});
 
   @override
   Widget build(BuildContext context) {
@@ -142,16 +142,11 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
 
     switch (this.pageType) {
       case Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE:
-        Routes.popUntilCachedEntryRouteName(context, true);
-
-//        Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
-//
-//        Routes.pushAndRemove(context, MaterialPageRoute(builder: (BuildContext context) => Map3NodeContractDetailPage(1)), Routes.map3node_product_list);
+        Routes.popUntilCachedEntryRouteName(context, this.contractNodeItem);
         break;
 
       default:
         Routes.popUntilCachedEntryRouteName(context, true);
-
         break;
     }
 

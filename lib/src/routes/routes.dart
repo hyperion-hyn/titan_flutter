@@ -47,11 +47,14 @@ class Routes {
   static String cachedEntryRouteName;
 
   static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
+    //print("Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
     if (Routes.cachedEntryRouteName == null) {
       //back to root
       Navigator.of(context).popUntilRouteName(Routes.root, result);
     } else {
       Navigator.of(context).popUntilRouteName(Routes.cachedEntryRouteName, result);
+      //print("Routes.cachedEntryRouteName:nulllllll");
+
       Routes.cachedEntryRouteName = null;
     }
   }
@@ -59,9 +62,9 @@ class Routes {
   static void pushAndRemove(BuildContext context, Route newRoute, String rootName) {
     Navigator.of(context).pushAndRemoveUntil(
       newRoute,
-      ModalRoute.withName(rootName),
-    );
-  }
+       ModalRoute.withName(rootName),
+        );
+   }
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -69,7 +72,7 @@ class Routes {
       return unknownPage();
     });
 
-    //root
+    //home
     router.define(root, handler: rootHandler, transitionType: TransitionType.fadeIn);
 
     //tools
@@ -86,40 +89,28 @@ class Routes {
         handler: transferConfirmHandler, transitionType: TransitionType.inFromRight);
     router.define(wallet_manager, handler: managerWalletHandler, transitionType: TransitionType.inFromRight);
     router.define(wallet_setting, handler: settingWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(wallet_setting_wallet_backup_notice,
-        handler: settingBackupNoticeWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(wallet_backup_notice_for_creation,
-        handler: backUpMnemoicNoticeForCreation, transitionType: TransitionType.inFromRight);
-    router.define(wallet_show_resume_word,
-        handler: showResumeWordForCreation, transitionType: TransitionType.inFromRight);
-    router.define(wallet_confirm_resume_word,
-        handler: confirmResumeWordForCreation, transitionType: TransitionType.inFromRight);
+    router.define(wallet_setting_wallet_backup_notice, handler: settingBackupNoticeWalletHandler, transitionType: TransitionType.inFromRight);
+    router.define(wallet_backup_notice_for_creation, handler: backUpMnemoicNoticeForCreation, transitionType: TransitionType.inFromRight);
+    router.define(wallet_show_resume_word, handler: showResumeWordForCreation, transitionType: TransitionType.inFromRight);
+    router.define(wallet_confirm_resume_word, handler: confirmResumeWordForCreation, transitionType: TransitionType.inFromRight);
     router.define(confirm_success_papge, handler: confirmSuccessHandler, transitionType: TransitionType.inFromRight);
 
     //contribution
     router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: TransitionType.inFromRight);
     router.define(contribute_done, handler: contributionDoneHandler, transitionType: TransitionType.inFromRight);
-    router.define(contribute_scan_signal,
-        handler: contributionScanSignalHandler, transitionType: TransitionType.inFromRight);
-    router.define(contribute_position_finish,
-        handler: contributionPositionFinishHandler, transitionType: TransitionType.inFromRight);
+    router.define(contribute_scan_signal, handler: contributionScanSignalHandler, transitionType: TransitionType.inFromRight);
+    router.define(contribute_position_finish, handler: contributionPositionFinishHandler, transitionType: TransitionType.inFromRight);
 
     //map3node
-    router.define(map3node_product_list,
-        handler: map3NodeProductListHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_create_wallet,
-        handler: map3NodeCreateWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_create_contract_page,
-        handler: map3NodeCreateContractHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_join_contract_page,
-        handler: map3NodeJoinContractHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_send_confirm_page,
-        handler: map3NodeSendConfirmHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_broadcase_success_page,
-        handler: map3NodeBroadcaseSuccessHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_contract_detail_page,
-        handler: map3NodeContractDetailHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_product_list, handler: map3NodeProductListHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_create_wallet, handler: map3NodeCreateWalletHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_create_contract_page, handler: map3NodeCreateContractHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_join_contract_page, handler: map3NodeJoinContractHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_send_confirm_page, handler: map3NodeSendConfirmHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_broadcase_success_page, handler: map3NodeBroadcaseSuccessHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_contract_detail_page, handler: map3NodeContractDetailHandler, transitionType: TransitionType.inFromRight);
     router.define(map3node_share_page, handler: map3NodeShareHandler, transitionType: TransitionType.inFromRight);
+
   }
 
   static Widget unknownPage() => Scaffold(
@@ -137,12 +128,8 @@ class MyRouter extends Router {
       Duration transitionDuration = const Duration(milliseconds: 250),
       transitionsBuilder}) {
     RouteSettings settingsToUse = routeSettings;
-    if (routeSettings?.arguments == null) {
-      if (routeSettings == null) {
-        settingsToUse = RouteSettings(name: path, arguments: Map());
-      } else {
-        settingsToUse = routeSettings.copyWith(arguments: Map());
-      }
+    if (routeSettings == null) {
+      settingsToUse = RouteSettings(name: path, arguments: Map());
     }
     return super.matchRoute(
       buildContext,
