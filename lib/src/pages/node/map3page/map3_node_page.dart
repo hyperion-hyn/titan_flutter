@@ -12,6 +12,7 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -75,12 +76,13 @@ class _Map3NodeState extends State<Map3NodePage> {
       NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
 
       NodePageEntityVo cloneData = netData.clone();
-      cloneData.nodeHeadEntity.lastRecordMessage = null;
+      cloneData.nodeHeadEntity?.lastRecordMessage = null;
       if (!cloneData.isEqual(MemoryCache.nodePageData)){
         _nodePageEntityVo = netData;
         MemoryCache.nodePageData = cloneData;
-        loadDataBloc.add(RefreshSuccessEvent());
       }
+
+      loadDataBloc.add(RefreshSuccessEvent());
       if (mounted) {
         setState(() {});
       }

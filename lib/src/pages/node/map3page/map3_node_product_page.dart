@@ -84,10 +84,11 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
       if(!NodeProductPageVo(netData).isEqual(MemoryCache.nodeProductPageData)){
         nodeList = netData;
         MemoryCache.nodeProductPageData = netData;
-        loadDataBloc.add(RefreshSuccessEvent());
-        if (mounted) {
-          setState(() {});
-        }
+      }
+
+      loadDataBloc.add(RefreshSuccessEvent());
+      if (mounted) {
+        setState(() {});
       }
     }catch(e){
       loadDataBloc.add(LoadFailEvent());
