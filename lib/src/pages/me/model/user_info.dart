@@ -40,6 +40,10 @@ class UserInfo {
   ParentUser parentUser;
   @JsonKey(name: "directly_power")
   int directlyPower;
+  @JsonKey(name: "level_num")
+  int levelNum;
+  @JsonKey(name: "can_staking")
+  bool canStaking;
 
   UserInfo(
       {this.id,
@@ -58,7 +62,10 @@ class UserInfo {
       this.parentUser,
       this.directlyPower,
       this.chargeUsdtBalance,
-      this.totalChargeBalance});
+      this.totalChargeBalance,
+      this.levelNum,
+      this.canStaking
+      });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserInfoFromJson(json);
 

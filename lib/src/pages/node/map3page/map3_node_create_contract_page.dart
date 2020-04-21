@@ -9,8 +9,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/me/components/account/account_component.dart';
+import 'package:titan/src/pages/me/model/user_info.dart';
+import 'package:titan/src/pages/me/model/user_level_info.dart';
+import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
@@ -41,7 +46,7 @@ class Map3NodeCreateContractPage extends StatefulWidget {
   _Map3NodeCreateContractState createState() => new _Map3NodeCreateContractState();
 }
 
-class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
+class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
@@ -56,6 +61,16 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   List<DropdownMenuItem> serverList;
   List<DropdownMenuItem> nodeList;
   List<NodeProviderEntity> providerList = [];
+  UserInfo userInfo;
+  List<UserLevelInfo> _userLevelInfoList = [];
+  UserService _userService = UserService();
+  String levelName = "";
+
+  @override
+  void onCreated() {
+    getLevelData();
+    super.onCreated();
+  }
 
   @override
   void initState() {
@@ -66,6 +81,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 //      widget.fieldCallBack(text);
     });
 
+    getLevelData();
     getNetworkData();
     checkIsCreateContract();
     super.initState();
@@ -77,6 +93,16 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       backgroundColor: Color(0xffF3F0F5),
       body: _pageView(context),
     );
+  }
+
+  void getLevelData() async {
+    _userLevelInfoList = await _userService.getUserLevelInfoList();
+    userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
+    _userLevelInfoList.forEach((levelInfo){
+      if(levelInfo.level == userInfo.levelNum){
+        levelName = levelInfo.name;
+      }
+    });
   }
 
   void getNetworkData() async {
@@ -291,7 +317,10 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S14medium),
-
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text("·  等级必须大于等于$levelName才能创建合约。", style: TextStyles.textC999S12),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                     child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
@@ -327,6 +356,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
+                if(!userInfo.canStaking){
+                  Fluttertoast.showToast(msg: "您的等级较低，不能创建合约！");
+                  return;
+                }
+
                 setState(() {
                   if (!_isUserCreatable) {
                     Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
