@@ -13,6 +13,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart'
 import 'package:titan/src/pages/node/map3page/map3_node_join_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_share_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
@@ -169,6 +170,12 @@ var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeContractDetailPage(int.parse(params['contractId']?.first));
+});
+
+var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
+  ContractNodeItem contractNodeItem =
+  ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  return Map3NodeSharePage(contractNodeItem);
 });
 
 /*var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {

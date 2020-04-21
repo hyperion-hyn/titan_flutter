@@ -42,6 +42,7 @@ class Routes {
   static const String map3node_send_confirm_page = '/map3node/send_confirm_page';
   static const String map3node_broadcase_success_page = '/map3node/broadcase_success_page';
   static const String map3node_contract_detail_page = '/map3node/contract_detail_page';
+  static const String map3node_share_page = '/map3node/share_page';
 
   static String cachedEntryRouteName;
 
@@ -98,6 +99,7 @@ class Routes {
     router.define(map3node_send_confirm_page, handler: map3NodeSendConfirmHandler, transitionType: TransitionType.inFromRight);
     router.define(map3node_broadcase_success_page, handler: map3NodeBroadcaseSuccessHandler, transitionType: TransitionType.inFromRight);
     router.define(map3node_contract_detail_page, handler: map3NodeContractDetailHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_share_page, handler: map3NodeShareHandler, transitionType: TransitionType.inFromRight);
 
   }
 
