@@ -10,6 +10,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -104,30 +105,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );
   }
 
-  HexColor  _stateColor(ContractState _contractState) {
-    var statusColor = HexColor('#EED197');
-
-    switch (_contractState) {
-      case ContractState.PENDING:
-        statusColor = HexColor('#EED197');
-        break;
-
-      case ContractState.ACTIVE:
-      case ContractState.DUE:
-        statusColor = HexColor('#1FB9C7');
-        break;
-
-      case ContractState.CANCELLED:
-      case ContractState.CANCELLED_COMPLETED:
-        statusColor = HexColor('#F30202');
-        break;
-
-      default:
-        statusColor = HexColor('#FFDB58');
-        break;
-    }
-    return statusColor;
-  }
   
   Widget _buildInfoItem(ContractNodeItem contractNodeItem) {
     String address = shortBlockChainAddress(contractNodeItem.owner);
@@ -197,7 +174,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                       child: Text(" $address",
                           style: TextStyles.textC9b9b9bS12)),
                   Text(dateDesc,
-                    style: TextStyle(fontSize: 12, color: _stateColor(state)),
+                    style: TextStyle(fontSize: 12, color: Map3NodeUtil.stateColor(state)),
                   )
                 ],
               ),

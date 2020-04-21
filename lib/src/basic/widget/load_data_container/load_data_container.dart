@@ -15,6 +15,7 @@ class LoadDataContainer extends StatefulWidget {
   final Widget child;
   final bool enablePullUp;
   final bool enablePullDown;
+  final bool hasFootView;
   final VoidCallback onLoadData;
   final VoidCallback onRefresh;
   final VoidCallback onLoadingMore;
@@ -25,6 +26,7 @@ class LoadDataContainer extends StatefulWidget {
     @required this.bloc,
     this.enablePullDown = true,
     this.enablePullUp = true,
+    this.hasFootView = true,
     this.onLoadData,
     this.onRefresh,
     this.onLoadingMore,
@@ -181,10 +183,12 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           } else if (mode == LoadStatus.canLoading) {
             body = Container();
           } else {
-            body = Text(
-              S.of(context).no_more_data,
-              style: TextStyle(color: Colors.grey, fontSize: 14),
-            );
+            if(widget.hasFootView){
+              body = Text(
+                S.of(context).no_more_data,
+                style: TextStyle(color: Colors.grey, fontSize: 14),
+              );
+            }
           }
           return Container(
             height: 56.0,

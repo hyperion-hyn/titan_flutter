@@ -19,6 +19,7 @@ import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/custom_stepper.dart';
 import 'package:titan/src/pages/node/widget/node_delegator_member_widget.dart';
@@ -54,8 +55,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   ContractDetailItem _contractDetailItem;
   UserDelegateState _userDelegateState;
-//  TransactionHistoryState _lastTransactionHistoryState;
-//  BillsOperaState _lastOperaState;
   ContractNodeItem _contractNodeItem;
   ContractState _contractState;
 
@@ -74,6 +73,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   NodeApi _nodeApi = NodeApi();
   List<ContractDelegateRecordItem> _delegateRecordList = [];
 
+  get _stateColor {
+    return Map3NodeUtil.stateColor(_contractState);
+  }
+
   get _durationType {
     return _contractNodeItem?.contract?.durationType??0;
   }
@@ -82,36 +85,17 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return _wallet == null;
   }
 
-  get _isCreator {
+ /* get _isCreator {
     return _wallet != null && _contractNodeItem != null && _wallet.getEthAccount().address == _contractNodeItem.owner;
-  }
+  }*/
+
+ get _isOwner {
+   return _contractDetailItem != null && _contractDetailItem.isOwner;
+ }
 
   get _canGetPercent50Rewards => _isDelegated && (_durationType == 2);
 
-  get _stateColor {
-    var statusColor = HexColor('#EED197');
 
-    switch (_contractState) {
-      case ContractState.PENDING:
-        statusColor = HexColor('#EED197');
-        break;
-
-      case ContractState.ACTIVE:
-      case ContractState.DUE:
-        statusColor = HexColor('#1FB9C7');
-        break;
-
-      case ContractState.CANCELLED:
-      case ContractState.CANCELLED_COMPLETED:
-        statusColor = HexColor('#F30202');
-        break;
-
-      default:
-        statusColor = HexColor('#FFDB58');
-        break;
-    }
-    return statusColor;
-  }
 
   get _currentStep {
     int value = 0;
@@ -381,8 +365,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case ContractState.PRE_CREATE:
       case ContractState.PENDING:
 
-        _contractStateDetail =
-            S.of(context).remain + "${FormatUtil.amountToString(_contractNodeItem.remainDelegation)}HYN";
+        if (double.parse(_contractNodeItem.remainDelegation) > 0) {
+          var remainDelegation = FormatUtil.amountToString(_contractNodeItem.remainDelegation) + "HYN";
+          _contractStateDetail =
+              S.of(context).remain + remainDelegation;
+        } else {
+          _contractStateDetail = S.of(context).delegation_full_will_active_hint;
+        }
+       
         break;
 
       case ContractState.ACTIVE:
@@ -459,9 +449,23 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
 
-    if (_userDelegateState != null && _userDelegateState == UserDelegateState.HALFDUE && _canGetPercent50Rewards ) {
-      _actionTitle = S.of(context).withdraw_fifty_revenue;
-      _visible = true;
+    if (_userDelegateState != null && _canGetPercent50Rewards ) {
+
+      switch (_userDelegateState) {
+        case UserDelegateState.HALFDUE:
+          _actionTitle = S.of(context).withdraw_fifty_revenue;
+          _visible = true;
+          break;
+
+        case UserDelegateState.PRE_CANCELLED_COLLECTED:
+        case UserDelegateState.PRE_HALFDUE_COLLECTED:
+        case UserDelegateState.PRE_DUE_COLLECTED:
+        _visible = false;
+          break;
+
+        default:
+          break;
+      }
     }
 
     if (_visible) {
@@ -486,6 +490,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           };
           break;
       }
+
+      // todo: test_jison_0420
+      /*onPressed = (){
+
+        Application.router.navigateTo(
+            context,
+            Routes.map3node_broadcase_success_page +
+                "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+
+        return;
+      };*/
+
       _lastActionTitle = _actionTitle;
     } else { 
       _actionTitle = "";
@@ -494,11 +510,21 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   
-  @override
+/*  @override
   void onCreated() {
+
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
     getContractDetailData();
+
     super.onCreated();
+  }*/
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+    getContractDetailData();
   }
 
   @override
@@ -693,7 +719,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Widget _contractNotifyWidget() {
     if (!_isDelegated || _contractDetailItem == null || _userDelegateState == null) {
-      return Container();
+      return Container(
+//        color: Colors.white,
+//        padding: EdgeInsets.only(top: 8),
+      );
     }
 
     var amountDelegation = FormatUtil.amountToString(_contractDetailItem.amountDelegation);
@@ -701,7 +730,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var expectedYield = FormatUtil.amountToString(total.toString());
     var commission = FormatUtil.amountToString(_contractDetailItem.commission);
     var textColor = _userDelegateState == UserDelegateState.CANCELLED ? HexColor("#B51414") : HexColor("#5C4304");
-    //print('[ddd] expectedYield:$expectedYield');
+    var withdrawn = FormatUtil.amountToString(_contractDetailItem.withdrawn) + "HYN";
+    var managerTip = Map3NodeUtil.managerTip(_contractNodeItem.contract, double.parse(_contractDetailItem.amountDelegation), isOwner: _isOwner);
+    var endProfit = Map3NodeUtil.getEndProfit(_contractNodeItem.contract, double.parse(_contractDetailItem.amountDelegation));
+    print('[Detail] commission:$commission vs $managerTip, expectedYield:$expectedYield vs $endProfit ,withdrawn: $withdrawn}');
+
+
     return Container(
       color: Colors.white,
       child: Column(
@@ -731,9 +765,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
+            padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
             child: Row(
-              children: [1, 2, 3].map((value) {
+
+              children: [1, 0.5, 2, 0.5, 3].map((value) {
                 String title = "";
                 String detail = "0";
                 Color color = HexColor("#000000");
@@ -751,8 +786,16 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     break;
 
                   case 3:
-                    title = _isCreator?S.of(context).get_manage_tip_hyn:S.of(context).out_mange_tip_hyn;
+                    title = _isOwner?S.of(context).get_manage_tip_hyn:S.of(context).out_mange_tip_hyn;
                     detail = commission;
+                    break;
+
+                  default:
+                    return Container(
+                      height: 20,
+                      width: 1.0,
+                      color: HexColor("#000000").withOpacity(0.2),
+                    );
                     break;
                 }
 
@@ -770,7 +813,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     children: <Widget>[
                       Text(detail, style: style),
                       Container(
-                        height: 8,
+                        height: 4,
                       ),
                       Text(title, style: TextStyles.textC333S11),
                     ],
@@ -788,6 +831,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     return Container(
       color: Colors.white,
+      padding: EdgeInsets.only(top: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -1217,6 +1261,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Future _collectAction() async {
+
     if (_wallet == null || _contractDetailItem == null) {
 
       return;

@@ -8,6 +8,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -105,7 +106,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
       return;
     }
     double inputValue = double.parse(inputText);
-    double doubleEndProfit = inputValue *
+
+/*
+   double doubleEndProfit = inputValue *
             contractNodeItem.contract.annualizedYield *
             contractNodeItem.contract.duration /
             365 +
@@ -115,8 +118,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         contractNodeItem.contract.duration /
         365 *
         contractNodeItem.contract.commission;
-    endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
-    spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
+    */
+    endProfit = Map3NodeUtil.getEndProfit(contractNodeItem.contract, inputValue);
+    spendManager = Map3NodeUtil.spendManagerTip(contractNodeItem.contract, inputValue);
 
     setState(() {
       if (!mounted) return;

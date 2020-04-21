@@ -199,8 +199,8 @@ class _MyPageState extends State<MyPage> {
     } else {
       iconWidget = Image.asset(
         "res/drawable/$imageName.png",
-        width: 20,
-        height: 20,
+        width: 25,
+        height: 25,
       );
     }
     ;

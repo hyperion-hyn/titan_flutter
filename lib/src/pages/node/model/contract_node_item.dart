@@ -178,9 +178,12 @@ part 'contract_node_item.g.dart';
   }
 
   String get shortOwnerName{
-    var shortOwnerName = ownerName.substring(
-        0, ownerName.length > 4 ? 4 : ownerName.length);
-    shortOwnerName = shortOwnerName + "...";
+    var shortOwnerName = ownerName;
+    if (ownerName.length > 6) {
+      shortOwnerName = ownerName.substring(
+          0, 6);
+      shortOwnerName = shortOwnerName + "...";
+    }
     return shortOwnerName;
   }
 
