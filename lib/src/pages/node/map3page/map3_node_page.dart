@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:sprintf/sprintf.dart';
@@ -12,13 +10,11 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:collection/collection.dart';
 
 class Map3NodePage extends StatefulWidget {
   @override
@@ -27,7 +23,7 @@ class Map3NodePage extends StatefulWidget {
   }
 }
 
-class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
+class _Map3NodeState extends State<Map3NodePage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   NodeApi _nodeApi = NodeApi();
   NodePageEntityVo _nodePageEntityVo = MemoryCache.nodePageData;
@@ -36,32 +32,11 @@ class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
   @override
   void initState() {
     super.initState();
-    if(!MemoryCache.hasNodePageData){
+    if (!MemoryCache.hasNodePageData) {
       loadDataBloc.add(LoadingEvent());
-    }else{
+    } else {
       getNetworkData();
     }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Application.routeObserver.subscribe(this, ModalRoute.of(context));
-  }
-
-
-  @override
-  void didPush() {
-
-    print("[node] didPush");
-    super.didPush();
-  }
-
-  @override
-  void didPopNext() {
-    print("[node] didPopNext");
-
-    super.didPushNext();
   }
 
   @override
@@ -97,7 +72,7 @@ class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
       NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
 
       NodePageEntityVo cloneData = netData.clone();
-      cloneData.nodeHeadEntity.lastRecordMessage = null;
+      cloneData.nodeHeadEntity?.lastRecordMessage = null;
       if (!cloneData.isEqual(MemoryCache.nodePageData)){
         _nodePageEntityVo = netData;
         MemoryCache.nodePageData = cloneData;
@@ -108,7 +83,6 @@ class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
           loadDataBloc.add(RefreshSuccessEvent());
         });
       }
-
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -374,8 +348,8 @@ class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: <Widget>[
                                     Expanded(
-                                        child:
-                                            Text("${contractNodeItem.contract.nodeName}", style: TextStyles.textCcc000000S14))
+                                        child: Text("${contractNodeItem.contract.nodeName}",
+                                            style: TextStyles.textCcc000000S14))
                                   ],
                                 ),
                                 Padding(
@@ -434,7 +408,7 @@ class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
                   child: FlatButton(
                     color: DefaultColors.colorffdb58,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                    onPressed: ()  {
+                    onPressed: () {
                       _pushContractDetail(contractNodeItem);
                     },
                     child: Text(S.of(context).detail, style: TextStyles.textC906b00S13),
@@ -449,8 +423,7 @@ class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
   }
 
   Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
-    Application.router
-        .navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
     /*
     var walletList = await WalletUtil.scanWallets();
     if (walletList.length == 0) {
@@ -462,16 +435,14 @@ class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
   }
 
   Future _pushContractListAction() async {
-    var entryRouteName = Uri.encodeComponent(Routes.root);
-    print("[detail] -----> back, _broadcaseContractAction, entryRouteName:$entryRouteName");
-
-    await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$entryRouteName');
+    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+    await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
 
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
 
-    if(result != null) {
-      if(result is ContractNodeItem) {
+    if (result != null) {
+      if (result is ContractNodeItem) {
         _pushContractDetail(result);
       }
     }
@@ -479,9 +450,7 @@ class _Map3NodeState extends State<Map3NodePage>  with RouteAware {
 
   @override
   void dispose() {
-    Application.routeObserver.unsubscribe(this);
-
     loadDataBloc.close();
-      super.dispose();
-    }
+    super.dispose();
   }
+}
