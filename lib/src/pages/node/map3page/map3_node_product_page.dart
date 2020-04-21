@@ -193,8 +193,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                       Application.router.navigateTo(context, Routes.map3node_create_wallet);
                     }else{
                       Application.router.navigateTo(context, Routes.map3node_create_contract_page
-                          + "?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}"
-                          + "&contractId=${nodeItem.id}");
+                          + "?contractId=${nodeItem.id}");
                     }
                   },
                   child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
@@ -209,109 +208,3 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
 
 }
 
-/*Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem,{hasRemind = false,showButton = true}) {
-  return Padding(
-    padding: EdgeInsets.only(left: 10.0, right: 10, top: 10, bottom: 10),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: Image.asset(
-                "res/drawable/ic_map3_node_item.png",
-                width: 50,
-                height: 50,
-                fit:BoxFit.cover,
-              ),
-            ),
-            Flexible(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(nodeItem.nodeName, style: TextStyles.textC333S14bold),
-                          SizedBox(height: 5,),
-                          Text("启动共需${FormatUtil.stringFormatNum(nodeItem.minTotalDelegation)}HYN",
-                              style: TextStyles.textC333S14)
-                        ],
-                      ),
-                    ),
-                  ),
-                  if(showButton)
-                    MaterialButton(
-                    height: 30,
-                    color: Colors.white,
-                    onPressed: () async {
-                      var walletList = await WalletUtil.scanWallets();
-                      if(walletList.length == 0){
-                        Application.router.navigateTo(context, Routes.map3node_create_wallet);
-                      }else{
-                        Application.router.navigateTo(context, Routes.map3node_create_contract_page
-                            + "?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}"
-                            + "&contractId=${nodeItem.id}");
-                      }
-                    },
-                    child: Text("创建合约", style: TextStyles.textC26ac29S12),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text("期满年化奖励", style: TextStyles.textC9b9b9bS12),
-                      Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textC333S14)
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text("合约期限", style: TextStyles.textC9b9b9bS12),
-                      Text("${nodeItem.duration}天", style: TextStyles.textC333S14)
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text("管理费", style: TextStyles.textC9b9b9bS12),
-                      Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textC333S14)
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text("创建最低投入", style: TextStyles.textC9b9b9bS12),
-                      Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}", style: TextStyles.textC333S14)
-                    ],
-                  )),
-            )
-          ],
-        ),
-        if(hasRemind)
-          Padding(
-            padding: const EdgeInsets.only(top:8.0),
-            child: Text("注：合约生效满90天后，即可提取50%奖励", style: TextStyles.textCf29a6eS12),
-          )
-      ],
-    ),
-  );
-}*/

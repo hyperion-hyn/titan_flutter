@@ -1,10 +1,13 @@
 import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
+import 'map3_node_contract_detail_page.dart';
 import 'map3_node_create_contract_page.dart';
 
 class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
@@ -134,12 +137,24 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
   }
 
   void _pop(BuildContext context) {
-    if (this.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT) {
-      //print("[detail] --> pop");
-      Navigator.of(context).pop();
-    } else {
-      Routes.popUntilCachedEntryRouteName(context);
+
+    print("[pop] this.pageType:${this.pageType}, Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
+
+    switch (this.pageType) {
+      case Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE:
+        Routes.popUntilCachedEntryRouteName(context, [true, 1, 2, 3]);
+
+//        Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
+//
+//        Routes.pushAndRemove(context, MaterialPageRoute(builder: (BuildContext context) => Map3NodeContractDetailPage(1)), Routes.map3node_product_list);
+        break;
+
+      default:
+        Routes.popUntilCachedEntryRouteName(context, [true, 1, 2, 3]);
+
+        break;
     }
+
   }
 
 }

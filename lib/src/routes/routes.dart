@@ -47,14 +47,24 @@ class Routes {
   static String cachedEntryRouteName;
 
   static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
+    print("Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
     if (Routes.cachedEntryRouteName == null) {
       //back to root
       Navigator.of(context).popUntilRouteName(Routes.root, result);
     } else {
-      Navigator.of(context).popUntilRouteName(Routes.cachedEntryRouteName, result);
+      Navigator.of(context).popUntilRouteName(Routes.cachedEntryRouteName, result, true);
+      print("Routes.cachedEntryRouteName:nulllllll");
+
       Routes.cachedEntryRouteName = null;
     }
   }
+
+  static void pushAndRemove(BuildContext context, Route newRoute, String rootName) {
+    Navigator.of(context).pushAndRemoveUntil(
+      newRoute,
+       ModalRoute.withName(rootName),
+        );
+   }
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {

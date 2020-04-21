@@ -132,6 +132,8 @@ var contributionPositionFinishHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeProductListHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+
   return Map3NodeProductPage();
 });
 
@@ -150,12 +152,15 @@ var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
+
   ContractNodeItem contractNodeItem =
       ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  var transferAmount = params['transferAmount']?.first ?? '0';
+
   return Map3NodeSendConfirmPage(
     params['coinVo']?.first ?? '0',
     contractNodeItem,
-    double.parse(params['transferAmount']?.first ?? '0'),
+    double.parse(transferAmount)??0.0,
     params['receiverAddress']?.first ?? '0',
     params['pageType']?.first,
     params['contractId']?.first,
@@ -165,12 +170,16 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
   return Map3NodeBroadcaseSuccessPage(params['pageType']?.first);
 });
 
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+
   return Map3NodeContractDetailPage(int.parse(params['contractId']?.first));
 });
+
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
   ContractNodeItem contractNodeItem =
@@ -178,16 +187,7 @@ var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeSharePage(contractNodeItem);
 });
 
-/*var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
-  //print('[route_handlers] param:${params}');
-
-  var jsonString = FluroConvertUtils.string2map(params['model']?.first);
-  //print('[route_handlers] jsonString:${jsonString}');
-
-  var model = ContractNodeItem.fromJson(jsonString);
-  return NodeContractDetailPage(model);
-});*/
-
+ 
 //var demoRouteHandler = Handler(
 //    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
 //      String message = params["message"]?.first;

@@ -29,6 +29,7 @@ import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -68,7 +69,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   var _actionTitle = "";
 
 
-  LoadDataBloc loadDataBloc = LoadDataBloc();
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   NodeApi _nodeApi = NodeApi();
   List<ContractDelegateRecordItem> _delegateRecordList = [];
@@ -88,9 +89,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   get _canGetPercent50Rewards => _isDelegated && _is180DaysContract;
 
   get _currentStep {
+    if (_contractState == null) return 0;
+
     int value = 0;
 
-    if (_is180DaysContract) {
+    if (_is180DaysContract && _userDelegateState != null) {
       switch (_userDelegateState) {
         case UserDelegateState.PRE_CREATE:
         case UserDelegateState.PENDING:
@@ -155,9 +158,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   get _currentStepProgress {
+
+    if (_contractState == null) return 0.0;
+
     double value = 0.0;
 
-    if (_is180DaysContract) {
+    if (_is180DaysContract && _userDelegateState != null) {
       switch (_userDelegateState) {
         case UserDelegateState.PRE_CREATE:
         case UserDelegateState.PENDING:
@@ -279,7 +285,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   get _contractNotifyDetail {
-    if (_contractState == null) {
+    if (_userDelegateState == null) {
       return S.of(context).wait_block_chain_verification;
     };
 
@@ -322,11 +328,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       case UserDelegateState.DUE_COLLECTED:
-//        var total = double.parse(_contractDetailItem.expectedYield) + double.parse(_contractDetailItem.amountDelegation);
-//        var expectedYield = FormatUtil.amountToString(total.toString());
-//        _contractNotifyDetail = "恭喜你成功提取奖励:${expectedYield}HYN";
-        //_contractNotifyDetail = S.of(context).happy_get_all_reward_hint;
-
         if (double.parse(_contractDetailItem?.withdrawn??"0") == 0) {
           _contractNotifyDetail = "";
         } else {
@@ -467,6 +468,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       }
     }
 
+
+
     if (_visible) {
       switch (_contractState) {
         case ContractState.PENDING:
@@ -490,22 +493,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
       }
 
-      // todo: test_jison_0420
-      /*onPressed = (){
-
-        Application.router.navigateTo(
-            context,
-            Routes.map3node_broadcase_success_page +
-                "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
-
-        return;
-      };*/
-
       _lastActionTitle = _actionTitle;
     } else { 
       _actionTitle = "";
       _lastActionTitle = "";
     }
+
+
+    // todo: test_jison_0420
+//    _actionTitle = "确定";
+//    _visible = true;
+//    onPressed = _joinContractAction;
+
   }
 
   
@@ -526,16 +525,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   @override
   void dispose() {
-    loadDataBloc.close();
+
+    print("[detail] dispose");
+
+    _loadDataBloc.close();
     super.dispose();
   }
 
   Widget build(BuildContext context) {
 
     // todo: test_jison_0420
-/*    _contractState = ContractState.PENDING;
+
+/*
+    _contractState = ContractState.PENDING;
     _userDelegateState = UserDelegateState.PRE_CANCELLED_COLLECTED;
-    _initBottomButtonData();*/
+    _initBottomButtonData();
+*/
 
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
@@ -553,17 +558,23 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _contractNodeItem?.contract == null) {
-      return AllPageStateContainer(_currentState, () {
-        setState(() {
-          _currentState = all_page_state.LoadingState();
-        });
-      });
+      return Scaffold(
+        appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_contract_detail)),
+
+        body: AllPageStateContainer(_currentState, () {
+          setState(() {
+            print("d999999999");
+            _currentState = all_page_state.LoadingState();
+            getContractDetailData();
+          });
+        }),
+      );
     }
 
     return Padding(
       padding: EdgeInsets.only(bottom: _visible ? 48 : 0),
       child: LoadDataContainer(
-          bloc: loadDataBloc,
+          bloc: _loadDataBloc,
           //enablePullDown: false,
           onRefresh: getContractDetailData,
           onLoadingMore: getJoinMemberMoreData,
@@ -600,6 +611,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     _contractNodeItem.ownerName,
                     _contractNodeItem.shareUrl,
                     isShowInviteItem: false,
+                    loadDataBloc: _loadDataBloc,
                   ),
                 ),
               ),
@@ -1184,14 +1196,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
         }).toList();*/
         _delegateRecordList.addAll(tempMemberList);
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
 
       //setState(() {});
     } catch (e) {
-      loadDataBloc.add(LoadMoreFailEvent());
+      _loadDataBloc.add(LoadMoreFailEvent());
 
       //setState(() {});
     }
@@ -1205,15 +1217,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
 
       setState(() {});
     } catch (e) {
       setState(() {
-        loadDataBloc.add(LoadMoreFailEvent());
+        _loadDataBloc.add(LoadMoreFailEvent());
       });
     }
   }
@@ -1246,17 +1258,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       // 3.
       Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          _currentState = null;
-          loadDataBloc.add(RefreshSuccessEvent());
-        });
+        if (mounted) {
+          setState(() {
+            _currentState = null;
+            _loadDataBloc.add(RefreshSuccessEvent());
+          });
+        }
+
       });
     } catch (e) {
-      setState(() {
-        loadDataBloc.add(RefreshFailEvent());
-
-        _currentState = all_page_state.LoadFailState();
-      });
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshFailEvent());
+          //_visible = false;
+          _currentState = all_page_state.LoadFailState();
+        });
+      }
     }
   }
 
@@ -1299,13 +1316,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           }
         }
 
-        var collectHex = await _api.withdrawContractInstance(
+         await _api.withdrawContractInstance(
             _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
-
-        Application.router.navigateTo(
-            context,
-            Routes.map3node_broadcase_success_page +
-                "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+          _broadcaseContractAction();
+//        Application.router.navigateTo(
+//            context,
+//            Routes.map3node_broadcase_success_page +
+//                "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
 
         _isTransferring = false;
 
@@ -1376,9 +1393,30 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     Application.router.navigateTo(context, Routes.map3node_create_wallet);
   }
 
-  void _joinContractAction() {
-    Application.router
-        .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+  void _joinContractAction() async {
+    //entryRouteName
+    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    await Application.router
+        .navigateTo(context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
+    _didPopNext();
+  }
+
+  void _broadcaseContractAction() async {
+    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    await Application.router.navigateTo(
+        context,
+        Routes.map3node_broadcase_success_page +
+            "?entryRouteName=$entryRouteName&pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+    _didPopNext();
+  }
+
+  _didPopNext() {
+    final result = ModalRoute.of(context).settings?.arguments;
+    print("[detail] -----> back, _broadcaseContractAction, result:${result}");
+
+    if(result != null) {
+      getContractDetailData();
+    }
   }
 
 }
