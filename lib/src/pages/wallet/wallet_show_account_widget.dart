@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -332,6 +333,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                 var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
                 var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
                 if (url != null) {
+
+                  // todo: jison_test_0421
+                 /*
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -339,6 +343,15 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 initUrl: url,
                                 title: '',
                               )));
+                */
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InAppWebViewContainer(
+                            initUrl: url,
+                            title: '',
+                          )));
                 }
               },
               child: Padding(

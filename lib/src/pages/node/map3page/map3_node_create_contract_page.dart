@@ -328,26 +328,43 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
                 setState(() {
-                  if (!_isUserCreatable) {
-                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-                    return;
-                  }
-                  
-                  if (!_joinCoinFormKey.currentState.validate()) {
-                    return;
-                  }
+                  // todo: test_jison_0420
                   String provider = providerList[selectServerItemValue].id;
                   String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+                  var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
+
                   Application.router.navigateTo(
                       context,
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                           "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                          "&transferAmount=${_joinCoinController.text ?? ""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&provider=$provider" +
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +
                           "&contractId=${widget.contractId}");
+                  return;
+
+//                  if (!_isUserCreatable) {
+//                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+//                    return;
+//                  }
+//
+//                  if (!_joinCoinFormKey.currentState.validate()) {
+//                    return;
+//                  }
+//                  String provider = providerList[selectServerItemValue].id;
+//                  String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+//                  Application.router.navigateTo(
+//                      context,
+//                      Routes.map3node_send_confirm_page +
+//                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+//                          "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
+//                          "&transferAmount=${_joinCoinController.text ?? ""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+//                          "&provider=$provider" +
+//                          "&region=$region" +
+//                          "&pageType=${widget.pageType}" +
+//                          "&contractId=${widget.contractId}");
                 });
               }),
         )
@@ -355,42 +372,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     );
   }
 
-/*Widget startAccount() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text("发起账号"),
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 30.0, right: 15),
-              child: Image.asset("res/drawable/hyn.png", width: 40, height: 40),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("${contractNodeItem.ownerName}",
-                    style: TextStyles.textC333S14),
-                Text("${contractNodeItem.owner}",
-                    style: TextStyles.textC9b9b9bS12)
-              ],
-            )
-          ],
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Container(
-          height: 5,
-          color: DefaultColors.colorf5f5f5,
-        ),
-      ],
-    );
-  }*/
 }
 
 Widget getHoldInNum(
@@ -434,12 +415,17 @@ Widget getHoldInNum(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, bottom: 15),
+          padding: const EdgeInsets.only(left: 15.0, bottom: 15, right: 8),
           child: Row(
             children: <Widget>[
-              Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo)),
-                  style: TextStyle(color: Colors.grey[600])),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+              ),
+              Expanded(
+                child: Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                    style: TextStyle(color: Colors.grey[600])),
+              ),
             ],
           ),
         ),
@@ -863,242 +849,3 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
   );
 }
 
-/*
-
-Widget _getHeadItemCard(BuildContext context, NodeItem nodeItem) {
-  var currentTime = new DateTime.now().millisecondsSinceEpoch;
-  var durationTime = nodeItem.duration * 3600 * 24 * 1000;
-  var tempHalfTime = durationTime / 2 + currentTime;
-  int halfTime = int.parse(tempHalfTime.toStringAsFixed(0));
-  var endTime = durationTime + currentTime;
-
-  if (nodeItem.halfCollected) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-      color: Colors.white,
-      margin: const EdgeInsets.only(left: 14.0, right: 14, bottom: 16, top: 16),
-      child: Padding(
-          padding: const EdgeInsets.only(left: 22.0, right: 22, top: 21, bottom: 21),
-          child: Stack(alignment: Alignment.topCenter, children: <Widget>[
-            Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(
-                              S.of(context).today_join,
-                              style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b")),
-                            ),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(currentTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(S.of(context).withdraw_reward,
-                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(halfTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(S.of(context).expire_end,
-                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(endTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 22,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 23,
-                      height: 1,
-                      color: HexColor("#D6D6D6"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10),
-                      child: Text(S.of(context).truely_date_accurate,
-                          style: TextStyle(fontSize: 12, color: HexColor("#AAAAAA"))),
-                    ),
-                    Container(
-                      width: 23,
-                      height: 1,
-                      color: HexColor("#D6D6D6"),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(width: 72),
-                Expanded(
-                  child: Container(
-//                    width: 70,
-                    height: 1,
-                    color: HexColor("#ECECEC"),
-                  ),
-                ),
-                SizedBox(width: 42, height: 13),
-                Expanded(
-                  child: Container(
-//                    width: 70,
-                    height: 1,
-                    color: HexColor("#ECECEC"),
-                  ),
-                ),
-                SizedBox(width: 72),
-              ],
-            )
-          ])),
-    );
-  } else {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-      color: Colors.white,
-      margin: const EdgeInsets.only(left: 14.0, right: 14, bottom: 16, top: 16),
-      child: Padding(
-          padding: const EdgeInsets.only(left: 22.0, right: 22, top: 21, bottom: 21),
-          child: Stack(alignment: Alignment.topCenter, children: <Widget>[
-            Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(
-                              S.of(context).today_join,
-                              style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b")),
-                            ),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(currentTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(S.of(context).expire_end,
-                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(endTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 22,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 23,
-                      height: 1,
-                      color: HexColor("#D6D6D6"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10),
-                      child: Text(
-                        S.of(context).truely_date_accurate,
-                        style: TextStyle(fontSize: 12, color: HexColor("#AAAAAA")),
-                      ),
-                    ),
-                    Container(
-                      width: 23,
-                      height: 1,
-                      color: HexColor("#D6D6D6"),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(width: 42, height: 13),
-                Container(
-                  width: 100,
-                  height: 1,
-                  color: HexColor("#ECECEC"),
-                ),
-                SizedBox(width: 42, height: 13)
-              ],
-            )
-          ])),
-    );
-  }
-}
-*/

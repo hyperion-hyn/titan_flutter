@@ -267,17 +267,31 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               child: Text(S.of(context).confirm_mortgage, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
                 setState(() {
-                  if (!_joinCoinFormKey.currentState.validate()) {
-                    return;
-                  }
+
+                  // todo: test_jison_0420
+                  var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
                   Application.router.navigateTo(
                       context,
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                           "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                          "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&pageType=${widget.pageType}" +
                           "&contractId=${widget.contractId}");
+
+                  return;
+
+//                  if (!_joinCoinFormKey.currentState.validate()) {
+//                    return;
+//                  }
+//                  Application.router.navigateTo(
+//                      context,
+//                      Routes.map3node_send_confirm_page +
+//                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+//                          "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
+//                          "&transferAmount=${_joinCoinController.text}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+//                          "&pageType=${widget.pageType}" +
+//                          "&contractId=${widget.contractId}");
                 });
               }),
         )
