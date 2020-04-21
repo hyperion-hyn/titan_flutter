@@ -73,34 +73,24 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   NodeApi _nodeApi = NodeApi();
   List<ContractDelegateRecordItem> _delegateRecordList = [];
 
-  get _stateColor {
-    return Map3NodeUtil.stateColor(_contractState);
-  }
+  get _stateColor => Map3NodeUtil.stateColor(_contractState);
 
   get _durationType {
     return _contractNodeItem?.contract?.durationType??0;
   }
 
-  get _isNoWallet {
-    return _wallet == null;
-  }
+  get _isNoWallet => _wallet == null;
 
- /* get _isCreator {
-    return _wallet != null && _contractNodeItem != null && _wallet.getEthAccount().address == _contractNodeItem.owner;
-  }*/
+  get _isOwner => _contractDetailItem != null && _contractDetailItem.isOwner;
 
- get _isOwner {
-   return _contractDetailItem != null && _contractDetailItem.isOwner;
- }
+  get _is180DaysContract => (_durationType == 2);
 
-  get _canGetPercent50Rewards => _isDelegated && (_durationType == 2);
-
-
+  get _canGetPercent50Rewards => _isDelegated && _is180DaysContract;
 
   get _currentStep {
     int value = 0;
 
-    if (_canGetPercent50Rewards) {
+    if (_is180DaysContract) {
       switch (_userDelegateState) {
         case UserDelegateState.PRE_CREATE:
         case UserDelegateState.PENDING:
@@ -167,7 +157,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   get _currentStepProgress {
     double value = 0.0;
 
-    if (_canGetPercent50Rewards) {
+    if (_is180DaysContract) {
       switch (_userDelegateState) {
         case UserDelegateState.PRE_CREATE:
         case UserDelegateState.PENDING:
@@ -176,7 +166,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.PRE_CANCELLED_COLLECTED:
         case UserDelegateState.FAIL:
           value = _contractNodeItem.remainProgress;
-//          value = 0.8;
           break;
 
         case UserDelegateState.ACTIVE:
@@ -207,7 +196,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case ContractState.FAIL:
 
           value = _contractNodeItem.remainProgress;
-//        value = 0.75;
 
         break;
 
@@ -376,8 +364,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       case ContractState.ACTIVE:
-
-        _contractStateDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay);
+        var suffix = S.of(context).expire_date;
+        _contractStateDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay)+suffix;
         break;
 
       case ContractState.DUE:
@@ -406,16 +394,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
 
-    if (_userDelegateState != null && _canGetPercent50Rewards) {
+    if (_userDelegateState != null && _is180DaysContract) {
       switch (_userDelegateState) {
+
+        case UserDelegateState.ACTIVE:
+          var suffix = "，${S.of(context).can_withdraw_fifty_reward}";
+          _contractStateDetail = S.of(context).remain_day(_contractNodeItem.remainHalfDueDay) + suffix;
+          break;
+
         case UserDelegateState.HALFDUE:
           _contractStateDetail = S.of(context).can_withdraw_fifty_reward;
           break;
 
-        case UserDelegateState.ACTIVE:
-        case UserDelegateState.HALFDUE_COLLECTED:
         case UserDelegateState.PRE_HALFDUE_COLLECTED:
-          _contractStateDetail = S.of(context).remain_day(_contractNodeItem.remainHalfDueDay);
+        case UserDelegateState.HALFDUE_COLLECTED:
+          var suffix = S.of(context).expire_date;
+          _contractStateDetail = S.of(context).remain_day(_contractNodeItem.remainHalfDueDay)+suffix;
           break;
 
         default: 
@@ -457,10 +451,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           _visible = true;
           break;
 
+        case UserDelegateState.ACTIVE:
         case UserDelegateState.PRE_CANCELLED_COLLECTED:
+        case UserDelegateState.CANCELLED_COLLECTED:
         case UserDelegateState.PRE_HALFDUE_COLLECTED:
+        case UserDelegateState.HALFDUE_COLLECTED:
         case UserDelegateState.PRE_DUE_COLLECTED:
-        _visible = false;
+        case UserDelegateState.DUE_COLLECTED:
+        case UserDelegateState.FAIL:
+          _visible = false;
           break;
 
         default:
@@ -510,22 +509,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   
-/*  @override
+  @override
   void onCreated() {
 
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
     getContractDetailData();
 
     super.onCreated();
-  }*/
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
-    getContractDetailData();
   }
+
 
   @override
   void initState() {
@@ -539,6 +531,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget build(BuildContext context) {
+
+    // todo: test_jison_0420
+/*    _contractState = ContractState.PENDING;
+    _userDelegateState = UserDelegateState.PRE_CANCELLED_COLLECTED;
+    _initBottomButtonData();*/
+
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
       child: Scaffold(
@@ -875,7 +873,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     List<int> subtitles = [];
     List<String> progressHints = [];
 
-    if (_canGetPercent50Rewards) {
+    if (_is180DaysContract) {
       titles = [
         S.of(context).create_time,
         S.of(context).launch_success,
@@ -888,7 +886,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         _contractNodeItem.instanceActiveTime,
         0,
         _contractNodeItem.instanceDueTime,
-        _userDelegateState.index<UserDelegateState.ACTIVE.index? 0:_contractNodeItem.instanceFinishTime,
+        _contractState.index<ContractState.ACTIVE.index? 0:_contractNodeItem.instanceFinishTime,
+
+//        _userDelegateState?.index<UserDelegateState?.ACTIVE?.index? 0:_contractNodeItem.instanceFinishTime,
       ];
       progressHints = [
         S.of(context).n_day(7.toString()),
@@ -1301,12 +1301,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
         var collectHex = await _api.withdrawContractInstance(
             _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
-        logger.i('map3 collect, collectHex: $collectHex');
 
         Application.router.navigateTo(
             context,
             Routes.map3node_broadcase_success_page +
                 "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+
+        _isTransferring = false;
+
       } catch (_) {
         logger.e(_);
         setState(() {

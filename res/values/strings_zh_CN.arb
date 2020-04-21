@@ -773,7 +773,6 @@
   "expected_output_hyn": "预期产出(HYN)",
   "create_time": "创建时间",
   "can_withdraw_fifty_reward": "可提50%奖励",
-  "expire_date": "期满可提",
   "extract_time": "合约完成",
   "extracting": "提取中...",
   "exceed_the_limit": "超过限制",
@@ -844,5 +843,6 @@
   "happy_get_all_reward_hint": "恭喜你成功提取所有奖励",
   "your_last_output_to_contract_func": "你的最新提取：$input, ${task_pending}",
   "no_pengding_node_contract_hint": "没有待启动的节点合约\n您可以创建合约",
-  "delegation_full_will_active_hint": "抵押已满，即将启动"
+  "delegation_full_will_active_hint": "抵押已满，即将启动",
+  "expire_date": "期满可提"
 }

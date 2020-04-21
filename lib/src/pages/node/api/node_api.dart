@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -38,7 +39,7 @@ class NodeApi {
     }
     Map<String,dynamic> headMap = Map();
 
-    headMap.putIfAbsent("appSource", ()=> "TITAN");
+    headMap.putIfAbsent("appSource", ()=> Config.APP_SOURCE);
 
     var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     if(hasAddress && activeWalletVo != null){
