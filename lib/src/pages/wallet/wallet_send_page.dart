@@ -168,7 +168,6 @@ class _WalletSendState extends State<WalletSendPage> {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            print('xxx balance ${widget.coinVo.balance}');
                             _amountController.text = FormatUtil.coinBalanceHumanRead(widget.coinVo);
                           },
                           child: Padding(

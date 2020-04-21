@@ -13,6 +13,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/pages/node/model/node_share_entity.dart';
@@ -155,15 +156,17 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       return;
     }
     double inputValue = double.parse(inputText);
-    double doubleEndProfit =
+        /*
+        double doubleEndProfit =
         inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
     double doubleSpendManager = (double.parse(contractNodeItem.contract.minTotalDelegation) - inputValue) *
         contractNodeItem.contract.annualizedYield *
         contractNodeItem.contract.duration /
         365 *
         contractNodeItem.contract.commission;
-    endProfit = FormatUtil.formatNumDecimal(doubleEndProfit);
-    spendManager = FormatUtil.formatNumDecimal(doubleSpendManager);
+        */
+    endProfit = Map3NodeUtil.getEndProfit(contractNodeItem.contract, inputValue);
+    spendManager = Map3NodeUtil.getManagerTip(contractNodeItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
@@ -176,6 +179,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       });
     }
   }
+
 
   @override
   void dispose() {
@@ -421,7 +425,7 @@ Widget getHoldInNum(
   }
 
   var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
-  walletName = UiUtil.shortString(walletName, limitLength: 3);
+  walletName = UiUtil.shortString(walletName, limitLength: 6);
 
   var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
   return Container(
