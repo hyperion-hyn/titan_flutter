@@ -72,8 +72,8 @@ class _Map3NodeState extends State<Map3NodePage> {
       NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
 
       NodePageEntityVo cloneData = netData.clone();
-      cloneData.nodeHeadEntity.lastRecordMessage = null;
-      if (!cloneData.isEqual(MemoryCache.nodePageData)) {
+      cloneData.nodeHeadEntity?.lastRecordMessage = null;
+      if (!cloneData.isEqual(MemoryCache.nodePageData)){
         _nodePageEntityVo = netData;
         MemoryCache.nodePageData = cloneData;
       }
