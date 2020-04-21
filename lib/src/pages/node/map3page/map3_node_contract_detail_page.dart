@@ -452,6 +452,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           _visible = true;
           break;
 
+        case UserDelegateState.PRE_CREATE:
         case UserDelegateState.ACTIVE:
         case UserDelegateState.PRE_CANCELLED_COLLECTED:
         case UserDelegateState.CANCELLED_COLLECTED:
