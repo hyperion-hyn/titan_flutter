@@ -133,7 +133,6 @@ var contributionPositionFinishHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeProductListHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-
   return Map3NodeProductPage();
 });
 
