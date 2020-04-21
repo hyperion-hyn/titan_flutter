@@ -1,6 +1,6 @@
 {
-  "app_name": "어플이름",
-  "network_request_err": "네트워크 요청 오류가 있습니다,상태 코드번호: $code",
+  "app_name": "하이페리온",
+  "network_request_err": "네트워크 요청 오류:$code",
   "route": "루트",
   "no_recommended_route": "추천 루트가 없습니다.",
   "less_than_1_min": "1분이내",
