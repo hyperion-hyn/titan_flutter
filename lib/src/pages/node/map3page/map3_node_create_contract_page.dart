@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:decimal/decimal.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -26,6 +26,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Map3NodeCreateContractPage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
@@ -725,7 +726,11 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           right: 0,
           child: InkWell(
             onTap: () async {
-              final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
+              Application.router.navigateTo(
+                  context,Routes.map3node_share_page +
+                  "?contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+
+              /*final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
 
               var activityWallet = WalletInheritedModel.of(context).activatedWallet;
               if(activityWallet != null) {
@@ -749,7 +754,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
                     .of(context)
                     .nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
                     text: "${contractNodeItem.shareUrl}");
-              }
+              }*/
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 44.0, right: 15),
