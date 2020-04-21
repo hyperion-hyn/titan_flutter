@@ -13,6 +13,7 @@ import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_product_page_vo.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -34,9 +35,9 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
 
   @override
   void initState() {
-    if(!MemoryCache.hasNodeProductPageData){
+    if (!MemoryCache.hasNodeProductPageData) {
       loadDataBloc.add(LoadingEvent());
-    }else{
+    } else {
       getNetworkData();
     }
 
@@ -52,7 +53,6 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   }
 
   Widget _pageView() {
-
     return Container(
       color: HexColor("#f5f5f5"),
       child: LoadDataContainer(
@@ -63,15 +63,15 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
         onRefresh: () async {
           getNetworkData();
         },
-        onLoadingMore: (){
+        onLoadingMore: () {
           getMoreNetworkData();
         },
         child: CustomScrollView(
           slivers: <Widget>[
             SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  return getMap3NodeProductItem(context, nodeList[index]);
-                }, childCount: nodeList.length))
+              return getMap3NodeProductItem(context, nodeList[index]);
+            }, childCount: nodeList.length))
           ],
         ),
       ),
@@ -79,9 +79,9 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   }
 
   void getNetworkData() async {
-    try{
+    try {
       var netData = await _nodeApi.getContractList(currentPage);
-      if(!NodeProductPageVo(netData).isEqual(MemoryCache.nodeProductPageData)){
+      if (!NodeProductPageVo(netData).isEqual(MemoryCache.nodeProductPageData)) {
         nodeList = netData;
         MemoryCache.nodeProductPageData = netData;
       }
@@ -91,24 +91,23 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
           loadDataBloc.add(RefreshSuccessEvent());
         });
       }
-    }catch(e){
+    } catch (e) {
       loadDataBloc.add(LoadFailEvent());
     }
   }
 
   void getMoreNetworkData() async {
-    try{
+    try {
       currentPage = currentPage + 1;
       List<NodeItem> tempNodeList = await _nodeApi.getContractList(currentPage);
-      if(tempNodeList.length > 0){
+      if (tempNodeList.length > 0) {
         nodeList.addAll(tempNodeList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
-      }else{
+      } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
       }
-      setState(() {
-      });
-    }catch(e){
+      setState(() {});
+    } catch (e) {
       loadDataBloc.add(LoadMoreFailEvent());
     }
   }
@@ -119,12 +118,11 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
     super.dispose();
   }
 
-  Widget getMap3NodeProductItem(BuildContext context,NodeItem nodeItem) {
+  Widget getMap3NodeProductItem(BuildContext context, NodeItem nodeItem) {
     return Container(
       color: Colors.white,
       margin: const EdgeInsets.only(top: 8),
-      padding:
-      const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
+      padding: const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -135,9 +133,11 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                 "res/drawable/ic_map3_node_item_contract.png",
                 width: 50,
                 height: 50,
-                fit:BoxFit.cover,
+                fit: BoxFit.cover,
               ),
-              SizedBox(width: 6,),
+              SizedBox(
+                width: 6,
+              ),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,19 +145,22 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
-                        Expanded(
-                            child: Text("${nodeItem.nodeName}",
-                                style: TextStyle(fontWeight: FontWeight.bold)))
+                        Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
                       ],
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 3.0),
                       child: Row(
                         children: <Widget>[
-                          Text(S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" + S.of(context).ten_thousand,
-                              style: TextStyles.textC99000000S13,maxLines:1,softWrap: true),
-                          Text("  |  ",style: TextStyles.textC9b9b9bS12),
-                          Text(S.of(context).n_day(nodeItem.duration.toString()),style: TextStyles.textC99000000S13)
+                          Text(
+                              S.of(context).highest +
+                                  " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
+                                  S.of(context).ten_thousand,
+                              style: TextStyles.textC99000000S13,
+                              maxLines: 1,
+                              softWrap: true),
+                          Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                          Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
                         ],
                       ),
                     ),
@@ -173,28 +176,25 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(top:9,bottom: 9),
-            child: Divider(height: 1,color: DefaultColors.color2277869e),
+            padding: const EdgeInsets.only(top: 9, bottom: 9),
+            child: Divider(height: 1, color: DefaultColors.color2277869e),
           ),
           Row(
             children: <Widget>[
-              Expanded(
-                child: Text("")
-              ),
+              Expanded(child: Text("")),
               SizedBox(
                 height: 24,
                 width: 92,
                 child: FlatButton(
                   color: DefaultColors.colorffdb58,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   onPressed: () async {
                     var walletList = await WalletUtil.scanWallets();
-                    if(walletList.length == 0){
+                    if (walletList.length == 0) {
                       Application.router.navigateTo(context, Routes.map3node_create_wallet);
-                    }else{
-                      Application.router.navigateTo(context, Routes.map3node_create_contract_page
-                          + "?contractId=${nodeItem.id}");
+                    } else {
+                      await Application.router
+                          .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
                     }
                   },
                   child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
@@ -206,6 +206,4 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
       ),
     );
   }
-
 }
-

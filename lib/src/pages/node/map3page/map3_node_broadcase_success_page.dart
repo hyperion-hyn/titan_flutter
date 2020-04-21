@@ -142,7 +142,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
 
     switch (this.pageType) {
       case Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE:
-        Routes.popUntilCachedEntryRouteName(context, [true, 1, 2, 3]);
+        Routes.popUntilCachedEntryRouteName(context, true);
 
 //        Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
 //
@@ -150,7 +150,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
         break;
 
       default:
-        Routes.popUntilCachedEntryRouteName(context, [true, 1, 2, 3]);
+        Routes.popUntilCachedEntryRouteName(context, true);
 
         break;
     }
