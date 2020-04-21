@@ -376,21 +376,23 @@ class _MeState extends BaseState<MePage> with RouteAware {
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
       child: Column(
         children: <Widget>[
-          _buildMemuBar('我发起的Map3合约', "ic_create", () {
+          _buildMemuBar(S.of(context).my_initiated_map_contract, "ic_create", () {
             if (_wallet != null) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我发起的Map3合约")));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_initiated_map_contract)));
             } else {
-              Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
+              Application.router.navigateTo(context, Routes.wallet_manager);
+              //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
             }
           }),
           Divider(
             height: 2,
           ),
-          _buildMemuBar('我参与的Map3合约', "ic_delegate", () {
+          _buildMemuBar(S.of(context).my_join_map_contract, "ic_delegate", () {
             if (_wallet != null) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage("我参与的Map3合约")));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_join_map_contract)));
             } else {
-              Fluttertoast.showToast(msg: "请创建/导入钱包", gravity: ToastGravity.CENTER);
+              Application.router.navigateTo(context, Routes.wallet_manager);
+              //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
             }
           }),
         ],

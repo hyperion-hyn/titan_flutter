@@ -35,9 +35,9 @@ class _Map3NodeState extends State<Map3NodePage> {
   @override
   void initState() {
     super.initState();
-    if(!MemoryCache.hasNodePageData){
+    if (!MemoryCache.hasNodePageData) {
       loadDataBloc.add(LoadingEvent());
-    }else{
+    } else {
       getNetworkData();
     }
   }
@@ -76,7 +76,7 @@ class _Map3NodeState extends State<Map3NodePage> {
 
       NodePageEntityVo cloneData = netData.clone();
       cloneData.nodeHeadEntity.lastRecordMessage = null;
-      if (!cloneData.isEqual(MemoryCache.nodePageData)){
+      if (!cloneData.isEqual(MemoryCache.nodePageData)) {
         _nodePageEntityVo = netData;
         MemoryCache.nodePageData = cloneData;
         loadDataBloc.add(RefreshSuccessEvent());
@@ -84,7 +84,6 @@ class _Map3NodeState extends State<Map3NodePage> {
       if (mounted) {
         setState(() {});
       }
-
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -331,11 +330,17 @@ class _Map3NodeState extends State<Map3NodePage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Image.asset(
-                    "res/drawable/ic_map3_node_item_contract.png",
-                    width: 42,
-                    height: 42,
-                    fit: BoxFit.cover,
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                      border: Border.all(color: Color(0x22B7B7B7), width: 1),
+                    ),
+                    child: Image.asset(
+                      "res/drawable/ic_map3_node_item_contract.png",
+                      width: 42,
+                      height: 42,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   SizedBox(
                     width: 6,
