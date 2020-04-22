@@ -132,9 +132,9 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
       initialUrl: widget.initUrl,
       initialHeaders: {},
       initialOptions: InAppWebViewWidgetOptions(
-          inAppWebViewOptions: InAppWebViewOptions(
-        debuggingEnabled: true,
-      )),
+//        inAppWebViewOptions: InAppWebViewOptions(
+//        debuggingEnabled: true,)
+      ),
       onWebViewCreated: (InAppWebViewController controller) {
         webView = controller;
       },

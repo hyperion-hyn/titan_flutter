@@ -82,10 +82,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
       selectNodeProvider(0, 0);
 
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          currentState = null;
-        });
+      setState(() {
+        currentState = null;
       });
     } catch (e) {
       setState(() {
