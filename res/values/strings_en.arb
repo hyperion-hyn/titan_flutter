@@ -648,7 +648,7 @@
   "signal_total_data": "Total signal data:",
   "poi_total_data": "POI data distribution:",
   "epidemic_map_desc": "Wuhan Virus Cases Tracking Map",
-  "buy_need_hyn_usdt_func": "(USDT Deposit：from HYN ${hyn}U + from USDT ${USDT}U)",
+  "buy_need_hyn_usdt_func": "(USDT Deposit：from HYN ${hyn}U + from USDT ${usdt}U)",
   "balance_hyn_usdt": "Available USDT: HYN deposit ${hyn}，USDT deposit ${usdt}",
   "hyn_eq_u": "HYN deposit",
   "usdt_direct": "USDT deposit",
