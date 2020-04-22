@@ -62,7 +62,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     });
 
     getNetworkData();
-    checkIsCreateContract();
     super.initState();
   }
 
@@ -82,10 +81,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
       selectNodeProvider(0, 0);
 
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          currentState = null;
-        });
+      setState(() {
+        currentState = null;
       });
     } catch (e) {
       setState(() {
@@ -97,7 +94,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   Future checkIsCreateContract() async {
     try {
       _isUserCreatable = await _nodeApi.checkIsUserCreatableContractInstance();
-      
     } catch (e) {
       log(e);
     }
@@ -166,7 +162,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     }
   }
 
-
   @override
   void dispose() {
     _filterSubject.close();
@@ -191,7 +186,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         Expanded(
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            getMap3NodeProductHeadItem(context, contractItem),
+                getMap3NodeProductHeadItemSmall(context, contractItem),
 //            SizedBox(height: 16,),
             Container(
               color: Colors.white,
@@ -264,8 +259,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               ),
             ),
             SizedBox(height: 8),
-            getHoldInNum(
-                context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
+            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
                 (textStr) {
               _filterSubject.sink.add(textStr);
             }, (textStr) {
@@ -277,17 +271,19 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S14medium),
-
+                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
                   ),
-                  Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+                  ),
 //                  Padding(
 //                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
 //                    child: Text(S.of(context).freeze_balance_reward_direct_push, style: TextStyles.textC999S12),
@@ -313,36 +309,21 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
-              onPressed: () {
-                setState(() {
-                  // todo: test_jison_0422
-                  String provider = providerList[selectServerItemValue].id;
-                  String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-                  var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
 
-                  Application.router.navigateTo(
-                      context,
-                      Routes.map3node_send_confirm_page +
-                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                          "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                          "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                          "&provider=$provider" +
-                          "&region=$region" +
-                          "&pageType=${widget.pageType}" +
-                          "&contractId=${widget.contractId}");
+              onPressed: () async {
+                await checkIsCreateContract();
+                if (!_isUserCreatable) {
+                  Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
                   return;
-                  /*
-                  if (!_isUserCreatable) {
-                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-                    return;
-                  }
+                }
 
+                setState(() {
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
                   }
                   String provider = providerList[selectServerItemValue].id;
                   String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-                  var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
+                  var transferAmount = _joinCoinController?.text.isNotEmpty ? _joinCoinController?.text : "0";
 
                   Application.router.navigateTo(
                       context,
@@ -361,7 +342,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       ],
     );
   }
-
 }
 
 Widget getHoldInNum(
@@ -376,7 +356,6 @@ Widget getHoldInNum(
     Function onPressFunction,
     {Function joinEnougnFunction,
     bool isMyself = false}) {
-
   List<int> suggestList =
       contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
@@ -410,10 +389,12 @@ Widget getHoldInNum(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child: Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                child:
+                    Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
-                child: Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                child: Text(
+                    S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                     style: TextStyle(color: Colors.grey[600])),
               ),
             ],
@@ -636,7 +617,88 @@ Widget getHoldInNum(
   );
 }
 
-Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem, {isJoin = false, isDetail = true, hasShare = false}) {
+Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem contractNodeItem,
+    {isJoin = false, isDetail = true, hasShare = false}) {
+  var title = !isDetail
+      ? S.of(context).node_contract_detail
+      : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
+  var nodeItem = contractNodeItem.contract;
+  return Material(
+    child: Container(
+      color: Theme.of(context).primaryColor,
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            height: 56,
+//            color: Colors.red,
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Positioned(
+                    left: 0,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )),
+                Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  "res/drawable/ic_map3_node_item_contract.png",
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(contractNodeItem.contract.nodeName, style: TextStyle(fontSize: 16, color: Colors.white)),
+                      SizedBox(height: 4),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text('${S.of(context).highest} ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}', style: TextStyle(fontSize: 13, color: Colors.white60)),
+                          SizedBox(width: 4),
+                          Container(width: 1, height: 10, color: Colors.white24),
+                          SizedBox(width: 4),
+                          Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyle(fontSize: 13, color: Colors.white60)),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    Text(FormatUtil.formatPercent(nodeItem.annualizedYield), style: TextStyle(fontSize: 20, color: Colors.white)),
+                    Text(S.of(context).annualized_rewards, style: TextStyle(fontSize: 13, color: Colors.white60)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem,
+    {isJoin = false, isDetail = true, hasShare = false}) {
   var title = !isDetail
       ? S.of(context).node_contract_detail
       : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
@@ -709,15 +771,16 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           ),
         ),
       ),
-      if(hasShare)
+      if (hasShare)
         Positioned(
-          top:0,
+          top: 0,
           right: 0,
           child: InkWell(
             onTap: () async {
               Application.router.navigateTo(
-                  context,Routes.map3node_share_page +
-                  "?contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+                  context,
+                  Routes.map3node_share_page +
+                      "?contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
 
               /*final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
 
@@ -842,4 +905,3 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
     ],
   );
 }
-
