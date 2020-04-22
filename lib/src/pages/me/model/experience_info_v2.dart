@@ -11,7 +11,7 @@ class ExperienceInfoV2 {
   int total;
   ExperienceInfoV2(this.canBuy, this.total);
 
-  factory ExperienceInfoV2.fromJson(Map<String, dynamic> json) => _$ContractInfoV2FromJson(json);
+  factory ExperienceInfoV2.fromJson(Map<String, dynamic> json) => _$ExperienceInfoV2FromJson(json);
 
-  Map<String, dynamic> toJson() => _$ContractInfoV2ToJson(this);
+  Map<String, dynamic> toJson() => _$ExperienceInfoV2ToJson(this);
 }

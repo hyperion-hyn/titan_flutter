@@ -28,7 +28,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
     chargeUsdtBalance: (json['charge_usdt_balance'] as num)?.toDouble(),
     totalChargeBalance: (json['total_charge_balance'] as num)?.toDouble(),
     levelNum: json['level_num'] as int,
-    canStaking: json['can_staking'] as bool
+    canStaking: json['can_staking'] as bool,
   );
 }
 

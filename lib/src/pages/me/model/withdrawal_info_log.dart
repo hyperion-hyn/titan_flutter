@@ -16,8 +16,9 @@ class WithdrawalInfoLog {
   String state;
   @JsonKey(name: "state_title")
   String stateTitle;
+  String hash;
 
-  WithdrawalInfoLog(this.id, this.amount, this.fee, this.createAt, this.state, this.stateTitle);
+  WithdrawalInfoLog(this.id, this.amount, this.fee, this.createAt, this.state, this.stateTitle, this.hash);
 
   factory WithdrawalInfoLog.fromJson(Map<String, dynamic> json) => _$WithdrawalInfoLogFromJson(json);
 

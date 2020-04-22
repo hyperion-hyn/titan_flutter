@@ -844,5 +844,6 @@
   "happy_get_all_reward_hint": "恭喜你成功提取所有奖励",
   "your_last_output_to_contract_func": "你的最新提取：$input, ${task_pending}",
   "no_pengding_node_contract_hint": "没有待启动的节点合约\n您可以创建合约",
-  "delegation_full_will_active_hint": "抵押已满，即将启动"
+  "delegation_full_will_active_hint": "抵押已满，即将启动",
+  "no_hash_found": "暂未发现交易哈希"
 }

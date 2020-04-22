@@ -25,6 +25,6 @@ Map<String, dynamic> _$TransactionHistoryEntityToJson(
       'instanceId': instance.instanceId,
       'txhash': instance.txhash,
       'operaType': instance.operaType,
-      "amount": instance.amount,
-      "shareKey": instance.shareKey
+      'amount': instance.amount,
+      'shareKey': instance.shareKey,
     };

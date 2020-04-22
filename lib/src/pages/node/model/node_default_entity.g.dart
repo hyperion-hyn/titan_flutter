@@ -11,7 +11,7 @@ NodeDefaultEntity _$NodeDefaultEntityFromJson(Map<String, dynamic> json) {
     json['address'] as String,
     json['txHash'] as String,
     name: json['name'] as String,
-    amount: json['amount'] as double,
+    amount: (json['amount'] as num)?.toDouble(),
     publicKey: json['publicKey'] as String,
     nodeProvider: json['nodeProvider'] as String,
     nodeRegion: json['nodeRegion'] as String,

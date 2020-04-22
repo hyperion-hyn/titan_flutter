@@ -14,6 +14,7 @@ WithdrawalInfoLog _$WithdrawalInfoLogFromJson(Map<String, dynamic> json) {
     json['created_at'] as int,
     json['state'] as String,
     json['state_title'] as String,
+    json['hash'] as String,
   );
 }
 
@@ -25,4 +26,5 @@ Map<String, dynamic> _$WithdrawalInfoLogToJson(WithdrawalInfoLog instance) =>
       'created_at': instance.createAt,
       'state': instance.state,
       'state_title': instance.stateTitle,
+      'hash': instance.hash,
     };

@@ -7,6 +7,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/me/components/account/account_component.dart';
 import 'package:titan/src/pages/me/draw_balance_page.dart';
@@ -16,7 +17,10 @@ import 'package:titan/src/pages/me/model/withdrawal_info_log.dart';
 import 'package:titan/src/pages/me/recharge_purchase_page.dart';
 import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class MyAssetPage extends StatefulWidget {
   @override
@@ -397,56 +401,73 @@ class _WithdrawalState extends DataListState<WithdrawalHistory> {
       stateColor = failColor;
     } else if (withdrawalInfo.state == "approved") {
       stateColor = successColor;
-    } else if (withdrawalInfo.state == "rollback:") {
+    } else if (withdrawalInfo.state == "rollback") {
       stateColor = failColor;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    S.of(context).withdrawal_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.amount)),
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                Text(
-                  S.of(context).poundage_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.fee)),
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
-                )
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+    return Material(
+      color: Colors.white,
+      child: InkWell(
+        onTap: () {
+          if (withdrawalInfo.hash != null && withdrawalInfo.hash.length > 0) {
+            var url = EtherscanApi.getTxDetailUrl(withdrawalInfo.hash,
+                SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
+            url = FluroConvertUtils.fluroCnParamsEncode(url);
+            Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$url');
+          } else {
+            UiUtil.toast(S.of(context).no_hash_found);
+          }
+        },
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  withdrawalInfo.stateTitle,
-                  style: TextStyle(fontSize: 14, color: stateColor),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        S
+                            .of(context)
+                            .withdrawal_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.amount)),
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    Text(
+                      S.of(context).poundage_with_quantity(Const.DOUBLE_NUMBER_FORMAT.format(withdrawalInfo.fee)),
+                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                    )
+                  ],
                 ),
               ),
-              Text(
-                Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(withdrawalInfo.createAt * 1000)),
-                style: TextStyle(fontSize: 12, color: Colors.black54),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      withdrawalInfo.stateTitle,
+                      style: TextStyle(fontSize: 14, color: stateColor),
+                    ),
+                  ),
+                  Text(
+                    Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(withdrawalInfo.createAt * 1000)),
+                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                  )
+                ],
               )
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
 
   @override
   Future<List> onLoadData(int page) async {
-    if(page == getStartPage()) {
+    if (page == getStartPage()) {
       UserService.syncUserInfo(context);
     }
     PageResponse<WithdrawalInfoLog> _pageResponse = await _userService.getWithdrawalLogList(page);

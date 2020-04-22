@@ -21,14 +21,9 @@ ContractDetailItem _$ContractDetailItemFromJson(Map<String, dynamic> json) {
     json['withdrawn'] as String,
     json['preWithdrawn'] as String,
     json['isOwner'] as bool,
-    /*json['latestTransaction'] == null
-        ? null
-        : LatestTransaction.fromJson(
-            json['latestTransaction'] as Map<String, dynamic>),*/
     json['state'] as String,
   );
 }
-
 
 Map<String, dynamic> _$ContractDetailItemToJson(ContractDetailItem instance) =>
     <String, dynamic>{
@@ -45,7 +40,6 @@ Map<String, dynamic> _$ContractDetailItemToJson(ContractDetailItem instance) =>
       'isOwner': instance.isOwner,
       'state': instance.state,
     };
-
 
 LatestTransaction _$LatestTransactionFromJson(Map<String, dynamic> json) {
   return LatestTransaction(
@@ -64,9 +58,9 @@ Map<String, dynamic> _$LatestTransactionToJson(LatestTransaction instance) =>
     <String, dynamic>{
       'userAddress': instance.userAddress,
       'instanceId': instance.instanceId,
+      'delegationId': instance.delegationId,
       'amount': instance.amount,
       'shareKey': instance.shareKey,
-      'delegationId': instance.delegationId,
       'txhash': instance.txhash,
       'operaType': instance.operaType,
       'state': instance.state,
