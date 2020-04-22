@@ -13,6 +13,7 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -155,7 +156,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
     return InkWell(
       onTap: (){
-        Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+        _pushDetailAction(contractNodeItem);
       },
       child: Container(
         color: Colors.white,
@@ -262,7 +263,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(28)),
                       onPressed: (){
-                        Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+_pushDetailAction(contractNodeItem);
                       },
                       child: Text(S.of(context).view_contract, style: TextStyles.textC906b00S13),
                     ),
@@ -276,9 +277,12 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );
   }
 
-  _loadMoreData() async {
-    print('[map3] _loadMoreData, l');
+  _pushDetailAction(ContractNodeItem contractNodeItem) {
+    var currentRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?entryRouteName=$currentRouteName&contractId=${contractNodeItem.id}");
+  }
 
+  _loadMoreData() async {
     List<ContractNodeItem> dataList = [];
     if (widget.title.contains(S.of(context).launch)) {
       List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);

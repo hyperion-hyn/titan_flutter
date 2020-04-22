@@ -1,12 +1,9 @@
 import 'dart:io';
 
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -18,7 +15,6 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/me/api/map_rich_api.dart';
 import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
@@ -26,16 +22,13 @@ import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/custom_stepper.dart';
-import 'package:titan/src/pages/node/widget/node_delegator_member_widget.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -71,11 +64,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   bool _isTransferring = false;
   String _lastActionTitle = "";
   bool _isDelegated = false; // todo:判断当前(钱包=用户)是否参与抵押, 不一定是180天
-  void Function() onPressed = () {};
+  VoidCallback onPressed = () {};
   var _actionTitle = "";
 
 
-  LoadDataBloc loadDataBloc = LoadDataBloc();
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   NodeApi _nodeApi = NodeApi();
   List<ContractDelegateRecordItem> _delegateRecordList = [];
@@ -97,9 +90,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   get _canGetPercent50Rewards => _isDelegated && _is180DaysContract;
 
   get _currentStep {
+    if (_contractState == null) return 0;
+
     int value = 0;
 
-    if (_is180DaysContract) {
+    if (_is180DaysContract && _userDelegateState != null) {
       switch (_userDelegateState) {
         case UserDelegateState.PRE_CREATE:
         case UserDelegateState.PENDING:
@@ -164,9 +159,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   get _currentStepProgress {
+
+    if (_contractState == null) return 0.0;
+
     double value = 0.0;
 
-    if (_is180DaysContract) {
+    if (_is180DaysContract && _userDelegateState != null) {
       switch (_userDelegateState) {
         case UserDelegateState.PRE_CREATE:
         case UserDelegateState.PENDING:
@@ -288,7 +286,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   get _contractNotifyDetail {
-    if (_contractState == null) {
+    if (_userDelegateState == null) {
       return S.of(context).wait_block_chain_verification;
     };
 
@@ -311,8 +309,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
         // cancel
       case UserDelegateState.CANCELLED:
+
       case UserDelegateState.FAIL:
         _contractNotifyDetail = S.of(context).launch_fail_request_refund;
+
+        if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+          var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
+          _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
+        }
         break;
 
 
@@ -331,11 +335,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       case UserDelegateState.DUE_COLLECTED:
-//        var total = double.parse(_contractDetailItem.expectedYield) + double.parse(_contractDetailItem.amountDelegation);
-//        var expectedYield = FormatUtil.amountToString(total.toString());
-//        _contractNotifyDetail = "恭喜你成功提取奖励:${expectedYield}HYN";
-        //_contractNotifyDetail = S.of(context).happy_get_all_reward_hint;
-
         if (double.parse(_contractDetailItem?.withdrawn??"0") == 0) {
           _contractNotifyDetail = "";
         } else {
@@ -452,14 +451,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
 
-    if (_userDelegateState != null && _canGetPercent50Rewards ) {
+    if (_userDelegateState != null && _isDelegated) {
 
       switch (_userDelegateState) {
         case UserDelegateState.HALFDUE:
           _actionTitle = S.of(context).withdraw_fifty_revenue;
-          _visible = true;
+          _visible = _canGetPercent50Rewards;
           break;
 
+        case UserDelegateState.PENDING:
+          if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+            _visible = false;
+            _actionTitle = "";
+          }
+          break;
+
+        case UserDelegateState.PRE_CREATE:
         case UserDelegateState.ACTIVE:
         case UserDelegateState.PRE_CANCELLED_COLLECTED:
         case UserDelegateState.CANCELLED_COLLECTED:
@@ -467,14 +474,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.HALFDUE_COLLECTED:
         case UserDelegateState.PRE_DUE_COLLECTED:
         case UserDelegateState.DUE_COLLECTED:
-        case UserDelegateState.FAIL:
           _visible = false;
+          break;
+
+        case UserDelegateState.FAIL:
+          _actionTitle = S.of(context).reset_input_contract;
+          if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+            _visible = false;
+            _actionTitle = "";
+          }
           break;
 
         default:
           break;
       }
     }
+
 
     if (_visible) {
       switch (_contractState) {
@@ -499,22 +514,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
       }
 
-      // todo: test_jison_0420
-      /*onPressed = (){
-
-        Application.router.navigateTo(
-            context,
-            Routes.map3node_broadcase_success_page +
-                "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
-
-        return;
-      };*/
-
       _lastActionTitle = _actionTitle;
     } else { 
       _actionTitle = "";
       _lastActionTitle = "";
     }
+
   }
 
   
@@ -535,16 +540,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   @override
   void dispose() {
-    loadDataBloc.close();
+
+    print("[detail] dispose");
+
+    _loadDataBloc.close();
     super.dispose();
   }
 
   Widget build(BuildContext context) {
 
     // todo: test_jison_0420
-/*    _contractState = ContractState.PENDING;
+
+/*
+    _contractState = ContractState.PENDING;
     _userDelegateState = UserDelegateState.PRE_CANCELLED_COLLECTED;
-    _initBottomButtonData();*/
+    _initBottomButtonData();
+*/
 
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
@@ -562,17 +573,23 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _contractNodeItem?.contract == null) {
-      return AllPageStateContainer(_currentState, () {
-        setState(() {
-          _currentState = all_page_state.LoadingState();
-        });
-      });
+      return Scaffold(
+        appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_contract_detail)),
+
+        body: AllPageStateContainer(_currentState, () {
+          setState(() {
+            print("d999999999");
+            _currentState = all_page_state.LoadingState();
+            getContractDetailData();
+          });
+        }),
+      );
     }
 
     return Padding(
       padding: EdgeInsets.only(bottom: _visible ? 48 : 0),
       child: LoadDataContainer(
-          bloc: loadDataBloc,
+          bloc: _loadDataBloc,
           //enablePullDown: false,
           onRefresh: getContractDetailData,
           onLoadingMore: getJoinMemberMoreData,
@@ -609,6 +626,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     _contractNodeItem.ownerName,
                     _contractNodeItem.shareUrl,
                     isShowInviteItem: false,
+                    loadDataBloc: _loadDataBloc,
                   ),
                 ),
               ),
@@ -630,7 +648,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       visible: _visible,
       child: Positioned(
         bottom: 0,
-        height: 48,
+        height: _visible?48:0.01,
         width: MediaQuery.of(context).size.width,
         child: Container(
           decoration: BoxDecoration(
@@ -939,7 +957,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               var index = titles.indexOf(title);
               var subtitle = subtitles[index]>0?FormatUtil.formatDate(subtitles[index]):"";
               var date = progressHints[index];
-              var textColor = _currentStep>=index ? HexColor("#4B4B4B") : HexColor("#A7A7A7");
+              //var textColor = _currentStep>=index ? HexColor("#4B4B4B") : HexColor("#A7A7A7");
+              var textColor = _currentStep!=index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+              //var subTextColor = _currentStep!=index ? HexColor("#A7A7A7") : _stateColor;
+
               bool isMiddle = titles.length == 5 && index==2;
 
               return CustomStep(
@@ -953,7 +974,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 ),
                 subtitle: Text(
                   subtitle,
-                  style: TextStyle(fontSize: 10, color: HexColor("#A7A7A7"), fontWeight: FontWeight.normal),
+                  style: TextStyle(fontSize: 10, color: textColor, fontWeight: FontWeight.normal),
                 ),
                 content: Container(
                 ),
@@ -1012,7 +1033,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _delegateRecordItemWidget(ContractDelegateRecordItem item) {
-    String shortName = item.userName.substring(0, 1);
+    String shortName = item.userName;
+    //print("item.userName:${item.userName}");
+
+    if (shortName.isNotEmpty) {
+      shortName = item.userName.substring(0, 1);
+    }
     String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
     var operaState = enumBillsOperaStateFromString(item.operaType);
     var recordState = enumBillsRecordStateFromString(item.state);
@@ -1115,10 +1141,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var operaState = enumBillsOperaStateFromString(item.operaType);
     var recordState = enumBillsRecordStateFromString(item.state);
 
-    // todo: test
-//    operaState = BillsOperaState.WITHDRAW;
-//    recordState = BillsRecordState.FAIL;
-
     switch (recordState) {
       case BillsRecordState.PRE_CREATE:
         return Container(
@@ -1193,14 +1215,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
         }).toList();*/
         _delegateRecordList.addAll(tempMemberList);
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
 
       //setState(() {});
     } catch (e) {
-      loadDataBloc.add(LoadMoreFailEvent());
+      _loadDataBloc.add(LoadMoreFailEvent());
 
       //setState(() {});
     }
@@ -1214,15 +1236,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
 
       setState(() {});
     } catch (e) {
       setState(() {
-        loadDataBloc.add(LoadMoreFailEvent());
+        _loadDataBloc.add(LoadMoreFailEvent());
       });
     }
   }
@@ -1255,17 +1277,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       // 3.
       Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          _currentState = null;
-          loadDataBloc.add(RefreshSuccessEvent());
-        });
+        if (mounted) {
+          setState(() {
+            _currentState = null;
+            _loadDataBloc.add(RefreshSuccessEvent());
+          });
+        }
+
       });
     } catch (e) {
-      setState(() {
-        loadDataBloc.add(RefreshFailEvent());
-
-        _currentState = all_page_state.LoadFailState();
-      });
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshFailEvent());
+          //_visible = false;
+          _currentState = all_page_state.LoadFailState();
+        });
+      }
     }
   }
 
@@ -1473,5 +1500,19 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       Fluttertoast.showToast(msg: S.of(context).transfer_fail);
     }
   }
+
+  void _broadcaseContractAction() async {
+    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    await Application.router.navigateTo(
+        context,
+        Routes.map3node_broadcase_success_page +
+            "?entryRouteName=$entryRouteName&pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+    final result = ModalRoute.of(context).settings?.arguments;
+    //print("[detail] result:$result");
+    if(result != null) {
+      getContractDetailData();
+    }
+  }
+
 
 }

@@ -16,16 +16,12 @@ class WalletTabsPage extends StatefulWidget {
   }
 }
 
-class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProviderStateMixin{
+class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
   void initState() {
-    _tabController = new TabController(
-      initialIndex: 0,
-        vsync: this,
-        length: 2
-    );
+    _tabController = new TabController(initialIndex: 0, vsync: this, length: 2);
     super.initState();
   }
 
@@ -34,7 +30,7 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
     return BlocListener<AppTabBarBloc, AppTabBarState>(
       listener: (context, state) {
         if (state is ChangeTabBarItemState) {
-          if(state.index == 1){
+          if (state.index == 1) {
             this.setState(() {
               _tabController.index = 0;
             });
@@ -57,26 +53,24 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
                       controller: _tabController,
                       labelColor: Colors.white,
                       labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      labelPadding: EdgeInsets.only(left:10,right: 20),
-//                      indicatorColor: Theme.of(context).primaryColor,
-                      indicatorColor: HexColor("#00000000"),
+                      indicatorSize: TabBarIndicatorSize.label,
+//                      labelPadding: EdgeInsets.only(left: 10, right: 20),
+                      indicatorColor: Colors.white,
+                      indicatorWeight: 3,
+                      indicatorPadding: EdgeInsets.only(bottom: 2),
+//                      indicatorColor: HexColor("#00000000"),
                       unselectedLabelColor: HexColor("#aaffffff"),
                       tabs: [
                         Tab(
                           text: S.of(context).wallet,
                         ),
                         Tab(
-//                          text: S.of(context).map3_node_introduction,
-                          text: "Map3        ",
+                          text: S.of(context).map3_node_introduction,
                         ),
                       ],
                     ),
                   ),
-                  Expanded(
-                    flex: 2,
-                    child:Text("")
-                  )
+                  Expanded(flex: 2, child: Text(""))
                 ],
               ),
             ),

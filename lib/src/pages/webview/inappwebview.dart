@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import '../me/widget_shot.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
+import '../me/widget_shot.dart';
 
 class InAppWebViewContainer extends StatefulWidget {
   final String initUrl;
@@ -132,9 +132,9 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
       initialUrl: widget.initUrl,
       initialHeaders: {},
       initialOptions: InAppWebViewWidgetOptions(
-          inAppWebViewOptions: InAppWebViewOptions(
-        debuggingEnabled: true,
-      )),
+//        inAppWebViewOptions: InAppWebViewOptions(
+//        debuggingEnabled: true,)
+      ),
       onWebViewCreated: (InAppWebViewController controller) {
         webView = controller;
       },

@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -122,7 +123,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * activeQuoteVoAndSign?.quoteVo?.price)}",
+                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
                               style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                             ),
                           ),
@@ -332,10 +333,21 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                 var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
                 var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
                 if (url != null) {
+                  // todo: jison_test_0421
+                  /*
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => WebViewContainer(
+                                initUrl: url,
+                                title: '',
+                              )));
+                */
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InAppWebViewContainer(
                                 initUrl: url,
                                 title: '',
                               )));

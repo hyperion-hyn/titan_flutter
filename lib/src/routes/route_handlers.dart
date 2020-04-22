@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
-import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/me/recharge_purchase_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page.dart';
@@ -14,6 +11,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart'
 import 'package:titan/src/pages/node/map3page/map3_node_join_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_share_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
@@ -21,7 +19,7 @@ import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
-import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
@@ -62,7 +60,7 @@ void _cacheEntryRouteName(params) {
 }
 
 var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
-  return WebViewContainer(
+  return InAppWebViewContainer(
       initUrl: FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first),
       title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
 });
@@ -132,6 +130,7 @@ var contributionPositionFinishHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeProductListHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
   return Map3NodeProductPage();
 });
 
@@ -146,16 +145,21 @@ var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
+  print("[dd] Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
+
   return Map3NodeJoinContractPage(params['contractId']?.first);
 });
 
 var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
+
   ContractNodeItem contractNodeItem =
       ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  var transferAmount = params['transferAmount']?.first ?? '0';
+
   return Map3NodeSendConfirmPage(
     params['coinVo']?.first ?? '0',
     contractNodeItem,
-    double.parse(params['transferAmount']?.first ?? '0'),
+    double.parse(transferAmount)??0.0,
     params['receiverAddress']?.first ?? '0',
     params['pageType']?.first,
     params['contractId']?.first,
@@ -165,10 +169,15 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
-  return Map3NodeBroadcaseSuccessPage(params['pageType']?.first);
+  _cacheEntryRouteName(params);
+  ContractNodeItem contractNodeItem =
+  ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  return Map3NodeBroadcaseSuccessPage(params['pageType']?.first, contractNodeItem: contractNodeItem,);
 });
 
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+
   return Map3NodeContractDetailPage(int.parse(params['contractId']?.first));
 });
 
@@ -177,15 +186,12 @@ var rechargePurchaseHandler = Handler(handlerFunc: (context, params) {
   return RechargePurchasePage();
 });
 
-/*var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
-  //print('[route_handlers] param:${params}');
+var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
+  ContractNodeItem contractNodeItem =
+  ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  return Map3NodeSharePage(contractNodeItem);
+});
 
-  var jsonString = FluroConvertUtils.string2map(params['model']?.first);
-  //print('[route_handlers] jsonString:${jsonString}');
-
-  var model = ContractNodeItem.fromJson(jsonString);
-  return NodeContractDetailPage(model);
-});*/
 
 //var demoRouteHandler = Handler(
 //    handlerFunc: (BuildContext context, Map<String, List<String>> params) {

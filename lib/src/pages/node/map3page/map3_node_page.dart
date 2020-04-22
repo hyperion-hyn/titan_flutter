@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:sprintf/sprintf.dart';
@@ -12,12 +10,11 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:collection/collection.dart';
 
 class Map3NodePage extends StatefulWidget {
   @override
@@ -75,14 +72,16 @@ class _Map3NodeState extends State<Map3NodePage> {
       NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
 
       NodePageEntityVo cloneData = netData.clone();
-      cloneData.nodeHeadEntity.lastRecordMessage = null;
+      cloneData.nodeHeadEntity?.lastRecordMessage = null;
       if (!cloneData.isEqual(MemoryCache.nodePageData)) {
         _nodePageEntityVo = netData;
         MemoryCache.nodePageData = cloneData;
-        loadDataBloc.add(RefreshSuccessEvent());
       }
+
       if (mounted) {
-        setState(() {});
+        setState(() {
+          loadDataBloc.add(RefreshSuccessEvent());
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -272,7 +271,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                       color: DefaultColors.colorffdb58,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
                       onPressed: () {
-                        Application.router.navigateTo(context, Routes.map3node_product_list);
+                        _pushContractListAction();
                       },
                       child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
                     ),
@@ -320,72 +319,78 @@ class _Map3NodeState extends State<Map3NodePage> {
               padding: const EdgeInsets.only(top: 8, bottom: 16),
               child: Divider(height: 1, color: Color(0x2277869e)),
             ),
-            InkWell(
-              onTap: () {
-                Application.router
-                    .navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
-//                String jsonString = FluroConvertUtils.object2string(contractNodeItem.toJson());
-//                Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?model=${jsonString}");
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                      border: Border.all(color: Color(0x22B7B7B7), width: 1),
-                    ),
-                    child: Image.asset(
-                      "res/drawable/ic_map3_node_item_contract.png",
-                      width: 42,
-                      height: 42,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 6,
-                  ),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Expanded(
-                                child:
-                                    Text("${contractNodeItem.contract.nodeName}", style: TextStyles.textCcc000000S14))
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3.0),
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                  S.of(context).highest +
-                                      " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" +
-                                      S.of(context).ten_thousand,
-                                  style: TextStyles.textC99000000S10,
-                                  maxLines: 1,
-                                  softWrap: true),
-                              Text("  |  ", style: TextStyles.textC9b9b9bS12),
-                              Text(S.of(context).n_day('${contractNodeItem.contract.duration}'),
-                                  style: TextStyles.textC99000000S10)
-                            ],
+            Column(
+              children: <Widget>[
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () {
+                        _pushContractDetail(contractNodeItem);
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                              border: Border.all(color: Color(0x22B7B7B7), width: 1),
+                            ),
+                            child: Image.asset(
+                              "res/drawable/ic_map3_node_item_contract.png",
+                              width: 42,
+                              height: 42,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            width: 6,
+                          ),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    Expanded(
+                                        child: Text("${contractNodeItem.contract.nodeName}",
+                                            style: TextStyles.textCcc000000S14))
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 3.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(
+                                          S.of(context).highest +
+                                              " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" +
+                                              S.of(context).ten_thousand,
+                                          style: TextStyles.textC99000000S10,
+                                          maxLines: 1,
+                                          softWrap: true),
+                                      Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                                      Text(S.of(context).n_day('${contractNodeItem.contract.duration}'),
+                                          style: TextStyles.textC99000000S10)
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: <Widget>[
+                              Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
+                                  style: TextStyles.textCff4c3bS18),
+                              Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S10)
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                  Column(
-                    children: <Widget>[
-                      Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
-                          style: TextStyles.textCff4c3bS18),
-                      Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S10)
-                    ],
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.only(top: 9, bottom: 9),
@@ -409,19 +414,10 @@ class _Map3NodeState extends State<Map3NodePage> {
                   child: FlatButton(
                     color: DefaultColors.colorffdb58,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                    onPressed: () async {
-                      var walletList = await WalletUtil.scanWallets();
-                      if (walletList.length == 0) {
-//                        Fluttertoast.showToast(msg: "请导入钱包");
-//                        BlocProvider.of<AppTabBarBloc>(context)
-//                            .add(ChangeTabBarItemEvent(index: 1));
-                        Application.router.navigateTo(context, Routes.map3node_create_wallet);
-                      } else {
-                        Application.router.navigateTo(
-                            context, Routes.map3node_join_contract_page + "?contractId=${contractNodeItem.id}");
-                      }
+                    onPressed: () {
+                      _pushContractDetail(contractNodeItem);
                     },
-                    child: Text(S.of(context).join, style: TextStyles.textC906b00S13),
+                    child: Text(S.of(context).detail, style: TextStyles.textC906b00S13),
                   ),
                 )
               ],
@@ -430,6 +426,30 @@ class _Map3NodeState extends State<Map3NodePage> {
         ),
       ),
     );
+  }
+
+  Future _pushContractListAction() async {
+    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+    await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
+    final result = ModalRoute.of(context).settings?.arguments;
+    print("[detail] -----> back, _broadcaseContractAction, result:$result");
+
+    if (result != null && result is Map) {
+      print("[detail] ----->1 back, _broadcaseContractAction, result:$result");
+
+      var item = result["result"];
+      if (item is ContractNodeItem) {
+        print("[detail] ----->2 back, _broadcaseContractAction, result:$result");
+
+        _pushContractDetail(item);
+      }
+    }
+  }
+
+  Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
+    print("[detail] ----->3 back, _broadcaseContractAction, result:${contractNodeItem.id}");
+
+    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
   }
 
   @override

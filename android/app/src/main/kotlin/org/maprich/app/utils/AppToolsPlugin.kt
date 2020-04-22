@@ -48,6 +48,7 @@ class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHan
         return when (call.method) {
             "clipboardData" -> {
                 getClipboardData()
+                result.success(true)
                 true
             }
             else -> false

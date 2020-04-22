@@ -22,8 +22,9 @@ class NodeJoinMemberWidget extends StatefulWidget {
   final String shareName;
   final String shareUrl;
   final bool isShowInviteItem;
+  final LoadDataBloc loadDataBloc;
 
-  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl, {this.isShowInviteItem = true});
+  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl, {this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
   State<StatefulWidget> createState() {
@@ -41,7 +42,15 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   void initState() {
     super.initState();
 
-    getJoinMemberData();
+    if (widget.loadDataBloc != null) {
+      widget.loadDataBloc.listen((state){
+        if (state is RefreshSuccessState) {
+          getJoinMemberData();
+        }
+      });
+    } else {
+      getJoinMemberData();
+    }
   }
 
   @override
@@ -67,10 +76,14 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
-
-    setState(() {
-      memberList.addAll(tempMemberList);
-    });
+    if (mounted) {
+      setState(() {
+        if (tempMemberList.length > 0) {
+          memberList = [];
+        }
+        memberList.addAll(tempMemberList);
+      });
+    }
   }
 
   void getJoinMemberMoreData() async {
@@ -138,20 +151,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       var i = index;
                       var delegatorItem = memberList[i];
                       return _item(delegatorItem, i == 0);
-//                      if (widget.isShowInviteItem) {
-//                        if (index == 0) {
-//                          return _firstItem();
-//                        } else {
-//                          var i = index - 1;
-//                          var delegatorItem = memberList[i];
-//                          return _item(delegatorItem,i==1);
-//                        }
-//                      }
-//                      else {
-//                        var i = index;
-//                        var delegatorItem = memberList[i];
-//                        return _item(delegatorItem, i==0);
-//                      }
                     },
                     itemCount: widget.isShowInviteItem ? memberList.length : memberList.length,
                     scrollDirection: Axis.horizontal,
@@ -163,59 +162,16 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     );
   }
 
-  /*Widget _firstItem() {
-    return Container(
-      width: 90,
-      margin: const EdgeInsets.only(right: 12, top: 2, bottom: 2.0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: HexColor("#7B766A"), width: 1, style: BorderStyle.solid)),
-      child: InkWell(
-        onTap: () async {
-          final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
-          Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
-              text: "${widget.shareUrl}?name=${widget.shareName}");
 
-//          Share.text(S.of(context).share, widget.shareUrl,'text/plain');
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              "res/drawable/ic_map3_node_join_add_member.png",
-              width: 26,
-              height: 26,
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Text(
-              S.of(context).invite_friend_join,
-              style: TextStyle(fontSize: 12, color: HexColor("#7B766A")),
-              textAlign: TextAlign.center,
-            )
-          ],
-        ),
-      ),
-    );
-  }*/
-
-  /* int index = memberList.indexOf(delegatorItem);
-    if (index % 3 == 0) {
-      color = HexColor("#CAF0FF");
-    } else if (index % 3 == 1) {
-      color = HexColor("#FFD7D7");
-    } else {
-      color = HexColor("#FFE87D");
-    }*/
-
-  Widget _item(ContractDelegatorItem delegatorItem, bool isFirst) {
-    String showName = delegatorItem.userName.substring(0, 1);
-
+  Widget _item(ContractDelegatorItem item, bool isFirst) {
+    String showName = item.userName;
+    if (item.userName.isNotEmpty) {
+      showName = item.userName.substring(0, 1);
+    }
 
     return InkWell(
       onTap: () {
-        var url = EtherscanApi.getAddressDetailUrl(delegatorItem.userAddress,
+        var url = EtherscanApi.getAddressDetailUrl(item.userAddress,
             SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
         url = FluroConvertUtils.fluroCnParamsEncode(url);
         Application.router.navigateTo(context,
@@ -248,7 +204,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       SizedBox(
 //                      height: 50,
 //                      width: 50,
-                        child: circleIconWidget(showName, isShowShape: false, address: delegatorItem.userAddress)
+                        child: circleIconWidget(showName, isShowShape: false, address: item.userAddress)
                         /*Card(
                           elevation: 2,
                           shape: RoundedRectangleBorder(
@@ -268,7 +224,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0, right: 5),
-                        child: Text("${delegatorItem.userName}",
+                        child: Text("${item.userName}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
@@ -276,7 +232,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 //                    SizedBox(
 //                      height: 4,
 //                    ),
-                      Text("${FormatUtil.stringFormatNum(delegatorItem.amountDelegation)}",
+                      Text("${FormatUtil.stringFormatNum(item.amountDelegation)}",
                           style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                     ],
                   ),

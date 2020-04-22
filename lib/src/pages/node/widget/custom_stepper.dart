@@ -321,7 +321,8 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
     return null;
   }
 
-  Color _circleColor(int index) {
+  // todo: test_jison_0420
+   Color _circleColor(int index) {
     final ThemeData themeData = Theme.of(context);
     if (!_isDark()) {
       return widget.steps[index].isActive && index <= widget.currentStep ? themeData.primaryColor : Colors.black38;
@@ -329,12 +330,21 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
       return widget.steps[index].isActive ? themeData.accentColor : themeData.backgroundColor;
     }
   }
+/*
+  Color _circleColor(int index) {
+    final ThemeData themeData = Theme.of(context);
+    if (!_isDark()) {
+      return widget.steps[index].isActive && index <= widget.currentStep ?  Colors.black38:themeData.primaryColor;
+    } else {
+      return widget.steps[index].isActive ?  themeData.backgroundColor:themeData.accentColor;
+    }
+  }*/
 
   Widget _buildCircle(int index, bool oldState) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
-      width: index <= widget.currentStep ? _kStepSize : _kStepSize * 0.8,
-      height: index <= widget.currentStep ? _kStepSize : _kStepSize * 0.8,
+      width: index == widget.currentStep ? _kStepSize : _kStepSize * 0.75,
+      height: index == widget.currentStep ? _kStepSize : _kStepSize * 0.75,
       child: AnimatedContainer(
         curve: Curves.fastOutSlowIn,
         duration: kThemeAnimationDuration,
@@ -686,7 +696,9 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 4.0),
                             height: 1.0,
-                            color: i <= widget.currentStep ? Theme.of(context).primaryColor : Colors.grey.shade400,
+                            // todo: test_jison_0420
+//                            color: i <= widget.currentStep ? Colors.grey.shade400:Theme.of(context).primaryColor ,
+                           color: i <= widget.currentStep ? Theme.of(context).primaryColor : Colors.grey.shade400,
                           ),
                         ),
                       ),

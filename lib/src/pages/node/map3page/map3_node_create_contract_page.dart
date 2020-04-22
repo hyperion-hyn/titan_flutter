@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:math';
 
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,10 +17,7 @@ import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
-import 'package:titan/src/pages/node/model/node_share_entity.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -51,7 +46,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
-  ContractNodeItem contractNodeItem;
+  ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
@@ -83,7 +78,6 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
 
     getLevelData();
     getNetworkData();
-    checkIsCreateContract();
     super.initState();
   }
 
@@ -107,15 +101,14 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
 
   void getNetworkData() async {
     try {
-      contractNodeItem = await _nodeApi.getContractItem(widget.contractId);
+      contractItem = await _nodeApi.getContractItem(widget.contractId);
 
       providerList = await _nodeApi.getNodeProviderList();
+
       selectNodeProvider(0, 0);
 
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          currentState = null;
-        });
+      setState(() {
+        currentState = null;
       });
     } catch (e) {
       setState(() {
@@ -127,7 +120,6 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   Future checkIsCreateContract() async {
     try {
       _isUserCreatable = await _nodeApi.checkIsUserCreatableContractInstance();
-      
     } catch (e) {
       log(e);
     }
@@ -167,7 +159,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractNodeItem == null || !mounted) {
+    if (contractItem == null || !mounted) {
       return;
     }
 
@@ -181,17 +173,8 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
       return;
     }
     double inputValue = double.parse(inputText);
-        /*
-        double doubleEndProfit =
-        inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
-    double doubleSpendManager = (double.parse(contractNodeItem.contract.minTotalDelegation) - inputValue) *
-        contractNodeItem.contract.annualizedYield *
-        contractNodeItem.contract.duration /
-        365 *
-        contractNodeItem.contract.commission;
-        */
-    endProfit = Map3NodeUtil.getEndProfit(contractNodeItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractNodeItem.contract, inputValue);
+    endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
+    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
@@ -205,7 +188,6 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
     }
   }
 
-
   @override
   void dispose() {
     _filterSubject.close();
@@ -213,7 +195,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractNodeItem.contract == null) {
+    if (currentState != null || contractItem.contract == null) {
       return AllPageStateContainer(currentState, () {
         setState(() {
           currentState = LoadingState();
@@ -230,7 +212,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
         Expanded(
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            getMap3NodeProductHeadItem(context, contractNodeItem),
+                getMap3NodeProductHeadItemSmall(context, contractItem),
 //            SizedBox(height: 16,),
             Container(
               color: Colors.white,
@@ -245,7 +227,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
                             width: 100,
                             child: Text(S.of(context).node_version,
                                 style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                        Text("${contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14),
+                        Text("${contractItem.contract.nodeName}", style: TextStyles.textC333S14),
                       ],
                     ),
                   ),
@@ -303,8 +285,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
               ),
             ),
             SizedBox(height: 8),
-            getHoldInNum(
-                context, contractNodeItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
+            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
                 (textStr) {
               _filterSubject.sink.add(textStr);
             }, (textStr) {
@@ -316,20 +297,23 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S14medium),
+                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text("·  等级必须大于等于$levelName才能创建合约。", style: TextStyles.textC999S12),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
                   ),
-                  Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+                  ),
 //                  Padding(
 //                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
 //                    child: Text(S.of(context).freeze_balance_reward_direct_push, style: TextStyles.textC999S12),
@@ -355,9 +339,15 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
-              onPressed: () {
+              onPressed: () async {
                 if(!userInfo.canStaking){
                   Fluttertoast.showToast(msg: "您的等级较低，不能创建合约！");
+                  return;
+                }
+
+                await checkIsCreateContract();
+                if (!_isUserCreatable) {
+                  Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
                   return;
                 }
 
@@ -372,59 +362,25 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
                   }
                   String provider = providerList[selectServerItemValue].id;
                   String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+                  var transferAmount = _joinCoinController?.text.isNotEmpty ? _joinCoinController?.text : "0";
+
                   Application.router.navigateTo(
                       context,
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                          "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-                          "&transferAmount=${_joinCoinController.text ?? ""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
+                          "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&provider=$provider" +
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +
                           "&contractId=${widget.contractId}");
+
                 });
               }),
         )
       ],
     );
   }
-
-/*Widget startAccount() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text("发起账号"),
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 30.0, right: 15),
-              child: Image.asset("res/drawable/hyn.png", width: 40, height: 40),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("${contractNodeItem.ownerName}",
-                    style: TextStyles.textC333S14),
-                Text("${contractNodeItem.owner}",
-                    style: TextStyles.textC9b9b9bS12)
-              ],
-            )
-          ],
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Container(
-          height: 5,
-          color: DefaultColors.colorf5f5f5,
-        ),
-      ],
-    );
-  }*/
 }
 
 Widget getHoldInNum(
@@ -439,7 +395,6 @@ Widget getHoldInNum(
     Function onPressFunction,
     {Function joinEnougnFunction,
     bool isMyself = false}) {
-
   List<int> suggestList =
       contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
@@ -468,12 +423,19 @@ Widget getHoldInNum(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, bottom: 15),
+          padding: const EdgeInsets.only(left: 15.0, bottom: 15, right: 8),
           child: Row(
             children: <Widget>[
-              Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-              Text(S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo)),
-                  style: TextStyle(color: Colors.grey[600])),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child:
+                    Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+              ),
+              Expanded(
+                child: Text(
+                    S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                    style: TextStyle(color: Colors.grey[600])),
+              ),
             ],
           ),
         ),
@@ -694,7 +656,88 @@ Widget getHoldInNum(
   );
 }
 
-Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem, {isJoin = false, isDetail = true, hasShare = false}) {
+Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem contractNodeItem,
+    {isJoin = false, isDetail = true, hasShare = false}) {
+  var title = !isDetail
+      ? S.of(context).node_contract_detail
+      : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
+  var nodeItem = contractNodeItem.contract;
+  return Material(
+    child: Container(
+      color: Theme.of(context).primaryColor,
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            height: 56,
+//            color: Colors.red,
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Positioned(
+                    left: 0,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )),
+                Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  "res/drawable/ic_map3_node_item_contract.png",
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(contractNodeItem.contract.nodeName, style: TextStyle(fontSize: 16, color: Colors.white)),
+                      SizedBox(height: 4),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text('${S.of(context).highest} ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}', style: TextStyle(fontSize: 13, color: Colors.white60)),
+                          SizedBox(width: 4),
+                          Container(width: 1, height: 10, color: Colors.white24),
+                          SizedBox(width: 4),
+                          Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyle(fontSize: 13, color: Colors.white60)),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    Text(FormatUtil.formatPercent(nodeItem.annualizedYield), style: TextStyle(fontSize: 20, color: Colors.white)),
+                    Text(S.of(context).annualized_rewards, style: TextStyle(fontSize: 13, color: Colors.white60)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem,
+    {isJoin = false, isDetail = true, hasShare = false}) {
   var title = !isDetail
       ? S.of(context).node_contract_detail
       : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
@@ -767,13 +810,18 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           ),
         ),
       ),
-      if(hasShare)
+      if (hasShare)
         Positioned(
-          top:0,
+          top: 0,
           right: 0,
           child: InkWell(
             onTap: () async {
-              final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
+              Application.router.navigateTo(
+                  context,
+                  Routes.map3node_share_page +
+                      "?contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+
+              /*final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
 
               var activityWallet = WalletInheritedModel.of(context).activatedWallet;
               if(activityWallet != null) {
@@ -797,7 +845,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
                     .of(context)
                     .nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
                     text: "${contractNodeItem.shareUrl}");
-              }
+              }*/
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 44.0, right: 15),
@@ -896,243 +944,3 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
     ],
   );
 }
-
-/*
-
-Widget _getHeadItemCard(BuildContext context, NodeItem nodeItem) {
-  var currentTime = new DateTime.now().millisecondsSinceEpoch;
-  var durationTime = nodeItem.duration * 3600 * 24 * 1000;
-  var tempHalfTime = durationTime / 2 + currentTime;
-  int halfTime = int.parse(tempHalfTime.toStringAsFixed(0));
-  var endTime = durationTime + currentTime;
-
-  if (nodeItem.halfCollected) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-      color: Colors.white,
-      margin: const EdgeInsets.only(left: 14.0, right: 14, bottom: 16, top: 16),
-      child: Padding(
-          padding: const EdgeInsets.only(left: 22.0, right: 22, top: 21, bottom: 21),
-          child: Stack(alignment: Alignment.topCenter, children: <Widget>[
-            Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(
-                              S.of(context).today_join,
-                              style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b")),
-                            ),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(currentTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(S.of(context).withdraw_reward,
-                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(halfTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(S.of(context).expire_end,
-                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(endTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 22,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 23,
-                      height: 1,
-                      color: HexColor("#D6D6D6"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10),
-                      child: Text(S.of(context).truely_date_accurate,
-                          style: TextStyle(fontSize: 12, color: HexColor("#AAAAAA"))),
-                    ),
-                    Container(
-                      width: 23,
-                      height: 1,
-                      color: HexColor("#D6D6D6"),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(width: 72),
-                Expanded(
-                  child: Container(
-//                    width: 70,
-                    height: 1,
-                    color: HexColor("#ECECEC"),
-                  ),
-                ),
-                SizedBox(width: 42, height: 13),
-                Expanded(
-                  child: Container(
-//                    width: 70,
-                    height: 1,
-                    color: HexColor("#ECECEC"),
-                  ),
-                ),
-                SizedBox(width: 72),
-              ],
-            )
-          ])),
-    );
-  } else {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-      color: Colors.white,
-      margin: const EdgeInsets.only(left: 14.0, right: 14, bottom: 16, top: 16),
-      child: Padding(
-          padding: const EdgeInsets.only(left: 22.0, right: 22, top: 21, bottom: 21),
-          child: Stack(alignment: Alignment.topCenter, children: <Widget>[
-            Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(
-                              S.of(context).today_join,
-                              style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b")),
-                            ),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(currentTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(color: HexColor("#322300"), width: 2)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 9.0, bottom: 9),
-                            child: Text(S.of(context).expire_end,
-                                style: TextStyle(fontSize: 12, color: HexColor("#4b4b4b"))),
-                          ),
-                          Text("${FormatUtil.formatDateCircle(endTime, isSecond: false)}",
-                              style: TextStyle(fontSize: 10, color: HexColor("#a7a7a7")))
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 22,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 23,
-                      height: 1,
-                      color: HexColor("#D6D6D6"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10),
-                      child: Text(
-                        S.of(context).truely_date_accurate,
-                        style: TextStyle(fontSize: 12, color: HexColor("#AAAAAA")),
-                      ),
-                    ),
-                    Container(
-                      width: 23,
-                      height: 1,
-                      color: HexColor("#D6D6D6"),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(width: 42, height: 13),
-                Container(
-                  width: 100,
-                  height: 1,
-                  color: HexColor("#ECECEC"),
-                ),
-                SizedBox(width: 42, height: 13)
-              ],
-            )
-          ])),
-    );
-  }
-}
-*/

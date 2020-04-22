@@ -702,7 +702,7 @@
   "freeze_balance_reward_direct_push": "·  创建节点需要暂时冻结500U账户余额，用于支付直推人的贡献奖励。直推人及奖励收取节点总收益的5%。",
   "confirm_bug": "确定买入",
   "mortgage_hyn_num": "抵押HYN数量",
-  "mortgage_wallet_balance": "（${walletName}钱包HYN余额 $balance）",
+  "mortgage_wallet_balance": "（可用$balance）",
   "mintotal_buy": "最低买入$minTotal",
   "mintotal_hyn": "不能少于${minTotal}HYN",
   "hyn_balance_no_enough": "HYN余额不足",
@@ -762,7 +762,7 @@
   "launch_success": "启动成功",
   "node_had_stop": "节点已停止",
   "expired_can_withdraw_rewards": "已到期,可提全部奖励",
-  "launch_fail_request_refund": "启动失败，请申请退款",
+  "launch_fail_request_refund": "转入失败，请重新抵押",
   "launch_fail": "启动失败",
   "recovered_invested_capital": "已取回投入资金",
   "earned_rewards": "已获取奖励",
@@ -845,5 +845,7 @@
   "no_pengding_node_contract_hint": "没有待启动的节点合约\n您可以创建合约",
   "delegation_full_will_active_hint": "抵押已满，即将启动",
   "expire_date": "期满可提",
-  "no_hash_found": "暂未发现交易哈希"
+  "no_hash_found": "暂未发现交易哈希",
+  "contract_share_content": "\"${who}\"在${appName}上发现了海伯利安${nodeName}合约，年化奖励去到${annualized}，周期${duration}天，邀请你前往围观！",
+  "reset_input_contract": "重新投入"
 }
