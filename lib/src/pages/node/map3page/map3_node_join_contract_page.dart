@@ -74,10 +74,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         isMyself = false;
       }
 
-      Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          currentState = null;
-        });
+      setState(() {
+        currentState = null;
       });
     } catch (e) {
       setState(() {
