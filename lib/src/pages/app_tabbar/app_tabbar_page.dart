@@ -212,8 +212,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
               },
               child: BlocBuilder<AppTabBarBloc, AppTabBarState>(builder: (context, state) {
                 if (state is CheckNewAnnouncementState && state.announcement != null) {
-                  //todo maprich _isShowAnnounceDialog 为 true
-                  _isShowAnnounceDialog = false;
+                  _isShowAnnounceDialog = true;
                   Application.isUpdateAnnounce = true;
                 }
 
