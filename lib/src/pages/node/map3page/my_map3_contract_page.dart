@@ -274,12 +274,9 @@ _pushDetailAction(contractNodeItem);
   _pushDetailAction(ContractNodeItem contractNodeItem) {
     var currentRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?entryRouteName=$currentRouteName&contractId=${contractNodeItem.id}");
-    print("[my] push, currentRouteName:$currentRouteName");
   }
 
   _loadMoreData() async {
-    print('[map3] _loadMoreData, l');
-
     List<ContractNodeItem> dataList = [];
     if (widget.title.contains(S.of(context).launch)) {
       List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);

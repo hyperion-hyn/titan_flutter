@@ -147,6 +147,8 @@ var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
+  print("[dd] Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
+
   return Map3NodeJoinContractPage(params['contractId']?.first);
 });
 
@@ -170,7 +172,9 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeBroadcaseSuccessPage(params['pageType']?.first);
+  ContractNodeItem contractNodeItem =
+  ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  return Map3NodeBroadcaseSuccessPage(params['pageType']?.first, contractNodeItem: contractNodeItem,);
 });
 
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {

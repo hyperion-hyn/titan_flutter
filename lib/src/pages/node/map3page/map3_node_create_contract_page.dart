@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:decimal/decimal.dart';
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,10 +12,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
-import 'package:titan/src/pages/node/model/node_share_entity.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -26,7 +21,6 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Map3NodeCreateContractPage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
@@ -47,7 +41,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
-  ContractNodeItem contractNodeItem;
+  ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
@@ -82,9 +76,10 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   void getNetworkData() async {
     try {
-      contractNodeItem = await _nodeApi.getContractItem(widget.contractId);
+      contractItem = await _nodeApi.getContractItem(widget.contractId);
 
       providerList = await _nodeApi.getNodeProviderList();
+
       selectNodeProvider(0, 0);
 
       Future.delayed(Duration(seconds: 1), () {
@@ -142,7 +137,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractNodeItem == null || !mounted) {
+    if (contractItem == null || !mounted) {
       return;
     }
 
@@ -156,17 +151,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       return;
     }
     double inputValue = double.parse(inputText);
-        /*
-        double doubleEndProfit =
-        inputValue * contractNodeItem.contract.annualizedYield * contractNodeItem.contract.duration / 365 + inputValue;
-    double doubleSpendManager = (double.parse(contractNodeItem.contract.minTotalDelegation) - inputValue) *
-        contractNodeItem.contract.annualizedYield *
-        contractNodeItem.contract.duration /
-        365 *
-        contractNodeItem.contract.commission;
-        */
-    endProfit = Map3NodeUtil.getEndProfit(contractNodeItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractNodeItem.contract, inputValue);
+    endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
+    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
@@ -188,7 +174,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractNodeItem.contract == null) {
+    if (currentState != null || contractItem.contract == null) {
       return AllPageStateContainer(currentState, () {
         setState(() {
           currentState = LoadingState();
@@ -205,7 +191,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         Expanded(
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            getMap3NodeProductHeadItem(context, contractNodeItem),
+            getMap3NodeProductHeadItem(context, contractItem),
 //            SizedBox(height: 16,),
             Container(
               color: Colors.white,
@@ -220,7 +206,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                             width: 100,
                             child: Text(S.of(context).node_version,
                                 style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                        Text("${contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14),
+                        Text("${contractItem.contract.nodeName}", style: TextStyles.textC333S14),
                       ],
                     ),
                   ),
@@ -279,7 +265,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             ),
             SizedBox(height: 8),
             getHoldInNum(
-                context, contractNodeItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
+                context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
                 (textStr) {
               _filterSubject.sink.add(textStr);
             }, (textStr) {
@@ -329,7 +315,15 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () {
                 setState(() {
-                  // todo: test_jison_0420
+
+                  if (!_isUserCreatable) {
+                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+                    return;
+                  }
+
+                  if (!_joinCoinFormKey.currentState.validate()) {
+                    return;
+                  }
                   String provider = providerList[selectServerItemValue].id;
                   String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
                   var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
@@ -338,34 +332,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       context,
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                          "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
+                          "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
                           "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&provider=$provider" +
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +
                           "&contractId=${widget.contractId}");
-                  return;
-
-//                  if (!_isUserCreatable) {
-//                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-//                    return;
-//                  }
-//
-//                  if (!_joinCoinFormKey.currentState.validate()) {
-//                    return;
-//                  }
-//                  String provider = providerList[selectServerItemValue].id;
-//                  String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-//                  Application.router.navigateTo(
-//                      context,
-//                      Routes.map3node_send_confirm_page +
-//                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-//                          "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}" +
-//                          "&transferAmount=${_joinCoinController.text ?? ""}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-//                          "&provider=$provider" +
-//                          "&region=$region" +
-//                          "&pageType=${widget.pageType}" +
-//                          "&contractId=${widget.contractId}");
                 });
               }),
         )

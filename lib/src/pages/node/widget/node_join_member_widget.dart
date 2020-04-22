@@ -76,10 +76,14 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
-
-    setState(() {
-      memberList.addAll(tempMemberList);
-    });
+    if (mounted) {
+      setState(() {
+        if (tempMemberList.length > 0) {
+          memberList = [];
+        }
+        memberList.addAll(tempMemberList);
+      });
+    }
   }
 
   void getJoinMemberMoreData() async {
@@ -159,12 +163,15 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 
 
-  Widget _item(ContractDelegatorItem delegatorItem, bool isFirst) {
-    String showName = delegatorItem.userName.substring(0, 1);
+  Widget _item(ContractDelegatorItem item, bool isFirst) {
+    String showName = item.userName;
+    if (item.userName.isNotEmpty) {
+      showName = item.userName.substring(0, 1);
+    }
 
     return InkWell(
       onTap: () {
-        var url = EtherscanApi.getAddressDetailUrl(delegatorItem.userAddress,
+        var url = EtherscanApi.getAddressDetailUrl(item.userAddress,
             SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
         url = FluroConvertUtils.fluroCnParamsEncode(url);
         Application.router.navigateTo(context,
@@ -197,7 +204,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       SizedBox(
 //                      height: 50,
 //                      width: 50,
-                        child: circleIconWidget(showName, isShowShape: false, address: delegatorItem.userAddress)
+                        child: circleIconWidget(showName, isShowShape: false, address: item.userAddress)
                         /*Card(
                           elevation: 2,
                           shape: RoundedRectangleBorder(
@@ -217,7 +224,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0, right: 5),
-                        child: Text("${delegatorItem.userName}",
+                        child: Text("${item.userName}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
@@ -225,7 +232,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 //                    SizedBox(
 //                      height: 4,
 //                    ),
-                      Text("${FormatUtil.stringFormatNum(delegatorItem.amountDelegation)}",
+                      Text("${FormatUtil.stringFormatNum(item.amountDelegation)}",
                           style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                     ],
                   ),
