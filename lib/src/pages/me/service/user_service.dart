@@ -509,7 +509,15 @@ class UserService {
     return await _mapRichApi.getDianpingCookies();
   }
 
-  ///附近可以分享的位置
+  Future<ResponseEntity<dynamic>> postStakingRewardFreeze({@required int nodeId, @required String contractAddress, @required String walletAddress}) async {
+    UserToken userToken = getUserToken();
+    if (userToken == null) {
+      throw new Exception("not login");
+    }
+    return await _mapRichApi.postStakingRewardFreeze(nodeId: nodeId, contractAddress: contractAddress, walletAddress: walletAddress, token: userToken.token);
+  }
+
+    ///附近可以分享的位置
   ///type:
   /// 1 美食
   /// 2 酒店
