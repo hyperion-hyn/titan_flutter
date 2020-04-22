@@ -487,4 +487,16 @@ class MapRichApi {
       options: RequestOptions(headers: {"Authorization": token, "Lang": getRequestLang()}, cancelToken: cancelToken),
     );
   }
+
+  Future<ResponseEntity<dynamic>> postStakingRewardFreeze({@required int nodeId, @required String contractAddress, @required String walletAddress, @required String token}) async {
+    return await MapRichHttpCore.instance.postResponseEntity(
+        'staking/reward/freeze', null,
+        params: {
+          "nodeId": nodeId,
+          "contractAddr": contractAddress,
+          "walletAddr": walletAddress,
+        },
+        options: RequestOptions(headers: {"Authorization": token}));
+  }
+
 }

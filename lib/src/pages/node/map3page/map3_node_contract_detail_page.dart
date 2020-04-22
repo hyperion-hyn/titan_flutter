@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -14,6 +18,8 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/me/api/map_rich_api.dart';
+import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
@@ -26,6 +32,7 @@ import 'package:titan/src/pages/node/widget/node_delegator_member_widget.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -78,6 +85,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   get _durationType {
     return _contractNodeItem?.contract?.durationType??0;
   }
+
+  get _isFreeze => _isOwner && _userDelegateState == UserDelegateState.DUE;
 
   get _isNoWallet => _wallet == null;
 
@@ -484,7 +493,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             if (_isNoWallet) {
               _pushWalletManagerAction();
             } else {
-              _collectAction();
+              _alertContractOwnerAction();
             }
           };
           break;
@@ -1260,78 +1269,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  Future _collectAction() async {
-
-    if (_wallet == null || _contractDetailItem == null) {
-
-      return;
-    }
-
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      if (walletPassword == null) {
-        return;
-      }
-
-      try {
-        setState(() {
-          if (mounted) {
-            _lastActionTitle = _actionTitle;
-            _isTransferring = true;
-          }
-        });
-
-        var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
-        var gasPrice = gasPriceRecommend.average.toInt();
-
-        var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
-        if (_userDelegateState == UserDelegateState.HALFDUE) {
-          gasLimit = EthereumConst.COLLECT_HALF_MAP3_NODE_GAS_LIMIT;
-        } else {
-          if (_isDelegated) {
-            gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
-          } else {
-            gasLimit = EthereumConst.COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT;
-          }
-        }
-
-        var collectHex = await _api.withdrawContractInstance(
-            _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
-
-        Application.router.navigateTo(
-            context,
-            Routes.map3node_broadcase_success_page +
-                "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
-
-        _isTransferring = false;
-
-      } catch (_) {
-        logger.e(_);
-        setState(() {
-          _isTransferring = false;
-        });
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
-      }
-    });
-  }
 
   void _pushNodeInfoAction() {
     if (_contractNodeItem != null) {
@@ -1379,6 +1316,162 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   void _joinContractAction() {
     Application.router
         .navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
+  }
+
+  void _showConfirmDialog({String title, String content, VoidCallback finishActon}) {
+    _showConfirmDialogWidget(title: Text(title) ,content:Text(content), actions: <Widget>[
+      FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+            finishActon();
+          },
+          child: Text(S.of(context).continue_text))
+    ]);
+  }
+
+  void _showConfirmDialogWidget({Widget title, Widget content, List<Widget> actions}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Platform.isIOS
+            ? CupertinoAlertDialog(
+          title: title,
+          content: content,
+          actions: actions,
+        )
+            : AlertDialog(
+          title: title,
+          content: content,
+          actions: actions,
+        );
+      },
+    );
+  }
+
+
+  void _alertContractOwnerAction() {
+    if (_wallet == null || _contractDetailItem == null) {
+
+      return;
+    }
+
+    if (_isFreeze) {
+      _showConfirmDialog(title: S.of(context).tips, content:"作为当前合约的创建者，我们会把你收益的5%分享给推荐的人哦！", finishActon:() => _alertPasswordAction());
+    } else {
+      _alertPasswordAction();
+    }
+  }
+
+  void _alertPasswordAction() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        }).then((walletPassword) async {
+      if (walletPassword == null) {
+        return;
+      }
+      _starCollectionAction(walletPassword);
+    });
+  }
+
+  Future _starCollectionAction(String walletPassword) async{
+
+    if (_wallet == null || _contractDetailItem == null) {
+      return;
+    }
+
+    try {
+      setState(() {
+        if (mounted) {
+          _lastActionTitle = _actionTitle;
+          _isTransferring = true;
+        }
+      });
+
+
+      var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+      var gasPrice = gasPriceRecommend.average.toInt();
+
+      var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+      if (_userDelegateState == UserDelegateState.HALFDUE) {
+        gasLimit = EthereumConst.COLLECT_HALF_MAP3_NODE_GAS_LIMIT;
+      } else {
+        if (_isDelegated) {
+          gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+        } else {
+          gasLimit = EthereumConst.COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT;
+        }
+      }
+      var success = await _api.withdrawContractInstance(
+          _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
+      print("[detail] collectionAction, success:$success");
+
+      if (success == "success") {
+        if (_isFreeze) {
+          _rewardFreezeAction(_pushBroadcastAction);
+        } else {
+          _pushBroadcastAction();
+        }
+      }
+      else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+      }
+
+      _isTransferring = false;
+
+    } catch (_) {
+      logger.e(_);
+
+      setState(() {
+        _isTransferring = false;
+      });
+
+      if (_ is PlatformException) {
+        if (_.code == WalletError.PASSWORD_WRONG) {
+          Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
+      } else if (_ is RPCError) {
+        if (_.errorCode == -32000) {
+          Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
+      }
+      else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+      }
+    }
+  }
+
+  _pushBroadcastAction() {
+    Application.router.navigateTo(
+        context,
+        Routes.map3node_broadcase_success_page +
+            "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+  }
+
+
+  Future _rewardFreezeAction(VoidCallback callback) async {
+    if (_wallet == null || _contractDetailItem == null) {
+      return;
+    }
+
+    var nodeId = _contractNodeItem.id;
+    var walletAddress = _contractNodeItem.owner;
+    var contractAddress = ContractTestConfig.map3ContractAddress;
+    var res = await UserService().postStakingRewardFreeze(nodeId: nodeId, contractAddress: contractAddress, walletAddress: walletAddress);
+    print("[detail] collectionAction, res:$res");
+
+    if (res.code == 0) {
+        callback();
+    }
+    else {
+      Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+    }
   }
 
 }
