@@ -62,7 +62,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     });
 
     getNetworkData();
-    checkIsCreateContract();
     super.initState();
   }
 
@@ -95,7 +94,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   Future checkIsCreateContract() async {
     try {
       _isUserCreatable = await _nodeApi.checkIsUserCreatableContractInstance();
-      
     } catch (e) {
       log(e);
     }
@@ -311,14 +309,14 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
-              onPressed: () {
-                setState(() {
+              onPressed: () async {
+                await checkIsCreateContract();
+                if (!_isUserCreatable) {
+                  Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+                  return;
+                }
 
-                  if (!_isUserCreatable) {
-                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-                    return;
-                  }
-
+                setState(()  {
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
                   }
