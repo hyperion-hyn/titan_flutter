@@ -17,7 +17,7 @@ import 'dart:typed_data';
 import 'package:titan/src/widget/widget_shot.dart';
 
 class Map3NodeSharePage extends StatefulWidget {
-  ContractNodeItem contractNodeItem;
+  final ContractNodeItem contractNodeItem;
 
   Map3NodeSharePage(this.contractNodeItem);
 
@@ -34,28 +34,24 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
   @override
   void onCreated() {
     var activityWallet = WalletInheritedModel.of(context).activatedWallet;
-    if(activityWallet != null) {
-      Wallet wallet = WalletInheritedModel
-          .of(context)
-          .activatedWallet
-          .wallet;
-      bool isFromOwn = wallet
-          .getEthAccount()
-          .address == widget.contractNodeItem.owner;
-      NodeShareEntity nodeShareEntity = NodeShareEntity(wallet
-          .getEthAccount()
-          .address, "detail", isFromOwn);
+    if (activityWallet != null) {
+      Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+      bool isFromOwn = wallet.getEthAccount().address == widget.contractNodeItem.owner;
+      NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address, "detail", isFromOwn);
       String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
       shareData = "${widget.contractNodeItem.shareUrl}&key=$encodeStr";
-    }else{
+    } else {
       shareData = "${widget.contractNodeItem.shareUrl}";
     }
     super.onCreated();
+
+    Future.delayed(Duration(milliseconds: 500)).then((_) {
+      _shareQr(context);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -81,6 +77,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
 
   Widget _body(BuildContext context) {
 //    var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
+    var wallet = WalletInheritedModel.of(context).activatedWallet;
     return WidgetShot(
       controller: _shotController,
       child: Container(
@@ -96,27 +93,48 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
               alignment: Alignment.center,
               children: <Widget>[
                 Container(
-                  height: 234,
+                  height: 220,
                   decoration: BoxDecoration(
-                    color: HexColor("#fffef8"),
+                    color: HexColor("#FFFFFEF8"),
                     shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(60),bottomRight: Radius.circular(60),), // 也可控件一边圆角大小
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50),
+                    ), // 也可控件一边圆角大小
                   ),
                 ),
-                Image.asset("res/drawable/ic_map3_node_item_2_big.png",width: 200,height: 184,),
+                Image.asset(
+                  "res/drawable/ic_map3_node_item_2_big.png",
+                  width: 200,
+                  height: 180,
+                ),
+                Positioned(
+                  left: 16,
+                  top: 16,
+                  child: Image.asset(
+                    "res/drawable/ic_logo.png",
+                    width: 40,
+                    height: 40,
+                    color: Color(0xFFD9AC43),
+                  ),
+                ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top:31.0,bottom: 30),
-              child: Text("节点创建成功！",style: TextStyle(fontSize: 30, color:Colors.white, fontWeight: FontWeight.bold),),
+              padding: const EdgeInsets.only(left: 24, right: 24.0, top: 16),
+              child: Text(
+                S.of(context).contract_share_content(
+                    wallet?.wallet?.keystore?.name ?? '',
+                    S.of(context).app_name,
+                    widget.contractNodeItem.contract.nodeName,
+                    FormatUtil.formatPercent(widget.contractNodeItem.contract.annualizedYield),
+                    widget.contractNodeItem.contract.duration.toString()),
+                style: TextStyle(color: Colors.white, fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left:30,right:30.0),
-              child: Text("    ${widget.contractNodeItem.ownerName}在titan地图上创建了Map3节点抵押合约，年化奖励${FormatUtil.formatPercent(widget.contractNodeItem.contract.annualizedYield)}，"
-                  + "周期${widget.contractNodeItem.contract.duration}天，合约马上启动，邀请你前往围观！",style: TextStyle( color:Colors.white, fontSize: 16),textAlign: TextAlign.center,),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top:50.0,bottom: 30),
+              padding: const EdgeInsets.only(top: 40.0, bottom: 32),
               child: Container(
                 color: Colors.white,
                 child: QrImage(
@@ -125,7 +143,10 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
                 ),
               ),
             ),
-            Text("长按图片识别二维码查看详情",style: TextStyle( color:Colors.white, fontSize: 15),),
+            Text(
+              "扫描二维码查看详情",
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
           ],
         ),
       ),
@@ -136,5 +157,4 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
     Uint8List imageByte = await _shotController.makeImageUint8List();
     await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
   }
-
 }

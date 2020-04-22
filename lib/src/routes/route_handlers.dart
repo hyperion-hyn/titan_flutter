@@ -21,6 +21,7 @@ import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
+import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -62,7 +63,7 @@ void _cacheEntryRouteName(params) {
 }
 
 var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
-  return WebViewContainer(
+  return InAppWebViewContainer(
       initUrl: FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first),
       title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
 });

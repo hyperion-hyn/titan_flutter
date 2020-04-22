@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
@@ -62,7 +63,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
   void initState() {
     super.initState();
 
-    TitanPlugin.getClipboardData();
+//    TitanPlugin.getClipboardData();
+    getClipboardData();
 
     _bottomBarPositionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -101,6 +103,15 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     };
   }
 
+  void getClipboardData() async {
+    var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+    if(clipboardData != null && clipboardData.text.contains("titan://contract/detail")){
+      var shareUser = clipboardData.text.split("key=")[1];
+      MemoryCache.shareKey = shareUser;
+      print("!!!!! " + clipboardData.text + " key= " + shareUser);
+    }
+  }
+
   void _pushWebView(Map values) {
     var url = values["out_link"];
     var title = values["title"];
@@ -130,11 +141,11 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
       Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
-    }else if(type == "save" && subType == "shareUser"){
+    }/*else if(type == "save" && subType == "shareUser"){
       var shareUser = content["shareUserValue"];
       MemoryCache.shareKey = shareUser;
       print("shareuser clipboard $shareUser");
-    }
+    }*/
   }
 
   @override
