@@ -123,7 +123,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * activeQuoteVoAndSign?.quoteVo?.price)}",
+                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
                               style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                             ),
                           ),
@@ -333,9 +333,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                 var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
                 var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
                 if (url != null) {
-
                   // todo: jison_test_0421
-                 /*
+                  /*
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -349,9 +348,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => InAppWebViewContainer(
-                            initUrl: url,
-                            title: '',
-                          )));
+                                initUrl: url,
+                                title: '',
+                              )));
                 }
               },
               child: Padding(
