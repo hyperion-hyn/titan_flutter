@@ -771,7 +771,7 @@
   "launch_success": "시작 성공",
   "node_had_stop": "노드가 완료 되었습니다",
   "expired_can_withdraw_rewards": "만기 되어 나머지 잔액 인출 가능합니다",
-  "launch_fail_request_refund": "시작이 실패했기에 환불 요청 드립니다",
+  "launch_fail_request_refund": "转入失败，请重新抵押",
   "launch_fail": "시작 실패",
   "recovered_invested_capital": "이미 투자된 원금이 회수되었습니다",
   "earned_rewards": "이미 벌어들인 장려금",
@@ -856,5 +856,6 @@
   "your_last_output_to_contract_func": "你的最新提取：$input, ${task_pending}",
   "no_pengding_node_contract_hint": "没有待启动的节点合约\n您可以创建合约",
   "delegation_full_will_active_hint": "抵押已满，即将启动",
-  "contract_share_content": "\"${who}\"在${appName}上发现了海伯利安${nodeName}合约，年化奖励去到${annualized}，周期${duration}天，邀请你前往围观！"
+  "contract_share_content": "\"${who}\"在${appName}上发现了海伯利安${nodeName}合约，年化奖励去到${annualized}，周期${duration}天，邀请你前往围观！",
+  "reset_input_contract": "重新投入"
 }

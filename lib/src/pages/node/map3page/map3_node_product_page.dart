@@ -185,9 +185,9 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   onPressed: () async {
                     // todo: test_jison_0422
-                    Application.router
+                    /*Application.router
                         .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
-                    return;
+                    return;*/
 
                     var walletList = await WalletUtil.scanWallets();
                     if (walletList.length == 0) {

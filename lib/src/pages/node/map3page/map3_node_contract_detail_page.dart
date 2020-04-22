@@ -299,8 +299,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         if (double.parse(_contractDetailItem?.amountPreDelegation??"0") == 0) {
           _contractNotifyDetail = "";
         } else {
-          _visible = false;
-          _actionTitle = "";
           var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
           _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
         }
@@ -310,8 +308,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
         // cancel
       case UserDelegateState.CANCELLED:
+
       case UserDelegateState.FAIL:
         _contractNotifyDetail = S.of(context).launch_fail_request_refund;
+
+        if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+          var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
+          _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
+        }
         break;
 
 
@@ -469,10 +473,17 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.HALFDUE_COLLECTED:
         case UserDelegateState.PRE_DUE_COLLECTED:
         case UserDelegateState.DUE_COLLECTED:
-        case UserDelegateState.FAIL:
           _visible = false;
           break;
 
+        case UserDelegateState.FAIL:
+          _actionTitle = S.of(context).reset_input_contract;
+          if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+            _visible = false;
+            _actionTitle = "";
+          }
+          break;
+          
         default:
           break;
       }

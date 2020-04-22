@@ -428,14 +428,21 @@ class _Map3NodeState extends State<Map3NodePage> {
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
 
-    if (result != null) {
-      if (result is ContractNodeItem) {
-        _pushContractDetail(result);
+    if (result != null && result is Map) {
+      print("[detail] ----->1 back, _broadcaseContractAction, result:$result");
+
+      var item = result["result"];
+      if (item is ContractNodeItem) {
+        print("[detail] ----->2 back, _broadcaseContractAction, result:$result");
+
+        _pushContractDetail(item);
       }
     }
   }
 
   Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
+    print("[detail] ----->3 back, _broadcaseContractAction, result:${contractNodeItem.id}");
+
     Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
   }
 

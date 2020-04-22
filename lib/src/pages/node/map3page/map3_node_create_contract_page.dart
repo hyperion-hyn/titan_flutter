@@ -312,7 +312,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
               onPressed: () async {
                 // todo: test_jison_0422
-                String provider = providerList[selectServerItemValue].id;
+                /*String provider = providerList[selectServerItemValue].id;
                 String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
                 var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
 
@@ -326,8 +326,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                         "&region=$region" +
                         "&pageType=${widget.pageType}" +
                         "&contractId=${widget.contractId}");
-                return;
-                
+                return;*/
+
                 await checkIsCreateContract();
                 if (!_isUserCreatable) {
                   Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
