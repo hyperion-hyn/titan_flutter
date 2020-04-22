@@ -281,7 +281,8 @@ class NodeApi {
     return NodeHttpCore.instance.postEntity(
         "contracts/precreate/$contractId",
         EntityFactory<ContractNodeItem> ((json) => ContractNodeItem.fromJson(json),),
-        data: nodeDefaultEntity.toJson()
+        data: nodeDefaultEntity.toJson(),
+        options: RequestOptions(contentType: "application/json")
     );
 
   }
