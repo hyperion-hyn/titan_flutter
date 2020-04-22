@@ -7,6 +7,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
@@ -271,6 +272,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                       color: DefaultColors.colorffdb58,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
                       onPressed: () {
+                        UserService.syncUserInfo(context);
                         _pushContractListAction();
                       },
                       child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
