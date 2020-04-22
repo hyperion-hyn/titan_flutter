@@ -29,8 +29,8 @@ class BaseHttpCore {
   }
 
   Future<ResponseEntity<T>> postResponseEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    var res = await post(url, params: params, options: options, cancelToken: cancelToken);
+      {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    var res = await post(url, data: data, params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
@@ -54,9 +54,9 @@ class BaseHttpCore {
   }
 
   Future<T> postEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
     var responseEntity =
-        await postResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
+        await postResponseEntity<T>(url, factory, data: data, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }

@@ -343,8 +343,8 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
   Widget _buildCircle(int index, bool oldState) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
-      width: index <= widget.currentStep ? _kStepSize : _kStepSize * 0.8,
-      height: index <= widget.currentStep ? _kStepSize : _kStepSize * 0.8,
+      width: index == widget.currentStep ? _kStepSize : _kStepSize * 0.75,
+      height: index == widget.currentStep ? _kStepSize : _kStepSize * 0.75,
       child: AnimatedContainer(
         curve: Curves.fastOutSlowIn,
         duration: kThemeAnimationDuration,
