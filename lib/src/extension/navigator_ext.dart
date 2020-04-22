@@ -2,11 +2,7 @@ import 'package:flutter/widgets.dart';
 
 extension NavigatorExt on NavigatorState {
   void popUntilRouteName<T extends Object>(String routeName, [T result, bool exactMatchRouteName = false]) {
-
-
     this.popUntil((route) {
-      print("[navigation] route.settings.arguments:${route.settings.arguments}");
-
       if (route.isFirst) {
         _setPopResult(route, result);
         return true;
@@ -30,11 +26,7 @@ extension NavigatorExt on NavigatorState {
 
   void _setPopResult(route, result) {
     print("[navigation] route.settings.arguments:${route.settings.arguments}, result:$result");
-
     var arguments = route.settings.arguments;
-    if (arguments == null) {
-      arguments = Map();
-    }
     if (arguments is Map) {
       (route.settings.arguments as Map)['result'] = result;
     }

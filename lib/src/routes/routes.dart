@@ -72,7 +72,7 @@ class Routes {
       return unknownPage();
     });
 
-    //home
+    //root
     router.define(root, handler: rootHandler, transitionType: TransitionType.fadeIn);
 
     //tools
@@ -130,6 +130,8 @@ class MyRouter extends Router {
     RouteSettings settingsToUse = routeSettings;
     if (routeSettings == null) {
       settingsToUse = RouteSettings(name: path, arguments: Map());
+    } else if(routeSettings.arguments == null) {
+      settingsToUse = routeSettings.copyWith(arguments: Map());
     }
     return super.matchRoute(
       buildContext,
