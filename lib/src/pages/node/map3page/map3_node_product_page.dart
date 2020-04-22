@@ -184,6 +184,11 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                   color: DefaultColors.colorffdb58,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   onPressed: () async {
+                    // todo: test_jison_0422
+                    Application.router
+                        .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
+                    return;
+
                     var walletList = await WalletUtil.scanWallets();
                     if (walletList.length == 0) {
                       Application.router.navigateTo(context, Routes.map3node_create_wallet);
