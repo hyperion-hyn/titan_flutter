@@ -83,7 +83,7 @@ android {
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
                     if(output.outputFileName.contains('-release')) {
-                        def fileName = "maprich_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
+                        def fileName = "star_rich_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
                         output.outputFileName = fileName
                     }
                 }
