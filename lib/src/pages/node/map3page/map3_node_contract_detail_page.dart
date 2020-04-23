@@ -615,7 +615,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
         body: AllPageStateContainer(_currentState, () {
           setState(() {
-            print("d999999999");
             _currentState = all_page_state.LoadingState();
             getContractDetailData();
           });
