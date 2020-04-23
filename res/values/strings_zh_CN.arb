@@ -436,7 +436,7 @@
   "end_profit_hyn": "期满共产生(HYN)：",
   "spend_manager_hyn": "另付管理费(HYN)：",
   "get_manager_hyn": "另获管理费(HYN)：",
-  "node_contract_detail": "节点抵押合约详情",
+  "node_contract_detail": "节点合约详情",
   "join_map_node_mortgage": "参与Map3节点抵押",
   "create_map_mortgage_contract": "创建Map3抵押合约",
   "ten_thousand_annualizedyield": "万/$annualizedYield",
