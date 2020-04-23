@@ -173,8 +173,12 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  ContractNodeItem contractNodeItem =
-      ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  ContractNodeItem contractNodeItem;
+  var item = params['contractNodeItem']?.first;
+  if(item != null ) {
+    contractNodeItem =
+        ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
+  }
   return Map3NodeBroadcaseSuccessPage(
     params['pageType']?.first,
     contractNodeItem: contractNodeItem,
