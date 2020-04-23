@@ -478,7 +478,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               _visible = true;
               _actionTitle = S.of(context).increase_investment;
               break;
-
           }
 
           break;
@@ -499,6 +498,27 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
             _visible = false;
             _actionTitle = "";
+          }
+          break;
+
+        case UserDelegateState.DUE:
+        case UserDelegateState.CANCELLED:
+
+          BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
+          switch (billsRecordState) {
+            /*case BillsRecordState.PRE_CREATE:// PRE_DUE_COLLECTED, PRE_HALFDUE_COLLECTED, PRE_CANCELLED_COLLECTED
+            case BillsRecordState.CONFIRMED: // DUE_COLLECTED, HALFDUE_COLLECTED ,CANCELLED_COLLECTED
+              _visible = false;
+              _actionTitle = "";
+              break;*/
+
+            case BillsRecordState.FAIL:
+              _visible = true;
+              _actionTitle = S.of(context).reset_output_contract;
+              break;
+
+            default:
+              break;
           }
           break;
           

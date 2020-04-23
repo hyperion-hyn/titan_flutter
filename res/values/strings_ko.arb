@@ -844,5 +844,6 @@
   "no_pengding_node_contract_hint": "没有待启动的节点合约\n您可以创建合约",
   "delegation_full_will_active_hint": "抵押已满，即将启动",
   "contract_share_content": "\"${who}\"在${appName}上发现了海伯利安${nodeName}合约，年化奖励去到${annualized}，周期${duration}天，邀请你前往围观！",
-  "reset_input_contract": "重新投入"
+  "reset_input_contract": "重新投入",
+  "reset_output_contract": "重新提取"
 }
