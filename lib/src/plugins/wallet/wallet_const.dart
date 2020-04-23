@@ -55,7 +55,7 @@ EthereumNetType getEthereumNetTypeFromString(String type) {
 class WalletConfig {
   static String get INFURA_MAIN_API => '${Config.INFURA_API_URL}/v3/${Config.INFURA_PRVKEY}';
 
-  static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
+  static String get INFURA_ROPSTEN_API => '${Config.INFURA_ROPSTEN_API_URL}/v3/${Config.INFURA_PRVKEY}';
 
   static String get INFURA_RINKEBY_API => 'https://rinkeby.infura.io/v3/${Config.INFURA_PRVKEY}';
 
