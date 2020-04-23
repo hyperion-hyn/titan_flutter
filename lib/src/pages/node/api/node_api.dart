@@ -131,9 +131,10 @@ class NodeApi {
 
     return contractsItem;
   }
-
+ 
   Future<ContractNodeItem> startContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet,
-      String password, int gasPrice, String contractId, StartJoinInstance startJoinInstance, Decimal amount) async {
+      String password, int gasPrice, String contractId, StartJoinInstance startJoinInstance, Decimal amount, {bool isRenew = false}) async {
+
     var wallet = activatedWallet.wallet;
 //    var maxStakingAmount = 1000000; //一百万
 //    var myStaking = amount;
@@ -181,8 +182,11 @@ class NodeApi {
     );
     print('createMap3Hex is: $createMap3Hex');
 
-    return await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress, walletName, amount.toDouble(),
-        publicKey, createMap3Hex, startJoinInstance.provider, startJoinInstance.region);
+    if (isRenew) {
+      return contractNodeItem;
+    }
+    return await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress,walletName,amount.toDouble(),publicKey,createMap3Hex
+        ,startJoinInstance.provider,startJoinInstance.region);
   }
 
   Future<String> joinContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
@@ -316,19 +320,24 @@ class NodeApi {
         data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<String> withdrawContractInstance(
-      ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password, int gasPrice, int gasLimit) async {
-    var _wallet = activatedWallet.wallet;
+  Future<String> withdrawContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
+      int gasPrice, int gasLimit) async {
+    var wallet = activatedWallet.wallet;
     var createNodeWalletAddress = contractNodeItem.owner;
-    var collectHex = await _wallet.sendCollectMap3Node(
+    final client = WalletUtil.getWeb3Client();
+    var address = wallet.getEthAccount().address;
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address), atBlock: BlockNum.pending());
+
+    var collectHex = await wallet.sendCollectMap3Node(
       createNodeWalletAddress: createNodeWalletAddress,
       gasPrice: BigInt.from(gasPrice),
       gasLimit: gasLimit,
       password: password,
+      nonce: nonce,
     );
     print('collectHex is: $collectHex');
 
-    await postWithdrawDefaultInstance(contractNodeItem.id, _wallet.getEthAccount().address, collectHex);
+    await postWithdrawDefaultInstance(contractNodeItem.id, address, collectHex);
 
     return "success";
   }

@@ -602,7 +602,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
         body: AllPageStateContainer(_currentState, () {
           setState(() {
-            print("d999999999");
             _currentState = all_page_state.LoadingState();
             getContractDetailData();
           });
@@ -1313,7 +1312,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       if (mounted) {
         setState(() {
           _loadDataBloc.add(RefreshFailEvent());
-          //_visible = false;
+          _visible = false;
           _currentState = all_page_state.LoadFailState();
         });
       }
