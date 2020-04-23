@@ -185,7 +185,7 @@ class NodeApi {
     if (isRenew) {
       return contractNodeItem;
     }
-    return await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress,walletName,amount,publicKey,createMap3Hex
+    return await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress,walletName,amount.toDouble(),publicKey,createMap3Hex
         ,startJoinInstance.provider,startJoinInstance.region);
   }
 
