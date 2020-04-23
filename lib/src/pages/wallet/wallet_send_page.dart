@@ -5,9 +5,12 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -32,7 +35,7 @@ class WalletSendPage extends StatefulWidget {
   }
 }
 
-class _WalletSendState extends State<WalletSendPage> {
+class _WalletSendState extends BaseState<WalletSendPage> {
   final TextEditingController _receiverAddressController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
@@ -55,6 +58,11 @@ class _WalletSendState extends State<WalletSendPage> {
     if (widget.toAddress != null) {
       _receiverAddressController.text = widget.toAddress;
     }
+  }
+
+  @override
+  void onCreated() {
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
