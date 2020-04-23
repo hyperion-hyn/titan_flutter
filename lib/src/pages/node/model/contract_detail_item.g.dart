@@ -21,10 +21,10 @@ ContractDetailItem _$ContractDetailItemFromJson(Map<String, dynamic> json) {
     json['withdrawn'] as String,
     json['preWithdrawn'] as String,
     json['isOwner'] as bool,
-    /*json['latestTransaction'] == null
+    json['lastRecord'] == null
         ? null
-        : LatestTransaction.fromJson(
-            json['latestTransaction'] as Map<String, dynamic>),*/
+        : ContractDelegateRecordItem.fromJson(
+            json['lastRecord'] as Map<String, dynamic>),
     json['state'] as String,
   );
 }
@@ -43,31 +43,7 @@ Map<String, dynamic> _$ContractDetailItemToJson(ContractDetailItem instance) =>
       'withdrawn': instance.withdrawn,
       'preWithdrawn': instance.preWithdrawn,
       'isOwner': instance.isOwner,
+      'lastRecord': instance.lastRecord,
       'state': instance.state,
     };
 
-
-LatestTransaction _$LatestTransactionFromJson(Map<String, dynamic> json) {
-  return LatestTransaction(
-    json['userAddress'] as String,
-    json['instanceId'] as int,
-    json['delegationId'] as int,
-    json['amount'] as String,
-    json['shareKey'] as String,
-    json['txhash'] as String,
-    json['operaType'] as String,
-    json['state'] as String,
-  );
-}
-
-Map<String, dynamic> _$LatestTransactionToJson(LatestTransaction instance) =>
-    <String, dynamic>{
-      'userAddress': instance.userAddress,
-      'instanceId': instance.instanceId,
-      'amount': instance.amount,
-      'shareKey': instance.shareKey,
-      'delegationId': instance.delegationId,
-      'txhash': instance.txhash,
-      'operaType': instance.operaType,
-      'state': instance.state,
-    };

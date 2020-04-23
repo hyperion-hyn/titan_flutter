@@ -302,7 +302,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
           _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
         }
-
         break;
 
 
@@ -345,7 +344,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       default:
         break;
     }
-
 
     return _contractNotifyDetail;
   }
@@ -459,16 +457,36 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
 
         case UserDelegateState.PENDING:
-          if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+          /*if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
             _visible = false;
             _actionTitle = "";
+          }*/
+
+          BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
+          switch (billsRecordState) {
+            case BillsRecordState.PRE_CREATE:
+              _visible = false;
+              _actionTitle = "";
+              break;
+
+            case BillsRecordState.FAIL:
+              _visible = true;
+              _actionTitle = S.of(context).reset_input_contract;
+              break;
+
+            case BillsRecordState.CONFIRMED:
+              _visible = true;
+              _actionTitle = S.of(context).increase_investment;
+              break;
+
           }
+
           break;
 
         case UserDelegateState.PRE_CREATE:
-        case UserDelegateState.ACTIVE:
         case UserDelegateState.PRE_CANCELLED_COLLECTED:
         case UserDelegateState.CANCELLED_COLLECTED:
+        case UserDelegateState.ACTIVE:
         case UserDelegateState.PRE_HALFDUE_COLLECTED:
         case UserDelegateState.HALFDUE_COLLECTED:
         case UserDelegateState.PRE_DUE_COLLECTED:
