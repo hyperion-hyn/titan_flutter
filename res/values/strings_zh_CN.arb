@@ -575,5 +575,6 @@
   "expire_date": "期满可提",
   "contract_share_content": "\"${who}\"在${appName}上发现了海伯利安${nodeName}合约，年化奖励去到${annualized}，周期${duration}天，邀请你前往围观！",
   "reset_input_contract": "重新投入",
-  "reset_output_contract": "重新提取"
+  "reset_output_contract": "重新提取",
+  "contract_launch_fail_please_get_back": "合约启动失败，请申请退款"
 }

@@ -307,9 +307,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
         // cancel
       case UserDelegateState.CANCELLED:
+        _contractNotifyDetail = S.of(context).contract_launch_fail_please_get_back;
+
+        break;
 
       case UserDelegateState.FAIL:
-        _contractNotifyDetail = S.of(context).launch_fail_request_refund;
 
         if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
           var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
@@ -1299,7 +1301,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
         }
       }
-      
+
       // 1.
       _contractState = enumContractStateFromString(_contractNodeItem.state);
       print('[contract] getContractInstanceItem,_isDelegated:$_isDelegated, contractState:$_contractState, userDelegateState:$_userDelegateState');
