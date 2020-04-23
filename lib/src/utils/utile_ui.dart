@@ -64,6 +64,7 @@ class UiUtil {
     return email.substring(0, 3) + "*" + email.substring(atIconIndex);
   }
 
+  // alertView 
   static void showDialogWidget(BuildContext context, {Widget title, Widget content, List<Widget> actions}) {
     showDialog(
       context: context,
@@ -138,7 +139,7 @@ class UiUtil {
 
 
   static void  showGoToOpenLocationServiceDialog(BuildContext context) {
-    UiUtil.showDialogWidget(
+    showDialogWidget(
       context,
       title: Text(S.of(context).open_location_service),
       content: Text(S.of(context).open_location_service_message),
@@ -150,7 +151,7 @@ class UiUtil {
         FlatButton(
           child: Text(S.of(context).setting),
           onPressed: () {
-            UiUtil.openSettingLocation();
+            openSettingLocation();
             Navigator.pop(context);
           },
         ),

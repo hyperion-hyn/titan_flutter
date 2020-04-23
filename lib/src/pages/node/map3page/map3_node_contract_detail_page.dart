@@ -590,10 +590,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     // todo: test_jison_0420
 
-    _contractState = ContractState.DUE;
+    /*_contractState = ContractState.DUE;
     _userDelegateState = UserDelegateState.DUE;
     _initBottomButtonData();
-
+    */
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
       child: Scaffold(
