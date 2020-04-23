@@ -2,7 +2,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/consts.dart';
 
 String getRequestLang() {
-  var locale = SettingInheritedModel.of(Keys.mapContainerKey.currentContext)?.languageModel?.locale;
+  var locale = SettingInheritedModel.of(Keys.rootKey.currentContext)?.languageModel?.locale;
   if (locale == null) {
     return "zh";
   } else if (locale.countryCode == null || locale.countryCode == "") {
