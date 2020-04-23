@@ -476,7 +476,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       if (event is ToMyLocationEvent) {
         //check location service
         if (!(await Permission.location.serviceStatus.isEnabled)) {
-          _showGoToOpenLocationServiceDialog();
+          UiUtil.showGoToOpenLocationServiceDialog(context);
           return;
         }
 
@@ -493,32 +493,12 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         } else if (status.isGranted) {
           _toMyLocation(event.zoom);
         } else {
-          _showGoToOpenLocationServiceDialog();
+          UiUtil.showGoToOpenLocationServiceDialog(context);
         }
       }
     });
   }
 
-  void _showGoToOpenLocationServiceDialog() {
-    UiUtil.showDialogWidget(
-      context,
-      title: Text(S.of(context).open_location_service),
-      content: Text(S.of(context).open_location_service_message),
-      actions: <Widget>[
-        FlatButton(
-          child: Text(S.of(context).cancel),
-          onPressed: () => Navigator.pop(context),
-        ),
-        FlatButton(
-          child: Text(S.of(context).setting),
-          onPressed: () {
-            UiUtil.openSettingLocation();
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    );
-  }
 
   @override
   void dispose() {
