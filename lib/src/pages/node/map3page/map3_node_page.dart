@@ -426,11 +426,13 @@ class _Map3NodeState extends State<Map3NodePage> {
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
     await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
     final result = ModalRoute.of(context).settings?.arguments;
-    print("[detail] -----> back, _broadcaseContractAction, result:$result");
+    //print("[detail] -----> back, _broadcaseContractAction, result:$result");
 
-    if (result != null) {
-      if (result is ContractNodeItem) {
-        _pushContractDetail(result);
+    if (result != null && result is Map) {
+
+      var item = result["result"];
+      if (item is ContractNodeItem) {
+        _pushContractDetail(item);
       }
     }
   }

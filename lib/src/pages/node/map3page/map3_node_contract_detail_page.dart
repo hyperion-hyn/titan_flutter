@@ -299,19 +299,22 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         if (double.parse(_contractDetailItem?.amountPreDelegation??"0") == 0) {
           _contractNotifyDetail = "";
         } else {
-          _visible = false;
-          _actionTitle = "";
           var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
           _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
         }
-
         break;
 
 
         // cancel
       case UserDelegateState.CANCELLED:
+
       case UserDelegateState.FAIL:
         _contractNotifyDetail = S.of(context).launch_fail_request_refund;
+
+        if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+          var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
+          _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
+        }
         break;
 
 
@@ -341,7 +344,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       default:
         break;
     }
-
 
     return _contractNotifyDetail;
   }
@@ -455,24 +457,71 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
 
         case UserDelegateState.PENDING:
+          /*if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
+            _visible = false;
+            _actionTitle = "";
+          }*/
+
+          BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
+          switch (billsRecordState) {
+            case BillsRecordState.PRE_CREATE:
+              _visible = false;
+              _actionTitle = "";
+              break;
+
+            case BillsRecordState.FAIL:
+              _visible = true;
+              _actionTitle = S.of(context).reset_input_contract;
+              break;
+
+            case BillsRecordState.CONFIRMED:
+              _visible = true;
+              _actionTitle = S.of(context).increase_investment;
+              break;
+          }
+
+          break;
+
+        case UserDelegateState.PRE_CREATE:
+        case UserDelegateState.PRE_CANCELLED_COLLECTED:
+        case UserDelegateState.CANCELLED_COLLECTED:
+        case UserDelegateState.ACTIVE:
+        case UserDelegateState.PRE_HALFDUE_COLLECTED:
+        case UserDelegateState.HALFDUE_COLLECTED:
+        case UserDelegateState.PRE_DUE_COLLECTED:
+        case UserDelegateState.DUE_COLLECTED:
+          _visible = false;
+          break;
+
+        case UserDelegateState.FAIL:
+          _actionTitle = S.of(context).reset_input_contract;
           if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
             _visible = false;
             _actionTitle = "";
           }
           break;
 
-        case UserDelegateState.PRE_CREATE:
-        case UserDelegateState.ACTIVE:
-        case UserDelegateState.PRE_CANCELLED_COLLECTED:
-        case UserDelegateState.CANCELLED_COLLECTED:
-        case UserDelegateState.PRE_HALFDUE_COLLECTED:
-        case UserDelegateState.HALFDUE_COLLECTED:
-        case UserDelegateState.PRE_DUE_COLLECTED:
-        case UserDelegateState.DUE_COLLECTED:
-        case UserDelegateState.FAIL:
-          _visible = false;
-          break;
+        case UserDelegateState.DUE:
+        case UserDelegateState.CANCELLED:
 
+          BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
+          switch (billsRecordState) {
+            /*case BillsRecordState.PRE_CREATE:// PRE_DUE_COLLECTED, PRE_HALFDUE_COLLECTED, PRE_CANCELLED_COLLECTED
+            case BillsRecordState.CONFIRMED: // DUE_COLLECTED, HALFDUE_COLLECTED ,CANCELLED_COLLECTED
+              _visible = false;
+              _actionTitle = "";
+              break;*/
+
+            case BillsRecordState.FAIL:
+              _visible = true;
+              _actionTitle = S.of(context).reset_output_contract;
+              break;
+
+            default:
+              break;
+          }
+          break;
+          
         default:
           break;
       }
