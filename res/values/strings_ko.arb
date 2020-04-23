@@ -701,7 +701,7 @@
   "freeze_balance_reward_direct_push": "노드를 만들려면 직접 추천인에게 추천장려금을 지불하기 위해 500U 계정 잔액을 일시적으로 동결해야 합니다. 추천장려금은 노드 총 수익의 5 %",
   "confirm_bug": "버그 확인",
   "mortgage_hyn_num": "저당 HYN 수량",
-  "mortgage_wallet_balance": "（지갑HYN잔액 $balance）",
+  "mortgage_wallet_balance": "（钱包余额 $balance）",
   "mintotal_buy": "최소 구매$minTal",
   "mintotal_hyn": "최소 ${minTotal}HYN ",
   "hyn_balance_no_enough": "HYN 잔액 부족",
