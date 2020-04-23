@@ -390,11 +390,11 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               Routes.wallet_account_send_transaction +
                   '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=$routeName&toAddress=${userEthAddress.address}')
           .then((_) {
-        final arguments = ModalRoute.of(context).settings.arguments as Map;
-        final result = arguments['result'];
-        if (result == true) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RechargeByTitanFinishPage()));
-        }
+//        final arguments = ModalRoute.of(context).settings.arguments as Map;
+//        final result = arguments['result'];
+//        if (result == true) {
+//          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RechargeByTitanFinishPage()));
+//        }
       });
     }
 //    Navigator.push(

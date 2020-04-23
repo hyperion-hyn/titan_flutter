@@ -258,7 +258,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: gasPrice == gasPriceRecommend.safeLow ? Colors.blue : Colors.grey[200],
+                                  color: gasPrice == gasPriceRecommend.safeLow ? Colors.grey : Colors.grey[200],
                                   border: Border(),
                                   borderRadius:
                                       BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
@@ -292,7 +292,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: gasPrice == gasPriceRecommend.average ? Colors.blue : Colors.grey[200],
+                                  color: gasPrice == gasPriceRecommend.average ? Colors.grey : Colors.grey[200],
                                   border: Border(),
                                   borderRadius: BorderRadius.all(Radius.circular(0))),
                               child: Column(
@@ -325,7 +325,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: gasPrice == gasPriceRecommend.fast ? Colors.blue : Colors.grey[200],
+                                  color: gasPrice == gasPriceRecommend.fast ? Colors.grey : Colors.grey[200],
                                   border: Border(),
                                   borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(30), bottomRight: Radius.circular(30))),

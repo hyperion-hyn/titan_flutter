@@ -22,16 +22,16 @@ class _ConfirmSuccessPage extends State<ConfirmSuccessPage> {
         return false;
       },
       child: Scaffold(
-//        appBar: AppBar(
-//          iconTheme: IconThemeData(color: Colors.white),
-//        ),
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
           body: Center(
         child: Container(
           padding: EdgeInsets.all(16),
           alignment: Alignment.center,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 80),
+              SizedBox(height: 48),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Image.asset(
