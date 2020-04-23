@@ -80,8 +80,8 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
           controller: _tabController,
           children: [
             WalletPage(),
-            Map3NodePage(),
-//            Map3NodeIntroductionPage(),
+//            Map3NodePage(),
+            Map3NodeIntroductionPage(),
 //            Center(
 //              child: Text('this is wallet page'),
 //            ),

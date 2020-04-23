@@ -702,7 +702,7 @@
   "freeze_balance_reward_direct_push": "·  创建节点需要暂时冻结500U账户余额，用于支付直推人的贡献奖励。直推人及奖励收取节点总收益的5%。",
   "confirm_bug": "确定买入",
   "mortgage_hyn_num": "抵押HYN数量",
-  "mortgage_wallet_balance": "（可用$balance）",
+  "mortgage_wallet_balance": "（钱包余额 $balance）",
   "mintotal_buy": "最低买入$minTotal",
   "mintotal_hyn": "不能少于${minTotal}HYN",
   "hyn_balance_no_enough": "HYN余额不足",
