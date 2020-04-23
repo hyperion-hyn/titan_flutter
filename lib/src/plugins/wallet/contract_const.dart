@@ -14,18 +14,25 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 class ContractTestConfig {
   static String get hynContractAddress {
     if (WalletConfig.netType == EthereumNetType.rinkeby) {
-      return '0xd643dc5aa8caf34295ab3c4cd3c4cc9f6b322b5c';
+      return '0x97B9e0EfeF243720FB024C823a39cBD73C25D601';
     } else if (WalletConfig.netType == EthereumNetType.repsten) {
-      return '0xb438de1880ee10342f17F52e3D8CAF85Ee0fFD8f';
+      return '0x80733C7D2E712e44F69dFD990E846C02c8200153';
+    }
+    return '0x884845609ea5DC317FA74Ccc5bdEc161Ce58D357';
+  }
+
+  static String get usdtContractAddress {
+    if (WalletConfig.netType == EthereumNetType.repsten) {
+      return '0xE82B8Eb1ce4684475eFc1655928dD012fb5Fa0Bb';
     }
     return '0x884845609ea5DC317FA74Ccc5bdEc161Ce58D357';
   }
 
   static String get map3ContractAddress {
     if (WalletConfig.netType == EthereumNetType.rinkeby) {
-      return '0xda3df1c86e4976643bfa69b830afa48ef5857d58';
+      return '0x02061f896Da00fC459C05a6f864b479137Dcb34b';
     } else if (WalletConfig.netType == EthereumNetType.repsten) {
-      return '0x498382ADfea3124B290696C54205b8a9B738A8e5';
+      return '0x83f07DB08D0a09fcaBe175b024B1285856281bDB';
     }
     return '0xEf429f2F9C4AB4a0723dEf4C76A8b5499dEB7205';
   }
