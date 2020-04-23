@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:decimal/decimal.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -151,7 +154,6 @@ var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
-
   ContractNodeItem contractNodeItem =
       ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   var transferAmount = params['transferAmount']?.first ?? '0';
@@ -159,7 +161,7 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeSendConfirmPage(
     params['coinVo']?.first ?? '0',
     contractNodeItem,
-    double.parse(transferAmount)??0.0,
+    Decimal.parse(transferAmount),
     params['receiverAddress']?.first ?? '0',
     params['pageType']?.first,
     params['contractId']?.first,
@@ -170,9 +172,16 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  ContractNodeItem contractNodeItem =
-  ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
-  return Map3NodeBroadcaseSuccessPage(params['pageType']?.first, contractNodeItem: contractNodeItem,);
+  ContractNodeItem contractNodeItem;
+  var item = params['contractNodeItem']?.first;
+  if(item != null ) {
+    contractNodeItem =
+        ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
+  }
+  return Map3NodeBroadcaseSuccessPage(
+    params['pageType']?.first,
+    contractNodeItem: contractNodeItem,
+  );
 });
 
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
@@ -181,15 +190,15 @@ var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeContractDetailPage(int.parse(params['contractId']?.first));
 });
 
-//maprich
-var rechargePurchaseHandler = Handler(handlerFunc: (context, params) {
-  return RechargePurchasePage();
-});
-
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
   ContractNodeItem contractNodeItem =
   ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   return Map3NodeSharePage(contractNodeItem);
+});
+
+//maprich
+var rechargePurchaseHandler = Handler(handlerFunc: (context, params) {
+  return RechargePurchasePage();
 });
 
 

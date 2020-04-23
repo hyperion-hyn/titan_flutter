@@ -1,6 +1,8 @@
 import 'package:titan/config.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 
+import '../../../env.dart';
+
 class TokenUnit {
   static const WEI = 1;
   static const K_WEI = 1000;
@@ -53,11 +55,11 @@ EthereumNetType getEthereumNetTypeFromString(String type) {
 class WalletConfig {
   static String get INFURA_MAIN_API => '${Config.INFURA_API_URL}/v3/${Config.INFURA_PRVKEY}';
 
-  static String get INFURA_ROPSTEN_API => 'https://ropsten.infura.io/v3/${Config.INFURA_PRVKEY}';
+  static String get INFURA_ROPSTEN_API => '${Config.INFURA_ROPSTEN_API_URL}/v3/${Config.INFURA_PRVKEY}';
 
   static String get INFURA_RINKEBY_API => 'https://rinkeby.infura.io/v3/${Config.INFURA_PRVKEY}';
 
-  static EthereumNetType netType = EthereumNetType.main;
+  static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.repsten : EthereumNetType.main;
 
   static String get map3ContractAddress {
     switch (netType) {
@@ -65,9 +67,9 @@ class WalletConfig {
         //TODO
         return '';
       case EthereumNetType.repsten:
-        return '0x498382ADfea3124B290696C54205b8a9B738A8e5';
+        return '0x83f07DB08D0a09fcaBe175b024B1285856281bDB';
       case EthereumNetType.rinkeby:
-        return '0xda3df1c86e4976643bfa69b830afa48ef5857d58';
+        return '0x02061f896Da00fC459C05a6f864b479137Dcb34b';
       case EthereumNetType.local:
         return ContractTestConfig.map3ContractAddress;
       //return '0x14D135f91B01db0DF32cdcF7d7e93cc14A9aE3D7';
