@@ -1383,7 +1383,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
 
     if (_isFreeze) {
-      _showConfirmDialog(title: S.of(context).tips, content:"作为当前合约的创建者，我们会把你收益的5%分享给推荐的人哦！", finishActon:() => _alertPasswordAction());
+      _showConfirmDialog(title: S.of(context).tips, content:"作为当前合约的创建者，我们会把你收益的5%分享给推荐的人哦！", finishActon:() => _rewardFreezeAction(_alertPasswordAction));
     } else {
       _alertPasswordAction();
     }
@@ -1436,11 +1436,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       print("[detail] collectionAction, success:$success");
 
       if (success == "success") {
-        if (_isFreeze) {
-          _rewardFreezeAction(_pushBroadcastAction);
-        } else {
-          _pushBroadcastAction();
-        }
+        _pushBroadcastAction();
       }
       else {
         Fluttertoast.showToast(msg: S.of(context).transfer_fail);
@@ -1497,11 +1493,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         callback();
     }
     else {
-      Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+      Fluttertoast.showToast(msg: S.of(context).transfer_fail + "code:${res.code}");
     }
   }
 
-  void _broadcaseContractAction() async {
+  /*void _broadcaseContractAction() async {
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     await Application.router.navigateTo(
         context,
@@ -1512,7 +1508,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     if(result != null) {
       getContractDetailData();
     }
-  }
+  }*/
 
 
 }
