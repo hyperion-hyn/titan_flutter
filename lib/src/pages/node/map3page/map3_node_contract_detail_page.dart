@@ -1400,10 +1400,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     Application.router.navigateTo(context, Routes.map3node_create_wallet);
   }
 
-  void _joinContractAction() {
-    Application.router.navigateTo(context, Routes.map3node_join_contract_page + "?contractId=${_contractNodeItem.id}");
-  }
-
   void _showConfirmDialog({String title, String content, VoidCallback finishActon}) {
     _showConfirmDialogWidget(title: Text(title), content: Text(content), actions: <Widget>[
       FlatButton(
@@ -1494,7 +1490,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       print("[detail] collectionAction, success:$success");
 
       if (success == "success") {
-        _pushBroadcastAction();
+        _broadcaseContractAction();
       } else {
         Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
@@ -1525,11 +1521,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  _pushBroadcastAction() {
-    Application.router.navigateTo(context,
-        Routes.map3node_broadcase_success_page + "?pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
-  }
-
   Future _rewardFreezeAction(VoidCallback callback) async {
     if (_wallet == null || _contractDetailItem == null) {
       return;
@@ -1549,17 +1540,32 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-/*void _broadcaseContractAction() async {
+  void _joinContractAction() async {
+    //entryRouteName
+    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    //print("[detail] entryRouteName,$entryRouteName");
+
+    await Application.router
+        .navigateTo(context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
+    _nextAction();
+  }
+
+  void _broadcaseContractAction() async {
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     await Application.router.navigateTo(
         context,
         Routes.map3node_broadcase_success_page +
             "?entryRouteName=$entryRouteName&pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+    _nextAction();
+  }
+
+  _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
-    //print("[detail] result:$result");
+    print("[detail] 1result:$result");
     if(result != null) {
+      print("[detail] 2result:$result");
       getContractDetailData();
     }
-  }*/
+  }
 
 }
