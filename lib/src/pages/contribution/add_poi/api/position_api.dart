@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image_pickers/Media.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/global.dart';
@@ -39,9 +43,11 @@ class PositionApi {
       print('[PositionApi] poiCollector, 1, params:${params}');
 
       for (var i = 0; i < imagePaths.length; i += 1) {
+        var filePath = await FlutterAbsolutePath.getAbsolutePath(imagePaths[i].path);
+        var compressPath = await getCompressPath(filePath);
         var index = i + 1;
         String key = "img$index";
-        params[key] = MultipartFile.fromFileSync(imagePaths[i].path);
+        params[key] = MultipartFile.fromFileSync(compressPath);
       }
 
       FormData formData = FormData.fromMap(params);
@@ -63,6 +69,14 @@ class PositionApi {
       logger.e(_);
       return -1;
     }
+  }
+
+  Future<String> getCompressPath(String imagePath) async {
+    ImageProperties properties = await FlutterNativeImage.getImageProperties(imagePath);
+    File compressedFile = await FlutterNativeImage.compressImage(imagePath, quality: 80,
+        targetWidth: 600,
+        targetHeight: (properties.height * 600 / properties.width).round());
+    return compressedFile.path;
   }
 
   Future<Map<String, dynamic>> getOpenCageData(String query, {String lang = "zh-Hans"}) async {
