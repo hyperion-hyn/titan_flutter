@@ -4,6 +4,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/validator_util.dart';
 
@@ -165,7 +166,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       disabledTextColor: Colors.white,
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          var walletName = _walletNameController.text;
+                          var walletName = FluroConvertUtils.fluroCnParamsEncode(_walletNameController.text);
                           var password = _walletPasswordController.text;
 
 //                          createWalletNameTemp = walletName;

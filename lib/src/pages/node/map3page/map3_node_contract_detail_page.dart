@@ -501,8 +501,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               break;*/
 
             case BillsRecordState.FAIL:
-              _visible = true;
-              _actionTitle = S.of(context).reset_output_contract;
+              BillsOperaState operaState = enumBillsOperaStateFromString(_contractDetailItem.lastRecord.operaType);
+              if (operaState == BillsOperaState.WITHDRAW) {
+                _visible = true;
+                _actionTitle = S.of(context).reset_output_contract;
+              }
+
               break;
 
             default:

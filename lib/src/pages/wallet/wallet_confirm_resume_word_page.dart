@@ -9,9 +9,9 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'wallet_backup_confirm_resume_word_page.dart';
 
 class ConfirmResumeWordPage extends StatefulWidget {
-  String createWalletMnemonicTemp;
-  String walletName;
-  String password;
+  final String createWalletMnemonicTemp;
+  final String walletName;
+  final String password;
 
   ConfirmResumeWordPage(
       this.createWalletMnemonicTemp, this.walletName, this.password);
@@ -31,6 +31,8 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
   void initState() {
     initMnemonic();
     super.initState();
+
+    print('xxx walletName is ${widget.walletName}');
   }
 
   void initMnemonic() {
@@ -73,12 +75,12 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                   ),
                 ),
                 Container(
-                  constraints: BoxConstraints(minHeight: 230),
+//                  constraints: BoxConstraints(minHeight: 230),
                   alignment: Alignment.center,
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
                       border: Border.all(color: Color(0xFFB7B7B7)),
-                      borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(8)),
                   child: GridView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -105,7 +107,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                       }),
                 ),
                 SizedBox(
-                  height: 36,
+                  height: 24,
                 ),
                 GridView.builder(
                     physics: NeverScrollableScrollPhysics(),
@@ -138,7 +140,7 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                       );
                     }),
                 SizedBox(
-                  height: 36,
+                  height: 24,
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),

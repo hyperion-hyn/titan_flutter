@@ -5,6 +5,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class ShowResumeWordPage extends StatefulWidget {
@@ -127,7 +128,7 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                       Application.router.navigateTo(
                           context,
                           Routes.wallet_confirm_resume_word +
-                              '?mnemonic=${createWalletMnemonicTemp}&walletName=${widget.walletName}&password=${widget.password}');
+                              '?mnemonic=$createWalletMnemonicTemp&walletName=${FluroConvertUtils.fluroCnParamsEncode(widget.walletName)}&password=${widget.password}');
 //                      Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmResumeWordPage("truck impact silver wall hunt orphan squeeze valid boss emotion right hazard")));
                     },
                     child: Padding(
