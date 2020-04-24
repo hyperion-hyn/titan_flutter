@@ -91,7 +91,7 @@ class SupportedTokens {
       return [HYN, USDT_ERC20];
     } else if (netType == EthereumNetType.ropsten) {
       return [HYN_ROPSTEN, USDT_ERC20_ROPSTEN];
-    } else if (netType == EthereumNetType.ropsten) {
+    } else if (netType == EthereumNetType.rinkeby) {
       return [HYN_RINKEBY];
     } else {
       return [HYN_LOCAL];
