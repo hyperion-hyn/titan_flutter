@@ -38,7 +38,7 @@ class WalletError {
 
 enum EthereumNetType {
   main,
-  repsten,
+  ropsten,
   rinkeby,
   local,
 }
@@ -59,15 +59,15 @@ class WalletConfig {
 
   static String get INFURA_RINKEBY_API => 'https://rinkeby.infura.io/v3/${Config.INFURA_PRVKEY}';
 
-  static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.repsten : EthereumNetType.main;
+  static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.ropsten : EthereumNetType.main;
 
   static String get map3ContractAddress {
     switch (netType) {
       case EthereumNetType.main:
         //TODO
         return '';
-      case EthereumNetType.repsten:
-        return '0x83f07DB08D0a09fcaBe175b024B1285856281bDB';
+      case EthereumNetType.ropsten:
+        return '0x81d3B55B4f030213826B43B26EE938b75D276E62';
       case EthereumNetType.rinkeby:
         return '0x02061f896Da00fC459C05a6f864b479137Dcb34b';
       case EthereumNetType.local:
@@ -81,7 +81,7 @@ class WalletConfig {
     switch (netType) {
       case EthereumNetType.main:
         return INFURA_MAIN_API;
-      case EthereumNetType.repsten:
+      case EthereumNetType.ropsten:
         return INFURA_ROPSTEN_API;
       case EthereumNetType.rinkeby:
         return INFURA_RINKEBY_API;
