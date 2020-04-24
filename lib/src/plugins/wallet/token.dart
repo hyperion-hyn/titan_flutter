@@ -68,7 +68,7 @@ class SupportedTokens {
   static const HYN_ROPSTEN = const AssetToken(
       name: 'Hyperion ROPSTEN',
       decimals: 18,
-      contractAddress: '0x80733C7D2E712e44F69dFD990E846C02c8200153',
+      contractAddress: '0x16b296D521641ce193cb1B6b249D842F3B25DBe9',
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
 
@@ -89,9 +89,9 @@ class SupportedTokens {
   static List<AssetToken> allContractTokens(EthereumNetType netType) {
     if (netType == EthereumNetType.main) {
       return [HYN, USDT_ERC20];
-    } else if (netType == EthereumNetType.repsten) {
+    } else if (netType == EthereumNetType.ropsten) {
       return [HYN_ROPSTEN, USDT_ERC20_ROPSTEN];
-    } else if (netType == EthereumNetType.repsten) {
+    } else if (netType == EthereumNetType.ropsten) {
       return [HYN_RINKEBY];
     } else {
       return [HYN_LOCAL];
