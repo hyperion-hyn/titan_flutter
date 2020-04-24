@@ -32,7 +32,7 @@ class Account {
       if (netType == EthereumNetType.main) {
         erc20Tokens.add(SupportedTokens.HYN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20);
-      } else if (netType == EthereumNetType.repsten) {
+      } else if (netType == EthereumNetType.ropsten) {
         erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
       } else if (netType == EthereumNetType.rinkeby) {

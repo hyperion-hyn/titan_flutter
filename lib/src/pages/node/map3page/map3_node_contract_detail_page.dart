@@ -562,7 +562,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   }
 
-  
+  //get _isRenew => _contractState == ContractState.DUE && _isOwner;
+  get _isRenew => false;
+
   @override
   void onCreated() {
 
@@ -588,6 +590,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget build(BuildContext context) {
+ 
+    // todo: test_jison_0420
+
+    /*_contractState = ContractState.DUE;
+    _userDelegateState = UserDelegateState.DUE;
+    _initBottomButtonData();
+    */
+ 
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
       child: Scaffold(
@@ -595,7 +605,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         body: Stack(
           children: <Widget>[
             _pageWidget(context),
-            _bottomSureButtonWidget(),
+            _isRenew?_bottomRenewButtonWidget():_bottomSureButtonWidget(),
           ],
         ),
       ),
@@ -697,6 +707,49 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
             child: Text(_isTransferring ? S.of(context).extracting : _lastActionTitle),
             onPressed: onPressed,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _bottomRenewButtonWidget() {
+    return Visibility(
+      visible: _visible,
+      child: Positioned(
+        bottom: 0,
+        height: _visible?50:0.01,
+        width: MediaQuery.of(context).size.width,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black38,
+                blurRadius: 4.0,
+              ),
+            ],
+          ),
+          child:Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              RaisedButton(
+                textColor: Colors.white,
+                color: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
+                child: Text(_isTransferring ? S.of(context).extracting : _lastActionTitle),
+                onPressed: onPressed,
+              ),
+              RaisedButton(
+                textColor: Colors.white,
+                color: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
+                child: Text(_isTransferring ? "复投中..." : "续约复投"),
+                onPressed: onPressed,
+              )
+            ],
           ),
         ),
       ),

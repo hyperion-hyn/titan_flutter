@@ -7,6 +7,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_product_page_vo.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -114,102 +115,108 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   }
 
   Widget getMap3NodeProductItem(BuildContext context, NodeItem nodeItem) {
-    return Container(
-      color: Colors.white,
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                  border: Border.all(color: Color(0x22B7B7B7), width: 1),
+    return InkWell(
+      onTap: ()=> _pushAction(nodeItem),
+      child: Container(
+        color: Colors.white,
+        margin: const EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                    border: Border.all(color: Color(0x22B7B7B7), width: 1),
+                  ),
+                  child: Image.asset(
+                    "res/drawable/ic_map3_node_item_contract.png",
+                    width: 50,
+                    height: 50,
+                    fit:BoxFit.cover,
+                  ),
                 ),
-                child: Image.asset(
-                  "res/drawable/ic_map3_node_item_contract.png",
-                  width: 50,
-                  height: 50,
-                  fit:BoxFit.cover,
+                SizedBox(
+                  width: 6,
                 ),
-              ),
-              SizedBox(
-                width: 6,
-              ),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 3.0),
-                      child: Row(
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Text(
-                              S.of(context).highest +
-                                  " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
-                                  S.of(context).ten_thousand,
-                              style: TextStyles.textC99000000S13,
-                              maxLines: 1,
-                              softWrap: true),
-                          Text("  |  ", style: TextStyles.textC9b9b9bS12),
-                          Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
+                          Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
                         ],
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                                S.of(context).highest +
+                                    " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
+                                    S.of(context).ten_thousand,
+                                style: TextStyles.textC99000000S13,
+                                maxLines: 1,
+                                softWrap: true),
+                            Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                            Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
+                    Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13)
                   ],
-                ),
-              ),
-              Column(
-                children: <Widget>[
-                  Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
-                  Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13)
-                ],
-              )
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 9, bottom: 9),
-            child: Divider(height: 1, color: DefaultColors.color2277869e),
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(child: Text("")),
-              SizedBox(
-                height: 24,
-                width: 92,
-                child: FlatButton(
-                  color: DefaultColors.colorffdb58,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                  onPressed: () async {
-                    // todo: test_jison_0422
-                    /*Application.router
-                        .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
-                    return;*/
-
-                    var walletList = await WalletUtil.scanWallets();
-                    if (walletList.length == 0) {
-                      Application.router.navigateTo(context, Routes.map3node_create_wallet);
-                    } else {
-                      await Application.router
-                          .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
-                    }
-                  },
-                  child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
-                ),
-              )
-            ],
-          )
-        ],
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 9, bottom: 9),
+              child: Divider(height: 1, color: DefaultColors.color2277869e),
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(child: Text("")),
+                SizedBox(
+                  height: 24,
+                  width: 92,
+                  child: FlatButton(
+                    color: DefaultColors.colorffdb58,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    onPressed: () => _pushAction(nodeItem),
+                    child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
+
+  _pushAction(NodeItem nodeItem) async{
+    // todo: test_jison_0422
+    /*Application.router
+                        .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
+                    return;*/
+
+    var walletList = await WalletUtil.scanWallets();
+    if (walletList.length == 0) {
+      Application.router.navigateTo(context, Routes.map3node_create_wallet);
+    } else {
+      await Application.router
+          .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
+    }
+  }
+
 }
