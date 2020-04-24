@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_confirm_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+
+import 'mnemonic_qrcode_page.dart';
 
 class BackupShowResumeWordPage extends StatefulWidget {
-  Wallet wallet;
-  String mnemonic;
+  final Wallet wallet;
+  final String mnemonic;
 
   BackupShowResumeWordPage(this.wallet, this.mnemonic);
 
@@ -42,6 +46,18 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.white),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                '显示二维码',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => MnemonicQrcodePage(mnemonic: widget.mnemonic)));
+              },
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -66,24 +82,33 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                 SizedBox(
                   height: 8,
                 ),
-                Container(
-                  height: 200,
-                  width: 360,
-                  child: GridView.builder(
+                GridView.builder(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3, mainAxisSpacing: 10.0, crossAxisSpacing: 10.0, childAspectRatio: 3),
-                      itemCount: _resumeWords.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: HexColor("#FFB7B7B7")),
-                                borderRadius: BorderRadius.circular(12)),
-                            child: Text("${index + 1} ${_resumeWords[index]}"));
-                      }),
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3, mainAxisSpacing: 10.0, crossAxisSpacing: 10.0, childAspectRatio: 3),
+                    itemCount: _resumeWords.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: HexColor("#FFB7B7B7")),
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Text("${index + 1} ${_resumeWords[index]}"));
+                    }),
+                Container(
+                  child: InkWell(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: widget.mnemonic));
+                      UiUtil.toast(S.of(context).copyed);
+                    },
+                    child: Text(
+                      S.of(context).copy,
+                      style: TextStyle(color: Colors.blue, fontSize: 14),
+                    ),
+                  ),
+                  padding: EdgeInsets.only(top: 24),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24),
