@@ -30,10 +30,9 @@ import 'package:web3dart/json_rpc.dart';
 
 import 'map3_node_create_contract_page.dart';
 
-
 class Map3NodeSendConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
-  final double transferAmount;
+  final Decimal transferAmount;
   final String receiverAddress;
   final String pageType;
   final String contractId;
@@ -41,8 +40,9 @@ class Map3NodeSendConfirmPage extends StatefulWidget {
   final String region;
   final ContractNodeItem contractNodeItem;
 
-  Map3NodeSendConfirmPage(String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress,
-      this.pageType, this.contractId,{this.provider,this.region})
+  Map3NodeSendConfirmPage(
+      String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress, this.pageType, this.contractId,
+      {this.provider, this.region})
       : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -100,8 +100,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
     var totalGasLimit = EthereumConst.ERC20_TRANSFER_GAS_LIMIT + EthereumConst.CREATE_MAP3_NODE_GAS_LIMIT;
-    var gasEstimate =
-        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
+    var gasEstimate = ConvertTokenUnit.weiToEther(
+        weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
 
     var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
 
@@ -147,7 +147,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                             ),
                           ),
                           Text(
-                            "≈ $quoteSign${WalletUtil.formatPrice(widget.transferAmount * quotePrice)}",
+                            "≈ $quoteSign${WalletUtil.formatPrice(widget.transferAmount.toDouble() * quotePrice)}",
                             style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                           )
                         ],
@@ -263,10 +263,10 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: gasPrice == gasPriceRecommend.safeLow ? Colors.blue : Colors.grey[200],
+                                    color: gasPrice == gasPriceRecommend.safeLow ? Colors.grey : Colors.grey[200],
                                     border: Border(),
-                                    borderRadius:
-                                        BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
                                 child: Column(
                                   children: <Widget>[
                                     Text(
@@ -297,7 +297,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: gasPrice == gasPriceRecommend.average ? Colors.blue : Colors.grey[200],
+                                    color: gasPrice == gasPriceRecommend.average ? Colors.grey : Colors.grey[200],
                                     border: Border(),
                                     borderRadius: BorderRadius.all(Radius.circular(0))),
                                 child: Column(
@@ -330,7 +330,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: gasPrice == gasPriceRecommend.fast ? Colors.blue : Colors.grey[200],
+                                    color: gasPrice == gasPriceRecommend.fast ? Colors.grey : Colors.grey[200],
                                     border: Border(),
                                     borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
@@ -399,7 +399,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   Future _transferNew() async {
     // todo: test_jison_0422
-   /* Application.router.navigateTo(context,
+    /* Application.router.navigateTo(context,
         Routes.map3node_broadcase_success_page +
             "?pageType=${widget.pageType}" +
             "&contractNodeItem=${FluroConvertUtils.object2string(widget.contractNodeItem.toJson())}");
@@ -422,26 +422,26 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
           });
         }
 
-        var startJoin = StartJoinInstance(activatedWallet.wallet.getEthAccount().address,
-            widget.provider,widget.region);
+        var startJoin =
+            StartJoinInstance(activatedWallet.wallet.getEthAccount().address, widget.provider, widget.region);
         //ContractDetailItem _detailItem;
         String resultMsg = "";
         ContractNodeItem contractNodeItem;
-        if(widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-          contractNodeItem = await _nodeApi.startContractInstance(widget.contractNodeItem, activatedWallet, walletPassword, gasPrice.toInt()
-              , widget.contractId, startJoin,widget.transferAmount);
+        if (widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
+          contractNodeItem = await _nodeApi.startContractInstance(widget.contractNodeItem, activatedWallet,
+              walletPassword, gasPrice.toInt(), widget.contractId, startJoin, widget.transferAmount);
           print("creat post result = $resultMsg");
-        }else{
+        } else {
           contractNodeItem = widget.contractNodeItem;
-          resultMsg = await _nodeApi.joinContractInstance(widget.contractNodeItem, activatedWallet, walletPassword, gasPrice.toInt(),
-              widget.contractNodeItem.owner, widget.contractId,widget.transferAmount);
+          resultMsg = await _nodeApi.joinContractInstance(widget.contractNodeItem, activatedWallet, walletPassword,
+              gasPrice.toInt(), widget.contractNodeItem.owner, widget.contractId, widget.transferAmount);
           print("join post result = $resultMsg");
         }
-        Application.router.navigateTo(context,
+        Application.router.navigateTo(
+            context,
             Routes.map3node_broadcase_success_page +
-            "?pageType=${widget.pageType}" +
-            "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}"
-        );
+                "?pageType=${widget.pageType}" +
+                "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
       } catch (_) {
         logger.e(_);
 
@@ -460,7 +460,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
         } else if (_ is RPCError) {
           if (_.errorCode == -32000) {
 //            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
-            Fluttertoast.showToast(msg: _.message,toastLength: Toast.LENGTH_LONG);
+            Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
           } else {
             Fluttertoast.showToast(msg: S.of(context).transfer_fail);
           }
@@ -470,5 +470,4 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
       }
     });
   }
-
 }

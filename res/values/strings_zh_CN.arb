@@ -77,7 +77,7 @@
   "skip": "跳过",
   "Next": "下一页",
   "enter": "进入",
-  "copyed": "已拷贝",
+  "copyed": "复制成功",
   "Clean": "清除痕迹",
   "time": "营业时间",
   "services": "服务",
@@ -427,7 +427,7 @@
   "freeze_balance_reward_direct_push": "•  创建节点需要暂时冻结500U账户余额，用于支付直推人的贡献奖励。直推人及奖励收取节点总收益的5%。",
   "confirm_bug": "确认提交",
   "mortgage_hyn_num": "抵押HYN数量",
-  "mortgage_wallet_balance": "（可用 $balance）",
+  "mortgage_wallet_balance": "（钱包余额 $balance）",
   "mintotal_buy": "最低买入$minTotal",
   "mintotal_hyn": "不能少于${minTotal}HYN",
   "hyn_balance_no_enough": "HYN余额不足",
@@ -436,7 +436,7 @@
   "end_profit_hyn": "期满共产生(HYN)：",
   "spend_manager_hyn": "另付管理费(HYN)：",
   "get_manager_hyn": "另获管理费(HYN)：",
-  "node_contract_detail": "节点抵押合约详情",
+  "node_contract_detail": "节点合约详情",
   "join_map_node_mortgage": "参与Map3节点抵押",
   "create_map_mortgage_contract": "创建Map3抵押合约",
   "ten_thousand_annualizedyield": "万/$annualizedYield",
@@ -574,5 +574,9 @@
   "delegation_full_will_active_hint": "抵押已满，即将启动",
   "expire_date": "期满可提",
   "contract_share_content": "\"${who}\"在${appName}上发现了海伯利安${nodeName}合约，年化奖励去到${annualized}，周期${duration}天，邀请你前往围观！",
-  "reset_input_contract": "重新投入"
+  "reset_input_contract": "重新投入",
+  "reset_output_contract": "重新提取",
+  "contract_launch_fail_please_get_back": "合约启动失败，请申请退款",
+  "mnemonic_qrcode_tip": "这个二维码包含你的助记词",
+  "qrcode": "二维码"
 }

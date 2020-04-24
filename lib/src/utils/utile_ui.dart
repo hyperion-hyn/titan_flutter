@@ -64,7 +64,8 @@ class UiUtil {
     return email.substring(0, 3) + "*" + email.substring(atIconIndex);
   }
 
-  static showDialogWidget(BuildContext context, {Widget title, Widget content, List<Widget> actions}) {
+  // alertView 
+  static void showDialogWidget(BuildContext context, {Widget title, Widget content, List<Widget> actions}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -83,6 +84,48 @@ class UiUtil {
     );
   }
 
+  static void showConfirmDialogWidget(BuildContext context, {Widget content, List<Widget> actions}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Platform.isIOS
+            ? CupertinoAlertDialog(
+          title: Text(S.of(context).tips),
+          content: content,
+          actions: actions,
+        )
+            : AlertDialog(
+          title: content,
+          actions: actions,
+        );
+      },
+    );
+  }
+
+  static void showConfirmDialog(BuildContext context, {String content}) {
+    showConfirmDialogWidget(context,content: Text(content), actions: <Widget>[
+      FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(S
+              .of(context)
+              .confirm))
+    ]);
+  }
+
+  static void showServiceDialog(BuildContext context) {
+    showDialogs(
+        context,
+        S
+            .of(context)
+            .open_location_service, S
+        .of(context)
+        .open_location_service_message, () {
+      openSettingLocation();
+    });
+  }
+
   static void openSettingLocation() {
     if (Platform.isIOS) {
       openAppSettings();
@@ -92,6 +135,53 @@ class UiUtil {
       );
       intent.launch();
     }
+  }
+
+
+  static void  showGoToOpenLocationServiceDialog(BuildContext context) {
+    showDialogWidget(
+      context,
+      title: Text(S.of(context).open_location_service),
+      content: Text(S.of(context).open_location_service_message),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(S.of(context).cancel),
+          onPressed: () => Navigator.pop(context),
+        ),
+        FlatButton(
+          child: Text(S.of(context).setting),
+          onPressed: () {
+            openSettingLocation();
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  static void showDialogs(BuildContext context, String title, String content, Function func) {
+    showDialogWidget(
+      context,
+      title: Text(title),
+      content: Text(content),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(S
+              .of(context)
+              .cancel),
+          onPressed: () => Navigator.pop(context),
+        ),
+        FlatButton(
+          child: Text(S
+              .of(context)
+              .setting),
+          onPressed: () {
+            func();
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
   }
 }
 

@@ -701,7 +701,7 @@
   "freeze_balance_reward_direct_push": "노드를 만들려면 직접 추천인에게 추천장려금을 지불하기 위해 500U 계정 잔액을 일시적으로 동결해야 합니다. 추천장려금은 노드 총 수익의 5 %",
   "confirm_bug": "버그 확인",
   "mortgage_hyn_num": "저당 HYN 수량",
-  "mortgage_wallet_balance": "（지갑HYN잔액 $balance）",
+  "mortgage_wallet_balance": "（钱包余额 $balance）",
   "mintotal_buy": "최소 구매$minTal",
   "mintotal_hyn": "최소 ${minTotal}HYN ",
   "hyn_balance_no_enough": "HYN 잔액 부족",
@@ -844,5 +844,9 @@
   "no_pengding_node_contract_hint": "没有待启动的节点合约\n您可以创建合约",
   "delegation_full_will_active_hint": "抵押已满，即将启动",
   "contract_share_content": "\"${who}\"在${appName}上发现了海伯利安${nodeName}合约，年化奖励去到${annualized}，周期${duration}天，邀请你前往围观！",
-  "reset_input_contract": "重新投入"
+  "reset_input_contract": "重新投入",
+  "reset_output_contract": "重新提取",
+  "contract_launch_fail_please_get_back": "合约启动失败，请申请退款",
+  "mnemonic_qrcode_tip": "这个二维码包含你的助记词",
+  "qrcode": "二维码"
 }

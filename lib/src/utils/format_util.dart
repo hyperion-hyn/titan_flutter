@@ -37,9 +37,12 @@ class FormatUtil {
   }
 
   static String formatDate(int timestamp, {bool isSecond = false}) {
-    var format = isSecond ? "yyyy-MM-dd HH:MM":"yyyy-MM-dd";
+    var format = isSecond ? "yyyy-MM-dd HH:mm":"yyyy-MM-dd";
     timestamp = timestamp * 1000;
-    return DateFormat(format).format(DateTime.fromMillisecondsSinceEpoch(timestamp))??"";
+    var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
+    //print("[format]   timestamp:$timestamp, date:$date");
+
+    return DateFormat(format).format(date)??"";
   }
 
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {

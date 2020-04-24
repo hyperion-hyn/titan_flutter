@@ -340,14 +340,14 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                   }
                   String provider = providerList[selectServerItemValue].id;
                   String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-                  var transferAmount = _joinCoinController?.text.isNotEmpty ? _joinCoinController?.text : "0";
+                  var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
 
                   Application.router.navigateTo(
                       context,
                       Routes.map3node_send_confirm_page +
                           "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                           "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                          "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                          "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
                           "&provider=$provider" +
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +

@@ -68,14 +68,14 @@ class SupportedTokens {
   static const HYN_ROPSTEN = const AssetToken(
       name: 'Hyperion ROPSTEN',
       decimals: 18,
-      contractAddress: '0xb438de1880ee10342f17F52e3D8CAF85Ee0fFD8f',
+      contractAddress: '0xF931A59Ac15C450147b827Cd978A4451ef7a35f1',
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
 
   static const HYN_RINKEBY = const AssetToken(
       name: 'Hyperion RINKEBY',
       decimals: 18,
-      contractAddress: '0xd643dc5aa8caf34295ab3c4cd3c4cc9f6b322b5c',
+      contractAddress: '0x97B9e0EfeF243720FB024C823a39cBD73C25D601',
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
 
@@ -89,9 +89,9 @@ class SupportedTokens {
   static List<AssetToken> allContractTokens(EthereumNetType netType) {
     if (netType == EthereumNetType.main) {
       return [HYN, USDT_ERC20];
-    } else if (netType == EthereumNetType.repsten) {
+    } else if (netType == EthereumNetType.ropsten) {
       return [HYN_ROPSTEN, USDT_ERC20_ROPSTEN];
-    } else if (netType == EthereumNetType.repsten) {
+    } else if (netType == EthereumNetType.rinkeby) {
       return [HYN_RINKEBY];
     } else {
       return [HYN_LOCAL];

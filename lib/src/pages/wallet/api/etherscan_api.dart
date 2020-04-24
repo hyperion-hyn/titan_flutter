@@ -11,7 +11,7 @@ class EtherscanApi {
     switch (WalletConfig.netType) {
       case EthereumNetType.main:
         return Config.ETHERSCAN_API_URL;
-      case EthereumNetType.repsten:
+      case EthereumNetType.ropsten:
         return Config.ETHERSCAN_API_URL_ROPSTEN;
       case EthereumNetType.rinkeby:
         return Config.ETHERSCAN_API_URL_RINKEBY;
@@ -30,7 +30,7 @@ class EtherscanApi {
       } else {
         return "https://etherscan.io";
       }
-    } else if (WalletConfig.netType == EthereumNetType.repsten) {
+    } else if (WalletConfig.netType == EthereumNetType.ropsten) {
       return "https://ropsten.etherscan.io";
     } else if (WalletConfig.netType == EthereumNetType.rinkeby) {
       return "https://rinkeby.etherscan.io";

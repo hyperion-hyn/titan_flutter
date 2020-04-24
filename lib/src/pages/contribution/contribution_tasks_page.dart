@@ -348,8 +348,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     var latlng =
     await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
     if (latlng == null) {
-      _showConfirmDialog(
-        title: S
+      UiUtil.showConfirmDialog(
+        context,
+        content: S
             .of(context)
             .get_poi_fail_please_again,
       );
@@ -498,7 +499,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     //1、检查定位的权限
     //check location service
     if (!(await Permission.location.serviceStatus.isEnabled)) {
-      _showServiceDialog();
+      UiUtil.showServiceDialog(context);
       return false;
     }
 
@@ -533,7 +534,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
       if (!blueAvaiable) {
-        _showDialog(S
+        UiUtil.showDialogs(
+            context,
+            S
             .of(context)
             .open_bluetooth, S
             .of(context)
@@ -552,7 +555,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (Platform.isAndroid) {
       bool wifiAvailable = await TitanPlugin.wifiEnable();
       if (!wifiAvailable) {
-        _showDialog(S
+        UiUtil.showDialogs(
+            context,
+            S
             .of(context)
             .open_wifi, S
             .of(context)
@@ -566,85 +571,5 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     return true;
   }
 
-  Widget _showConfirmDialog({String title}) {
-    _showConfirmDialogWidget(title: Text(title), actions: <Widget>[
-      FlatButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text(S
-              .of(context)
-              .confirm))
-    ]);
-  }
 
-  Widget _showConfirmDialogWidget({Widget title, List<Widget> actions}) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Platform.isIOS
-            ? CupertinoAlertDialog(
-          title: title,
-          actions: actions,
-        )
-            : AlertDialog(
-          title: title,
-          actions: actions,
-        );
-      },
-    );
-  }
-
-  Widget _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Platform.isIOS
-            ? CupertinoAlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        )
-            : AlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        );
-      },
-    );
-  }
-
-  void _showServiceDialog() {
-    _showDialog(S
-        .of(context)
-        .open_location_service, S
-        .of(context)
-        .open_location_service_message, () {
-      UiUtil.openSettingLocation();
-    });
-  }
-
-  void _showDialog(String title, String content, Function func) {
-    _showDialogWidget(
-      title: Text(title),
-      content: Text(content),
-      actions: <Widget>[
-        FlatButton(
-          child: Text(S
-              .of(context)
-              .cancel),
-          onPressed: () => Navigator.pop(context),
-        ),
-        FlatButton(
-          child: Text(S
-              .of(context)
-              .setting),
-          onPressed: () {
-            func();
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    );
-  }
 }

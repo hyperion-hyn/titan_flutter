@@ -220,7 +220,7 @@ class WalletUtil {
           _web3clientMain = WalletUtil._newWeb3Client(WalletConfig.INFURA_MAIN_API);
         }
         return _web3clientMain;
-      case EthereumNetType.repsten:
+      case EthereumNetType.ropsten:
         if (_web3clientRopsten == null) {
           _web3clientRopsten = WalletUtil._newWeb3Client(WalletConfig.INFURA_ROPSTEN_API);
         }
