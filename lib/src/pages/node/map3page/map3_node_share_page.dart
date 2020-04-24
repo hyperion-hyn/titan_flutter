@@ -83,8 +83,15 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
       child: Container(
         decoration: BoxDecoration(
           gradient: new LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [
-            HexColor("#1095b0"),
-            HexColor("#137291"),
+            // titan old:
+//            HexColor("#1095b0"),
+//            HexColor("#137291"),
+          // titan:
+//            HexColor("#1284A1"),
+//            HexColor("#137796"),
+          // starrich
+            HexColor("#DCAE2F"),
+            HexColor("#B08320"),
           ]),
         ),
         child: Column(
@@ -104,7 +111,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
                   ),
                 ),
                 Image.asset(
-                  "res/drawable/ic_map3_node_item_2_big.png",
+                  "res/drawable/ic_map3_node_item_2_big_starrich.png",
                   width: 200,
                   height: 180,
                 ),

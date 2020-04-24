@@ -100,7 +100,8 @@ class ContractNodeItem extends Object {
   double get launcherSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     int timeLeft = expectCancelTime - now;
-    return timeLeft > 0 ? timeLeft : 0;
+    var left = timeLeft > 0 ? timeLeft : 0;
+    return left.toDouble();
   }
 
 //  String get remainDay {
@@ -129,7 +130,8 @@ class ContractNodeItem extends Object {
   double get completeSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     int timeLeft = expectDueTime - now;
-    return timeLeft > 0 ? timeLeft : 0;
+    var left =  timeLeft > 0 ? timeLeft : 0;
+    return left.toDouble();
   }
 
   double get expectDueProgress {
@@ -150,7 +152,7 @@ class ContractNodeItem extends Object {
   ///从启动到中期剩余时间
   double get halfCompleteSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
-    double timeLeft = (expectDueTime - now) / 2;
+    double timeLeft = (expectDueTime - now.toDouble()) / 2;
     return timeLeft > 0 ? timeLeft : 0;
   }
 
