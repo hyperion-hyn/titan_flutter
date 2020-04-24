@@ -81,42 +81,39 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
           child: Column(
             children: <Widget>[
               if (isLoading)
-                SizedBox(
-                    height: 2,
-                    child: progress < 1.0
-                        ? LinearProgressIndicator(value: progress)
-                        : Container()),
+                SizedBox(height: 2, child: progress < 1.0 ? LinearProgressIndicator(value: progress) : Container()),
               Expanded(
                 child: _body(),
               ),
-              Column(
-                children: <Widget>[
-                  Divider(
-                    height: 0,
-                  ),
-                  Container(
-                    height: 48,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        IconButton(
-                          onPressed: onBackPress,
-                          icon: Icon(Icons.chevron_left),
-                          disabledColor: Colors.grey[200],
-                        ),
-                        SizedBox(
-                          width: 40,
-                        ),
-                        IconButton(
-                          onPressed: onForwardPress,
-                          icon: Icon(Icons.chevron_right),
-                          disabledColor: Colors.grey[200],
-                        )
-                      ],
+              if (onBackPress != null && onForwardPress != null)
+                Column(
+                  children: <Widget>[
+                    Divider(
+                      height: 0,
                     ),
-                  ),
-                ],
-              ),
+                    Container(
+                      height: 48,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          IconButton(
+                            onPressed: onBackPress,
+                            icon: Icon(Icons.chevron_left),
+                            disabledColor: Colors.grey[200],
+                          ),
+                          SizedBox(
+                            width: 40,
+                          ),
+                          IconButton(
+                            onPressed: onForwardPress,
+                            icon: Icon(Icons.chevron_right),
+                            disabledColor: Colors.grey[200],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
@@ -125,7 +122,6 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
   }
 
   Widget _body() {
-
     print('[inapp] --> webView, url:${widget.initUrl}');
 
     return InAppWebView(
@@ -134,7 +130,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
       initialOptions: InAppWebViewWidgetOptions(
 //        inAppWebViewOptions: InAppWebViewOptions(
 //        debuggingEnabled: true,)
-      ),
+          ),
       onWebViewCreated: (InAppWebViewController controller) {
         webView = controller;
       },
@@ -180,21 +176,16 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
       onForwardPress = null;
     }
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 
-
   void _shareQr(BuildContext context) async {
-
     if (webView != null) {
       webView.takeScreenshot().then((imageByte) async {
         var len = imageByte.lengthInBytes;
         debugPrint("screenshot taken bytes $len");
 
-        await Share.file(
-            S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+        await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
       });
     }
   }
