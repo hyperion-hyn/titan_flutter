@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -427,6 +428,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 //        Routes.popUntilCachedEntryRouteName(context, true);
       } catch (_) {
         logger.e(_);
+        FlutterBugly.uploadException(message: _.message, detail: _.data?.toString() ?? _.message);
         setState(() {
           isTransferring = false;
         });
