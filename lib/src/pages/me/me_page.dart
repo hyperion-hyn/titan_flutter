@@ -94,8 +94,10 @@ class _MeState extends BaseState<MePage> with RouteAware {
               height: 0,
             ),
             _buildWalletSection(),
-//            _dividerView(isBottom: true),
-//            _buildContractSection(),
+            // todo: test_jison_0424
+            _dividerView(isBottom: true),
+            _buildContractSection(),
+
             _dividerView(isBottom: true),
             _buildSettingSection(),
             _dividerView(),
