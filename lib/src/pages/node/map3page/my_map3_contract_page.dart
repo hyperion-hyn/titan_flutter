@@ -23,6 +23,7 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
 class MyMap3ContractPage extends StatefulWidget {
   final String title;
+
   MyMap3ContractPage(this.title);
 
   @override
@@ -42,7 +43,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -99,14 +99,12 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: _pageWidget(context),
     );
   }
 
-  
   Widget _buildInfoItem(ContractNodeItem contractNodeItem) {
     String address = shortBlockChainAddress(contractNodeItem.owner);
     var dateDesc = "";
@@ -122,14 +120,15 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         break;
 
       case ContractState.PENDING:
-        dateDesc = S.of(context).remain_day(contractNodeItem.remainDay);
+        dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
         amountPre = S.of(context).remain;
         amount = FormatUtil.amountToString(contractNodeItem.remainDelegation);
         hyn = "HYN";
         break;
 
       case ContractState.ACTIVE:
-        dateDesc = S.of(context).remain_day(contractNodeItem.expectDueDay);
+//        dateDesc = S.of(context).remain_day(contractNodeItem.expectDueDay);
+        dateDesc = FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft.toDouble());
         break;
 
       case ContractState.DUE:
@@ -153,35 +152,31 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         break;
     }
 
-
     return InkWell(
-      onTap: (){
+      onTap: () {
         _pushDetailAction(contractNodeItem);
       },
       child: Container(
         color: Colors.white,
         child: Padding(
-          padding:
-          const EdgeInsets.only(left: 20.0, right: 13, top: 7, bottom: 7),
+          padding: const EdgeInsets.only(left: 20.0, right: 13, top: 7, bottom: 7),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  Text("${contractNodeItem.ownerName}",
-                      style: TextStyles.textCcc000000S14),
-                  Expanded(
-                      child: Text(" $address",
-                          style: TextStyles.textC9b9b9bS12)),
-                  Text(dateDesc,
+                  Text("${contractNodeItem.ownerName}", style: TextStyles.textCcc000000S14),
+                  Expanded(child: Text(" $address", style: TextStyles.textC9b9b9bS12)),
+                  Text(
+                    dateDesc,
                     style: TextStyle(fontSize: 12, color: Map3NodeUtil.stateColor(state)),
                   )
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top:8,bottom: 16),
-                child: Divider(height: 1,color: DefaultColors.color2277869e),
+                padding: const EdgeInsets.only(top: 8, bottom: 16),
+                child: Divider(height: 1, color: DefaultColors.color2277869e),
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,10 +190,12 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                       "res/drawable/ic_map3_node_item_contract.png",
                       width: 42,
                       height: 42,
-                      fit:BoxFit.cover,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(width: 6,),
+                  SizedBox(
+                    width: 6,
+                  ),
                   Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,52 +204,53 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
                             Expanded(
-                                child: Text("${contractNodeItem.contract.nodeName}",
-                                    style: TextStyles.textCcc000000S14))
+                                child:
+                                    Text("${contractNodeItem.contract.nodeName}", style: TextStyles.textCcc000000S14))
                           ],
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 3.0),
                           child: Row(
                             children: <Widget>[
-                              Text(S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" + S.of(context).ten_thousand,
-                                  style: TextStyles.textC99000000S10,maxLines:1,softWrap: true),
-                              Text("  |  ",style: TextStyles.textC9b9b9bS12),
-                              Text(S.of(context).n_day(contractNodeItem.contract.duration.toString()),style: TextStyles.textC99000000S10)
+                              Text(
+                                  S.of(context).highest +
+                                      " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" +
+                                      S.of(context).ten_thousand,
+                                  style: TextStyles.textC99000000S10,
+                                  maxLines: 1,
+                                  softWrap: true),
+                              Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                              Text(S.of(context).n_day(contractNodeItem.contract.duration.toString()),
+                                  style: TextStyles.textC99000000S10)
                             ],
                           ),
                         ),
-                        Text("${FormatUtil.formatDate(contractNodeItem.instanceStartTime)}", style: TextStyles.textCfffS12),
+                        Text("${FormatUtil.formatDate(contractNodeItem.instanceStartTime)}",
+                            style: TextStyles.textCfffS12),
                       ],
                     ),
                   ),
                   Column(
                     children: <Widget>[
-                      Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}", style: TextStyles.textCff4c3bS18),
+                      Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}",
+                          style: TextStyles.textCff4c3bS18),
                       Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S10)
                     ],
                   )
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top:9,bottom: 9),
-                child: Divider(height: 1,color: DefaultColors.color2277869e),
+                padding: const EdgeInsets.only(top: 9, bottom: 9),
+                child: Divider(height: 1, color: DefaultColors.color2277869e),
               ),
               Row(
                 children: <Widget>[
                   Expanded(
                     child: RichText(
-                      text: TextSpan(
-                          text: amountPre,
-                          style: TextStyles.textC9b9b9bS12,
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: amount,
-                                style: TextStyles.textC7c5b00S12),
-                            TextSpan(
-                                text: hyn,
-                                style: TextStyles.textC9b9b9bS12),
-                          ]),
+                      text: TextSpan(text: amountPre, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
+                        TextSpan(text: amount, style: TextStyles.textC7c5b00S12),
+                        TextSpan(text: hyn, style: TextStyles.textC9b9b9bS12),
+                      ]),
                     ),
                   ),
                   SizedBox(
@@ -260,10 +258,9 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
                     width: 84,
                     child: FlatButton(
                       color: DefaultColors.colorffdb58,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(28)),
-                      onPressed: (){
-_pushDetailAction(contractNodeItem);
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                      onPressed: () {
+                        _pushDetailAction(contractNodeItem);
                       },
                       child: Text(S.of(context).view_contract, style: TextStyles.textC906b00S13),
                     ),
@@ -279,14 +276,15 @@ _pushDetailAction(contractNodeItem);
 
   _pushDetailAction(ContractNodeItem contractNodeItem) {
     var currentRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?entryRouteName=$currentRouteName&contractId=${contractNodeItem.id}");
+    Application.router.navigateTo(context,
+        Routes.map3node_contract_detail_page + "?entryRouteName=$currentRouteName&contractId=${contractNodeItem.id}");
   }
 
   _loadMoreData() async {
     List<ContractNodeItem> dataList = [];
     if (widget.title.contains(S.of(context).launch)) {
       List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);
-      dataList  = createContractList;
+      dataList = createContractList;
     } else {
       List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(page: _currentPage);
       dataList = joinContractList;
@@ -304,7 +302,6 @@ _pushDetailAction(contractNodeItem);
     }
 
     print('[map3] _loadMoreData, list.length:${dataList.length}');
-
   }
 
   _loadData() async {
@@ -314,7 +311,7 @@ _pushDetailAction(contractNodeItem);
       List<ContractNodeItem> dataList = [];
       if (widget.title.contains(S.of(context).launch)) {
         List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
-        dataList  = createContractList;
+        dataList = createContractList;
       } else {
         List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
         dataList = joinContractList;
@@ -323,7 +320,7 @@ _pushDetailAction(contractNodeItem);
       if (dataList.length == 0) {
         loadDataBloc.add(LoadEmptyEvent());
       } else {
-        _currentPage ++;
+        _currentPage++;
         loadDataBloc.add(RefreshSuccessEvent());
 
         setState(() {
@@ -339,11 +336,9 @@ _pushDetailAction(contractNodeItem);
         });
       });
     } catch (e) {
-
       setState(() {
         _currentState = all_page_state.LoadFailState();
       });
     }
   }
-
 }

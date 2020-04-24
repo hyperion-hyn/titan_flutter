@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
 import '../../../global.dart';
@@ -91,7 +92,7 @@ class RoutePanelState extends State<RoutePanel> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        timeString(context, duration),
+                        FormatUtil.timeString(context, duration),
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
@@ -186,40 +187,6 @@ class RoutePanelState extends State<RoutePanel> {
         ),
       ),
     );
-  }
-
-  String timeString(BuildContext context, double seconds) {
-    if (seconds < 60) {
-      return S.of(context).less_than_1_min;
-    }
-    final kDay = 3600 * 24;
-    final kHour = 3600;
-    final kMinute = 60;
-    int day = 0;
-    int hour = 0;
-    int minute = 0;
-    if (seconds > kDay) {
-      day = seconds ~/ kDay;
-      seconds = seconds - day * kDay;
-    }
-    if (seconds > kHour) {
-      hour = seconds ~/ kHour;
-      seconds = seconds - hour * kHour;
-    }
-    minute = seconds ~/ kMinute;
-    seconds = seconds - minute * kMinute;
-
-    var timeStr = '';
-    if (day > 0) {
-      timeStr += S.of(context).n_day('$day');
-    }
-    if (hour > 0) {
-      timeStr += S.of(context).n_hour('$hour');
-    }
-    if (minute > 0) {
-      timeStr += S.of(context).n_minute('$minute');
-    }
-    return timeStr;
   }
 
   String distanceString(BuildContext context, double distance) {

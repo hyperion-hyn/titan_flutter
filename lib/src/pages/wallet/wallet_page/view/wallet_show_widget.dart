@@ -120,14 +120,13 @@ class ShowWalletView extends StatelessWidget {
               },
               itemCount: walletVo.coins.length,
             ),
-            if (env.buildType == BuildType.DEV)
-              _testWalletView(context),
+            if (env.buildType == BuildType.DEV) _testWalletView(context),
           ]),
     );
   }
 
   Widget _testWalletView(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: <Widget>[
@@ -135,9 +134,10 @@ class ShowWalletView extends StatelessWidget {
             child: Text('-测试申请0.05ETH'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
+              if (time - _lastRequestCoinTime < 60 * 1000) {
+                //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return ;
+                return;
               }
               var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
@@ -146,19 +146,24 @@ class ShowWalletView extends StatelessWidget {
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05);
-                var txHash = await client.sendTransaction(
-                  credentials,
-                  Transaction(
-                    to: EthereumAddress.fromHex(toAddress),
-                    value: EtherAmount.inWei(amount),
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
-                  ),
-                  fetchChainIdFromNetworkId: true,
-                );
-                _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
-                logger.i('has is $txHash');
-                UiUtil.toast('-申请ETH成功,请等待2-5分钟');
+                try {
+                  var txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction(
+                      to: EthereumAddress.fromHex(toAddress),
+                      value: EtherAmount.inWei(amount),
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
+                  logger.i('has is $txHash');
+                  UiUtil.toast('-申请ETH成功,请等待2-5分钟');
+                } catch (e) {
+                  logger.e(e);
+                  UiUtil.toast(e.message);
+                }
               }
             },
           ),
@@ -166,9 +171,10 @@ class ShowWalletView extends StatelessWidget {
             child: Text('-测试申请20万HYN'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
+              if (time - _lastRequestCoinTime < 60 * 1000) {
+                //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return ;
+                return;
               }
               var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
@@ -179,21 +185,26 @@ class ShowWalletView extends StatelessWidget {
 
                 var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
                 var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 200000); //二十万
-                var txHash = await client.sendTransaction(
-                  credentials,
-                  Transaction.callContract(
-                    contract: hynErc20Contract,
-                    function: hynErc20Contract.function('transfer'),
-                    parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
-                  ),
-                  fetchChainIdFromNetworkId: true,
-                );
-                logger.i('has is $txHash');
+                try {
+                  var txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction.callContract(
+                      contract: hynErc20Contract,
+                      function: hynErc20Contract.function('transfer'),
+                      parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  logger.i('has is $txHash');
 
-                _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
-                UiUtil.toast('-申请HYN成功, 请等待2-5分钟');
+                  _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
+                  UiUtil.toast('-申请HYN成功, 请等待2-5分钟');
+                } catch (e) {
+                  logger.e(e);
+                  UiUtil.toast(e.message);
+                }
               }
             },
           ),
@@ -201,9 +212,10 @@ class ShowWalletView extends StatelessWidget {
             child: Text('-测试申请100USDT'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
+              if (time - _lastRequestCoinTime < 60 * 1000) {
+                //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return ;
+                return;
               }
               var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
@@ -214,21 +226,26 @@ class ShowWalletView extends StatelessWidget {
 
                 var erc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.usdtContractAddress);
                 var amount = ConvertTokenUnit.numToWei(100, SupportedTokens.USDT_ERC20_ROPSTEN.decimals);
-                var txHash = await client.sendTransaction(
-                  credentials,
-                  Transaction.callContract(
-                    contract: erc20Contract,
-                    function: erc20Contract.function('transfer'),
-                    parameters: [EthereumAddress.fromHex(toAddress), amount],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
-                  ),
-                  fetchChainIdFromNetworkId: true,
-                );
-                logger.i('has is $txHash');
+                try {
+                  var txHash = await client.sendTransaction(
+                    credentials,
+                    Transaction.callContract(
+                      contract: erc20Contract,
+                      function: erc20Contract.function('transfer'),
+                      parameters: [EthereumAddress.fromHex(toAddress), amount],
+                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
+                    ),
+                    fetchChainIdFromNetworkId: true,
+                  );
+                  logger.i('has is $txHash');
 
-                _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
-                UiUtil.toast('-申请USDT成功, 请等待2-5分钟');
+                  _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
+                  UiUtil.toast('-申请USDT成功, 请等待2-5分钟');
+                } catch (e) {
+                  logger.e(e);
+                  UiUtil.toast(e.message);
+                }
               }
             },
           ),

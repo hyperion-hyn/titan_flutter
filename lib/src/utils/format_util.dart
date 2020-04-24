@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/i18n.dart';
 import 'dart:convert';
 
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
@@ -70,5 +72,39 @@ class FormatUtil {
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo) {
     return NumberFormat("#,###,###.######").format(double.parse(coinBalanceHumanRead(coinVo)));
+  }
+
+  static String timeString(BuildContext context, double seconds) {
+    if (seconds < 60) {
+      return S.of(context).less_than_1_min;
+    }
+    final kDay = 3600 * 24;
+    final kHour = 3600;
+    final kMinute = 60;
+    int day = 0;
+    int hour = 0;
+    int minute = 0;
+    if (seconds > kDay) {
+      day = seconds ~/ kDay;
+      seconds = seconds - day * kDay;
+    }
+    if (seconds > kHour) {
+      hour = seconds ~/ kHour;
+      seconds = seconds - hour * kHour;
+    }
+    minute = seconds ~/ kMinute;
+    seconds = seconds - minute * kMinute;
+
+    var timeStr = '';
+    if (day > 0) {
+      timeStr += S.of(context).n_day('$day');
+    }
+    if (hour > 0) {
+      timeStr += S.of(context).n_hour('$hour');
+    }
+    if (minute > 0) {
+      timeStr += S.of(context).n_minute('$minute');
+    }
+    return timeStr;
   }
 }

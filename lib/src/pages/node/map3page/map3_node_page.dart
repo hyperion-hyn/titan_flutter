@@ -314,7 +314,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                 Expanded(
                     child:
                         Text(" ${UiUtil.shortEthAddress(contractNodeItem.owner)}", style: TextStyles.textC9b9b9bS12)),
-                Text(S.of(context).remain_day_has_colon(contractNodeItem.remainDay), style: TextStyles.textC9b9b9bS12)
+                Text(S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft), style: TextStyles.textC9b9b9bS12)
               ],
             ),
             Padding(
