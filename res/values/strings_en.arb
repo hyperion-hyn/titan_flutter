@@ -852,5 +852,6 @@
   "contract_launch_fail_please_get_back": "合约启动失败，请申请退款",
   "mnemonic_qrcode_tip": "这个二维码包含你的助记词",
   "qrcode": "二维码",
-  "time_left": "剩余"
+  "time_left": "剩余",
+  "delegation_amount_full": "抵押已满"
 }

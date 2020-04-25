@@ -400,6 +400,7 @@ class _Map3NodeState extends State<Map3NodePage> {
             ),
             Row(
               children: <Widget>[
+                (int.parse(contractNodeItem.remainDelegation) > 0)?
                 Expanded(
                   child: RichText(
                     text: TextSpan(text: S.of(context).remain, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
@@ -407,6 +408,12 @@ class _Map3NodeState extends State<Map3NodePage> {
                           text: "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
                           style: TextStyles.textC7c5b00S12),
                       TextSpan(text: "HYN", style: TextStyles.textC9b9b9bS12),
+                    ]),
+                  ),
+                ):Expanded(
+                  child: RichText(
+                    text: TextSpan(text: S.of(context).delegation_amount_full, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
+                      
                     ]),
                   ),
                 ),

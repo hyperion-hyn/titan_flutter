@@ -99,15 +99,21 @@ var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
 });
 
 var backUpMnemoicNoticeForCreation = Handler(handlerFunc: (context, params) {
-  return CreateWalletBackupNoticePage(params['walletName']?.first, params['password']?.first);
+  var walletName = params['walletName']?.first != null
+      ? FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first)
+      : 'MyWallet';
+  return CreateWalletBackupNoticePage(walletName, params['password']?.first);
 });
 
 var showResumeWordForCreation = Handler(handlerFunc: (context, params) {
-  return ShowResumeWordPage(params['walletName']?.first, params['password']?.first);
+  var walletName = params['walletName']?.first != null
+      ? FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first)
+      : 'MyWallet';
+  return ShowResumeWordPage(walletName, params['password']?.first);
 });
 
 var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
-  return ConfirmResumeWordPage(params['mnemonic']?.first, params['walletName']?.first, params['password']?.first);
+  return ConfirmResumeWordPage(params['mnemonic']?.first, FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first), params['password']?.first);
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
@@ -148,8 +154,6 @@ var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  print("[dd] Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
-
   return Map3NodeJoinContractPage(params['contractId']?.first);
 });
 
@@ -174,9 +178,8 @@ var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   ContractNodeItem contractNodeItem;
   var item = params['contractNodeItem']?.first;
-  if(item != null ) {
-    contractNodeItem =
-        ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
+  if (item != null) {
+    contractNodeItem = ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
   }
   return Map3NodeBroadcaseSuccessPage(
     params['pageType']?.first,
