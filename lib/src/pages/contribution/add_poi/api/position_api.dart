@@ -73,9 +73,9 @@ class PositionApi {
 
   Future<String> getCompressPath(String imagePath) async {
     ImageProperties properties = await FlutterNativeImage.getImageProperties(imagePath);
-    File compressedFile = await FlutterNativeImage.compressImage(imagePath, quality: 80,
-        targetWidth: 600,
-        targetHeight: (properties.height * 600 / properties.width).round());
+    File compressedFile = await FlutterNativeImage.compressImage(imagePath, quality: 90,
+        targetWidth: 1000,
+        targetHeight: (properties.height * 1000 / properties.width).round());
     return compressedFile.path;
   }
 
