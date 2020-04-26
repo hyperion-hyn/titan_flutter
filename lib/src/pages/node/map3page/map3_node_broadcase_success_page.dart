@@ -13,6 +13,7 @@ import 'map3_node_create_contract_page.dart';
 class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
   final String pageType;
   final ContractNodeItem contractNodeItem;
+
   Map3NodeBroadcaseSuccessPage(this.pageType, {this.contractNodeItem});
 
   @override
@@ -41,8 +42,8 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(50.0),
                   child: Container(
-                    width: 240,
-                    height: 180,
+                    height: 76,
+                    width: 124,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4.0),
                       child: Image.asset(
@@ -56,7 +57,10 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 Container(
                   width: 250,
                   child: Text(
-                    S.of(context).map_node_broadcase_success_description(pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE ? S.of(context).create : S.of(context).join),
+                    S.of(context).map_node_broadcase_success_description(
+                        pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE
+                            ? S.of(context).create
+                            : S.of(context).join),
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -92,18 +96,13 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                         ),
                       ),*/
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 16, horizontal: 48),
+                        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 48),
                         child: Container(
                           constraints: BoxConstraints.expand(height: 48),
                           child: FlatButton(
-                            color: DefaultColors.color26ac29,
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    color: DefaultColors.color26ac29),
-                                borderRadius: BorderRadius.circular(36)),
+                            color: Theme.of(context).primaryColor,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
-
                               _pop(context);
 
                               //Routes.popUntilCachedEntryRouteName(context);
@@ -115,12 +114,10 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                             },
                             child: Container(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 40.0, vertical: 12.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                                 child: Text(
                                   S.of(context).finish,
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
+                                  style: TextStyle(fontSize: 16, color: Colors.white),
                                 ),
                               ),
                             ),
@@ -137,7 +134,6 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
   }
 
   void _pop(BuildContext context) {
-
     //print("[pop] this.pageType:${this.pageType}, Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
 
     // todo: test_jison_0422
@@ -155,7 +151,5 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
         Routes.popUntilCachedEntryRouteName(context, true);
         break;
     }
-
   }
-
 }
