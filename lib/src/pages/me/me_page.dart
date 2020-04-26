@@ -1,3 +1,4 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/i18n.dart';
@@ -26,6 +27,7 @@ import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
@@ -142,7 +144,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
     return Stack(
       children: <Widget>[
         Container(
-          height: 230,
+          height: 234,
           decoration: BoxDecoration(
               gradient: LinearGradient(
             colors: [HexColor('#CC941E'), HexColor('#E4B042'), HexColor('#FBE6BD')],
@@ -191,6 +193,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
                           "${shortEmail(userInfo?.email)}",
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
+                        SizedBox(height: 7,),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => GradePage()));
@@ -218,46 +221,83 @@ class _MeState extends BaseState<MePage> with RouteAware {
                   ),
                   Spacer(),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      GestureDetector(
-                        child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                color: HexColor('#F2C345'),
-                                borderRadius: BorderRadius.circular(16),
-                                //border: Border.all(color: Theme.of(context).primaryColor),
-                                shape: BoxShape.rectangle),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                              child: Row(
-                                children: <Widget>[
-                                  Icon(
-                                    ExtendsIconFont.checkbox_outline,
-                                    color: Colors.white,
-                                    size: 14,
-                                  ),
-                                  Text(
-                                    (checkInModel?.finishTaskNum ?? 0) >= 3
-                                        ? S.of(context).check_in_completed
-                                        : S.of(context).task,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
+                      InkWell(
+                          onTap: () async {
+                            String scanStr = await BarcodeScanner.scan();
+                            print("indexInt= $scanStr");
+                            if(scanStr == null){
+                              return;
+                            }else if(scanStr.contains("share?id=")){
+                              int indexInt = scanStr.indexOf("=");
+                              String contractId = scanStr.substring(indexInt+1,indexInt+2);
+                              Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+                            }else if(scanStr.contains("http") || scanStr.contains("https")){
+                              scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
+                              Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
+                            }else{
+//                              Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
+                            }
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                ExtendsIconFont.qrcode_scan,
+                                color: Colors.white,
                               ),
-                            )),
-                        onTap: _doTask,
+                              Padding(
+                                padding: const EdgeInsets.only(left:3.0),
+                                child: Text("扫一扫",style: TextStyle(fontSize: 14,color: Colors.white),),
+                              )
+                            ],
+                          )
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Text(
-                          "${checkInModel?.finishTaskNum ?? 0}/3",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
+                      SizedBox(height: 7,),
+                      Row(
+                        children: <Widget>[
+                          GestureDetector(
+                            child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: HexColor('#F2C345'),
+                                    borderRadius: BorderRadius.circular(16),
+                                    //border: Border.all(color: Theme.of(context).primaryColor),
+                                    shape: BoxShape.rectangle),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        ExtendsIconFont.checkbox_outline,
+                                        color: Colors.white,
+                                        size: 14,
+                                      ),
+                                      Text(
+                                        (checkInModel?.finishTaskNum ?? 0) >= 3
+                                            ? S.of(context).check_in_completed
+                                            : S.of(context).task,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                            onTap: _doTask,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Text(
+                              "${checkInModel?.finishTaskNum ?? 0}/3",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        ],
+                      ),
+
                     ],
                   )
                 ],
