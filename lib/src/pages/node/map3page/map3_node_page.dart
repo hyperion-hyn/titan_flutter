@@ -9,6 +9,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -291,14 +292,16 @@ class _Map3NodeState extends State<Map3NodePage> {
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
     await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
     final result = ModalRoute.of(context).settings?.arguments;
-    //print("[detail] -----> back, _broadcaseContractAction, result:$result");
-
+    print("[detail] -----> back, _broadcaseContractAction, result:$result");
+     // 记得清理
     if (result != null && result is Map) {
 
       var item = result["result"];
       if (item is ContractNodeItem) {
         _pushContractDetail(item);
       }
+
+      result["result"] = null;
     }
   }
 
@@ -317,6 +320,19 @@ class _Map3NodeState extends State<Map3NodePage> {
 Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
   if (contractNodeItem == null) return Container();
   var dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
+  var state = enumContractStateFromString(contractNodeItem.state);
+  var suff = "";
+  var fullDesc = "";
+
+  if (state.index < ContractState.ACTIVE.index) {
+    suff = "启动";
+    fullDesc = S.of(context).delegation_amount_full;
+  } else if (state.index >= ContractState.ACTIVE.index && state.index < ContractState.DUE.index) {
+    dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft);
+    suff = "到期";
+  }
+  dateDesc += suff;
+
 
   return Container(
     decoration: BoxDecoration(
@@ -455,7 +471,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                 ),
               ):Expanded(
                 child: RichText(
-                  text: TextSpan(text: S.of(context).delegation_amount_full, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
+                  text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
 
                   ]),
                 ),

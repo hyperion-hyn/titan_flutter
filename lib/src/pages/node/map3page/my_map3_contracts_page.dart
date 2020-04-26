@@ -43,11 +43,14 @@ class _MyContractsState extends State<MyContractsPage> with TickerProviderStateM
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    _contractTypeModels = [
-      MyContractModel(S.of(context).my_initiated_map_contract, MyContractType.create),
-      MyContractModel(S.of(context).my_join_map_contract, MyContractType.join)
-    ];
-    _tabController = TabController(length: _contractTypeModels.length, vsync: this);
+    if (_contractTypeModels?.isEmpty??true) {
+      _contractTypeModels = [
+        MyContractModel(S.of(context).my_initiated_map_contract, MyContractType.create),
+        MyContractModel(S.of(context).my_join_map_contract, MyContractType.join)
+      ];
+      _tabController = TabController(length: _contractTypeModels.length, vsync: this);
+    }
+
   }
 
   @override
@@ -190,7 +193,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         onLoadingMore: _loadMoreData,
         child: ListView.separated(
             itemBuilder: (context, index) {
-              return _buildInfoItem(_dataArray[index]);
+              return getMap3NodeWaitItem(context, _dataArray[index]);
             },
             separatorBuilder: (context, index) {
               return Container(
@@ -214,177 +217,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );*/
   }
 
-
-  Widget _buildInfoItem(ContractNodeItem contractNodeItem) {
-    return getMap3NodeWaitItem(context, contractNodeItem);
-
-    String address = shortBlockChainAddress(contractNodeItem.owner);
-    var dateDesc = "";
-    var amountPre = "";
-    var amount = "";
-    var hyn = "";
-    var state = enumContractStateFromString(contractNodeItem.state);
-    //print('[contract] _buildInfoItem, stateString:${contractNodeItem.state},state:$state');
-
-    switch (state) {
-      case ContractState.PRE_CREATE:
-        dateDesc = S.of(context).task_pending;
-        break;
-
-      case ContractState.PENDING:
-        dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
-        amountPre = S.of(context).remain;
-        amount = FormatUtil.amountToString(contractNodeItem.remainDelegation);
-        hyn = "HYN";
-        break;
-
-      case ContractState.ACTIVE:
-        dateDesc = FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft.toDouble());
-        break;
-
-      case ContractState.DUE:
-        dateDesc = S.of(context).be_expired;
-        break;
-
-      case ContractState.CANCELLED:
-      case ContractState.FAIL:
-        dateDesc = S.of(context).overdue_start_failed;
-        break;
-
-      case ContractState.DUE_COMPLETED:
-        dateDesc = S.of(context).be_expired;
-        break;
-
-      case ContractState.CANCELLED_COMPLETED:
-        dateDesc = S.of(context).overdue_start_failed;
-        break;
-
-      default:
-        break;
-    }
-
-
-    return InkWell(
-      onTap: (){
-        _pushDetailAction(contractNodeItem);
-      },
-      child: Container(
-        color: Colors.white,
-        child: Padding(
-          padding:
-          const EdgeInsets.only(left: 20.0, right: 13, top: 7, bottom: 7),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Text("${contractNodeItem.ownerName}",
-                      style: TextStyles.textCcc000000S14),
-                  Expanded(
-                      child: Text(" $address",
-                          style: TextStyles.textC9b9b9bS12)),
-                  Text(dateDesc,
-                    style: TextStyle(fontSize: 12, color: Map3NodeUtil.stateColor(state)),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top:8,bottom: 16),
-                child: Divider(height: 1,color: DefaultColors.color2277869e),
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Image.asset(
-                    "res/drawable/ic_map3_node_item_contract.png",
-                    width: 42,
-                    height: 42,
-                    fit:BoxFit.cover,
-                  ),
-                  SizedBox(width: 6,),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Expanded(
-                                child: Text("${contractNodeItem.contract.nodeName}",
-                                    style: TextStyles.textCcc000000S14))
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3.0),
-                          child: Row(
-                            children: <Widget>[
-                              Text(S.of(context).highest + " ${FormatUtil.formatTenThousandNoUnit(contractNodeItem.contract.minTotalDelegation)}" + S.of(context).ten_thousand,
-                                  style: TextStyles.textC99000000S10,maxLines:1,softWrap: true),
-                              Text("  |  ",style: TextStyles.textC9b9b9bS12),
-                              Text(S.of(context).n_day(contractNodeItem.contract.duration.toString()),style: TextStyles.textC99000000S10)
-                            ],
-                          ),
-                        ),
-                        Text("${FormatUtil.formatDate(contractNodeItem.instanceStartTime)}", style: TextStyles.textCfffS12),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    children: <Widget>[
-                      Text("${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}", style: TextStyles.textCff4c3bS18),
-                      Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S10)
-                    ],
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top:9,bottom: 9),
-                child: Divider(height: 1,color: DefaultColors.color2277869e),
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                          text: amountPre,
-                          style: TextStyles.textC9b9b9bS12,
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: amount,
-                                style: TextStyles.textC7c5b00S12),
-                            TextSpan(
-                                text: hyn,
-                                style: TextStyles.textC9b9b9bS12),
-                          ]),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 28,
-                    width: 84,
-                    child: FlatButton(
-                      color: DefaultColors.colorffdb58,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(28)),
-                      onPressed: (){
-_pushDetailAction(contractNodeItem);
-                      },
-                      child: Text(S.of(context).view_contract, style: TextStyles.textC906b00S13),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  _pushDetailAction(ContractNodeItem contractNodeItem) {
-    var currentRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?entryRouteName=$currentRouteName&contractId=${contractNodeItem.id}");
-  }
 
   _loadMoreData() async {
     List<ContractNodeItem> dataList = [];
