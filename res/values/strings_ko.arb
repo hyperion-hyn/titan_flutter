@@ -826,6 +826,8 @@
   "contract_had_stop": "合约已结束",
   "contract_had_expired": "合约已到期",
   "create_contract_only_one_hint": "• 一个钱包有且只能创建一个Map3节点抵押合约。合约到期后可再创建一个。",
+  "join_map3_level_min": "• 等级必须大于等于${levelName}才能创建合约。",
+  "referrer_reward_tip": "• 节点合约期满后，你需要给直推人合约总收益的5%作为他的推荐奖励。",
   "contract_running": "合约运行中",
   "check_is_create_contract_hint": "你已有一个创建合约的请求正处理中",
   "happy_get_half_reward_hint": "恭喜你获得一半奖励",

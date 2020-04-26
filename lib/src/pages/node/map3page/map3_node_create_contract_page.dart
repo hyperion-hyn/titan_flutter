@@ -297,10 +297,14 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
+                  Text(S.of(context).join_map3_level_min(levelName), style: TextStyles.textC999S12),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text("·  等级必须大于等于$levelName才能创建合约。", style: TextStyles.textC999S12),
+                    child: Text(S.of(context).referrer_reward_tip, style: TextStyles.textC999S12),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
