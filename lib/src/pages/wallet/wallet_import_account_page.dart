@@ -1,9 +1,13 @@
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/validator_util.dart';
@@ -18,7 +22,7 @@ class ImportAccountPage extends StatefulWidget {
   }
 }
 
-class _ImportAccountState extends State<ImportAccountPage> {
+class _ImportAccountState extends BaseState<ImportAccountPage> {
   TextEditingController _mnemonicController = TextEditingController(text: "");
 
   TextEditingController _walletNameController = TextEditingController();
@@ -26,6 +30,12 @@ class _ImportAccountState extends State<ImportAccountPage> {
   TextEditingController _walletConfimPasswordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void onCreated() async {
+    await availableRScanCameras();
+    super.onCreated();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +64,43 @@ class _ImportAccountState extends State<ImportAccountPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   ExtendsIconFont.qrcode_scan,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () async {
+                var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
+                List<Asset> resultList = await MultiImagePicker.pickImages(
+                  maxImages: 1,
+                  enableCamera: true,
+//                  selectedAssets: images,
+                  cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+                  materialOptions: MaterialOptions(
+                    actionBarColor: themeColor,
+                    actionBarTitle: "选择二维码图片",
+                    allViewTitle: "All Photos",
+                    useDetailsView: false,
+                    selectCircleStrokeColor: "#ffffff",
+                  ),
+                );
+                if(resultList.length > 0){
+                  var filePath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
+                  RScanResult mnemonicWords = await RScan.scanImagePath(filePath);
+//                  String mnemonicWords = await BarcodeScanner.scan();
+                  if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
+                    Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                    return;
+                  } else {
+                    _mnemonicController.text = mnemonicWords.message;
+                  }
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.image,
+                  size: 30,
                   color: Colors.white,
                 ),
               ),
