@@ -41,8 +41,8 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(50.0),
                   child: Container(
-                    width: 240,
-                    height: 180,
+                    height: 76,
+                    width: 124,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4.0),
                       child: Image.asset(
@@ -97,10 +97,10 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                         child: Container(
                           constraints: BoxConstraints.expand(height: 48),
                           child: FlatButton(
-                            color: DefaultColors.color26ac29,
+                            color: Theme.of(context).primaryColor,
                             shape: RoundedRectangleBorder(
                                 side: BorderSide(
-                                    color: DefaultColors.color26ac29),
+                                    color: Theme.of(context).primaryColor),
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
 
