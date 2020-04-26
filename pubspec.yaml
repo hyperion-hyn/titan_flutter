@@ -123,6 +123,7 @@ dependencies:
   multi_image_picker: ^4.6.6+rc.1
   flutter_absolute_path: ^1.0.6
   flutter_native_image: ^0.0.5
+  r_scan: ^0.1.4+1
 
 dev_dependencies:
   flutter_driver:

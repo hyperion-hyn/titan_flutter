@@ -159,7 +159,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractItem == null || !mounted) {
+    if (contractItem == null || !mounted || _joinCoinController.text == inputText) {
       return;
     }
 
