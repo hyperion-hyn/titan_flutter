@@ -333,25 +333,29 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
   Future _openModalBottomSheet() async {
     final option = await showModalBottomSheet(
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext dialogContext) {
           return Wrap(
             children: <Widget>[
               ListTile(
                 title: Text(S.of(context).camera_scan,textAlign: TextAlign.center),
                 onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500),(){
+                    Navigator.pop(dialogContext);
+                  });
                   String mnemonicWords = await BarcodeScanner.scan();
                   if (!bip39.validateMnemonic(mnemonicWords)) {
                     Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
-                    return;
                   } else {
                     _mnemonicController.text = mnemonicWords;
                   }
-                  Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: Text(S.of(context).import_from_album,textAlign: TextAlign.center),
                 onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500),(){
+                    Navigator.pop(dialogContext);
+                  });
                   var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
                   List<Asset> resultList = await MultiImagePicker.pickImages(
                     maxImages: 1,
@@ -370,12 +374,10 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     RScanResult mnemonicWords = await RScan.scanImagePath(filePath);
                     if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
                       Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
-                      return;
                     } else {
                       _mnemonicController.text = mnemonicWords.message;
                     }
                   }
-                  Navigator.pop(context);
                 },
               ),
               ListTile(
