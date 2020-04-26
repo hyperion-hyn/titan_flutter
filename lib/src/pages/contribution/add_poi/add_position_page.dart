@@ -6,6 +6,7 @@ import 'package:image_pickers/Media.dart';
 import 'package:image_pickers/UIConfig.dart';
 import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/i18n.dart';
@@ -78,6 +79,7 @@ class _AddPositionState extends BaseState<AddPositionPage> {
   int _requestOpenCageDataCount = 0;
   String language;
   String address;
+  List<Asset> images = List<Asset>();
 
   @override
   void onCreated() {
@@ -319,11 +321,11 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     var childAspectRatio = (105.0 / 74.0);
     var itemHeight = itemWidth / childAspectRatio;
     var itemCount = 1;
-    if (_listImagePaths.length == 0) {
+    if (images.length == 0) {
       itemCount = 1;
-    } else if (_listImagePaths.length > 0 && _listImagePaths.length < _listImagePathsMaxLength) {
-      itemCount = 1 + _listImagePaths.length;
-    } else if (_listImagePaths.length >= _listImagePathsMaxLength) {
+    } else if (images.length > 0 && images.length < _listImagePathsMaxLength) {
+      itemCount = 1 + images.length;
+    } else if (images.length >= _listImagePathsMaxLength) {
       itemCount = _listImagePathsMaxLength;
     }
     double containerHeight = 2 + (10 + itemHeight) * ((itemCount / 3).ceil());
@@ -344,7 +346,7 @@ class _AddPositionState extends BaseState<AddPositionPage> {
               childAspectRatio: childAspectRatio,
             ),
             itemBuilder: (context, index) {
-              if (index == itemCount - 1 && _listImagePaths.length < _listImagePathsMaxLength) {
+              if (index == itemCount - 1 && images.length < _listImagePathsMaxLength) {
                 return InkWell(
                   onTap: () {
                     _selectImages();
@@ -370,9 +372,14 @@ class _AddPositionState extends BaseState<AddPositionPage> {
                   },
                   child: Stack(
                     children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(3),
-                        child: Image.file(File(_listImagePaths[index].path), width: itemWidth, fit: BoxFit.cover),
+                      SizedBox(
+                        width:itemWidth,
+                        height:itemWidth,
+                        child: AssetThumb(
+                          asset: images[index],
+                          width:itemWidth.toInt(),
+                          height:itemWidth.toInt(),
+                        ),
                       ),
                       Positioned(
                         top: 0,
@@ -390,6 +397,7 @@ class _AddPositionState extends BaseState<AddPositionPage> {
                           onTap: () {
                             setState(() {
                               _listImagePaths.removeAt(index);
+                              images.removeAt(index);
                             });
                           },
                         ),
@@ -756,7 +764,41 @@ class _AddPositionState extends BaseState<AddPositionPage> {
 
   // actions
   Future<void> _selectImages() async {
-    var tempListImagePaths = await ImagePickers.pickerPaths(
+    List<Asset> resultList = List<Asset>();
+
+    var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: _listImagePathsMaxLength,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: themeColor,
+          actionBarTitle: "Example App",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#ffffff",
+        ),
+      );
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+
+    if(resultList.length > 0){
+      setState(() {
+        _listImagePaths.clear();
+        resultList.forEach((entity){
+          var media = Media();
+          media.path = entity.identifier;
+          _listImagePaths.add(media);
+        });
+        images = resultList;
+      });
+    }
+
+
+    /*var tempListImagePaths = await ImagePickers.pickerPaths(
       galleryMode: GalleryMode.image,
       selectCount: _listImagePathsMaxLength - _listImagePaths.length,
       showCamera: true,
@@ -766,7 +808,7 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     );
     setState(() {
       _listImagePaths.addAll(tempListImagePaths);
-    });
+    });*/
   }
 
   _pushCategory() async {

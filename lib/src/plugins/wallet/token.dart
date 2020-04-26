@@ -68,7 +68,7 @@ class SupportedTokens {
   static const HYN_ROPSTEN = const AssetToken(
       name: 'Hyperion ROPSTEN',
       decimals: 18,
-      contractAddress: '0xF931A59Ac15C450147b827Cd978A4451ef7a35f1',
+      contractAddress: '0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6',
       logo: 'res/drawable/hyn_logo.png',
       symbol: 'HYN');
 

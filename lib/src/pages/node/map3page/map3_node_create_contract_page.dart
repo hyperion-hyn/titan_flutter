@@ -304,15 +304,15 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
                   ),
 //                  Padding(
 //                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
@@ -356,7 +356,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
                     Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
                     return;
                   }
-                  
+
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
                   }

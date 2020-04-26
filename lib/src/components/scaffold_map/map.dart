@@ -478,7 +478,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
       if (event is ToMyLocationEvent) {
         //check location service
         if (!(await Permission.location.serviceStatus.isEnabled)) {
-          UiUtil.showGoToOpenLocationServiceDialog(context);
+          UiUtil.showRequestLocationAuthDialog(context, true);
           return;
         }
 
@@ -495,7 +495,7 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         } else if (status.isGranted) {
           _toMyLocation(event.zoom);
         } else {
-          UiUtil.showGoToOpenLocationServiceDialog(context);
+          UiUtil.showRequestLocationAuthDialog(context, false);
         }
       }
     });

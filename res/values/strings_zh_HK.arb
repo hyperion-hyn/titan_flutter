@@ -725,6 +725,7 @@
   "expire_end": "期满结束",
   "truely_date_accurate": "具体以实际日期为准",
   "no_enough_hyn_fail_invest_extract": "·  投入后，若在规定期限内Map3节点抵押合约不能积攒够启动所需HYN，则本次合约启动失败。投入HYN的钱包账户可提取自己投入的HYN资金。",
+  "mortgage_quantity_standard": "•  抵押hyn数量以最终链上交易数量为准。",
   "invest_cant_undo": "·  投入Map3节点后不可撤销。",
   "account_flow": "合约流水",
   "total": "总额",
