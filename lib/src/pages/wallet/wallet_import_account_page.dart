@@ -52,29 +52,29 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
           actions: <Widget>[
             InkWell(
               onTap: () async {
-                String mnemonicWords = await BarcodeScanner.scan();
+                _openModalBottomSheet();
+                /*String mnemonicWords = await BarcodeScanner.scan();
                 if (!bip39.validateMnemonic(mnemonicWords)) {
                   Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
                   return;
                 } else {
                   _mnemonicController.text = mnemonicWords;
-                }
+                }*/
               },
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(top:8.0,bottom: 8,left: 15,right: 15),
                 child: Icon(
                   ExtendsIconFont.qrcode_scan,
                   color: Colors.white,
                 ),
               ),
             ),
-            InkWell(
+            /*InkWell(
               onTap: () async {
                 var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
                 List<Asset> resultList = await MultiImagePicker.pickImages(
                   maxImages: 1,
                   enableCamera: true,
-//                  selectedAssets: images,
                   cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
                   materialOptions: MaterialOptions(
                     actionBarColor: themeColor,
@@ -87,7 +87,6 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                 if(resultList.length > 0){
                   var filePath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
                   RScanResult mnemonicWords = await RScan.scanImagePath(filePath);
-//                  String mnemonicWords = await BarcodeScanner.scan();
                   if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
                     Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
                     return;
@@ -104,7 +103,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                   color: Colors.white,
                 ),
               ),
-            )
+            )*/
           ],
         ),
         body: Container(
@@ -330,4 +329,65 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
           ),
         ));
   }
+
+  Future _openModalBottomSheet() async {
+    final option = await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Wrap(
+            children: <Widget>[
+              ListTile(
+                title: Text(S.of(context).camera_scan,textAlign: TextAlign.center),
+                onTap: () async {
+                  String mnemonicWords = await BarcodeScanner.scan();
+                  if (!bip39.validateMnemonic(mnemonicWords)) {
+                    Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                    return;
+                  } else {
+                    _mnemonicController.text = mnemonicWords;
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).import_from_album,textAlign: TextAlign.center),
+                onTap: () async {
+                  var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
+                  List<Asset> resultList = await MultiImagePicker.pickImages(
+                    maxImages: 1,
+                    enableCamera: true,
+                    cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+                    materialOptions: MaterialOptions(
+                      actionBarColor: themeColor,
+                      actionBarTitle: S.of(context).select_qrcode_picture,
+                      allViewTitle: S.of(context).all_picture,
+                      useDetailsView: false,
+                      selectCircleStrokeColor: "#ffffff",
+                    ),
+                  );
+                  if(resultList.length > 0){
+                    var filePath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
+                    RScanResult mnemonicWords = await RScan.scanImagePath(filePath);
+                    if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
+                      Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                      return;
+                    } else {
+                      _mnemonicController.text = mnemonicWords.message;
+                    }
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text(S.of(context).cancel,textAlign: TextAlign.center),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        }
+    );
+  }
+
 }
