@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -427,6 +428,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 //        Routes.popUntilCachedEntryRouteName(context, true);
       } catch (_) {
         logger.e(_);
+        FlutterBugly.uploadException(message: _.message, detail: _.data?.toString() ?? _.message);
         setState(() {
           isTransferring = false;
         });
@@ -438,7 +440,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           }
         } else if (_ is RPCError) {
           if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+//            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+            Fluttertoast.showToast(msg: _.message);
           } else {
             Fluttertoast.showToast(msg: S.of(context).transfer_fail);
           }

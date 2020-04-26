@@ -48,7 +48,7 @@ class MnemonicQrcodePage extends StatelessWidget {
                       data: mnemonic,
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.grey[800],
-                      version: 4,
+                      version: 5,
                       size: 200,
                     ),
                   ),

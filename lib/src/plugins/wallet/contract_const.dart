@@ -16,7 +16,7 @@ class ContractTestConfig {
     if (WalletConfig.netType == EthereumNetType.rinkeby) {
       return '0x97B9e0EfeF243720FB024C823a39cBD73C25D601';
     } else if (WalletConfig.netType == EthereumNetType.ropsten) {
-      return '0x16b296D521641ce193cb1B6b249D842F3B25DBe9'; //0x16b296D521641ce193cb1B6b249D842F3B25DBe9
+      return '0xF931A59Ac15C450147b827Cd978A4451ef7a35f1'; //0xF931A59Ac15C450147b827Cd978A4451ef7a35f1
     }
     return '0x884845609ea5DC317FA74Ccc5bdEc161Ce58D357';
   }
@@ -32,7 +32,7 @@ class ContractTestConfig {
     if (WalletConfig.netType == EthereumNetType.rinkeby) {
       return '0x02061f896Da00fC459C05a6f864b479137Dcb34b';
     } else if (WalletConfig.netType == EthereumNetType.ropsten) {
-      return '0x0E0f168bbf6182d6917cC8FB895539Ec20424600';//0x0E0f168bbf6182d6917cC8FB895539Ec20424600
+      return '0x81d3B55B4f030213826B43B26EE938b75D276E62';//0x81d3B55B4f030213826B43B26EE938b75D276E62
     }
     return '0xEf429f2F9C4AB4a0723dEf4C76A8b5499dEB7205';
   }
