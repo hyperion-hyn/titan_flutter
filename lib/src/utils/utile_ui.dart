@@ -65,8 +65,8 @@ class UiUtil {
   }
 
   // alertView
-  static void showDialogWidget(BuildContext context, {Widget title, Widget content, List<Widget> actions}) {
-    showDialog(
+  static Future<T> showDialogWidget<T>(BuildContext context, {Widget title, Widget content, List<Widget> actions}) {
+    return showDialog<T>(
       context: context,
       builder: (context) {
         return Platform.isIOS
@@ -84,8 +84,8 @@ class UiUtil {
     );
   }
 
-  static void showConfirmDialogWidget(BuildContext context, {Widget content, List<Widget> actions}) {
-    showDialog(
+  static Future<T> showConfirmDialogWidget<T>(BuildContext context, {Widget content, List<Widget> actions}) {
+    return showDialog<T>(
       context: context,
       builder: (context) {
         return Platform.isIOS
@@ -112,8 +112,8 @@ class UiUtil {
     ]);
   }
 
-  static void showRequestLocationAuthDialog(BuildContext context, bool isServiceTurnOff) {
-    showDialogs(
+  static Future<T> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
+    return showDialogs<T>(
       context,
       isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
       isServiceTurnOff == true ? S.of(context).open_location_service_message : S.of(context).require_location_message,
@@ -136,8 +136,8 @@ class UiUtil {
     }
   }
 
-  static void showDialogs(BuildContext context, String title, String content, Function func) {
-    showDialogWidget(
+  static Future<T> showDialogs<T>(BuildContext context, String title, String content, Function func) {
+    return showDialogWidget<T>(
       context,
       title: Text(title),
       content: Text(content),
