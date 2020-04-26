@@ -303,9 +303,18 @@ class _MyPageState extends State<MyPage> {
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                ExtendsIconFont.qrcode_scan,
-                color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    ExtendsIconFont.qrcode_scan,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left:10.0),
+                    child: Text("扫一扫",style: TextStyle(fontSize: 14,color: Colors.white),),
+                  )
+                ],
               ),
             )
         ),
