@@ -580,5 +580,10 @@
   "contract_launch_fail_please_get_back": "合约启动失败，请申请退款",
   "mnemonic_qrcode_tip": "这个二维码包含你的助记词",
   "qrcode": "二维码",
-  "delegation_amount_full": "抵押已满"
+  "delegation_amount_full": "抵押已满",
+  "camera_scan": "相机扫描",
+  "import_from_album": "从相册导入",
+  "select_qrcode_picture": "选择二维码图片",
+  "all_picture": "所有图片",
+  "select_picture": "选择图片"
 }
