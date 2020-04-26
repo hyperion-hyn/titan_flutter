@@ -122,14 +122,14 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         break;
 
       case ContractState.PENDING:
-        dateDesc = S.of(context).remain_day(contractNodeItem.remainDay);
+        dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
         amountPre = S.of(context).remain;
         amount = FormatUtil.amountToString(contractNodeItem.remainDelegation);
         hyn = "HYN";
         break;
 
       case ContractState.ACTIVE:
-        dateDesc = S.of(context).remain_day(contractNodeItem.expectDueDay);
+        dateDesc = FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft.toDouble());
         break;
 
       case ContractState.DUE:

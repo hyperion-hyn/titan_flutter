@@ -9,6 +9,9 @@ class ContractNodeItem extends Object {
   @JsonKey(name: 'id')
   int id;
 
+  @JsonKey(name: 'contractCode')
+  String contractCode;
+
   @JsonKey(name: 'contract')
   NodeItem contract;
 
@@ -69,6 +72,7 @@ class ContractNodeItem extends Object {
 
   ContractNodeItem(
     this.id,
+    this.contractCode,
     this.contract,
     this.owner,
     this.ownerName,
@@ -97,36 +101,42 @@ class ContractNodeItem extends Object {
 
   Map<String, dynamic> toJson() => _$ContractNodeItemToJson(this);
 
-  String get remainDay {
+  ///启动剩余时间
+  double get launcherSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
-    double totalRemain = (expectCancelTime - instanceStartTime) / 3600 / 24;
-    double progress = ((now - instanceStartTime) / 3600 / 24);
-    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
+    int timeLeft = expectCancelTime - now;
+    var left = timeLeft > 0 ? timeLeft : 0;
+    return left.toDouble();
   }
+
+//  String get remainDay {
+//    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+//    double totalRemain = (expectCancelTime - instanceStartTime) / 3600 / 24;
+//    double progress = ((now - instanceStartTime) / 3600 / 24);
+//    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
+//  }
 
   double get remainProgress {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     int totalRemain = (expectCancelTime - instanceStartTime);
     double progress = (now - instanceStartTime) / totalRemain;
 
-    if (progress != double.infinity) {
-      if (progress > 0.2 && progress <= 1.0) {
-        return progress;
-      } else if (progress > 1) {
-        return 0.99;
-      } else {
-        return 0.2;
-      }
-    }
-
-    return 0.0;
+    return _adjustProgress(progress);
   }
 
-  String get expectDueDay {
+//  String get expectDueDay {
+//    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+//    double totalRemain = (expectDueTime - instanceActiveTime) / 3600 / 24;
+//    double progress = ((now - instanceActiveTime) / 3600 / 24);
+//    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
+//  }
+
+  ///从启动到期满剩余时间
+  double get completeSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
-    double totalRemain = (expectDueTime - instanceActiveTime) / 3600 / 24;
-    double progress = ((now - instanceActiveTime) / 3600 / 24);
-    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
+    int timeLeft = expectDueTime - now;
+    var left =  timeLeft > 0 ? timeLeft : 0;
+    return left.toDouble();
   }
 
   double get expectDueProgress {
@@ -134,24 +144,21 @@ class ContractNodeItem extends Object {
     int totalDue = (expectDueTime - instanceActiveTime);
     double progress = (now - instanceActiveTime) / totalDue;
 
-    if (progress != double.infinity) {
-      if (progress > 0.2 && progress <= 1.0) {
-        return progress;
-      } else if (progress > 1) {
-        return 0.99;
-      } else {
-        return 0.2;
-      }
-    }
-
-    return 0.0;
+    return _adjustProgress(progress);
   }
 
-  String get remainHalfDueDay {
+//  String get remainHalfDueDay {
+//    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+//    double totalRemain = (expectDueTime - instanceActiveTime) / 3600 / 24 / 2;
+//    double progress = ((now - instanceStartTime) / 3600 / 24);
+//    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
+//  }
+
+  ///从启动到中期剩余时间
+  double get halfCompleteSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
-    double totalRemain = (expectDueTime - instanceActiveTime) / 3600 / 24 / 2;
-    double progress = ((now - instanceStartTime) / 3600 / 24);
-    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
+    double timeLeft = (expectDueTime - now.toDouble()) / 2;
+    return timeLeft > 0 ? timeLeft : 0;
   }
 
   double get expectHalfDueProgress {
@@ -159,6 +166,10 @@ class ContractNodeItem extends Object {
     int totalDue = (expectDueTime - instanceActiveTime);
     double progress = ((now - instanceActiveTime) * 2) / totalDue;
 
+    return _adjustProgress(progress);
+  }
+
+  double _adjustProgress(double progress) {
     if (progress != double.infinity) {
       if (progress > 0.2 && progress <= 1.0) {
         return progress;
@@ -180,6 +191,5 @@ class ContractNodeItem extends Object {
     }
     return shortOwnerName;
   }
-
 
 }

@@ -10,6 +10,7 @@ import 'package:titan/src/components/scaffold_map/bottom_panels/user_poi_panel.d
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -36,7 +37,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
 
   PositionBloc _positionBloc = PositionBloc();
   MapboxMapController mapController;
-  double defaultZoom = 17;
+  double defaultZoom = 16;
 
   UserContributionPoi confirmPoiItem;
 
@@ -283,43 +284,45 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
 
   @override
   void dispose() {
-//    _positionBloc.close();
+    _positionBloc.close();
     _addMarkerSubject.close();
     super.dispose();
   }
 
   Widget _mapView() {
-    return Container();
-//    var style;
-//    if (currentAppArea.key == AppArea.MAINLAND_CHINA_AREA.key) {
-//      style = Const.kWhiteMapStyleCn;
-//    } else {
-//      style = Const.kWhiteMapStyle;
-//    }
-//    var languageCode = Localizations.localeOf(context).languageCode;
-//
-//    return SizedBox(
-//      height: 150,
-//      child: MapboxMap(
-//        compassEnabled: false,
-//        initialCameraPosition: CameraPosition(
-//          target: recentlyLocation,
-//          zoom: defaultZoom,
-//        ),
-//        styleString: style,
-//        onStyleLoaded: (mapboxController) {
-//          onStyleLoaded(mapboxController);
-//        },
-//        myLocationTrackingMode: MyLocationTrackingMode.None,
-//        rotateGesturesEnabled: false,
-//        tiltGesturesEnabled: false,
-//        enableLogo: false,
-//        enableAttribution: false,
-//        minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
-//        myLocationEnabled: false,
-//        languageCode: languageCode,
-//      ),
-//    );
+//    return Container();
+    var style;
+    if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+      style = Const.kWhiteMapStyleCn;
+    } else {
+      style = Const.kWhiteMapStyle;
+    }
+    var languageCode = Localizations.localeOf(context).languageCode;
+
+    return SizedBox(
+      height: 160,
+      child: MapboxMap(
+        compassEnabled: false,
+        initialCameraPosition: CameraPosition(
+          target: Application.recentlyLocation,
+          zoom: defaultZoom,
+        ),
+        styleString: style,
+        onMapCreated: (controller) {
+          Future.delayed(Duration(milliseconds: 500)).then((value) {
+            onStyleLoaded(controller);
+          });
+        },
+        myLocationTrackingMode: MyLocationTrackingMode.None,
+        rotateGesturesEnabled: false,
+        tiltGesturesEnabled: false,
+        enableLogo: false,
+        enableAttribution: false,
+        minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
+        myLocationEnabled: false,
+        languageCode: languageCode,
+      ),
+    );
   }
 
   void onStyleLoaded(MapboxMapController controller) {
