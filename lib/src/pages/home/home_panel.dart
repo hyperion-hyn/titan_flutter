@@ -136,22 +136,23 @@ class HomePanelState extends State<HomePanel> {
                     borderRadius: BorderRadius.all(Radius.circular(4.0)),
                     onTap: () {
 
+                      // todo: test_jison_0426
                       // old version
-                      Navigator.push(
+                      /*Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => WebViewContainer(
                                     initUrl: 'https://news.hyn.space/react-reduction/',
                                     title: S.of(context).map3_global_nodes,
                                   )));
-
+                      */
                       print('[Home_panel] -->focusArea， 数组展示');
 
                       // new version
-                      /*Navigator.push(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => GlobalDataPage()));*/
+                              builder: (context) => GlobalDataPage()));
 
                     },
                     child: Container(

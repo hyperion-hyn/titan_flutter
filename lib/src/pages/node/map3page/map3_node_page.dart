@@ -265,15 +265,17 @@ class _Map3NodeState extends State<Map3NodePage> {
                     ],
                   ),
                   SizedBox(
-                    height: 24,
-                    width: 92,
+                    height: 35,
+                    width: 140,
                     child: FlatButton(
-                      color: DefaultColors.colorffdb58,
+                      //color: DefaultColors.colorffdb58,
+                      color: HexColor("#FF15B2D2"),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
                       onPressed: () {
                         _pushContractListAction();
                       },
-                      child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
+                      child: Text(S.of(context).create_contract,
+                          style: TextStyle(fontSize: 13, color: Colors.white)),
                     ),
                   )
                 ],
@@ -287,11 +289,12 @@ class _Map3NodeState extends State<Map3NodePage> {
 
   Widget _getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
     if (contractNodeItem == null) return Container();
+    var dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -301,11 +304,32 @@ class _Map3NodeState extends State<Map3NodePage> {
       ),
       margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9),
       child: Padding(
-        padding: const EdgeInsets.only(left: 20.0, right: 13, top: 7, bottom: 7),
+        padding: const EdgeInsets.only(left: 20.0, right: 20, top: 7, bottom: 7),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Row(
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                    Text("编号 ${contractNodeItem.contractCode??""}", style: TextStyles.textC333S14bold),
+                    Container(width: 4,),
+                    Text("${UiUtil.shortEthAddress(contractNodeItem.owner)}", style: TextStyles.textC9b9b9bS12),
+                  ],
+                ),
+                Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("发起人:  ${UiUtil.shortEthAddress(contractNodeItem.ownerName)}", style: TextStyles.textC9b9b9bS12),
+                    Container(width: 4,),
+                    Text(dateDesc, style: TextStyles.textC9b9b9bS12),
+                  ],
+                )
+              ],
+            ),
+            /*Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text("${contractNodeItem.shortOwnerName}", style: TextStyle(fontWeight: FontWeight.w600)),
@@ -314,7 +338,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                         Text(" ${UiUtil.shortEthAddress(contractNodeItem.owner)}", style: TextStyles.textC9b9b9bS12)),
                 Text(S.of(context).remain_day_has_colon(contractNodeItem.remainDay), style: TextStyles.textC9b9b9bS12)
               ],
-            ),
+            ),*/
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 16),
               child: Divider(height: 1, color: Color(0x2277869e)),
@@ -410,17 +434,19 @@ class _Map3NodeState extends State<Map3NodePage> {
                   ),
                 ),
                 SizedBox(
-                  height: 24,
-                  width: 78,
+                  height: 30,
+                  width: 80,
                   child: FlatButton(
-                    color: DefaultColors.colorffdb58,
+                    color: HexColor("#FF15B2D2"),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     onPressed: () {
                       _pushContractDetail(contractNodeItem);
                     },
-                    child: Text(S.of(context).detail, style: TextStyles.textC906b00S13),
+                    child: Text(S.of(context).detail,
+                        style: TextStyle(fontSize: 13, color: Colors.white)),
+                      //style: TextStyles.textC906b00S13),
                   ),
-                )
+                ),
               ],
             )
           ],
