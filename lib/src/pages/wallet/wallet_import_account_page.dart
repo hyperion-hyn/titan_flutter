@@ -362,6 +362,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     enableCamera: true,
                     cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
                     materialOptions: MaterialOptions(
+                      statusBarColor: themeColor,
                       actionBarColor: themeColor,
                       actionBarTitle: S.of(context).select_qrcode_picture,
                       allViewTitle: S.of(context).all_picture,
