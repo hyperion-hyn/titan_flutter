@@ -245,9 +245,10 @@ class _MeState extends BaseState<MePage> with RouteAware {
                               Icon(
                                 ExtendsIconFont.qrcode_scan,
                                 color: Colors.white,
+                                size: 16,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left:3.0),
+                                padding: const EdgeInsets.only(left:10.0),
                                 child: Text("扫一扫",style: TextStyle(fontSize: 14,color: Colors.white),),
                               )
                             ],
@@ -265,20 +266,20 @@ class _MeState extends BaseState<MePage> with RouteAware {
                                     //border: Border.all(color: Theme.of(context).primaryColor),
                                     shape: BoxShape.rectangle),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                                   child: Row(
                                     children: <Widget>[
                                       Icon(
                                         ExtendsIconFont.checkbox_outline,
                                         color: Colors.white,
-                                        size: 14,
+                                        size: 12,
                                       ),
                                       Text(
                                         (checkInModel?.finishTaskNum ?? 0) >= 3
                                             ? S.of(context).check_in_completed
                                             : S.of(context).task,
                                         style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           color: Colors.white,
                                         ),
@@ -288,11 +289,12 @@ class _MeState extends BaseState<MePage> with RouteAware {
                                 )),
                             onTap: _doTask,
                           ),
+                          SizedBox(width: 10,),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4),
                             child: Text(
                               "${checkInModel?.finishTaskNum ?? 0}/3",
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: Colors.white,fontSize: 14),
                             ),
                           )
                         ],
