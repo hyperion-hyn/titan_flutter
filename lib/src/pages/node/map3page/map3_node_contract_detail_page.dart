@@ -381,7 +381,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       case ContractState.ACTIVE:
         var suffix = S.of(context).expire_date;
-        _contractStateDetail = S.of(context).remain_day(_contractNodeItem.expectDueDay)+suffix;
+        _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.completeSecondsLeft.toDouble()) + suffix;
         break;
 
       case ContractState.DUE:
@@ -415,7 +415,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
         case UserDelegateState.ACTIVE:
           var suffix = "，${S.of(context).can_withdraw_fifty_reward}";
-          _contractStateDetail = S.of(context).remain_day(_contractNodeItem.remainHalfDueDay) + suffix;
+          _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         case UserDelegateState.HALFDUE:
@@ -425,7 +425,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.PRE_HALFDUE_COLLECTED:
         case UserDelegateState.HALFDUE_COLLECTED:
           var suffix = S.of(context).expire_date;
-          _contractStateDetail = S.of(context).remain_day(_contractNodeItem.remainHalfDueDay)+suffix;
+          _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         default: 
@@ -638,6 +638,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       );
     }
 
+    var remainDay = S.of(context).time_left + FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft);
+
     return Padding(
       padding: EdgeInsets.only(bottom: _visible ? 48 : 0),
       child: LoadDataContainer(
@@ -674,7 +676,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   color: Colors.white,
                   child: NodeJoinMemberWidget(
                     "${widget.contractId}",
-                    _contractNodeItem.remainDay,
+                    remainDay,
                     _contractNodeItem.ownerName,
                     _contractNodeItem.shareUrl,
                     isShowInviteItem: false,
