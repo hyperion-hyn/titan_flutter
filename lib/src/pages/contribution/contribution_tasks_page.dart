@@ -499,7 +499,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     //1、检查定位的权限
     //check location service
     if (!(await Permission.location.serviceStatus.isEnabled)) {
-      UiUtil.showServiceDialog(context);
+      UiUtil.showRequestLocationAuthDialog(context, true);
       return false;
     }
 
