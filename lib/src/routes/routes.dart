@@ -10,6 +10,7 @@ class Routes {
 
   //tools page
   static const String toolspage_webview_page = '/toolspage/webview_page';
+  static const String toolspage_qrcode_page = '/toolspage/qrcode_page';
 
   //wallet
   static const String wallet_create = '/wallet/create';
@@ -77,6 +78,7 @@ class Routes {
 
     //tools
     router.define(toolspage_webview_page, handler: toolsPageWebviewHandler, transitionType: TransitionType.inFromRight);
+    router.define(toolspage_qrcode_page, handler: toolsPageQrcodeHandler, transitionType: TransitionType.inFromRight);
 
     //wallet
     router.define(wallet_create, handler: createWalletHandler, transitionType: TransitionType.inFromRight);
