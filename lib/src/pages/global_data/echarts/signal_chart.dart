@@ -265,8 +265,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     ''';
 
     var _size = MediaQuery.of(context).size;
-    double _chartsWidth = _size.width - 8.0;
-    double _chartsHeight = 300;
+    double _chartsWidth = _size.width - 16.0 * 2.0;
+    double _chartsHeight = (299.3 * _chartsWidth) / 343 ;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -276,18 +276,25 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
             //color: Colors.w,
             child: Text(_title, style: TextStyle(color: Colors.black))),
         Center(
-          child: Container(
-            child: Echarts(
-              option: _barOption,
-              extensions: [worldScript],
-              captureAllGestures: true,
-              onMessage: (String message) {
-                Map<String, Object> messageAction = jsonDecode(message);
-                print(messageAction);
-              },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+//                decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.all(Radius.circular(16.0))),
+                child: Echarts(
+                  option: _barOption,
+                  extensions: [worldScript],
+                  captureAllGestures: true,
+                  onMessage: (String message) {
+                    Map<String, Object> messageAction = jsonDecode(message);
+                    print(messageAction);
+                  },
+                ),
+                width: _chartsWidth,
+                height: _chartsHeight,
+              ),
             ),
-            width: _chartsWidth,
-            height: _chartsHeight,
           ),
         ),
       ],

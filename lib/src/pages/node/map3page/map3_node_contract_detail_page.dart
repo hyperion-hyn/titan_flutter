@@ -623,6 +623,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       );
     }
 
+    var remainDay = S.of(context).time_left + FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft);
+
     return Padding(
       padding: EdgeInsets.only(bottom: _visible ? 48 : 0),
       child: LoadDataContainer(
@@ -658,6 +660,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   color: Colors.white,
                   child: NodeJoinMemberWidget(
                     "${widget.contractId}",
+                    remainDay,
                     _contractNodeItem.ownerName,
                     _contractNodeItem.shareUrl,
                     isShowInviteItem: false,

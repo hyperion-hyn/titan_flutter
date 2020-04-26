@@ -699,11 +699,14 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Image.asset(
-                  "res/drawable/ic_map3_node_item_contract.png",
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(24.5),
+                  child: Image.asset(
+                    "res/drawable/ic_map3_node_item_contract.png",
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 SizedBox(width: 8),
                 Expanded(
