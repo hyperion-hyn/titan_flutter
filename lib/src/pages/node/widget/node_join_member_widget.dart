@@ -18,13 +18,12 @@ import 'package:titan/src/utils/format_util.dart';
 
 class NodeJoinMemberWidget extends StatefulWidget {
   final String contractId;
-  final String remainDay;
   final String shareName;
   final String shareUrl;
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl, {this.isShowInviteItem = true, this.loadDataBloc});
+  NodeJoinMemberWidget(this.contractId, this.shareName, this.shareUrl, {this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
   State<StatefulWidget> createState() {
