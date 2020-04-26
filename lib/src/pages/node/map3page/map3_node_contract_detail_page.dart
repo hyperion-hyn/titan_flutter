@@ -676,6 +676,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   color: Colors.white,
                   child: NodeJoinMemberWidget(
                     "${widget.contractId}",
+                    remainDay,
                     _contractNodeItem.ownerName,
                     _contractNodeItem.shareUrl,
                     isShowInviteItem: false,
