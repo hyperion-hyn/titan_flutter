@@ -297,7 +297,6 @@ class _MyPageState extends State<MyPage> {
                 Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
               }
             },
-//            child: Text(S.of(context).wallet_manage, style: TextStyle(color: Colors.white70, fontSize: 14))
             child: Icon(
               ExtendsIconFont.qrcode_scan,
               color: Colors.white,
