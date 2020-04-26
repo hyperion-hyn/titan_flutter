@@ -159,7 +159,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractItem == null || !mounted) {
+    if (contractItem == null || !mounted || _joinCoinController.text == inputText) {
       return;
     }
 
@@ -297,14 +297,14 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
+                  Text(S.of(context).join_map3_level_min(levelName), style: TextStyles.textC999S12),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text("·  等级必须大于等于$levelName才能创建合约。", style: TextStyles.textC999S12),
+                    child: Text(S.of(context).referrer_reward_tip, style: TextStyles.textC999S12),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
+                    child: Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
@@ -313,6 +313,10 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
                   ),
 //                  Padding(
 //                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
@@ -356,7 +360,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
                     Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
                     return;
                   }
-                  
+
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
                   }

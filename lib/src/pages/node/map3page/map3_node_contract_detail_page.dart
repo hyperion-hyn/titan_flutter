@@ -331,12 +331,27 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       case UserDelegateState.DUE_COLLECTED:
-        if (double.parse(_contractDetailItem?.withdrawn ?? "0") == 0) {
+        /*if (double.parse(_contractDetailItem?.withdrawn??"0") == 0) {
           _contractNotifyDetail = "";
         } else {
           var output = "${FormatUtil.amountToString(_contractDetailItem.withdrawn)}HYN";
           _contractNotifyDetail = S.of(context).your_last_output_to_contract_func(output, S.of(context).task_finished);
+        }*/
+
+        if (double.parse(_contractDetailItem.lastRecord.amount) == 0) {
+          _contractNotifyDetail = "";
+        } else {
+          BillsOperaState operaState = enumBillsOperaStateFromString(_contractDetailItem.lastRecord.operaType);
+          var amount = "0";
+          if (operaState == BillsOperaState.WITHDRAW) {
+            amount = _contractDetailItem.lastRecord.amount;
+          } else {
+            amount = _contractDetailItem.withdrawn;
+          }
+          var output = "${FormatUtil.amountToString(amount)}HYN";
+          _contractNotifyDetail = S.of(context).your_last_output_to_contract_func(output, S.of(context).task_finished);
         }
+
         break;
 
       default:
