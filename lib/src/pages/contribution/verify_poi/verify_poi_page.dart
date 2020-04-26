@@ -284,7 +284,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
 
   @override
   void dispose() {
-//    _positionBloc.close();
+    _positionBloc.close();
     _addMarkerSubject.close();
     super.dispose();
   }
@@ -300,7 +300,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
     var languageCode = Localizations.localeOf(context).languageCode;
 
     return SizedBox(
-      height: 150,
+      height: 160,
       child: MapboxMap(
         compassEnabled: false,
         initialCameraPosition: CameraPosition(
@@ -308,9 +308,11 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
           zoom: defaultZoom,
         ),
         styleString: style,
-//        onStyleLoaded: (mapboxController) {
-//          onStyleLoaded(mapboxController);
-//        },
+        onMapCreated: (controller) {
+          Future.delayed(Duration(milliseconds: 500)).then((value) {
+            onStyleLoaded(controller);
+          });
+        },
         myLocationTrackingMode: MyLocationTrackingMode.None,
         rotateGesturesEnabled: false,
         tiltGesturesEnabled: false,
