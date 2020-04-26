@@ -67,7 +67,7 @@ class WalletConfig {
         //TODO
         return '';
       case EthereumNetType.ropsten:
-        return '0x81d3B55B4f030213826B43B26EE938b75D276E62';
+        return '0x2c6FA17BDF5Cb10e64d26bFc62f64183D9f939A6';
       case EthereumNetType.rinkeby:
         return '0x02061f896Da00fC459C05a6f864b479137Dcb34b';
       case EthereumNetType.local:

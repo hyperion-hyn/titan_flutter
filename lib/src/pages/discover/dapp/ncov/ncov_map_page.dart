@@ -522,7 +522,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
 
   void _fireToMyLocation() async {
     if (!(await Permission.location.serviceStatus.isEnabled)) {
-      _showGoToOpenAppSettingsDialog();
+      UiUtil.showRequestLocationAuthDialog(context, true);
       return;
     }
 
@@ -535,29 +535,8 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
     } else if (status.isGranted) {
       _toMyLocationSink();
     } else {
-      _showGoToOpenAppSettingsDialog();
+      UiUtil.showRequestLocationAuthDialog(context, false);
     }
-  }
-
-  void _showGoToOpenAppSettingsDialog() {
-    UiUtil.showDialogWidget(
-      context,
-      title: Text(S.of(context).open_location_service),
-      content: Text(S.of(context).open_location_service_message),
-      actions: <Widget>[
-        FlatButton(
-          child: Text(S.of(context).cancel),
-          onPressed: () => Navigator.pop(context),
-        ),
-        FlatButton(
-          child: Text(S.of(context).setting),
-          onPressed: () {
-            UiUtil.openSettingLocation();
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    );
   }
 
   void _showDialogWidget({Widget title, Widget content, List<Widget> actions}) {

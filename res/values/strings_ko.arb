@@ -724,6 +724,7 @@
   "expire_end": "만기 종료",
   "truely_date_accurate": "실제 날짜에 따라 달라질 수 있습니다",
   "no_enough_hyn_fail_invest_extract": "투자 후 지정된 기간 이내에 필요한 HYN을 시작하기에 충분한 HYN이 축적되어 있지 않으면, Map3 노드 모기지 계약이 실패하고 투자된 HYN은 자체적으로 회수할 수 있습니다.",
+  "mortgage_quantity_standard": "•  抵押hyn数量以最终链上交易数量为准。",
   "invest_cant_undo": "Map3 노드에 진입한 후 취소 가능",
   "account_flow": "계좌 내역",
   "total": "총액",
@@ -850,5 +851,10 @@
   "mnemonic_qrcode_tip": "这个二维码包含你的助记词",
   "qrcode": "二维码",
   "delegation_amount_full": "抵押已满",
-  "time_left": "剩余"
+  "time_left": "剩余",
+  "camera_scan": "相机扫描",
+  "import_from_album": "从相册导入",
+  "select_qrcode_picture": "选择二维码图片",
+  "all_picture": "所有图片",
+  "select_picture": "选择图片"
 }

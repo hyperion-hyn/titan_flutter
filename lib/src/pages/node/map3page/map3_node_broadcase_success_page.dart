@@ -46,8 +46,8 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4.0),
                       child: Image.asset(
-                        "res/drawable/ic_map3_node_item.png",
-                        fit: BoxFit.cover,
+                        "res/drawable/check_outline.png",
+                        fit: BoxFit.contain,
                         width: 72,
                       ),
                     ),

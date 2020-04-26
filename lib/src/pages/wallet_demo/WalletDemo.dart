@@ -135,7 +135,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   logger.i('ETH交易已提交，交易hash $txHash');
 
                   var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
-                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 205000); //三十万
+                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 505000); //三十万
                   txHash = await client.sendTransaction(
                     credentials,
                     Transaction.callContract(

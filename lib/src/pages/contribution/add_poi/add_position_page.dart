@@ -767,9 +767,10 @@ class _AddPositionState extends BaseState<AddPositionPage> {
         selectedAssets: images,
         cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
         materialOptions: MaterialOptions(
+          statusBarColor: themeColor,
           actionBarColor: themeColor,
-          actionBarTitle: "Example App",
-          allViewTitle: "All Photos",
+          actionBarTitle: S.of(context).select_picture,
+          allViewTitle: S.of(context).all_picture,
           useDetailsView: false,
           selectCircleStrokeColor: "#ffffff",
         ),
