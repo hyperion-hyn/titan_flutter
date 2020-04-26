@@ -67,6 +67,11 @@ class _MyPageState extends State<MyPage> {
                   alignment: Alignment.centerLeft,
                   child: Stack(
                     children: <Widget>[
+                      Positioned(
+                        top: 37,
+                        right: 12,
+                        child: _buildScanQrCodeRow(),
+                      ),
                       Container(
                         margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                         width: 216,
@@ -94,7 +99,6 @@ class _MyPageState extends State<MyPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            if (_wallet != null) _buildWalletManagerRow(),
                             SizedBox(height: 16),
                             _wallet == null ? _buildWalletCreateRow() : _buildWalletDetailRow(_wallet),
                             SizedBox(height: 16),
@@ -284,7 +288,7 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget _buildWalletManagerRow() {
+  Widget _buildScanQrCodeRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -305,10 +309,21 @@ class _MyPageState extends State<MyPage> {
                 Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
               }
             },
-//            child: Text(S.of(context).wallet_manage, style: TextStyle(color: Colors.white70, fontSize: 14))
-            child: Icon(
-              ExtendsIconFont.qrcode_scan,
-              color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    ExtendsIconFont.qrcode_scan,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left:10.0),
+                    child: Text("扫一扫",style: TextStyle(fontSize: 14,color: Colors.white),),
+                  )
+                ],
+              ),
             )
         ),
       ],
