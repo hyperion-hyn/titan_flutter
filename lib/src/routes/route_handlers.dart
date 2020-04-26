@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
+import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
@@ -67,6 +68,10 @@ var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
   return InAppWebViewContainer(
       initUrl: FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first),
       title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
+});
+
+var toolsPageQrcodeHandler = Handler(handlerFunc: (context, params) {
+  return QrCodePage(params['qrCodeStr']?.first);
 });
 
 var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
