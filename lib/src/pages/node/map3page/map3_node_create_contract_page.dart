@@ -348,13 +348,14 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () async {
+                if(_joinCoinController.text.isEmpty){
+                  _joinCoinFormKey.currentState.validate();
+                  return;
+                }
                 if(!userInfo.canStaking){
                   Fluttertoast.showToast(msg: "您的等级较低，不能创建合约！");
                   return;
                 }
-
-
-
                 setState(() async {
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
