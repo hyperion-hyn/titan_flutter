@@ -864,5 +864,6 @@
   "select_picture": "选择图片",
   "select_picture": "选择图片",
   "launcher_time_left": "启动剩${time}",
-  "scan_qrcode_result": "扫码结果"
+  "scan_qrcode_result": "扫码结果",
+  "your_level_low_cant_create_contract": "您的等级较低，不能创建合约！"
 }
