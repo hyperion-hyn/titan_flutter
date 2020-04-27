@@ -62,7 +62,7 @@ class _MyContractsState extends State<MyContractsPage> with TickerProviderStateM
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
-          "我的合约",
+          S.of(context).my_contract,
           style: TextStyle(color: Colors.white),
         ),
       ),
