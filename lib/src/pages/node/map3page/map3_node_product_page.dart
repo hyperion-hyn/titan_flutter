@@ -130,17 +130,11 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                    border: Border.all(color: Color(0x22B7B7B7), width: 1),
-                  ),
-                  child: Image.asset(
-                    "res/drawable/ic_map3_node_item_contract.png",
-                    width: 50,
-                    height: 50,
-                    fit:BoxFit.cover,
-                  ),
+                Image.asset(
+                  "res/drawable/ic_map3_node_item_contract.png",
+                  width: 50,
+                  height: 50,
+                  fit:BoxFit.cover,
                 ),
                 SizedBox(
                   width: 6,
