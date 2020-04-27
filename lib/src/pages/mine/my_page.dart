@@ -14,6 +14,7 @@ import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -62,11 +63,6 @@ class _MyPageState extends State<MyPage> {
               height: 200.0 + MediaQuery.of(context).padding.top,
               child: Container(
                 color: Theme.of(context).primaryColor,
-//                decoration: BoxDecoration(
-//                    gradient: LinearGradient(
-//                        colors: [/*Color(0xff041528),*/ Theme.of(context).primaryColor, Color(0xff99C3E6)],
-//                        begin: FractionalOffset(0, 0.4),
-//                        end: FractionalOffset(0, 1))),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Stack(
@@ -124,7 +120,7 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),
-                  _buildMenuBar(S.of(context).my_initiated_map_contract, Icons.menu, () {
+                  /*_buildMenuBar(S.of(context).my_initiated_map_contract, Icons.menu, () {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_initiated_map_contract)));
                     } else {
@@ -139,6 +135,18 @@ class _MyPageState extends State<MyPage> {
                   _buildMenuBar(S.of(context).my_join_map_contract, Icons.menu, () {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_join_map_contract)));
+                    } else {
+                      Application.router.navigateTo(context, Routes.wallet_manager);
+                      //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
+                    }
+                  }, imageName: "my_contract_join"),
+                  Container(
+                    height: 10,
+                    color: HexColor('#F1EFF2'),
+                  ),*/
+                  _buildMenuBar("我的合约", Icons.menu, () {
+                    if (_wallet != null) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
                     } else {
                       Application.router.navigateTo(context, Routes.wallet_manager);
                       //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
