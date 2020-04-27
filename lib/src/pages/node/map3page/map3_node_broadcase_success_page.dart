@@ -137,7 +137,6 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
   }
 
   void _pop(BuildContext context) {
-
     switch (this.pageType) {
       case Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE:
         print("[pop] -----> _pop, contractNodeItem:${this.contractNodeItem.toJson()}");

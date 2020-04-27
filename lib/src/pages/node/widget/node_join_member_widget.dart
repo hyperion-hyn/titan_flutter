@@ -257,6 +257,21 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 }
 
+/*
+
+Runes
+在Dart中，符文是字符串的UTF-32代码点。
+
+Unicode为世界上所有书写系统中使用的每个字母，数字和符号定义唯一的数值。 由于Dart字符串是UTF-16代码单元的序列，因此在字符串中表示32位Unicode值需要特殊语法。
+
+表达Unicode代码点的常用方法是\ uXXXX，其中XXXX是4位十六进制值。 例如，心脏角色（♥）是\ u2665。 要指定多于或少于4个十六进制数字，请将值放在大括号中。 例如，笑的表情符号（?）是\ u {1f600}。
+
+String类有几个属性可用于提取符文信息。 codeUnitAt和codeUnit属性返回16位代码单元。 使用runes属性获取字符串的符文。
+————————————————
+版权声明：本文为CSDN博主「mafanwei」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qwe25878/java/article/details/94434117
+*/
+
 Widget circleIconWidget(String shortName, {bool isShowShape = true, String address = "#000000"}) {
   String hexColor = address;
   if (address.length>6) {

@@ -271,7 +271,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                     width: 140,
                     child: FlatButton(
                       //color: DefaultColors.colorffdb58,
-                      color: HexColor("#FF15B2D2"),
+                      color: HexColor("#FFE6A927"),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
                       onPressed: () {
                         UserService.syncUserInfo(context);
@@ -487,7 +487,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                 height: 30,
                 width: 80,
                 child: FlatButton(
-                  color: HexColor("#FF15B2D2"),
+                  color: HexColor("#FFE6A927"),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   onPressed: () {
                     Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");

@@ -61,10 +61,15 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   List<UserLevelInfo> _userLevelInfoList = [];
   UserService _userService = UserService();
   String levelName = "";
+  bool isChecking = false;
+  var activatedWallet;
+  var walletName;
 
   @override
   void onCreated() {
     getLevelData();
+    activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    walletName = activatedWallet.wallet.keystore.name;
     super.onCreated();
   }
 
@@ -210,9 +215,6 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
       });
     }
 
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-
     return Column(
       children: <Widget>[
         Expanded(
@@ -341,46 +343,66 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
           constraints: BoxConstraints.expand(height: 50),
           child: RaisedButton(
               textColor: Colors.white,
+              disabledColor: Colors.grey[600],
+              disabledTextColor: Colors.white,
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
-              child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
-              onPressed: () async {
-                if(!userInfo.canStaking){
-                  Fluttertoast.showToast(msg: "您的等级较低，不能创建合约！");
-                  return;
-                }
-
-                await checkIsCreateContract();
-
-                setState(() {
-                  if (!_joinCoinFormKey.currentState.validate()) {
-                    return;
-                  }
-
-                  if (!_isUserCreatable) {
-                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-                    return;
-                  }
-
-                  String provider = providerList[selectServerItemValue].id;
-                  String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-                  var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
-
-                  Application.router.navigateTo(
-                      context,
-                      Routes.map3node_send_confirm_page +
-                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                          "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                          "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                          "&provider=$provider" +
-                          "&region=$region" +
-                          "&pageType=${widget.pageType}" +
-                          "&contractId=${widget.contractId}");
-                });
-              }),
+              child: Text(isChecking ? S.of(context).please_waiting : S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
+              onPressed: isChecking ? null : jumpTransfer
+              ),
         )
       ],
     );
+  }
+
+  Future jumpTransfer() async {
+    {
+      if(_joinCoinController.text.isEmpty){
+        _joinCoinFormKey.currentState.validate();
+        return;
+      }
+
+      if(!userInfo.canStaking){
+        Fluttertoast.showToast(msg: S.of(context).your_level_low_cant_create_contract);
+        return;
+      }
+
+      if (!_joinCoinFormKey.currentState.validate()) {
+        return;
+      }
+
+      setState(() {
+        isChecking = true;
+      });
+
+      await checkIsCreateContract();
+      if (!_isUserCreatable) {
+        Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+        setState(() {
+          isChecking = false;
+        });
+        return;
+      }
+
+      String provider = providerList[selectServerItemValue].id;
+      String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+      var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
+
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_send_confirm_page +
+              "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+              "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
+              "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+              "&provider=$provider" +
+              "&region=$region" +
+              "&pageType=${widget.pageType}" +
+              "&contractId=${widget.contractId}");
+
+      setState(() {
+        isChecking = false;
+      });
+    }
   }
 }
 

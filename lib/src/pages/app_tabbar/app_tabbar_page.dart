@@ -114,7 +114,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
 
   void getClipboardData() async {
     var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-    if(clipboardData != null && clipboardData.text.contains("titan://contract/detail")){
+    if(clipboardData != null && clipboardData.text.contains("starrich://contract/detail")){
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
       print("!!!!! " + clipboardData.text + " key= " + shareUser);
