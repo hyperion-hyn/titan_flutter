@@ -1510,8 +1510,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
-
-    //Application.router.navigateTo(context, Routes.map3node_create_wallet);
   }
 
   void _joinContractAction() async {

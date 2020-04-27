@@ -592,5 +592,8 @@
   "join_map_node_must_have_block_account": "参与Map3抵押节点前，你必须先拥有一个区块链钱包账户。",
   "launcher_time_left": "启动剩${time}",
   "scan_qrcode_result": "扫码结果",
-  "global_node_map_title": "全球节点分布:"
+  "global_node_map_title": "全球节点分布:",
+  "my_contract": "我的合约",
+  "active": "启动",
+  "expired": "到期"
 }
