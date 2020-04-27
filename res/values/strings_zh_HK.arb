@@ -587,5 +587,6 @@
   "select_qrcode_picture": "选择二维码图片",
   "all_picture": "所有图片",
   "select_picture": "选择图片",
+  "launcher_time_left": "启动剩${time}",
   "scan_qrcode_result": "扫码结果"
 }
