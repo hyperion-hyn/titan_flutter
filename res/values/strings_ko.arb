@@ -854,10 +854,10 @@
   "qrcode": "二维码",
   "time_left": "剩余",
   "delegation_amount_full": "抵押已满",
-  "time_left": "剩余",
   "camera_scan": "相机扫描",
   "import_from_album": "从相册导入",
   "select_qrcode_picture": "选择二维码图片",
   "all_picture": "所有图片",
-  "select_picture": "选择图片"
+  "select_picture": "选择图片",
+  "launcher_time_left": "启动剩${time}"
 }
