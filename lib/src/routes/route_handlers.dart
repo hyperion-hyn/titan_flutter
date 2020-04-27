@@ -150,7 +150,7 @@ var map3NodeProductListHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeCreateWalletHandler = Handler(handlerFunc: (context, params) {
-  return Map3NodeCreateWalletPage();
+  return Map3NodeCreateWalletPage(params['pageType']?.first);
 });
 
 var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {

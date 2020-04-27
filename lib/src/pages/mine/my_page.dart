@@ -143,7 +143,7 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),*/
-                  _buildMenuBar("我的合约", Icons.menu, () {
+                  _buildMenuBar(S.of(context).my_contract, Icons.menu, () {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
                     } else {

@@ -370,8 +370,9 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       selectCircleStrokeColor: "#ffffff",
                     ),
                   );
+
                   if(resultList.length > 0){
-                    var filePath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
+                  var filePath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
                     RScanResult mnemonicWords = await RScan.scanImagePath(filePath);
                     if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
                       Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);

@@ -37,6 +37,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   String endProfit = "";
   String spendManager = "";
   bool isMyself = false;
+  String originInputStr = "";
 
   @override
   void initState() {
@@ -87,10 +88,11 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractNodeItem == null || !mounted) {
+    if (contractNodeItem == null || !mounted || originInputStr == inputText) {
       return;
     }
 
+    originInputStr = inputText;
     _joinCoinFormKey.currentState?.validate();
 
     if (inputText == null || inputText == "") {
@@ -186,14 +188,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               color: DefaultColors.colorf5f5f5,
             ),
             getHoldInNum(
-                context, contractNodeItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, true,
-                (textStr) {
-              _filterSubject.sink.add(textStr);
-            }, (textStr) {
-              getCurrentSpend(textStr);
-            }, joinEnougnFunction: () {
-              getCurrentSpend(contractNodeItem.remainDelegation);
-            }, isMyself: isMyself),
+                context, contractNodeItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, true, isMyself: isMyself),
 //            Container(
 //              height: 10,
 //              color: DefaultColors.colorf5f5f5,

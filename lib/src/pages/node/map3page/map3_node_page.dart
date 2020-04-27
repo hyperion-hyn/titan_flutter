@@ -325,13 +325,13 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   var fullDesc = "";
 
   if (state.index < ContractState.ACTIVE.index) {
-    suff = "启动";
+    suff = S.of(context).active;
     fullDesc = S.of(context).delegation_amount_full;
   } else if (state.index >= ContractState.ACTIVE.index && state.index < ContractState.DUE.index) {
     dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft);
-    suff = "到期";
+    suff = S.of(context).expired;
   }
-  dateDesc += suff;
+  dateDesc = suff + dateDesc;
 
 
   return Container(
@@ -356,7 +356,12 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("编号 ${contractNodeItem.contractCode??""}", style: TextStyles.textC333S14bold),
+                  Text.rich(TextSpan(
+                    children: [
+                      TextSpan(text:"编号 ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                      TextSpan(text:"${contractNodeItem.contractCode??""}", style: TextStyles.textC333S14bold),
+                    ]
+                  )),
                   Container(width: 4,),
                   Text("${UiUtil.shortEthAddress(contractNodeItem.owner)}", style: TextStyles.textC9b9b9bS12),
                 ],

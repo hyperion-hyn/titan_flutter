@@ -51,6 +51,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   List<DropdownMenuItem> serverList;
   List<DropdownMenuItem> nodeList;
   List<NodeProviderEntity> providerList = [];
+  String originInputStr = "";
 
   @override
   void initState() {
@@ -137,10 +138,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractItem == null || !mounted || _joinCoinController.text == inputText) {
+    if (contractItem == null || !mounted || originInputStr == inputText) {
       return;
     }
 
+    originInputStr = inputText;
     _joinCoinFormKey.currentState?.validate();
 
     if (inputText == null || inputText == "") {
@@ -263,12 +265,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               ),
             ),
             SizedBox(height: 8),
-            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
-                (textStr) {
-              _filterSubject.sink.add(textStr);
-            }, (textStr) {
-              getCurrentSpend(textStr);
-            }),
+            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
             SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
@@ -314,31 +311,14 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
               onPressed: () async {
-                // todo: test_jison_0422
-                /*String provider = providerList[selectServerItemValue].id;
-                String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-                var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
 
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_send_confirm_page +
-                        "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                        "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                        "&provider=$provider" +
-                        "&region=$region" +
-                        "&pageType=${widget.pageType}" +
-                        "&contractId=${widget.contractId}");
-                return;*/
+                await checkIsCreateContract();
 
-
-
-                setState(() async {
+                setState(() {
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
                   }
 
-                  await checkIsCreateContract();
                   if (!_isUserCreatable) {
                     Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
                     return;
@@ -374,10 +354,7 @@ Widget getHoldInNum(
     String endProfit,
     String spendManager,
     bool isJoin,
-    Function onChangeFuntion,
-    Function onPressFunction,
-    {Function joinEnougnFunction,
-    bool isMyself = false}) {
+    {bool isMyself = false}) {
   List<int> suggestList =
       contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
@@ -443,10 +420,6 @@ Widget getHoldInNum(
                             controller: textEditingController,
                             keyboardType: TextInputType.number,
                             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                            onChanged: (textStr) {
-                              onChangeFuntion(textStr);
-//                            _filterSubject.sink.add(textStr);
-                            },
                             decoration: InputDecoration(
                               hintStyle: TextStyles.textC9b9b9bS14,
                               labelStyle: TextStyles.textC333S14,
@@ -472,7 +445,7 @@ Widget getHoldInNum(
                 SizedBox(
                   height: 17,
                 ),
-                if (!isJoin)
+                if (!isJoin && suggestList.length == 3)
                   Padding(
                     padding: const EdgeInsets.only(left: 49.0),
                     child: Row(
@@ -481,10 +454,10 @@ Widget getHoldInNum(
                           child: Container(
                             color: Color(0xFFFFF9E9),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text('200,000', style: TextStyle(fontSize: 12)),
+                            child: Text(suggestList[0].toString(), style: TextStyle(fontSize: 12)),
                           ),
                           onTap: () {
-                            textEditingController.text = '200000';
+                            textEditingController.text = suggestList[0].toString();
                           },
                         ),
                         SizedBox(width: 16),
@@ -492,10 +465,10 @@ Widget getHoldInNum(
                           child: Container(
                             color: Color(0xFFFFF9E9),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text('400,000', style: TextStyle(fontSize: 12)),
+                            child: Text(suggestList[1].toString(), style: TextStyle(fontSize: 12)),
                           ),
                           onTap: () {
-                            textEditingController.text = '400000';
+                            textEditingController.text = suggestList[1].toString();
                           },
                         ),
                         SizedBox(width: 16),
@@ -503,10 +476,11 @@ Widget getHoldInNum(
                           child: Container(
                             color: Color(0xFFFFF9E9),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text('600,000', style: TextStyle(fontSize: 12)),
+                            child: Text(suggestList[2].toString(), style: TextStyle(fontSize: 12)),
                           ),
                           onTap: () {
-                            textEditingController.text = '600000';
+//                            onPressFunction(suggestList[2].toString());
+                            textEditingController.text = suggestList[2].toString();
                           },
                         ),
                       ],
@@ -521,52 +495,6 @@ Widget getHoldInNum(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          if (!isJoin && suggestList.length == 3)
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text(
-                                      "${FormatUtil.formatNum(suggestList[0])}HYN",
-                                      style: TextStyle(fontSize: 12, color: HexColor("#5C4304")),
-                                    ),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[0].toString());
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text("${FormatUtil.formatNum(suggestList[1])}HYN",
-                                        style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[1].toString());
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text("${FormatUtil.formatNum(suggestList[2])}HYN",
-                                        style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[2].toString());
-                                    },
-                                  ),
-                                )
-                              ],
-                            ),
                           if (isJoin)
                             Row(
                               children: <Widget>[
@@ -593,7 +521,8 @@ Widget getHoldInNum(
                                       padding: const EdgeInsets.all(0),
                                       color: HexColor("#FFDE64"),
                                       onPressed: () {
-                                        joinEnougnFunction();
+                                        textEditingController.text = contractNodeItem.remainDelegation;
+//                                        joinEnougnFunction();
                                       },
                                       child: Text(S.of(context).all_bug,
                                           style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
@@ -680,7 +609,7 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                 ClipRRect(
                   borderRadius: BorderRadius.circular(24.5),
                   child: Image.asset(
-                    "res/drawable/ic_map3_node_item_contract.png",
+                    "res/drawable/ic_map3_node_item_contract_fit_bg.png",
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,

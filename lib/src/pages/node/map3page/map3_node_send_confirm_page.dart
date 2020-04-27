@@ -263,7 +263,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: gasPrice == gasPriceRecommend.safeLow ? Colors.grey : Colors.grey[200],
+                                    color: selectedPriceLevel == 0 ? Colors.grey : Colors.grey[200],
                                     border: Border(),
                                     borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
@@ -272,7 +272,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                     Text(
                                       S.of(context).speed_slow,
                                       style: TextStyle(
-                                          color: gasPrice == gasPriceRecommend.safeLow ? Colors.white : Colors.black,
+                                          color: selectedPriceLevel == 0 ? Colors.white : Colors.black,
                                           fontSize: 12),
                                     ),
                                     Text(
@@ -297,7 +297,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: gasPrice == gasPriceRecommend.average ? Colors.grey : Colors.grey[200],
+                                    color: selectedPriceLevel == 1 ? Colors.grey : Colors.grey[200],
                                     border: Border(),
                                     borderRadius: BorderRadius.all(Radius.circular(0))),
                                 child: Column(
@@ -305,7 +305,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                     Text(
                                       S.of(context).speed_normal,
                                       style: TextStyle(
-                                          color: gasPrice == gasPriceRecommend.average ? Colors.white : Colors.black,
+                                          color: selectedPriceLevel == 1 ? Colors.white : Colors.black,
                                           fontSize: 12),
                                     ),
                                     Text(
@@ -330,7 +330,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: gasPrice == gasPriceRecommend.fast ? Colors.grey : Colors.grey[200],
+                                    color: selectedPriceLevel == 2 ? Colors.grey : Colors.grey[200],
                                     border: Border(),
                                     borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
@@ -339,7 +339,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                                     Text(
                                       S.of(context).speed_fast,
                                       style: TextStyle(
-                                          color: gasPrice == gasPriceRecommend.fast ? Colors.white : Colors.black,
+                                          color: selectedPriceLevel == 2 ? Colors.white : Colors.black,
                                           fontSize: 12),
                                     ),
                                     Text(
@@ -398,13 +398,6 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   }
 
   Future _transferNew() async {
-    // todo: test_jison_0422
-    /* Application.router.navigateTo(context,
-        Routes.map3node_broadcase_success_page +
-            "?pageType=${widget.pageType}" +
-            "&contractNodeItem=${FluroConvertUtils.object2string(widget.contractNodeItem.toJson())}");
-    return;*/
-
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,

@@ -34,6 +34,7 @@ import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_contract_page.dart';
+import 'map3_node_create_wallet_page.dart';
 
 class Map3NodeContractDetailPage extends StatefulWidget {
   final int contractId;
@@ -579,7 +580,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   //get _isRenew => _contractState == ContractState.DUE && _isOwner;
   get _isRenew => false;
 
-  get _isShowLaunchDate => _contractState.index <= ContractState.PENDING.index;
+  get _isShowLaunchDate => _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
 
   @override
   void onCreated() {
@@ -764,7 +765,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 color: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
-                child: Text(_isTransferring ? "复投中..." : "续约复投"),
+                child: Text(_isTransferring ? S.of(context).renew_contract_ing : S.of(context).renew_contract),
                 onPressed: onPressed,
               )
             ],
@@ -1373,7 +1374,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       // 2.
       await getJoinMemberData();
-
       _initBottomButtonData();
 
       // 3.
@@ -1384,7 +1384,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             _loadDataBloc.add(RefreshSuccessEvent());
           });
         }
-
       });
     } catch (e) {
       if (mounted) {
@@ -1510,7 +1509,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   void _pushWalletManagerAction() {
-    Application.router.navigateTo(context, Routes.map3node_create_wallet);
+    Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _joinContractAction() async {

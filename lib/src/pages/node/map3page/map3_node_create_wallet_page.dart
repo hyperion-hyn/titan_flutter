@@ -4,6 +4,12 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class Map3NodeCreateWalletPage extends StatelessWidget {
+  
+  static const String CREATE_WALLET_PAGE_TYPE_CREATE = "create";
+  static const String CREATE_WALLET_PAGE_TYPE_JOIN = "join";
+  final String type;
+  Map3NodeCreateWalletPage(this.type);
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +35,7 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
                 Container(
                   width: 250,
                   child: Text(
-                    S.of(context).create_map_node_must_have_block_account,
+                    type == CREATE_WALLET_PAGE_TYPE_CREATE?S.of(context).create_map_node_must_have_block_account:S.of(context).join_map_node_must_have_block_account,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),

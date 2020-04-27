@@ -857,5 +857,13 @@
   "select_qrcode_picture": "选择二维码图片",
   "all_picture": "所有图片",
   "select_picture": "选择图片",
-  "launcher_time_left": "启动剩${time}"
+  "renew_contract_ing": "复投中...",
+  "renew_contract": "续约复投",
+  "join_map_node_must_have_block_account": "参与Map3抵押节点前，你必须先拥有一个区块链钱包账户。",
+  "launcher_time_left": "启动剩${time}",
+  "scan_qrcode_result": "扫码结果",
+  "global_node_map_title": "全球节点分布:",
+  "my_contract": "我的合约",
+  "active": "启动",
+  "expired": "到期"
 }
