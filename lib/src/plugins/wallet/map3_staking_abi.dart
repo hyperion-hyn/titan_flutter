@@ -822,62 +822,11 @@ const MAP3_STAKING_ABI = '''
           "internalType": "uint256",
           "name": "maxTotalDelegation",
           "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "nodeAddr",
-          "type": "address"
-        }
-      ],
-      "name": "delegationsByNode",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "node",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "midCollectable",
-          "type": "bool"
         },
         {
           "internalType": "address[]",
           "name": "delegators",
           "type": "address[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "amounts",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "rewards",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "remainingRewards",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "bool[]",
-          "name": "midCollecteds",
-          "type": "bool[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "collectableRewards",
-          "type": "uint256[]"
         }
       ],
       "payable": false,
