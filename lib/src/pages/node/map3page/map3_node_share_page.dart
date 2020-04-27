@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/me/components/account/account_component.dart';
+import 'package:titan/src/pages/me/model/user_info.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -34,14 +36,15 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
   @override
   void onCreated() {
     var activityWallet = WalletInheritedModel.of(context).activatedWallet;
+    UserInfo userInfo = AccountInheritedModel.of(context).userInfo;
     if (activityWallet != null) {
       Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
       bool isFromOwn = wallet.getEthAccount().address == widget.contractNodeItem.owner;
       NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address, "detail", isFromOwn);
       String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
-      shareData = "${widget.contractNodeItem.shareUrl}&key=$encodeStr";
+      shareData = "${widget.contractNodeItem.shareUrl}&key=$encodeStr&code=${userInfo?.id ?? ''}";
     } else {
-      shareData = "${widget.contractNodeItem.shareUrl}";
+      shareData = "${widget.contractNodeItem.shareUrl}&code=${userInfo?.id ?? ''}";
     }
     super.onCreated();
 

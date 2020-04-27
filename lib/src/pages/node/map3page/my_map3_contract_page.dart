@@ -127,7 +127,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         break;
 
       case ContractState.ACTIVE:
-//        dateDesc = S.of(context).remain_day(contractNodeItem.expectDueDay);
         dateDesc = FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft.toDouble());
         break;
 

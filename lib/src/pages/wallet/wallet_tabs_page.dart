@@ -81,8 +81,8 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
           children: [
             WalletPage(),
             // todo: test_jison_0424
-//            Map3NodePage(),
-            Map3NodeIntroductionPage(),
+            Map3NodePage(),
+//            Map3NodeIntroductionPage(),
 //            Center(
 //              child: Text('this is wallet page'),
 //            ),

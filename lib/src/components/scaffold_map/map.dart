@@ -473,12 +473,19 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
     _toLocationEventSubject.sink.add(zoom);
   }
 
+  bool _isShowingLocationAuthDialog = false;
+
   void _listenEventBus() {
     _eventBusSubscription = Application.eventBus.on().listen((event) async {
       if (event is ToMyLocationEvent) {
         //check location service
         if (!(await Permission.location.serviceStatus.isEnabled)) {
-          UiUtil.showGoToOpenLocationServiceDialog(context);
+          if (_isShowingLocationAuthDialog != true) {
+            _isShowingLocationAuthDialog = true;
+            UiUtil.showRequestLocationAuthDialog(context, true).then((_) {
+              _isShowingLocationAuthDialog = false;
+            });
+          }
           return;
         }
 
@@ -495,7 +502,12 @@ class MapContainerState extends State<MapContainer> with SingleTickerProviderSta
         } else if (status.isGranted) {
           _toMyLocation(event.zoom);
         } else {
-          UiUtil.showGoToOpenLocationServiceDialog(context);
+          if (_isShowingLocationAuthDialog != true) {
+            _isShowingLocationAuthDialog = true;
+            UiUtil.showRequestLocationAuthDialog(context, false).then((_) {
+              _isShowingLocationAuthDialog = false;
+            });
+          }
         }
       }
     });

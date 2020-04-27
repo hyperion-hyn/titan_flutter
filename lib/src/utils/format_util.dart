@@ -62,6 +62,7 @@ class FormatUtil {
   static String decodeBase64(String data){
     return String.fromCharCodes(base64Decode(data));
   }
+
   static double coinBalanceDouble(CoinVo coinVo) {
     return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toDouble();
   }
@@ -107,4 +108,5 @@ class FormatUtil {
     }
     return timeStr;
   }
+
 }

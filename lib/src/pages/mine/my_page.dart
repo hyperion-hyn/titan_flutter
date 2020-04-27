@@ -1,3 +1,4 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,15 +8,18 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -59,15 +63,15 @@ class _MyPageState extends State<MyPage> {
               height: 200.0 + MediaQuery.of(context).padding.top,
               child: Container(
                 color: Theme.of(context).primaryColor,
-//                decoration: BoxDecoration(
-//                    gradient: LinearGradient(
-//                        colors: [/*Color(0xff041528),*/ Theme.of(context).primaryColor, Color(0xff99C3E6)],
-//                        begin: FractionalOffset(0, 0.4),
-//                        end: FractionalOffset(0, 1))),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Stack(
                     children: <Widget>[
+                      Positioned(
+                        top: 37,
+                        right: 12,
+                        child: _buildScanQrCodeRow(),
+                      ),
                       Container(
                         margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                         width: 216,
@@ -95,7 +99,6 @@ class _MyPageState extends State<MyPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            if (_wallet != null) _buildWalletManagerRow(),
                             SizedBox(height: 16),
                             _wallet == null ? _buildWalletCreateRow() : _buildWalletDetailRow(_wallet),
                             SizedBox(height: 16),
@@ -117,7 +120,7 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),
-                  _buildMenuBar(S.of(context).my_initiated_map_contract, Icons.menu, () {
+                  /*_buildMenuBar(S.of(context).my_initiated_map_contract, Icons.menu, () {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_initiated_map_contract)));
                     } else {
@@ -132,6 +135,18 @@ class _MyPageState extends State<MyPage> {
                   _buildMenuBar(S.of(context).my_join_map_contract, Icons.menu, () {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_join_map_contract)));
+                    } else {
+                      Application.router.navigateTo(context, Routes.wallet_manager);
+                      //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
+                    }
+                  }, imageName: "my_contract_join"),
+                  Container(
+                    height: 10,
+                    color: HexColor('#F1EFF2'),
+                  ),*/
+                  _buildMenuBar("我的合约", Icons.menu, () {
+                    if (_wallet != null) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
                     } else {
                       Application.router.navigateTo(context, Routes.wallet_manager);
                       //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
@@ -203,7 +218,7 @@ class _MyPageState extends State<MyPage> {
         height: 25,
       );
     }
-    ;
+
     return Material(
       child: InkWell(
         onTap: onTap,
@@ -273,15 +288,44 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget _buildWalletManagerRow() {
+  Widget _buildScanQrCodeRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         InkWell(
-            onTap: () {
-              Application.router.navigateTo(context, Routes.wallet_manager);
+            onTap: () async {
+              String scanStr = await BarcodeScanner.scan();
+              print("indexInt= $scanStr");
+              if(scanStr == null){
+                return;
+              }else if(scanStr.contains("share?id=")){
+                int indexInt = scanStr.indexOf("=");
+                String contractId = scanStr.substring(indexInt+1,indexInt+2);
+                Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+              }else if(scanStr.contains("http") || scanStr.contains("https")){
+                scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
+                Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
+              }else{
+                Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
+              }
             },
-            child: Text(S.of(context).wallet_manage, style: TextStyle(color: Colors.white70, fontSize: 14))),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    ExtendsIconFont.qrcode_scan,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left:10.0),
+                    child: Text("扫一扫",style: TextStyle(fontSize: 14,color: Colors.white),),
+                  )
+                ],
+              ),
+            )
+        ),
       ],
     );
   }

@@ -184,7 +184,7 @@ class ShowWalletView extends StatelessWidget {
                 var toAddress = activeWallet.getEthAccount().address;
 
                 var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
-                var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 200000); //二十万
+                var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 1200000); //二十万
                 try {
                   var txHash = await client.sendTransaction(
                     credentials,

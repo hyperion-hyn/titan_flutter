@@ -60,10 +60,16 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   List<UserLevelInfo> _userLevelInfoList = [];
   UserService _userService = UserService();
   String levelName = "";
+  String originInputStr = "";
+  bool isChecking = false;
+  var activatedWallet;
+  var walletName;
 
   @override
   void onCreated() {
     getLevelData();
+    activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    walletName = activatedWallet.wallet.keystore.name;
     super.onCreated();
   }
 
@@ -93,7 +99,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
     _userLevelInfoList = await _userService.getUserLevelInfoList();
     userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
     _userLevelInfoList.forEach((levelInfo){
-      if(levelInfo.level == userInfo.levelNum){
+      if(levelInfo.level == userInfo.levelLimit){
         levelName = levelInfo.name;
       }
     });
@@ -101,9 +107,13 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
 
   void getNetworkData() async {
     try {
-      contractItem = await _nodeApi.getContractItem(widget.contractId);
+//      contractItem = await _nodeApi.getContractItem(widget.contractId);
+//      providerList = await _nodeApi.getNodeProviderList();
 
-      providerList = await _nodeApi.getNodeProviderList();
+      var requestList =
+          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+      contractItem = requestList[0];
+      providerList = requestList[1];
 
       selectNodeProvider(0, 0);
 
@@ -159,10 +169,11 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   }
 
   void getCurrentSpend(String inputText) {
-    if (contractItem == null || !mounted) {
+    if (contractItem == null || !mounted || originInputStr == inputText) {
       return;
     }
 
+    originInputStr = inputText;
     _joinCoinFormKey.currentState?.validate();
 
     if (inputText == null || inputText == "") {
@@ -204,15 +215,12 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
       });
     }
 
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-
     return Column(
       children: <Widget>[
         Expanded(
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                getMap3NodeProductHeadItemSmall(context, contractItem),
+            getMap3NodeProductHeadItemSmall(context, contractItem),
 //            SizedBox(height: 16,),
             Container(
               color: Colors.white,
@@ -285,26 +293,21 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
               ),
             ),
             SizedBox(height: 8),
-            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
-                (textStr) {
-              _filterSubject.sink.add(textStr);
-            }, (textStr) {
-              getCurrentSpend(textStr);
-            }),
+            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
             SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
+                  Text(S.of(context).join_map3_level_min(levelName), style: TextStyles.textC999S12),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text("·  等级必须大于等于$levelName才能创建合约。", style: TextStyles.textC999S12),
+                    child: Text(S.of(context).referrer_reward_tip, style: TextStyles.textC999S12),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
+                    child: Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
@@ -313,6 +316,10 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
                   ),
 //                  Padding(
 //                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
@@ -336,50 +343,64 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
           constraints: BoxConstraints.expand(height: 50),
           child: RaisedButton(
               textColor: Colors.white,
+              disabledColor: Colors.grey[600],
+              disabledTextColor: Colors.white,
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
-              child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
-              onPressed: () async {
-                if(!userInfo.canStaking){
-                  Fluttertoast.showToast(msg: "您的等级较低，不能创建合约！");
-                  return;
-                }
-
-                await checkIsCreateContract();
-                if (!_isUserCreatable) {
-                  Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-                  return;
-                }
-
-                setState(() {
-                  if (!_isUserCreatable) {
-                    Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-                    return;
-                  }
-                  
-                  if (!_joinCoinFormKey.currentState.validate()) {
-                    return;
-                  }
-                  String provider = providerList[selectServerItemValue].id;
-                  String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-                  var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
-
-                  Application.router.navigateTo(
-                      context,
-                      Routes.map3node_send_confirm_page +
-                          "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                          "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                          "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                          "&provider=$provider" +
-                          "&region=$region" +
-                          "&pageType=${widget.pageType}" +
-                          "&contractId=${widget.contractId}");
-
-                });
-              }),
+              child: Text(isChecking ? S.of(context).please_waiting : S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
+              onPressed: isChecking ? null : jumpTransfer
+              ),
         )
       ],
     );
+  }
+
+  Future jumpTransfer() async {
+    {
+      if(_joinCoinController.text.isEmpty){
+        _joinCoinFormKey.currentState.validate();
+        return;
+      }
+      if(!userInfo.canStaking){
+        Fluttertoast.showToast(msg: S.of(context).your_level_low_cant_create_contract);
+        return;
+      }
+
+      if (!_joinCoinFormKey.currentState.validate()) {
+        return;
+      }
+      setState(() {
+        isChecking = true;
+      });
+
+      await checkIsCreateContract();
+      if (!_isUserCreatable) {
+        Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+        setState(() {
+          isChecking = false;
+        });
+        return;
+      }
+
+      String provider = providerList[selectServerItemValue].id;
+      String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+      var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
+
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_send_confirm_page +
+              "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+              "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
+              "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+              "&provider=$provider" +
+              "&region=$region" +
+              "&pageType=${widget.pageType}" +
+              "&contractId=${widget.contractId}");
+
+      setState(() {
+        isChecking = false;
+      });
+    }
   }
 }
 
@@ -391,10 +412,7 @@ Widget getHoldInNum(
     String endProfit,
     String spendManager,
     bool isJoin,
-    Function onChangeFuntion,
-    Function onPressFunction,
-    {Function joinEnougnFunction,
-    bool isMyself = false}) {
+    {bool isMyself = false}) {
   List<int> suggestList =
       contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
@@ -432,8 +450,7 @@ Widget getHoldInNum(
                     Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
-                child: Text(
-                    S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                child: Text(S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                     style: TextStyle(color: Colors.grey[600])),
               ),
             ],
@@ -461,10 +478,6 @@ Widget getHoldInNum(
                             controller: textEditingController,
                             keyboardType: TextInputType.number,
                             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                            onChanged: (textStr) {
-                              onChangeFuntion(textStr);
-//                            _filterSubject.sink.add(textStr);
-                            },
                             decoration: InputDecoration(
                               hintStyle: TextStyles.textC9b9b9bS14,
                               labelStyle: TextStyles.textC333S14,
@@ -490,7 +503,7 @@ Widget getHoldInNum(
                 SizedBox(
                   height: 17,
                 ),
-                if (!isJoin)
+                if (!isJoin && suggestList.length == 3)
                   Padding(
                     padding: const EdgeInsets.only(left: 49.0),
                     child: Row(
@@ -499,10 +512,10 @@ Widget getHoldInNum(
                           child: Container(
                             color: Color(0xFFFFF9E9),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text('200,000', style: TextStyle(fontSize: 12)),
+                            child: Text(suggestList[0].toString(), style: TextStyle(fontSize: 12)),
                           ),
                           onTap: () {
-                            textEditingController.text = '200000';
+                            textEditingController.text = suggestList[0].toString();
                           },
                         ),
                         SizedBox(width: 16),
@@ -510,10 +523,10 @@ Widget getHoldInNum(
                           child: Container(
                             color: Color(0xFFFFF9E9),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text('400,000', style: TextStyle(fontSize: 12)),
+                            child: Text(suggestList[1].toString(), style: TextStyle(fontSize: 12)),
                           ),
                           onTap: () {
-                            textEditingController.text = '400000';
+                            textEditingController.text = suggestList[1].toString();
                           },
                         ),
                         SizedBox(width: 16),
@@ -521,10 +534,11 @@ Widget getHoldInNum(
                           child: Container(
                             color: Color(0xFFFFF9E9),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text('600,000', style: TextStyle(fontSize: 12)),
+                            child: Text(suggestList[2].toString(), style: TextStyle(fontSize: 12)),
                           ),
                           onTap: () {
-                            textEditingController.text = '600000';
+//                            onPressFunction(suggestList[2].toString());
+                            textEditingController.text = suggestList[2].toString();
                           },
                         ),
                       ],
@@ -539,52 +553,6 @@ Widget getHoldInNum(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          if (!isJoin && suggestList.length == 3)
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text(
-                                      "${FormatUtil.formatNum(suggestList[0])}HYN",
-                                      style: TextStyle(fontSize: 12, color: HexColor("#5C4304")),
-                                    ),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[0].toString());
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text("${FormatUtil.formatNum(suggestList[1])}HYN",
-                                        style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[1].toString());
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: FlatButton(
-                                    color: HexColor("#FFFBED"),
-                                    padding: const EdgeInsets.all(0),
-                                    child: Text("${FormatUtil.formatNum(suggestList[2])}HYN",
-                                        style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-                                    onPressed: () {
-                                      onPressFunction(suggestList[2].toString());
-                                    },
-                                  ),
-                                )
-                              ],
-                            ),
                           if (isJoin)
                             Row(
                               children: <Widget>[
@@ -611,7 +579,8 @@ Widget getHoldInNum(
                                       padding: const EdgeInsets.all(0),
                                       color: HexColor("#FFDE64"),
                                       onPressed: () {
-                                        joinEnougnFunction();
+                                        textEditingController.text = contractNodeItem.remainDelegation;
+//                                        joinEnougnFunction();
                                       },
                                       child: Text(S.of(context).all_bug,
                                           style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
@@ -695,11 +664,14 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Image.asset(
-                  "res/drawable/ic_map3_node_item_contract.png",
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(24.5),
+                  child: Image.asset(
+                    "res/drawable/ic_map3_node_item_contract_fit_bg.png",
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 SizedBox(width: 8),
                 Expanded(
@@ -711,11 +683,14 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text('${S.of(context).highest} ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}', style: TextStyle(fontSize: 13, color: Colors.white60)),
+                          Text(
+                              '${S.of(context).highest} ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}',
+                              style: TextStyle(fontSize: 13, color: Colors.white60)),
                           SizedBox(width: 4),
                           Container(width: 1, height: 10, color: Colors.white24),
                           SizedBox(width: 4),
-                          Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyle(fontSize: 13, color: Colors.white60)),
+                          Text(S.of(context).n_day(nodeItem.duration.toString()),
+                              style: TextStyle(fontSize: 13, color: Colors.white60)),
                         ],
                       )
                     ],
@@ -723,7 +698,8 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                 ),
                 Column(
                   children: <Widget>[
-                    Text(FormatUtil.formatPercent(nodeItem.annualizedYield), style: TextStyle(fontSize: 20, color: Colors.white)),
+                    Text(FormatUtil.formatPercent(nodeItem.annualizedYield),
+                        style: TextStyle(fontSize: 20, color: Colors.white)),
                     Text(S.of(context).annualized_rewards, style: TextStyle(fontSize: 13, color: Colors.white60)),
                   ],
                 ),

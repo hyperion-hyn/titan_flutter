@@ -10,11 +10,14 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_product_page_vo.dart';
+import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+
+import 'map3_node_create_wallet_page.dart';
 
 class Map3NodeProductPage extends StatefulWidget {
   @override
@@ -190,12 +193,14 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                   height: 24,
                   width: 92,
                   child: FlatButton(
-                    color: DefaultColors.colorffdb58,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    //color: DefaultColors.colorffdb58,
+                    color: HexColor("#FFE6A927"),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
                     onPressed: () => _pushAction(nodeItem),
-                    child: Text(S.of(context).create_contract, style: TextStyles.textC906b00S13),
+                    child: Text(S.of(context).create_contract,
+                        style: TextStyle(fontSize: 13, color: Colors.white)),
                   ),
-                )
+                ),
               ],
             )
           ],
@@ -205,14 +210,10 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   }
 
   _pushAction(NodeItem nodeItem) async{
-    // todo: test_jison_0422
-    /*Application.router
-                        .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
-                    return;*/
 
     var walletList = await WalletUtil.scanWallets();
     if (walletList.length == 0) {
-      Application.router.navigateTo(context, Routes.map3node_create_wallet);
+      Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       await Application.router
           .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
