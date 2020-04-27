@@ -101,7 +101,10 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                           constraints: BoxConstraints.expand(height: 48),
                           child: FlatButton(
                             color: Theme.of(context).primaryColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                                borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
                               _pop(context);
 

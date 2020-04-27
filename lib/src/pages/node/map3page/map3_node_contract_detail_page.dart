@@ -382,7 +382,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       case ContractState.ACTIVE:
         var suffix = S.of(context).expire_date;
-        _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.completeSecondsLeft.toDouble()) + suffix;
+        _contractStateDetail =
+            FormatUtil.timeString(context, _contractNodeItem.completeSecondsLeft.toDouble()) + suffix;
         break;
 
       case ContractState.DUE:
@@ -410,8 +411,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     if (_userDelegateState != null && _is180DaysContract) {
       switch (_userDelegateState) {
         case UserDelegateState.ACTIVE:
+          var pre = S.of(context).time_left;
           var suffix = "，${S.of(context).can_withdraw_fifty_reward}";
-          _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
+          _contractStateDetail =
+              pre + FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         case UserDelegateState.HALFDUE:
@@ -421,7 +424,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.PRE_HALFDUE_COLLECTED:
         case UserDelegateState.HALFDUE_COLLECTED:
           var suffix = S.of(context).expire_date;
-          _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
+          var pre = S.of(context).time_left;
+          _contractStateDetail =
+              pre + FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         default:
@@ -567,6 +572,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   //get _isRenew => _contractState == ContractState.DUE && _isOwner;
   get _isRenew => false;
 
+  get _isShowLaunchDate => _contractState.index <= ContractState.PENDING.index;
+
   @override
   void onCreated() {
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
@@ -660,7 +667,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   color: Colors.white,
                   child: NodeJoinMemberWidget(
                     "${widget.contractId}",
-                    remainDay,
                     _contractNodeItem.ownerName,
                     _contractNodeItem.shareUrl,
                     isShowInviteItem: false,
@@ -937,6 +943,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _contractProgressWidget() {
+    var dateDesc = S.of(context).time_left + FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft);
+
     return Container(
       color: Colors.white,
       padding: EdgeInsets.only(top: 8),
@@ -944,7 +952,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.fromLTRB(0, 8, 16, 8),
             child: Row(
               children: <Widget>[
                 Padding(
@@ -959,11 +967,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 ),
                 Text.rich(TextSpan(children: [
                   TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
-                  /*TextSpan(
-                    text: _contractProgressDetail,
-                    style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
-                  ),*/
                 ])),
+                Spacer(),
+                if (_isShowLaunchDate)
+                  Text(
+                    dateDesc,
+                    style: TextStyles.textC999S14,
+                  ),
               ],
             ),
           ),
@@ -1567,8 +1577,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     //print("[detail] entryRouteName,$entryRouteName");
 
-    await Application.router
-        .navigateTo(context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
+    await Application.router.navigateTo(context,
+        Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
     _nextAction();
   }
 
@@ -1584,10 +1594,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] 1result:$result");
-    if(result != null) {
+    if (result != null) {
       print("[detail] 2result:$result");
       getContractDetailData();
     }
   }
-
 }

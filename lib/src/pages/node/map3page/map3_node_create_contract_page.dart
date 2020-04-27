@@ -349,21 +349,19 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
                   return;
                 }
 
-                await checkIsCreateContract();
-                if (!_isUserCreatable) {
-                  Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-                  return;
-                }
 
-                setState(() {
+
+                setState(() async {
+                  if (!_joinCoinFormKey.currentState.validate()) {
+                    return;
+                  }
+
+                  await checkIsCreateContract();
                   if (!_isUserCreatable) {
                     Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
                     return;
                   }
 
-                  if (!_joinCoinFormKey.currentState.validate()) {
-                    return;
-                  }
                   String provider = providerList[selectServerItemValue].id;
                   String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
                   var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
