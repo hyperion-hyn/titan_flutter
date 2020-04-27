@@ -12,7 +12,7 @@ class QrCodePage extends StatelessWidget {
         appBar: AppBar(
           elevation: 0,
           title: Text(
-            "二维码",
+            S.of(context).scan_qrcode_result,
             style: TextStyle(color: Colors.white),
           ),
           centerTitle: true,

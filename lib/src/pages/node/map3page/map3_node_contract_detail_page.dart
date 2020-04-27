@@ -968,11 +968,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
                 ])),
                 Spacer(),
-                if (_isShowLaunchDate)
-                  Text(
-                    S.of(context).launcher_time_left(FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft)),
-                    style: TextStyles.textC999S14,
-                  ),
+                if (_isShowLaunchDate) Text(
+                  S.of(context).launcher_time_left(FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft)),
+                  style: TextStyles.textC999S14,
+                ),
               ],
             ),
           ),
@@ -1365,7 +1364,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       // 2.
       await getJoinMemberData();
-
       _initBottomButtonData();
 
       // 3.
