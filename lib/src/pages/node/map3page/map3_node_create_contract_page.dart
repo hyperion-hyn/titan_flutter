@@ -667,7 +667,7 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                 ClipRRect(
                   borderRadius: BorderRadius.circular(24.5),
                   child: Image.asset(
-                    "res/drawable/ic_map3_node_item_contract.png",
+                    "res/drawable/ic_map3_node_item_contract_fit_bg.png",
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
