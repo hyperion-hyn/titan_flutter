@@ -191,7 +191,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                   width: 92,
                   child: FlatButton(
                     //color: DefaultColors.colorffdb58,
-                    color: HexColor("#FF15B2D2"),
+                    color: HexColor("#FFE6A927"),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
                     onPressed: () => _pushAction(nodeItem),
                     child: Text(S.of(context).create_contract,
