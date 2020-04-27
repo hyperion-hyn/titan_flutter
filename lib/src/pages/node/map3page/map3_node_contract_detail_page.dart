@@ -33,6 +33,7 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -1462,7 +1463,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     if (_isNeedFreezeFirst) {
       var ret =
-          await _showConfirmDialog(title: S.of(context).tips, content: "作为当前合约的创建者，你需要给直推人数额为5%合约总收益作为推荐奖励，系统会为你自动划转。");
+          await _showConfirmDialog(title: S.of(context).tips, content: S.of(context).freezeContentDesc);
       if (ret == true) {
         _alertPasswordAction();
       }
@@ -1570,9 +1571,30 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         .postStakingRewardFreeze(nodeId: nodeId, contractAddress: contractAddress, walletAddress: walletAddress);
     print("[detail] collectionAction, res:$res");
 
+
+    /*CODE	描述
+  -10001	参数错误
+  -1003	没权限访问, 只有加密验证没通过才会出现这个
+  -1004	用户余额不足
+  */
+
     if (res.code == 0) {
       return true;
-    } else {
+    } else if (res.code == -1004) {
+      bool result = await UiUtil.showDialogsNoCallback(context,
+        S.of(context).tips,
+        '当前账户余额不足，请先充值',
+        confirm: S.of(context).confirm,
+      );
+      if (result) {
+        Application.router.navigateTo(context, Routes.recharge_purchase).then((isSuccess) async {
+          if (isSuccess == true) {
+            await UserService.syncUserInfo(context);
+          }
+        });
+      }
+    }
+    else {
       Fluttertoast.showToast(msg: "处理奖励转移发生异常 错误码：${res.code}");
       return false;
     }

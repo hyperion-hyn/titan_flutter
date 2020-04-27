@@ -794,6 +794,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           right: 0,
           child: InkWell(
             onTap: () async {
+
               Application.router.navigateTo(
                   context,
                   Routes.map3node_share_page +

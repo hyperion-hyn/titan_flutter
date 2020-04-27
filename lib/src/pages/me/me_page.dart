@@ -54,7 +54,10 @@ class _MeState extends BaseState<MePage> with RouteAware {
     _updateCheckInCount();
 
     _loadData();
+
+    super.onCreated();
   }
+
 
   Future _loadData() async {
     _pubKey = await TitanPlugin.getPublicKey();
@@ -411,7 +414,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
     );
   }
 
-  Widget _buildWalletSection() {
+  /*Widget _buildWalletSection() {
     var wallet = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
     return Container(
       color: Colors.white,
@@ -420,7 +423,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
         Application.router.navigateTo(context, Routes.wallet_manager);
       }, wallet?.wallet?.keystore?.name ?? S.of(context).wallet_manage),
     );
-  }
+  }*/
 
   Widget _buildContractSection() {
     var _wallet = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
@@ -429,12 +432,11 @@ class _MeState extends BaseState<MePage> with RouteAware {
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
       child: Column(
         children: <Widget>[
-          _buildMemuBar("我的合约", "ic_create", () {
+          _buildMemuBar(S.of(context).my_contract, "ic_map3_node_item_contract", () {
             if (_wallet != null) {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
             } else {
               Application.router.navigateTo(context, Routes.wallet_manager);
-              //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
             }
           }),
         ],

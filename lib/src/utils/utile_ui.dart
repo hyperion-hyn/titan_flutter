@@ -150,7 +150,7 @@ class UiUtil {
     }
   }
 
-  static Future<T> showDialogs<T>(BuildContext context, String title, String content, Function func) {
+  static Future<T> showDialogs<T>(BuildContext context, String title, String content, Function func, {String confirm = ""}) {
     return showDialogWidget<T>(
       context,
       title: Text(title),
@@ -161,7 +161,7 @@ class UiUtil {
           onPressed: () => Navigator.pop(context),
         ),
         FlatButton(
-          child: Text(S.of(context).setting),
+          child: Text(confirm.isNotEmpty?confirm:S.of(context).setting),
           onPressed: () {
             func();
             Navigator.pop(context);
@@ -170,6 +170,25 @@ class UiUtil {
       ],
     );
   }
+
+  static Future<T> showDialogsNoCallback<T>(BuildContext context, String title, String content, {String confirm = ""}) {
+    return showDialogWidget<T>(
+      context,
+      title: Text(title),
+      content: Text(content),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(S.of(context).cancel),
+          onPressed: () => Navigator.pop(context, false),
+        ),
+        FlatButton(
+          child: Text(confirm.isNotEmpty?confirm:S.of(context).setting),
+          onPressed: () => Navigator.pop(context, true),
+        ),
+      ],
+    );
+  }
+
 }
 
 void callLater(FrameCallback callback) {
