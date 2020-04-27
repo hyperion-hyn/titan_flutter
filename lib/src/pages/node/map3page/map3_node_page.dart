@@ -11,6 +11,7 @@ import 'package:titan/src/pages/me/service/user_service.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -335,6 +336,10 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   }
   dateDesc = suff + dateDesc;
 
+  if (state.index >= ContractState.CANCELLED.index && state.index <= ContractState.CANCELLED_COMPLETED.index) {
+    dateDesc = S.of(context).launch_fail;
+  }
+
 
   return Container(
     decoration: BoxDecoration(
@@ -360,7 +365,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                 children: <Widget>[
                   Text.rich(TextSpan(
                     children: [
-                      TextSpan(text:"编号 ", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                      TextSpan(text:S.of(context).number, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                       TextSpan(text:"${contractNodeItem.contractCode??""}", style: TextStyles.textC333S14bold),
                     ]
                   )),
@@ -372,23 +377,13 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("发起人:  ${UiUtil.shortEthAddress(contractNodeItem.ownerName)}", style: TextStyles.textC9b9b9bS12),
+                  Text(S.of(context).launcher_func(UiUtil.shortEthAddress(contractNodeItem.ownerName)), style: TextStyles.textC9b9b9bS12),
                   Container(width: 4,),
-                  Text(dateDesc, style: TextStyles.textC9b9b9bS12),
+                  Text(dateDesc, style: TextStyle(color: Map3NodeUtil.stateColor(state), fontSize: 12)),
                 ],
               )
             ],
           ),
-          /*Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text("${contractNodeItem.shortOwnerName}", style: TextStyle(fontWeight: FontWeight.w600)),
-                Expanded(
-                    child:
-                        Text(" ${UiUtil.shortEthAddress(contractNodeItem.owner)}", style: TextStyles.textC9b9b9bS12)),
-                Text(S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft), style: TextStyles.textC9b9b9bS12)
-              ],
-            ),*/
           Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 16),
             child: Divider(height: 1, color: Color(0x2277869e)),

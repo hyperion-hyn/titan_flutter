@@ -866,7 +866,9 @@
   "scan_qrcode_result": "扫码结果",
   "my_contract": "我的合约",
   "active": "启动",
-  "expired": "到期",
   "global_node_map_title": "全球节点分布:",
-  "your_level_low_cant_create_contract": "您的等级较低，不能创建合约！"
+  "your_level_low_cant_create_contract": "您的等级较低，不能创建合约！",
+  "expired": "到期",
+  "number": "编号",
+  "launcher_func": "发起人:  ${name}"
 }
