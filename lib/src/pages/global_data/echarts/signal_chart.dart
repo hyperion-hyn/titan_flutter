@@ -86,12 +86,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
                   padding: const EdgeInsets.all(16.0),
                   child: Text(_title),
                 )),
-            Container(
-              //color: Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(20, 16, 0, 8),
-                  child: SizedBox(width: double.infinity, child: Text(S.of(context).poi_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
-                )),
+            _poiWidget(),
             _dailySignalWidget(type: SensorType.POI),
           ],
         ),
@@ -102,14 +97,26 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
 
   Widget _poiWidget() {
-    return Container(
-      child: FadeInImage.assetNetwork(
-        image: "xxx",
-        placeholder: 'res/drawable/signal_map.',
-        width: 112,
-        height: 84,
-        fit: BoxFit.cover,
-      ),
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: SizedBox(width: double.infinity, child: Text(S.of(context).poi_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: FadeInImage.assetNetwork(
+              image: "xxx",
+              placeholder: 'res/drawable/signal_map.png',
+//            width: 112,
+//            height: 84,
+              fit: BoxFit.fill,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -166,8 +173,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     },
     legend: {
       orient: 'vertical',
-      y: 'bottom',
       x:'right',
+      y: 'bottom',
       data:['map3 nodes'],
       textStyle: {
         color: '#fff'
@@ -237,12 +244,13 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
             //color: HexColor('#404a59'),
             //color: Colors.w,
             child: Text(_title, style: TextStyle(color: Colors.black))),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+//                padding: const EdgeInsets.all(8),
+              child: Center(
                 child: Echarts(
                   option: _barOption,
                   extensions: [worldScript],
@@ -252,9 +260,9 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
                     print(messageAction);
                   },
                 ),
-                width: _chartsWidth,
-                height: _chartsHeight,
               ),
+              width: _chartsWidth,
+              height: _chartsHeight,
             ),
           ),
         ),
@@ -496,12 +504,21 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
           padding: EdgeInsets.fromLTRB(20, 16, 0, 8),
         ),*/
         Center(
-
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8.0,
+                    ),
+                  ],
+                ),
                 child: Echarts(
                   option: _barOption,
                   onMessage: (String message) {
@@ -523,7 +540,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     var _size = MediaQuery.of(context).size;
     double _chartsWidth = _size.width - 0;
     double _chartsHeight = type != SensorType.POI ? 250 : 180;
-
+    var left = "15%";
     var xAxisData = [];
     var seriesData = [];
     if (_dailyVo != null || _poiVoList != null) {
@@ -543,6 +560,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
         case SensorType.GPS:
           list = _dailyVo.gps;
+
+          left = "25%";
           break;
 
         case SensorType.POI:
@@ -573,7 +592,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         type: 'value'
     },
     grid: {
-       left: '15%',
+       left: ${jsonEncode(left)},
        top: '10%',
        bottom: '20%',
     },
@@ -594,6 +613,16 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         borderRadius: BorderRadius.circular(20),
 
         child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8.0,
+              ),
+            ],
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -611,6 +640,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
                   )),
               Center(
                 child: Container(
+                  padding: EdgeInsets.fromLTRB(type == SensorType.GPS?0:20, 0, 0, 0),
                   child: Echarts(
                     option: _lineOption,
                     onMessage: (String message) {
