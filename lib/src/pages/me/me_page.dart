@@ -23,7 +23,7 @@ import 'package:titan/src/pages/me/util/me_util.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -92,12 +92,12 @@ class _MeState extends BaseState<MePage> with RouteAware {
             _buildHeaderSection(),
             _buildPohNodeSection(),
             _dividerView(isBottom: true),
-            Divider(
-              height: 0,
-            ),
-            _buildWalletSection(),
+//            Divider(
+//              height: 0,
+//            ),
+//            _buildWalletSection(),
             // todo: test_jison_0424
-            _dividerView(isBottom: true),
+//            _dividerView(isBottom: true),
             _buildContractSection(),
 
             _dividerView(isBottom: true),
@@ -419,20 +419,9 @@ class _MeState extends BaseState<MePage> with RouteAware {
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
       child: Column(
         children: <Widget>[
-          _buildMemuBar(S.of(context).my_initiated_map_contract, "ic_create", () {
+          _buildMemuBar("我的合约", "ic_create", () {
             if (_wallet != null) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_initiated_map_contract)));
-            } else {
-              Application.router.navigateTo(context, Routes.wallet_manager);
-              //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
-            }
-          }),
-          Divider(
-            height: 2,
-          ),
-          _buildMemuBar(S.of(context).my_join_map_contract, "ic_delegate", () {
-            if (_wallet != null) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_join_map_contract)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
             } else {
               Application.router.navigateTo(context, Routes.wallet_manager);
               //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);

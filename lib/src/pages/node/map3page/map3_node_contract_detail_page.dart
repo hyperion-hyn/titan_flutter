@@ -1426,10 +1426,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  void _pushWalletManagerAction() {
-    Application.router.navigateTo(context, Routes.map3node_create_wallet);
-  }
-
   Future<T> _showConfirmDialog<T>({String title, String content}) {
     return _showConfirmDialogWidget(title: Text(title), content: Text(content), actions: <Widget>[
       FlatButton(
