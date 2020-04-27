@@ -859,5 +859,7 @@
   "select_picture": "选择图片",
   "renew_contract_ing": "复投中...",
   "renew_contract": "续约复投",
-  "join_map_node_must_have_block_account": "参与Map3抵押节点前，你必须先拥有一个区块链钱包账户。"
+  "join_map_node_must_have_block_account": "参与Map3抵押节点前，你必须先拥有一个区块链钱包账户。",
+  "launcher_time_left": "启动剩${time}",
+  "scan_qrcode_result": "扫码结果"
 }

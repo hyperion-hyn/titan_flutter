@@ -955,8 +955,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _contractProgressWidget() {
-    var dateDesc = S.of(context).time_left + FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft);
-
     return Container(
       color: Colors.white,
       padding: EdgeInsets.only(top: 8),
@@ -982,7 +980,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 ])),
                 Spacer(),
                 if (_isShowLaunchDate) Text(
-                  dateDesc,
+                  S.of(context).launcher_time_left(FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft)),
                   style: TextStyles.textC999S14,
                 ),
               ],
@@ -1376,7 +1374,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       // 2.
       await getJoinMemberData();
-
       _initBottomButtonData();
 
       // 3.
@@ -1387,7 +1384,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             _loadDataBloc.add(RefreshSuccessEvent());
           });
         }
-
       });
     } catch (e) {
       if (mounted) {
