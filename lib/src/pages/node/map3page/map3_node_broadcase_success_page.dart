@@ -137,11 +137,6 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
   }
 
   void _pop(BuildContext context) {
-    //print("[pop] this.pageType:${this.pageType}, Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
-
-    // todo: test_jison_0422
-    /*Routes.popUntilCachedEntryRouteName(context, true);
-    return;*/
 
     switch (this.pageType) {
       case Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE:

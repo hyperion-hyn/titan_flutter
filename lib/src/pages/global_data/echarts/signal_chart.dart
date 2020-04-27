@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -9,6 +10,7 @@ import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/model/map3_node_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_daily_vo.dart';
+import 'package:titan/src/pages/global_data/model/signal_total_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_weekly_vo.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
 import 'world.dart' show worldScript;
@@ -33,10 +35,10 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   var _title = "";
   List<Signal> _poiVoList;
   Map3NodeVo _map3nodeVo;
+  SignalTotalVo _signalTotalVo;
 
   @override
   bool get wantKeepAlive => true;
-  MapboxMapController _mapboxMapController;
 
   @override
   void initState() {
@@ -47,7 +49,6 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
 
     _getData();
@@ -59,99 +60,101 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       return SingleChildScrollView(
         child: _nodeWidget(),
       );
-    } else if (widget.type == SignalChatsPage.POI) {
-      return Stack(fit: StackFit.expand, children: <Widget>[
-        _mapView(),
-        Positioned(
-            left: 0,
-            right: 0,
-            top: 0,
-            //bottom: 16,
-            child: Column(
-              children: <Widget>[
-                Container(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(_title),
-                    )),
-                Container(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(20, 0, 0, 8),
-                      child: SizedBox(width: double.infinity, child: Text(S.of(context).poi_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
-                    )),
-              ],
-            )),
-        Positioned(left: 0, right: 0, bottom: 0, child: _dailySignalWidget(type: SensorType.POI)),
-      ]);
-    } else {
+    } else if (widget.type == SignalChatsPage.SIGNAL){
       return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Text(_title),
-            ),
-            _weeklySignalWidget(),
-            _dailySignalWidget(type: SensorType.GPS),
-            _dailySignalWidget(type: SensorType.WIFI),
-            _dailySignalWidget(type: SensorType.BLUETOOTH),
-            _dailySignalWidget(type: SensorType.CELLULAR),
-          ],
-        ),
+        child: _signalWidget(),
       );
-    }
-  }
-
-  Widget _mapView() {
-    var style;
-
-    if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
-      style = Const.kWhiteMapStyleCn;
+    } else if (widget.type == SignalChatsPage.POI) {
+      return SingleChildScrollView(
+        child: _poiWidget(),
+      );
     } else {
-      style = Const.kWhiteMapStyle;
     }
-
-    var languageCode = Localizations.localeOf(context).languageCode;
-    DMapCreationModel model = DMapDefine.kMapList["poi"];
-    var models = model.dMapConfigModel.heavenDataModelList;
-    print('[signal] --> _mapView, models.length:${models.length}, name:${models[0].sourceLayer}');
-
-    return MapboxMapParent(
-      key: Keys.mapHeatKey,
-      controller: _mapboxMapController,
-      child: MapboxMap(
-        compassEnabled: false,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(23.13246724, 113.36946487), // 天河公园-学院附近
-          zoom: 12,
-        ),
-        styleString: style,
-        onMapCreated: onMapCreated,
-        myLocationTrackingMode: MyLocationTrackingMode.None,
-        rotateGesturesEnabled: false,
-        tiltGesturesEnabled: false,
-        enableLogo: false,
-        enableAttribution: false,
-        minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
-        myLocationEnabled: false,
-        languageCode: languageCode,
-        children: <Widget>[
-          ///active plugins
-          HeavenPlugin(models: models),
-        ],
-      ),
-    );
-  }
-
-  void onMapCreated(MapboxMapController controller) {
-    print('[signal] --> onMapCreated, controller:${controller}');
-    _mapboxMapController = controller;
   }
 
   Widget _nodeWidget() {
+
+    var _size = MediaQuery.of(context).size;
+    double _chartsWidth = _size.width - 16.0 * 2.0;
+    double _chartsHeight = (299.3 * _chartsWidth) / 343 ;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            child: HtmlWidget(
+              _title,
+            )),
+        Padding(
+          child: Text(S.of(context).global_node_map_title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 16),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              child: Center(
+                child: _nodeChartWidget(),
+              ),
+              width: _chartsWidth,
+              height: _chartsHeight,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _signalWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          child: HtmlWidget(_title),
+        ),
+        _signalTotalChartWidget(),
+        _dailySignalChartWidget(type: SensorType.GPS),
+        _dailySignalChartWidget(type: SensorType.WIFI),
+        _dailySignalChartWidget(type: SensorType.BLUETOOTH),
+        _dailySignalChartWidget(type: SensorType.CELLULAR),
+      ],
+    );
+  }
+
+  Widget _poiWidget() {
+    return Column(
+      children: <Widget>[
+        Container(
+          //color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+              child: HtmlWidget(_title),
+            )),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: SizedBox(width: double.infinity, child: Text(S.of(context).poi_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: FadeInImage.assetNetwork(
+              image: "xxx",
+              placeholder: 'res/drawable/signal_map.png',
+//            width: 112,
+//            height: 84,
+              fit: BoxFit.fill,
+            ),
+          ),
+        ),
+        _dailySignalChartWidget(type: SensorType.POI),
+      ],
+    );
+  }
+
+  Widget _nodeChartWidget() {
     var data = [];
 
     if (_map3nodeVo != null && _map3nodeVo.tiles.length > 0) {
@@ -187,15 +190,6 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     var _barOption = '''
 {
     backgroundColor: '#404a59',
-    title: {
-      text: 'Hyperion map3 nodes',
-      subtext: 'Nodes for hyperion map3',
-      sublink: 'https://www.map3.metwork',
-      x:'left',
-      textStyle: {
-        color: '#fff'
-      }
-    },
     tooltip: {
       trigger: 'item',
       formatter: function (params) {
@@ -204,8 +198,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     },
     legend: {
       orient: 'vertical',
-      y: 'bottom',
-      x:'right',
+      right: '5%',
+      bottom: '5%',
       data:['map3 nodes'],
       textStyle: {
         color: '#fff'
@@ -214,6 +208,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     visualMap: {
       min: 0,
       max: 200,
+      left: '2.5%',
+      bottom: '2.5%',
       calculable: true,
       color: ['#d94e5d','#eac736','#50a3ba'],
       textStyle: {
@@ -221,7 +217,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       }
     },
     geo: {
-      //top: '15%',
+      top: '15%',
       map: 'world',
       label: {
         emphasis: {
@@ -264,44 +260,18 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 }
     ''';
 
-    var _size = MediaQuery.of(context).size;
-    double _chartsWidth = _size.width - 16.0 * 2.0;
-    double _chartsHeight = (299.3 * _chartsWidth) / 343 ;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-            padding: const EdgeInsets.all(16.0),
-            //color: HexColor('#404a59'),
-            //color: Colors.w,
-            child: Text(_title, style: TextStyle(color: Colors.black))),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-//                decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.all(Radius.circular(16.0))),
-                child: Echarts(
-                  option: _barOption,
-                  extensions: [worldScript],
-                  captureAllGestures: true,
-                  onMessage: (String message) {
-                    Map<String, Object> messageAction = jsonDecode(message);
-                    print(messageAction);
-                  },
-                ),
-                width: _chartsWidth,
-                height: _chartsHeight,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return Echarts(
+      option: _barOption,
+      extensions: [worldScript],
+      captureAllGestures: true,
+      onMessage: (String message) {
+        Map<String, Object> messageAction = jsonDecode(message);
+        print(messageAction);
+      },
     );
   }
 
-  Widget _weeklySignalWidget() {
+  Widget _signalTotalChartWidget() {
     var legendData = [
       S.of(context).scan_name_gps,
       S.of(context).scan_name_wifi,
@@ -337,65 +307,231 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     }
 
     var _barOption = '''
- {
-    tooltip: {
-      trigger: 'axis'
-    },
-    legend: {
-      data: ${jsonEncode(legendData)},
-      bottom: '3%'
-    },
-    calculable: true,
-    xAxis: [
-      {
-            type: 'category',
-      }
-    ],
-    yAxis: [
-      {
-            type: 'value'
-      }
-    ],
-    grid: {
-       left: '20%',
-       right: '5%',
-    },
-    series: ${jsonEncode(series)}
-}
-                  ''';
+{
+            backgroundColor: "#0B1837",
+            width: 360,
+            color: ["#906BF9", "#FE5656", "#3DD1F9", "#FFAD05"],
+            grid: {
+              left: -100,
+              top: 50,
+              bottom: 10,
+              right: 10,
+              containLabel: true
+            },
+            tooltip: {
+              trigger: 'item',
+              formatter: "{b} : {c} ({d}%)"
+            },
+            legend: {
+              type: "scroll",
+              orient: "vartical",
+              top: 420,
+              bottom: "0%",
+              itemWidth: 16,
+              itemHeight: 8,
+              itemGap: 16,
+              textStyle: {
+                color: '#A3E2F4',
+                fontSize: 12,
+                fontWeight: 0
+              },
+              data: ['Wifi', 'Cellular', 'BlueTooth', 'GPS']
+            },
+            polar: {},
+            angleAxis: {
+              interval: 1,
+              type: 'category',
+              data: [],
+              z: 10,
+              axisLine: {
+                show: false,
+                lineStyle: {
+                  color: "#0B4A6B",
+                  width: 1,
+                  type: "solid"
+                },
+              },
+              axisLabel: {
+                interval: 0,
+                show: true,
+                color: "#0B4A6B",
+                margin: 8,
+                fontSize: 16
+              },
+            },
+            radiusAxis: {
+              min: 40,
+              max: 120,
+              interval: 20,
+              axisLine: {
+                show: false,
+                lineStyle: {
+                  color: "#0B3E5E",
+                  width: 1,
+                  type: "solid"
+                },
+              },
+              axisLabel: {
+                formatter: '{value} %',
+                show: false,
+                padding: [0, 0, 20, 0],
+                color: "#0B3E5E",
+                fontSize: 16
+              },
+              splitLine: {
+                lineStyle: {
+                  color: "#0B3E5E",
+                  width: 2,
+                  type: "solid"
+                }
+              }
+            },
+            calculable: true,
+            series: [{
+              type: 'pie',
+              radius: ["5%", "10%"],
+              hoverAnimation: false,
+              labelLine: {
+                normal: {
+                  show: false,
+                  length: 30,
+                  length2: 55
+                },
+                emphasis: {
+                  show: false
+                }
+              },
+              data: [{
+                name: '',
+                value: 0,
+                itemStyle: {
+                  normal: {
+                    color: "#0B4A6B"
+                  }
+                }
+              }]
+            }, {
+              type: 'pie',
+              radius: ["90%", "95%"],
+              hoverAnimation: false,
+              labelLine: {
+                normal: {
+                  show: false,
+                  length: 30,
+                  length2: 55
+                },
+                emphasis: {
+                  show: false
+                }
+              },
+              name: "",
+              data: [{
+                name: '',
+                value: 0,
+                itemStyle: {
+                  normal: {
+                    color: "#0B4A6B"
+                  }
+                }
+              }]
+            }, {
+              stack: 'a',
+              type: 'pie',
+              radius: ['20%', '80%'],
+              roseType: 'area',
+              zlevel: 10,
+              label: {
+                normal: {
+                  show: true,
+                  formatter: "{c}",
+                  textStyle: {
+                    fontSize: 12,
+                  },
+                  position: 'inside'
+                },
+                emphasis: {
+                  show: true
+                }
+              },
+              labelLine: {
+                normal: {
+                  show: true,
+                  length: 20,
+                  length2: 55
+                },
+                emphasis: {
+                  show: false
+                }
+              },
+              data: [{
+                  value: ${jsonEncode(_signalTotalVo?.wifiTotal??0)},
+                name: 'Wifi'
+              },
+                {
+                  value: ${jsonEncode(_signalTotalVo?.cellularTotal??0)},
+                  name: 'Cellular'
+                },
+                {
+                  value: ${jsonEncode(_signalTotalVo?.blueToothTotal??0)},
+                  name: 'BlueTooth'
+                },
+                {
+                  value: ${jsonEncode(_signalTotalVo?.gpsTotal??0)},
+                  name: 'GPS'
+                }
+              ]
+            },
+            ]
+          }                  ''';
 
     var _size = MediaQuery.of(context).size;
     double _chartsWidth = _size.width - 8;
-    double _chartsHeight = 250;
+    double _chartsHeight = 300;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
           child: Text(S.of(context).signal_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          padding: EdgeInsets.fromLTRB(20, 16, 0, 8),
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 8),
         ),
         Center(
-          child: Container(
-            child: Echarts(
-              option: _barOption,
-              onMessage: (String message) {
-                Map<String, Object> messageAction = jsonDecode(message);
-                print(messageAction);
-              },
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8.0,
+                    ),
+                  ],
+                ),
+                child: Echarts(
+                  option: _barOption,
+                  onMessage: (String message) {
+                    Map<String, Object> messageAction = jsonDecode(message);
+                    print(messageAction);
+                  },
+                ),
+                width: _chartsWidth,
+                height: _chartsHeight,
+              ),
             ),
-            width: _chartsWidth,
-            height: _chartsHeight,
           ),
         ),
       ],
     );
   }
 
-  Widget _dailySignalWidget({int type}) {
+  Widget _dailySignalChartWidget({int type}) {
     var _size = MediaQuery.of(context).size;
     double _chartsWidth = _size.width - 0;
     double _chartsHeight = type != SensorType.POI ? 250 : 180;
-
+    var left = "15%";
     var xAxisData = [];
     var seriesData = [];
     if (_dailyVo != null || _poiVoList != null) {
@@ -415,6 +551,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
         case SensorType.GPS:
           list = _dailyVo.gps;
+
+          left = "25%";
           break;
 
         case SensorType.POI:
@@ -445,7 +583,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         type: 'value'
     },
     grid: {
-       left: '15%',
+       left: ${jsonEncode(left)},
        top: '10%',
        bottom: '20%',
     },
@@ -460,39 +598,59 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
     //print('[signal] --> _lineOption:${_lineOption}');
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+
+        child: Container(
+          decoration: BoxDecoration(
             color: Colors.white,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20, 16, 0, 0),
-              child: SizedBox(
-                  width: double.infinity,
-                  child: Text(S.of(context).signal_chart_last_month_numbers_func("${SensorType.getScanName(context, type)}"),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ))),
-            )),
-        Center(
-          child: Container(
-            child: Echarts(
-              option: _lineOption,
-              onMessage: (String message) {
-                Map<String, Object> messageAction = jsonDecode(message);
-                print(messageAction);
-              },
-            ),
-            width: _chartsWidth,
-            height: _chartsHeight,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8.0,
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(20, 16, 0, 0),
+                    child: SizedBox(
+                        width: double.infinity,
+                        child: Text(S.of(context).signal_chart_last_month_numbers_func("${SensorType.getScanName(context, type)}"),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ))),
+                  )),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(type == SensorType.GPS?0:20, 0, 0, 0),
+                  child: Echarts(
+                    option: _lineOption,
+                    onMessage: (String message) {
+                      Map<String, Object> messageAction = jsonDecode(message);
+                      print(messageAction);
+                    },
+                  ),
+                  width: _chartsWidth,
+                  height: _chartsHeight,
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
-  _getData() async {
+  Future _getData() async {
     var languageCode = Localizations.localeOf(context).languageCode;
 
     switch (widget.type) {
@@ -507,7 +665,8 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       case SignalChatsPage.SIGNAL:
         {
           _title = S.of(context).signal_chart_desc_signal;
-          _weeklyVoList = await _api.getSignalWeekly(language: languageCode);
+          _signalTotalVo = await _api.getSignalTotal();
+          //_weeklyVoList = await _api.getSignalWeekly(language: languageCode);
           var dailyList = await _api.getSignalDaily(language: languageCode);
           _dailyVo = dailyList[0];
         }
@@ -522,6 +681,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         break;
     }
 
-    setState(() {});
+    if (mounted) {setState(() {});}
   }
+
 }
