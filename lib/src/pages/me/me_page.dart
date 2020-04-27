@@ -237,7 +237,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
                               scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
                               Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
                             }else{
-//                              Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
+                              Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
                             }
                           },
                           child: Row(

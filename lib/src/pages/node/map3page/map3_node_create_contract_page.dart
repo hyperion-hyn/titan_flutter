@@ -93,7 +93,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
     _userLevelInfoList = await _userService.getUserLevelInfoList();
     userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
     _userLevelInfoList.forEach((levelInfo){
-      if(levelInfo.level == userInfo.levelNum){
+      if(levelInfo.level == userInfo.levelLimit){
         levelName = levelInfo.name;
       }
     });

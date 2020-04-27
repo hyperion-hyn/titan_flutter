@@ -41,7 +41,7 @@ class UserInfo {
   @JsonKey(name: "directly_power")
   int directlyPower;
   @JsonKey(name: "level_num")
-  int levelNum;
+  int levelLimit;
   @JsonKey(name: "can_staking")
   bool canStaking;
 
@@ -63,7 +63,7 @@ class UserInfo {
       this.directlyPower,
       this.chargeUsdtBalance,
       this.totalChargeBalance,
-      this.levelNum,
+      this.levelLimit,
       this.canStaking
       });
 
