@@ -437,7 +437,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return _contractStateDetail;
   }
 
-  void _initBottomButtonData() {
+  Future _initBottomButtonData() {
 
     switch (_contractState) {
 
@@ -1374,20 +1374,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       print('[contract] getContractInstanceItem,_isDelegated:$_isDelegated, contractState:$_contractState, userDelegateState:$_userDelegateState');
 
       // 2.
-      await getJoinMemberData();
-
-      _initBottomButtonData();
+      await Future.wait([getJoinMemberData(), _initBottomButtonData()]);
+//      await getJoinMemberData();
+//      _initBottomButtonData();
 
       // 3.
-      Future.delayed(Duration(seconds: 1), () {
-        if (mounted) {
-          setState(() {
-            _currentState = null;
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
 
-      });
     } catch (e) {
       if (mounted) {
         setState(() {
