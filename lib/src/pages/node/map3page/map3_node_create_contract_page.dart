@@ -75,9 +75,13 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   void getNetworkData() async {
     try {
-      contractItem = await _nodeApi.getContractItem(widget.contractId);
+//      contractItem = await _nodeApi.getContractItem(widget.contractId);
+//      providerList = await _nodeApi.getNodeProviderList();
 
-      providerList = await _nodeApi.getNodeProviderList();
+      var requestList =
+          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+      contractItem = requestList[0];
+      providerList = requestList[1];
 
       selectNodeProvider(0, 0);
 
@@ -186,7 +190,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         Expanded(
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                getMap3NodeProductHeadItemSmall(context, contractItem),
+            getMap3NodeProductHeadItemSmall(context, contractItem),
 //            SizedBox(height: 16,),
             Container(
               color: Colors.white,
@@ -309,7 +313,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
-
               onPressed: () async {
 
                 await checkIsCreateContract();
@@ -338,7 +341,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                           "&region=$region" +
                           "&pageType=${widget.pageType}" +
                           "&contractId=${widget.contractId}");
-
                 });
               }),
         )
@@ -396,8 +398,7 @@ Widget getHoldInNum(
                     Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
-                child: Text(
-                    S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                child: Text(S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                     style: TextStyle(color: Colors.grey[600])),
               ),
             ],
@@ -678,11 +679,14 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text('${S.of(context).highest} ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}', style: TextStyle(fontSize: 13, color: Colors.white60)),
+                          Text(
+                              '${S.of(context).highest} ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}',
+                              style: TextStyle(fontSize: 13, color: Colors.white60)),
                           SizedBox(width: 4),
                           Container(width: 1, height: 10, color: Colors.white24),
                           SizedBox(width: 4),
-                          Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyle(fontSize: 13, color: Colors.white60)),
+                          Text(S.of(context).n_day(nodeItem.duration.toString()),
+                              style: TextStyle(fontSize: 13, color: Colors.white60)),
                         ],
                       )
                     ],
@@ -690,7 +694,8 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                 ),
                 Column(
                   children: <Widget>[
-                    Text(FormatUtil.formatPercent(nodeItem.annualizedYield), style: TextStyle(fontSize: 20, color: Colors.white)),
+                    Text(FormatUtil.formatPercent(nodeItem.annualizedYield),
+                        style: TextStyle(fontSize: 20, color: Colors.white)),
                     Text(S.of(context).annualized_rewards, style: TextStyle(fontSize: 13, color: Colors.white60)),
                   ],
                 ),
