@@ -1048,7 +1048,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           var subtitle = subtitles[index] > 0 ? FormatUtil.formatDate(subtitles[index]) : "";
           var date = progressHints[index];
           //var textColor = _currentStep>=index ? HexColor("#4B4B4B") : HexColor("#A7A7A7");
-          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+          var textColor = _currentStep != index ? HexColor("#A7A7A7") : Theme.of(context).primaryColor;
           //var subTextColor = _currentStep!=index ? HexColor("#A7A7A7") : _stateColor;
 
           bool isMiddle = titles.length == 5 && index == 2;
