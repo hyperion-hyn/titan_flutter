@@ -201,10 +201,6 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
   }
   
   _pushAction(NodeItem nodeItem) async{
-    // todo: test_jison_0422
-    /*Application.router
-                        .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
-                    return;*/
 
     var walletList = await WalletUtil.scanWallets();
     if (walletList.length == 0) {

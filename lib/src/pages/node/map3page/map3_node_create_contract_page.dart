@@ -311,31 +311,14 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
 
               onPressed: () async {
-                // todo: test_jison_0422
-                /*String provider = providerList[selectServerItemValue].id;
-                String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-                var transferAmount = _joinCoinController?.text.isNotEmpty?_joinCoinController?.text:"0";
 
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_send_confirm_page +
-                        "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                        "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                        "&transferAmount=$transferAmount&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                        "&provider=$provider" +
-                        "&region=$region" +
-                        "&pageType=${widget.pageType}" +
-                        "&contractId=${widget.contractId}");
-                return;*/
+                await checkIsCreateContract();
 
-
-
-                setState(() async {
+                setState(() {
                   if (!_joinCoinFormKey.currentState.validate()) {
                     return;
                   }
 
-                  await checkIsCreateContract();
                   if (!_isUserCreatable) {
                     Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
                     return;
