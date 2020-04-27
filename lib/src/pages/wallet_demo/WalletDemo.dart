@@ -135,7 +135,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   logger.i('ETH交易已提交，交易hash $txHash');
 
                   var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
-                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 505000); //三十万
+                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 805000); //三十万
                   txHash = await client.sendTransaction(
                     credentials,
                     Transaction.callContract(
@@ -211,7 +211,7 @@ class _WalletDemoState extends State<WalletDemo> {
                       contractAddress: hynErc20ContractAddress,
                       approveToAddress: approveToAddress,
                       amount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
-                      password: '111111',
+                      password: '111111__',
                       gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                       gasLimit: 5000000);
                   var ret =
@@ -220,6 +220,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   logger.i('hyn approve, result: $ret');
                 } catch (e) {
                   logger.e(e);
+                  print('message: ${e.message}, detail: ${e.toString()}');
                   if (e is PlatformException) {
                     if (e.code == PlatformErrorCode.PASSWORD_WRONG) {
                       Fluttertoast.showToast(msg: '密码错误');
