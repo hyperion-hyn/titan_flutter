@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -78,7 +79,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return _contractNodeItem?.contract?.durationType ?? 0;
   }
 
-  get _isFreeze => _isOwner && _userDelegateState == UserDelegateState.DUE;
+  get _isNeedFreezeFirst => _isOwner && _userDelegateState == UserDelegateState.DUE;
 
   get _isNoWallet => _wallet == null;
 
@@ -382,7 +383,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       case ContractState.ACTIVE:
         var suffix = S.of(context).expire_date;
-        _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.completeSecondsLeft.toDouble()) + suffix;
+        _contractStateDetail =
+            FormatUtil.timeString(context, _contractNodeItem.completeSecondsLeft.toDouble()) + suffix;
         break;
 
       case ContractState.DUE:
@@ -410,8 +412,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     if (_userDelegateState != null && _is180DaysContract) {
       switch (_userDelegateState) {
         case UserDelegateState.ACTIVE:
+          var pre = S.of(context).time_left;
           var suffix = "，${S.of(context).can_withdraw_fifty_reward}";
-          _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
+          _contractStateDetail =
+              pre + FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         case UserDelegateState.HALFDUE:
@@ -421,7 +425,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.PRE_HALFDUE_COLLECTED:
         case UserDelegateState.HALFDUE_COLLECTED:
           var suffix = S.of(context).expire_date;
-          _contractStateDetail = FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
+          var pre = S.of(context).time_left;
+          _contractStateDetail =
+              pre + FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         default:
@@ -567,6 +573,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   //get _isRenew => _contractState == ContractState.DUE && _isOwner;
   get _isRenew => false;
 
+  get _isShowLaunchDate => _contractState.index <= ContractState.PENDING.index;
+
   @override
   void onCreated() {
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
@@ -622,6 +630,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         }),
       );
     }
+
+//    var remainDay = S.of(context).time_left + FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft);
 
     return Padding(
       padding: EdgeInsets.only(bottom: _visible ? 48 : 0),
@@ -934,6 +944,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _contractProgressWidget() {
+    var dateDesc = S.of(context).time_left + FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft);
+
     return Container(
       color: Colors.white,
       padding: EdgeInsets.only(top: 8),
@@ -941,7 +953,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.fromLTRB(0, 8, 16, 8),
             child: Row(
               children: <Widget>[
                 Padding(
@@ -956,11 +968,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 ),
                 Text.rich(TextSpan(children: [
                   TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
-                  /*TextSpan(
-                    text: _contractProgressDetail,
-                    style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
-                  ),*/
                 ])),
+                Spacer(),
+                if (_isShowLaunchDate)
+                  Text(
+                    dateDesc,
+                    style: TextStyles.textC999S14,
+                  ),
               ],
             ),
           ),
@@ -1419,19 +1433,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     Application.router.navigateTo(context, Routes.map3node_create_wallet);
   }
 
-  void _showConfirmDialog({String title, String content, VoidCallback finishActon}) {
-    _showConfirmDialogWidget(title: Text(title), content: Text(content), actions: <Widget>[
+  Future<T> _showConfirmDialog<T>({String title, String content}) {
+    return _showConfirmDialogWidget(title: Text(title), content: Text(content), actions: <Widget>[
       FlatButton(
           onPressed: () {
-            Navigator.pop(context);
-            finishActon();
+            Navigator.pop(context, true);
           },
           child: Text(S.of(context).continue_text))
     ]);
   }
 
-  void _showConfirmDialogWidget({Widget title, Widget content, List<Widget> actions}) {
-    showDialog(
+  Future<T> _showConfirmDialogWidget<T>({Widget title, Widget content, List<Widget> actions}) {
+    return showDialog<T>(
       context: context,
       builder: (context) {
         return Platform.isIOS
@@ -1449,16 +1462,17 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
-  void _alertContractOwnerAction() {
+  void _alertContractOwnerAction() async {
     if (_wallet == null || _contractDetailItem == null) {
       return;
     }
 
-    if (_isFreeze) {
-      _showConfirmDialog(
-          title: S.of(context).tips,
-          content: "作为当前合约的创建者，我们会把你收益的5%分享给推荐的人哦！",
-          finishActon: () => _rewardFreezeAction(_alertPasswordAction));
+    if (_isNeedFreezeFirst) {
+      var ret =
+          await _showConfirmDialog(title: S.of(context).tips, content: "作为当前合约的创建者，你需要给直推人数额为5%合约总收益作为推荐奖励，系统会为你自动划转。");
+      if (ret == true) {
+        _alertPasswordAction();
+      }
     } else {
       _alertPasswordAction();
     }
@@ -1491,6 +1505,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         }
       });
 
+      //ensure password is right.
+      await _wallet.getCredentials(walletPassword);
+
+      var isFreezeSuccess = await _rewardFreezeAction();
+      if (isFreezeSuccess != true) {
+        return;
+      }
+
       var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
       var gasPrice = gasPriceRecommend.average.toInt();
 
@@ -1504,6 +1526,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           gasLimit = EthereumConst.COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT;
         }
       }
+
       var success = await _api.withdrawContractInstance(
           _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
       print("[detail] collectionAction, success:$success");
@@ -1521,6 +1544,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       setState(() {
         _isTransferring = false;
       });
+
+      FlutterBugly.uploadException(message: _.message, detail: _.toString());
 
       if (_ is PlatformException) {
         if (_.code == WalletError.PASSWORD_WRONG) {
@@ -1540,9 +1565,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  Future _rewardFreezeAction(VoidCallback callback) async {
+  Future<bool> _rewardFreezeAction() async {
     if (_wallet == null || _contractDetailItem == null) {
-      return;
+      return false;
     }
 
     var nodeId = _contractNodeItem.id;
@@ -1553,9 +1578,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     print("[detail] collectionAction, res:$res");
 
     if (res.code == 0) {
-      callback();
+      return true;
     } else {
-      Fluttertoast.showToast(msg: S.of(context).transfer_fail + "code:${res.code}");
+      Fluttertoast.showToast(msg: "处理奖励转移发生异常 错误码：${res.code}");
+      return false;
     }
   }
 
@@ -1564,8 +1590,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     //print("[detail] entryRouteName,$entryRouteName");
 
-    await Application.router
-        .navigateTo(context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
+    await Application.router.navigateTo(context,
+        Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
     _nextAction();
   }
 
@@ -1581,10 +1607,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] 1result:$result");
-    if(result != null) {
+    if (result != null) {
       print("[detail] 2result:$result");
       getContractDetailData();
     }
   }
-
 }

@@ -9,6 +9,7 @@ part of 'contract_node_item.dart';
 ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
   return ContractNodeItem(
     json['id'] as int,
+    json['contractCode'] as String,
     json['contract'] == null
         ? null
         : NodeItem.fromJson(json['contract'] as Map<String, dynamic>),
@@ -35,6 +36,7 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'contractCode': instance.contractCode,
       'contract': instance.contract,
       'owner': instance.owner,
       'ownerName': instance.ownerName,

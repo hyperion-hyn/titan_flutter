@@ -8,6 +8,9 @@ class ContractNodeItem extends Object {
   @JsonKey(name: 'id')
   int id;
 
+  @JsonKey(name: 'contractCode')
+  String contractCode;
+
   @JsonKey(name: 'contract')
   NodeItem contract;
 
@@ -68,6 +71,7 @@ class ContractNodeItem extends Object {
 
   ContractNodeItem(
     this.id,
+    this.contractCode,
     this.contract,
     this.owner,
     this.ownerName,
@@ -186,4 +190,5 @@ class ContractNodeItem extends Object {
     }
     return shortOwnerName;
   }
+
 }
