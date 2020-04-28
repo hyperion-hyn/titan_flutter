@@ -5,6 +5,10 @@ import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class EmptyWalletView extends StatelessWidget {
+  final String tips;
+
+  EmptyWalletView({this.tips});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -27,10 +31,11 @@ class EmptyWalletView extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 48),
             child: Text(
-              S.of(context).private_wallet_tips,
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.grey[400]),
+              tips ?? S.of(context).private_wallet_tips,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.grey[600]),
             ),
           ),
           Padding(
@@ -43,8 +48,7 @@ class EmptyWalletView extends StatelessWidget {
                       side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
                     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                    Application.router.navigateTo(context,
-                        Routes.wallet_create + '?entryRouteName=$currentRouteName');
+                    Application.router.navigateTo(context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
                   },
                   child: Container(
                     child: Padding(
@@ -66,8 +70,8 @@ class EmptyWalletView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(36)),
                     onPressed: () {
                       var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                      Application.router.navigateTo(context,
-                          Routes.wallet_import + '?entryRouteName=$currentRouteName');
+                      Application.router
+                          .navigateTo(context, Routes.wallet_import + '?entryRouteName=$currentRouteName');
                     },
                     child: Container(
                       child: Padding(
