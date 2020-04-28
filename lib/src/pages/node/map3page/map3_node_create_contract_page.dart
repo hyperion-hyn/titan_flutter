@@ -56,11 +56,11 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   List<DropdownMenuItem> serverList;
   List<DropdownMenuItem> nodeList;
   List<NodeProviderEntity> providerList = [];
+  String originInputStr = "";
   UserInfo userInfo;
   List<UserLevelInfo> _userLevelInfoList = [];
   UserService _userService = UserService();
   String levelName = "";
-  String originInputStr = "";
   bool isChecking = false;
   var activatedWallet;
   var walletName;
@@ -360,6 +360,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
         _joinCoinFormKey.currentState.validate();
         return;
       }
+
       if(!userInfo.canStaking){
         Fluttertoast.showToast(msg: S.of(context).your_level_low_cant_create_contract);
         return;
@@ -368,6 +369,7 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
       if (!_joinCoinFormKey.currentState.validate()) {
         return;
       }
+
       setState(() {
         isChecking = true;
       });
@@ -791,6 +793,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           right: 0,
           child: InkWell(
             onTap: () async {
+
               Application.router.navigateTo(
                   context,
                   Routes.map3node_share_page +

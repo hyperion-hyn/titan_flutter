@@ -23,7 +23,6 @@ import 'package:titan/src/pages/me/util/me_util.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -55,7 +54,10 @@ class _MeState extends BaseState<MePage> with RouteAware {
     _updateCheckInCount();
 
     _loadData();
+
+    super.onCreated();
   }
+
 
   Future _loadData() async {
     _pubKey = await TitanPlugin.getPublicKey();
@@ -93,12 +95,12 @@ class _MeState extends BaseState<MePage> with RouteAware {
             _buildHeaderSection(),
             _buildPohNodeSection(),
             _dividerView(isBottom: true),
-            Divider(
-              height: 0,
-            ),
-            _buildWalletSection(),
+//            Divider(
+//              height: 0,
+//            ),
+//            _buildWalletSection(),
             // todo: test_jison_0424
-            _dividerView(isBottom: true),
+//            _dividerView(isBottom: true),
             _buildContractSection(),
 
             _dividerView(isBottom: true),
@@ -194,7 +196,9 @@ class _MeState extends BaseState<MePage> with RouteAware {
                           "${shortEmail(userInfo?.email)}",
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 7,),
+                        SizedBox(
+                          height: 7,
+                        ),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => GradePage()));
@@ -228,17 +232,20 @@ class _MeState extends BaseState<MePage> with RouteAware {
                           onTap: () async {
                             String scanStr = await BarcodeScanner.scan();
                             print("indexInt= $scanStr");
-                            if(scanStr == null){
+                            if (scanStr == null) {
                               return;
-                            }else if(scanStr.contains("share?id=")){
+                            } else if (scanStr.contains("share?id=")) {
                               int indexInt = scanStr.indexOf("=");
-                              String contractId = scanStr.substring(indexInt+1,indexInt+2);
-                              Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
-                            }else if(scanStr.contains("http") || scanStr.contains("https")){
+                              String contractId = scanStr.substring(indexInt + 1, indexInt + 2);
+                              Application.router.navigateTo(
+                                  context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+                            } else if (scanStr.contains("http") || scanStr.contains("https")) {
                               scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
-                              Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
-                            }else{
-                              Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
+                              Application.router
+                                  .navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
+                            } else {
+                              Application.router
+                                  .navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
                             }
                           },
                           child: Row(
@@ -249,13 +256,17 @@ class _MeState extends BaseState<MePage> with RouteAware {
                                 size: 16,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left:10.0),
-                                child: Text("扫一扫",style: TextStyle(fontSize: 14,color: Colors.white),),
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  "扫一扫",
+                                  style: TextStyle(fontSize: 14, color: Colors.white),
+                                ),
                               )
                             ],
-                          )
+                          )),
+                      SizedBox(
+                        height: 7,
                       ),
-                      SizedBox(height: 7,),
                       Row(
                         children: <Widget>[
                           GestureDetector(
@@ -290,17 +301,18 @@ class _MeState extends BaseState<MePage> with RouteAware {
                                 )),
                             onTap: _doTask,
                           ),
-                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 10,
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4),
                             child: Text(
                               "${checkInModel?.finishTaskNum ?? 0}/3",
-                              style: TextStyle(color: Colors.white,fontSize: 14),
+                              style: TextStyle(color: Colors.white, fontSize: 14),
                             ),
                           )
                         ],
                       ),
-
                     ],
                   )
                 ],
@@ -402,7 +414,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
     );
   }
 
-  Widget _buildWalletSection() {
+  /*Widget _buildWalletSection() {
     var wallet = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
     return Container(
       color: Colors.white,
@@ -411,7 +423,7 @@ class _MeState extends BaseState<MePage> with RouteAware {
         Application.router.navigateTo(context, Routes.wallet_manager);
       }, wallet?.wallet?.keystore?.name ?? S.of(context).wallet_manage),
     );
-  }
+  }*/
 
   Widget _buildContractSection() {
     var _wallet = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
@@ -420,12 +432,11 @@ class _MeState extends BaseState<MePage> with RouteAware {
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: HexColor("#E9E9E9"), width: 0)),
       child: Column(
         children: <Widget>[
-          _buildMemuBar("我的合约", "ic_create", () {
+          _buildMemuBar(S.of(context).my_contract, "ic_map3_node_item_contract", () {
             if (_wallet != null) {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
             } else {
               Application.router.navigateTo(context, Routes.wallet_manager);
-              //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
             }
           }),
         ],

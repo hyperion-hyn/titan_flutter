@@ -33,6 +33,7 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -76,9 +77,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   get _stateColor => Map3NodeUtil.stateColor(_contractState);
 
-  get _durationType {
-    return _contractNodeItem?.contract?.durationType ?? 0;
-  }
+  get _durationType => _contractNodeItem?.contract?.durationType??0;
 
   get _isNeedFreezeFirst => _isOwner && _userDelegateState == UserDelegateState.DUE;
 
@@ -834,10 +833,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Widget _contractNotifyWidget() {
     if (!_isDelegated || _contractDetailItem == null || _userDelegateState == null) {
-      return Container(
-//        color: Colors.white,
-//        padding: EdgeInsets.only(top: 8),
-          );
+      return Container();
     }
 
     var amountDelegation = FormatUtil.amountToString(_contractDetailItem.amountDelegation);
@@ -1042,14 +1038,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       tickText: _contractStateDetail,
       currentStepProgress: _currentStepProgress,
       currentStep: _currentStep,
-      steps: titles.map(
-        (title) {
-          var index = titles.indexOf(title);
-          var subtitle = subtitles[index] > 0 ? FormatUtil.formatDate(subtitles[index]) : "";
-          var date = progressHints[index];
-          //var textColor = _currentStep>=index ? HexColor("#4B4B4B") : HexColor("#A7A7A7");
-          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
-          //var subTextColor = _currentStep!=index ? HexColor("#A7A7A7") : _stateColor;
+      steps: titles
+          .map(
+            (title) {
+              var index = titles.indexOf(title);
+              var subtitle = subtitles[index]>0?FormatUtil.formatDate(subtitles[index]):"";
+              var date = progressHints[index];
+              var textColor = _currentStep!=index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 
           bool isMiddle = titles.length == 5 && index == 2;
 
@@ -1303,9 +1298,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        /*List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
-          return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
-        }).toList();*/
         _delegateRecordList.addAll(tempMemberList);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
@@ -1426,12 +1418,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  void _pushWalletManagerAction() {
-    Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
-
-    //Application.router.navigateTo(context, Routes.map3node_create_wallet);
-  }
-
   Future<T> _showConfirmDialog<T>({String title, String content}) {
     return _showConfirmDialogWidget(title: Text(title), content: Text(content), actions: <Widget>[
       FlatButton(
@@ -1468,7 +1454,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     if (_isNeedFreezeFirst) {
       var ret =
-          await _showConfirmDialog(title: S.of(context).tips, content: "作为当前合约的创建者，你需要给直推人数额为5%合约总收益作为推荐奖励，系统会为你自动划转。");
+          await _showConfirmDialog(title: S.of(context).tips, content: S.of(context).freezeContentDesc);
       if (ret == true) {
         _alertPasswordAction();
       }
@@ -1576,12 +1562,37 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         .postStakingRewardFreeze(nodeId: nodeId, contractAddress: contractAddress, walletAddress: walletAddress);
     print("[detail] collectionAction, res:$res");
 
+
+    /*CODE	描述
+  -10001	参数错误
+  -1003	没权限访问, 只有加密验证没通过才会出现这个
+  -1004	用户余额不足
+  */
+
     if (res.code == 0) {
       return true;
-    } else {
+    } else if (res.code == -1004) {
+      bool result = await UiUtil.showDialogsNoCallback(context,
+        S.of(context).tips,
+        '当前账户余额不足，请先充值',
+        confirm: S.of(context).confirm,
+      );
+      if (result) {
+        Application.router.navigateTo(context, Routes.recharge_purchase).then((isSuccess) async {
+          if (isSuccess == true) {
+            await UserService.syncUserInfo(context);
+          }
+        });
+      }
+    }
+    else {
       Fluttertoast.showToast(msg: "处理奖励转移发生异常 错误码：${res.code}");
       return false;
     }
+  }
+
+  void _pushWalletManagerAction() {
+    Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _joinContractAction() async {
