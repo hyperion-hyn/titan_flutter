@@ -1302,7 +1302,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       _delegateRecordList = [];
 
       List<ContractDelegateRecordItem> tempMemberList =
-          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+      await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1323,7 +1323,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     try {
       _currentPage++;
       List<ContractDelegateRecordItem> tempMemberList =
-          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+      await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1386,14 +1386,72 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  Future _collectAction() async {
+  void _pushNodeInfoAction() {
+    if (_contractNodeItem != null) {
+      print('url:${_contractNodeItem.remoteNodeUrl}');
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WebViewContainer(
+                initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
+                title: "",
+              )));
+    }
+  }
+
+  void _pushTransactionDetailAction(ContractDelegateRecordItem item) {
+    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
+    var url = EtherscanApi.getTxDetailUrl(item.txHash, isChinaMainland);
+    if (url != null) {
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WebViewContainer(
+                initUrl: url,
+                title: "",
+              )));
+    }
+  }
+
+  Future<T> _showConfirmDialog<T>({String title, String content}) {
+    return _showConfirmDialogWidget(title: Text(title), content: Text(content), actions: <Widget>[
+      FlatButton(
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+          child: Text(S.of(context).continue_text))
+    ]);
+  }
+
+  Future<T> _showConfirmDialogWidget<T>({Widget title, Widget content, List<Widget> actions}) {
+    return showDialog<T>(
+      context: context,
+      builder: (context) {
+        return Platform.isIOS
+            ? CupertinoAlertDialog(
+          title: title,
+          content: content,
+          actions: actions,
+        )
+            : AlertDialog(
+          title: title,
+          content: content,
+          actions: actions,
+        );
+      },
+    );
+  }
+
+  void _alertContractOwnerAction() async {
     if (_wallet == null || _contractDetailItem == null) {
       return;
     }
 
     if (_isNeedFreezeFirst) {
       var ret =
-          await _showConfirmDialog(title: S.of(context).tips, content: S.of(context).freezeContentDesc);
+      await _showConfirmDialog(title: S.of(context).tips, content: S.of(context).freezeContentDesc);
       if (ret == true) {
         _alertPasswordAction();
       }
@@ -1451,50 +1509,49 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         }
       }
 
-        var success = await _api.withdrawContractInstance(
-            _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
-        if (success == "success") {
-          _broadcaseContractAction();
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
-        _isTransferring = false;
-      } catch (_) {
-        logger.e(_);
-        setState(() {
-          _isTransferring = false;
-        });
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
+      var success = await _api.withdrawContractInstance(
+          _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
+      print("[detail] collectionAction, success:$success");
+
+      if (success == "success") {
+        _broadcaseContractAction();
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
-    });
+
+      _isTransferring = false;
+    } catch (_) {
+      logger.e(_);
+
+      setState(() {
+        _isTransferring = false;
+      });
+
+      FlutterBugly.uploadException(message: _.message, detail: _.toString());
+
+      if (_ is PlatformException) {
+        if (_.code == WalletError.PASSWORD_WRONG) {
+          Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
+      } else if (_ is RPCError) {
+        if (_.errorCode == -32000) {
+          Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+      }
+    }
   }
 
   Future<bool> _rewardFreezeAction() async {
+
     if (_wallet == null || _contractDetailItem == null) {
       return false;
     }
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => WebViewContainer(
-                    initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
-                    title: "",
-                  )));
 
     var nodeId = _contractNodeItem.id;
     var walletAddress = _contractNodeItem.owner;
@@ -1523,25 +1580,26 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
+
   Future _alertRechargeAction() async {
 
-    // todo: test_jison_0428
-    var withdrawn = FormatUtil.amountToString(_contractDetailItem.withdrawn) + "HYN";
+    print("_rewardFreezeAction---------1004");
+
+    var withdrawn = double.parse(_contractDetailItem?.withdrawn??"0") * 0.05;
+    var withdrawnStr = FormatUtil.amountToString(withdrawn.toString()) + "HYN";
 
     bool result = await UiUtil.showDialogsNoCallback(context,
       S.of(context).tips,
-      '您的账户余额不足以划转合约总收益5%(即:$withdrawn)到直推人上，请先充值余额。',
+      '您的账户余额不足以划转合约总收益5%(即:$withdrawnStr)到直推人上，请先充值余额。',
       confirm: S.of(context).recharge,
     );
     if (result) {
       Application.router.navigateTo(context, Routes.recharge_purchase);
     }
-    print("_rewardFreezeAction---------1004");
   }
 
   void _pushWalletManagerAction() {
-    Application.router.navigateTo(
-        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+    Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _joinContractAction() async {
@@ -1551,11 +1609,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     await Application.router.navigateTo(context,
         Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
-    final result = ModalRoute.of(context).settings?.arguments;
-    //print("[detail] result:$result");
-    if (result != null) {
-      getContractDetailData();
-    }
+    _nextAction();
   }
 
   void _broadcaseContractAction() async {
@@ -1569,10 +1623,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
-    //print("[detail] result:$result");
+    print("[detail] 1result:$result");
     if (result != null) {
+      print("[detail] 2result:$result");
       getContractDetailData();
     }
   }
- 
+
+
 }
