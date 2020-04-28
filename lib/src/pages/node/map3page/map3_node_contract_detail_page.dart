@@ -1570,21 +1570,23 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   -1004	用户余额不足
   */
     // todo: test_jison_0428
+    var withdrawn = FormatUtil.amountToString(_contractDetailItem.withdrawn) + "HYN";
+
     var code = res.code;
-    code = -1004;
+    //code = -1004;
     if (code == 0) {
       return true;
     } else if (code == -1004) {
 
       bool result = await UiUtil.showDialogsNoCallback(context,
         S.of(context).tips,
-        '您的账户余额不足以划转合约总收益5%(即:1023.23 hyn)到直推人上，请先充值余额。',
+        '您的账户余额不足以划转合约总收益5%(即:$withdrawn)到直推人上，请先充值余额。',
         confirm: S.of(context).recharge,
       );
       if (result) {
         Application.router.navigateTo(context, Routes.recharge_purchase);
       }
-      //print("_rewardFreezeAction---------1004");
+      print("_rewardFreezeAction---------1004");
       return false;
     }
     else {
