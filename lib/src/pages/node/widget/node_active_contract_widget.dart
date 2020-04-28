@@ -87,7 +87,7 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
 
   Widget activeContractWidget() {
     return Container(
-      color: Color(0xfff5f5f5),
+      color: Colors.white,
       height: 200,
       child: Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 8),
