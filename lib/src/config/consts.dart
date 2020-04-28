@@ -14,9 +14,9 @@ class Const {
 
   static String get NODE_DOMAIN {
     if(env.buildType == BuildType.DEV){
-      return ContractTestConfig.apiLocalDomain;
+      return ContractTestConfig.apiLocalDomain_test;
     }else{
-      return 'https://api.hyn.space/';
+      return ContractTestConfig.apiLocalDomain;
     }
   }
 
