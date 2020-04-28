@@ -303,30 +303,28 @@ class ShowWalletView extends StatelessWidget {
               ],
             ),
           ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                SizedBox(
-                  width:130,
-                  child: Text(
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Text(
                   "${FormatUtil.coinBalanceHumanReadFormat(coin)}",textAlign: TextAlign.right,
                     style: TextStyle(color: Color(0xFF252525), fontSize: 16),overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}",
-                    style: TextStyles.textC9b9b9bS12,
+                  SizedBox(
+                    height: 4,
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}",
+                      style: TextStyles.textC9b9b9bS12,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
