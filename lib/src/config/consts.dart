@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/config.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 
@@ -14,9 +15,9 @@ class Const {
 
   static String get NODE_DOMAIN {
     if(env.buildType == BuildType.DEV){
-      return ContractTestConfig.apiLocalDomain_test;
+      return Config.NODE_API_URL_TEST;
     }else{
-      return ContractTestConfig.apiLocalDomain;
+      return Config.NODE_API_URL;
     }
   }
 
