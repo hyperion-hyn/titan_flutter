@@ -409,7 +409,7 @@
   "signal_chart_desc_poi": "''POI贡献基于<strong>众包、众治的去中心化理念</strong>，以去中心化的最有效方式鼓励用户贡献真实详细的<strong>位置详情</strong>。为避免POI信息有误，同时推出<strong>博弈系统</strong>配合网络验证，开放给所有地图用户<strong>查验POI数据真实性</strong>。未来想要搜索附近好吃好玩的目的地，只需在App首页输入关键字，如美食、酒店、商场、景点等，即可查看该位置点详情。''",
   "signal_chart_last_month_numbers_func": "最近一个月${scanName}数据增量：",
   "signal_total_data": "信号数据总量：",
-  "poi_total_data": "用户贡献POI数据分布：",
+  "poi_total_data": "用户贡献的POI数据分布：",
   "wait_start_node_contract": "待启动的节点",
   "earth_outpace_server_node": "全球超过%d个地球服务站点",
   "map_provide_stable_server": "为海伯利安地图提供稳定可靠的地图服务",
