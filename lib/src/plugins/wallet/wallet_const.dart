@@ -64,8 +64,7 @@ class WalletConfig {
   static String get map3ContractAddress {
     switch (netType) {
       case EthereumNetType.main:
-        //TODO
-        return '';
+        return '0x04dd43162ccb7c2e256128e28e29218c5057e7f3';
       case EthereumNetType.ropsten:
         return '0x2c6FA17BDF5Cb10e64d26bFc62f64183D9f939A6';
       case EthereumNetType.rinkeby:
