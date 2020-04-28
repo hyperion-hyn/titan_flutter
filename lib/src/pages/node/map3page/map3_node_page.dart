@@ -69,6 +69,12 @@ class _Map3NodeState extends State<Map3NodePage> {
                 child: NodeActiveContractWidget(loadDataBloc),
               ),
             ),
+            SliverToBoxAdapter(
+              child: Padding(
+                  padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
+                  child: Text(S.of(context).wait_start_node_contract,
+                      style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")))),
+            ),
             if (_nodePageEntityVo.contractNodeList.isNotEmpty) _pendingListWidget(),
             _emptyListWidget(),
           ],
@@ -129,10 +135,7 @@ class _Map3NodeState extends State<Map3NodePage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
-                    child: Text(S.of(context).wait_start_node_contract,
-                        style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")))),
+
                 getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])
               ],
             );
@@ -144,7 +147,7 @@ class _Map3NodeState extends State<Map3NodePage> {
 
   Widget _emptyListWidget() {
     // empty
-    if (_nodePageEntityVo.contractNodeList.isEmpty && activeContractList.isEmpty) {
+    if (_nodePageEntityVo.contractNodeList.isEmpty) {
       return SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.only(top: 48.0),
