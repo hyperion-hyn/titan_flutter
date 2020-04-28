@@ -292,9 +292,12 @@ class ShowWalletView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                Text(
-                  "${FormatUtil.coinBalanceHumanReadFormat(coin)}",
-                  style: TextStyle(color: Color(0xFF252525), fontSize: 16),
+                SizedBox(
+                  width:130,
+                  child: Text(
+                  "${FormatUtil.coinBalanceHumanReadFormat(coin)}",textAlign: TextAlign.right,
+                    style: TextStyle(color: Color(0xFF252525), fontSize: 16),overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 SizedBox(
                   height: 4,
