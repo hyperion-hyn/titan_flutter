@@ -39,7 +39,7 @@ class EmptyWalletView extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
+            padding: const EdgeInsets.only(top: 24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -52,18 +52,18 @@ class EmptyWalletView extends StatelessWidget {
                   },
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 10.0),
                       child: Text(
                         S.of(context).create_wallet,
                         style:
-                            TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                            TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
                   color: Colors.white,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.only(top: 16),
                   child: FlatButton(
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Theme.of(context).primaryColor),
@@ -75,11 +75,11 @@ class EmptyWalletView extends StatelessWidget {
                     },
                     child: Container(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 10.0),
                         child: Text(
                           S.of(context).import_wallet,
                           style: TextStyle(
-                              fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                              fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
                         ),
                       ),
                     ),

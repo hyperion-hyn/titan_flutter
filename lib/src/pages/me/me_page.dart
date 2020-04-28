@@ -436,9 +436,10 @@ class _MeState extends BaseState<MePage> with RouteAware {
             if (_wallet != null) {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
             } else {
-              Application.router.navigateTo(context, Routes.wallet_manager);
+              var tips = FluroConvertUtils.fluroCnParamsEncode('你需要先创建/导入钱包账户，才能查看你的钱包账户相关合约数据。');
+              Application.router.navigateTo(context, Routes.wallet_manager + '?tips=$tips');
             }
-          }),
+          }, _wallet == null ? '请先创建/导入钱包' : null),
         ],
       ),
     );
