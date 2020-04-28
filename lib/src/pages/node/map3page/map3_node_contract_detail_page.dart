@@ -71,9 +71,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   get _stateColor => Map3NodeUtil.stateColor(_contractState);
 
-  get _durationType {
-    return _contractNodeItem?.contract?.durationType??0;
-  }
+  get _durationType => _contractNodeItem?.contract?.durationType??0;
 
   get _isNoWallet => _wallet == null;
 
@@ -846,10 +844,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Widget _contractNotifyWidget() {
     if (!_isDelegated || _contractDetailItem == null || _userDelegateState == null) {
-      return Container(
-//        color: Colors.white,
-//        padding: EdgeInsets.only(top: 8),
-      );
+      return Container();
     }
 
     var amountDelegation = FormatUtil.amountToString(_contractDetailItem.amountDelegation);
@@ -1059,9 +1054,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               var index = titles.indexOf(title);
               var subtitle = subtitles[index]>0?FormatUtil.formatDate(subtitles[index]):"";
               var date = progressHints[index];
-              //var textColor = _currentStep>=index ? HexColor("#4B4B4B") : HexColor("#A7A7A7");
               var textColor = _currentStep!=index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
-              //var subTextColor = _currentStep!=index ? HexColor("#A7A7A7") : _stateColor;
 
               bool isMiddle = titles.length == 5 && index==2;
 
@@ -1313,9 +1306,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        /*List<ContractDelegateRecordItem> filterMemberList = tempMemberList.where((element) {
-          return enumBillsOperaStateFromString(element.operaType) == _currentOperaState;
-        }).toList();*/
         _delegateRecordList.addAll(tempMemberList);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {

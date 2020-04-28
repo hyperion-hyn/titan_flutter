@@ -867,5 +867,5 @@
   "active": "启动",
   "expired": "到期",
   "number": "编号",
-  "launcher_func": "发起人:  ${UiUtil.shortEthAddress(contractNodeItem.ownerName)}"
+  "launcher_func": "发起人:  ${ownerName}"
 }
