@@ -104,7 +104,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
                   ),
                 ),
                 Image.asset(
-                  "res/drawable/ic_map3_node_item_2_big.png",
+                  "res/drawable/ic_map3_node_item_2.png",
                   width: 200,
                   height: 180,
                 ),
