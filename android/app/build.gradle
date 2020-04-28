@@ -57,6 +57,10 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
+
+        defaultConfig {
+            resConfigs "en", "ko", "CN", "HK"
+        }
     }
 
     signingConfigs {
