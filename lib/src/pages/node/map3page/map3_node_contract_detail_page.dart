@@ -1571,7 +1571,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   */
 
     var code = res.code;
-    //code = -1004;
     if (code == 0) {
       return true;
     } else if (code == -1004) {
