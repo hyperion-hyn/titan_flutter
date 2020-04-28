@@ -222,7 +222,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
 /*
-
   get _nodeStateDesc {
     if (_contractState == null) {
       return S.of(context).node_in_configuration;
@@ -1495,6 +1494,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       var isFreezeSuccess = await _rewardFreezeAction();
       if (isFreezeSuccess != true) {
+        setState(() {
+          if (mounted) {
+            _isTransferring = false;
+          }
+        });
         return;
       }
 
@@ -1607,10 +1611,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   void _joinContractAction() async {
-    //entryRouteName
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-    //print("[detail] entryRouteName,$entryRouteName");
-
     await Application.router.navigateTo(context,
         Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
     _nextAction();
@@ -1627,9 +1628,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
-    print("[detail] 1result:$result");
     if (result != null) {
-      print("[detail] 2result:$result");
       getContractDetailData();
     }
   }

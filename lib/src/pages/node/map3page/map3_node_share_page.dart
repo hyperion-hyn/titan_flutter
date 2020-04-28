@@ -42,7 +42,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
       bool isFromOwn = wallet.getEthAccount().address == widget.contractNodeItem.owner;
       NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address, "detail", isFromOwn);
       String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
-      shareData = "${widget.contractNodeItem.shareUrl}&key=$encodeStr&code=${userInfo?.id ?? ''}";
+      shareData = "${widget.contractNodeItem.shareUrl}&code=${userInfo?.id ?? ''}&key=$encodeStr";
     } else {
       shareData = "${widget.contractNodeItem.shareUrl}&code=${userInfo?.id ?? ''}";
     }
