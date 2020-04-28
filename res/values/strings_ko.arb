@@ -870,6 +870,10 @@
   "your_level_low_cant_create_contract": "您的等级较低，不能创建合约！",
   "expired": "到期",
   "number": "编号",
+  "n_second": "${n}秒",
+  "left": "剩",
+  "n_hour_simple": "${hour}时",
+  "n_minute_simple": "${minute}分",
   "freezeContentDesc": "作为当前合约的创建者，你需要给直推人数额为5%合约总收益作为推荐奖励，系统会为你自动划转。",
   "launcher_func": "发起人:  ${ownerName}"
 }

@@ -387,7 +387,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       case ContractState.ACTIVE:
         var suffix = S.of(context).expire_date;
         _contractStateDetail =
-            FormatUtil.timeString(context, _contractNodeItem.completeSecondsLeft.toDouble()) + suffix;
+            FormatUtil.timeStringSimple(context, _contractNodeItem.completeSecondsLeft.toDouble()) + suffix;
         break;
 
       case ContractState.DUE:
@@ -415,10 +415,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     if (_userDelegateState != null && _is180DaysContract) {
       switch (_userDelegateState) {
         case UserDelegateState.ACTIVE:
-          var pre = S.of(context).time_left;
+          var pre = S.of(context).left;
           var suffix = "，${S.of(context).can_withdraw_fifty_reward}";
           _contractStateDetail =
-              pre + FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
+              pre + FormatUtil.timeStringSimple(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         case UserDelegateState.HALFDUE:
@@ -428,9 +428,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         case UserDelegateState.PRE_HALFDUE_COLLECTED:
         case UserDelegateState.HALFDUE_COLLECTED:
           var suffix = S.of(context).expire_date;
-          var pre = S.of(context).time_left;
+          var pre = S.of(context).left;
           _contractStateDetail =
-              pre + FormatUtil.timeString(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
+              pre + FormatUtil.timeStringSimple(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         default:
@@ -971,7 +971,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   Text(
                     S
                         .of(context)
-                        .launcher_time_left(FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft)),
+                        .launcher_time_left(FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft)),
                     style: TextStyles.textC999S14,
                   ),
               ],

@@ -873,6 +873,10 @@
   "active": "启动",
   "expired": "到期",
   "number": "编号",
+  "n_second": "${n}秒",
+  "left": "剩",
+  "n_hour_simple": "${hour}时",
+  "n_minute_simple": "${minute}分",
   "freezeContentDesc": "作为当前节点的创建者，您需要给直推人节点总收益的5%作为推荐奖励，系统将为您自动划转。",
   "launcher_func": "发起人:  ${ownerName}"
 }
