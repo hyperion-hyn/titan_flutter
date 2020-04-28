@@ -92,7 +92,7 @@ var managerWalletHandler = Handler(
     handlerFunc: (context, params) => BlocProvider<WalletManagerBloc>(
         create: (context) => WalletManagerBloc(),
         child: WalletManagerPage(
-          tips: params['tips']?.first,
+          tips: FluroConvertUtils.fluroCnParamsDecode(params['tips']?.first),
         )));
 
 var settingWalletHandler = Handler(handlerFunc: (context, params) {
