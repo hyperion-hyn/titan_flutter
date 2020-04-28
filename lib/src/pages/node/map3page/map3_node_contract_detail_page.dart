@@ -219,6 +219,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     return value;
   }
+/*
 
   get _nodeStateDesc {
     if (_contractState == null) {
@@ -245,6 +246,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
     return _nodeStateDesc;
   }
+*/
 
   get _contractStateDesc {
     if (_contractState == null) {
@@ -1590,7 +1592,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     bool result = await UiUtil.showDialogsNoCallback(context,
       S.of(context).tips,
-      '您的账户余额不足以划转合约总收益5%(即:$withdrawnStr)到直推人上，请先充值余额。',
+      '您的账户余额不足以划转节点总收益5%(即:$withdrawnStr)到直推人上，请先充值余额。',
       confirm: S.of(context).recharge,
     );
     if (result) {
