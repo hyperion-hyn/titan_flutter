@@ -69,6 +69,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         child: _poiWidget(),
       );
     } else {
+      return Container();
     }
   }
 
