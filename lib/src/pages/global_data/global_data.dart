@@ -27,7 +27,7 @@ final poiDMapConfigModel = DMapConfigModel(
     defaultZoom: 12,
 
     onMapLongPressHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
-      print('on long press police');
+      print('[global] on long press police');
       return true;
     },
     panelBuilder: (BuildContext context, ScrollController scrollController, IDMapPoi poi) {

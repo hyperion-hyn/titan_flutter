@@ -77,7 +77,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   get _stateColor => Map3NodeUtil.stateColor(_contractState);
 
-  get _durationType => _contractNodeItem?.contract?.durationType??0;
+  get _durationType => _contractNodeItem?.contract?.durationType ?? 0;
 
   get _isNeedFreezeFirst => _isOwner && _userDelegateState == UserDelegateState.DUE;
 
@@ -220,6 +220,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return value;
   }
 
+/*
   get _nodeStateDesc {
     if (_contractState == null) {
       return S.of(context).node_in_configuration;
@@ -245,6 +246,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
     return _nodeStateDesc;
   }
+*/
 
   get _contractStateDesc {
     if (_contractState == null) {
@@ -573,7 +575,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   //get _isRenew => _contractState == ContractState.DUE && _isOwner;
   get _isRenew => false;
 
-  get _isShowLaunchDate => _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
+  get _isShowLaunchDate =>
+      _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
 
   @override
   void onCreated() {
@@ -602,7 +605,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 //    _contractState = ContractState.DUE;
 //    _userDelegateState = UserDelegateState.DUE;
 //    _initBottomButtonData();
-
 
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
@@ -770,7 +772,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
             child: Row(
               children: <Widget>[
-                Text(_nodeStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
+                Text(_contractNodeItem.contract.nodeName,
+                    style: TextStyle(
+                      fontSize: 14, /*color: _stateColor*/
+                    )),
                 Spacer(),
                 if (_contractNodeItem?.remoteNodeUrl?.isNotEmpty == true && _contractState == ContractState.ACTIVE)
                   InkWell(
@@ -790,15 +795,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                        width: 100,
-                        child: Text(S.of(context).node_version,
-                            style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                    new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
-                  ],
-                ),
+//                Row(
+//                  children: <Widget>[
+//                    Container(
+//                        width: 100,
+//                        child:
+//                            Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+//                    new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
+//                  ],
+//                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Row(
@@ -823,6 +828,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     ],
                   ),
                 ),
+                SizedBox(height: 8),
               ],
             ),
           ),
@@ -965,10 +971,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
                 ])),
                 Spacer(),
-                if (_isShowLaunchDate) Text(
-                  S.of(context).launcher_time_left(FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft)),
-                  style: TextStyles.textC999S14,
-                ),
+                if (_isShowLaunchDate)
+                  Text(
+                    S
+                        .of(context)
+                        .launcher_time_left(FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft)),
+                    style: TextStyles.textC999S14,
+                  ),
               ],
             ),
           ),
@@ -1038,13 +1047,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       tickText: _contractStateDetail,
       currentStepProgress: _currentStepProgress,
       currentStep: _currentStep,
-      steps: titles
-          .map(
-            (title) {
-              var index = titles.indexOf(title);
-              var subtitle = subtitles[index]>0?FormatUtil.formatDate(subtitles[index]):"";
-              var date = progressHints[index];
-              var textColor = _currentStep!=index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+      steps: titles.map(
+        (title) {
+          var index = titles.indexOf(title);
+          var subtitle = subtitles[index] > 0 ? FormatUtil.formatDate(subtitles[index]) : "";
+          var date = progressHints[index];
+          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 
           bool isMiddle = titles.length == 5 && index == 2;
 
@@ -1391,23 +1399,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     title: "",
                   )));
     }
-
-//    String webUrl = FluroConvertUtils.fluroCnParamsEncode(_contractNodeItem.remoteNodeUrl??"https://www.map3.network");
-//    String webTitle = FluroConvertUtils.fluroCnParamsEncode("");
-//    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).map_node_detail);
-//    Application.router
-//        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
 
   void _pushTransactionDetailAction(ContractDelegateRecordItem item) {
     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
     var url = EtherscanApi.getTxDetailUrl(item.txHash, isChinaMainland);
     if (url != null) {
-      /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
-      String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
-      Application.router.navigateTo(context, Routes.toolspage_webview_page
-          + '?initUrl=$webUrl&title=$webTitle');*/
-
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -1453,8 +1450,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
 
     if (_isNeedFreezeFirst) {
-      var ret =
-          await _showConfirmDialog(title: S.of(context).tips, content: S.of(context).freezeContentDesc);
+      var ret = await _showConfirmDialog(title: S.of(context).tips, content: S.of(context).freezeContentDesc);
       if (ret == true) {
         _alertPasswordAction();
       }
@@ -1495,6 +1491,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
       var isFreezeSuccess = await _rewardFreezeAction();
       if (isFreezeSuccess != true) {
+        setState(() {
+          if (mounted) {
+            _isTransferring = false;
+          }
+        });
         return;
       }
 
@@ -1551,7 +1552,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Future<bool> _rewardFreezeAction() async {
-
     if (_wallet == null || _contractDetailItem == null) {
       return false;
     }
@@ -1563,45 +1563,48 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         .postStakingRewardFreeze(nodeId: nodeId, contractAddress: contractAddress, walletAddress: walletAddress);
     print("[detail] collectionAction, res:$res");
 
-
     /*CODE	描述
   -10001	参数错误
   -1003	没权限访问, 只有加密验证没通过才会出现这个
   -1004	用户余额不足
   */
-    // todo: test_jison_0428
+
     var code = res.code;
-    code = -1004;
     if (code == 0) {
       return true;
     } else if (code == -1004) {
-
-      bool result = await UiUtil.showDialogsNoCallback(context,
-        S.of(context).tips,
-        '您的账户余额不足以划转合约总收益5%(即:1023.23 hyn)到直推人上，请先充值余额。',
-        confirm: S.of(context).recharge,
-      );
-      if (result) {
-        Application.router.navigateTo(context, Routes.recharge_purchase);
-      }
-      //print("_rewardFreezeAction---------1004");
+      await _alertRechargeAction();
       return false;
-    }
-    else {
+    } else {
       Fluttertoast.showToast(msg: "处理奖励转移发生异常 错误码：${res.code}");
       return false;
     }
   }
 
+  Future _alertRechargeAction() async {
+    print("_rewardFreezeAction---------1004");
+
+    var withdrawn = double.parse(_contractDetailItem?.withdrawn ?? "0") * 0.05;
+    var withdrawnStr = FormatUtil.amountToString(withdrawn.toString()) + "HYN";
+
+    bool result = await UiUtil.showDialogsNoCallback(
+      context,
+      S.of(context).tips,
+      '您的账户余额不足以划转节点总收益5%(即:$withdrawnStr)到直推人上，请先充值余额。',
+      confirm: S.of(context).recharge,
+    );
+    if (result) {
+      Application.router.navigateTo(context, Routes.recharge_purchase);
+    }
+  }
+
   void _pushWalletManagerAction() {
-    Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+    Application.router.navigateTo(
+        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _joinContractAction() async {
-    //entryRouteName
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-    //print("[detail] entryRouteName,$entryRouteName");
-
     await Application.router.navigateTo(context,
         Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
     _nextAction();
@@ -1618,9 +1621,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
-    print("[detail] 1result:$result");
     if (result != null) {
-      print("[detail] 2result:$result");
       getContractDetailData();
     }
   }
