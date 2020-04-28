@@ -601,10 +601,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   Widget build(BuildContext context) {
     // todo: test_jison_0420
 
-    /*_contractState = ContractState.DUE;
-    _userDelegateState = UserDelegateState.DUE;
-    _initBottomButtonData();
-    */
+//    _contractState = ContractState.DUE;
+//    _userDelegateState = UserDelegateState.DUE;
+//    _initBottomButtonData();
+
 
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
@@ -1560,6 +1560,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Future<bool> _rewardFreezeAction() async {
+
     if (_wallet == null || _contractDetailItem == null) {
       return false;
     }
@@ -1577,22 +1578,23 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   -1003	没权限访问, 只有加密验证没通过才会出现这个
   -1004	用户余额不足
   */
-
-    if (res.code == 0) {
+    // todo: test_jison_0428
+    var code = res.code;
+    code = -1004;
+    if (code == 0) {
       return true;
-    } else if (res.code == -1004) {
+    } else if (code == -1004) {
+
       bool result = await UiUtil.showDialogsNoCallback(context,
         S.of(context).tips,
-        '当前账户余额不足，请先充值',
-        confirm: S.of(context).confirm,
+        '您的账户余额不足以划转合约总收益5%(即:1023.23 hyn)到直推人上，请先充值余额。',
+        confirm: S.of(context).recharge,
       );
       if (result) {
-        Application.router.navigateTo(context, Routes.recharge_purchase).then((isSuccess) async {
-          if (isSuccess == true) {
-            await UserService.syncUserInfo(context);
-          }
-        });
+        Application.router.navigateTo(context, Routes.recharge_purchase);
       }
+      //print("_rewardFreezeAction---------1004");
+      return false;
     }
     else {
       Fluttertoast.showToast(msg: "处理奖励转移发生异常 错误码：${res.code}");
