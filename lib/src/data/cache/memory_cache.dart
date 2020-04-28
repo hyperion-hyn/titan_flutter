@@ -16,7 +16,9 @@ class MemoryCache {
   var memoryMap = Map();
 
   void setMemoryMap(String key,String value){
-    memoryMap.putIfAbsent(key,() => value);
+      memoryMap.update(key,(value){
+        return value;
+      },ifAbsent: () => value);
   }
 
   String getMemoryMap(String key){
