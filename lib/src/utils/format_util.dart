@@ -39,12 +39,12 @@ class FormatUtil {
   }
 
   static String formatDate(int timestamp, {bool isSecond = false}) {
-    var format = isSecond ? "yyyy-MM-dd HH:mm":"yyyy-MM-dd";
+    var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
     timestamp = timestamp * 1000;
     var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
     //print("[format]   timestamp:$timestamp, date:$date");
 
-    return DateFormat(format).format(date)??"";
+    return DateFormat(format).format(date) ?? "";
   }
 
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
@@ -53,13 +53,13 @@ class FormatUtil {
 
   static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
 
-  static String encodeBase64(String data){
+  static String encodeBase64(String data) {
     var content = utf8.encode(data);
     var digest = base64Encode(content);
     return digest;
   }
 
-  static String decodeBase64(String data){
+  static String decodeBase64(String data) {
     return String.fromCharCodes(base64Decode(data));
   }
 
@@ -109,4 +109,40 @@ class FormatUtil {
     return timeStr;
   }
 
+  static String timeStringSimple(BuildContext context, double seconds) {
+    if (seconds < 60) {
+      return S.of(context).n_second('$seconds');
+    }
+    final kDay = 3600 * 24;
+    final kHour = 3600;
+    final kMinute = 60;
+    int day = 0;
+    int hour = 0;
+    int minute = 0;
+    if (seconds > kDay) {
+      day = seconds ~/ kDay;
+      seconds = seconds - day * kDay;
+    }
+    if (seconds > kHour) {
+      hour = seconds ~/ kHour;
+      seconds = seconds - hour * kHour;
+    }
+    minute = seconds ~/ kMinute;
+    seconds = seconds - minute * kMinute;
+
+    var timeStr = '';
+    if (day > 0) {
+      timeStr += S.of(context).n_day('$day');
+      timeStr += S.of(context).n_hour_simple('$hour');
+      return timeStr;
+    }
+
+    if (hour > 0) {
+      timeStr += S.of(context).n_hour_simple('$hour');
+    }
+    if (minute > 0) {
+      timeStr += S.of(context).n_minute_simple('$minute');
+    }
+    return timeStr;
+  }
 }

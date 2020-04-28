@@ -335,6 +335,7 @@ class _Map3NodeState extends State<Map3NodePage> {
 
 Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
   if (contractNodeItem == null) return Container();
+
   var state = enumContractStateFromString(contractNodeItem.state);
 
   var isNotFull = int.parse(contractNodeItem.remainDelegation) > 0;
@@ -343,7 +344,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
-      dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
 
       dateDesc = S.of(context).active + dateDesc;
 
@@ -351,7 +352,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
       break;
 
     case ContractState.ACTIVE:
-      dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft);
 
       dateDesc = S.of(context).expired + dateDesc;
 
