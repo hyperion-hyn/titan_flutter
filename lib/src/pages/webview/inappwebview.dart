@@ -141,6 +141,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         });
       },
       onLoadStop: (InAppWebViewController controller, String url) async {
+        isLoading = false;
         print("onLoadStop $url");
         setState(() {
           this.url = url;
@@ -180,7 +181,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
   }
 
   void _shareQr(BuildContext context) async {
-    if (webView != null) {
+    if (webView != null && !isLoading) {
       webView.takeScreenshot().then((imageByte) async {
         var len = imageByte.lengthInBytes;
         debugPrint("screenshot taken bytes $len");
