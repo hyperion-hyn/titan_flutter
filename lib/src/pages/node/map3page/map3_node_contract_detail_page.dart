@@ -1569,30 +1569,35 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   -1003	没权限访问, 只有加密验证没通过才会出现这个
   -1004	用户余额不足
   */
-    // todo: test_jison_0428
-    var withdrawn = FormatUtil.amountToString(_contractDetailItem.withdrawn) + "HYN";
 
     var code = res.code;
     //code = -1004;
     if (code == 0) {
       return true;
     } else if (code == -1004) {
-
-      bool result = await UiUtil.showDialogsNoCallback(context,
-        S.of(context).tips,
-        '您的账户余额不足以划转合约总收益5%(即:$withdrawn)到直推人上，请先充值余额。',
-        confirm: S.of(context).recharge,
-      );
-      if (result) {
-        Application.router.navigateTo(context, Routes.recharge_purchase);
-      }
-      print("_rewardFreezeAction---------1004");
+      await _alertRechargeAction();
       return false;
     }
     else {
       Fluttertoast.showToast(msg: "处理奖励转移发生异常 错误码：${res.code}");
       return false;
     }
+  }
+
+  Future _alertRechargeAction() async {
+
+    // todo: test_jison_0428
+    var withdrawn = FormatUtil.amountToString(_contractDetailItem.withdrawn) + "HYN";
+
+    bool result = await UiUtil.showDialogsNoCallback(context,
+      S.of(context).tips,
+      '您的账户余额不足以划转合约总收益5%(即:$withdrawn)到直推人上，请先充值余额。',
+      confirm: S.of(context).recharge,
+    );
+    if (result) {
+      Application.router.navigateTo(context, Routes.recharge_purchase);
+    }
+    print("_rewardFreezeAction---------1004");
   }
 
   void _pushWalletManagerAction() {
@@ -1626,4 +1631,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       getContractDetailData();
     }
   }
+
+
+
 }
