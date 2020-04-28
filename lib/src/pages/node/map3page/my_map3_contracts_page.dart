@@ -209,12 +209,22 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   @override
   Widget build(BuildContext context) {
 
-    return _pageWidget(context);
+    if (widget.model.type != MyContractType.active) {
+      return _pageWidget(context);
+    }
 
-    /*return Scaffold(
-      appBar: AppBar(title: Text(widget.model.name)),
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
+        title: Text(
+          widget.model.name,
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
       body: _pageWidget(context),
-    );*/
+    );
   }
 
 
@@ -248,13 +258,24 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
       _currentPage = 0;
 
       List<ContractNodeItem> dataList = [];
-      if (widget.model.type == MyContractType.create) {
-        List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
-        dataList  = createContractList;
-      } else {
-        List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
-        dataList = joinContractList;
+      switch (widget.model.type) {
+
+        case MyContractType.join:
+          List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
+          dataList = joinContractList;
+          break;
+
+        case MyContractType.create:
+          List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
+          dataList  = createContractList;
+          break;
+
+        default:
+          List<ContractNodeItem> createContractList = await api.getContractActiveList();
+          dataList  = createContractList;
+          break;
       }
+
 
       if (dataList.length == 0) {
         loadDataBloc.add(LoadEmptyEvent());
@@ -287,6 +308,7 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 enum MyContractType {
   join,
   create,
+  active,
 }
 
 

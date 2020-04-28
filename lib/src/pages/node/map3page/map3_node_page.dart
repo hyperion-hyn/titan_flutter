@@ -46,7 +46,8 @@ class _Map3NodeState extends State<Map3NodePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xffFDFAFF),
+      color: Color(0xfff5f5f5),
+      //color: Color(0xffFDFAFF),
       child: LoadDataContainer(
         enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
         bloc: loadDataBloc,
@@ -125,23 +126,27 @@ class _Map3NodeState extends State<Map3NodePage> {
       return SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.only(top: 48.0),
-          child: Column(
-            children: <Widget>[
-              Image.asset(
-                'res/drawable/ic_empty_contract.png',
-                width: 120,
-                height: 120,
-              ),
-              SizedBox(height: 8),
-              SizedBox(
-                child: Text(
-                  S.of(context).no_pengding_node_contract_hint,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                  textAlign: TextAlign.center,
+          child: Container(
+            color: Color(0xfff5f5f5),
+            child: Column(
+              children: <Widget>[
+                Image.asset(
+                  'res/drawable/ic_empty_contract.png',
+                  width: 120,
+                  height: 120,
                 ),
-                width: 160,
-              )
-            ],
+                SizedBox(height: 8),
+                SizedBox(
+                  child: Text(
+                    S.of(context).no_pengding_node_contract_hint,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    textAlign: TextAlign.center,
+                  ),
+                  width: 160,
+                ),
+                SizedBox(height: 64),
+              ],
+            ),
           ),
         ),
       );
@@ -156,7 +161,7 @@ class _Map3NodeState extends State<Map3NodePage> {
             Padding(
                 padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
                 child: Text(S.of(context).wait_start_node_contract,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54))),
+                    style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")))),
             getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])
           ],
         );
@@ -289,7 +294,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                       child: Text(S.of(context).create_contract,
                           style: TextStyle(fontSize: 13, color: Colors.white)),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

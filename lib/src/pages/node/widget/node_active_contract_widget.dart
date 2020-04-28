@@ -9,6 +9,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
@@ -79,6 +80,9 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
           contractList = [];
         }
         contractList.addAll(tempMemberList);
+        //contractList.addAll(tempMemberList);
+        //contractList.addAll(tempMemberList);
+
       });
     }
   }
@@ -87,46 +91,52 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
 
   Widget activeContractWidget() {
     return Container(
+      color: Color(0xfff5f5f5),
       height: 200,
       child: Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 8),
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 0),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                      child: Text("启动的节点", style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
-                  Text(
-                    "查看更多 >",
-                    style: TextStyles.textC999S14,
-                  ),
-                  SizedBox(
-                    width: 14,
-                  )
-                ],
+            InkWell(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(MyContractModel("运行中的合约",MyContractType.active))));
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+
+                        child: Text("运行中的节点", style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),)),
+                    Text(
+                      "查看更多",
+                      style: TextStyles.textC999S14,
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black54,
+                    ),
+                    SizedBox(
+                      width: 14,
+                    )
+                  ],
+                ),
               ),
             ),
             SizedBox(
               height: 12,
             ),
             Expanded(
-              child: LoadDataContainer(
-                  bloc: loadDataBloc,
-                  enablePullDown: false,
-                  hasFootView: false,
-                  //onLoadData: getJoinMemberData,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    itemBuilder: (context, index) {
-                      var i = index;
-                      var delegatorItem = contractList[i];
-                      return _item(delegatorItem);
-                    },
-                    itemCount:  contractList.length,
-                    scrollDirection: Axis.horizontal,
-                  )),
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemBuilder: (context, index) {
+                  var i = index;
+                  var delegatorItem = contractList[i];
+                  return _item(delegatorItem);
+                },
+                itemCount:  contractList.length,
+                scrollDirection: Axis.horizontal,
+              ),
             ),
           ],
         ),
@@ -137,6 +147,7 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
 
   Widget _item(ContractNodeItem item) {
 
+    var width = (MediaQuery.of(context).size.width - 3.0 * 8) / 3.0;
     return InkWell(
       onTap: () {
         Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${item.id}");
@@ -144,8 +155,8 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
       child: Padding(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),
         child: SizedBox(
-          width: 130,
-          height: 160,
+          width: width,
+//          height: 160,
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
