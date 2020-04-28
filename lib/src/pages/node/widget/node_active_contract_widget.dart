@@ -26,11 +26,11 @@ class NodeActiveContractWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _NodeJoinMemberState();
+    return _NodeActiveContractState();
   }
 }
 
-class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
+class _NodeActiveContractState extends State<NodeActiveContractWidget> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   NodeApi _nodeApi = NodeApi();
@@ -79,8 +79,6 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
           contractList = [];
         }
         contractList.addAll(tempMemberList);
-        //contractList.addAll(tempMemberList);
-        //contractList.addAll(tempMemberList);
       });
     }
   }
