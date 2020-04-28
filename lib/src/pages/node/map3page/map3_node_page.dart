@@ -63,14 +63,16 @@ class _Map3NodeState extends State<Map3NodePage> {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverToBoxAdapter(child: _map3HeadItem()),
-            if (activeContractList.isNotEmpty) SliverToBoxAdapter(
-              child: Material(
-                color: Colors.white,
-                child: NodeActiveContractWidget(loadDataBloc),
+            if (activeContractList.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: NodeActiveContractWidget(loadDataBloc),
+                ),
               ),
-            ),
             SliverToBoxAdapter(
-              child: Padding(
+              child: Container(
+                  color: Colors.white,
                   padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
                   child: Text(S.of(context).wait_start_node_contract,
                       style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")))),
@@ -92,7 +94,7 @@ class _Map3NodeState extends State<Map3NodePage> {
 
       NodePageEntityVo cloneData = netData.clone();
       cloneData.nodeHeadEntity?.lastRecordMessage = null;
-      if (!cloneData.isEqual(MemoryCache.nodePageData)){
+      if (!cloneData.isEqual(MemoryCache.nodePageData)) {
         _nodePageEntityVo = netData;
         MemoryCache.nodePageData = cloneData;
       }
@@ -128,50 +130,47 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 
   Widget _pendingListWidget() {
-
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
-          if (index == 0) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-
-                getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])
-              ],
-            );
-          } else {
-            return getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]);
-          }
-        }, childCount: _nodePageEntityVo.contractNodeList.length));
+//      if (index == 0) {
+//        return Column(
+//          crossAxisAlignment: CrossAxisAlignment.start,
+//          children: <Widget>[getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])],
+//        );
+//      } else {
+        return Container(
+          padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
+          color: Colors.white,
+            child: getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]));
+//      }
+    }, childCount: _nodePageEntityVo.contractNodeList.length));
   }
 
   Widget _emptyListWidget() {
     // empty
     if (_nodePageEntityVo.contractNodeList.isEmpty) {
       return SliverToBoxAdapter(
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.only(top: 48.0),
-          child: Container(
-            color: Color(0xfff5f5f5),
-            child: Column(
-              children: <Widget>[
-                Image.asset(
-                  'res/drawable/ic_empty_contract.png',
-                  width: 120,
-                  height: 120,
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              Image.asset(
+                'res/drawable/ic_empty_contract.png',
+                width: 120,
+                height: 120,
+              ),
+              SizedBox(height: 8),
+              SizedBox(
+                child: Text(
+                  S.of(context).no_pengding_node_contract_hint,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 8),
-                SizedBox(
-                  child: Text(
-                    S.of(context).no_pengding_node_contract_hint,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                    textAlign: TextAlign.center,
-                  ),
-                  width: 160,
-                ),
-                SizedBox(height: 64),
-              ],
-            ),
+                width: 160,
+              ),
+              SizedBox(height: 64),
+            ],
           ),
         ),
       );
@@ -302,8 +301,7 @@ class _Map3NodeState extends State<Map3NodePage> {
                       onPressed: () {
                         _pushContractListAction();
                       },
-                      child: Text(S.of(context).create_contract,
-                          style: TextStyle(fontSize: 13, color: Colors.white)),
+                      child: Text(S.of(context).create_contract, style: TextStyle(fontSize: 13, color: Colors.white)),
                     ),
                   ),
                 ],
@@ -320,9 +318,8 @@ class _Map3NodeState extends State<Map3NodePage> {
     await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
-     // 记得清理
+    // 记得清理
     if (result != null && result is Map) {
-
       var item = result["result"];
       if (item is ContractNodeItem) {
         _pushContractDetail(item);
@@ -343,7 +340,6 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 }
 
-
 Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
   if (contractNodeItem == null) return Container();
 
@@ -355,15 +351,15 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
-      dateDesc = S.of(context).left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
 
       dateDesc = S.of(context).active + dateDesc;
 
-      fullDesc = !isNotFull?S.of(context).delegation_amount_full:"";
+      fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       break;
 
     case ContractState.ACTIVE:
-      dateDesc = S.of(context).left + FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
 
       dateDesc = S.of(context).expired + dateDesc;
 
@@ -409,13 +405,13 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text.rich(TextSpan(
-                    children: [
-                      TextSpan(text:S.of(context).number, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                      TextSpan(text:"${contractNodeItem.contractCode??""}", style: TextStyles.textC333S14bold),
-                    ]
-                  )),
-                  Container(width: 4,),
+                  Text.rich(TextSpan(children: [
+                    TextSpan(text: S.of(context).number, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                    TextSpan(text: "${contractNodeItem.contractCode ?? ""}", style: TextStyles.textC333S14bold),
+                  ])),
+                  Container(
+                    width: 4,
+                  ),
                   Text("${UiUtil.shortEthAddress(contractNodeItem.owner)}", style: TextStyles.textC9b9b9bS12),
                 ],
               ),
@@ -423,8 +419,11 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(S.of(context).launcher_func(UiUtil.shortEthAddress(contractNodeItem.ownerName)), style: TextStyles.textC9b9b9bS12),
-                  Container(width: 4,),
+                  Text(S.of(context).launcher_func(UiUtil.shortEthAddress(contractNodeItem.ownerName)),
+                      style: TextStyles.textC9b9b9bS12),
+                  Container(
+                    width: 4,
+                  ),
                   Text(dateDesc, style: TextStyle(color: Map3NodeUtil.stateColor(state), fontSize: 12)),
                 ],
               )
@@ -441,7 +440,8 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: () {
-                      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+                      Application.router.navigateTo(
+                          context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -507,23 +507,23 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
           ),
           Row(
             children: <Widget>[
-              isNotFull?
-              Expanded(
-                child: RichText(
-                  text: TextSpan(text: S.of(context).remain, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
-                    TextSpan(
-                        text: "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
-                        style: TextStyles.textC7c5b00S12),
-                    TextSpan(text: "HYN", style: TextStyles.textC9b9b9bS12),
-                  ]),
-                ),
-              ):Expanded(
-                child: RichText(
-                  text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
-
-                  ]),
-                ),
-              ),
+              isNotFull
+                  ? Expanded(
+                      child: RichText(
+                        text:
+                            TextSpan(text: S.of(context).remain, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
+                          TextSpan(
+                              text: "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
+                              style: TextStyles.textC7c5b00S12),
+                          TextSpan(text: "HYN", style: TextStyles.textC9b9b9bS12),
+                        ]),
+                      ),
+                    )
+                  : Expanded(
+                      child: RichText(
+                        text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[]),
+                      ),
+                    ),
               SizedBox(
                 height: 30,
                 width: 80,
@@ -531,10 +531,10 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                   color: HexColor("#FF15B2D2"),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   onPressed: () {
-                    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+                    Application.router.navigateTo(
+                        context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                   },
-                  child: Text(S.of(context).detail,
-                      style: TextStyle(fontSize: 13, color: Colors.white)),
+                  child: Text(S.of(context).detail, style: TextStyle(fontSize: 13, color: Colors.white)),
                   //style: TextStyles.textC906b00S13),
                 ),
               ),
