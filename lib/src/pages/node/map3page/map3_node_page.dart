@@ -325,7 +325,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   var suff = "";
   var fullDesc = "";
 
-  if (state.index < ContractState.ACTIVE.index) {
+  /*if (state.index < ContractState.ACTIVE.index) {
     suff = S.of(context).active;
     fullDesc = S.of(context).delegation_amount_full;
   } else if (state.index >= ContractState.ACTIVE.index && state.index < ContractState.DUE.index) {
@@ -336,8 +336,37 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
 
   if (state == ContractState.FAIL || (state.index >= ContractState.CANCELLED.index && state.index <= ContractState.CANCELLED_COMPLETED.index)) {
     dateDesc = S.of(context).launch_fail;
+  }*/
+
+  switch (state) {
+
+    case ContractState.PRE_CREATE:
+    case ContractState.PENDING:
+      suff = S.of(context).active;
+      fullDesc = S.of(context).delegation_amount_full;
+
+      dateDesc = suff + dateDesc;
+
+      break;
+
+    case ContractState.ACTIVE:
+      dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft);
+      suff = S.of(context).expired;
+
+      dateDesc = suff + dateDesc;
+
+      break;
+
+    case ContractState.FAIL:
+    case ContractState.CANCELLED:
+    case ContractState.CANCELLED_COMPLETED:
+    dateDesc = S.of(context).launch_fail;
+      break;
+
+    default:
+      break;
+
   }
-  
 
   return Container(
     decoration: BoxDecoration(
