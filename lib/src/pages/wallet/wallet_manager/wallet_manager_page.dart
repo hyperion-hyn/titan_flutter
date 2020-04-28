@@ -17,6 +17,10 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
 
 class WalletManagerPage extends StatefulWidget {
+  final String tips;
+
+  WalletManagerPage({this.tips});
+
   @override
   State<StatefulWidget> createState() {
     return _WalletManagerState();
@@ -116,7 +120,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                   alignment: Alignment.topCenter,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 32.0),
-                    child: EmptyWalletView(),
+                    child: EmptyWalletView(tips: widget.tips),
                   ));
             } else {
               return Container();
