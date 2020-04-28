@@ -77,7 +77,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   get _stateColor => Map3NodeUtil.stateColor(_contractState);
 
-  get _durationType => _contractNodeItem?.contract?.durationType??0;
+  get _durationType => _contractNodeItem?.contract?.durationType ?? 0;
 
   get _isNeedFreezeFirst => _isOwner && _userDelegateState == UserDelegateState.DUE;
 
@@ -573,7 +573,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   //get _isRenew => _contractState == ContractState.DUE && _isOwner;
   get _isRenew => false;
 
-  get _isShowLaunchDate => _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
+  get _isShowLaunchDate =>
+      _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
 
   @override
   void onCreated() {
@@ -770,7 +771,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
             child: Row(
               children: <Widget>[
-                Text(_nodeStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
+                Text(_contractNodeItem.contract.nodeName,
+                    style: TextStyle(
+                      fontSize: 14, /*color: _stateColor*/
+                    )),
                 Spacer(),
                 if (_contractNodeItem?.remoteNodeUrl?.isNotEmpty == true && _contractState == ContractState.ACTIVE)
                   InkWell(
@@ -790,15 +794,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                        width: 100,
-                        child: Text(S.of(context).node_version,
-                            style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                    new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
-                  ],
-                ),
+//                Row(
+//                  children: <Widget>[
+//                    Container(
+//                        width: 100,
+//                        child:
+//                            Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+//                    new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
+//                  ],
+//                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Row(
@@ -823,6 +827,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     ],
                   ),
                 ),
+                SizedBox(height: 8),
               ],
             ),
           ),
@@ -965,10 +970,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
                 ])),
                 Spacer(),
-                if (_isShowLaunchDate) Text(
-                  S.of(context).launcher_time_left(FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft)),
-                  style: TextStyles.textC999S14,
-                ),
+                if (_isShowLaunchDate)
+                  Text(
+                    S
+                        .of(context)
+                        .launcher_time_left(FormatUtil.timeString(context, _contractNodeItem.launcherSecondsLeft)),
+                    style: TextStyles.textC999S14,
+                  ),
               ],
             ),
           ),
@@ -1038,13 +1046,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       tickText: _contractStateDetail,
       currentStepProgress: _currentStepProgress,
       currentStep: _currentStep,
-      steps: titles
-          .map(
-            (title) {
-              var index = titles.indexOf(title);
-              var subtitle = subtitles[index]>0?FormatUtil.formatDate(subtitles[index]):"";
-              var date = progressHints[index];
-              var textColor = _currentStep!=index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+      steps: titles.map(
+        (title) {
+          var index = titles.indexOf(title);
+          var subtitle = subtitles[index] > 0 ? FormatUtil.formatDate(subtitles[index]) : "";
+          var date = progressHints[index];
+          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 
           bool isMiddle = titles.length == 5 && index == 2;
 
@@ -1379,75 +1386,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
   }
 
-  void _pushNodeInfoAction() {
-    if (_contractNodeItem != null) {
-      print('url:${_contractNodeItem.remoteNodeUrl}');
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => WebViewContainer(
-                    initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
-                    title: "",
-                  )));
-    }
-
-//    String webUrl = FluroConvertUtils.fluroCnParamsEncode(_contractNodeItem.remoteNodeUrl??"https://www.map3.network");
-//    String webTitle = FluroConvertUtils.fluroCnParamsEncode("");
-//    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).map_node_detail);
-//    Application.router
-//        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-  }
-
-  void _pushTransactionDetailAction(ContractDelegateRecordItem item) {
-    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-    var url = EtherscanApi.getTxDetailUrl(item.txHash, isChinaMainland);
-    if (url != null) {
-      /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
-      String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
-      Application.router.navigateTo(context, Routes.toolspage_webview_page
-          + '?initUrl=$webUrl&title=$webTitle');*/
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => WebViewContainer(
-                    initUrl: url,
-                    title: "",
-                  )));
-    }
-  }
-
-  Future<T> _showConfirmDialog<T>({String title, String content}) {
-    return _showConfirmDialogWidget(title: Text(title), content: Text(content), actions: <Widget>[
-      FlatButton(
-          onPressed: () {
-            Navigator.pop(context, true);
-          },
-          child: Text(S.of(context).continue_text))
-    ]);
-  }
-
-  Future<T> _showConfirmDialogWidget<T>({Widget title, Widget content, List<Widget> actions}) {
-    return showDialog<T>(
-      context: context,
-      builder: (context) {
-        return Platform.isIOS
-            ? CupertinoAlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              )
-            : AlertDialog(
-                title: title,
-                content: content,
-                actions: actions,
-              );
-      },
-    );
-  }
-
-  void _alertContractOwnerAction() async {
+  Future _collectAction() async {
     if (_wallet == null || _contractDetailItem == null) {
       return;
     }
@@ -1512,49 +1451,50 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         }
       }
 
-      var success = await _api.withdrawContractInstance(
-          _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
-      print("[detail] collectionAction, success:$success");
-
-      if (success == "success") {
-        _broadcaseContractAction();
-      } else {
-        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-      }
-
-      _isTransferring = false;
-    } catch (_) {
-      logger.e(_);
-
-      setState(() {
+        var success = await _api.withdrawContractInstance(
+            _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
+        if (success == "success") {
+          _broadcaseContractAction();
+        } else {
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+        }
         _isTransferring = false;
-      });
-
-      FlutterBugly.uploadException(message: _.message, detail: _.toString());
-
-      if (_ is PlatformException) {
-        if (_.code == WalletError.PASSWORD_WRONG) {
-          Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+      } catch (_) {
+        logger.e(_);
+        setState(() {
+          _isTransferring = false;
+        });
+        if (_ is PlatformException) {
+          if (_.code == WalletError.PASSWORD_WRONG) {
+            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
+        } else if (_ is RPCError) {
+          if (_.errorCode == -32000) {
+            Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
+          } else {
+            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+          }
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
-      } else if (_ is RPCError) {
-        if (_.errorCode == -32000) {
-          Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
-      } else {
-        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
-    }
+    });
   }
 
   Future<bool> _rewardFreezeAction() async {
-
     if (_wallet == null || _contractDetailItem == null) {
       return false;
     }
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WebViewContainer(
+                    initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
+                    title: "",
+                  )));
 
     var nodeId = _contractNodeItem.id;
     var walletAddress = _contractNodeItem.owner;
@@ -1596,7 +1536,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   void _pushWalletManagerAction() {
-    Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+    Application.router.navigateTo(
+        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _joinContractAction() async {
@@ -1606,7 +1547,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     await Application.router.navigateTo(context,
         Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
-    _nextAction();
+    final result = ModalRoute.of(context).settings?.arguments;
+    //print("[detail] result:$result");
+    if (result != null) {
+      getContractDetailData();
+    }
   }
 
   void _broadcaseContractAction() async {
@@ -1620,10 +1565,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
-    print("[detail] 1result:$result");
+    //print("[detail] result:$result");
     if (result != null) {
-      print("[detail] 2result:$result");
       getContractDetailData();
     }
   }
+
+  
 }
