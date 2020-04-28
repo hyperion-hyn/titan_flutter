@@ -66,8 +66,8 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
   var walletName;
 
   @override
-  void onCreated() {
-    getLevelData();
+  void onCreated() async {
+    await getLevelData();
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     walletName = activatedWallet.wallet.keystore.name;
     super.onCreated();
@@ -82,7 +82,6 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
 //      widget.fieldCallBack(text);
     });
 
-    getLevelData();
     getNetworkData();
     super.initState();
   }
@@ -95,11 +94,11 @@ class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage>
     );
   }
 
-  void getLevelData() async {
+  Future getLevelData() async {
     _userLevelInfoList = await _userService.getUserLevelInfoList();
     userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
     _userLevelInfoList.forEach((levelInfo){
-      if(levelInfo.level == userInfo.levelLimit){
+      if(levelInfo.level == userInfo.canStakingLevel){
         levelName = levelInfo.name;
       }
     });
