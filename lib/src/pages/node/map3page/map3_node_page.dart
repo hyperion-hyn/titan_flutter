@@ -336,7 +336,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   }
   dateDesc = suff + dateDesc;
 
-  if (state.index >= ContractState.CANCELLED.index && state.index <= ContractState.CANCELLED_COMPLETED.index) {
+  if (state == ContractState.FAIL || (state.index >= ContractState.CANCELLED.index && state.index <= ContractState.CANCELLED_COMPLETED.index)) {
     dateDesc = S.of(context).launch_fail;
   }
 

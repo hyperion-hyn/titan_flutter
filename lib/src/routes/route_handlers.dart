@@ -88,8 +88,11 @@ var transferConfirmHandler = Handler(handlerFunc: (context, params) {
 });
 
 var managerWalletHandler = Handler(
-    handlerFunc: (context, params) =>
-        BlocProvider<WalletManagerBloc>(create: (context) => WalletManagerBloc(), child: WalletManagerPage()));
+    handlerFunc: (context, params) => BlocProvider<WalletManagerBloc>(
+        create: (context) => WalletManagerBloc(),
+        child: WalletManagerPage(
+          tips: params['tips']?.first,
+        )));
 
 var settingWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
@@ -118,7 +121,8 @@ var showResumeWordForCreation = Handler(handlerFunc: (context, params) {
 });
 
 var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
-  return ConfirmResumeWordPage(params['mnemonic']?.first, FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first), params['password']?.first);
+  return ConfirmResumeWordPage(params['mnemonic']?.first,
+      FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first), params['password']?.first);
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {

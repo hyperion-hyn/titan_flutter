@@ -19,7 +19,6 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utils.dart';
 
-import '../../../env.dart';
 import 'map3_contract_control.dart';
 
 class MyPage extends StatefulWidget {
@@ -171,7 +170,7 @@ class _MyPageState extends State<MyPage> {
                   Divider(
                     height: 0,
                   ),
-                  if (['0x74Fa941242af2F76af1E5293Add5919f6881753a', '0x53b242c5fe2f78da1521c00cd484bd157e0021f4']
+                  if (['0x74Fa941242af2F76af1E5293Add5919f6881753a', '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82']
                       .contains(_wallet?.getEthAccount()?.address))
                     _buildMenuBar(
                         'map3智能合约管理',

@@ -27,7 +27,8 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
     directlyPower: json['directly_power'] as int,
     chargeUsdtBalance: (json['charge_usdt_balance'] as num)?.toDouble(),
     totalChargeBalance: (json['total_charge_balance'] as num)?.toDouble(),
-    levelLimit: json['level_num'] as int,
+    levelNum: json['level_num'] as int,
+    canStakingLevel: json['can_staking_level'] as int,
     canStaking: json['can_staking'] as bool,
   );
 }
@@ -50,6 +51,7 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'num_of_team_member': instance.numOfTeamMember,
       'parent_user': instance.parentUser,
       'directly_power': instance.directlyPower,
-      'level_num': instance.levelLimit,
+      'level_num': instance.levelNum,
+      'can_staking_level': instance.canStakingLevel,
       'can_staking': instance.canStaking,
     };
