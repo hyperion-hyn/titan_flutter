@@ -453,7 +453,7 @@
   "no_enough_hyn_fail_invest_extract": "•  投入后，若在规定期限内Map3节点不能积攒够启动所需HYN，则本次节点启动失败。已投入的HYN可自行取回。",
   "mortgage_quantity_standard": "•  最终抵押hyn数量以链上实际交易数量为准。",
   "invest_cant_undo": "•  投入节点后不可撤销。",
-  "account_flow": "合约流水",
+  "account_flow": "节点流水",
   "total": "总额",
   "part_member": "参与地址",
   "total_member_count": "共：$memberCount（个）",
