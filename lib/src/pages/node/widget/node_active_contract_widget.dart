@@ -41,7 +41,7 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
     super.initState();
 
     if (widget.loadDataBloc != null) {
-      widget.loadDataBloc.listen((state){
+      widget.loadDataBloc.listen((state) {
         if (state is RefreshSuccessState) {
           getContractActiveList();
         }
@@ -70,10 +70,9 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
 
   void getContractActiveList() async {
     _currentPage = 0;
-    List<ContractNodeItem> tempMemberList =
-    await _nodeApi.getContractActiveList(_currentPage);
+    List<ContractNodeItem> tempMemberList = await _nodeApi.getContractActiveList(_currentPage);
 
-     print("[widget] --> build, length:${tempMemberList.length}");
+    print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
       setState(() {
         if (tempMemberList.length > 0) {
@@ -82,12 +81,9 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
         contractList.addAll(tempMemberList);
         //contractList.addAll(tempMemberList);
         //contractList.addAll(tempMemberList);
-
       });
     }
   }
-
-
 
   Widget activeContractWidget() {
     return Container(
@@ -98,16 +94,21 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
         child: Column(
           children: <Widget>[
             InkWell(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(MyContractModel("运行中的节点",MyContractType.active))));
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyMap3ContractPage(MyContractModel("运行中的节点", MyContractType.active))));
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 0),
                 child: Row(
                   children: <Widget>[
                     Expanded(
-
-                        child: Text("运行中的节点", style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),)),
+                        child: Text(
+                      "运行中的节点",
+                      style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
+                    )),
                     Text(
                       "查看更多",
                       style: TextStyles.textC999S14,
@@ -134,7 +135,7 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
                   var delegatorItem = contractList[i];
                   return _item(delegatorItem);
                 },
-                itemCount:  contractList.length,
+                itemCount: contractList.length > 3 ? 3 : contractList.length,
                 scrollDirection: Axis.horizontal,
               ),
             ),
@@ -144,9 +145,7 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
     );
   }
 
-
   Widget _item(ContractNodeItem item) {
-
     var width = (MediaQuery.of(context).size.width - 3.0 * 8) / 3.0;
     return InkWell(
       onTap: () {
@@ -187,17 +186,17 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0, right: 5),
-                        child: Text.rich(TextSpan(
-                            children: [
-                              TextSpan(text:S.of(context).number, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                              TextSpan(text:"${item.contractCode??""}", style: TextStyles.textC333S14bold),
-                            ]
-                        )),
+                        child: Text.rich(TextSpan(children: [
+                          TextSpan(
+                              text: S.of(context).number, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                          TextSpan(text: "${item.contractCode ?? ""}", style: TextStyles.textC333S14bold),
+                        ])),
                       ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                      Text(S.of(context).launcher_func(UiUtil.shortEthAddress(item.ownerName)), style: TextStyles.textC9b9b9bS12),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(S.of(context).launcher_func(UiUtil.shortEthAddress(item.ownerName)),
+                          style: TextStyles.textC9b9b9bS12),
 
 //                      Text(item.ownerName,
 //                          style: TextStyle(fontSize: 14, color: HexColor("#9B9B9B")))
@@ -211,6 +210,4 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
       ),
     );
   }
-
 }
-
