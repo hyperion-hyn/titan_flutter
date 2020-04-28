@@ -12,6 +12,7 @@ import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
+import 'package:titan/src/pages/node/widget/node_active_contract_widget.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -30,6 +31,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   NodeApi _nodeApi = NodeApi();
   NodePageEntityVo _nodePageEntityVo = MemoryCache.nodePageData;
   int currentPage = 0;
+  List<ContractNodeItem> activeContractList = [];
 
   @override
   void initState() {
@@ -60,6 +62,12 @@ class _Map3NodeState extends State<Map3NodePage> {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverToBoxAdapter(child: _map3HeadItem()),
+            if (activeContractList.isNotEmpty) SliverToBoxAdapter(
+              child: Material(
+                color: Colors.white,
+                child: NodeActiveContractWidget(loadDataBloc),
+              ),
+            ),
             _pendingListWidget(),
           ],
         ),
@@ -72,6 +80,7 @@ class _Map3NodeState extends State<Map3NodePage> {
       currentPage = 0;
 
       NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
+      activeContractList = await _nodeApi.getContractActiveList();
 
       NodePageEntityVo cloneData = netData.clone();
       cloneData.nodeHeadEntity?.lastRecordMessage = null;
@@ -111,6 +120,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 
   Widget _pendingListWidget() {
+    // empty
     if (_nodePageEntityVo.contractNodeList == null || _nodePageEntityVo.contractNodeList.length == 0) {
       return SliverToBoxAdapter(
         child: Padding(
@@ -320,52 +330,44 @@ class _Map3NodeState extends State<Map3NodePage> {
 
 Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
   if (contractNodeItem == null) return Container();
-  var dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
   var state = enumContractStateFromString(contractNodeItem.state);
-  var suff = "";
+
+  var isNotFull = int.parse(contractNodeItem.remainDelegation) > 0;
   var fullDesc = "";
-
-  /*if (state.index < ContractState.ACTIVE.index) {
-    suff = S.of(context).active;
-    fullDesc = S.of(context).delegation_amount_full;
-  } else if (state.index >= ContractState.ACTIVE.index && state.index < ContractState.DUE.index) {
-    dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft);
-    suff = S.of(context).expired;
-  }
-  dateDesc = suff + dateDesc;
-
-  if (state == ContractState.FAIL || (state.index >= ContractState.CANCELLED.index && state.index <= ContractState.CANCELLED_COMPLETED.index)) {
-    dateDesc = S.of(context).launch_fail;
-  }*/
-
+  var dateDesc = "";
   switch (state) {
-
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
-      suff = S.of(context).active;
-      fullDesc = S.of(context).delegation_amount_full;
+      dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.launcherSecondsLeft);
 
-      dateDesc = suff + dateDesc;
+      dateDesc = S.of(context).active + dateDesc;
 
+      fullDesc = !isNotFull?S.of(context).delegation_amount_full:"";
       break;
 
     case ContractState.ACTIVE:
       dateDesc = S.of(context).time_left + FormatUtil.timeString(context, contractNodeItem.completeSecondsLeft);
-      suff = S.of(context).expired;
 
-      dateDesc = suff + dateDesc;
+      dateDesc = S.of(context).expired + dateDesc;
 
       break;
 
-    case ContractState.FAIL:
+    case ContractState.DUE:
+      dateDesc = S.of(context).contract_had_expired;
+      break;
+
     case ContractState.CANCELLED:
     case ContractState.CANCELLED_COMPLETED:
-    dateDesc = S.of(context).launch_fail;
+    case ContractState.FAIL:
+      dateDesc = S.of(context).launch_fail;
+      break;
+
+    case ContractState.DUE_COMPLETED:
+      dateDesc = S.of(context).contract_had_stop;
       break;
 
     default:
       break;
-
   }
 
   return Container(
@@ -488,7 +490,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
           ),
           Row(
             children: <Widget>[
-              (int.parse(contractNodeItem.remainDelegation) > 0)?
+              isNotFull?
               Expanded(
                 child: RichText(
                   text: TextSpan(text: S.of(context).remain, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[

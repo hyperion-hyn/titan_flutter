@@ -250,6 +250,15 @@ class NodeApi {
     return contractsList;
   }
 
+  Future<List<ContractNodeItem>> getContractActiveList([int page = 0]) async {
+    var contractsList = await NodeHttpCore.instance.getEntity("/instances/active?page=$page",
+        EntityFactory<List<ContractNodeItem>>((data) {
+          return (data as List).map((dataItem) => ContractNodeItem.fromJson(dataItem)).toList();
+        }), options: RequestOptions(headers: getOptionHeader(hasLang: true)));
+
+    return contractsList;
+  }
+
   Future postWallets(WalletVo _activatedWalletVo) async {
     if (_activatedWalletVo?.wallet != null &&
         _activatedWalletVo?.wallet?.getEthAccount() != null &&
