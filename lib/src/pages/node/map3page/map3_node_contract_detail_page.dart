@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
@@ -219,6 +220,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     return value;
   }
+
 /*
 
   get _nodeStateDesc {
@@ -605,7 +607,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 //    _contractState = ContractState.DUE;
 //    _userDelegateState = UserDelegateState.DUE;
 //    _initBottomButtonData();
-
 
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
@@ -1304,7 +1305,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       _delegateRecordList = [];
 
       List<ContractDelegateRecordItem> tempMemberList =
-      await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1325,7 +1326,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     try {
       _currentPage++;
       List<ContractDelegateRecordItem> tempMemberList =
-      await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1369,7 +1370,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       _initBottomButtonData();
 
       // 3.
-      Future.delayed(Duration(seconds: 1), () {
+      Future.delayed(Duration(milliseconds: 100), () {
         if (mounted) {
           setState(() {
             _currentState = null;
@@ -1378,6 +1379,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         }
       });
     } catch (e) {
+      logger.e(e);
+
       if (mounted) {
         setState(() {
           _loadDataBloc.add(RefreshFailEvent());
@@ -1396,9 +1399,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
-                title: "",
-              )));
+                    initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
+                    title: "",
+                  )));
     }
   }
 
@@ -1406,14 +1409,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
     var url = EtherscanApi.getTxDetailUrl(item.txHash, isChinaMainland);
     if (url != null) {
-
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: url,
-                title: "",
-              )));
+                    initUrl: url,
+                    title: "",
+                  )));
     }
   }
 
@@ -1433,15 +1435,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       builder: (context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        )
+                title: title,
+                content: content,
+                actions: actions,
+              )
             : AlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        );
+                title: title,
+                content: content,
+                actions: actions,
+              );
       },
     );
   }
@@ -1452,8 +1454,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
 
     if (_isNeedFreezeFirst) {
-      var ret =
-      await _showConfirmDialog(title: S.of(context).tips, content: S.of(context).freezeContentDesc);
+      var ret = await _showConfirmDialog(title: S.of(context).tips, content: S.of(context).freezeContentDesc);
       if (ret == true) {
         _alertPasswordAction();
       }
@@ -1550,7 +1551,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Future<bool> _rewardFreezeAction() async {
-
     if (_wallet == null || _contractDetailItem == null) {
       return false;
     }
@@ -1561,7 +1561,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var res = await UserService()
         .postStakingRewardFreeze(nodeId: nodeId, contractAddress: contractAddress, walletAddress: walletAddress);
     print("[detail] collectionAction, res:$res");
-
 
     /*CODE	描述
   -10001	参数错误
@@ -1575,24 +1574,26 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     } else if (code == -1004) {
       await _alertRechargeAction();
       return false;
-    }
-    else {
+    } else {
       Fluttertoast.showToast(msg: "处理奖励转移发生异常 错误码：${res.code}");
       return false;
     }
   }
 
-
   Future _alertRechargeAction() async {
-
     print("_rewardFreezeAction---------1004");
 
-    var withdrawn = double.parse(_contractDetailItem?.withdrawn??"0") * 0.05;
-    var withdrawnStr = FormatUtil.amountToString(withdrawn.toString()) + "HYN";
+    var profit = Decimal.parse(_contractDetailItem.instance.contract.minTotalDelegation) *
+        Decimal.parse(_contractDetailItem.instance.contract.annualizedYield.toString()) *
+        Decimal.fromInt(_contractDetailItem.instance.contract.duration) /
+        Decimal.fromInt(365) *
+        Decimal.parse('0.05');
+    var withdrawnStr = FormatUtil.amountToString(profit.toString()) + "HYN";
 
-    bool result = await UiUtil.showDialogsNoCallback(context,
+    bool result = await UiUtil.showDialogsNoCallback(
+      context,
       S.of(context).tips,
-      '您的账户余额不足以划转节点总收益5%(即:$withdrawnStr)到直推人上，请先充值余额。',
+      '您的账户余额不足以划转节点总收益5%(≈ $withdrawnStr)到直推人上，请先充值余额。',
       confirm: S.of(context).recharge,
     );
     if (result) {
@@ -1601,7 +1602,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   void _pushWalletManagerAction() {
-    Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+    Application.router.navigateTo(
+        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _joinContractAction() async {
@@ -1631,6 +1633,4 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       getContractDetailData();
     }
   }
-
-
 }
