@@ -124,6 +124,10 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   }
 
   Widget _poiWidget() {
+    // todo: test_jison_0428
+    var imageUrl = "http://www.hyn.space/";
+    var isValidImageUrl = imageUrl.contains(".png");
+
     return Column(
       children: <Widget>[
         Container(
@@ -140,9 +144,14 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: FadeInImage.assetNetwork(
-              image: "xxx",
+            child: isValidImageUrl?FadeInImage.assetNetwork(
+              image: imageUrl,
               placeholder: 'res/drawable/signal_map.png',
+//            width: 112,
+//            height: 84,
+              fit: BoxFit.fill,
+            ):Image.asset(
+               'res/drawable/signal_map.png',
 //            width: 112,
 //            height: 84,
               fit: BoxFit.fill,
