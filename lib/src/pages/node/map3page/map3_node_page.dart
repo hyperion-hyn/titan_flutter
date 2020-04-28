@@ -69,7 +69,8 @@ class _Map3NodeState extends State<Map3NodePage> {
                 child: NodeActiveContractWidget(loadDataBloc),
               ),
             ),
-            _pendingListWidget(),
+            if (_nodePageEntityVo.contractNodeList.isNotEmpty) _pendingListWidget(),
+            _emptyListWidget(),
           ],
         ),
       ),
@@ -121,8 +122,29 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 
   Widget _pendingListWidget() {
+
+    return SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          if (index == 0) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                    padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
+                    child: Text(S.of(context).wait_start_node_contract,
+                        style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")))),
+                getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])
+              ],
+            );
+          } else {
+            return getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]);
+          }
+        }, childCount: _nodePageEntityVo.contractNodeList.length));
+  }
+
+  Widget _emptyListWidget() {
     // empty
-    if (_nodePageEntityVo.contractNodeList == null || _nodePageEntityVo.contractNodeList.length == 0) {
+    if (_nodePageEntityVo.contractNodeList.isEmpty && activeContractList.isEmpty) {
       return SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.only(top: 48.0),
@@ -152,23 +174,9 @@ class _Map3NodeState extends State<Map3NodePage> {
       );
     }
 
-    return SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-      if (index == 0) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
-                child: Text(S.of(context).wait_start_node_contract,
-                    style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")))),
-            getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])
-          ],
-        );
-      } else {
-        return getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]);
-      }
-    }, childCount: _nodePageEntityVo.contractNodeList.length));
+    return SliverToBoxAdapter(
+      child: Container(),
+    );
   }
 
   Widget _map3HeadItem() {

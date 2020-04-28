@@ -99,7 +99,7 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
           children: <Widget>[
             InkWell(
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(MyContractModel("运行中的合约",MyContractType.active))));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(MyContractModel("运行中的节点",MyContractType.active))));
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 0),
