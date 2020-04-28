@@ -142,14 +142,14 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),*/
-//                  _buildMenuBar(S.of(context).my_contract, Icons.menu, () {
-//                    if (_wallet != null) {
-//                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
-//                    } else {
-//                      var tips = FluroConvertUtils.fluroCnParamsEncode('你需要先创建/导入钱包账户，才能查看你的钱包账户相关合约数据。');
-//                      Application.router.navigateTo(context, Routes.wallet_manager + '?tips=$tips');
-//                    }
-//                  }, imageName: "ic_map3_node_item_contract", subText: _wallet == null ? '请先创建/导入钱包' : null),
+                  _buildMenuBar(S.of(context).my_contract, Icons.menu, () {
+                    if (_wallet != null) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
+                    } else {
+                      var tips = FluroConvertUtils.fluroCnParamsEncode('你需要先创建/导入钱包账户，才能查看你的钱包账户相关合约数据。');
+                      Application.router.navigateTo(context, Routes.wallet_manager + '?tips=$tips');
+                    }
+                  }, imageName: "ic_map3_node_item_contract", subText: _wallet == null ? '请先创建/导入钱包' : null),
                   Container(
                     height: 10,
                     color: HexColor('#F1EFF2'),
