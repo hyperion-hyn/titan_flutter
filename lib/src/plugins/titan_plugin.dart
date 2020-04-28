@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 typedef MessagePushCallBack = void Function(Map values);
+typedef UrlLauncherCallBack = void Function(Map values);
 
 class TitanPlugin {
   static final MethodChannel callChannel = MethodChannel('org.hyn.titan/call_channel');
   static final EventChannel keyPairChangeChannel = EventChannel('org.hyn.titan/event_stream');
   static MessagePushCallBack msgPushChangeCallBack;
+  static UrlLauncherCallBack urlLauncherCallBack;
 
   static void initFlutterMethodCall() {
     callChannel.setMethodCallHandler(_platformCallHandler);
@@ -39,12 +41,27 @@ class TitanPlugin {
           "out_link": "",
         };
         msgPushChangeCallBack(values);
-*/
+       */
         break;
 
       case "msgPush":
         Map result = call.arguments;
         msgPushChangeCallBack(result);
+        break;
+
+
+      case "urlLauncher":
+       /*
+        Map values = {
+          "type": "contract",
+          "subType": "detail",
+          "content": {
+              "contractId": 8,
+          },
+        };
+        */
+        Map result = call.arguments;
+        urlLauncherCallBack(result);
         break;
     }
   }
@@ -61,6 +78,11 @@ class TitanPlugin {
       expired = DateTime.now().millisecondsSinceEpoch + 3600 * 24 * 1000;
     }
     return await callChannel.invokeMethod('initKeyPair', expired);
+  }
+
+  static Future<bool> getClipboardData() async {
+    print("main onMethodCall111");
+    return await callChannel.invokeMethod('clipboardData');
   }
 
   static Future<String> genKeyPair({int expired = 0}) async {

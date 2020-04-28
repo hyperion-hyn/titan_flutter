@@ -33,10 +33,10 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
         System.loadLibrary("TrustWalletCore")
     }
 
-    //ropsten api
-    private val ETH_ROPSTEN_API = "https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
-    //main net api
-    private val ETH_MAIN_API = "https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
+//    //ropsten api
+//    private val ETH_ROPSTEN_API = "https://ropsten.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
+//    //main net api
+//    private val ETH_MAIN_API = "https://mainnet.infura.io/v3/23df5e05a6524e9abfd20fb6297ee226"
 
 //    private val objectMapper by lazy {
 //        val om = ObjectMapper()
@@ -206,8 +206,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                         result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
                     } else {
                         if (storedKey.isMnemonic) {
-                            val wallet = storedKey.wallet(oldPassword)
-                            val mnemonic = wallet.mnemonic()
+                            val mnemonic = storedKey.decryptMnemonic(oldPassword);
                             if (mnemonic.isNullOrEmpty()) {
                                 result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
                                 return true
@@ -258,152 +257,18 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                         Timber.i("加载keystore文件 ${getKeyStorePath(fileName)}")
                         val storedKey = StoredKey.load(getKeyStorePath(fileName))
                         if (storedKey.isMnemonic) {
-                            val wallet = storedKey.wallet(password)
-                            return if (wallet != null) {
-                                val mnemonic = wallet.mnemonic()
-                                result.success(mnemonic)
-                                true
-                            } else {
+                            val mnemonic = storedKey.decryptMnemonic(password)
+                            if (mnemonic.isNullOrEmpty()) {
                                 result.error(ErrorCode.PASSWORD_WRONG, "wrong password.", null)
-                                true
+                            } else {
+                                result.success(mnemonic)
                             }
+                            return true
                         }
                     }
                     result.error(ErrorCode.UNKNOWN_ERROR, "cannot get mnemonic.", null)
                 } else {
                     result.error(ErrorCode.PARAMETERS_WRONG, "file not exist.", null)
-                }
-                true
-            }
-            /*获取余额*/
-            "wallet_getBalance" -> {
-                val address = call.argument<String>("address")
-                val coinType = call.argument<Int>("coinType")
-                val erc20ContractAddress = call.argument<String>("erc20ContractAddress")
-                val isMainNet = call.argument<Boolean>("isMainNet") ?: true
-                if (address == null || coinType == null) {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "parameters error", null)
-                } else {
-                    if (coinType == CoinType.ETHEREUM.value()) {
-                        if (erc20ContractAddress != null) {
-                            val erc20 = buildHyperionToken(erc20ContractAddress, isMainNet, fromAddress = address)
-                            erc20.balanceOf(address).flowable()
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({
-                                        result.success(Numeric.toHexStringNoPrefix(it))
-                                    }, {
-                                        it.printStackTrace()
-                                        result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
-                                    })
-                        } else {
-                            //get ethereum balance
-                            val web3j = buildWeb3j(isMainNet)
-                            web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST).flowable()
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({
-                                        result.success(Numeric.toHexStringNoPrefix(it.balance))
-                                    }, {
-                                        it.printStackTrace()
-                                        result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
-                                    })
-                        }
-                    } else {
-                        //Other coin are not implements
-                        result.error(ErrorCode.UNKNOWN_ERROR, "coinType $coinType are not implemented", null)
-                    }
-                }
-                true
-            }
-            "wallet_ethGasPrice" -> {
-                val isMainNet = call.argument<Boolean>("isMainNet") ?: true
-                val web3j = buildWeb3j(isMainNet)
-                web3j.ethGasPrice().flowable()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            result.success(Numeric.toHexStringNoPrefix(it.gasPrice))
-                        }, {
-                            it.printStackTrace()
-                            result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
-                        })
-                true
-            }
-            "wallet_transfer" -> {
-                val password = call.argument<String>("password")
-                val fileName = call.argument<String>("fileName")
-                val fromAddress = call.argument<String>("fromAddress")
-                val toAddress = call.argument<String>("toAddress")
-                val amount = call.argument<String>("amount")
-                val coinType = call.argument<Int>("coinType")
-                val erc20ContractAddress = call.argument<String>("erc20ContractAddress")
-                val isMainNet = call.argument<Boolean>("isMainNet") ?: true
-                val data = call.argument<String>("data")
-                Timber.i(call.arguments.toString())
-
-                if (password != null && fileName != null && fromAddress != null && toAddress != null && amount != null && coinType != null) {
-                    if (coinType == CoinType.ETHEREUM.value()) {
-                        val prvKeyHex = KeyStoreUtil.getPrvKey(getKeyStorePath(fileName), password, CoinType.ETHEREUM)
-                        if (prvKeyHex != null) {
-                            val web3j = buildWeb3j(isMainNet)
-                            Flowable.fromCallable {
-                                Timber.i("begin eth transfer")
-                                if (erc20ContractAddress.isNullOrEmpty()) {
-                                    return@fromCallable EthHelper.transferETH(web3j, fromAddress, prvKeyHex, toAddress, BigInteger(amount, 16), data)
-                                } else {
-                                    Timber.i("begin token transfer")
-                                    return@fromCallable EthHelper.transferToken(web3j, prvKeyHex, fromAddress, toAddress, erc20ContractAddress, BigInteger(amount, 16))
-                                }
-                            }
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({ txHash ->
-                                        result.success(txHash)
-                                    }, {
-                                        it.printStackTrace()
-                                        result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
-                                    })
-                        } else {
-                            result.error(ErrorCode.PASSWORD_WRONG, "password error", null)
-                        }
-                    } else {
-                        result.error(ErrorCode.UNKNOWN_ERROR, "coinType $coinType are not implemented", null)
-                    }
-                }
-                true
-            }
-            /*计算油费*/
-            "wallet_estimateGas" -> {
-                val fromAddress = call.argument<String>("fromAddress")
-                val toAddress = call.argument<String>("toAddress")
-                val amount = call.argument<String>("amount")
-                val coinType = call.argument<Int>("coinType")
-                val erc20ContractAddress = call.argument<String>("erc20ContractAddress")
-                val isMainNet = call.argument<Boolean>("isMainNet") ?: true
-                if (fromAddress != null && toAddress != null && amount != null && coinType != null) {
-                    if (coinType == CoinType.ETHEREUM.value()) {
-                        val web3j = buildWeb3j(isMainNet)
-                        Flowable.fromCallable {
-                            if (erc20ContractAddress.isNullOrEmpty()) {
-                                return@fromCallable EthHelper.ethTransferEstimateGas(web3j, fromAddress, toAddress, BigInteger(amount, 16))
-                            } else {
-                                return@fromCallable EthHelper.tokenTransferEstimateGas(web3j, fromAddress, toAddress, erc20ContractAddress, BigInteger(amount, 16))
-                            }
-                        }
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({
-                                    result.success(Numeric.toHexStringNoPrefix(it))
-                                }, {
-                                    it.printStackTrace()
-                                    result.error(ErrorCode.UNKNOWN_ERROR, it.message, null)
-                                })
-                    } else {
-                        result.error(ErrorCode.UNKNOWN_ERROR, "coinType $coinType are not implemented", null)
-                    }
-                } else {
-                    result.error(ErrorCode.UNKNOWN_ERROR, "coinType $coinType are not implemented", null)
                 }
                 true
             }
@@ -518,29 +383,5 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
 
     private fun isTrustWallet(fileName: String): Boolean {
         return fileName.endsWith(".keystore")
-    }
-
-//    private fun isV3KeyStore(fileName: String): Boolean {
-//        return fileName.endsWith(".json")
-//    }
-
-    private fun buildWeb3j(isMainNet: Boolean): Web3j {
-        val api = if (isMainNet) ETH_MAIN_API else ETH_ROPSTEN_API
-        return Web3j.build(HttpService(api))
-    }
-
-    /**
-     * warn: prvKeyHex or fromAddress cannot be null on the same time
-     */
-    private fun buildHyperionToken(contractAddress: String, isMainNet: Boolean, prvKeyHex: String? = null, fromAddress: String? = null): HyperionToken {
-        val web3 = buildWeb3j(isMainNet)
-        val credentials = if (prvKeyHex != null) Credentials.create(prvKeyHex) else null
-        if (credentials != null) {
-            //TODO set gas price
-            return HyperionToken.load(contractAddress, web3, credentials, DefaultGasProvider())
-        } else if (fromAddress != null) {
-            return HyperionToken.load(contractAddress, web3, ReadonlyTransactionManager(web3, fromAddress), DefaultGasProvider())
-        }
-        throw Exception("prvKeyHex or fromAddress cannot be null on the same time!")
     }
 }

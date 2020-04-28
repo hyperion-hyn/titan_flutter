@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/env.dart';
+import 'package:titan/src/config/consts.dart';
 
-import '../../../env.dart';
 import 'base_http.dart';
 
 class HttpCore extends BaseHttpCore {
@@ -15,9 +15,9 @@ class HttpCore extends BaseHttpCore {
   static HttpCore _getInstance() {
     if (_instance == null) {
       _instance = HttpCore._internal();
-//      if (env.buildType == BuildType.DEV) {
+      if (env.buildType == BuildType.DEV) {
         _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
-//      }
+      }
     }
     return _instance;
   }

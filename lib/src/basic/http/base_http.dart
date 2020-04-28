@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:titan/generated/i18n.dart';
-import 'package:titan/src/consts/consts.dart';
+import 'package:titan/src/config/consts.dart';
 
 import '../../../env.dart';
 import 'entity.dart';
@@ -29,8 +29,8 @@ class BaseHttpCore {
   }
 
   Future<ResponseEntity<T>> postResponseEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    var res = await post(url, params: params, options: options, cancelToken: cancelToken);
+      {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+    var res = await post(url, data: data, params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
@@ -49,13 +49,14 @@ class BaseHttpCore {
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
+    //print('[request] responseEntity.data:${responseEntity.data}');
     return responseEntity.data;
   }
 
   Future<T> postEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
     var responseEntity =
-        await postResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
+        await postResponseEntity<T>(url, factory, data: data, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
@@ -114,9 +115,9 @@ class BaseHttpCore {
       response = await dio.get(url, options: options, cancelToken: cancelToken);
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
-        params.forEach((key,value){
+        /*params.forEach((key,value){
           print("[base_http] post params.key $key params.values $value");
-        });
+        });*/
         response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
       } else if (data != null) {
         response = await dio.post(url, data: data, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
@@ -133,7 +134,7 @@ class BaseHttpCore {
 
     statusCode = response.statusCode;
     if (statusCode < 0) {
-      errorMsg = S.of(Keys.mainContextKey.currentContext).network_request_err(statusCode.toString());
+      errorMsg = S.of(Keys.rootKey.currentContext).network_request_err(statusCode.toString());
       throw HttpResponseNot200Exception(errorMsg);
     }
 //    String res2Json = '{"code":0,"msg":"mssss","data":[{"name":"moo"},{"name":"moo2"}]}';
@@ -145,12 +146,12 @@ class BaseHttpCore {
     try {
       map = json.decode(response.data);
     } catch (err) {
-      print('[base_http] json decode 1 err $err');
+      //print('[base_http] json decode 1 err $err');
       //String res2Json = json.encode(response.data);
       try {
         map = json.decode(response.data);
       } catch (err) {
-        print('[base_http] json decode 2 err $err');
+        //print('[base_http] json decode 2 err $err');
       }
     }
 

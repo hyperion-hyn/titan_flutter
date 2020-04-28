@@ -1,17 +1,15 @@
-
-
-
 import 'package:flutter/material.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/widget/common_page_view/empty_view.dart';
+import 'package:titan/src/widget/common_page_view/fail_view.dart';
+import 'package:titan/src/widget/common_page_view/loading_view.dart';
 
 import 'all_page_state.dart';
 
 class AllPageStateContainer extends StatefulWidget {
+  final AllPageState allPageState;
+  final VoidCallback onLoadData;
 
-  AllPageState allPageState;
-  VoidCallback onLoadData;
-
-  AllPageStateContainer(this.allPageState,this.onLoadData);
+  AllPageStateContainer(this.allPageState, this.onLoadData);
 
   @override
   State<StatefulWidget> createState() {
@@ -20,7 +18,6 @@ class AllPageStateContainer extends StatefulWidget {
 }
 
 class AllPageStateContainerState extends State<AllPageStateContainer> {
-
   @override
   void initState() {
     super.initState();
@@ -42,63 +39,17 @@ class AllPageStateContainerState extends State<AllPageStateContainer> {
   }
 
   Widget buildLoading(context) {
-    return Center(
-      child: SizedBox(
-        height: 40,
-        width: 40,
-        child: CircularProgressIndicator(
-          strokeWidth: 3,
-        ),
-      ),
-    );
+    return LoadingView();
   }
 
   Widget buildFail(context, String message) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Image.asset('res/drawable/load_fail.png', width: 100.0),
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Text(
-              '网络请求异常~',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ),
-          FlatButton(
-              onPressed: () {
-                widget.onLoadData();
-              },
-              child: Text(
-                '点击重试',
-                style: TextStyle(
-                  color: Theme.of(context).accentColor,
-                  fontSize: 16,
-                ),
-              )),
-        ],
-      ),
+    return FailView(
+      message: message,
+      onRetry: widget.onLoadData,
     );
   }
 
   Widget buildEmpty(context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Image.asset('res/drawable/empty_data.png', width: 100.0),
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Text(
-              S.of(context).search_empty_data,
-              style: TextStyle(color: Colors.grey),
-            ),
-          )
-//          FlatButton(onPressed: () {}, child: Text('点击刷新')),
-        ],
-      ),
-    );
+    return EmptyView();
   }
-
 }

@@ -41,8 +41,23 @@ import CoreBluetooth
         if let userInfo = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] {
             msgPushAction(userInfo: userInfo as! [AnyHashable : Any])
         }
+        
+        /*
+             若用户直接启动，lauchOptions内无数据;
+             若由其他应用程序通过openURL:启动，则UIApplicationLaunchOptionsURLKey对应的对象为启动URL（NSURL）,UIApplicationLaunchOptionsSourceApplicationKey对应启动的源应用程序的bundle ID (NSString)；
+             若由本地通知启动，则UIApplicationLaunchOptionsLocalNotificationKey对应的是为启动应用程序的的本地通知对象(UILocalNotification)；
+             若由远程通知启动，则UIApplicationLaunchOptionsRemoteNotificationKey对应的是启动应用程序的的远程通知信息userInfo（NSDictionary）；
+             其他key还有UIApplicationLaunchOptionsAnnotationKey,UIApplicationLaunchOptionsLocationKey,
+             UIApplicationLaunchOptionsNewsstandDownloadsKey。
+        */
+        
+        if let url = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL{
+             urlLauncherAction(url: url)
+        }
+        
+        let isLaunch = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+        return isLaunch
     }
     
     func printLog(_ log: String) {
@@ -192,6 +207,31 @@ import CoreBluetooth
         }
     }
 
+    override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        urlLauncherAction(url: url)
+        
+        return true
+    }
+    
+    private func urlLauncherAction(url: URL) {
+       print("[Appdelegate] -->open url, url:\(url)")
+
+       let urlString = url.absoluteString
+       if urlString.hasPrefix("titan://contract/detail?") {
+           if let detailComponentsLast = urlString.components(separatedBy: "?").last {
+               let components = detailComponentsLast.components(separatedBy: "=")
+               let mapValue: [String:Any] = [
+                   "type": "contract",
+                   "subType": "detail",
+                   "content": [
+                       components.first!: components.last
+                   ]
+               ]
+               self.callChannel.invokeMethod("urlLauncher", arguments: mapValue)
+           }
+       }
+    }
+    
 }
 
 
