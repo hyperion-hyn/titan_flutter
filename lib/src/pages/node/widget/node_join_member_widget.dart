@@ -11,6 +11,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -162,7 +163,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     );
   }
 
-
   Widget _item(ContractDelegatorItem item, bool isFirst) {
     String showName = item.userName;
     if (item.userName.isNotEmpty) {
@@ -170,13 +170,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     }
 
     return InkWell(
-      onTap: () {
-        var url = EtherscanApi.getAddressDetailUrl(item.userAddress,
-            SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
-        url = FluroConvertUtils.fluroCnParamsEncode(url);
-        Application.router.navigateTo(context,
-            Routes.toolspage_webview_page + '?initUrl=$url');
-      },
+      onTap: ()=> _pushTransactionDetailAction(item),
       child: Padding(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),
         child: SizedBox(
@@ -205,18 +199,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 //                      height: 50,
 //                      width: 50,
                         child: circleIconWidget(showName, isShowShape: false, address: item.userAddress)
-                        /*Card(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(13.0)),
-                          ),
-                          child: Center(
-                              child: Text(
-                            "$showName",
-                            style: TextStyle(fontSize: 15, color: HexColor("#000000")),
-                          )),
-                        )*/
                         ,
                       ),
                       SizedBox(
@@ -256,6 +238,27 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
       ),
     );
   }
+
+
+  void _pushTransactionDetailAction(ContractDelegatorItem item) {
+    var url = EtherscanApi.getAddressDetailUrl(item.userAddress,
+        SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
+    if (url != null) {
+      /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
+      String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
+      Application.router.navigateTo(context, Routes.toolspage_webview_page
+          + '?initUrl=$webUrl&title=$webTitle');*/
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WebViewContainer(
+                initUrl: url,
+                title: "",
+              )));
+    }
+  }
+
 }
 
 Widget circleIconWidget(String shortName, {bool isShowShape = true, String address = "#000000"}) {
