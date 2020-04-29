@@ -873,10 +873,14 @@
   "active": "启动",
   "expired": "到期",
   "number": "编号",
+  "launcher_func": "创建者: ${ownerName}",
   "n_second": "${n}秒",
   "left": "剩",
   "n_hour_simple": "${hour}时",
   "n_minute_simple": "${minute}分",
   "freezeContentDesc": "作为当前节点的创建者，您需要给直推人节点总收益的5%作为推荐奖励，系统将为您自动划转。",
-  "launcher_func": "发起人:  ${ownerName}"
+  "check_join": "查看参与",
+  "create_wallet_account_check_contract": "你需要先创建/导入钱包账户，才能查看你的钱包账户相关合约数据。",
+  "create_or_import_wallet_first": "请先创建/导入钱包",
+  "map_smart_contract_management": "map3智能合约管理"
 }

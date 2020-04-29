@@ -100,7 +100,7 @@ class EncryptionPluginInterface(private val context: Context, private val binary
 
     @SuppressLint("CheckResult")
     private fun generateKey(expired: Long, result: MethodChannel.Result) {
-        Timber.i("生成密钥")
+        Timber.i("-生成密钥")
         encryptionService.generateKeyPairAndStore(expired)
                 .subscribe({
                     encryptionService.publicKey?.let { pubKey ->

@@ -92,9 +92,9 @@ class _WalletDemoState extends State<WalletDemo> {
                 _mnemonic = null;
                 BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
 
-                logger.i("快捷一步，创建一个新钱包, name:$walletName, keystore: ${wallet.keystore.fileName}， 成功！");
+                logger.i("-快捷一步，创建一个新钱包, name:$walletName, keystore: ${wallet.keystore.fileName}， 成功！");
               } else {
-                logger.i("快捷一步，创建一个新钱包：错误 ");
+                logger.i("-快捷一步，创建一个新钱包：错误 ");
               }
             },
             child: Text('快捷一步，创建一个新钱包, 并且激活新钱包'),
@@ -102,7 +102,7 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               if (WalletConfig.netType == EthereumNetType.main) {
-                logger.i('请先切换到ETH网络到非主网');
+                logger.i('-请先切换到ETH网络到非主网');
               } else {
                 final client = WalletUtil.getWeb3Client();
                 String privateKey = ContractTestConfig.privateKey;
@@ -234,7 +234,7 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               //请注意，要先 approve
-              logger.w('请注意，要先 approve');
+              logger.w('-请注意，要先 approve');
               var wallets = WalletInheritedModel.of(context).activatedWallet;
 //              var wallets = await WalletUtil.scanWallets();
               if (wallets != null) {
@@ -452,12 +452,12 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var wallets = await WalletUtil.scanWallets();
               if (wallets.length > 0) {
-                print('扫描到的钱包:');
+                print('-扫描到的钱包:');
                 for (var wallet in wallets) {
                   print(
                       "钱包 name: ${(wallet.keystore is KeyStore) ? wallet.keystore.name : " "}  文件路径： ${wallet.keystore.fileName}");
                   for (var account in wallet.accounts) {
-                    print("账户地址： ${account.address}");
+                    print("-账户地址： ${account.address}");
                     print(account.token);
                     print('-------');
                     for (var token in account.contractAssetTokens) {
@@ -466,7 +466,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   }
                 }
               } else {
-                print('没有扫描到钱包');
+                print('-没有扫描到钱包');
               }
             },
             child: Text('扫描所有钱包'),
@@ -479,14 +479,14 @@ class _WalletDemoState extends State<WalletDemo> {
                   if (wallets.length > 0) {
                     //修改第一个账户密码吧
                     var wallet = wallets[0];
-                    print('即将修改${wallet.keystore.fileName} 的密码');
+                    print('-即将修改${wallet.keystore.fileName} 的密码');
                     var success = await WalletUtil.changePassword(
                         wallet: wallet, oldPassword: '111111', newPassword: "new password", name: '修改的钱包');
 //                    var success = await WalletUtil.changePassword(
 //                        wallet: wallet, oldPassword: 'new password', newPassword: "111111", name: '修改的钱包');
                     if (success) {
-                      print('修改密码成功');
-                      print('最后成为${wallet.keystore.fileName}');
+                      print('-修改密码成功');
+                      print('-最后成为${wallet.keystore.fileName}');
                     }
                   }
                 },
@@ -498,12 +498,12 @@ class _WalletDemoState extends State<WalletDemo> {
                   if (wallets.length > 0) {
                     //修改第一个账户密码吧
                     var wallet = wallets[0];
-                    print('即将修改${wallet.keystore.fileName} 的密码');
+                    print('-即将修改${wallet.keystore.fileName} 的密码');
                     var success = await WalletUtil.changePassword(
                         wallet: wallet, oldPassword: '111111_wrong', newPassword: "new password", name: '修改的钱包');
                     if (success) {
-                      print('修改密码成功');
-                      print('最后成为${wallet.keystore.fileName}');
+                      print('-修改密码成功');
+                      print('-最后成为${wallet.keystore.fileName}');
                     }
                   }
                 },
@@ -560,7 +560,7 @@ class _WalletDemoState extends State<WalletDemo> {
                             fileName: wallet.keystore.fileName, password: '111111');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
-                        print('不是TrustWallet钱包，不支持导出助记词');
+                        print('-不是TrustWallet钱包，不支持导出助记词');
                       }
                     } catch (e) {
                       logger.e(e);
@@ -580,7 +580,7 @@ class _WalletDemoState extends State<WalletDemo> {
                             fileName: wallet.keystore.fileName, password: '111111_wrong');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
-                        print('不是TrustWallet钱包，不支持导出助记词');
+                        print('-不是TrustWallet钱包，不支持导出助记词');
                       }
                     } catch (e) {
                       logger.e(e);
@@ -597,7 +597,7 @@ class _WalletDemoState extends State<WalletDemo> {
               var wallets = await WalletUtil.scanWallets();
               for (var wallet in wallets) {
                 var result = await wallet.delete(password);
-                print("删除结果 ${wallet.keystore.fileName} $result");
+                print("-删除结果 ${wallet.keystore.fileName} $result");
               }
 
               wallets = await WalletUtil.scanWallets();
@@ -645,7 +645,7 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               var gas = await WalletUtil.ethGasPrice();
-              logger.i('油费是 $gas ${gas / BigInt.from(TokenUnit.G_WEI)}');
+              logger.i('-油费是 $gas ${gas / BigInt.from(TokenUnit.G_WEI)}');
             },
             child: Text('查看以太坊油费'),
           ),
@@ -677,7 +677,7 @@ class _WalletDemoState extends State<WalletDemo> {
                 );
                 logger.i('estimateGasPrice $ret');
               } else {
-                print('无钱包');
+                print('-无钱包');
               }
             },
             child: Text('查看交易费率'),

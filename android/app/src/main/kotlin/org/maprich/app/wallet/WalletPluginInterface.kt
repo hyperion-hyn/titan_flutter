@@ -254,7 +254,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val fileName = call.argument<String>("fileName")
                 if (fileName != null && password != null) {
                     if (isTrustWallet(fileName)) {
-                        Timber.i("加载keystore文件 ${getKeyStorePath(fileName)}")
+                        Timber.i("-加载keystore文件 ${getKeyStorePath(fileName)}")
                         val storedKey = StoredKey.load(getKeyStorePath(fileName))
                         if (storedKey.isMnemonic) {
                             val mnemonic = storedKey.decryptMnemonic(password)
@@ -340,7 +340,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
     private fun saveStoredKeyToLocal(storedKey: StoredKey): String {
         val saveName = "${storedKey.name()}${System.currentTimeMillis()}".md5() + ".keystore"
         val savePath = getKeyStoreDir().absolutePath + File.separator + saveName
-        Timber.i("保存keystore文件 $saveName")
+        Timber.i("-保存keystore文件 $saveName")
         storedKey.store(savePath)
         return saveName
     }

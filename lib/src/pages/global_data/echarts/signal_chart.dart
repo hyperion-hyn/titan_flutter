@@ -126,7 +126,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
   Widget _poiWidget() {
     // todo: test_jison_0428
-    var imageUrl = "http://www.hyn.space/";
+    var imageUrl = "https://static.hyn.mobi/titan/images/mapmap.png";
     var isValidImageUrl = imageUrl.contains(".png");
 
     return Column(

@@ -22,7 +22,6 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
-import '../wallet/wallet_manager/wallet_manager_page.dart';
 import 'add_poi/select_position_page.dart';
 
 class ContributionTasksPage extends StatefulWidget {
@@ -300,6 +299,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
+        if (Platform.isAndroid)
         _buildTaskItem('ncov', S.of(context).add_ncov_item_title, -1, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
@@ -314,6 +314,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             );
           }
         }, isOpen: true),
+        if (Platform.isAndroid)
         _divider(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -351,9 +352,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (latlng == null) {
       UiUtil.showConfirmDialog(
         context,
-        content: S
-            .of(context)
-            .get_poi_fail_please_again,
+        content: S.of(context).get_poi_fail_please_again,
       );
     }
     return latlng;
@@ -551,13 +550,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     bool blueAvaiable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
       if (!blueAvaiable) {
-        UiUtil.showDialogs(
-            context,
-            S
-            .of(context)
-            .open_bluetooth, S
-            .of(context)
-            .please_open_bluetooth, () {
+        UiUtil.showDialogs(context, S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
           AppSettings.openBluetoothSettings();
         });
         return false;
@@ -572,13 +565,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (Platform.isAndroid) {
       bool wifiAvailable = await TitanPlugin.wifiEnable();
       if (!wifiAvailable) {
-        UiUtil.showDialogs(
-            context,
-            S
-            .of(context)
-            .open_wifi, S
-            .of(context)
-            .please_open_wifi, () {
+        UiUtil.showDialogs(context, S.of(context).open_wifi, S.of(context).please_open_wifi, () {
           AppSettings.openWIFISettings();
         });
         return false;
@@ -587,6 +574,4 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
     return true;
   }
-
-
 }
