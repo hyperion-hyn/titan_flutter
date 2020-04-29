@@ -88,6 +88,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   void getNetworkData() async {
     try {
       currentPage = 0;
+      _nodePageEntityVo = MemoryCache.nodePageData;
 
       NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
       activeContractList = await _nodeApi.getContractActiveList();
@@ -95,8 +96,8 @@ class _Map3NodeState extends State<Map3NodePage> {
       NodePageEntityVo cloneData = netData.clone();
       cloneData.nodeHeadEntity?.lastRecordMessage = null;
       if (!cloneData.isEqual(MemoryCache.nodePageData)) {
-        _nodePageEntityVo = netData;
         MemoryCache.nodePageData = cloneData;
+        _nodePageEntityVo = MemoryCache.nodePageData;
       }
 
       if (mounted) {
