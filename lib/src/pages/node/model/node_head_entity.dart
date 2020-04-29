@@ -10,7 +10,7 @@ class NodeHeadEntity extends Object {
   int instanceCount;
 
   @JsonKey(name: 'lastRecordMessage')
-  List<String> lastRecordMessage;
+  List<String> lastRecordMessage;// use it will get exception in cache
 
   @JsonKey(name: 'message')
   String message;

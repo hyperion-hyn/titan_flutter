@@ -146,10 +146,10 @@ class _MyPageState extends State<MyPage> {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
                     } else {
-                      var tips = FluroConvertUtils.fluroCnParamsEncode('你需要先创建/导入钱包账户，才能查看你的钱包账户相关合约数据。');
+                      var tips = FluroConvertUtils.fluroCnParamsEncode(S.of(context).create_wallet_account_check_contract);
                       Application.router.navigateTo(context, Routes.wallet_manager + '?tips=$tips');
                     }
-                  }, imageName: "ic_map3_node_item_contract", subText: _wallet == null ? '请先创建/导入钱包' : null),
+                  }, imageName: "ic_map3_node_item_contract", subText: _wallet == null ? S.of(context).create_or_import_wallet_first : null),
                   Container(
                     height: 10,
                     color: HexColor('#F1EFF2'),
@@ -173,7 +173,7 @@ class _MyPageState extends State<MyPage> {
                   if (['0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(), '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase()]
                       .contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
                     _buildMenuBar(
-                        'map3智能合约管理',
+                        S.of(context).map_smart_contract_management,
                         Icons.account_balance_wallet,
                         () => Navigator.push(
                             context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
