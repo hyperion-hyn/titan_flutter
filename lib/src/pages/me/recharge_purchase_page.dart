@@ -194,161 +194,161 @@ class _RechargePurchaseState extends State<RechargePurchasePage> {
               SizedBox(
                 height: 16,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 22.0),
-                child: RaisedButton(
-                  color: Color(0xFFD6A734),
-                  onPressed: () async {
-                    WalletVo _walletVo =
-                        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
-                    if (_walletVo == null) {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Platform.isIOS
-                                ? CupertinoAlertDialog(
-                                    title: Text(S.of(context).Tips),
-                                    content: Text(S.of(context).without_hyn_wallet),
-                                    actions: <Widget>[
+//              Padding(
+//                padding: const EdgeInsets.only(top: 22.0),
+//                child: RaisedButton(
+//                  color: Color(0xFFD6A734),
+//                  onPressed: () async {
+//                    WalletVo _walletVo =
+//                        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+//                    if (_walletVo == null) {
+//                      showDialog(
+//                          context: context,
+//                          builder: (context) {
+//                            return Platform.isIOS
+//                                ? CupertinoAlertDialog(
+//                                    title: Text(S.of(context).Tips),
+//                                    content: Text(S.of(context).without_hyn_wallet),
+//                                    actions: <Widget>[
+////                                      new FlatButton(
+////                                        onPressed: () {
+////                                          createWalletPopUtilName = "/recharge_purchase_page";
+////                                          Navigator.push(
+////                                              context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+////                                        },
+////                                        child: new Text(S.of(context).create),
+////                                      ),
 //                                      new FlatButton(
 //                                        onPressed: () {
-//                                          createWalletPopUtilName = "/recharge_purchase_page";
-//                                          Navigator.push(
-//                                              context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+//                                          Navigator.of(context).pop();
+//                                          Application.router.navigateTo(context, Routes.wallet_manager);
 //                                        },
-//                                        child: new Text(S.of(context).create),
+//                                        child: new Text(S.of(context).wallet_manage),
 //                                      ),
-                                      new FlatButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Application.router.navigateTo(context, Routes.wallet_manager);
-                                        },
-                                        child: new Text(S.of(context).wallet_manage),
-                                      ),
-                                      new FlatButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: new Text(S.of(context).close),
-                                      ),
-                                    ],
-                                  )
-                                : AlertDialog(
-                                    title: new Text(S.of(context).tips),
-                                    content: new Text(S.of(context).without_hyn_wallet),
-                                    actions: <Widget>[
 //                                      new FlatButton(
 //                                        onPressed: () {
-//                                          createWalletPopUtilName = "/recharge_purchase_page";
-//                                          Navigator.push(
-//                                              context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+//                                          Navigator.of(context).pop();
 //                                        },
-//                                        child: new Text(S.of(context).create),
+//                                        child: new Text(S.of(context).close),
 //                                      ),
-                                      new FlatButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Application.router.navigateTo(context, Routes.wallet_manager);
-                                        },
-                                        child: new Text(S.of(context).wallet_manage),
-                                      ),
-                                      new FlatButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: new Text(S.of(context).close),
-                                      ),
-                                    ],
-                                  );
-                          });
-                    } else {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (ctx) {
-                            return Wrap(
-                              children: <Widget>[
-                                ListTile(
-                                  leading: Image(
-                                    image: AssetImage('res/drawable/hyn_logo.png'),
-                                    height: 24,
-                                    width: 24,
-                                  ),
-                                  title: Text(S.of(context).transfer_in_hyn),
-                                  onTap: () {
-                                    Navigator.pop(ctx);
-                                    _transferToken(context, 'HYN');
-                                  },
-                                ),
-                                ListTile(
-                                  leading: Image(
-                                    image: AssetImage('res/drawable/usdt_logo.png'),
-                                    height: 24,
-                                    width: 24,
-                                  ),
-                                  title: Text(S.of(context).transfer_in_usdt),
-                                  onTap: () {
-                                    Navigator.pop(ctx);
-                                    _transferToken(context, 'USDT');
-                                  },
-                                ),
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.close,
-                                  ),
-                                  title: Text(S.of(context).close),
-                                  onTap: () {
-                                    Navigator.pop(ctx);
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                    }
-                  },
-                  child: SizedBox(
-                    height: 48,
-                    width: 192,
-                    child: Center(
-                      child: Text(
-                        S.of(context).by_hyn_transfer,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: RaisedButton(
-                  color: Color(0xFF73C42D),
-                  onPressed: () async {
-                    var ret = await service.confirmRechargeV2(userInfo.balance);
-                    if (ret.code == 0) {
-                      Fluttertoast.showToast(msg: S.of(context).recharge_success_hint);
-                      Navigator.pop(context, true);
-                    } else {
-                      if (ret.code == -1007) {
-                        Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
-                      } else {
-                        Fluttertoast.showToast(msg: S.of(context).no_transfer_info_hint);
-                      }
-                    }
-                  },
-                  child: SizedBox(
-                    height: 48,
-                    width: 192,
-                    child: Center(
-                      child: Text(
-                        S.of(context).out_wallet_transfer_hint,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-              )
+//                                    ],
+//                                  )
+//                                : AlertDialog(
+//                                    title: new Text(S.of(context).tips),
+//                                    content: new Text(S.of(context).without_hyn_wallet),
+//                                    actions: <Widget>[
+////                                      new FlatButton(
+////                                        onPressed: () {
+////                                          createWalletPopUtilName = "/recharge_purchase_page";
+////                                          Navigator.push(
+////                                              context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
+////                                        },
+////                                        child: new Text(S.of(context).create),
+////                                      ),
+//                                      new FlatButton(
+//                                        onPressed: () {
+//                                          Navigator.of(context).pop();
+//                                          Application.router.navigateTo(context, Routes.wallet_manager);
+//                                        },
+//                                        child: new Text(S.of(context).wallet_manage),
+//                                      ),
+//                                      new FlatButton(
+//                                        onPressed: () {
+//                                          Navigator.of(context).pop();
+//                                        },
+//                                        child: new Text(S.of(context).close),
+//                                      ),
+//                                    ],
+//                                  );
+//                          });
+//                    } else {
+//                      showModalBottomSheet(
+//                          context: context,
+//                          builder: (ctx) {
+//                            return Wrap(
+//                              children: <Widget>[
+//                                ListTile(
+//                                  leading: Image(
+//                                    image: AssetImage('res/drawable/hyn_logo.png'),
+//                                    height: 24,
+//                                    width: 24,
+//                                  ),
+//                                  title: Text(S.of(context).transfer_in_hyn),
+//                                  onTap: () {
+//                                    Navigator.pop(ctx);
+//                                    _transferToken(context, 'HYN');
+//                                  },
+//                                ),
+//                                ListTile(
+//                                  leading: Image(
+//                                    image: AssetImage('res/drawable/usdt_logo.png'),
+//                                    height: 24,
+//                                    width: 24,
+//                                  ),
+//                                  title: Text(S.of(context).transfer_in_usdt),
+//                                  onTap: () {
+//                                    Navigator.pop(ctx);
+//                                    _transferToken(context, 'USDT');
+//                                  },
+//                                ),
+//                                ListTile(
+//                                  leading: Icon(
+//                                    Icons.close,
+//                                  ),
+//                                  title: Text(S.of(context).close),
+//                                  onTap: () {
+//                                    Navigator.pop(ctx);
+//                                  },
+//                                ),
+//                              ],
+//                            );
+//                          });
+//                    }
+//                  },
+//                  child: SizedBox(
+//                    height: 48,
+//                    width: 192,
+//                    child: Center(
+//                      child: Text(
+//                        S.of(context).by_hyn_transfer,
+//                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+//                      ),
+//                    ),
+//                  ),
+//                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+//                ),
+//              ),
+//              Padding(
+//                padding: const EdgeInsets.only(top: 16.0),
+//                child: RaisedButton(
+//                  color: Color(0xFF73C42D),
+//                  onPressed: () async {
+//                    var ret = await service.confirmRechargeV2(userInfo.balance);
+//                    if (ret.code == 0) {
+//                      Fluttertoast.showToast(msg: S.of(context).recharge_success_hint);
+//                      Navigator.pop(context, true);
+//                    } else {
+//                      if (ret.code == -1007) {
+//                        Fluttertoast.showToast(msg: S.of(context).over_limit_amount_hint);
+//                      } else {
+//                        Fluttertoast.showToast(msg: S.of(context).no_transfer_info_hint);
+//                      }
+//                    }
+//                  },
+//                  child: SizedBox(
+//                    height: 48,
+//                    width: 192,
+//                    child: Center(
+//                      child: Text(
+//                        S.of(context).out_wallet_transfer_hint,
+//                        textAlign: TextAlign.center,
+//                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+//                      ),
+//                    ),
+//                  ),
+//                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+//                ),
+//              )
             ],
           ),
         ),
