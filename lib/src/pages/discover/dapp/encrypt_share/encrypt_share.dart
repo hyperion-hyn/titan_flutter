@@ -120,7 +120,7 @@ class EncryptShareState extends State<EncryptShare> {
                             padding: const EdgeInsets.only(right: 16.0),
                             child: InkWell(
                               onTap: () async {
-                                print('你将要加密 $selectedPoi');
+                                print('-你将要加密 $selectedPoi');
                                 if (selectedPoi != null) {
                                   var suc = await showDialog(
                                       context: context,
@@ -131,7 +131,7 @@ class EncryptShareState extends State<EncryptShare> {
                                   if (suc) {
                                     //关闭分享位置
 //                                    BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
-                                    print('成功打开分享');
+                                    print('-成功打开分享');
                                   }
                                 }
                               },

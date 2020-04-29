@@ -602,5 +602,8 @@
   "left": "剩",
   "n_hour_simple": "${hour}时",
   "n_minute_simple": "${minute}分",
-  "check_join": "查看参与"
+  "check_join": "查看参与",
+  "create_wallet_account_check_contract": "你需要先创建/导入钱包账户，才能查看你的钱包账户相关合约数据。",
+  "create_or_import_wallet_first": "请先创建/导入钱包",
+  "map_smart_contract_management": "map3智能合约管理"
 }
