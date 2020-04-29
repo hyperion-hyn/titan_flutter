@@ -32,7 +32,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   Api _api = Api();
   SignalDailyVo _dailyVo;
   List<SignalWeeklyVo> _weeklyVoList;
-  var _title = "";
+  var _introduction = "";
   List<Signal> _poiVoList;
   Map3NodeVo _map3nodeVo;
   SignalTotalVo _signalTotalVo;
@@ -44,7 +44,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   void initState() {
     super.initState();
 
-    print('[signal_chart] --> initState：${_title}');
+    print('[signal_chart] --> initState：${_introduction}');
   }
 
   @override
@@ -69,6 +69,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         child: _poiWidget(),
       );
     } else {
+      return Container();
     }
   }
 
@@ -80,28 +81,9 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            child: HtmlWidget(
-              _title,
-            )),
-        Padding(
-          child: Text(S.of(context).global_node_map_title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          padding: EdgeInsets.fromLTRB(20, 0, 0, 16),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              child: Center(
-                child: _nodeChartWidget(),
-              ),
-              width: _chartsWidth,
-              height: _chartsHeight,
-            ),
-          ),
-        ),
+        _introductionWidget(),
+        _titleWidget(S.of(context).global_node_map_title),
+        _clipRRectWidget(_nodeChartWidget(), _chartsWidth, _chartsHeight),
       ],
     );
   }
@@ -110,10 +92,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-          child: HtmlWidget(_title),
-        ),
+        _introductionWidget(),
         _signalTotalChartWidget(),
         _dailySignalChartWidget(type: SensorType.GPS),
         _dailySignalChartWidget(type: SensorType.WIFI),
@@ -124,40 +103,17 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   }
 
   Widget _poiWidget() {
-    // todo: test_jison_0428
-    var imageUrl = "https://static.hyn.mobi/titan/images/mapmap.png";
-    var isValidImageUrl = imageUrl.contains(".png");
 
     return Column(
       children: <Widget>[
-        Container(
-          //color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-              child: HtmlWidget(_title),
-            )),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: SizedBox(width: double.infinity, child: Text(S.of(context).poi_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: isValidImageUrl?FadeInImage.assetNetwork(
-              image: imageUrl,
-              placeholder: 'res/drawable/signal_map.png',
-//            width: 112,
-//            height: 84,
-              fit: BoxFit.fill,
-            ):Image.asset(
-               'res/drawable/signal_map.png',
-//            width: 112,
-//            height: 84,
-              fit: BoxFit.fill,
-            ),
-          ),
-        ),
+        _introductionWidget(),
+        _titleWidget(S.of(context).poi_total_data),
+        _clipRRectWidget(
+            FadeInImage.assetNetwork(
+          image: "https://static.hyn.mobi/titan/images/mapmap.png",
+          placeholder: 'res/drawable/signal_map.png',
+          fit: BoxFit.fill,
+        )),
         _dailySignalChartWidget(type: SensorType.POI),
       ],
     );
@@ -499,39 +455,14 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          child: Text(S.of(context).signal_total_data, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          padding: EdgeInsets.fromLTRB(20, 0, 0, 8),
-        ),
-        Center(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8.0,
-                    ),
-                  ],
-                ),
-                child: Echarts(
-                  option: _barOption,
-                  onMessage: (String message) {
-                    Map<String, Object> messageAction = jsonDecode(message);
-                    print(messageAction);
-                  },
-                ),
-                width: _chartsWidth,
-                height: _chartsHeight,
-              ),
-            ),
-          ),
-        ),
+        _titleWidget(S.of(context).signal_total_data),
+        _clipRRectWidget(Echarts(
+          option: _barOption,
+          onMessage: (String message) {
+            Map<String, Object> messageAction = jsonDecode(message);
+            print(messageAction);
+          },
+        ), _chartsWidth, _chartsHeight),
       ],
     );
   }
@@ -638,24 +569,53 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
                               fontWeight: FontWeight.bold,
                             ))),
                   )),
-              Center(
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(type == SensorType.GPS?0:20, 0, 0, 0),
-                  child: Echarts(
-                    option: _lineOption,
-                    onMessage: (String message) {
-                      Map<String, Object> messageAction = jsonDecode(message);
-                      print(messageAction);
-                    },
-                  ),
-                  width: _chartsWidth,
-                  height: _chartsHeight,
+              Container(
+                padding: EdgeInsets.fromLTRB(type == SensorType.GPS?0:20, 0, 0, 0),
+                child: Echarts(
+                  option: _lineOption,
+                  onMessage: (String message) {
+                    Map<String, Object> messageAction = jsonDecode(message);
+                    print(messageAction);
+                  },
                 ),
+                width: _chartsWidth,
+                height: _chartsHeight,
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _clipRRectWidget(Widget child, [double width, double height, BoxDecoration decoration]) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          decoration: decoration,
+          child: Center(
+            child: child,
+          ),
+          width: width,
+          height: height,
+        ),
+      ),
+    );
+  }
+
+  Widget _introductionWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      child: HtmlWidget(_introduction),
+    );
+  }
+
+  Widget _titleWidget(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: SizedBox(width: double.infinity, child: Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
     );
   }
 
@@ -665,7 +625,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     switch (widget.type) {
       case SignalChatsPage.NODE:
         {
-          _title =
+          _introduction =
               S.of(context).signal_chart_desc_map3;
           _map3nodeVo = await _api.getMap3NodeData();
         }
@@ -673,7 +633,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
       case SignalChatsPage.SIGNAL:
         {
-          _title = S.of(context).signal_chart_desc_signal;
+          _introduction = S.of(context).signal_chart_desc_signal;
           _signalTotalVo = await _api.getSignalTotal();
           //_weeklyVoList = await _api.getSignalWeekly(language: languageCode);
           var dailyList = await _api.getSignalDaily(language: languageCode);
@@ -683,7 +643,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
       case SignalChatsPage.POI:
         {
-          _title =
+          _introduction =
               S.of(context).signal_chart_desc_poi;
           _poiVoList = await _api.getPoiDaily(language: languageCode);
         }

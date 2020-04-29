@@ -343,7 +343,7 @@ class _Map3NodeState extends State<Map3NodePage> {
 Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
   if (contractNodeItem == null) return Container();
 
-  var state = enumContractStateFromString(contractNodeItem.state);
+  var state = contractNodeItem.stateValue;
 
   var isNotFull = int.parse(contractNodeItem.remainDelegation) > 0;
   var fullDesc = "";

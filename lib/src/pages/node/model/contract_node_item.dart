@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -191,5 +192,7 @@ class ContractNodeItem extends Object {
     }
     return shortOwnerName;
   }
+
+  ContractState get stateValue => enumContractStateFromString(state);
 
 }

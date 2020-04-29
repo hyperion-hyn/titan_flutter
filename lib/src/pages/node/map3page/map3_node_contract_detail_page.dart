@@ -1347,7 +1347,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       }
 
       // 1.
-      _contractState = enumContractStateFromString(_contractNodeItem.state);
+      _contractState = _contractNodeItem.stateValue;
       print(
           '[contract] getContractInstanceItem,_isDelegated:$_isDelegated, contractState:$_contractState, userDelegateState:$_userDelegateState');
 
