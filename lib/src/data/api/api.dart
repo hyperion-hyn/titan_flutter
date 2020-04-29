@@ -6,6 +6,7 @@ import 'package:titan/src/pages/global_data/model/map3_node_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_daily_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_total_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_weekly_vo.dart';
+import 'package:titan/src/pages/me/api/map_rich_http.dart';
 import '../../domain/model/photo_poi_list_model.dart';
 import 'package:titan/src/global.dart';
 import '../entity/poi/photo_simple_poi.dart';
@@ -67,13 +68,12 @@ class Api {
   }
 
   Future<UpdateEntity> update(String channel, String lang, String platform) async {
-    var data = await HttpCore.instance.getEntity(
-        'api/v1/titan/app/update', EntityFactory<UpdateEntity>((json) => UpdateEntity.fromJson(json)),
-        params: {
-          'channel': channel,
-          'lang': lang,
-          "platform": platform,
-        });
+    var data = await MapRichHttpCore.instance
+        .getEntity('apps/update', EntityFactory<UpdateEntity>((json) => UpdateEntity.fromJson(json)), params: {
+      'channel': channel,
+      'lang': lang,
+      "platform": platform,
+    });
 
     return data;
   }
