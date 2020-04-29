@@ -349,9 +349,6 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   }
 
   Widget _signalTotalChartWidget() {
-//    if (_weeklyVoList == null) {
-//      return Loading();
-//    }
 
     var legendData = [
       S.of(context).scan_name_gps,
@@ -657,15 +654,54 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
     //print('[signal] --> _lineOption:${_lineOption}');
 
+    return _clipRRectWidget(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20, 16, 0, 0),
+                  child: SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                          S
+                              .of(context)
+                              .signal_chart_last_month_numbers_func("${SensorType.getScanName(context, type)}"),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ))),
+                )),
+            Container(
+              padding: EdgeInsets.fromLTRB(type == SensorType.GPS ? 0 : 20, 0, 0, 0),
+              child: Echarts(
+                option: _lineOption,
+                onMessage: (String message) {
+                  Map<String, Object> messageAction = jsonDecode(message);
+                  print(messageAction);
+                },
+              ),
+              width: _chartsWidth,
+              height: _chartsHeight,
+            ),
+          ],
+        ));
+  }
+
+  Widget _clipRRectWidget(Widget child, [double width, double height, BoxDecoration decoration]) {
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child:
-      ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Material(
+        clipBehavior: Clip.hardEdge,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 0.05, color: Colors.grey),
+          borderRadius: new BorderRadius.circular(20.0),
+        ),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            //borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -673,50 +709,6 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20, 16, 0, 0),
-                    child: SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                            S
-                                .of(context)
-                                .signal_chart_last_month_numbers_func("${SensorType.getScanName(context, type)}"),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ))),
-                  )),
-              Container(
-                padding: EdgeInsets.fromLTRB(type == SensorType.GPS ? 0 : 20, 0, 0, 0),
-                child: Echarts(
-                  option: _lineOption,
-                  onMessage: (String message) {
-                    Map<String, Object> messageAction = jsonDecode(message);
-                    print(messageAction);
-                  },
-                ),
-                width: _chartsWidth,
-                height: _chartsHeight,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _clipRRectWidget(Widget child, [double width, double height, BoxDecoration decoration]) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          decoration: decoration,
           child: Center(
             child: child,
           ),

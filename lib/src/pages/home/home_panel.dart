@@ -141,7 +141,7 @@ class HomePanelState extends State<HomePanel> {
 
                       // todo: test_jison_0426
                       print('[Home_panel] -->focusArea， 数组展示');
-                      if (Platform.isIOS) {
+                      /*if (Platform.isIOS) {
                         // old version
                         Navigator.push(
                             context,
@@ -157,8 +157,12 @@ class HomePanelState extends State<HomePanel> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => GlobalDataPage()));
-                      }
+                      }*/
 
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GlobalDataPage()));
                     },
                     child: Container(
                       decoration: BoxDecoration(
