@@ -16,9 +16,10 @@ class MemoryCache {
   var memoryMap = Map();
 
   void setMemoryMap(String key,String value){
-      memoryMap.update(key,(value){
-        return value;
-      },ifAbsent: () => value);
+//      memoryMap.update(key,(value){
+//        return value;
+//      },ifAbsent: () => value);
+    memoryMap[key] = value;
   }
 
   String getMemoryMap(String key){
