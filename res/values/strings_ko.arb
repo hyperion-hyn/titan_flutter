@@ -871,5 +871,6 @@
   "n_second": "${n}秒",
   "left": "剩",
   "n_hour_simple": "${hour}时",
-  "n_minute_simple": "${minute}分"
+  "n_minute_simple": "${minute}分",
+  "check_join": "查看参与"
 }

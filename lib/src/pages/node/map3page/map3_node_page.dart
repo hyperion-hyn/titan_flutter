@@ -349,21 +349,19 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   var isNotFull = int.parse(contractNodeItem.remainDelegation) > 0;
   var fullDesc = "";
   var dateDesc = "";
+  var isPending = false;
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
       dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
-
       dateDesc = S.of(context).active + dateDesc;
-
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
+      isPending = true;
       break;
 
     case ContractState.ACTIVE:
       dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
-
       dateDesc = S.of(context).expired + dateDesc;
-
       break;
 
     case ContractState.DUE:
@@ -527,7 +525,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                     ),
               SizedBox(
                 height: 30,
-                width: 80,
+//                width: 80,
                 child: FlatButton(
                   color: HexColor("#FF15B2D2"),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -535,7 +533,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                     Application.router.navigateTo(
                         context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                   },
-                  child: Text(S.of(context).detail, style: TextStyle(fontSize: 13, color: Colors.white)),
+                  child:Text(isPending ? S.of(context).check_join : S.of(context).detail, style: TextStyle(fontSize: 13, color: Colors.white)),
                   //style: TextStyles.textC906b00S13),
                 ),
               ),

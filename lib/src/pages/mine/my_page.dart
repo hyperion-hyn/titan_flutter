@@ -170,8 +170,8 @@ class _MyPageState extends State<MyPage> {
                   Divider(
                     height: 0,
                   ),
-                  if (['0x74Fa941242af2F76af1E5293Add5919f6881753a', '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82']
-                      .contains(_wallet?.getEthAccount()?.address))
+                  if (['0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(), '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase()]
+                      .contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
                     _buildMenuBar(
                         'map3智能合约管理',
                         Icons.account_balance_wallet,

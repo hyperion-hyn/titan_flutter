@@ -164,6 +164,12 @@ class WalletUtil {
     var keystore = KeyStore.fromDynamicMap(map);
     var accounts = List<Account>.from(
         map['accounts'].map((accountMap) => Account.fromJsonWithNet(accountMap, WalletConfig.netType)));
+
+    //filter only ETHEREUM
+    accounts = accounts.where((account) {
+      return account.coinType == CoinType.ETHEREUM;
+    }).toList();
+
     var wallet = Wallet(keystore: keystore, accounts: accounts);
     return wallet;
   }
