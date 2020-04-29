@@ -99,15 +99,14 @@ class _NodeJoinMemberState extends State<NodeActiveContractWidget> {
           children: <Widget>[
             InkWell(
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(MyContractModel("运行中的节点",MyContractType.active))));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(MyContractModel("最新启动节点",MyContractType.active))));
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 0),
                 child: Row(
                   children: <Widget>[
                     Expanded(
-
-                        child: Text("运行中的节点", style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),)),
+                        child: Text("最新启动节点", style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),)),
                     Text(
                       "查看更多",
                       style: TextStyles.textC999S14,
