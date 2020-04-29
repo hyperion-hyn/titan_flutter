@@ -1,3 +1,6 @@
+
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -137,22 +140,24 @@ class HomePanelState extends State<HomePanel> {
                     onTap: () {
 
                       // todo: test_jison_0426
-                      // old version
-                      /*Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WebViewContainer(
-                                    initUrl: 'https://news.hyn.space/react-reduction/',
-                                    title: S.of(context).map3_global_nodes,
-                                  )));
-                      */
                       print('[Home_panel] -->focusArea， 数组展示');
+                      if (Platform.isIOS) {
+                        // old version
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WebViewContainer(
+                                  initUrl: 'https://news.hyn.space/react-reduction/',
+                                  title: S.of(context).map3_global_nodes,
+                                )));
 
-                      // new version
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => GlobalDataPage()));
+                      } else {
+                        // new version
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => GlobalDataPage()));
+                      }
 
                     },
                     child: Container(

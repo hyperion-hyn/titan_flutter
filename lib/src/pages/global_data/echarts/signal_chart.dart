@@ -2,17 +2,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:loading/loading.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/api/api.dart';
-import 'package:titan/src/pages/discover/dmap_define.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/pages/global_data/model/map3_node_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_daily_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_total_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_weekly_vo.dart';
 import 'package:titan/src/plugins/sensor_type.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'world.dart' show worldScript;
 
 class SignalChatsPage extends StatefulWidget {
@@ -36,6 +38,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   List<Signal> _poiVoList;
   Map3NodeVo _map3nodeVo;
   SignalTotalVo _signalTotalVo;
+  all_page_state.AllPageState currentState = all_page_state.LoadingState();
 
   @override
   bool get wantKeepAlive => true;
@@ -44,7 +47,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   void initState() {
     super.initState();
 
-    print('[signal_chart] --> initState：${_introduction}');
+    print('[signal_chart] -->1 initState：${_introduction}');
   }
 
   @override
@@ -52,32 +55,135 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
     super.didChangeDependencies();
 
     _getData();
+
+    print('[signal_chart] -->2 initState：${_introduction}');
   }
 
   @override
   Widget build(BuildContext context) {
+    if (currentState != null) {
+      return AllPageStateContainer(currentState, () {
+        setState(() {
+          currentState = all_page_state.LoadingState();
+        });
+
+        _getData();
+      });
+    }
+    /*return SingleChildScrollView(
+      child: _nodeWidget(),
+    );*/
     if (widget.type == SignalChatsPage.NODE) {
       return SingleChildScrollView(
         child: _nodeWidget(),
       );
-    } else if (widget.type == SignalChatsPage.SIGNAL){
-      return SingleChildScrollView(
-        child: _signalWidget(),
+    } else if (widget.type == SignalChatsPage.SIGNAL) {
+      return ListView.builder(
+        primary: false,
+        shrinkWrap: true,
+        itemBuilder: (BuildContext context, int index) {
+          Widget child;
+
+          switch (index) {
+            case 0:
+              {
+                child = _introductionWidget();
+              }
+              break;
+
+            case 1:
+              {
+                child = _signalTotalChartWidget();
+              }
+              break;
+
+            case 2:
+              {
+                child = _dailySignalChartWidget(type: SensorType.GPS);
+              }
+              break;
+            case 3:
+              {
+                child = _dailySignalChartWidget(type: SensorType.WIFI);
+              }
+              break;
+            case 4:
+              {
+                child = _dailySignalChartWidget(type: SensorType.BLUETOOTH);
+              }
+              break;
+            case 5:
+              {
+                child = _dailySignalChartWidget(type: SensorType.CELLULAR);
+              }
+              break;
+          }
+          return child;
+        },
+        itemCount: 6,
       );
+
+      /*return CustomScrollView(
+        slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: _introductionWidget(),
+          ),
+          SliverToBoxAdapter(
+            child: _signalTotalChartWidget(),
+          ),
+          SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+            int type = SensorType.GPS;
+            switch (index) {
+              case 0:
+                {
+                  type = SensorType.GPS;
+                }
+                break;
+
+              case 1:
+                {
+                  type = SensorType.WIFI;
+                }
+                break;
+
+              case 2:
+                {
+                  type = SensorType.BLUETOOTH;
+                }
+                break;
+              case 3:
+                {
+                  type = SensorType.CELLULAR;
+                }
+                break;
+            }
+            return _dailySignalChartWidget(type: type);
+          }, childCount: 4))
+        ],
+      );
+      */
+
+      /*return SingleChildScrollView(
+        child: _signalWidget(),
+      );*/
     } else if (widget.type == SignalChatsPage.POI) {
       return SingleChildScrollView(
         child: _poiWidget(),
       );
     } else {
-      return Container();
+      return Loading();
     }
   }
 
   Widget _nodeWidget() {
+    if (_map3nodeVo == null) {
+      return Loading();
+    }
 
     var _size = MediaQuery.of(context).size;
     double _chartsWidth = _size.width - 16.0 * 2.0;
-    double _chartsHeight = (299.3 * _chartsWidth) / 343 ;
+    double _chartsHeight = (299.3 * _chartsWidth) / 343;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -89,6 +195,10 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   }
 
   Widget _signalWidget() {
+    if (_dailyVo == null || _signalTotalVo == null) {
+      return Loading();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -103,13 +213,15 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   }
 
   Widget _poiWidget() {
+    if (_poiVoList == null) {
+      return Loading();
+    }
 
     return Column(
       children: <Widget>[
         _introductionWidget(),
         _titleWidget(S.of(context).poi_total_data),
-        _clipRRectWidget(
-            FadeInImage.assetNetwork(
+        _clipRRectWidget(FadeInImage.assetNetwork(
           image: "https://static.hyn.mobi/titan/images/mapmap.png",
           placeholder: 'res/drawable/signal_map.png',
           fit: BoxFit.fill,
@@ -237,6 +349,10 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   }
 
   Widget _signalTotalChartWidget() {
+//    if (_weeklyVoList == null) {
+//      return Loading();
+//    }
+
     var legendData = [
       S.of(context).scan_name_gps,
       S.of(context).scan_name_wifi,
@@ -429,19 +545,19 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
                 }
               },
               data: [{
-                  value: ${jsonEncode(_signalTotalVo?.wifiTotal??0)},
+                  value: ${jsonEncode(_signalTotalVo?.wifiTotal ?? 0)},
                 name: 'Wifi'
               },
                 {
-                  value: ${jsonEncode(_signalTotalVo?.cellularTotal??0)},
+                  value: ${jsonEncode(_signalTotalVo?.cellularTotal ?? 0)},
                   name: 'Cellular'
                 },
                 {
-                  value: ${jsonEncode(_signalTotalVo?.blueToothTotal??0)},
+                  value: ${jsonEncode(_signalTotalVo?.blueToothTotal ?? 0)},
                   name: 'BlueTooth'
                 },
                 {
-                  value: ${jsonEncode(_signalTotalVo?.gpsTotal??0)},
+                  value: ${jsonEncode(_signalTotalVo?.gpsTotal ?? 0)},
                   name: 'GPS'
                 }
               ]
@@ -456,13 +572,16 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         _titleWidget(S.of(context).signal_total_data),
-        _clipRRectWidget(Echarts(
-          option: _barOption,
-          onMessage: (String message) {
-            Map<String, Object> messageAction = jsonDecode(message);
-            print(messageAction);
-          },
-        ), _chartsWidth, _chartsHeight),
+        _clipRRectWidget(
+            Echarts(
+              option: _barOption,
+              onMessage: (String message) {
+                Map<String, Object> messageAction = jsonDecode(message);
+                print(messageAction);
+              },
+            ),
+            _chartsWidth,
+            _chartsHeight),
       ],
     );
   }
@@ -540,13 +659,13 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: ClipRRect(
+      child:
+      ClipRRect(
         borderRadius: BorderRadius.circular(20),
-
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            //borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -563,14 +682,17 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
                     padding: EdgeInsets.fromLTRB(20, 16, 0, 0),
                     child: SizedBox(
                         width: double.infinity,
-                        child: Text(S.of(context).signal_chart_last_month_numbers_func("${SensorType.getScanName(context, type)}"),
+                        child: Text(
+                            S
+                                .of(context)
+                                .signal_chart_last_month_numbers_func("${SensorType.getScanName(context, type)}"),
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ))),
                   )),
               Container(
-                padding: EdgeInsets.fromLTRB(type == SensorType.GPS?0:20, 0, 0, 0),
+                padding: EdgeInsets.fromLTRB(type == SensorType.GPS ? 0 : 20, 0, 0, 0),
                 child: Echarts(
                   option: _lineOption,
                   onMessage: (String message) {
@@ -615,42 +737,106 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   Widget _titleWidget(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      child: SizedBox(width: double.infinity, child: Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
+      child: SizedBox(
+          width: double.infinity, child: Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
     );
   }
 
   Future _getData() async {
     var languageCode = Localizations.localeOf(context).languageCode;
+    print("[signal_chart] _getData, widget.type:${widget.type}");
 
     switch (widget.type) {
       case SignalChatsPage.NODE:
         {
-          _introduction =
-              S.of(context).signal_chart_desc_map3;
-          _map3nodeVo = await _api.getMap3NodeData();
+          try {
+            _introduction = S.of(context).signal_chart_desc_map3;
+            _map3nodeVo = await _api.getMap3NodeData();
+
+            Future.delayed(Duration(milliseconds: 500)).then((_) {
+              if (widget.type == SignalChatsPage.NODE) {
+                if (mounted) {
+                  setState(() {
+                    print("[signal_chart] _getData, 2-1 widget.type:${widget.type}");
+                    currentState = null;
+                  });
+                }
+              }
+            });
+          } catch (e) {
+            print(e);
+            if (widget.type == SignalChatsPage.NODE) {
+              if (mounted) {
+                setState(() {
+                  print("[signal_chart] _getData, 2-2 widget.type:${widget.type}");
+                  currentState = all_page_state.LoadFailState();
+                });
+              }
+            }
+          }
         }
         break;
 
       case SignalChatsPage.SIGNAL:
         {
-          _introduction = S.of(context).signal_chart_desc_signal;
-          _signalTotalVo = await _api.getSignalTotal();
-          //_weeklyVoList = await _api.getSignalWeekly(language: languageCode);
-          var dailyList = await _api.getSignalDaily(language: languageCode);
-          _dailyVo = dailyList[0];
+          try {
+            _introduction = S.of(context).signal_chart_desc_signal;
+            _signalTotalVo = await _api.getSignalTotal();
+            //_weeklyVoList = await _api.getSignalWeekly(language: languageCode);
+            var dailyList = await _api.getSignalDaily(language: languageCode);
+            _dailyVo = dailyList[0];
+
+            if (widget.type == SignalChatsPage.SIGNAL) {
+              if (mounted) {
+                setState(() {
+                  print("[signal_chart] _getData, 2-1 widget.type:${widget.type}");
+                  currentState = null;
+                });
+              }
+            }
+          } catch (e) {
+            print(e);
+
+            if (widget.type == SignalChatsPage.SIGNAL) {
+              if (mounted) {
+                setState(() {
+                  print("[signal_chart] _getData, 2-2 widget.type:${widget.type}");
+                  currentState = all_page_state.LoadFailState();
+                });
+              }
+            }
+          }
         }
         break;
 
       case SignalChatsPage.POI:
         {
-          _introduction =
-              S.of(context).signal_chart_desc_poi;
-          _poiVoList = await _api.getPoiDaily(language: languageCode);
+          try {
+            _introduction = S.of(context).signal_chart_desc_poi;
+            _poiVoList = await _api.getPoiDaily(language: languageCode);
+
+            if (widget.type == SignalChatsPage.POI) {
+              if (mounted) {
+                setState(() {
+                  print("[signal_chart] _getData, 2-1 widget.type:${widget.type}");
+                  currentState = null;
+                });
+              }
+            }
+          } catch (e) {
+            print(e);
+
+            if (widget.type == SignalChatsPage.POI) {
+              if (mounted) {
+                setState(() {
+                  print("[signal_chart] _getData, 2-2 widget.type:${widget.type}");
+                  currentState = all_page_state.LoadFailState();
+                });
+              }
+            }
+          }
         }
         break;
     }
-
-    if (mounted) {setState(() {});}
   }
-
 }
