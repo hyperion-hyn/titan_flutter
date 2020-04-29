@@ -310,7 +310,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           fetchChainIdFromNetworkId: true,
         );
 
-        print('提交成功 hash $response');
+        print('-提交成功 hash $response');
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {
@@ -557,7 +557,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           fetchChainIdFromNetworkId: true,
         );
 
-        print('提交成功 hash $response');
+        print('-提交成功 hash $response');
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {
@@ -600,7 +600,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           fetchChainIdFromNetworkId: true,
         );
 
-        print('提交成功 hash $response');
+        print('-提交成功 hash $response');
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {
@@ -643,7 +643,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           fetchChainIdFromNetworkId: true,
         );
 
-        print('提交成功 hash $response');
+        print('-提交成功 hash $response');
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {

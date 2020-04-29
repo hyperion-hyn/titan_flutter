@@ -96,7 +96,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => MyMap3ContractPage(MyContractModel("运行中的节点", MyContractType.active))));
+                        builder: (context) => MyMap3ContractPage(MyContractModel("最新启动节点", MyContractType.active))));
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 0),
@@ -104,7 +104,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                   children: <Widget>[
                     Expanded(
                         child: Text(
-                      "运行中的节点",
+                      "最新启动节点",
                       style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
                     )),
                     Text(
@@ -191,11 +191,10 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                         ])),
                       ),
                       SizedBox(
-                        height: 8,
+                        height: 4,
                       ),
-                      Text(S.of(context).launcher_func(UiUtil.shortEthAddress(item.ownerName)),
+                      Text(UiUtil.shortEthAddress(item.ownerName),
                           style: TextStyles.textC9b9b9bS12),
-
 //                      Text(item.ownerName,
 //                          style: TextStyle(fontSize: 14, color: HexColor("#9B9B9B")))
                     ],

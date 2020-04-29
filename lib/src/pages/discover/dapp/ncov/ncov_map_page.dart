@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:android_intent/android_intent.dart';
 import 'package:bordered_text/bordered_text.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/cupertino.dart';
@@ -156,19 +155,19 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
           appBar: AppBar(
             title: Text(S.of(context).epidemic_map_short),
             actions: <Widget>[
-              InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => NewsNcovPage()));
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    S.of(context).ncov_guide,
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-              ),
+//              InkWell(
+//                onTap: () {
+//                  Navigator.push(context, MaterialPageRoute(builder: (context) => NewsNcovPage()));
+//                },
+//                child: Container(
+//                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+//                  alignment: Alignment.centerRight,
+//                  child: Text(
+//                    S.of(context).ncov_guide,
+//                    style: TextStyle(fontSize: 16, color: Colors.white),
+//                  ),
+//                ),
+//              ),
               IconButton(
                 icon: Icon(Icons.share),
                 color: Colors.white,
