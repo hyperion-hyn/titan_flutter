@@ -294,7 +294,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           }
         }, isOpen: true),
         _divider(),
-        if (Platform.isIOS)
+        if (Platform.isAndroid)
           _buildTaskItem('ncov', S.of(context).add_ncov_item_title, () async {
             var latlng = await getLatlng();
             if (latlng != null) {
@@ -309,7 +309,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
               );
             }
           }, isOpen: true),
-        if (Platform.isIOS) _divider()
+        if (Platform.isAndroid) _divider()
       ],
     );
   }
