@@ -78,7 +78,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         child: _nodeWidget(),
       );
     } else if (widget.type == SignalChatsPage.SIGNAL) {
-      return ListView.builder(
+      /*return ListView.builder(
         primary: false,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
@@ -122,6 +122,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         },
         itemCount: 6,
       );
+*/
 
       /*return CustomScrollView(
         slivers: <Widget>[
@@ -164,9 +165,9 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       );
       */
 
-      /*return SingleChildScrollView(
+      return SingleChildScrollView(
         child: _signalWidget(),
-      );*/
+      );
     } else if (widget.type == SignalChatsPage.POI) {
       return SingleChildScrollView(
         child: _poiWidget(),
@@ -689,19 +690,25 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         ));
   }
 
-  Widget _clipRRectWidget(Widget child, [double width, double height, BoxDecoration decoration]) {
+  Widget _clipRRectWidget(Widget child, [double width, double height]) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Material(
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: Clip.antiAlias,
+        shadowColor: Colors.black12,
+        elevation: 5.0,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 0.05, color: Colors.grey),
-          borderRadius: new BorderRadius.circular(20.0),
+          side: const BorderSide(width: 0.05, color: Colors.black12),
+            borderRadius: BorderRadius.all(
+              Radius.circular(20.0),
+            ),
         ),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.all(
+              Radius.circular(20.0),
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
