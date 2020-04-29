@@ -191,11 +191,10 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                         ])),
                       ),
                       SizedBox(
-                        height: 8,
+                        height: 4,
                       ),
-                      Text(S.of(context).launcher_func(UiUtil.shortEthAddress(item.ownerName)),
+                      Text(UiUtil.shortEthAddress(item.ownerName),
                           style: TextStyles.textC9b9b9bS12),
-
 //                      Text(item.ownerName,
 //                          style: TextStyle(fontSize: 14, color: HexColor("#9B9B9B")))
                     ],
