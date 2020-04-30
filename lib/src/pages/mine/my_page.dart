@@ -306,8 +306,9 @@ class _MyPageState extends State<MyPage> {
       children: <Widget>[
         InkWell(
             onTap: () async {
+              // todo: test_jison_0429
               String scanStr = await BarcodeScanner.scan();
-              print("indexInt= $scanStr");
+              print("[scan] indexInt= $scanStr");
               if (scanStr == null) {
                 return;
               } else if (scanStr.contains("share?id=")) {
