@@ -7,15 +7,23 @@ import 'vo/symbol_quote_vo.dart';
 
 class CoinMarketApi {
   Future<List<SymbolQuoteVo>> quotes(List<String> symbols, List<String> quoteConverts) async {
+    /*
     final symbolString = symbols.reduce((value, element) => value + ',' + element);
     final convert = quoteConverts.reduce((value, element) => value + ',' + element);
     var response = await HttpCore.instance.get('${Config.COINMARKETCAP_API_URL}/v1/cryptocurrency/quotes/latest',
         params: {"symbol": symbolString, "convert": convert},
         options: RequestOptions(
             headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
+*/
+    var response = await HttpCore.instance.get('api/v1/market/prices/latest',
+        options: RequestOptions(
+            headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
 
-    var status = response['status'];
+    var status = response['state'];
+    //print("[coin] ---> status:$status");
+
     if (status['error_code'] == 0) {
+
       List<SymbolQuoteVo> list = [];
       var datas = response["data"] as Map;
       var keys = datas.keys;

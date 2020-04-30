@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:decimal/decimal.dart';
@@ -654,8 +655,12 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
   );
 }
 
+
+
 Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem,
     {isJoin = false, isDetail = true, hasShare = false}) {
+
+  double padding = UiUtil.isIPhoneX(context)?20:0;
   var title = !isDetail
       ? S.of(context).node_contract_detail
       : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
@@ -663,7 +668,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
   return Stack(
     children: <Widget>[
       Container(
-          height: isDetail ? 250 : 250,
+          height: isDetail ? (UiUtil.isIPhoneX(context)?280:250) : 250,
           decoration: BoxDecoration(
             color: Theme.of(context).primaryColor,
 //          borderRadius: BorderRadius.only(bottomLeft:Radius.circular(15),bottomRight:Radius.circular(15),), // 也可控件一边圆角大小
@@ -721,7 +726,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           Navigator.of(context).pop();
         },
         child: Padding(
-          padding: const EdgeInsets.only(top: 44.0, left: 15),
+          padding: EdgeInsets.only(top: 44.0+padding, left: 15),
           child: Icon(
             Icons.arrow_back,
             color: Colors.white,
@@ -766,7 +771,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
               }*/
             },
             child: Padding(
-              padding: const EdgeInsets.only(top: 44.0, right: 15),
+              padding: EdgeInsets.only(top: 44.0+padding, right: 15),
               child: Icon(
                 Icons.share,
                 color: Colors.white,
@@ -777,7 +782,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
       Align(
         alignment: Alignment.topCenter,
         child: Padding(
-          padding: const EdgeInsets.only(top: 44.0),
+          padding: EdgeInsets.only(top: 44.0 + padding),
           child: Text(
             title,
             style: TextStyles.textCfffS17,

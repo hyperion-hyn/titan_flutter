@@ -17,6 +17,7 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import 'map3_contract_control.dart';
@@ -52,6 +53,7 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
+    double padding = UiUtil.isIPhoneX(context)?20:0;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -66,7 +68,7 @@ class _MyPageState extends State<MyPage> {
                   child: Stack(
                     children: <Widget>[
                       Positioned(
-                        top: 37,
+                        top: 37+padding,
                         right: 12,
                         child: _buildScanQrCodeRow(),
                       ),

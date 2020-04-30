@@ -70,101 +70,12 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         _getData();
       });
     }
-    /*return SingleChildScrollView(
-      child: _nodeWidget(),
-    );*/
+
     if (widget.type == SignalChatsPage.NODE) {
       return SingleChildScrollView(
         child: _nodeWidget(),
       );
     } else if (widget.type == SignalChatsPage.SIGNAL) {
-      /*return ListView.builder(
-        primary: false,
-        shrinkWrap: true,
-        itemBuilder: (BuildContext context, int index) {
-          Widget child;
-
-          switch (index) {
-            case 0:
-              {
-                child = _introductionWidget();
-              }
-              break;
-
-            case 1:
-              {
-                child = _signalTotalChartWidget();
-              }
-              break;
-
-            case 2:
-              {
-                child = _dailySignalChartWidget(type: SensorType.GPS);
-              }
-              break;
-            case 3:
-              {
-                child = _dailySignalChartWidget(type: SensorType.WIFI);
-              }
-              break;
-            case 4:
-              {
-                child = _dailySignalChartWidget(type: SensorType.BLUETOOTH);
-              }
-              break;
-            case 5:
-              {
-                child = _dailySignalChartWidget(type: SensorType.CELLULAR);
-              }
-              break;
-          }
-          return child;
-        },
-        itemCount: 6,
-      );
-*/
-
-      /*return CustomScrollView(
-        slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: _introductionWidget(),
-          ),
-          SliverToBoxAdapter(
-            child: _signalTotalChartWidget(),
-          ),
-          SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-            int type = SensorType.GPS;
-            switch (index) {
-              case 0:
-                {
-                  type = SensorType.GPS;
-                }
-                break;
-
-              case 1:
-                {
-                  type = SensorType.WIFI;
-                }
-                break;
-
-              case 2:
-                {
-                  type = SensorType.BLUETOOTH;
-                }
-                break;
-              case 3:
-                {
-                  type = SensorType.CELLULAR;
-                }
-                break;
-            }
-            return _dailySignalChartWidget(type: type);
-          }, childCount: 4))
-        ],
-      );
-      */
-
       return SingleChildScrollView(
         child: _signalWidget(),
       );
@@ -264,10 +175,11 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
       }
     }
     //print('[node] --> geoCoordMap:${data.length}');
-
+    //313947
+    //404a59
     var _barOption = '''
 {
-    backgroundColor: '#404a59',
+    backgroundColor: '#313947',
     tooltip: {
       trigger: 'item',
       formatter: function (params) {
@@ -690,7 +602,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
         ));
   }
 
-  Widget _clipRRectWidget(Widget child, [double width, double height]) {
+  Widget _clipRRectWidget1(Widget child, [double width, double height]) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Material(
@@ -702,6 +614,42 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
             borderRadius: BorderRadius.all(
               Radius.circular(20.0),
             ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(20.0),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8.0,
+              ),
+            ],
+          ),
+          child: Center(
+            child: child,
+          ),
+          width: width,
+          height: height,
+        ),
+      ),
+    );
+  }
+
+  Widget _clipRRectWidget(Widget child, [double width, double height]) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        //shadowColor: Colors.black12,
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 0.05, color: Colors.black12),
+          borderRadius: BorderRadius.all(
+            Radius.circular(20.0),
+          ),
         ),
         child: Container(
           decoration: BoxDecoration(
