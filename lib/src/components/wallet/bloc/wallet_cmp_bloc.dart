@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -45,6 +48,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         _lastUpdateBalanceTime = 0; //set can update balance in time.
         walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
+        _recoverBalanceFromDisk(_activatedWalletVo);
+
         //sync wallet account to server
 //        _nodeApi.postWallets(_activatedWalletVo);
       }
@@ -60,6 +65,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         try {
           await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
+          _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
           yield UpdatedWalletBalanceState(walletVo: _activatedWalletVo.copyWith());
         } catch (e) {
           logger.e(e);
@@ -117,5 +123,28 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       }
     }
     return WalletVo(wallet: wallet, coins: coins);
+  }
+
+  void _saveWalletVoBalanceToDisk(WalletVo vo) {
+    List jsonList = List();
+    vo.coins.map((item) => jsonList.add(item.toJson())).toList();
+    var encoded = json.encode(jsonList);
+    AppCache.saveValue(PrefsKey.walletBalance, encoded);
+  }
+
+  void _recoverBalanceFromDisk(WalletVo vo) async {
+    var encoded = await AppCache.getValue(PrefsKey.walletBalance);
+    if (encoded != null && encoded != '') {
+      List decoded = json.decode(encoded);
+      var deList = decoded.map((item) => CoinVo.fromJson(item)).toList();
+      for (var cVo in vo.coins) {
+        for (var dVO in deList) {
+          if (cVo.symbol == dVO.symbol) {
+            cVo.balance = dVO.balance;
+            break;
+          }
+        }
+      }
+    }
   }
 }

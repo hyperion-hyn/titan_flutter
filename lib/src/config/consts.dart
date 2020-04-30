@@ -87,6 +87,8 @@ class PrefsKey {
 
   static final lastAnnouncement = 'last_announcement';
   static final newsUpdateTime = 'news_update_time';
+
+  static final walletBalance = 'wallet_balance';
 }
 
 enum Status { idle, loading, success, failed, cancelled }
