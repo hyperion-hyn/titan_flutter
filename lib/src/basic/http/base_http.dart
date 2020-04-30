@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:package_info/package_info.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 
+import '../../../config.dart';
 import '../../../env.dart';
 import 'entity.dart';
 import 'http_exception.dart';
@@ -100,6 +103,25 @@ class BaseHttpCore {
     String errorMsg = "";
     int statusCode;
     Response response;
+
+    //add app source tag
+    if(options != null && options.headers == null){
+      options.headers = Map();
+    }else if(options == null){
+      options = RequestOptions();
+      options.headers = Map();
+    }
+    options.headers["appName"] = Config.APP_SOURCE;
+    options.headers["buildChannel"] = env.channel;
+    options.headers["buildType"] = env.buildType;
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    options.headers["versionCode"] = packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "" ;
+    options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
+    options.headers["walletAddress"] = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address;
+
+    // todo rich add userid
+
     if (method == GET) {
       if (params != null && params.isNotEmpty) {
         StringBuffer sb = new StringBuffer("?");
