@@ -77,6 +77,9 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
 
   Widget _body(BuildContext context) {
 //    var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
+
+   print("[map3]  shareData:$shareData");
+
     var wallet = WalletInheritedModel.of(context).activatedWallet;
     return WidgetShot(
       controller: _shotController,
@@ -122,7 +125,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 24, right: 24.0, top: 16),
+              padding: const EdgeInsets.only(left: 24, right: 24.0, top: 40),
               child: Text(
                 S.of(context).contract_share_content(
                     wallet?.wallet?.keystore?.name ?? '',
