@@ -14,6 +14,7 @@ import 'http_exception.dart';
 
 class BaseHttpCore {
   final Dio dio;
+  var packageInfo;
 
   BaseHttpCore(this.dio) {
     //hack method
@@ -58,8 +59,8 @@ class BaseHttpCore {
 
   Future<T> postEntity<T>(String url, EntityFactory<T> factory,
       {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    var responseEntity =
-        await postResponseEntity<T>(url, factory, data: data, params: params, options: options, cancelToken: cancelToken);
+    var responseEntity = await postResponseEntity<T>(url, factory,
+        data: data, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
@@ -81,10 +82,20 @@ class BaseHttpCore {
     return _request(url, method: GET, params: params, options: options, cancelToken: cancelToken);
   }
 
-
   //post method
-  Future<dynamic> post(String url, {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken, ProgressCallback onSendProgress}) async {
-    return _request(url, method: POST, data: data, params: params, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
+  Future<dynamic> post(String url,
+      {dynamic data,
+      Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken,
+      ProgressCallback onSendProgress}) async {
+    return _request(url,
+        method: POST,
+        data: data,
+        params: params,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress);
   }
 
   //patch method
@@ -93,7 +104,12 @@ class BaseHttpCore {
   }
 
   Future<dynamic> _request(String url,
-      {String method, dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken, ProgressCallback onSendProgress}) async {
+      {String method,
+      dynamic data,
+      Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken,
+      ProgressCallback onSendProgress}) async {
 //    dio.onHttpClientCreate = (HttpClient client) {
 //      client.findProxy = (uri) {
 //        //proxy all request to localhost:8888
@@ -105,9 +121,9 @@ class BaseHttpCore {
     Response response;
 
     //add app source tag
-    if(options != null && options.headers == null){
+    if (options != null && options.headers == null) {
       options.headers = Map();
-    }else if(options == null){
+    } else if (options == null) {
       options = RequestOptions();
       options.headers = Map();
     }
@@ -115,10 +131,13 @@ class BaseHttpCore {
     options.headers["buildChannel"] = env.channel;
     options.headers["buildType"] = env.buildType;
 
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    options.headers["versionCode"] = packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "" ;
+    if (packageInfo == null) {
+      packageInfo = await PackageInfo.fromPlatform();
+    }
+    options.headers["versionCode"] = packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
     options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
-    options.headers["walletAddress"] = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address;
+    options.headers["walletAddress"] =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? '';
 
     // todo rich add userid
 
@@ -142,8 +161,9 @@ class BaseHttpCore {
         });*/
         response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
       } else if (data != null) {
-        response = await dio.post(url, data: data, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
-      } else{
+        response =
+            await dio.post(url, data: data, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
+      } else {
         response = await dio.post(url, options: options, cancelToken: cancelToken);
       }
     } else if (method == PATCH) {
