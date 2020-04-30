@@ -77,6 +77,9 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
 
   Widget _body(BuildContext context) {
 //    var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
+
+   print("[map3]  shareData:$shareData");
+
     var wallet = WalletInheritedModel.of(context).activatedWallet;
     return WidgetShot(
       controller: _shotController,
@@ -93,7 +96,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
               alignment: Alignment.center,
               children: <Widget>[
                 Container(
-                  height: 220,
+                  height: 264,
                   decoration: BoxDecoration(
                     color: HexColor("#FFFFFEF8"),
                     shape: BoxShape.rectangle,
@@ -103,14 +106,17 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
                     ), // 也可控件一边圆角大小
                   ),
                 ),
-                Image.asset(
-                  "res/drawable/ic_map3_node_item_2.png",
-                  width: 200,
-                  height: 180,
+                Positioned(
+                  top: 60,
+                  child: Image.asset(
+                    "res/drawable/ic_map3_node_item_2.png",
+                    width: 168,
+                    height: 168,
+                  ),
                 ),
                 Positioned(
                   left: 16,
-                  top: 16,
+                  top: 25,
                   child: Image.asset(
                     "res/drawable/ic_logo.png",
                     width: 40,
@@ -122,7 +128,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 24, right: 24.0, top: 16),
+              padding: const EdgeInsets.only(left: 24, right: 24.0, top: 40),
               child: Text(
                 S.of(context).contract_share_content(
                     wallet?.wallet?.keystore?.name ?? '',
