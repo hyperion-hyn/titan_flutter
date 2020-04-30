@@ -50,6 +50,7 @@ class Const {
 
   static const String POI_POLICY = "https://api.hyn.space/map-collector/pol-policy";
   static const String PRIVACY_POLICY = "https://api.hyn.space/map-collector/upload/privacy-policy";
+  static const String APP_POLICY = 'https://github.com/hyperion-hyn/titan_flutter/blob/master/LICENSE';
 }
 
 class Keys {

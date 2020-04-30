@@ -68,7 +68,7 @@ class Api {
 
   Future<UpdateEntity> update(String channel, String lang, String platform) async {
     var data = await HttpCore.instance.getEntity(
-        'api/v1/titan/app/update', EntityFactory<UpdateEntity>((json) => UpdateEntity.fromJson(json)),
+        'api/v1/titan/app/update/v2', EntityFactory<UpdateEntity>((json) => UpdateEntity.fromJson(json)),
         params: {
           'channel': channel,
           'lang': lang,

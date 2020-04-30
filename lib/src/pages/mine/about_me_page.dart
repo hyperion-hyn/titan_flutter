@@ -7,6 +7,9 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutMePage extends StatefulWidget {
@@ -16,15 +19,15 @@ class AboutMePage extends StatefulWidget {
   }
 }
 
-class _AboueMeState extends State<AboutMePage> {
+class _AboueMeState extends BaseState<AboutMePage> {
   String version = "";
 
   @override
-  void initState() {
-    super.initState();
+  void onCreated() {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      version = packageInfo.version;
-      setState(() {});
+      setState(() {
+        version = packageInfo.version;
+      });
     });
   }
 
@@ -53,7 +56,7 @@ class _AboueMeState extends State<AboutMePage> {
               ],
             ),
           ),
-          Container(
+          Ink(
             color: Colors.white,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -73,9 +76,43 @@ class _AboueMeState extends State<AboutMePage> {
               ),
             ),
           ),
+          Divider(height: 0),
+          Ink(
+            color: Colors.white,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WebViewContainer(
+                          initUrl: Const.APP_POLICY,
+                          title: 'POLICY',
+                        )));
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      '软件协议',
+                      style: TextStyle(color: Colors.black, fontSize: 15),
+                    ),
+                    Spacer(),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Divider(height: 0),
           SizedBox(
             height: 20,
           ),
+          Divider(height: 0),
           _buildInfoContainer(
               label: S.of(context).official_website,
               showValue: "https://www.hyn.space/",
@@ -110,6 +147,11 @@ class _AboueMeState extends State<AboutMePage> {
               showValue: "@Bi321369",
               value: "@Bi321369",
             ),
+          Divider(height: 0),
+          SizedBox(
+            height: 20,
+          ),
+
         ]));
   }
 
