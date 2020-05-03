@@ -17,9 +17,9 @@ class NodeHttpCore extends BaseHttpCore {
       _instance = NodeHttpCore._internal();
 
       // todo: test_jison_0428_close_log
-//      if (env.buildType == BuildType.DEV) {
+      if (env.buildType == BuildType.DEV) {
         _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
-//      }
+      }
     }
     return _instance;
   }
