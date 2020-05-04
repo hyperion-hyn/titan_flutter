@@ -10,6 +10,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/web3dart.dart';
@@ -114,7 +115,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                _buildItem('奖励池剩: ${WalletUtil.formatCoinNum(rewardAmount.toDouble())} hyn', [
+                _buildItem('奖励池剩: ${FormatUtil.formatCoinNum(rewardAmount.toDouble())} hyn', [
                   _buildButton('取回', () {
                     textEditorController.text = '';
                     UiUtil.showDialogWidget(context,
@@ -159,7 +160,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                 Divider(
                   height: 1,
                 ),
-                _buildItem('最大抵押量: ${WalletUtil.formatCoinNum(maxTotalDelegation.toDouble())} hyn', [
+                _buildItem('最大抵押量: ${FormatUtil.formatCoinNum(maxTotalDelegation.toDouble())} hyn', [
                   _buildButton('修改', () {
                     UiUtil.showDialogWidget(context,
                         title: Text('修改最大抵押量'),
@@ -450,7 +451,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           SizedBox(
             height: 8,
           ),
-          Text('当前奖励池 ${WalletUtil.formatCoinNum(currentValue.toDouble())} hyn'),
+          Text('当前奖励池 ${FormatUtil.formatCoinNum(currentValue.toDouble())} hyn'),
         ],
       ),
     );
@@ -503,7 +504,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           SizedBox(
             height: 8,
           ),
-          Text('当前奖励池 ${WalletUtil.formatCoinNum(currentValue.toDouble())} hyn'),
+          Text('当前奖励池 ${FormatUtil.formatCoinNum(currentValue.toDouble())} hyn'),
         ],
       ),
     );

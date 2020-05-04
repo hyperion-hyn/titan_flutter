@@ -227,7 +227,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                       children: <Widget>[
                         Padding(
                             padding: EdgeInsets.only(left: 8, top: 8),
-                            child: Text("≈ $quoteSign${WalletUtil.formatPrice(_notionalValue)}")),
+                            child: Text("≈ $quoteSign${FormatUtil.formatPrice(_notionalValue)}")),
                       ],
                     ),
                     SizedBox(

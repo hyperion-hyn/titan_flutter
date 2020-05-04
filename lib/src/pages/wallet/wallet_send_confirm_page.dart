@@ -21,6 +21,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/json_rpc.dart';
@@ -142,7 +143,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           ),
                         ),
                         Text(
-                          "≈ $quoteSign${WalletUtil.formatPrice(double.parse(widget.transferAmount) * quotePrice)}",
+                          "≈ $quoteSign${FormatUtil.formatPrice(double.parse(widget.transferAmount) * quotePrice)}",
                           style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
@@ -232,7 +233,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           alignment: Alignment.centerLeft,
                           height: 24,
                           child: Text(
-                            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${WalletUtil.formatPrice(gasPriceEstimate.toDouble())})",
+                            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})",
                             style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                           ),
                         ),

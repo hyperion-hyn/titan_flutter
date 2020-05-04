@@ -30,7 +30,7 @@ class Const {
 
   static Color PRIMARY_COLOR = HexColor("#FF259B24");
 
-  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
+//  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
 
