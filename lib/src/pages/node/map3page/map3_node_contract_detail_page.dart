@@ -12,6 +12,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
@@ -1432,11 +1433,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             Fluttertoast.showToast(msg: S.of(context).transfer_fail);
           }
         } else if (_ is RPCError) {
-          if (_.errorCode == -32000) {
+          Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
+          /*if (_.errorCode == -32000) {
             Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
           } else {
             Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
+          }*/
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }

@@ -13,6 +13,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -452,12 +453,13 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
             Fluttertoast.showToast(msg: S.of(context).transfer_fail);
           }
         } else if (_ is RPCError) {
-          if (_.errorCode == -32000) {
-//            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
+          Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
+
+          /*if (_.errorCode == -32000) {
             Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
           } else {
             Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
+          }*/
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }

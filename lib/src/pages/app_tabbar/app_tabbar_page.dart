@@ -11,6 +11,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
+import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -65,6 +66,12 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
 //    TitanPlugin.getClipboardData();
     getClipboardData();
+
+    BlocProvider.of<SettingBloc>(context).listen((state){
+      if(state is UpdatedSettingState){
+        MemoryCache.setContractErrorStr();
+      }
+    });
 
     _bottomBarPositionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
