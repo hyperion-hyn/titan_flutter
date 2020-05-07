@@ -68,7 +68,7 @@ class ShowWalletView extends StatelessWidget {
                                 width: 8,
                               ),
                               Text(
-                                "${WalletUtil.formatPrice(walletVo.balance)}",
+                                "${FormatUtil.formatPrice(walletVo.balance)}",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
                               ),
@@ -275,7 +275,7 @@ class ShowWalletView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}",
+                        "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}",
                         style: TextStyles.textC9b9b9bS12,
                       ),
                     ),
@@ -302,7 +302,7 @@ class ShowWalletView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      "${symbolQuote?.sign?.sign ?? ''} ${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}",
+                      "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}",
                       style: TextStyles.textC9b9b9bS12,
                     ),
                   ),
@@ -320,7 +320,7 @@ class ShowWalletView extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.only(left: 6),
         child: Text(
-          "+${WalletUtil.formatPercentChange(percentChange)}",
+          "+${FormatUtil.formatPercentChange(percentChange)}",
           style: TextStyles.textC00ec00S12,
         ),
       );
@@ -328,7 +328,7 @@ class ShowWalletView extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.only(left: 6),
         child: Text(
-          "${WalletUtil.formatPercentChange(percentChange)}",
+          "${FormatUtil.formatPercentChange(percentChange)}",
           style: TextStyles.textCff2d2dS12,
         ),
       );

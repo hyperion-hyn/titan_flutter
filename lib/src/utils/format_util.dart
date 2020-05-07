@@ -71,8 +71,37 @@ class FormatUtil {
     return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toString();
   }
 
-  static String coinBalanceHumanReadFormat(CoinVo coinVo) {
-    return NumberFormat("#,###,###.######").format(double.parse(coinBalanceHumanRead(coinVo)));
+  static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
+    var value = double.parse(coinBalanceHumanRead(coinVo));
+    if (isFloor) {
+      value = (value * 1000000).floor() / 1000000;
+    }
+    return NumberFormat("#,###,###.######").format(value);
+  }
+
+  static String formatCoinNum(double coinNum, [isFloor = true]) {
+    if (isFloor) {
+      coinNum = (coinNum * 1000000).floor() / 1000000;
+    }
+    return NumberFormat("#,###.######").format(coinNum);
+  }
+
+  static String formatPrice(double price, [isFloor = true]) {
+    if (price >= 1) {
+      if (isFloor) {
+        price = (price * 100).floor() / 100;
+      }
+      return NumberFormat("#,###.##").format(price);
+    } else {
+      if (isFloor) {
+        price = (price * 10000).floor() / 10000;
+      }
+      return NumberFormat("#,###.####").format(price);
+    }
+  }
+
+  static String formatPercentChange(double percentChange) {
+    return NumberFormat("#,###.##").format(percentChange) + "%";
   }
 
   static String timeString(BuildContext context, double seconds) {

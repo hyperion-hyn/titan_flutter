@@ -123,7 +123,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${WalletUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
+                              "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
                               style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
                             ),
                           ),
@@ -276,7 +276,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     var title = "";
     var describe = "";
     var amountColor;
-    var amountText = "${WalletUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.symbol}";
+    var amountText = "${FormatUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.symbol}";
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconData = ExtendsIconFont.receiver;
       title = S.of(context).received;
