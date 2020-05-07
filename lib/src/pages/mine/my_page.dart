@@ -335,7 +335,7 @@ class _MyPageState extends State<MyPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "扫一扫",
+                      S.of(context).scan,
                       style: TextStyle(fontSize: 14, color: Colors.white),
                     ),
                   )

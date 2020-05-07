@@ -57,11 +57,33 @@ class RoutePanelState extends State<RoutePanel> {
       double duration = (routes['routes'][0]['duration'] as num).toDouble();
       double distance = (routes['routes'][0]['distance'] as num).toDouble();
 
+      // todo: jison_test_0507
+      var startNavigationTips = S.of(context).start_navigation_tips;
+      var language = Localizations.localeOf(context).languageCode;
+      switch (language) {
+        case 'en':
+          //startNavigationTips = "Start navigation";
+          break;
+
+        case 'ko':
+          //startNavigationTips = "탐색 시작";
+          break;
+
+        default:
+          //startNavigationTips = "开始导航";
+          language = "zh-Hans";
+          break;
+      }
+      print("[navigation] language:$language");
+
       var navigationDataModel = NavigationDataModel(
           startLatLng: widget.routeDataModel.startLatLng,
           endLatLng: widget.routeDataModel.endLatLng,
           directionsResponse: widget.routeDataModel.directionsResponse,
-          profile: widget.profile);
+          profile: widget.profile,
+          language: language,
+          startNavigationTips: startNavigationTips,
+      );
 
       return Container(
 //        padding: const EdgeInsets.only(top: 4),
