@@ -606,5 +606,6 @@
   "create_wallet_account_check_contract": "你需要先创建/导入钱包账户，才能查看你的钱包账户相关合约数据。",
   "create_or_import_wallet_first": "请先创建/导入钱包",
   "map_smart_contract_management": "map3智能合约管理",
-  "scan": "扫一扫"
+  "scan": "扫一扫",
+  "start_navigation_tips": "开始导航"
 }
