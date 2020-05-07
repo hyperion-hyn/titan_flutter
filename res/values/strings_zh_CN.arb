@@ -613,7 +613,7 @@
   "gas_limit_reached_hint": "Gas超过区块限制",
   "insufficient_funds_for_transfer_hint": "转账资金不足",
   "intrinsic_gas_too_low_hint": "指定Gas不够",
-  "insufficient_funds_for_gas_price_value_hint": "gas资金不足",
+  "insufficient_funds_for_gas_price_value_hint": "当前钱包ETH余额不足以支付gas费",
   "provision_insufficient_hint": "奖金池正在准备中",
   "not_half_time_to_collect_hint": "未达到提取一半收益的时间",
   "already_collected_hint": "已经提取了",

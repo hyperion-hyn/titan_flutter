@@ -69,7 +69,9 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
     BlocProvider.of<SettingBloc>(context).listen((state){
       if(state is UpdatedSettingState){
-        MemoryCache.setContractErrorStr();
+        Future.delayed(Duration(milliseconds: 2000)).then((value) {
+          MemoryCache.setContractErrorStr();
+        });
       }
     });
 
