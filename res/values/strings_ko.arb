@@ -877,7 +877,7 @@
   "create_or_import_wallet_first": "请先创建/导入钱包",
   "map_smart_contract_management": "map3智能合约管理",
   "scan": "扫一扫",
-  "start_navigation_tips": "Start navigation",
+  "start_navigation_tips": "Welcome to use the Hyperion map to start navigation",
   "nonce_too_low_hint": "nonce too low",
   "nonce_too_high_hint": "nonce too high",
   "gas_limit_reached_hint": "gas limit reached",

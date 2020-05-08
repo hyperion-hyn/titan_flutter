@@ -607,7 +607,7 @@
   "create_or_import_wallet_first": "请先创建/导入钱包",
   "map_smart_contract_management": "map3智能合约管理",
   "scan": "扫一扫",
-  "start_navigation_tips": "开始导航",
+  "start_navigation_tips": "欢迎您使用海伯利安地图，开始导航",
   "nonce_too_low_hint": "随机值太低",
   "nonce_too_high_hint": "随机值太高",
   "gas_limit_reached_hint": "Gas超过区块限制",
