@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/setting/system_config_entity.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -94,12 +97,13 @@ class Wallet {
     String data,
   }) async {
     var account = getEthAccount();
+    SystemConfigEntity systemConfigEntity = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity;
     if (account != null) {
       if (gasLimit == null) {
         if (data == null) {
-          gasLimit = BigInt.from(EthereumConst.ETH_TRANSFER_GAS_LIMIT);
+          gasLimit = BigInt.from(systemConfigEntity.ethTransferGasLimit);
         } else {
-          gasLimit = BigInt.from(EthereumConst.ERC20_TRANSFER_GAS_LIMIT);
+          gasLimit = BigInt.from(systemConfigEntity.erc20TransferGasLimit);
         }
       }
       if (gasPrice == null) {
@@ -133,8 +137,11 @@ class Wallet {
     BigInt value,
     BigInt gasPrice,
     int nonce,
-    int gasLimit = EthereumConst.ETH_TRANSFER_GAS_LIMIT,
+    int gasLimit = 0,
   }) async {
+    if(gasLimit == 0){
+      gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
+    }
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
     final credentials = await client.credentialsFromPrivateKey(privateKey);
@@ -159,8 +166,11 @@ class Wallet {
     BigInt value,
     BigInt gasPrice,
     int nonce,
-    int gasLimit = EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
+    int gasLimit = 0,
   }) async {
+    if(gasLimit == 0){
+      gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20TransferGasLimit;
+    }
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
     final credentials = await client.credentialsFromPrivateKey(privateKey);

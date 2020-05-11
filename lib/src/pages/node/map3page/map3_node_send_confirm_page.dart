@@ -9,6 +9,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -101,7 +102,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
-    var totalGasLimit = EthereumConst.ERC20_TRANSFER_GAS_LIMIT + EthereumConst.CREATE_MAP3_NODE_GAS_LIMIT;
+    var totalGasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit
+        + SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
     var gasEstimate = ConvertTokenUnit.weiToEther(
         weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
 

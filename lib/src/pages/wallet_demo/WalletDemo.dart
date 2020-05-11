@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -128,7 +129,7 @@ class _WalletDemoState extends State<WalletDemo> {
                       value: EtherAmount.inWei(amount),
                       nonce: count,
                       gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                      maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
+                      maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit,
                     ),
                     fetchChainIdFromNetworkId: true,
                   );

@@ -59,6 +59,7 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
       languageModel: languageModel,
       quotesSign: quotesSign
     ));
+    BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
   }
 
   void launchRootPage() async {

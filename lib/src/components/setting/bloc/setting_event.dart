@@ -19,3 +19,7 @@ class UpdateSettingEvent extends SettingEvent with EquatableMixin {
   @override
   bool get stringify => true;
 }
+
+class SystemConfigEvent extends SettingEvent{
+  SystemConfigEvent();
+}

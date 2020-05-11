@@ -5,12 +5,15 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import '../system_config_entity.dart';
 import './bloc.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
-  final BuildContext context;
 
+  Api api = Api();
+  final BuildContext context;
   SettingBloc({this.context});
 
   @override
@@ -29,6 +32,13 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         _saveQuoteSign(event.quotesSign);
       }
       yield UpdatedSettingState(languageModel: event.languageModel, areaModel: event.areaModel, quotesSign: event.quotesSign);
+    }else if(event is SystemConfigEvent){
+//      Future.delayed(Duration(milliseconds: 2000)).then((value) async* {
+//        SystemConfigEntity systemConfigEntity = await api.getSystemConfigData();
+//        yield SystemConfigState(systemConfigEntity);
+//      });
+      SystemConfigEntity systemConfigEntity = await api.getSystemConfigData();
+      yield SystemConfigState(systemConfigEntity);
     }
   }
 
