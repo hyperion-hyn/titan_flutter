@@ -32,6 +32,8 @@ class SystemConfigEntity extends Object {
 
   SystemConfigEntity(this.ethTransferGasLimit,this.erc20TransferGasLimit,this.erc20ApproveGasLimit,this.createMap3NodeGasLimit,this.delegateMap3NodeGasLimit,this.collectMap3NodeCreatorGasLimit,this.collectMap3NodePartnerGasLimit,this.collectHalfMap3NodeGasLimit,);
 
+  SystemConfigEntity.setData();
+
   factory SystemConfigEntity.fromJson(Map<String, dynamic> srcJson) => _$SystemConfigEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SystemConfigEntityToJson(this);

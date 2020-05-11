@@ -39,7 +39,7 @@ class _SettingManager extends StatefulWidget {
 class _SettingManagerState extends BaseState<_SettingManager> {
   LanguageModel languageModel;
   AreaModel areaModel;
-  SystemConfigEntity systemConfigEntity;
+  SystemConfigEntity systemConfigEntity = SystemConfigEntity.setData();
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ enum SettingAspect { language, area, sign, systemConfig }
 class SettingInheritedModel extends InheritedModel<SettingAspect> {
   final LanguageModel languageModel;
   final AreaModel areaModel;
-  final SystemConfigEntity systemConfigEntity;
+  SystemConfigEntity systemConfigEntity;
 
   SettingInheritedModel({
     @required this.languageModel,

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -357,7 +358,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                           ),
                         ],
                       ),
-                    )
+                    ),
+                    Text("PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf")))
                   ],
                 ),
               ),
