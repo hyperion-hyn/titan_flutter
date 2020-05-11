@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/components/setting/bloc/bloc.dart';
+import 'package:titan/src/components/setting/system_config_entity.dart';
 import 'package:titan/src/pages/global_data/model/map3_node_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_daily_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_total_vo.dart';
@@ -204,6 +208,17 @@ class Api {
     print('[api] getMap3NodeData, length:${model.tiles.length}');
 
     return model;
+  }
+
+  Future<SystemConfigEntity> getSystemConfigData() async {
+    var configEntity = await HttpCore.instance.getEntity(
+      'config?key=gas_limit',
+      EntityFactory<SystemConfigEntity>((data) {
+        return SystemConfigEntity.fromJson(json.decode(data));
+      }
+      ), options: RequestOptions(contentType: "application/json")
+    );
+    return configEntity;
   }
 
 }

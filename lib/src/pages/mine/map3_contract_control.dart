@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -538,7 +539,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             amount: ConvertTokenUnit.decimalToWei(value),
             password: password,
             gasPrice: BigInt.from(QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt()),
-            gasLimit: EthereumConst.ERC20_APPROVE_GAS_LIMIT,
+            gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,
             nonce: count);
         print('approve has: $approveHex');
 

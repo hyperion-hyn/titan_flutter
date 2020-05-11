@@ -165,7 +165,7 @@ class NodeApi {
         amount: ConvertTokenUnit.decimalToWei(amount),
         password: password,
         gasPrice: BigInt.from(gasPrice),
-        gasLimit: EthereumConst.ERC20_APPROVE_GAS_LIMIT,
+        gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20ApproveGasLimit,
         nonce: count);
     print('approve result: $approveHex， durationType:${durationType}');
 
@@ -176,7 +176,7 @@ class NodeApi {
       firstHalfPubKey: firstHalfPubKey,
       secondHalfPubKey: secondHalfPubKey,
       gasPrice: BigInt.from(gasPrice),
-      gasLimit: EthereumConst.CREATE_MAP3_NODE_GAS_LIMIT,
+      gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.createMap3NodeGasLimit,
       password: password,
       nonce: count + 1,
     );
@@ -211,7 +211,7 @@ class NodeApi {
       amount: ConvertTokenUnit.decimalToWei(myStaking),
       password: password,
       gasPrice: BigInt.from(gasPrice),
-      gasLimit: EthereumConst.ERC20_APPROVE_GAS_LIMIT,
+      gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20ApproveGasLimit,
       nonce: count,
     );
     print('approveHex is: $approveHex');
@@ -220,7 +220,7 @@ class NodeApi {
       createNodeWalletAddress: createNodeWalletAddress,
       stakingAmount: ConvertTokenUnit.decimalToWei(myStaking),
       gasPrice: BigInt.from(gasPrice),
-      gasLimit: EthereumConst.DELEGATE_MAP3_NODE_GAS_LIMIT,
+      gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.delegateMap3NodeGasLimit,
       password: password,
       nonce: count + 1,
     );

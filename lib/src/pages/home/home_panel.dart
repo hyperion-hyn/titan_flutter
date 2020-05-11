@@ -367,7 +367,7 @@ class HomePanelState extends State<HomePanel> {
 //  }
 
   Widget poiRow2(context) {
-    bool isChinaMainland = SettingInheritedModel.of(context).areaModel.isChinaMainland;
+    bool isChinaMainland = SettingInheritedModel.of(context,aspect: SettingAspect.area).areaModel.isChinaMainland;
     var center = Application.recentlyLocation;
 
     return Row(

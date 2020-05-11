@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:path_provider/path_provider.dart';
@@ -66,6 +67,15 @@ class PositionApi {
         return responseEntity.code;
       }
     } catch (_) {
+      if(_ is NoSuchMethodError){
+        FlutterBugly.uploadException(message: _.stackTrace.toString(), detail: _.stackTrace.toString());
+      }else if(_ is Exception){
+        FlutterBugly.uploadException(message: _.toString(), detail: _.toString());
+      }else if(_ is Error){
+        FlutterBugly.uploadException(message: _.stackTrace.toString(), detail: _.stackTrace.toString());
+      }else{
+        FlutterBugly.uploadException(message: _.toString(), detail: _.toString());
+      }
       logger.e(_);
       return -1;
     }

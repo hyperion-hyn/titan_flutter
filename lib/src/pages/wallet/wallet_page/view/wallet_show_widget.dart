@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -152,7 +153,8 @@ class ShowWalletView extends StatelessWidget {
                     to: EthereumAddress.fromHex(toAddress),
                     value: EtherAmount.inWei(amount),
                     gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
+//                    maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
+                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -186,7 +188,7 @@ class ShowWalletView extends StatelessWidget {
                     function: hynErc20Contract.function('transfer'),
                     parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
                     gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
+                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -221,7 +223,7 @@ class ShowWalletView extends StatelessWidget {
                     function: erc20Contract.function('transfer'),
                     parameters: [EthereumAddress.fromHex(toAddress), amount],
                     gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: EthereumConst.ERC20_TRANSFER_GAS_LIMIT,
+                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );

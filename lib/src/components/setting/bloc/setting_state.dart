@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:titan/src/components/quotes/model.dart';
 
 import '../model.dart';
+import '../system_config_entity.dart';
 
 //store
 
@@ -25,4 +26,9 @@ class UpdatedSettingState extends SettingState with EquatableMixin {
 
   @override
   bool get stringify => true;
+}
+
+class SystemConfigState extends SettingState {
+  final SystemConfigEntity systemConfigEntity;
+  SystemConfigState(this.systemConfigEntity);
 }

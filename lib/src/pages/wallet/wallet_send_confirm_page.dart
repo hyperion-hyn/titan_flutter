@@ -9,6 +9,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -100,7 +101,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
     var gasLimit =
-        widget.coinVo.symbol == "ETH" ? EthereumConst.ETH_TRANSFER_GAS_LIMIT : EthereumConst.ERC20_TRANSFER_GAS_LIMIT;
+        widget.coinVo.symbol == "ETH" ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
+            : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
     var gasEstimate =
         ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
 

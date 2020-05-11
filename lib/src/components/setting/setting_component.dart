@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/config.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/setting/model.dart';
+import 'package:titan/src/components/setting/system_config_entity.dart';
 import 'package:titan/src/config/consts.dart';
 
 import 'bloc/bloc.dart';
@@ -12,6 +14,7 @@ class SettingComponent extends StatelessWidget {
   final Widget child;
 
   SettingComponent({@required this.child});
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +36,10 @@ class _SettingManager extends StatefulWidget {
   }
 }
 
-class _SettingManagerState extends State<_SettingManager> {
+class _SettingManagerState extends BaseState<_SettingManager> {
   LanguageModel languageModel;
   AreaModel areaModel;
+  SystemConfigEntity systemConfigEntity = SystemConfigEntity.setData();
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +52,6 @@ class _SettingManagerState extends State<_SettingManager> {
           if (state.quotesSign != null) {
             BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: state.quotesSign));
           }
-
-          /*if (state.languageModel != null) {
-            //update current quotes by setting
-            var quoteSign = SupportedQuoteSigns.of('USD');
-            if (state.languageModel?.isZh() == true) {
-              quoteSign = SupportedQuoteSigns.of('CNY');
-            }
-            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quoteSign));
-          }*/
         }
       },
       child: BlocBuilder<SettingBloc, SettingState>(
@@ -68,11 +63,14 @@ class _SettingManagerState extends State<_SettingManager> {
             if (state.areaModel != null) {
               areaModel = state.areaModel;
             }
+          }else if(state is SystemConfigState){
+            systemConfigEntity = state.systemConfigEntity;
           }
 
           return SettingInheritedModel(
             areaModel: areaModel,
             languageModel: languageModel,
+            systemConfigEntity: systemConfigEntity,
             child: widget.child,
           );
         },
@@ -81,15 +79,17 @@ class _SettingManagerState extends State<_SettingManager> {
   }
 }
 
-enum SettingAspect { language, area, sign }
+enum SettingAspect { language, area, sign, systemConfig }
 
 class SettingInheritedModel extends InheritedModel<SettingAspect> {
   final LanguageModel languageModel;
   final AreaModel areaModel;
+  SystemConfigEntity systemConfigEntity;
 
   SettingInheritedModel({
     @required this.languageModel,
     @required this.areaModel,
+    @required this.systemConfigEntity,
     Key key,
     @required Widget child,
   }) : super(key: key, child: child);
@@ -106,20 +106,24 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
     return languageCode;
   }
 
-
   @override
   bool updateShouldNotify(SettingInheritedModel oldWidget) {
-    return languageModel != oldWidget.languageModel || areaModel != oldWidget.areaModel;
+    return languageModel != oldWidget.languageModel || areaModel != oldWidget.areaModel || systemConfigEntity != oldWidget.systemConfigEntity;
   }
 
   static SettingInheritedModel of(BuildContext context, {SettingAspect aspect}) {
     return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: aspect);
   }
 
+  static SettingInheritedModel ofConfig(BuildContext context,) {
+    return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: SettingAspect.systemConfig);
+  }
+
   @override
   bool updateShouldNotifyDependent(SettingInheritedModel oldWidget, Set<SettingAspect> dependencies) {
-    return (languageModel != oldWidget.languageModel && dependencies.contains(SettingAspect.language) ||
-        areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area));
+    return ((languageModel != oldWidget.languageModel && dependencies.contains(SettingAspect.language)) ||
+        (areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area)) ||
+        (systemConfigEntity != oldWidget.systemConfigEntity && dependencies.contains(SettingAspect.systemConfig)));
   }
 }
 

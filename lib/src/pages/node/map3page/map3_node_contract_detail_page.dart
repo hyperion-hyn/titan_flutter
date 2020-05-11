@@ -1402,14 +1402,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = gasPriceRecommend.average.toInt();
 
-        var gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+        var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit;
         if (_userDelegateState == UserDelegateState.HALFDUE) {
-          gasLimit = EthereumConst.COLLECT_HALF_MAP3_NODE_GAS_LIMIT;
+          gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectHalfMap3NodeGasLimit;
         } else {
           if (_isDelegated) {
-            gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT;
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit;
           } else {
-            gasLimit = EthereumConst.COLLECT_MAP3_NODE_PARTNER_GAS_LIMIT;
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodePartnerGasLimit;
           }
         }
 
