@@ -1,4 +1,4 @@
- {
+{
   "app_name": "泰坦地图",
   "network_request_err": "网络请求错误,状态码: $code",
   "route": "路线",
