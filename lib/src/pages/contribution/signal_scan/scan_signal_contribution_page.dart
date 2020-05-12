@@ -236,7 +236,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     var value = currentValue ?? 0.001;
 
     var item = 1.0 / 4.0;
-    if (Platform.isAndroid) {
+    if (Platform.isIOS) {
       item = 1.0 / 2.0;
 
       if (value > 0 && value < 1.0 * item) {
