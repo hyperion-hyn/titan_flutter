@@ -10,6 +10,7 @@ import 'package:titan/src/pages/global_data/model/map3_node_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_daily_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_total_vo.dart';
 import 'package:titan/src/pages/global_data/model/signal_weekly_vo.dart';
+import 'package:titan/src/pages/node/api/node_http.dart';
 import '../../domain/model/photo_poi_list_model.dart';
 import 'package:titan/src/global.dart';
 import '../entity/poi/photo_simple_poi.dart';
@@ -207,7 +208,7 @@ class Api {
 
   Future<SystemConfigEntity> getSystemConfigData() async {
     var configEntity =
-        await HttpCore.instance.getEntity('config?key=gas_limit', EntityFactory<SystemConfigEntity>((data) {
+        await NodeHttpCore.instance.getEntity('config?key=gas_limit', EntityFactory<SystemConfigEntity>((data) {
       return SystemConfigEntity.fromJson(json.decode(data));
     }), options: RequestOptions(contentType: "application/json"));
     return configEntity;
