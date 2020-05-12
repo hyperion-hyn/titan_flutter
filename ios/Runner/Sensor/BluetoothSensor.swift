@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+/*
 import CoreBluetooth
 
 class BluetoothSensor: NSObject, Sensor {
@@ -96,4 +98,29 @@ extension BluetoothSensor: CBCentralManagerDelegate {
             onSensorChange(type, values)
         }
     }
+}
+*/
+
+
+class BluetoothSensor: NSObject {
+    
+    var isEnable: Bool = true
+
+    func initialize() {
+         
+        //print("[BluetoothSensor] -->\(self), onSensorChange: \(onSensorChange)")
+    }
+    
+    func startScan() {
+         
+    }
+    
+    func stopScan() {
+         
+    }
+    
+    func destory() {
+         
+    }
+    
 }

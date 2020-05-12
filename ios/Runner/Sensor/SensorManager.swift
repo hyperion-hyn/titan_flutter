@@ -16,9 +16,11 @@ class SensorManager {
     func initialize() {
         registerSensorList.removeAll()
 
+        /*
         let blueToothSensor = BluetoothSensor.share;
         blueToothSensor.onSensorChange = onSensorChange
         registerSensorList.append(blueToothSensor)
+        */
         
         let gpsSensor = GpsSensor()
         gpsSensor.onSensorChange = onSensorChange
