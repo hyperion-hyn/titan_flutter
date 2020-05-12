@@ -79,6 +79,8 @@ import CoreBluetooth
                 switch methodCall.method {
 
                 case "bluetoothEnable":
+                    
+                    /*
                     BluetoothSensor.share.initialize()
                     
                     var isEnable = BluetoothSensor.share.isEnable
@@ -88,7 +90,9 @@ import CoreBluetooth
                         result(isEnable)
                     } else {
                         result(true)
-                    }
+                    }*/
+
+                    result(true)
 
                     break
                     
