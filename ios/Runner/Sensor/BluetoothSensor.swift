@@ -102,7 +102,13 @@ extension BluetoothSensor: CBCentralManagerDelegate {
 */
 
 
-class BluetoothSensor: NSObject {
+class BluetoothSensor: NSObject, Sensor {
+    
+    static let share = BluetoothSensor()
+    
+    var onSensorChange: OnSensorValueChangeListener!
+    
+    var type = SensorType.BLUETOOTH
     
     var isEnable: Bool = true
 
