@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -63,9 +65,9 @@ class Routes {
   static void pushAndRemove(BuildContext context, Route newRoute, String rootName) {
     Navigator.of(context).pushAndRemoveUntil(
       newRoute,
-       ModalRoute.withName(rootName),
-        );
-   }
+      ModalRoute.withName(rootName),
+    );
+  }
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -77,42 +79,62 @@ class Routes {
     router.define(root, handler: rootHandler, transitionType: TransitionType.fadeIn);
 
     //tools
-    router.define(toolspage_webview_page, handler: toolsPageWebviewHandler, transitionType: TransitionType.inFromRight);
-    router.define(toolspage_qrcode_page, handler: toolsPageQrcodeHandler, transitionType: TransitionType.inFromRight);
+    router.define(toolspage_webview_page, handler: toolsPageWebviewHandler, transitionType: pushNewPageTransitionType);
+    router.define(toolspage_qrcode_page, handler: toolsPageQrcodeHandler, transitionType: pushNewPageTransitionType);
 
     //wallet
-    router.define(wallet_create, handler: createWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(wallet_import, handler: importWalletHandler, transitionType: TransitionType.inFromRight);
+    router.define(wallet_create, handler: createWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_import, handler: importWalletHandler, transitionType: pushNewPageTransitionType);
     router.define(wallet_account_detail,
-        handler: walletAccountDetailHandler, transitionType: TransitionType.inFromRight);
+        handler: walletAccountDetailHandler, transitionType: pushNewPageTransitionType);
     router.define(wallet_account_send_transaction,
-        handler: walletAccountSendTransactionHandler, transitionType: TransitionType.inFromRight);
+        handler: walletAccountSendTransactionHandler, transitionType: pushNewPageTransitionType);
     router.define(wallet_transfer_token_confirm,
-        handler: transferConfirmHandler, transitionType: TransitionType.inFromRight);
-    router.define(wallet_manager, handler: managerWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(wallet_setting, handler: settingWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(wallet_setting_wallet_backup_notice, handler: settingBackupNoticeWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(wallet_backup_notice_for_creation, handler: backUpMnemoicNoticeForCreation, transitionType: TransitionType.inFromRight);
-    router.define(wallet_show_resume_word, handler: showResumeWordForCreation, transitionType: TransitionType.inFromRight);
-    router.define(wallet_confirm_resume_word, handler: confirmResumeWordForCreation, transitionType: TransitionType.inFromRight);
-    router.define(confirm_success_papge, handler: confirmSuccessHandler, transitionType: TransitionType.inFromRight);
+        handler: transferConfirmHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_manager, handler: managerWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_setting, handler: settingWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_setting_wallet_backup_notice,
+        handler: settingBackupNoticeWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_backup_notice_for_creation,
+        handler: backUpMnemoicNoticeForCreation, transitionType: pushNewPageTransitionType);
+    router.define(wallet_show_resume_word,
+        handler: showResumeWordForCreation, transitionType: pushNewPageTransitionType);
+    router.define(wallet_confirm_resume_word,
+        handler: confirmResumeWordForCreation, transitionType: pushNewPageTransitionType);
+    router.define(confirm_success_papge, handler: confirmSuccessHandler, transitionType: pushNewPageTransitionType);
 
     //contribution
-    router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: TransitionType.inFromRight);
-    router.define(contribute_done, handler: contributionDoneHandler, transitionType: TransitionType.inFromRight);
-    router.define(contribute_scan_signal, handler: contributionScanSignalHandler, transitionType: TransitionType.inFromRight);
-    router.define(contribute_position_finish, handler: contributionPositionFinishHandler, transitionType: TransitionType.inFromRight);
+    router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: pushNewPageTransitionType);
+    router.define(contribute_done, handler: contributionDoneHandler, transitionType: pushNewPageTransitionType);
+    router.define(contribute_scan_signal,
+        handler: contributionScanSignalHandler, transitionType: pushNewPageTransitionType);
+    router.define(contribute_position_finish,
+        handler: contributionPositionFinishHandler, transitionType: pushNewPageTransitionType);
 
     //map3node
-    router.define(map3node_product_list, handler: map3NodeProductListHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_create_wallet, handler: map3NodeCreateWalletHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_create_contract_page, handler: map3NodeCreateContractHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_join_contract_page, handler: map3NodeJoinContractHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_send_confirm_page, handler: map3NodeSendConfirmHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_broadcase_success_page, handler: map3NodeBroadcaseSuccessHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_contract_detail_page, handler: map3NodeContractDetailHandler, transitionType: TransitionType.inFromRight);
-    router.define(map3node_share_page, handler: map3NodeShareHandler, transitionType: TransitionType.inFromRight);
+    router.define(map3node_product_list,
+        handler: map3NodeProductListHandler, transitionType: pushNewPageTransitionType);
+    router.define(map3node_create_wallet,
+        handler: map3NodeCreateWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(map3node_create_contract_page,
+        handler: map3NodeCreateContractHandler, transitionType: pushNewPageTransitionType);
+    router.define(map3node_join_contract_page,
+        handler: map3NodeJoinContractHandler, transitionType: pushNewPageTransitionType);
+    router.define(map3node_send_confirm_page,
+        handler: map3NodeSendConfirmHandler, transitionType: pushNewPageTransitionType);
+    router.define(map3node_broadcase_success_page,
+        handler: map3NodeBroadcaseSuccessHandler, transitionType: pushNewPageTransitionType);
+    router.define(map3node_contract_detail_page,
+        handler: map3NodeContractDetailHandler, transitionType: pushNewPageTransitionType);
+    router.define(map3node_share_page, handler: map3NodeShareHandler, transitionType: pushNewPageTransitionType);
+  }
 
+  static TransitionType get pushNewPageTransitionType {
+    if (Platform.isIOS) {
+      return TransitionType.cupertino;
+    } else {
+      return TransitionType.inFromRight;
+    }
   }
 
   static Widget unknownPage() => Scaffold(
@@ -132,7 +154,7 @@ class MyRouter extends Router {
     RouteSettings settingsToUse = routeSettings;
     if (routeSettings == null) {
       settingsToUse = RouteSettings(name: path, arguments: Map());
-    } else if(routeSettings.arguments == null) {
+    } else if (routeSettings.arguments == null) {
       settingsToUse = routeSettings.copyWith(arguments: Map());
     }
     return super.matchRoute(

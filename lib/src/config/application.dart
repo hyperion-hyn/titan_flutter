@@ -10,8 +10,7 @@ class Application {
   //-----------------
   // route
   //-----------------
-  static MyRouter myRouter;
-  static ApplicationRouter router = ApplicationRouter();
+  static MyRouter router;
   static RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   /// The global [EventBus] object.
@@ -27,18 +26,6 @@ class Application {
   // Announce
   //-----------------
   static bool isUpdateAnnounce = false;
-
-}
-
-class ApplicationRouter {
-
-  //-----------------
-  // Push
-  //-----------------
-  Future navigateTo(BuildContext context, String path, {bool replace = false}) {
-    TransitionType transitionType = Platform.isIOS?TransitionType.cupertino:TransitionType.native;
-    return Application.myRouter.navigateTo(context, path, replace: replace, transition: transitionType);
-  }
 }
 
 class ClearBadgeEvent {}
