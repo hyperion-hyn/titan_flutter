@@ -489,16 +489,16 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     }
 
     //3. 检查蓝牙权限
-    bool blueAvaiable = await TitanPlugin.bluetoothEnable();
+    bool blueAvailable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
-      if (!blueAvaiable) {
+      if (!blueAvailable) {
         UiUtil.showDialogs(context, S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
           AppSettings.openBluetoothSettings();
         });
         return false;
       }
     } else {
-      if (!blueAvaiable) {
+      if (!blueAvailable) {
         return false;
       }
     }
