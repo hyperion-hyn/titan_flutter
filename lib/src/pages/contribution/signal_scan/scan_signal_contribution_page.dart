@@ -247,16 +247,30 @@ class _ContributionState extends State<ScanSignalContributionPage> {
         _currentScanType = SensorType.GPS;
       }
     } else {
-      item = 1.0 / 4.0;
 
-      if (value > 0 && value < 1.0 * item) {
-        _currentScanType = SensorType.WIFI;
-      } else if (value >= 1.0 * item && value < 2.0 * item) {
-        _currentScanType = SensorType.CELLULAR;
-      } else if (value >= 2.0 * item && value < 3.0 * item) {
-        _currentScanType = SensorType.BLUETOOTH;
-      } else if (value >= 3.0 * item && value < 1.0) {
-        _currentScanType = SensorType.GPS;
+
+      if (Platform.isAndroid) {
+        item = 1.0 / 4.0;
+
+        if (value > 0 && value < 1.0 * item) {
+          _currentScanType = SensorType.WIFI;
+        } else if (value >= 1.0 * item && value < 2.0 * item) {
+          _currentScanType = SensorType.CELLULAR;
+        } else if (value >= 2.0 * item && value < 3.0 * item) {
+          _currentScanType = SensorType.BLUETOOTH;
+        } else if (value >= 3.0 * item && value < 1.0) {
+          _currentScanType = SensorType.GPS;
+        }
+      } else {
+        item = 1.0 / 3.0;
+
+        if (value > 0 && value < 1.0 * item) {
+          _currentScanType = SensorType.WIFI;
+        } else if (value >= 1.0 * item && value < 2.0 * item) {
+          _currentScanType = SensorType.CELLULAR;
+        } else if (value >= 2.0 * item && value < 1.0) {
+          _currentScanType = SensorType.GPS;
+        }
       }
     }
   }
