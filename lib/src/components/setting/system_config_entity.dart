@@ -20,7 +20,7 @@ class SystemConfigEntity extends Object {
   int delegateMap3NodeGasLimit = 700000;
 
   @JsonKey(name: 'collectMap3NodeCreatorGasLimit')
-  int collectMap3NodeCreatorGasLimit = 2800000;
+  int collectMap3NodeCreatorGasLimit = 800000;
 
   @JsonKey(name: 'collectMap3NodePartnerGasLimit')
   int collectMap3NodePartnerGasLimit = 80000;

@@ -656,7 +656,6 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
 }
 
 
-
 Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem,
     {isJoin = false, isDetail = true, hasShare = false}) {
 
