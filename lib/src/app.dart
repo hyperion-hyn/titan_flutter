@@ -27,7 +27,7 @@ class _AppState extends State<App> {
   _AppState() {
     var router = MyRouter();
     Routes.configureRoutes(router);
-    Application.router = router;
+    Application.myRouter = router;
   }
 
   @override
@@ -70,7 +70,7 @@ class _AppState extends State<App> {
                     ],
                     supportedLocales: S.delegate.supportedLocales,
                     navigatorObservers: [Application.routeObserver],
-                    onGenerateRoute: Application.router.generator,
+                    onGenerateRoute: Application.myRouter.generator,
                   ),
                 );
               },
