@@ -1,10 +1,13 @@
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/config/consts.dart';
+
+import '../global.dart';
 
 class ExceptionProcess {
   static process(Exception error, {bool isThrow = true}) {
@@ -23,5 +26,14 @@ class ExceptionProcess {
     if (isThrow) {
       throw e;
     }
+  }
+
+  static uploadException(dynamic exception){
+    if(exception is Error){
+      FlutterBugly.uploadException(message: "poi upload ${exception.stackTrace}", detail: "poi upload ${exception.stackTrace}");
+    }else{
+      FlutterBugly.uploadException(message: "poi upload ${exception.toString()}", detail: "poi upload ${exception.toString()}");
+    }
+    logger.e(exception);
   }
 }
