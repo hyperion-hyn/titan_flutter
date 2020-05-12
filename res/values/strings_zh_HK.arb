@@ -603,7 +603,7 @@
   "n_hour_simple": "${hour}時",
   "n_minute_simple": "${minute}鐘",
   "check_join": "查看參與",
-  "create_wallet_account_check_contract": "妳需要先創建/導入錢包賬戶，才能查看妳的錢包賬戶相關合約數據。",
+  "create_wallet_account_check_contract": "妳需要先創建/導入錢包賬戶，才能查看妳的錢包賬戶相關節點數據。",
   "create_or_import_wallet_first": "請先創建/導入錢包",
   "map_smart_contract_management": "map3智能合約管理",
   "scan": "掃壹掃",
