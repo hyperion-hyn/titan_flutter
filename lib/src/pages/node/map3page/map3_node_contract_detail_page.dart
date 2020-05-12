@@ -1381,16 +1381,16 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           if (_isOwner) {
             int delegatorCount = _contractDetailItem.delegatorCount;
             if (delegatorCount <= 21) {
-              gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT_21;
+              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit21;
             }
             else if (delegatorCount > 21 && delegatorCount <= 41) {
-              gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT_41;
+              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit41;
             }
             else if (delegatorCount > 41 && delegatorCount <= 61) {
-              gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT_61;
+              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit61;
             }
             else {
-              gasLimit = EthereumConst.COLLECT_MAP3_NODE_CREATOR_GAS_LIMIT_81;
+              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit81;
             }
             print("[detail]  delegatorCount:$delegatorCount, gasLimit:$gasLimit");
           } else {

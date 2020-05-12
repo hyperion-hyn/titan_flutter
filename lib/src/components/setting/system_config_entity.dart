@@ -19,6 +19,18 @@ class SystemConfigEntity extends Object {
   @JsonKey(name: 'delegateMap3NodeGasLimit')
   int delegateMap3NodeGasLimit = 700000;
 
+  @JsonKey(name: 'collectMap3NodeCreatorGasLimit81')
+  int collectMap3NodeCreatorGasLimit81 = 2800000;
+
+  @JsonKey(name: 'collectMap3NodeCreatorGasLimit61')
+  int collectMap3NodeCreatorGasLimit61 = 2100000;
+
+  @JsonKey(name: 'collectMap3NodeCreatorGasLimit41')
+  int collectMap3NodeCreatorGasLimit41 = 1500000;
+
+  @JsonKey(name: 'collectMap3NodeCreatorGasLimit21')
+  int collectMap3NodeCreatorGasLimit21 = 800000;
+
   @JsonKey(name: 'collectMap3NodeCreatorGasLimit')
   int collectMap3NodeCreatorGasLimit = 800000;
 
@@ -34,6 +46,10 @@ class SystemConfigEntity extends Object {
     this.erc20ApproveGasLimit,
     this.createMap3NodeGasLimit,
     this.delegateMap3NodeGasLimit,
+    this.collectMap3NodeCreatorGasLimit81,
+    this.collectMap3NodeCreatorGasLimit61,
+    this.collectMap3NodeCreatorGasLimit41,
+    this.collectMap3NodeCreatorGasLimit21,
     this.collectMap3NodeCreatorGasLimit,
     this.collectMap3NodePartnerGasLimit,
     this.collectHalfMap3NodeGasLimit,
