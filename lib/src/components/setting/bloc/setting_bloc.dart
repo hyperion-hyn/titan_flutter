@@ -11,9 +11,9 @@ import '../system_config_entity.dart';
 import './bloc.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
-
   Api api = Api();
   final BuildContext context;
+
   SettingBloc({this.context});
 
   @override
@@ -31,8 +31,9 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       if (event.quotesSign != null) {
         _saveQuoteSign(event.quotesSign);
       }
-      yield UpdatedSettingState(languageModel: event.languageModel, areaModel: event.areaModel, quotesSign: event.quotesSign);
-    }else if(event is SystemConfigEvent){
+      yield UpdatedSettingState(
+          languageModel: event.languageModel, areaModel: event.areaModel, quotesSign: event.quotesSign);
+    } else if (event is SystemConfigEvent) {
 //      Future.delayed(Duration(milliseconds: 2000)).then((value) async* {
 //        SystemConfigEntity systemConfigEntity = await api.getSystemConfigData();
 //        yield SystemConfigState(systemConfigEntity);

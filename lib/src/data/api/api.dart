@@ -155,13 +155,12 @@ class Api {
 
   /// signal daily
   Future<List<SignalDailyVo>> getSignalDaily({String language = "zh-Hans"}) async {
-    var list = await HttpCore.instance.getEntity(
-        'map-collector/signal/count/daily',
+    var list = await HttpCore.instance.getEntity('map-collector/signal/count/daily',
         EntityFactory<List<SignalDailyVo>>((json) {
-          return (json as List).map((levelInfoJson) {
-            return SignalDailyVo.fromJson(levelInfoJson);
-          }).toList();
-        }), options: RequestOptions(headers: {"Lang": language}));
+      return (json as List).map((levelInfoJson) {
+        return SignalDailyVo.fromJson(levelInfoJson);
+      }).toList();
+    }), options: RequestOptions(headers: {"Lang": language}));
 
     //print('[api] getSignalDaily, length:${list.length}');
 
@@ -169,14 +168,11 @@ class Api {
   }
 
   Future<List<Signal>> getPoiDaily({String language = "zh-Hans"}) async {
-    var list = await HttpCore.instance.getEntity(
-        'map-collector/poi/count/daily',
-        EntityFactory<List<Signal>>((json) {
-          return (json as List).map((levelInfoJson) {
-            return Signal.fromJson(levelInfoJson);
-          }).toList();
-        }), options: RequestOptions(headers: {"Lang": language})
-    );
+    var list = await HttpCore.instance.getEntity('map-collector/poi/count/daily', EntityFactory<List<Signal>>((json) {
+      return (json as List).map((levelInfoJson) {
+        return Signal.fromJson(levelInfoJson);
+      }).toList();
+    }), options: RequestOptions(headers: {"Lang": language}));
 
     //print('[api] getSignalDaily, length:${list.length}');
 
@@ -185,13 +181,12 @@ class Api {
 
   /// signal weekly
   Future<List<SignalWeeklyVo>> getSignalWeekly({String language = "zh-Hans"}) async {
-    var list = await HttpCore.instance.getEntity(
-        'map-collector/signal/count/weekly',
+    var list = await HttpCore.instance.getEntity('map-collector/signal/count/weekly',
         EntityFactory<List<SignalWeeklyVo>>((json) {
-          return (json as List).map((levelInfoJson) {
-            return SignalWeeklyVo.fromJson(levelInfoJson);
-          }).toList();
-        }), options: RequestOptions(headers: {"Lang": language}));
+      return (json as List).map((levelInfoJson) {
+        return SignalWeeklyVo.fromJson(levelInfoJson);
+      }).toList();
+    }), options: RequestOptions(headers: {"Lang": language}));
 
     //print('[api] getSignalWeekly, length:${list.length}');
 
@@ -212,14 +207,10 @@ class Api {
   }
 
   Future<SystemConfigEntity> getSystemConfigData() async {
-    var configEntity = await NodeHttpCore.instance.getEntity(
-      'config?key=gas_limit',
-      EntityFactory<SystemConfigEntity>((data) {
-        return SystemConfigEntity.fromJson(json.decode(data));
-      }
-      ), options: RequestOptions(contentType: "application/json")
-    );
+    var configEntity =
+        await NodeHttpCore.instance.getEntity('config?key=gas_limit', EntityFactory<SystemConfigEntity>((data) {
+      return SystemConfigEntity.fromJson(json.decode(data));
+    }), options: RequestOptions(contentType: "application/json"));
     return configEntity;
   }
-
 }
