@@ -68,7 +68,7 @@ class PositionApi {
         return responseEntity.code;
       }
     } catch (_) {
-      ExceptionProcess.uploadException(_);
+      ExceptionProcess.uploadPoiException(_, 'poi upload');
       return -1;
     }
   }

@@ -2,10 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'system_config_entity.g.dart';
 
-
 @JsonSerializable()
 class SystemConfigEntity extends Object {
-
   @JsonKey(name: 'ethTransferGasLimit')
   int ethTransferGasLimit = 21000;
 
@@ -30,12 +28,20 @@ class SystemConfigEntity extends Object {
   @JsonKey(name: 'collectHalfMap3NodeGasLimit')
   int collectHalfMap3NodeGasLimit = 150000;
 
-  SystemConfigEntity(this.ethTransferGasLimit,this.erc20TransferGasLimit,this.erc20ApproveGasLimit,this.createMap3NodeGasLimit,this.delegateMap3NodeGasLimit,this.collectMap3NodeCreatorGasLimit,this.collectMap3NodePartnerGasLimit,this.collectHalfMap3NodeGasLimit,);
+  SystemConfigEntity(
+    this.ethTransferGasLimit,
+    this.erc20TransferGasLimit,
+    this.erc20ApproveGasLimit,
+    this.createMap3NodeGasLimit,
+    this.delegateMap3NodeGasLimit,
+    this.collectMap3NodeCreatorGasLimit,
+    this.collectMap3NodePartnerGasLimit,
+    this.collectHalfMap3NodeGasLimit,
+  );
 
-  SystemConfigEntity.setData();
+  SystemConfigEntity.def();
 
   factory SystemConfigEntity.fromJson(Map<String, dynamic> srcJson) => _$SystemConfigEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SystemConfigEntityToJson(this);
-
 }

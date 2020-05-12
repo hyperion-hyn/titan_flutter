@@ -7,6 +7,7 @@ import 'package:titan/generated/i18n.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/config/consts.dart';
 
+import '../../env.dart';
 import '../global.dart';
 
 class ExceptionProcess {
@@ -28,11 +29,15 @@ class ExceptionProcess {
     }
   }
 
-  static uploadException(dynamic exception){
-    if(exception is Error){
-      FlutterBugly.uploadException(message: "poi upload ${exception.stackTrace}", detail: "poi upload ${exception.stackTrace}");
-    }else{
-      FlutterBugly.uploadException(message: "poi upload ${exception.toString()}", detail: "poi upload ${exception.toString()}");
+  static uploadPoiException(dynamic exception, [String errorPrefix]) {
+    if (env.buildType == BuildType.PROD) {
+      if (exception is Error) {
+        FlutterBugly.uploadException(
+            message: "[$errorPrefix]: ${exception.stackTrace}", detail: "[$errorPrefix]: ${exception.stackTrace}");
+      } else {
+        FlutterBugly.uploadException(
+            message: "[$errorPrefix]: ${exception.toString()}", detail: "[$errorPrefix]: ${exception.toString()}");
+      }
     }
     logger.e(exception);
   }
