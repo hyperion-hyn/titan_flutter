@@ -15,7 +15,6 @@ class SettingComponent extends StatelessWidget {
 
   SettingComponent({@required this.child});
 
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<SettingBloc>(
@@ -39,7 +38,7 @@ class _SettingManager extends StatefulWidget {
 class _SettingManagerState extends BaseState<_SettingManager> {
   LanguageModel languageModel;
   AreaModel areaModel;
-  SystemConfigEntity systemConfigEntity = SystemConfigEntity.setData();
+  SystemConfigEntity systemConfigEntity = SystemConfigEntity.def();
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +62,7 @@ class _SettingManagerState extends BaseState<_SettingManager> {
             if (state.areaModel != null) {
               areaModel = state.areaModel;
             }
-          }else if(state is SystemConfigState){
+          } else if (state is SystemConfigState) {
             systemConfigEntity = state.systemConfigEntity;
           }
 
@@ -84,7 +83,7 @@ enum SettingAspect { language, area, sign, systemConfig }
 class SettingInheritedModel extends InheritedModel<SettingAspect> {
   final LanguageModel languageModel;
   final AreaModel areaModel;
-  SystemConfigEntity systemConfigEntity;
+  final SystemConfigEntity systemConfigEntity;
 
   SettingInheritedModel({
     @required this.languageModel,
@@ -99,8 +98,8 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
   }
 
   String get netLanguageCode {
-    var countryCode = languageModel.locale.countryCode??'';
-    if(languageCode == "zh"){
+    var countryCode = languageModel.locale.countryCode ?? '';
+    if (languageCode == "zh") {
       return "${languageCode}_$countryCode";
     }
     return languageCode;
@@ -108,14 +107,16 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
 
   @override
   bool updateShouldNotify(SettingInheritedModel oldWidget) {
-    return languageModel != oldWidget.languageModel || areaModel != oldWidget.areaModel || systemConfigEntity != oldWidget.systemConfigEntity;
+    return languageModel != oldWidget.languageModel ||
+        areaModel != oldWidget.areaModel ||
+        systemConfigEntity != oldWidget.systemConfigEntity;
   }
 
   static SettingInheritedModel of(BuildContext context, {SettingAspect aspect}) {
     return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: aspect);
   }
 
-  static SettingInheritedModel ofConfig(BuildContext context,) {
+  static SettingInheritedModel ofConfig(BuildContext context) {
     return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: SettingAspect.systemConfig);
   }
 
@@ -126,4 +127,3 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
         (systemConfigEntity != oldWidget.systemConfigEntity && dependencies.contains(SettingAspect.systemConfig)));
   }
 }
-

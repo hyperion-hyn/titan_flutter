@@ -1,9 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 
+import '../../../env.dart';
 import '../../global.dart';
 
 class AppBlocDelegate extends BlocDelegate {
-
   @override
   void onEvent(Bloc bloc, Object event) {
     super.onEvent(bloc, event);
@@ -18,6 +19,9 @@ class AppBlocDelegate extends BlocDelegate {
   @override
   void onError(Bloc bloc, Object error, StackTrace stacktrace) {
     super.onError(bloc, error, stacktrace);
+    if (env.buildType == BuildType.PROD) {
+      FlutterBugly.uploadException(message: error.toString(), detail: stacktrace?.toString() ?? error.toString());
+    }
     logger.e(error);
   }
 }
