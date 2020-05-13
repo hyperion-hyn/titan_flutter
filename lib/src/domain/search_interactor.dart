@@ -5,7 +5,7 @@ import 'package:titan/src/data/repository/repository.dart';
 import '../data/entity/history_search.dart';
 import '../data/entity/poi/mapbox_poi.dart';
 import '../data/entity/poi/poi_interface.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/consts.dart';
 
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
