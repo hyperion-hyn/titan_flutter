@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
@@ -214,8 +215,114 @@ class DiscoverPageState extends State<DiscoverPage> {
                         Padding(
                           padding: EdgeInsets.only(top: 16),
                           child: SizedBox(
-                            height: 180,
-                            child: Row(
+                            height: Platform.isIOS ? 80:180,
+                            child: Platform.isIOS ? Row(
+                              children: <Widget>[
+                                //全球大使馆
+                                Expanded(
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                                    onTap: () {
+                                      activeDMap('embassy');
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: Color(0xFFE9E9E9)),
+                                          borderRadius: BorderRadius.all(Radius.circular(4))),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Image.asset(
+                                            'res/drawable/ic_dmap_mbassy.png',
+                                            width: 28,
+                                            height: 28,
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    S.of(context).embassy_guide,
+                                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(top: 8.0),
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Expanded(
+                                                          child: Text(
+                                                            S.of(context).global_embassies,
+                                                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 12,
+                                ),
+                                //警察服务站
+                                Expanded(
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                                    onTap: () {
+                                      activeDMap('policeStation');
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: Color(0xFFE9E9E9)),
+                                          borderRadius: BorderRadius.all(Radius.circular(4))),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Image.asset(
+                                            'res/drawable/ic_dmap_police.png',
+                                            width: 28,
+                                            height: 28,
+                                          ),
+                                          Flexible(
+                                            flex: 2,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    S.of(context).police_security_station,
+                                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                                  ),
+                                                  Flexible(
+                                                    flex: 2,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(top: 8.0),
+                                                      child: Text(
+                                                        S.of(context).police_station_text,
+                                                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ):Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 Expanded(
@@ -331,6 +438,7 @@ class DiscoverPageState extends State<DiscoverPage> {
                                   width: 12,
                                 ),
                                 //疫情
+
                                 Expanded(
                                   child: InkWell(
                                     borderRadius: BorderRadius.all(Radius.circular(4)),
