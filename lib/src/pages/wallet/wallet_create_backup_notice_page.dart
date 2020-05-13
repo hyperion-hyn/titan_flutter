@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';

@@ -1,4 +1,4 @@
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/consts.dart';
 
 class HttpResponseNot200Exception implements Exception {

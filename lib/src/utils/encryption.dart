@@ -7,7 +7,7 @@ import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 
 import '../global.dart';
 

@@ -4,7 +4,7 @@ import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:loading/loading.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/api/api.dart';

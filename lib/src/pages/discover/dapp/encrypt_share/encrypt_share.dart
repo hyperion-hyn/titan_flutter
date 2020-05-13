@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';

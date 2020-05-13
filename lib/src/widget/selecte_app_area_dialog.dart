@@ -1,5 +1,5 @@
 //import 'package:flutter/material.dart';
-//import 'package:titan/generated/i18n.dart';
+//import 'package:titan/generated/l10n.dart';
 //import 'package:titan/src/app.dart';
 //import 'package:titan/src/business/my/app_area.dart';
 //
