@@ -38,8 +38,18 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 //        SystemConfigEntity systemConfigEntity = await api.getSystemConfigData();
 //        yield SystemConfigState(systemConfigEntity);
 //      });
-      SystemConfigEntity systemConfigEntity = await api.getSystemConfigData();
-      yield SystemConfigState(systemConfigEntity);
+
+      var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
+      if(systemConfigStr != null){
+        SystemConfigEntity systemConfigEntity = SystemConfigEntity.fromJson(json.decode(systemConfigStr));
+        yield SystemConfigState(systemConfigEntity);
+      }
+
+      SystemConfigEntity netSystemConfigEntity = await api.getSystemConfigData();
+      if(systemConfigStr != json.encode(netSystemConfigEntity.toJson())){
+        _saveSystemConfig(netSystemConfigEntity);
+        yield SystemConfigState(netSystemConfigEntity);
+      }
     }
   }
 
@@ -56,5 +66,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   Future<bool> _saveQuoteSign(QuotesSign quotesSign) {
     var modelStr = json.encode(quotesSign.toJson());
     return AppCache.saveValue(PrefsKey.SETTING_QUOTE_SIGN, modelStr);
+  }
+
+  Future<bool> _saveSystemConfig(SystemConfigEntity systemConfigEntity) {
+    var modelStr = json.encode(systemConfigEntity.toJson());
+    return AppCache.saveValue(PrefsKey.SETTING_SYSTEM_CONFIG, modelStr);
   }
 }
