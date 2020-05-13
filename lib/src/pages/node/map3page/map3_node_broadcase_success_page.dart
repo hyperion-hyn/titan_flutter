@@ -1,7 +1,7 @@
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/routes/routes.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_pickers/image_pickers.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/style/titan_sytle.dart';

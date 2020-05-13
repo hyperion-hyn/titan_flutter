@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 
 typedef void TextFieldCallBack(String content,{bool isForceSearch});
 

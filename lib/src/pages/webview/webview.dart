@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 

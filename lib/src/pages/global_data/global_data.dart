@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/scaffold_map/dmap/dmap.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:package_info/package_info.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 

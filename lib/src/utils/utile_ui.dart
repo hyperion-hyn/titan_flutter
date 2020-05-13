@@ -7,7 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {

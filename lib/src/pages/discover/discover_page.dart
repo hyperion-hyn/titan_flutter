@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';

@@ -9,7 +9,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -851,6 +851,7 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     // 2.检测网络数据
     if (_openCageData == null) {
       _positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
+      Fluttertoast.showToast(msg: "网络服务错误");
       return;
     }
 

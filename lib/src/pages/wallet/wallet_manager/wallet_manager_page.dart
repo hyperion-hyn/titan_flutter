@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';

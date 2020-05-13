@@ -12,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:titan/generated/i18n.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/consts.dart';
