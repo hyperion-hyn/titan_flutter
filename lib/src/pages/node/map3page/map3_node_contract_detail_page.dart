@@ -552,9 +552,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         default:
           onPressed = () {
             if (_isNoWallet) {
-              _actingTitle = S.of(context).extracting;
               _pushWalletManagerAction();
             } else {
+              _actingTitle = S.of(context).extracting;
               _collectAction();
             }
           };
