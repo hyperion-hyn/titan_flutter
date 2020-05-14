@@ -530,8 +530,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         var approveToAddress = WalletConfig.map3ContractAddress;
 
         final client = WalletUtil.getWeb3Client();
-        var count = await client.getTransactionCount(EthereumAddress.fromHex(wallet.getEthAccount().address),
-            atBlock: BlockNum.pending());
+        var count = await client.getTransactionCount(EthereumAddress.fromHex(wallet.getEthAccount().address));
 
         var approveHex = await wallet.sendApproveErc20Token(
             contractAddress: hynErc20ContractAddress,
