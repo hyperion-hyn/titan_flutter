@@ -177,12 +177,15 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   Widget _pageView(BuildContext context) {
     if (currentState != null || contractItem.contract == null) {
-      return AllPageStateContainer(currentState, () {
-        setState(() {
-          currentState = LoadingState();
-        });
-        getNetworkData();
-      });
+      return Scaffold(
+        appBar: AppBar(centerTitle: true, title: Text(S.of(context).create_map_mortgage_contract)),
+        body: AllPageStateContainer(currentState, () {
+          setState(() {
+            currentState = LoadingState();
+          });
+          getNetworkData();
+        }),
+      );
     }
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
