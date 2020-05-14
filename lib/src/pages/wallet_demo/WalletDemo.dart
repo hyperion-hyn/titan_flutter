@@ -119,8 +119,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05); //.toRadixString(16);
 //                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.5); //.toRadixString(16);
 
-                  var count = await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55),
-                      atBlock: BlockNum.pending());
+                  var count = await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55));
 
                   var txHash = await client.sendTransaction(
                     credentials,
@@ -635,7 +634,7 @@ class _WalletDemoState extends State<WalletDemo> {
 //                }
 
                 var count =
-                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress), atBlock: BlockNum.pending());
+                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress));
                 logger.i('pending nonce is $count');
               }
             },
