@@ -360,15 +360,23 @@ Widget getHoldInNum(
       contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
   double minTotal = 0;
+  double remainTotal = 0;
   if (isJoin) {
+    //calculation
+    remainTotal = double.parse(contractNodeItem.remainDelegation);
     double tempMinTotal =
         double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.minDelegationRate;
-    if (tempMinTotal >= double.parse(contractNodeItem.remainDelegation)) {
-      minTotal = double.parse(contractNodeItem.remainDelegation);
+    if(remainTotal <= 0){
+      minTotal = 0;
+      remainTotal = 0;
+      contractNodeItem.remainDelegation = "0";
+    } else if (tempMinTotal >= remainTotal) {
+      minTotal = remainTotal;
     } else {
       minTotal = tempMinTotal;
     }
   } else {
+    remainTotal = double.parse(contractNodeItem.contract.minTotalDelegation);
     minTotal =
         double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.ownerMinDelegationRate;
   }
@@ -430,8 +438,12 @@ Widget getHoldInNum(
                             validator: (textStr) {
                               if (textStr.length == 0) {
                                 return S.of(context).please_input_hyn_count;
+                              } else if (minTotal == 0) {
+                                return "抵押已满";
                               } else if (int.parse(textStr) < minTotal) {
                                 return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
+                              } else if (int.parse(textStr) > remainTotal) {
+                                return "不能超过剩余份额";
                               } else if (Decimal.parse(textStr) >
                                   Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
                                 return S.of(context).hyn_balance_no_enough;
