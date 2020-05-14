@@ -83,6 +83,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   get _canGetPercent50Rewards => _isDelegated && _is180DaysContract;
 
+  get _isUserDelegatable => double.parse(_contractNodeItem?.remainDelegation) > 0;
+
   get _currentStep {
     if (_contractState == null) return 0;
 
@@ -455,6 +457,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
 
+
     if (_userDelegateState != null && _isDelegated) {
       switch (_userDelegateState) {
         case UserDelegateState.HALFDUE:
@@ -463,10 +466,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
 
         case UserDelegateState.PENDING:
-          /*if (double.parse(_contractDetailItem?.amountPreDelegation??"0") > 0) {
-            _visible = false;
-            _actionTitle = "";
-          }*/
 
           BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
           switch (billsRecordState) {
@@ -476,12 +475,13 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               break;
 
             case BillsRecordState.FAIL:
-              _visible = true;
+
+              _visible = _isUserDelegatable;
               _actionTitle = S.of(context).reset_input_contract;
               break;
 
             case BillsRecordState.CONFIRMED:
-              _visible = true;
+              _visible = _isUserDelegatable;
               _actionTitle = S.of(context).increase_investment;
               break;
           }
@@ -567,9 +567,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       _lastActionTitle = "";
     }
   }
-
-  //get _isRenew => _contractState == ContractState.DUE && _isOwner;
-  get _isRenew => false;
 
   get _isShowLaunchDate =>
       _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
@@ -1053,21 +1050,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         child: Row(
           children: <Widget>[
             Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-            /*if (_currentOperaState == BillsOperaState.DELEGATE) Spacer(),
-            if (_currentOperaState == BillsOperaState.DELEGATE)
-              RichText(
-                text: TextSpan(
-                  text: "${S.of(context).total}：",
-                  style: TextStyle(fontSize: 12, color: HexColor("#333333"), fontWeight: FontWeight.normal),
-                  children: [
-                    TextSpan(
-                      text: "${FormatUtil.amountToString(_contractNodeItem.amountDelegation)} (HYN)",
-                      style: TextStyle(fontSize: 12, color: HexColor("#FF4C3B"), fontWeight: FontWeight.normal),
-                    )
-                  ]
-                ),
-
-              )*/
           ],
         ),
       ),
@@ -1087,7 +1069,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var isPengding = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
 
     return Container(
-      //padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       color: Colors.white,
       child: Stack(
         children: <Widget>[
@@ -1364,12 +1345,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       }
 
       try {
-        setState(() {
-          if (mounted) {
+        if (mounted) {
+          setState(() {
             _lastActionTitle = _actionTitle;
             _isTransferring = true;
-          }
-        });
+          });
+        }
 
         var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
         var gasPrice = gasPriceRecommend.average.toInt();
@@ -1404,13 +1385,23 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           _broadcaseContractAction();
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
+
+          if (mounted) {
+            setState(() {
+              _isTransferring = false;
+            });
+          }
         }
-        _isTransferring = false;
+
       } catch (_) {
         logger.e(_);
-        setState(() {
-          _isTransferring = false;
-        });
+
+        if (mounted) {
+          setState(() {
+            _isTransferring = false;
+          });
+        }
+
         if (_ is PlatformException) {
           if (_.code == WalletError.PASSWORD_WRONG) {
             Fluttertoast.showToast(msg: S.of(context).password_incorrect);
@@ -1419,11 +1410,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           }
         } else if (_ is RPCError) {
           Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
-          /*if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }*/
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
