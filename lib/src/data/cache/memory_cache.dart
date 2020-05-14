@@ -73,8 +73,7 @@ class MemoryCache {
     return false;
   }
 
-  static set nodeProductPageData(List<NodeItem> nodeItemList) {
-    NodeProductPageVo nodeProductPageVo = NodeProductPageVo(nodeItemList);
+  static set nodeProductPageData(NodeProductPageVo nodeProductPageVo) {
     instance.setMemoryMap(NODE_PRODUCT_PAGE_DATA_CACHE_KEY, json.encode(nodeProductPageVo.toJson()));
   }
 

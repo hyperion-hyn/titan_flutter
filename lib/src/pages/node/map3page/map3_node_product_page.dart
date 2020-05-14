@@ -82,7 +82,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
       var netData = await _nodeApi.getContractList(currentPage);
       if (!NodeProductPageVo(netData).isEqual(MemoryCache.nodeProductPageData)) {
         nodeList = netData;
-        MemoryCache.nodeProductPageData = netData;
+        MemoryCache.nodeProductPageData = NodeProductPageVo(netData);
       }
 
       if (mounted) {
