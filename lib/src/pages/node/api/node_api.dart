@@ -155,7 +155,7 @@ class NodeApi {
 
     final client = WalletUtil.getWeb3Client();
     var count =
-        await client.getTransactionCount(EthereumAddress.fromHex(walletHynAddress), atBlock: BlockNum.pending());
+        await client.getTransactionCount(EthereumAddress.fromHex(walletHynAddress));
 
     //approve
     print('approve result: $count');
@@ -202,7 +202,7 @@ class NodeApi {
 
     final client = WalletUtil.getWeb3Client();
     var count =
-        await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address), atBlock: BlockNum.pending());
+        await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address));
 
     //approve
     var approveHex = await wallet.sendApproveErc20Token(
@@ -335,7 +335,7 @@ class NodeApi {
     var createNodeWalletAddress = contractNodeItem.owner;
     final client = WalletUtil.getWeb3Client();
     var address = wallet.getEthAccount().address;
-    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address), atBlock: BlockNum.pending());
+    var nonce = await client.getTransactionCount(EthereumAddress.fromHex(address));
 
     var collectHex = await wallet.sendCollectMap3Node(
       createNodeWalletAddress: createNodeWalletAddress,
