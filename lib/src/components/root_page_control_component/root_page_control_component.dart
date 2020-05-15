@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/inject/injector.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
@@ -59,6 +60,9 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
       languageModel: languageModel,
       quotesSign: quotesSign
     ));
+
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+
     Future.delayed(Duration(milliseconds: 1500),(){
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
     });

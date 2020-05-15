@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -7,6 +8,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -575,6 +577,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   void onCreated() {
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
     getContractDetailData();
+
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
 
     super.onCreated();
   }
