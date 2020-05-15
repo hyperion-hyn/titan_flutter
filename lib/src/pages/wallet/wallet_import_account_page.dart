@@ -1,9 +1,9 @@
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:image_pickers/UIConfig.dart';
+import 'package:image_pickers/image_pickers.dart';
 import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -356,7 +356,25 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                   Future.delayed(Duration(milliseconds: 500),(){
                     Navigator.pop(dialogContext);
                   });
-                  var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
+
+                  var tempListImagePaths = await ImagePickers.pickerPaths(
+                    galleryMode: GalleryMode.image,
+                    selectCount: 1,
+                    showCamera: true,
+                    cropConfig: null,
+                    compressSize: 500,
+                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                  );
+                  if(tempListImagePaths != null && tempListImagePaths.length == 1){
+                    RScanResult mnemonicWords = await RScan.scanImagePath(tempListImagePaths[0].path);
+                    if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
+                      Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                    } else {
+                      _mnemonicController.text = mnemonicWords.message;
+                    }
+                  }
+
+                  /*var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
                   List<Asset> resultList = await MultiImagePicker.pickImages(
                     maxImages: 1,
                     enableCamera: true,
@@ -379,7 +397,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     } else {
                       _mnemonicController.text = mnemonicWords.message;
                     }
-                  }
+                  }*/
                 },
               ),
               ListTile(
