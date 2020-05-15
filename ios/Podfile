@@ -78,7 +78,7 @@ target 'Runner' do
     
     pod 'SwiftKeychainWrapper'
     pod 'RxSwift', '~> 5.0'
-    pod 'RxCocoa', '~> 5.0'
+#    pod 'RxCocoa', '~> 5.0'
     pod 'TrustWalletCore'
   end
 end
