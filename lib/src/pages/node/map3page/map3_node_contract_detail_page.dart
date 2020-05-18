@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/config.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -1335,6 +1336,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Future _collectAction() async {
     if (_wallet == null || _contractDetailItem == null) {
+      return;
+    }
+
+    AppSource source;
+    if (Config.APP_SOURCE == 'TITAN') {
+      source = AppSource.TITAN;
+    } else {
+      source = AppSource.STARRICH;
+    }
+
+    if (_contractNodeItem.appSource != source.index) {
+      Fluttertoast.showToast(msg: "该节点并非创建于${S.of(context).app_name}，提取失败");
       return;
     }
 
