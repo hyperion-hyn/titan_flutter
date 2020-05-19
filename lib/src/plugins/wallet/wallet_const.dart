@@ -14,9 +14,9 @@ class TokenUnit {
 }
 
 class EthereumConst {
-  static const LOW_SPEED = 3 * TokenUnit.G_WEI;
-  static const FAST_SPEED = 10 * TokenUnit.G_WEI;
-  static const SUPER_FAST_SPEED = 30 * TokenUnit.G_WEI;
+  static const LOW_SPEED = 15 * TokenUnit.G_WEI;
+  static const FAST_SPEED = 30 * TokenUnit.G_WEI;
+  static const SUPER_FAST_SPEED = 60 * TokenUnit.G_WEI;
 
   static const int ETH_TRANSFER_GAS_LIMIT = 21000;
   static const int ERC20_TRANSFER_GAS_LIMIT = 65000;

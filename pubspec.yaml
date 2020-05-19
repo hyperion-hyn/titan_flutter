@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.0.4+104
+version: 3.0.5+105
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -97,25 +97,30 @@ dependencies:
   fake_cookie_manager: ^0.1.0
   loading: ^1.0.1
   flutter_inappwebview: ^3.1.0
+  characters: ^0.5.0
+
   #  flutter_inappwebview:
   #    git:
   #      url: https://github.com/pichillilorenzo/flutter_inappwebview
   #https://pub.flutter-io.cn/packages/flutter_bugly
-  flutter_bugly:
-    git:
-      url: git@github.com:moyaying/flutter_bugly.git
+  flutter_bugly: ^0.2.8
+  #    git:
+#      url: git@github.com:moyaying/flutter_bugly.git
   android_intent: ^0.3.4
   app_settings: ^3.0.0
   fluro: ^1.5.1
   #https://pub:dev/packages/image_pickers#-readme-tab-
-  image_pickers: ^1.0.7+1
+#  image_pickers: ^1.0.7+2
+  image_pickers:
+    git:
+      url: git@github.com:moyaying/image_pickers.git
   bordered_text: ^1.0.0
   #  video_player: ^0.10.8+1
   #  https://pub:dev/packages/flutter_echarts#-installing-tab-
   flutter_echarts: ^1.3.0
-  multi_image_picker: ^4.6.7
-  flutter_absolute_path: ^1.0.6
-  flutter_native_image: ^0.0.5
+#  multi_image_picker: ^4.6.7
+#  flutter_absolute_path: ^1.0.6
+#  flutter_native_image: ^0.0.5
   r_scan: ^0.1.4+1
   #  https://pub:dev/packages/flutter_widget_from_html_core#-installing-tab-:
   flutter_widget_from_html_core: ^0.3.3

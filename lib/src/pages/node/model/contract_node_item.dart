@@ -67,6 +67,9 @@ class ContractNodeItem extends Object {
   @JsonKey(name: 'remoteNodeUrl')
   String remoteNodeUrl;
 
+  @JsonKey(name: 'appSource')
+  int appSource;
+
 //  enum ContractState { PRE_CREATE, PENDING, CANCELLED, CANCELLED_COMPLETED, ACTIVE, DUE, DUE_COMPLETED, FAIL}
   @JsonKey(name: 'state')
   String state;
@@ -91,6 +94,7 @@ class ContractNodeItem extends Object {
     this.instanceFinishTime,
     this.shareUrl,
     this.remoteNodeUrl,
+    this.appSource,
     this.state,
   );
 

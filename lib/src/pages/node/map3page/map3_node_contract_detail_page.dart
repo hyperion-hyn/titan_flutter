@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/config.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -37,6 +40,7 @@ import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_contract_page.dart';
 import 'map3_node_create_wallet_page.dart';
+import 'package:characters/characters.dart';
 
 class Map3NodeContractDetailPage extends StatefulWidget {
   final int contractId;
@@ -576,6 +580,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
     getContractDetailData();
 
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+
     super.onCreated();
   }
 
@@ -1061,7 +1067,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     //print("item.userName:${item.userName}");
 
     if (shortName.isNotEmpty) {
-      shortName = item.userName.substring(0, 1);
+      shortName = item.userName.characters.first;
+//      shortName = item.userName.substring(0, 1);
     }
     String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
     var operaState = enumBillsOperaStateFromString(item.operaType);
@@ -1331,6 +1338,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
   Future _collectAction() async {
     if (_wallet == null || _contractDetailItem == null) {
+      return;
+    }
+
+    AppSource source;
+    if (Config.APP_SOURCE == 'TITAN') {
+      source = AppSource.TITAN;
+    } else {
+      source = AppSource.STARRICH;
+    }
+
+    if (_contractNodeItem.appSource != source.index) {
+      Fluttertoast.showToast(msg: "该节点并非创建于${S.of(context).app_name}，提取失败");
       return;
     }
 

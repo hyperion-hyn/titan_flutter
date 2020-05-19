@@ -52,3 +52,5 @@ TransactionHistoryAction enumTransactionHistoryActionFromString(String fruit) {
 String transactionHistoryAction2String(TransactionHistoryAction action) {
   return action.toString().split(".").last ?? "";
 }
+
+enum AppSource { DEFAULT, TITAN, STARRICH}

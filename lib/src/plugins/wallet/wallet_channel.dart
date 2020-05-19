@@ -3,9 +3,9 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 
 class WalletChannel {
-  static Future<String> makeMnemonic() async {
-    return await TitanPlugin.callChannel.invokeMethod("wallet_make_mnemonic");
-  }
+//  static Future<String> makeMnemonic() async {
+//    return await TitanPlugin.callChannel.invokeMethod("wallet_make_mnemonic");
+//  }
 
   static Future<String> saveAsTrustWalletKeyStoreByMnemonic({
     @required String name,

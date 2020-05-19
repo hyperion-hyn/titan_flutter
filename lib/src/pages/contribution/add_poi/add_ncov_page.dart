@@ -6,7 +6,6 @@ import 'package:image_pickers/Media.dart';
 import 'package:image_pickers/UIConfig.dart';
 import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
@@ -84,7 +83,6 @@ class _AddNcovState extends BaseState<AddNcovPage> {
   ScrollController _scrollController = ScrollController();
   String language;
   String walletAddress;
-  List<Asset> images = List<Asset>();
 
   @override
   void onCreated() {
@@ -312,11 +310,11 @@ class _AddNcovState extends BaseState<AddNcovPage> {
     var childAspectRatio = (105.0 / 74.0);
     var itemHeight = itemWidth / childAspectRatio;
     var itemCount = 1;
-    if (images.length == 0) {
+    if (_listImagePaths.length == 0) {
       itemCount = 1;
-    } else if (images.length > 0 && images.length < _listImagePathsMaxLength) {
-      itemCount = 1 + images.length;
-    } else if (images.length >= _listImagePathsMaxLength) {
+    } else if (_listImagePaths.length > 0 && _listImagePaths.length < _listImagePathsMaxLength) {
+      itemCount = 1 + _listImagePaths.length;
+    } else if (_listImagePaths.length >= _listImagePathsMaxLength) {
       itemCount = _listImagePathsMaxLength;
     }
     double containerHeight = 2 + (10 + itemHeight) * ((itemCount / 3).ceil());
@@ -337,10 +335,9 @@ class _AddNcovState extends BaseState<AddNcovPage> {
               childAspectRatio: childAspectRatio,
             ),
             itemBuilder: (context, index) {
-              if (index == itemCount - 1 && images.length < _listImagePathsMaxLength) {
+              if (index == itemCount - 1 && _listImagePaths.length < _listImagePathsMaxLength) {
                 return InkWell(
                   onTap: () {
-                    // todo: test_jison_0513 预览图片
                     _selectImages();
                   },
                   child: Container(
@@ -360,19 +357,13 @@ class _AddNcovState extends BaseState<AddNcovPage> {
               }
               return InkWell(
                   onTap: () {
-                    // todo: test_jison_0513 预览图片
                     ImagePickers.previewImagesByMedia(_listImagePaths, index);
                   },
                   child: Stack(
                     children: <Widget>[
-                      SizedBox(
-                        width:itemWidth,
-                        height:itemWidth,
-                        child: AssetThumb(
-                          asset: images[index],
-                          width:itemWidth.toInt(),
-                          height:itemWidth.toInt(),
-                        ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.file(File(_listImagePaths[index].path), width: itemWidth, fit: BoxFit.cover),
                       ),
                       Positioned(
                         top: 0,
@@ -390,7 +381,6 @@ class _AddNcovState extends BaseState<AddNcovPage> {
                           onTap: () {
                             setState(() {
                               _listImagePaths.removeAt(index);
-                              images.removeAt(index);
                             });
                           },
                         ),
@@ -570,36 +560,36 @@ class _AddNcovState extends BaseState<AddNcovPage> {
             ),
             _openCageData == null
                 ? Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 18, 4, 6),
-                    child: InkWell(
-                      child: Text(
-                        S.of(context).click_auto_get_hint,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
-                      onTap: () {
-                        _requestOpenCageDataCount += 1;
-                        _filterSubject.sink.add(_requestOpenCageDataCount);
-                      },
-                    ))
-                : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 18, 8, 6),
-                      child: Text(
-                        _addressText ?? "",
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          color: DefaultColors.color333,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
+                padding: const EdgeInsets.fromLTRB(0, 18, 4, 6),
+                child: InkWell(
+                  child: Text(
+                    S.of(context).click_auto_get_hint,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
                     ),
                   ),
+                  onTap: () {
+                    _requestOpenCageDataCount += 1;
+                    _filterSubject.sink.add(_requestOpenCageDataCount);
+                  },
+                ))
+                : Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 18, 8, 6),
+                child: Text(
+                  _addressText ?? "",
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(
+                    color: DefaultColors.color333,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
         Container(
@@ -642,16 +632,16 @@ class _AddNcovState extends BaseState<AddNcovPage> {
               onPressed: _isOnPressed
                   ? null
                   : () {
-                      setState(() {
-                        _isOnPressed = true;
-                      });
-                      Future.delayed(Duration(seconds: 1), () {
-                        setState(() {
-                          _isOnPressed = false;
-                        });
-                      });
-                      _uploadPoiData();
-                    },
+                setState(() {
+                  _isOnPressed = true;
+                });
+                Future.delayed(Duration(seconds: 1), () {
+                  setState(() {
+                    _isOnPressed = false;
+                  });
+                });
+                _uploadPoiData();
+              },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -672,12 +662,12 @@ class _AddNcovState extends BaseState<AddNcovPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => WebViewContainer(
-                            initUrl: Const.POI_POLICY,
-                            title: S.of(context).poi_upload_protocol,
-                          )));
+                        initUrl: Const.POI_POLICY,
+                        title: S.of(context).poi_upload_protocol,
+                      )));
             },
             child: SizedBox(
-                //width: 200,
+              //width: 200,
                 height: 40,
                 child: Row(
                   children: <Widget>[
@@ -873,42 +863,7 @@ class _AddNcovState extends BaseState<AddNcovPage> {
 
   // actions
   Future<void> _selectImages() async {
-    List<Asset> resultList = List<Asset>();
-
-    var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: _listImagePathsMaxLength,
-        enableCamera: true,
-        selectedAssets: images,
-        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-        materialOptions: MaterialOptions(
-          statusBarColor: themeColor,
-          actionBarColor: themeColor,
-          actionBarTitle: S.of(context).select_picture,
-          allViewTitle: S.of(context).all_picture,
-          useDetailsView: false,
-          selectCircleStrokeColor: "#ffffff",
-        ),
-      );
-    } on Exception catch (e) {
-      print(e.toString());
-    }
-
-    if(resultList.length > 0){
-      setState(() {
-        _listImagePaths.clear();
-        resultList.forEach((entity){
-          var media = Media();
-          media.path = entity.identifier;
-          _listImagePaths.add(media);
-        });
-        images = resultList;
-      });
-    }
-
-
-    /*var tempListImagePaths = await ImagePickers.pickerPaths(
+    var tempListImagePaths = await ImagePickers.pickerPaths(
       galleryMode: GalleryMode.image,
       selectCount: _listImagePathsMaxLength - _listImagePaths.length,
       showCamera: true,
@@ -918,7 +873,7 @@ class _AddNcovState extends BaseState<AddNcovPage> {
     );
     setState(() {
       _listImagePaths.addAll(tempListImagePaths);
-    });*/
+    });
   }
 
   _uploadPoiData() {
