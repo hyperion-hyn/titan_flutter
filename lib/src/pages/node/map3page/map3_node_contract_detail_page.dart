@@ -40,6 +40,7 @@ import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_contract_page.dart';
 import 'map3_node_create_wallet_page.dart';
+import 'package:characters/characters.dart';
 
 class Map3NodeContractDetailPage extends StatefulWidget {
   final int contractId;
@@ -1066,7 +1067,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     //print("item.userName:${item.userName}");
 
     if (shortName.isNotEmpty) {
-      shortName = item.userName.substring(0, 1);
+      shortName = item.userName.characters.first;
+//      shortName = item.userName.substring(0, 1);
     }
     String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
     var operaState = enumBillsOperaStateFromString(item.operaType);
