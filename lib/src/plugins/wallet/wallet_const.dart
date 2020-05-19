@@ -19,7 +19,7 @@ class EthereumConst {
   static const SUPER_FAST_SPEED = 30 * TokenUnit.G_WEI;
 
   static const int ETH_TRANSFER_GAS_LIMIT = 21000;
-  static const int ERC20_TRANSFER_GAS_LIMIT = 55000;
+  static const int ERC20_TRANSFER_GAS_LIMIT = 65000;
 
   static const int ERC20_APPROVE_GAS_LIMIT = 50000;
 

@@ -9,7 +9,7 @@ part of 'system_config_entity.dart';
 SystemConfigEntity _$SystemConfigEntityFromJson(Map<String, dynamic> json) {
   return SystemConfigEntity(
     json['ethTransferGasLimit'] as int ?? 21000,
-    json['erc20TransferGasLimit'] as int ?? 55000,
+    json['erc20TransferGasLimit'] as int ?? 65000,
     json['erc20ApproveGasLimit'] as int ?? 50000,
     json['createMap3NodeGasLimit'] as int ?? 560000,
     json['delegateMap3NodeGasLimit'] as int ?? 700000,
