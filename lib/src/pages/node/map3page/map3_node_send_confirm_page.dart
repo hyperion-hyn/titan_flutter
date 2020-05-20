@@ -229,7 +229,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    /*
+                    // todo: test_jison_0520_close
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
@@ -363,10 +363,9 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                         ],
                       ),
                     ),
-                    */
-                    GasInputWidget(currentEthPrice: 1489.73607, callback: (double gasPrice, double gasPriceLimit){
+                    /*GasInputWidget(currentEthPrice: ethQuotePrice, callback: (double gasPrice, double gasPriceLimit){
                       print("[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
-                    }),
+                    }),*/
                     Text("PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf")))
                   ],
                 ),

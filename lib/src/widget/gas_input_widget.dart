@@ -66,7 +66,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8),
               child: Row(
                 children: <Widget>[
                   Text("矿工费用"),
@@ -83,7 +83,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
               height: 40,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
@@ -100,13 +100,13 @@ class _GasInputWidgetState extends State<GasInputWidget> {
                       setState(() {
                         _isOpen = newValue;
 
-                        if (_gasPriceController.text.isEmpty) {
+//                        if (_gasPriceController.text.isEmpty) {
                           _gasPriceController.text = "${_gasPrice.toStringAsPrecision(4)}";
-                        }
+//                        }
 
-                        if (_gasPriceLimitController.text.isEmpty) {
+//                        if (_gasPriceLimitController.text.isEmpty) {
                           _gasPriceLimitController.text = "${_gasPriceLimit}";
-                        }
+//                        }
 
                       });
                     },
@@ -124,7 +124,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8),
           child: Row(
             children: <Widget>[
               Image.asset(
@@ -254,7 +254,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
     //print("[textfield] $initialValue, controller:$controller");
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
       child: Row(
         children: <Widget>[
           Expanded(
