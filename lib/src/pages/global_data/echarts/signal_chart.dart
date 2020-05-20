@@ -47,7 +47,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
   void initState() {
     super.initState();
 
-    print('[signal_chart] -->1 initState：${_introduction}');
+    //print('[signal_chart] -->1 initState：${_introduction}');
   }
 
   @override
@@ -56,7 +56,7 @@ class _SignalChatsState extends State<SignalChatsPage> with AutomaticKeepAliveCl
 
     _getData();
 
-    print('[signal_chart] -->2 initState：${_introduction}');
+    //print('[signal_chart] -->2 initState：${_introduction}');
   }
 
   @override
