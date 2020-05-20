@@ -34,16 +34,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       yield UpdatedSettingState(
           languageModel: event.languageModel, areaModel: event.areaModel, quotesSign: event.quotesSign);
     } else if (event is SystemConfigEvent) {
-//      Future.delayed(Duration(milliseconds: 2000)).then((value) async* {
-//        SystemConfigEntity systemConfigEntity = await api.getSystemConfigData();
-//        yield SystemConfigState(systemConfigEntity);
-//      });
-
       var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
-      if(systemConfigStr != null){
-        SystemConfigEntity systemConfigEntity = SystemConfigEntity.fromJson(json.decode(systemConfigStr));
-        yield SystemConfigState(systemConfigEntity);
-      }
 
       SystemConfigEntity netSystemConfigEntity = await api.getSystemConfigData();
       if(systemConfigStr != json.encode(netSystemConfigEntity.toJson())){

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/config.dart';
@@ -7,6 +9,7 @@ import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/system_config_entity.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 
 import 'bloc/bloc.dart';
 
@@ -39,6 +42,15 @@ class _SettingManagerState extends BaseState<_SettingManager> {
   LanguageModel languageModel;
   AreaModel areaModel;
   SystemConfigEntity systemConfigEntity = SystemConfigEntity.def();
+
+  @override
+  void onCreated() async {
+    var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
+    if(systemConfigStr != null){
+      systemConfigEntity = SystemConfigEntity.fromJson(json.decode(systemConfigStr));
+    }
+    super.onCreated();
+  }
 
   @override
   Widget build(BuildContext context) {

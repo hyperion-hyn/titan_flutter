@@ -8,7 +8,7 @@ class SystemConfigEntity extends Object {
   int ethTransferGasLimit = 21000;
 
   @JsonKey(name: 'erc20TransferGasLimit')
-  int erc20TransferGasLimit = 55000;
+  int erc20TransferGasLimit = 65000;
 
   @JsonKey(name: 'erc20ApproveGasLimit')
   int erc20ApproveGasLimit = 50000;
