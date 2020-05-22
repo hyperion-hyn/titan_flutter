@@ -49,7 +49,7 @@ object KeyStoreUtil {
         return getPrvKey(storedKey, password, coinType) != null
     }
 
-    fun getPrvKeyBytes(storedKey: StoredKey, password: String, coinType: CoinType): ByteArray? {
+    private fun getPrvKeyBytes(storedKey: StoredKey, password: String, coinType: CoinType): ByteArray? {
         return if (storedKey.isMnemonic) {
             val hdWallet = storedKey.wallet(password)
             val privateKey = hdWallet?.getKeyForCoin(coinType)

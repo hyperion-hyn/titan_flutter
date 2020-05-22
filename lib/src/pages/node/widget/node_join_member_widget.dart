@@ -15,6 +15,7 @@ import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 class NodeJoinMemberWidget extends StatefulWidget {
   final String contractId;
@@ -196,7 +197,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       SizedBox(
 //                      height: 50,
 //                      width: 50,
-                        child: circleIconWidget(showName, isShowShape: false, address: item.userAddress)
+                        child: walletHeaderWidget(showName, isShowShape: false, address: item.userAddress)
                         ,
                       ),
                       SizedBox(
@@ -257,35 +258,4 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     }
   }
 
-}
-
-Widget circleIconWidget(String shortName, {bool isShowShape = true, String address = "#000000"}) {
-  String hexColor = address;
-  if (address.length>6) {
-    hexColor = "#"+address.substring(address.length-6);
-  }
-  HexColor color = HexColor(hexColor);
-  return Container(
-    width: 40,
-    height: 40,
-    decoration: BoxDecoration(
-      color: color,
-      shape: BoxShape.circle,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey[300],
-          blurRadius: 8.0,
-        ),
-      ],
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Text(
-          shortName.toUpperCase(),
-          style: TextStyle(fontSize: 15, color: HexColor("#FFFFFF"), fontWeight: FontWeight.w500),
-        ),
-      ),
-    ),
-  );
 }

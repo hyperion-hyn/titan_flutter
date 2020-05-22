@@ -16,11 +16,14 @@ import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 import 'map3_contract_control.dart';
+import 'package:characters/characters.dart';
 
 class MyPage extends StatefulWidget {
   @override
@@ -53,7 +56,7 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    double padding = UiUtil.isIPhoneX(context)?20:0;
+    double padding = UiUtil.isIPhoneX(context) ? 20 : 0;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -68,7 +71,7 @@ class _MyPageState extends State<MyPage> {
                   child: Stack(
                     children: <Widget>[
                       Positioned(
-                        top: 37+padding,
+                        top: 37 + padding,
                         right: 12,
                         child: _buildScanQrCodeRow(),
                       ),
@@ -148,10 +151,13 @@ class _MyPageState extends State<MyPage> {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
                     } else {
-                      var tips = FluroConvertUtils.fluroCnParamsEncode(S.of(context).create_wallet_account_check_contract);
+                      var tips =
+                          FluroConvertUtils.fluroCnParamsEncode(S.of(context).create_wallet_account_check_contract);
                       Application.router.navigateTo(context, Routes.wallet_manager + '?tips=$tips');
                     }
-                  }, imageName: "ic_map3_node_item_contract", subText: _wallet == null ? S.of(context).create_or_import_wallet_first : null),
+                  },
+                      imageName: "ic_map3_node_item_contract",
+                      subText: _wallet == null ? S.of(context).create_or_import_wallet_first : null),
                   Container(
                     height: 10,
                     color: HexColor('#F1EFF2'),
@@ -172,8 +178,10 @@ class _MyPageState extends State<MyPage> {
                   Divider(
                     height: 0,
                   ),
-                  if (['0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(), '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase()]
-                      .contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
+                  if ([
+                    '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
+                    '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase()
+                  ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
                     _buildMenuBar(
                         S.of(context).map_smart_contract_management,
                         Icons.account_balance_wallet,
@@ -396,20 +404,25 @@ class _MyPageState extends State<MyPage> {
       children: <Widget>[
         Container(
           alignment: Alignment.center,
-          width: 52,
-          height: 52,
+//          width: 52,
+//          height: 52,
           decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              goSetWallet(wallet);
+            },
             child: Stack(
               children: <Widget>[
                 Align(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      "res/drawable/ic_logo.png",
-                      width: 80,
-                      height: 80,
-                    )),
+                  alignment: Alignment.center,
+                  child: walletHeaderWidget(
+                    walletName.characters.first,
+                    size: 60,
+                    fontSize: 20,
+                    address: ethAccount.address,
+                    isShowShape: false,
+                  ),
+                ),
               ],
             ),
           ),
@@ -419,29 +432,42 @@ class _MyPageState extends State<MyPage> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                walletName,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  shortBlockChainAddress(ethAccount.address, limitCharsLength: 13),
-                  style: TextStyle(fontSize: 14, color: Colors.white70),
+          child: InkWell(
+            onTap: (){
+              goSetWallet(wallet);
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  walletName,
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 4,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    shortBlockChainAddress(ethAccount.address, limitCharsLength: 13),
+                    style: TextStyle(fontSize: 14, color: Colors.white70),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Spacer(),
       ],
     );
+  }
+
+  void goSetWallet(Wallet wallet){
+    var walletStr = FluroConvertUtils.object2string(wallet.toJson());
+    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+//    print(currentRouteName);
+    Application.router.navigateTo(
+        context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
   }
 
   Widget _buildSloganRow() {

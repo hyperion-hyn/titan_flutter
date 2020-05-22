@@ -59,14 +59,14 @@ class WalletChannel {
     return await TitanPlugin.callChannel.invokeMethod("wallet_all_keystore");
   }
 
-  static Future<String> changeKeyStorePassword({
+  static Future<String> updateWallet({
     @required String fileName,
     @required oldPassword,
     @required newPassword,
     name,
     List<int> activeCoins = const [CoinType.ETHEREUM],
   }) async {
-    return await TitanPlugin.callChannel.invokeMethod("wallet_change_password", {
+    return await TitanPlugin.callChannel.invokeMethod("wallet_update", {
       "fileName": fileName,
       'oldPassword': oldPassword,
       'newPassword': newPassword,

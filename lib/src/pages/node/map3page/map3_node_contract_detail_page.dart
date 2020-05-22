@@ -36,6 +36,7 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_contract_page.dart';
@@ -461,7 +462,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
 
-
     if (_userDelegateState != null && _isDelegated) {
       switch (_userDelegateState) {
         case UserDelegateState.HALFDUE:
@@ -470,7 +470,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
 
         case UserDelegateState.PENDING:
-
           BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
           switch (billsRecordState) {
             case BillsRecordState.PRE_CREATE:
@@ -479,7 +478,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               break;
 
             case BillsRecordState.FAIL:
-
               _visible = _isUserDelegatable;
               _actionTitle = S.of(context).reset_input_contract;
               break;
@@ -599,7 +597,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
       child: Scaffold(
@@ -708,9 +705,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             disabledTextColor: Colors.white,
             color: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
-                side: BorderSide(color: _isTransferring?Colors.grey[600]:Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
-            child: Text(_isTransferring ? _actingTitle : _lastActionTitle, style: TextStyle(fontSize: 16, color: Colors.white70)),
-            onPressed: !_isTransferring?onPressed:null,
+                side: BorderSide(color: _isTransferring ? Colors.grey[600] : Theme.of(context).primaryColor),
+                borderRadius: BorderRadius.circular(0)),
+            child: Text(_isTransferring ? _actingTitle : _lastActionTitle,
+                style: TextStyle(fontSize: 16, color: Colors.white70)),
+            onPressed: !_isTransferring ? onPressed : null,
           ),
         ),
       ),
@@ -927,9 +926,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 Spacer(),
                 if (_isShowLaunchDate)
                   Text(
-                    S
-                        .of(context)
-                        .launcher_time_left(FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft)),
+                    S.of(context).launcher_time_left(
+                        FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft)),
                     style: TextStyles.textC999S14,
                   ),
               ],
@@ -1092,7 +1090,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: circleIconWidget(shortName, address: item.userAddress),
+                    child: walletHeaderWidget(shortName, address: item.userAddress),
                   ),
                   Flexible(
                     flex: 4,
@@ -1242,7 +1240,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       _delegateRecordList = [];
 
       List<ContractDelegateRecordItem> tempMemberList =
-      await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1263,7 +1261,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     try {
       _currentPage++;
       List<ContractDelegateRecordItem> tempMemberList =
-      await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1382,14 +1380,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             int delegatorCount = _contractDetailItem.delegatorCount;
             if (delegatorCount <= 21) {
               gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit21;
-            }
-            else if (delegatorCount > 21 && delegatorCount <= 41) {
+            } else if (delegatorCount > 21 && delegatorCount <= 41) {
               gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit41;
-            }
-            else if (delegatorCount > 41 && delegatorCount <= 61) {
+            } else if (delegatorCount > 41 && delegatorCount <= 61) {
               gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit61;
-            }
-            else {
+            } else {
               gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit81;
             }
             print("[detail]  delegatorCount:$delegatorCount, gasLimit:$gasLimit");
@@ -1411,7 +1406,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             });
           }
         }
-
       } catch (_) {
         logger.e(_);
 
@@ -1444,9 +1438,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
-                title: "",
-              )));
+                    initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
+                    title: "",
+                  )));
     }
   }
 
@@ -1458,9 +1452,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: url,
-                title: "",
-              )));
+                    initUrl: url,
+                    title: "",
+                  )));
     }
   }
 
@@ -1493,7 +1487,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   _nextAction() {
-
     final result = ModalRoute.of(context).settings?.arguments;
 
     print("[detai] _next action, result:$result");
