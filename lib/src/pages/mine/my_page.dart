@@ -305,24 +305,7 @@ class _MyPageState extends State<MyPage> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         InkWell(
-            onTap: () async {
-              // todo: test_jison_0429
-              String scanStr = await BarcodeScanner.scan();
-              print("[scan] indexInt= $scanStr");
-              if (scanStr == null) {
-                return;
-              } else if (scanStr.contains("share?id=")) {
-                int indexInt = scanStr.indexOf("=");
-                String contractId = scanStr.substring(indexInt + 1, indexInt + 2);
-                Application.router
-                    .navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
-              } else if (scanStr.contains("http") || scanStr.contains("https")) {
-                scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
-                Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
-              } else {
-                Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
-              }
-            },
+            onTap: _scanAction,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -344,6 +327,25 @@ class _MyPageState extends State<MyPage> {
             )),
       ],
     );
+  }
+
+  Future _scanAction() async {
+    // todo: test_jison_0429
+    String scanStr = await BarcodeScanner.scan();
+    print("[scan] indexInt= $scanStr");
+    if (scanStr == null) {
+      return;
+    } else if (scanStr.contains("share?id=")) {
+      int indexInt = scanStr.indexOf("=");
+      String contractId = scanStr.substring(indexInt + 1, indexInt + 2);
+      Application.router
+          .navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+    } else if (scanStr.contains("http") || scanStr.contains("https")) {
+      scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
+      Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
+    } else {
+      Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
+    }
   }
 
   Widget _buildWalletCreateRow() {
