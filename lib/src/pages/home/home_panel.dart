@@ -84,10 +84,10 @@ class HomePanelState extends State<HomePanel> {
             child: _category(),
           ),
           SliverToBoxAdapter(
-            child: focusArea(context),
+            child: _focusArea(context),
           ),
           SliverToBoxAdapter(
-            child: dMap(),
+            child: _dMap(),
           ),
         ],
       ),
@@ -95,7 +95,7 @@ class HomePanelState extends State<HomePanel> {
   }
 
 
-  Widget focusArea(context) {
+  Widget _focusArea(context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       //margin: EdgeInsets.only(top: 16),
@@ -308,7 +308,30 @@ class HomePanelState extends State<HomePanel> {
     );
   }
 
-  Widget dMap() {
+  Widget _buildDiscoverPage(BuildContext context, Widget child) {
+    return BlocBuilder<DiscoverBloc, DiscoverState>(
+      bloc: BlocProvider.of<DiscoverBloc>(context),
+      builder: (context, state) {
+        if (state is ActiveDMapState) {
+          DMapCreationModel model = DMapDefine.kMapList[state.name];
+          if (model != null) {
+            return model.createDAppWidgetFunction(context);
+          }
+        } else if (state is LoadedFocusState) {
+          //focusImages = state.focusImages;
+        }
+        return Scaffold(
+          backgroundColor: Theme.of(context).backgroundColor,
+          body: Container(
+            color: Colors.red,
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _dMap() {
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
       //padding: const EdgeInsets.only(top: 16.0),
@@ -813,18 +836,28 @@ class HomePanelState extends State<HomePanel> {
             },
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Chip(
-                avatar: Image.asset(
-                  model.avatar,
-                  width: 16,
-                  height: 16,
-                  color: Colors.white,
+              child: Container(
+                /*decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [HexColor("#46CBE6"), HexColor("#00A4C5")],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                  ),
+                ),*/
+                child: Chip(
+                  avatar: Image.asset(
+                    model.avatar,
+                    width: 16,
+                    height: 16,
+                    color: Colors.white,
+                  ),
+                  label: Text(model.title),
+                  labelStyle: TextStyle(color: Colors.white),
+                  //backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: HexColor("00A4C5"),
+                  padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
+                  labelPadding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                 ),
-                label: Text(model.title),
-                labelStyle: TextStyle(color: Colors.white),
-                backgroundColor: Theme.of(context).primaryColor,
-                padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                labelPadding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
               ),
             ),
           );
