@@ -50,13 +50,13 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
     fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
             /*产生助记词*/
-            "wallet_make_mnemonic" -> {
-                val initialEntropy = ByteArray(16)
-                secureRandom.nextBytes(initialEntropy)
-                val mnemonic = MnemonicUtils.generateMnemonic(initialEntropy)
-                result.success(mnemonic)
-                true
-            }
+//            "wallet_make_mnemonic" -> {
+//                val initialEntropy = ByteArray(16)
+//                secureRandom.nextBytes(initialEntropy)
+//                val mnemonic = MnemonicUtils.generateMnemonic(initialEntropy)
+//                result.success(mnemonic)
+//                true
+//            }
             /*通过助记词保存、导入*/
             "wallet_import_mnemonic" -> {
                 val name = call.argument<String>("name")
@@ -170,7 +170,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 true
             }
             /*修改密码*/
-            "wallet_change_password" -> {
+            "wallet_update" -> {
                 val oldPassword = call.argument<String>("oldPassword")
                 val newPassword = call.argument<String>("newPassword")
                 val fileName = call.argument<String>("fileName")

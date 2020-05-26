@@ -15,6 +15,7 @@ import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 class NodeJoinMemberWidget extends StatefulWidget {
   final String contractId;
@@ -192,7 +193,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       SizedBox(
 //                      height: 50,
 //                      width: 50,
-                        child: circleIconWidget(item.userName, isShowShape: false, address: item.userAddress)
+                        child: walletHeaderWidget(item.userName, isShowShape: false, address: item.userAddress)
                         ,
                       ),
                       SizedBox(

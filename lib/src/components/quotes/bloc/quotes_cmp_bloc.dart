@@ -59,8 +59,10 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
             average: parseGasPriceToBigIntWei(response['fast']),
 //            avgWait: response['avgWait'],
             avgWait: response['fastWait'],
-            safeLow: parseGasPriceToBigIntWei(response['safeLow']),
-            safeLowWait: response['safeLowWait']);
+//            safeLow: parseGasPriceToBigIntWei(response['safeLow']),
+//            safeLowWait: response['safeLowWait']);
+            safeLow: parseGasPriceToBigIntWei(response['average']),
+            safeLowWait: response['avgWait']);
         yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
       } catch (e) {
         logger.e(e);

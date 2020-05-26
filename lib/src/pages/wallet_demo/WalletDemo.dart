@@ -474,22 +474,24 @@ class _WalletDemoState extends State<WalletDemo> {
             children: <Widget>[
               RaisedButton(
                 onPressed: () async {
-                  var wallets = await WalletUtil.scanWallets();
-                  if (wallets.length > 0) {
+                  var wallet = WalletInheritedModel.of(context).activatedWallet;
+                  if (wallet != null) {
                     //修改第一个账户密码吧
-                    var wallet = wallets[0];
-                    print('-即将修改${wallet.keystore.fileName} 的密码');
-                    var success = await WalletUtil.changePassword(
-                        wallet: wallet, oldPassword: '111111', newPassword: "new password", name: '修改的钱包');
+                    print('-即将修改${wallet.wallet.keystore.fileName}');
+                    var success = await WalletUtil.updateWallet(
+                        wallet: wallet.wallet,
+                        password: '111111',
+//                        newPassword: "new password",
+                        name: '🤩钱包${Random().nextInt(1000)}');
 //                    var success = await WalletUtil.changePassword(
 //                        wallet: wallet, oldPassword: 'new password', newPassword: "111111", name: '修改的钱包');
                     if (success) {
-                      print('-修改密码成功');
-                      print('-最后成为${wallet.keystore.fileName}');
+                      print('-修改成功');
+                      print('-最后成为${wallet.wallet.keystore.name} ${wallet.wallet.keystore.fileName}');
                     }
                   }
                 },
-                child: Text('修改钱包密码'),
+                child: Text('修改钱包'),
               ),
               RaisedButton(
                 onPressed: () async {
@@ -498,8 +500,8 @@ class _WalletDemoState extends State<WalletDemo> {
                     //修改第一个账户密码吧
                     var wallet = wallets[0];
                     print('-即将修改${wallet.keystore.fileName} 的密码');
-                    var success = await WalletUtil.changePassword(
-                        wallet: wallet, oldPassword: '111111_wrong', newPassword: "new password", name: '修改的钱包');
+                    var success = await WalletUtil.updateWallet(
+                        wallet: wallet, password: '111111_wrong', newPassword: "new password", name: '修改的钱包');
                     if (success) {
                       print('-修改密码成功');
                       print('-最后成为${wallet.keystore.fileName}');

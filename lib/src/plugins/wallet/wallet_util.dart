@@ -99,14 +99,14 @@ class WalletUtil {
     return WalletChannel.exportMnemonic(fileName: fileName, password: password);
   }
 
-  static Future<bool> changePassword({
-    @required String oldPassword,
-    @required String newPassword,
+  static Future<bool> updateWallet({
+    @required String password,
+    String newPassword,
     @required Wallet wallet,
     String name,
   }) async {
-    bool result = await wallet.keystore.changePassword(
-      oldPassword: oldPassword,
+    bool result = await wallet.keystore.updateWallet(
+      password: password,
       newPassword: newPassword,
       name: name,
     );

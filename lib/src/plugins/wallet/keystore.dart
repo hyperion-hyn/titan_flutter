@@ -18,25 +18,23 @@ class KeyStore {
     return map;
   }
 
-  Future<bool> changePassword({
-    @required oldPassword,
-    @required newPassword,
+  Future<bool> updateWallet({
+    @required password,
+    newPassword,
     name,
   }) async {
-    try {
-      var newName = await WalletChannel.changeKeyStorePassword(
-        fileName: this.fileName,
-        oldPassword: oldPassword,
-        newPassword: newPassword,
-        name: name,
-      );
-      this.fileName = newName;
-      this.name = name;
-      return true;
-    } catch (e) {
-      logger.e(e);
+    if (newPassword == null) {
+      newPassword = password;
     }
-    return false;
+    var newName = await WalletChannel.updateWallet(
+      fileName: this.fileName,
+      oldPassword: password,
+      newPassword: newPassword,
+      name: name,
+    );
+    this.fileName = newName;
+    this.name = name;
+    return true;
   }
 
   KeyStore._({
