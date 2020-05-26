@@ -163,10 +163,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 
   Widget _item(ContractDelegatorItem item, bool isFirst) {
-    String showName = item.userName;
-    if (item.userName.isNotEmpty) {
-      showName = item.userName.characters.first;
-    }
      return InkWell(
       onTap: ()=> _pushTransactionDetailAction(item),
       child: Padding(
@@ -196,7 +192,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                       SizedBox(
 //                      height: 50,
 //                      width: 50,
-                        child: circleIconWidget(showName, isShowShape: false, address: item.userAddress)
+                        child: circleIconWidget(item.userName, isShowShape: false, address: item.userAddress)
                         ,
                       ),
                       SizedBox(
@@ -259,7 +255,10 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 
 }
 
-Widget circleIconWidget(String shortName, {bool isShowShape = true, String address = "#000000"}) {
+Widget circleIconWidget(String shortName, {bool isShowShape = true, String address = "#000000", double textSize = 0}) {
+  if (shortName.isNotEmpty) {
+    shortName = shortName.characters.first;
+  }
   String hexColor = address;
   if (address.length>6) {
     hexColor = "#"+address.substring(address.length-6);
@@ -283,7 +282,7 @@ Widget circleIconWidget(String shortName, {bool isShowShape = true, String addre
       child: Center(
         child: Text(
           shortName.toUpperCase(),
-          style: TextStyle(fontSize: 15, color: HexColor("#FFFFFF"), fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: textSize != 0 ? textSize : 15, color: HexColor("#FFFFFF"), fontWeight: FontWeight.w500),
         ),
       ),
     ),

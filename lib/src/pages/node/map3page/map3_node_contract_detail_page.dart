@@ -1065,13 +1065,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _delegateRecordItemWidget(ContractDelegateRecordItem item) {
-    String shortName = item.userName;
-    //print("item.userName:${item.userName}");
-
-    if (shortName.isNotEmpty) {
-      shortName = item.userName.characters.first;
-//      shortName = item.userName.substring(0, 1);
-    }
     String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
     var operaState = enumBillsOperaStateFromString(item.operaType);
     var recordState = enumBillsRecordStateFromString(item.state);
@@ -1095,7 +1088,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: circleIconWidget(shortName, address: item.userAddress),
+                    child: circleIconWidget(item.userName, address: item.userAddress),
                   ),
                   Flexible(
                     flex: 4,
