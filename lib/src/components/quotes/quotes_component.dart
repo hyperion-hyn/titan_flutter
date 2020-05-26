@@ -35,6 +35,7 @@ class _QuotesManager extends StatefulWidget {
 class _QuotesManagerState extends State<_QuotesManager> {
   QuotesModel _quotesModel;
   QuotesSign _quotesSign;
+
   GasPriceRecommend _gasPriceRecommend = GasPriceRecommend(
       safeLow: Decimal.fromInt(EthereumConst.LOW_SPEED),
       safeLowWait: 30,
@@ -45,12 +46,20 @@ class _QuotesManagerState extends State<_QuotesManager> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<QuotesCmpBloc, QuotesCmpState>(
+    return BlocListener<QuotesCmpBloc, QuotesCmpState>(
+    listener: (context, state) {
+      if (state is UpdatedQuotesSignState) {
+        _quotesSign = state.sign;
+      }
+    },
+    child: BlocBuilder<QuotesCmpBloc, QuotesCmpState>(
       builder: (ctx, state) {
         if (state is UpdatedQuotesState) {
+          print("!!!!!222 ${state.quoteModel.toString()} ${state.quoteModel.quotes[0].price}");
           _quotesModel = state.quoteModel;
         }
         if (state is UpdatedQuotesSignState) {
+          print("!!!!!000 ${state.sign}");
           _quotesSign = state.sign;
         }
         if (state is GasPriceState) {
@@ -65,7 +74,7 @@ class _QuotesManagerState extends State<_QuotesManager> {
           child: widget.child,
         );
       },
-    );
+    ));
   }
 }
 
@@ -85,9 +94,13 @@ class QuotesInheritedModel extends InheritedModel<QuotesAspect> {
   }) : super(key: key, child: child);
 
   ActiveQuoteVoAndSign activatedQuoteVoAndSign(String symbol) {
+    print("!!!!!666 $quotesModel $activeQuotesSign");
     if (quotesModel != null && activeQuotesSign != null) {
+      print("!!!!!333");
       for (var quote in quotesModel.quotes) {
+        print("!!!!!444 ${quote.symbol} ${quote.quote} ${activeQuotesSign.quote}");
         if (quote.symbol == symbol && quote.quote == activeQuotesSign.quote) {
+          print("!!!!!555 ${quote.symbol}");
           return ActiveQuoteVoAndSign(quoteVo: quote, sign: activeQuotesSign);
         }
       }

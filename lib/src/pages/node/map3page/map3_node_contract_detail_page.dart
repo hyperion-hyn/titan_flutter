@@ -8,13 +8,16 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
@@ -31,6 +34,7 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -42,6 +46,7 @@ import 'map3_node_create_wallet_page.dart';
 
 class Map3NodeContractDetailPage extends StatefulWidget {
   final int contractId;
+  TransactionInteractor transactionInteractor = Injector.of(Keys.rootKey.currentContext).transactionInteractor;
 
   Map3NodeContractDetailPage(this.contractId);
 
@@ -459,7 +464,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
     }
 
-
     if (_userDelegateState != null && _isDelegated) {
       switch (_userDelegateState) {
         case UserDelegateState.HALFDUE:
@@ -468,7 +472,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
 
         case UserDelegateState.PENDING:
-
           BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
           switch (billsRecordState) {
             case BillsRecordState.PRE_CREATE:
@@ -477,7 +480,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               break;
 
             case BillsRecordState.FAIL:
-
               _visible = _isUserDelegatable;
               _actionTitle = S.of(context).reset_input_contract;
               break;
@@ -597,7 +599,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () async => !_isTransferring,
       child: Scaffold(
@@ -706,9 +707,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             disabledTextColor: Colors.white,
             color: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
-                side: BorderSide(color: _isTransferring?Colors.grey[600]:Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(0)),
-            child: Text(_isTransferring ? _actingTitle : _lastActionTitle, style: TextStyle(fontSize: 16, color: Colors.white70)),
-            onPressed: !_isTransferring?onPressed:null,
+                side: BorderSide(color: _isTransferring ? Colors.grey[600] : Theme.of(context).primaryColor),
+                borderRadius: BorderRadius.circular(0)),
+            child: Text(_isTransferring ? _actingTitle : _lastActionTitle,
+                style: TextStyle(fontSize: 16, color: Colors.white70)),
+            onPressed: !_isTransferring ? onPressed : null,
           ),
         ),
       ),
@@ -925,9 +928,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 Spacer(),
                 if (_isShowLaunchDate)
                   Text(
-                    S
-                        .of(context)
-                        .launcher_time_left(FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft)),
+                    S.of(context).launcher_time_left(
+                        FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft)),
                     style: TextStyles.textC999S14,
                   ),
               ],
@@ -1071,6 +1073,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     var operaState = enumBillsOperaStateFromString(item.operaType);
     var recordState = enumBillsRecordStateFromString(item.state);
     var isPengding = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
+    var isWithdrawDelegatePengding = operaState == BillsOperaState.DELEGATE && recordState == BillsRecordState.PRE_CREATE || isPengding;
 
     return Container(
       color: Colors.white,
@@ -1141,7 +1144,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                           height: 8.0,
                         ),
                         Text(FormatUtil.formatDate(item.createAt, isSecond: true),
-                            style: TextStyle(fontSize: 10, color: HexColor("#999999")))
+                            style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
+                        if(_delegateRecordList.last != item && (_wallet?.getEthAccount()?.address ?? "") == item.userAddress
+                          && isWithdrawDelegatePengding)
+                          speedTransactionView(item)
                       ],
                     ),
                   ),
@@ -1239,7 +1245,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       _delegateRecordList = [];
 
       List<ContractDelegateRecordItem> tempMemberList =
-      await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1260,7 +1266,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     try {
       _currentPage++;
       List<ContractDelegateRecordItem> tempMemberList =
-      await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1367,14 +1373,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             int delegatorCount = _contractDetailItem.delegatorCount;
             if (delegatorCount <= 21) {
               gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit21;
-            }
-            else if (delegatorCount > 21 && delegatorCount <= 41) {
+            } else if (delegatorCount > 21 && delegatorCount <= 41) {
               gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit41;
-            }
-            else if (delegatorCount > 41 && delegatorCount <= 61) {
+            } else if (delegatorCount > 41 && delegatorCount <= 61) {
               gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit61;
-            }
-            else {
+            } else {
               gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit81;
             }
             print("[detail]  delegatorCount:$delegatorCount, gasLimit:$gasLimit");
@@ -1396,7 +1399,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             });
           }
         }
-
       } catch (_) {
         logger.e(_);
 
@@ -1429,9 +1431,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
-                title: "",
-              )));
+                    initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
+                    title: "",
+                  )));
     }
   }
 
@@ -1443,9 +1445,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: url,
-                title: "",
-              )));
+                    initUrl: url,
+                    title: "",
+                  )));
     }
   }
 
@@ -1478,7 +1480,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   _nextAction() {
-
     final result = ModalRoute.of(context).settings?.arguments;
 
     print("[detai] _next action, result:$result");
@@ -1492,5 +1493,54 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         });
       }
     }
+  }
+
+  Widget speedTransactionView(ContractDelegateRecordItem recordItem) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        SizedBox(
+          width: 50,
+          child: FlatButton(
+              padding: EdgeInsets.all(0),
+              child: Text("加速"),
+              onPressed: () {
+                UiUtil.showDialogWidget(context,
+                    content: Text("确认提交该操作无法保证能够成功加速您的原始交易。如果加速成功，您将被收取更高的交易费用。"),
+                    actions: [
+                      FlatButton(
+                          child: Text('确认'),
+                          onPressed: () async {
+                            BillsOperaState operaState = enumBillsOperaStateFromString(_contractDetailItem.lastRecord.operaType);
+                            if(operaState == BillsOperaState.WITHDRAW){
+                              await widget.transactionInteractor.speedMap3Withdraw(recordItem.txHash, () {
+                                Fluttertoast.showToast(
+                                    msg: "已发送加速操作，请稍后刷新。", toastLength: Toast.LENGTH_LONG);
+                              }, (exception) {
+                                Fluttertoast.showToast(
+                                    msg: "交易即将完成，无法加速。", toastLength: Toast.LENGTH_LONG);
+                              });
+                            }else{
+                              await widget.transactionInteractor.speedMap3Delegate("0x1bc34ecbd3faf22e1874d1ac1cbbd3db4d289288ac3792a29331ba508f325f14", recordItem.txHash, () {
+                                Fluttertoast.showToast(
+                                    msg: "已发送加速操作，请稍后刷新。", toastLength: Toast.LENGTH_LONG);
+                              }, (exception) {
+                                Fluttertoast.showToast(
+                                    msg: "交易即将完成，无法加速。", toastLength: Toast.LENGTH_LONG);
+                              });
+                            }
+//                                            onWidgetRefreshCallback();
+                            Navigator.pop(context);
+                          }),
+                      FlatButton(
+                          child: Text('取消'),
+                          onPressed: () async {
+                            Navigator.pop(context);
+                          })
+                    ]);
+              }),
+        )
+      ],
+    );
   }
 }

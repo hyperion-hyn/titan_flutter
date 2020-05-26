@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -241,6 +242,7 @@ class ShowWalletView extends StatelessWidget {
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
     var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
+    print("!!!!!11111 ${coin.symbol} ${symbolQuote?.quoteVo?.price}");
     var isNetworkUrl = coin.logo.contains("http");
     return Padding(
       padding: const EdgeInsets.all(8.0),

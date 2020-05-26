@@ -28,8 +28,8 @@ class WalletDemo extends StatefulWidget {
 }
 
 class _WalletDemoState extends State<WalletDemo> {
-
   var _mnemonic = "";
+  var currentNonce = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -518,8 +518,8 @@ class _WalletDemoState extends State<WalletDemo> {
                   if (wallets.length > 0) {
                     var wallet = wallets[0];
                     try {
-                      var prvKey = await WalletUtil.exportPrivateKey(
-                          fileName: wallet.keystore.fileName, password: '111111');
+                      var prvKey =
+                          await WalletUtil.exportPrivateKey(fileName: wallet.keystore.fileName, password: '111111');
                       logger.i('your prvKey is: $prvKey');
                     } catch (e) {
                       logger.e(e);
@@ -555,8 +555,8 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     try {
                       if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
-                        var mnemonic = await WalletUtil.exportMnemonic(
-                            fileName: wallet.keystore.fileName, password: '111111');
+                        var mnemonic =
+                            await WalletUtil.exportMnemonic(fileName: wallet.keystore.fileName, password: '111111');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
                         print('-不是TrustWallet钱包，不支持导出助记词');
@@ -633,14 +633,12 @@ class _WalletDemoState extends State<WalletDemo> {
 //                  }
 //                }
 
-                var count =
-                    await client.getTransactionCount(EthereumAddress.fromHex(ethAddress));
+                var count = await client.getTransactionCount(EthereumAddress.fromHex(ethAddress));
                 logger.i('pending nonce is $count');
               }
             },
             child: Text('查看nonce'),
           ),
-
           RaisedButton(
             onPressed: () async {
               var gas = await WalletUtil.ethGasPrice();
@@ -733,6 +731,146 @@ class _WalletDemoState extends State<WalletDemo> {
               }
             },
             child: Text('HYN转账'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                if (activeWallet != null) {
+                  var password = '111111';
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.001);
+
+                  var toAddress = '0x04C2156b0aE0F028acB0a341496887F717CFe157';
+
+                  int nonce = await WalletUtil.getWeb3Client()
+                      .getTransactionCount(EthereumAddress.fromHex(activeWallet.accounts[0].address));
+                  currentNonce= nonce;
+                  logger.i('ETH交易已提交，交易nonce $nonce');
+                  var txHash = await activeWallet.sendEthTransaction(
+                      password: password,
+                      value: amount,
+                      toAddress: toAddress,
+                      gasPrice: BigInt.from(0.001 * TokenUnit.G_WEI),
+                      nonce: nonce);
+                  logger.i('ETH交易已提交，交易hash $txHash');
+                }
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('ETH nonce 一次慢速转账'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                if (activeWallet != null) {
+                  var password = '111111';
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.001);
+
+                  var toAddress = '0x04C2156b0aE0F028acB0a341496887F717CFe157';
+
+                  int nonce = await WalletUtil.getWeb3Client()
+                      .getTransactionCount(EthereumAddress.fromHex(activeWallet.accounts[0].address)) + 1;
+                  currentNonce= nonce;
+                  logger.i('ETH交易已提交，交易nonce $nonce');
+                  var txHash = await activeWallet.sendEthTransaction(
+                      password: password,
+                      value: amount,
+                      toAddress: toAddress,
+                      gasPrice: BigInt.from(30 * TokenUnit.G_WEI),
+                      nonce: nonce);
+                  logger.i('ETH交易已提交，交易hash $txHash');
+                }
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('ETH nonce 二次快速转账'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                if (activeWallet != null) {
+                  var password = '111111';
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.001);
+
+                  var toAddress = '0x04C2156b0aE0F028acB0a341496887F717CFe157';
+
+                  int nonce = await WalletUtil.getWeb3Client()
+                      .getTransactionCount(EthereumAddress.fromHex(activeWallet.accounts[0].address));
+                  logger.i('ETH交易已提交，交易nonce $nonce');
+                  var txHash = await activeWallet.sendEthTransaction(
+                      password: password,
+                      value: amount,
+                      toAddress: toAddress,
+                      gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
+                      nonce: nonce);
+                  logger.i('ETH交易已提交，交易hash $txHash');
+                }
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('ETH nonce 重置转账'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                if (activeWallet != null) {
+                  var password = '111111';
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0);
+
+                  var toAddress = '0x04C2156b0aE0F028acB0a341496887F717CFe157';
+
+                  int nonce = await WalletUtil.getWeb3Client()
+                      .getTransactionCount(EthereumAddress.fromHex(activeWallet.accounts[0].address));
+                  logger.i('ETH交易已提交，交易nonce $nonce');
+                  var txHash = await activeWallet.sendEthTransaction(
+                      password: password,
+                      value: amount,
+                      toAddress: toAddress,
+                      gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
+                      nonce: currentNonce);
+                  logger.i('ETH交易已提交，交易hash $txHash');
+                }
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('ETH nonce 取消转账'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                if (activeWallet != null) {
+                  var password = '111111';
+                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 16);
+
+                  var toAddress = '0x04C2156b0aE0F028acB0a341496887F717CFe157';
+//                  var txHash = await activeWallet.sendEthTransaction(
+//                      password: password,
+//                      value: amount,
+//                      toAddress: toAddress,
+//                      gasPrice: BigInt.from(0.001 * TokenUnit.G_WEI));
+
+                  final txHash = await activeWallet.sendErc20Transaction(
+                    contractAddress: "0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6",
+                    password: password,
+                    gasPrice: BigInt.from(10 * TokenUnit.G_WEI),
+                    value: amount,
+                    toAddress: toAddress,
+                  );
+                  logger.i('ETH交易已提交，交易hash $txHash');
+                }
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('ETH nonce 多次慢速转账'),
           ),
         ],
       ),

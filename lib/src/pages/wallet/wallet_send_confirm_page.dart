@@ -426,6 +426,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               activatedWallet.wallet);
         }
 
+
         Application.router.navigateTo(context, Routes.confirm_success_papge);
 //        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
 //        Routes.popUntilCachedEntryRouteName(context, true);

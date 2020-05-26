@@ -64,6 +64,7 @@ class _WalletManagerState extends State<_WalletManager> {
           if (state is UpdatedQuotesState) {
             _quoteModel = state.quoteModel;
           } else if (state is UpdatedQuotesSignState) {
+            print("!!!!!00011 ${state.sign}");
             _quotesSign = state.sign;
           }
           if (_activatedWallet != null) {

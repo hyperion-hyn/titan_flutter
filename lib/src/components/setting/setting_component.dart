@@ -37,7 +37,7 @@ class _SettingManager extends StatefulWidget {
 
 class _SettingManagerState extends BaseState<_SettingManager> {
   LanguageModel languageModel;
-  AreaModel areaModel;
+  AreaModel areaModel;//
   SystemConfigEntity systemConfigEntity = SystemConfigEntity.def();
 
   @override

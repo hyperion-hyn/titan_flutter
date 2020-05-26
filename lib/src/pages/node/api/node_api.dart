@@ -201,8 +201,9 @@ class NodeApi {
     var walletName = wallet.keystore.name;
 
     final client = WalletUtil.getWeb3Client();
-    var count =
-        await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address));
+//    var count =
+//        await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address));
+    int nonce = await wallet.getCurrentWalletNonce();
 
     //approve
     var approveHex = await wallet.sendApproveErc20Token(
@@ -212,7 +213,8 @@ class NodeApi {
       password: password,
       gasPrice: BigInt.from(gasPrice),
       gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20ApproveGasLimit,
-      nonce: count,
+      nonce: nonce,
+      isStore: true
     );
     print('approveHex is: $approveHex');
 
@@ -222,7 +224,7 @@ class NodeApi {
       gasPrice: BigInt.from(gasPrice),
       gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.delegateMap3NodeGasLimit,
       password: password,
-      nonce: count + 1,
+      nonce: nonce + 1,
     );
     print('joinHex is: $joinHex');
 

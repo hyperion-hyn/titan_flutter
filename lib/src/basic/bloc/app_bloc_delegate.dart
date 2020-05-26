@@ -22,6 +22,6 @@ class AppBlocDelegate extends BlocDelegate {
     if (env.buildType == BuildType.PROD) {
       FlutterBugly.uploadException(message: error.toString(), detail: stacktrace?.toString() ?? error.toString());
     }
-    logger.e(error);
+    logger.e("[bloc delegate onError] = $error");
   }
 }
