@@ -16,6 +16,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
+import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/setting_on_launcher/setting_on_launcher_page.dart';
 
 class RootPageControlComponent extends StatefulWidget {
@@ -87,6 +88,7 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
       providers: [
         BlocProvider<ScaffoldMapBloc>(create: (context) => ScaffoldMapBloc(context)),
         BlocProvider<AppTabBarBloc>(create: (context) => AppTabBarBloc()),
+        BlocProvider<DiscoverBloc>(create: (context) => DiscoverBloc(context)),
       ],
       child: BlocBuilder<RootPageControlBloc, RootPageControlState>(
         builder: (ctx, state) {

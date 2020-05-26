@@ -30,10 +30,22 @@ class EmbassyPoi implements IDMapPoi {
   factory EmbassyPoi.fromMapFeature(Map<String, dynamic> feature) {
     EmbassyPoi poi = EmbassyPoi();
 
-    poi.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
-    var lat = double.parse(feature["properties"]["lat"]);
-    var lon = double.parse(feature["properties"]["lon"]);
-    poi.latLng = LatLng(lat, lon);
+    print('[EmbassyPoi] --> map:$feature');
+
+    var type = feature["geometry"]["type"];
+    var coordinates = feature["geometry"]["coordinates"];
+    print('[EmbassyPoi] --> type:$type, coordinates:$coordinates');
+
+    if (coordinates is List) {
+      var lat = coordinates[1];
+      var lon = coordinates[0];
+      poi.latLng = LatLng(lat, lon);
+    } else {
+      var lat = double.parse(feature["properties"]["lat"]);
+      var lon = double.parse(feature["properties"]["lon"]);
+      poi.latLng = LatLng(lat, lon);
+    }
+
     poi.name = feature["properties"]["name"];
     poi.telephone = feature["properties"]["telephone"];
     poi.department = feature["properties"]["department"];

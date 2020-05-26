@@ -20,6 +20,7 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
+import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
@@ -71,8 +72,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 //    TitanPlugin.getClipboardData();
     getClipboardData();
 
-    BlocProvider.of<SettingBloc>(context).listen((state){
-      if(state is UpdatedSettingState){
+    BlocProvider.of<SettingBloc>(context).listen((state) {
+      if (state is UpdatedSettingState) {
         Future.delayed(Duration(milliseconds: 2000)).then((value) {
           MemoryCache.setContractErrorStr();
         });
@@ -114,11 +115,14 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
+
+//    DMapCreationModel model = DMapDefine.kMapList["embassy"];
+//    createDAppWidgetFunction = model.createDAppWidgetFunction;
   }
 
   void getClipboardData() async {
     var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-    if(clipboardData != null && clipboardData.text.contains("titan://contract/detail")){
+    if (clipboardData != null && clipboardData.text.contains("titan://contract/detail")) {
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
       print("!!!!! " + clipboardData.text + " key= " + shareUser);
@@ -135,11 +139,11 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
         context,
         MaterialPageRoute(
             builder: (context) => InfoDetailPage(
-              id: 0,
-              url: url,
-              title: title,
-              content: content,
-            )));
+                  id: 0,
+                  url: url,
+                  title: title,
+                  content: content,
+                )));
   }
 
   void _urlLauncherAction(Map values) {
@@ -148,13 +152,13 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     var content = values["content"];
     print('[Home_page] _urlLauncherAction, values:${values}');
     if (type == "contract" && subType == "detail") {
-
       var contractId = content["contractId"];
       var key = content["key"];
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
       Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
-    }/*else if(type == "save" && subType == "shareUser"){
+    }
+    /*else if(type == "save" && subType == "shareUser"){
       var shareUser = content["shareUserValue"];
       MemoryCache.shareKey = shareUser;
       print("shareuser clipboard $shareUser");
@@ -166,6 +170,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     _clearBadgeSubcription.cancel();
     super.dispose();
   }
+
+  CreateDAppWidgetFunction createDAppWidgetFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -188,6 +194,26 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
               if (state is ChangeTabBarItemState) {
                 this.setState(() {
                   this._currentTabIndex = state.index;
+                });
+              }
+            },
+          ),
+          BlocListener<DiscoverBloc, DiscoverState>(
+            listener: (context, state) {
+              if (state is ActiveDMapState) {
+                DMapCreationModel model = DMapDefine.kMapList[state.name];
+                print("[app_Dmap] ---1");
+
+                if (model != null) {
+                  this.setState(() {
+                    print("[app_Dmap] ---2 - 2");
+                    createDAppWidgetFunction = model.createDAppWidgetFunction;
+                  });
+                }
+              } else  {
+                this.setState(() {
+                  print("[app_Dmap] ---2 - 3");
+                  createDAppWidgetFunction = null;
                 });
               }
             },
@@ -250,7 +276,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                       child: _getTabView(_currentTabIndex),
                     ),
                     bottomNavigationBar(),
-                    
+                    if (createDAppWidgetFunction != null) createDAppWidgetFunction(context),
+
                     if (_isShowAnnounceDialog && state is CheckNewAnnouncementState)
                       AnnouncementDialog(state.announcement, () {
                         _isShowAnnounceDialog = false;
@@ -409,7 +436,6 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 //      ),
 //    );
 
-
     switch (index) {
       case 1:
         return WalletPage();
@@ -419,11 +445,18 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
       case 3:
         return InformationPage();
+//        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage());
 
       case 4:
         return MyPage();
     }
-    return BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey));
-  }
 
+    if (createDAppWidgetFunction != null) {
+      return createDAppWidgetFunction(context);
+    } else {
+      return BlocProvider(
+          create: (ctx) => HomeBloc(ctx),
+          child: HomePage(key: Keys.homePageKey));
+    }
+  }
 }

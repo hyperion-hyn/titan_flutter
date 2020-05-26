@@ -749,15 +749,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-//                Row(
-//                  children: <Widget>[
-//                    Container(
-//                        width: 100,
-//                        child:
-//                            Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-//                    new Text("${_contractNodeItem.contract.nodeName}", style: TextStyles.textC333S14)
-//                  ],
-//                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Row(
