@@ -61,12 +61,15 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      children: <Widget>[
-        Expanded(child: _buildWalletView(context)),
-        //hyn quotes view
-        hynQuotesView(),
-      ],
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Expanded(child: _buildWalletView(context)),
+          //hyn quotes view
+          hynQuotesView(),
+        ],
+      ),
     );
   }
 

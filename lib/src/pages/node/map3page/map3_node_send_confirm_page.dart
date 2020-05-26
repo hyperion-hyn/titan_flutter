@@ -30,6 +30,7 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:titan/src/widget/gas_input_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 
 import 'map3_node_create_contract_page.dart';
@@ -111,6 +112,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
 
     var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
+
+    print("[confirm] gasPriceEstimate:$gasPriceEstimate, ethQuotePrice:$ethQuotePrice");
 
     return WillPopScope(
       onWillPop: () async {
@@ -226,6 +229,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    // todo: test_jison_0520_close
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
@@ -359,6 +363,9 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                         ],
                       ),
                     ),
+                    /*GasInputWidget(currentEthPrice: ethQuotePrice, callback: (double gasPrice, double gasPriceLimit){
+                      print("[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
+                    }),*/
                     Text("PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf")))
                   ],
                 ),

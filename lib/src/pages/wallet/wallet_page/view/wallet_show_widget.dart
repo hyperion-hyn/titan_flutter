@@ -33,7 +33,8 @@ class ShowWalletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(16, 54, 16, 0),
+//        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 44),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,

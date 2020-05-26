@@ -123,7 +123,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
       child: Container(
         color: Colors.white,
         margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
+        padding: const EdgeInsets.only(left: 16.0, right: 16, top: 21, bottom: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -131,13 +131,13 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Image.asset(
-                  "res/drawable/ic_map3_node_item_contract.png",
+                  "res/drawable/ic_map3_node_item_2.png",
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,
                 ),
                 SizedBox(
-                  width: 6,
+                  width: 8,
                 ),
                 Flexible(
                   child: Column(
@@ -154,13 +154,13 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                         child: Row(
                           children: <Widget>[
                             Text(
-                                S.of(context).highest +
+                                "首期抵押" +
                                     " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
                                     S.of(context).ten_thousand,
                                 style: TextStyles.textC99000000S13,
                                 maxLines: 1,
                                 softWrap: true),
-                            Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                            Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                             Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
                           ],
                         ),
@@ -182,9 +182,9 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
             ),
             Row(
               children: <Widget>[
-                Expanded(child: Text("")),
+                Expanded(child: Text(nodeItem.durationType == 2?"满90天释放50%奖励":"", style: TextStyle(fontSize: 12, color: HexColor("9A9A9A")),)),
                 SizedBox(
-                  height: 24,
+                  height: 30,
                   width: 92,
                   child: FlatButton(
                     //color: DefaultColors.colorffdb58,

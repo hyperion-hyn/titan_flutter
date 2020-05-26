@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
@@ -22,6 +23,9 @@ import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_tabs_page.dart';
+import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/routes.dart';
 
@@ -330,8 +334,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     tabItem(Icons.home, S.of(context).home_page, 0),
+                    tabItem(Icons.explore, "节点", 2),
                     tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1),
-                    tabItem(Icons.explore, S.of(context).discover, 2),
                     tabItem(Icons.description, S.of(context).information, 3),
                     tabItem(Icons.person, S.of(context).my_page, 4),
                   ],
@@ -405,40 +409,21 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 //      ),
 //    );
 
+
     switch (index) {
       case 1:
-        return WalletTabsPage();
+        return WalletPage();
+
       case 2:
-        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage(key: _discoverKey,));
+        return Map3NodeTabsPage();
+
       case 3:
         return InformationPage();
+
       case 4:
         return MyPage();
     }
     return BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey));
   }
 
-//  Widget home() {
-//    return Container(
-//      color: Colors.red,
-//      child: Center(
-//        child: RaisedButton(
-//          onPressed: () {
-//            _isShowBottomNavigationBar = !_isShowBottomNavigationBar;
-//            if (_isShowBottomNavigationBar) {
-//              //show
-//              _bottomBarPositionAnimationController.animateBack(0, curve: Curves.easeInQuart);
-//            } else {
-//              //hide
-//              _bottomBarPositionAnimationController.animateTo(1, curve: Curves.easeOutQuint);
-//            }
-////            setState(() {
-////              _isShowBottomNavigationBar = !_isShowBottomNavigationBar;
-////            });
-//          },
-//          child: Text('hhh'),
-//        ),
-//      ),
-//    );
-//  }
 }

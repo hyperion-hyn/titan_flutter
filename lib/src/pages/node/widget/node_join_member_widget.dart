@@ -12,8 +12,7 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/routes.dart';
+import 'package:characters/characters.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -166,10 +165,9 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   Widget _item(ContractDelegatorItem item, bool isFirst) {
     String showName = item.userName;
     if (item.userName.isNotEmpty) {
-      showName = item.userName.substring(0, 1);
+      showName = item.userName.characters.first;
     }
-
-    return InkWell(
+     return InkWell(
       onTap: ()=> _pushTransactionDetailAction(item),
       child: Padding(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),
