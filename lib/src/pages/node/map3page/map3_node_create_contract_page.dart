@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:decimal/decimal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -200,9 +201,14 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             _nodeIntroductionWidget(),
             SizedBox(height: 8),
             getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
-            SizedBox(height: 16),
-            _tipsWidget(),
-          ])),
+            SizedBox(height: 8),
+            _autoRenewalWidget(),
+            SizedBox(height: 8),
+            _managerSpendWidget(),
+            SizedBox(height: 8),
+            _nodePronounceWidget(),
+                SizedBox(height: 18),
+              ])),
         ),
         _confirmButtonWidget(),
       ],
@@ -221,8 +227,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               children: <Widget>[
                 Container(
                     width: 100,
-                    child: Text(S.of(context).node_version,
-                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                    child:
+                        Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                 Text("${contractItem.contract.nodeName}", style: TextStyles.textC333S14),
               ],
             ),
@@ -258,8 +264,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               children: <Widget>[
                 Container(
                     width: 100,
-                    child: Text(S.of(context).node_location,
-                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                    child:
+                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -277,6 +283,204 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  bool _autoRenewal = true;
+  Widget _autoRenewalWidget() {
+    return Container(
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "期满自动续约",
+              style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+            ),
+          ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Transform.scale(
+              scale: 0.8,
+              child: CupertinoSwitch(
+                value: _autoRenewal,
+                activeColor: Theme.of(context).primaryColor,
+                onChanged: (value) {
+                  setState(() {
+                    _autoRenewal = value;
+                  });
+                  print("[AutoRenewalWidget] --> value:$value");
+                },
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  int _managerSpendCount = 20;
+  Widget _managerSpendWidget() {
+    return Container(
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: RichText(
+              text: TextSpan(
+                  text: "管理费设置",
+                  style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                  children: [
+                    TextSpan(
+                      text: "（1%-20%）",
+                      style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                    )
+                  ]),
+            ),
+          ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _managerSpendCount--;
+                      if (_managerSpendCount < 1) {
+                        _managerSpendCount = 1;
+                      }
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        child: Text(
+                          "-",
+                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: HexColor("#F2F2F2"),
+                        borderRadius: BorderRadius.circular(3.0),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                      child: Text(
+                        "$_managerSpendCount",
+                        style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      color: HexColor("#FFFFFF"),
+                      border: Border.all(color: HexColor("#DEDEDE"), width: 0.5),
+                      borderRadius: BorderRadius.circular(13.0),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Container(
+                    child: Text(
+                      "%",
+                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _managerSpendCount++;
+                      if (_managerSpendCount > 20) {
+                        _managerSpendCount = 20;
+                      }
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        child: Text(
+                          "+",
+                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: HexColor("#F2F2F2"),
+                        borderRadius: BorderRadius.circular(3.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  TextEditingController _pronounceTextController = TextEditingController();
+  Widget _nodePronounceWidget() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  "节点宣言",
+                  style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                ),
+              ),
+            ],
+          ),
+          TextFormField(
+              controller: _pronounceTextController,
+              keyboardType: TextInputType.text,
+              maxLength: 200,
+              maxLines: 6,
+              style: TextStyle(color: HexColor("#333333"), fontSize: 14),
+              decoration: InputDecoration(
+                hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 14),
+                //labelStyle: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                hintText: "大家快来参与我的节点吧，收益高高！",
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              validator: (textStr) {
+                if (textStr.length == 0) {
+                  return "大家快来参与我的节点吧，收益高高！";
+                }  {
+                  return null;
+                }
+              },
+            onChanged: (value) {
+              print("[NodePronounce] value:$value");
+            },
+          ),
+
         ],
       ),
     );
@@ -404,7 +608,7 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, bottom: 15, right: 8),
+          padding: const EdgeInsets.only(left: 16.0, bottom: 22, right: 8),
           child: Row(
             children: <Widget>[
               Padding(
@@ -420,7 +624,7 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
           ),
         ),
         Container(
-            padding: const EdgeInsets.only(left: 15.0, right: 30, bottom: 10),
+            padding: const EdgeInsets.only(left: 16.0, right: 36, bottom: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -432,9 +636,10 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                       style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
                     ),
                     SizedBox(
-                      width: 11,
+                      width: 12,
                     ),
-                    Expanded(
+                    Flexible(
+                      flex: 1,
                       child: Form(
                         key: formKey,
                         child: TextFormField(
@@ -442,10 +647,21 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                             keyboardType: TextInputType.number,
                             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                             decoration: InputDecoration(
-                              hintStyle: TextStyles.textC9b9b9bS14,
+                              /*filled: true,
+                              fillColor: HexColor("#F2F2F2"),
+                              contentPadding: const EdgeInsets.only(left: 24.0),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: HexColor("#F2F2F2")),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: HexColor("#F2F2F2")),
+                                borderRadius: BorderRadius.circular(30),
+                              ),*/
+                              hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
                               labelStyle: TextStyles.textC333S14,
                               hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
-//                              border: InputBorder.none,
+                              //border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                             ),
                             validator: (textStr) {
                               if (textStr.length == 0) {
@@ -462,53 +678,36 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                               } else {
                                 return null;
                               }
-                            }),
+                            },
+                        ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: 17,
+                  height: 16,
                 ),
                 if (!isJoin && suggestList.length == 3)
                   Padding(
-                    padding: const EdgeInsets.only(left: 49.0),
+                    padding: const EdgeInsets.only(left: 49.0, bottom: 18),
                     child: Row(
-                      children: <Widget>[
-                        InkWell(
+                      children: [0, 0.5, 1, 0.5, 2].map((value) {
+                        if (value == 0.5) {
+                          return SizedBox(width: 16);
+                        }
+
+                        return InkWell(
                           child: Container(
-                            color: Color(0xFFFFF9E9),
+                            color: HexColor("#1FB9C7").withOpacity(0.08),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text(suggestList[0].toString(), style: TextStyle(fontSize: 12)),
+                            child: Text(suggestList[value].toString(),
+                                style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
                           ),
                           onTap: () {
-                            textEditingController.text = suggestList[0].toString();
+                            textEditingController.text = suggestList[value].toString();
                           },
-                        ),
-                        SizedBox(width: 16),
-                        InkWell(
-                          child: Container(
-                            color: Color(0xFFFFF9E9),
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text(suggestList[1].toString(), style: TextStyle(fontSize: 12)),
-                          ),
-                          onTap: () {
-                            textEditingController.text = suggestList[1].toString();
-                          },
-                        ),
-                        SizedBox(width: 16),
-                        InkWell(
-                          child: Container(
-                            color: Color(0xFFFFF9E9),
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text(suggestList[2].toString(), style: TextStyle(fontSize: 12)),
-                          ),
-                          onTap: () {
-//                            onPressFunction(suggestList[2].toString());
-                            textEditingController.text = suggestList[2].toString();
-                          },
-                        ),
-                      ],
+                        );
+                      }).toList(),
                     ),
                   ),
                 Row(
