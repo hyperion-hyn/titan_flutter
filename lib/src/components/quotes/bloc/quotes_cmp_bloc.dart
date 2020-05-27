@@ -45,6 +45,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
         }
       }
     } else if (event is UpdateQuotesSignEvent) {
+      print("!!!!!0000 ${event.sign}");
       yield UpdatedQuotesSignState(sign: event.sign);
     } else if (event is UpdateGasPriceEvent) {
       yield GasPriceState(status: Status.loading);
@@ -58,8 +59,10 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
             average: parseGasPriceToBigIntWei(response['fast']),
 //            avgWait: response['avgWait'],
             avgWait: response['fastWait'],
-            safeLow: parseGasPriceToBigIntWei(response['safeLow']),
-            safeLowWait: response['safeLowWait']);
+//            safeLow: parseGasPriceToBigIntWei(response['safeLow']),
+//            safeLowWait: response['safeLowWait']);
+            safeLow: parseGasPriceToBigIntWei(response['average']),
+            safeLowWait: response['avgWait']);
         yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
       } catch (e) {
         logger.e(e);

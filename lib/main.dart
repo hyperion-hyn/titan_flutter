@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/data/db/transfer_history_dao.dart';
+import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/global.dart';
 
 import 'env.dart';
@@ -27,8 +29,10 @@ void main() {
   //init injector
   Api api = Api();
   SearchHistoryDao searchDao = SearchHistoryDao();
-  Repository repository = Repository(api: api, searchHistoryDao: searchDao);
+  TransferHistoryDao transferHistoryDao = TransferHistoryDao();
+  Repository repository = Repository(api: api, searchHistoryDao: searchDao, transferHistoryDao: transferHistoryDao);
   SearchInteractor searchInteractor = SearchInteractor(repository);
+  TransactionInteractor transactionInteractor = TransactionInteractor(repository);
 
   BlocSupervisor.delegate = AppBlocDelegate();
 
@@ -44,11 +48,12 @@ void main() {
       child: App(),
       repository: repository,
       searchInteractor: searchInteractor,
+      transactionInteractor: transactionInteractor,
 //      mapStore: ScaffoldMapStore(),
     )),
     debugUpload: env.buildType == BuildType.PROD,
     handler: (FlutterErrorDetails detail) {
-      print(detail.toString());
+      print("main exception ${detail.toString()}");
       logger.e(detail.exception?.message, detail.exception, detail.stack);
     }
   );

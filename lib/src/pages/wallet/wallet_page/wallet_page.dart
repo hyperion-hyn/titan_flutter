@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,8 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -78,13 +81,23 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
           enablePullUp: false,
           onRefresh: () async {
             //update quotes
+            var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+            QuotesSign quotesSign =
+            quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
+            print("!!!!!999$quotesSign");
+            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
             BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
             //update all coin balance
             BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
 
             await Future.delayed(Duration(milliseconds: 700));
 
-            loadDataBloc.add(RefreshSuccessEvent());
+            if (mounted) {
+              print("!!!!!11111");
+              setState(() {
+                loadDataBloc.add(RefreshSuccessEvent());
+              });
+            }
           },
           child: SingleChildScrollView(
               scrollDirection: Axis.vertical, child: ShowWalletView(activatedWalletVo, loadDataBloc)));

@@ -1,15 +1,22 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/setting/system_config_entity.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/domain/transaction_interactor.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
@@ -22,6 +29,7 @@ class Wallet {
   ///activated account of this wallet,  btc, eth etc.
   List<Account> accounts;
   KeyStore keystore;
+  TransactionInteractor transactionInteractor = Injector.of(Keys.rootKey.currentContext).transactionInteractor;
 
   Wallet({this.keystore, this.accounts});
 
@@ -97,7 +105,8 @@ class Wallet {
     String data,
   }) async {
     var account = getEthAccount();
-    SystemConfigEntity systemConfigEntity = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity;
+    SystemConfigEntity systemConfigEntity =
+        SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity;
     if (account != null) {
       if (gasLimit == null) {
         if (data == null) {
@@ -131,6 +140,20 @@ class Wallet {
     return BigInt.from(0);
   }
 
+  Future<int> getCurrentWalletNonce({int nonce}) async {
+    if (nonce == null) {
+      WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      String fromAddress = walletVo.wallet.getEthAccount().address;
+      nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress));
+      String localNonce = await transactionInteractor.getTransactionDBNonce(fromAddress);
+      if (localNonce != null && int.parse(localNonce) >= nonce) {
+        nonce = int.parse(localNonce) + 1;
+      }
+    }
+    print("!!!!!nonce = $nonce");
+    return nonce;
+  }
+
   Future<String> sendEthTransaction({
     String password,
     String toAddress,
@@ -138,10 +161,13 @@ class Wallet {
     BigInt gasPrice,
     int nonce,
     int gasLimit = 0,
+    int id,
   }) async {
-    if(gasLimit == 0){
+    if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
+    nonce = await getCurrentWalletNonce(nonce: nonce);
+
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
     final credentials = await client.credentialsFromPrivateKey(privateKey);
@@ -156,6 +182,10 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+    await transactionInteractor.insertTransactionDB(
+        txHash, password, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce);
+
     return txHash;
   }
 
@@ -167,15 +197,18 @@ class Wallet {
     BigInt gasPrice,
     int nonce,
     int gasLimit = 0,
+    int id,
   }) async {
-    if(gasLimit == 0){
+    if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20TransferGasLimit;
     }
+    nonce = await getCurrentWalletNonce(nonce: nonce);
+
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
     final credentials = await client.credentialsFromPrivateKey(privateKey);
     final contract = WalletUtil.getHynErc20Contract(contractAddress);
-    return await client.sendTransaction(
+    final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
         contract: contract,
@@ -187,6 +220,11 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+    await transactionInteractor.insertTransactionDB(
+        txHash, password, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
+        id: id, contractAddress: contractAddress);
+    return txHash;
   }
 
   Future<web3.Credentials> getCredentials(String password) async {
@@ -196,19 +234,22 @@ class Wallet {
     return credentials;
   }
 
-  Future<String> sendApproveErc20Token({
-    String contractAddress,
-    String approveToAddress,
-    String password,
-    BigInt amount,
-    BigInt gasPrice,
-    int gasLimit,
-    int nonce,
-  }) async {
+  Future<String> sendApproveErc20Token(
+      {String contractAddress,
+      String approveToAddress,
+      String password,
+      BigInt amount,
+      BigInt gasPrice,
+      int gasLimit,
+      int nonce,
+      int id,
+      bool isStore = false}) async {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
     var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
-    return await client.sendTransaction(
+    nonce = await getCurrentWalletNonce(nonce: nonce);
+
+    final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
         contract: erc20Contract,
@@ -220,6 +261,13 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+    if (isStore) {
+      await transactionInteractor.insertTransactionDB(
+          txHash, password, approveToAddress, amount, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce,
+          id: id, contractAddress: contractAddress);
+    }
+    return txHash;
   }
 
   Future<String> signApproveErc20Token({
@@ -315,11 +363,12 @@ class Wallet {
     BigInt gasPrice,
     int gasLimit,
     int nonce,
+    int id,
   }) async {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
     var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
-    return await client.sendTransaction(
+    final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
         contract: map3Contract,
@@ -331,6 +380,11 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+    await transactionInteractor.insertTransactionDB(txHash, password, createNodeWalletAddress, stakingAmount, gasPrice,
+        gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce,
+        id: id, contractAddress: "");
+    return txHash;
   }
 
   Future<String> signDelegateMap3Node({
@@ -366,11 +420,12 @@ class Wallet {
     BigInt gasPrice,
     int gasLimit,
     int nonce,
+    int id
   }) async {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
     var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
-    return await client.sendTransaction(
+    var txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
         contract: map3Contract,
@@ -382,6 +437,11 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+    await transactionInteractor.insertTransactionDB(txHash, password, createNodeWalletAddress, BigInt.parse("0"), gasPrice,
+        gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce,
+        id: id, contractAddress: "");
+    return txHash;
   }
 
   ///Withdraw token

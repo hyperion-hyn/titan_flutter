@@ -15,6 +15,8 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
+import 'package:characters/characters.dart';
 
 class WalletManagerPage extends StatefulWidget {
   final String tips;
@@ -152,18 +154,20 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                     children: <Widget>[
                       Container(
                         alignment: Alignment.center,
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
                         width: 52,
                         height: 52,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
                         child: Stack(
                           children: <Widget>[
                             Align(
-                                alignment: Alignment.center,
-                                child: Image.asset(
-                                  "res/drawable/hyn_wallet.png",
-                                  width: 24,
-                                  height: 24,
-                                )),
+                              alignment: Alignment.center,
+                              child: walletHeaderWidget(
+                                walletKeyStore.name,
+                                address: ethAccount.address,
+                                size: 52,
+                                fontSize: 20,
+                              ),
+                            ),
                             if (isSelected)
                               Align(
                                 alignment: Alignment.bottomRight,

@@ -16,7 +16,7 @@ class EnterWalletPasswordState extends State<EnterWalletPasswordWidget> {
   int _countdownTime = 0;
   Timer _timer;
 
-  String walletEditErrorMsg = null;
+  String walletEditErrorMsg;
 
   final _formKey = GlobalKey<FormState>();
 

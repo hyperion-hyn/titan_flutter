@@ -176,7 +176,7 @@ class WalletPluginInterface {
             }
             result(ksList)
             return true
-        case "wallet_change_password":
+        case "wallet_update":
             //修改密码
             guard let params = methodCall.arguments as? [String: Any] else {
                 result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params is not [String: String]", details: nil))
@@ -187,10 +187,13 @@ class WalletPluginInterface {
                 return true
             }
             
+            let name = params["name"] as? String
+            
             for w in keyStore.wallets {
                 if(w.keyURL.lastPathComponent == fileName) {
                     do {
-                        try keyStore.update(wallet: w, password: oldPassword, newPassword: newPassword)
+                        try updateKeyStor(name: name ?? w.key.name, wallet: w, password: oldPassword, newPassword: newPassword)
+//                        try keyStore.update(wallet: w, password: oldPassword, newPassword: newPassword)
                         let success = w.key.store(path: w.keyURL.path)
                         print("is store success \(success)")
                         result(w.keyURL.lastPathComponent)
@@ -303,5 +306,35 @@ class WalletPluginInterface {
             }
         }
         return coins
+    }
+    
+    private func updateKeyStor(name: String, wallet: Wallet, password: String, newPassword: String) throws {
+        guard let index = keyStore.wallets.firstIndex(of: wallet) else {
+            fatalError("Missing wallet")
+        }
+
+        guard var privateKeyData = wallet.key.decryptPrivateKey(password: password) else {
+            throw KeyStore.Error.invalidPassword
+        }
+        defer {
+            privateKeyData.resetBytes(in: 0 ..< privateKeyData.count)
+        }
+
+        guard let coin = wallet.key.account(index: 0)?.coin else {
+            throw KeyStore.Error.accountNotFound
+        }
+
+        if let mnemonic = checkMnemonic(privateKeyData) {
+            keyStore.wallets[index].key = StoredKey.importHDWallet(mnemonic: mnemonic, name: name, password: newPassword, coin: coin)
+        } else {
+            keyStore.wallets[index].key = StoredKey.importPrivateKey(privateKey: privateKeyData, name: name, password: newPassword, coin: coin)
+        }
+    }
+    
+    private func checkMnemonic(_ data: Data) -> String? {
+        guard let mnemonic = String(data: data, encoding: .ascii), HDWallet.isValid(mnemonic: mnemonic) else {
+            return nil
+        }
+        return mnemonic
     }
 }
