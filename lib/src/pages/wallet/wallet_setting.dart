@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -13,6 +14,7 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
@@ -93,7 +95,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             onPressed: deleteWallet,
             child: Text(
               S.of(context).delete,
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(color: HexColor("#ccffffff")),
             ),
           ),
         ],
@@ -104,18 +106,19 @@ class _WalletSettingState extends State<WalletSettingPage> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 24),
-                child: Stack(
+                padding: const EdgeInsets.only(top: 16, bottom: 13),
+                child: walletHeaderWidget(widget.wallet.keystore.name,
+                    size: 88, fontSize: 26, address: widget.wallet.getEthAccount()?.address),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 29),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    walletHeaderWidget(widget.wallet.keystore.name.characters.first,
-                        size: 64, fontSize: 20, address: widget.wallet.getEthAccount()?.address),
-                    Positioned(
-                        right: 6,
-                        bottom: 6,
-                        child: Image.asset(
-                          'res/drawable/ic_edit.png',
-                          height: 12,
-                        )),
+                    Image.asset("res/drawable/ic_wallet_edit_head_img.png",width: 18,height: 18,),
+                    SizedBox(width: 4,),
+                    Text("修改头像",style: TextStyle(color: HexColor("#1F81FF"),fontSize: 16),)
                   ],
                 ),
               ),
@@ -208,25 +211,24 @@ class _WalletSettingState extends State<WalletSettingPage> {
               ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                constraints: BoxConstraints.expand(height: 44),
+                constraints: BoxConstraints.expand(height: 46,width: 300),
                 child: RaisedButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  disabledColor: Colors.grey[600],
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  disabledTextColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(23)),
+                  clipBehavior: Clip.hardEdge,
+//                  disabledColor: Colors.grey[600],
+//                  color: Theme.of(context).primaryColor,
+                  textColor: _hasChangeProperties ? Colors.white : DefaultColors.color999,
+//                  textColor: Colors.white,
+//                  disabledTextColor: Colors.white,
                   onPressed: _hasChangeProperties ? updateWallet : null,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '保存更新',
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-                        ),
-                      ],
+                  padding: const EdgeInsets.all(0.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: getGradient(),
                     ),
+                    child: Container(
+                        alignment: Alignment.center,
+                        child: Text('保存更新')),
                   ),
                 ),
               ),
@@ -235,6 +237,24 @@ class _WalletSettingState extends State<WalletSettingPage> {
         ),
       ),
     );
+  }
+
+  LinearGradient getGradient(){
+    if(_hasChangeProperties){
+      return LinearGradient(
+        colors: <Color>[
+          Color(0xff15B2D2),
+          Color(0xff1097B4)
+        ],
+      );
+    }else{
+      return LinearGradient(
+        colors: <Color>[
+          Color(0xffDEDEDE),
+          Color(0xffDEDEDE)
+        ],
+      );
+    }
   }
 
   void updateWallet() async {

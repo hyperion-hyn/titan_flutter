@@ -1080,7 +1080,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: circleIconWidget(item.userName, address: item.userAddress),
+                    child: walletHeaderWidget(item.userName, address: item.userAddress),
                   ),
                   Flexible(
                     flex: 4,

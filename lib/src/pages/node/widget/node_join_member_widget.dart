@@ -255,37 +255,3 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 
 }
-
-Widget circleIconWidget(String shortName, {bool isShowShape = true, String address = "#000000", double textSize = 0}) {
-  if (shortName.isNotEmpty) {
-    shortName = shortName.characters.first;
-  }
-  String hexColor = address;
-  if (address.length>6) {
-    hexColor = "#"+address.substring(address.length-6);
-  }
-  HexColor color = HexColor(hexColor);
-  return Container(
-    width: 40,
-    height: 40,
-    decoration: BoxDecoration(
-      color: color,
-      shape: BoxShape.circle,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey[300],
-          blurRadius: 8.0,
-        ),
-      ],
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Text(
-          shortName.toUpperCase(),
-          style: TextStyle(fontSize: textSize != 0 ? textSize : 15, color: HexColor("#FFFFFF"), fontWeight: FontWeight.w500),
-        ),
-      ),
-    ),
-  );
-}

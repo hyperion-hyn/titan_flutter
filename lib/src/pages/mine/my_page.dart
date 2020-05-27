@@ -418,7 +418,7 @@ class _MyPageState extends State<MyPage> {
                 Align(
                   alignment: Alignment.center,
                   child: walletHeaderWidget(
-                    walletName.characters.first,
+                    walletName,
                     size: 60,
                     fontSize: 20,
                     address: ethAccount.address,
