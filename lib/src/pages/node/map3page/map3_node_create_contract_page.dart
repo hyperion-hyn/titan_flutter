@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:decimal/decimal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -198,149 +199,379 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
           child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             getMap3NodeProductHeadItemSmall(context, contractItem),
-//            SizedBox(height: 16,),
-            Container(
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15, top: 16),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                            width: 100,
-                            child: Text(S.of(context).node_version,
-                                style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                        Text("${contractItem.contract.nodeName}", style: TextStyles.textC333S14),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0, left: 15),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                            width: 100,
-                            child: Text(S.of(context).service_provider,
-                                style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                        DropdownButtonHideUnderline(
-                          child: Container(
-                            height: 30,
-                            child: DropdownButton(
-                              value: selectServerItemValue,
-                              items: serverList,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectNodeProvider(value, 0);
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16.0, left: 15, bottom: 6),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                            width: 100,
-                            child: Text(S.of(context).node_location,
-                                style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                        DropdownButtonHideUnderline(
-                          child: Container(
-                            height: 30,
-                            child: DropdownButton(
-                              value: selectNodeItemValue,
-                              items: nodeList,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectNodeProvider(selectServerItemValue, value);
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _nodeIntroductionWidget(),
             SizedBox(height: 8),
             getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
-            SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
+            SizedBox(height: 8),
+            _autoRenewalWidget(),
+            SizedBox(height: 8),
+            _managerSpendWidget(),
+            SizedBox(height: 8),
+            _nodePronounceWidget(),
+                SizedBox(height: 18),
+              ])),
+        ),
+        _confirmButtonWidget(),
+      ],
+    );
+  }
+
+  Widget _nodeIntroductionWidget() {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(left: 15, top: 16),
+            child: Row(
+              children: <Widget>[
+                Container(
+                    width: 100,
+                    child:
+                        Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                Text("${contractItem.contract.nodeName}", style: TextStyles.textC333S14),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, left: 15),
+            child: Row(
+              children: <Widget>[
+                Container(
+                    width: 100,
+                    child: Text(S.of(context).service_provider,
+                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                DropdownButtonHideUnderline(
+                  child: Container(
+                    height: 30,
+                    child: DropdownButton(
+                      value: selectServerItemValue,
+                      items: serverList,
+                      onChanged: (value) {
+                        setState(() {
+                          selectNodeProvider(value, 0);
+                        });
+                      },
+                    ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 16.0, left: 15, bottom: 6),
+            child: Row(
+              children: <Widget>[
+                Container(
+                    width: 100,
+                    child:
+                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                DropdownButtonHideUnderline(
+                  child: Container(
+                    height: 30,
+                    child: DropdownButton(
+                      value: selectNodeItemValue,
+                      items: nodeList,
+                      onChanged: (value) {
+                        setState(() {
+                          selectNodeProvider(selectServerItemValue, value);
+                        });
+                      },
+                    ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _autoRenewal = true;
+  Widget _autoRenewalWidget() {
+    return Container(
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "期满自动续约",
+              style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+            ),
+          ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Transform.scale(
+              scale: 0.8,
+              child: CupertinoSwitch(
+                value: _autoRenewal,
+                activeColor: Theme.of(context).primaryColor,
+                onChanged: (value) {
+                  setState(() {
+                    _autoRenewal = value;
+                  });
+                  print("[AutoRenewalWidget] --> value:$value");
+                },
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  int _managerSpendCount = 20;
+  Widget _managerSpendWidget() {
+    return Container(
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: RichText(
+              text: TextSpan(
+                  text: "管理费设置",
+                  style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                  children: [
+                    TextSpan(
+                      text: "（1%-20%）",
+                      style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                    )
+                  ]),
+            ),
+          ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _managerSpendCount--;
+                      if (_managerSpendCount < 1) {
+                        _managerSpendCount = 1;
+                      }
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        child: Text(
+                          "-",
+                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: HexColor("#F2F2F2"),
+                        borderRadius: BorderRadius.circular(3.0),
+                      ),
+                    ),
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                      child: Text(
+                        "$_managerSpendCount",
+                        style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      color: HexColor("#FFFFFF"),
+                      border: Border.all(color: HexColor("#DEDEDE"), width: 0.5),
+                      borderRadius: BorderRadius.circular(13.0),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Container(
+                    child: Text(
+                      "%",
+                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _managerSpendCount++;
+                      if (_managerSpendCount > 20) {
+                        _managerSpendCount = 20;
+                      }
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        child: Text(
+                          "+",
+                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: HexColor("#F2F2F2"),
+                        borderRadius: BorderRadius.circular(3.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  TextEditingController _pronounceTextController = TextEditingController();
+  Widget _nodePronounceWidget() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  "节点宣言",
+                  style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                ),
+              ),
+            ],
+          ),
+          TextFormField(
+              controller: _pronounceTextController,
+              keyboardType: TextInputType.text,
+              maxLength: 200,
+              maxLines: 6,
+              style: TextStyle(color: HexColor("#333333"), fontSize: 14),
+              decoration: InputDecoration(
+                hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 14),
+                //labelStyle: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                hintText: "大家快来参与我的节点吧，收益高高！",
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              validator: (textStr) {
+                if (textStr.length == 0) {
+                  return "大家快来参与我的节点吧，收益高高！";
+                }  {
+                  return null;
+                }
+              },
+            onChanged: (value) {
+              print("[NodePronounce] value:$value");
+            },
+          ),
+
+        ],
+      ),
+    );
+  }
+
+  Widget _tipsWidget() {
+    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+
+    return Container(
+      padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
+          ),
 //                  Padding(
 //                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
 //                    child: Text(S.of(context).freeze_balance_reward_direct_push, style: TextStyles.textC999S12),
 //                  ),
-                ],
-              ),
-            ),
-          ])),
-        ),
-        ClickRectangleButton(S.of(context).confirm_bug,()async{
-          await checkIsCreateContract();
+        ],
+      ),
+    );
+  }
 
-          setState(() {
-            if (!_joinCoinFormKey.currentState.validate()) {
-              return;
-            }
+  Widget _confirmButtonWidget() {
+    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
-            if (!_isUserCreatable) {
-              Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-              return;
-            }
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black38,
+            blurRadius: 4.0,
+          ),
+        ],
+      ),
+      constraints: BoxConstraints.expand(height: 50),
+      child: RaisedButton(
+          textColor: Colors.white,
+          color: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
+          child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
+          onPressed: () async {
+            await checkIsCreateContract();
 
-            String provider = providerList[selectServerItemValue].id;
-            String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-            var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
+            setState(() {
+              if (!_joinCoinFormKey.currentState.validate()) {
+                return;
+              }
 
-            Application.router.navigateTo(
-                context,
-                Routes.map3node_send_confirm_page +
-                    "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                    "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                    "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                    "&provider=$provider" +
-                    "&region=$region" +
-                    "&pageType=${widget.pageType}" +
-                    "&contractId=${widget.contractId}");
-          });
-        })
-      ],
+              if (!_isUserCreatable) {
+                Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+                return;
+              }
+
+              String provider = providerList[selectServerItemValue].id;
+              String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+              var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
+
+              Application.router.navigateTo(
+                  context,
+                  Routes.map3node_send_confirm_page +
+                      "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+                      "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
+                      "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                      "&provider=$provider" +
+                      "&region=$region" +
+                      "&pageType=${widget.pageType}" +
+                      "&contractId=${widget.contractId}");
+            });
+          }),
     );
   }
 }
 
-Widget getHoldInNum(
-    BuildContext context,
-    ContractNodeItem contractNodeItem,
-    GlobalKey<FormState> formKey,
-    TextEditingController textEditingController,
-    String endProfit,
-    String spendManager,
-    bool isJoin,
+Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
+    TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
     {bool isMyself = false}) {
   List<int> suggestList =
       contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
@@ -352,7 +583,7 @@ Widget getHoldInNum(
     remainTotal = double.parse(contractNodeItem.remainDelegation);
     double tempMinTotal =
         double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.minDelegationRate;
-    if(remainTotal <= 0){
+    if (remainTotal <= 0) {
       minTotal = 0;
       remainTotal = 0;
       contractNodeItem.remainDelegation = "0";
@@ -378,7 +609,7 @@ Widget getHoldInNum(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, bottom: 15, right: 8),
+          padding: const EdgeInsets.only(left: 16.0, bottom: 22, right: 8),
           child: Row(
             children: <Widget>[
               Padding(
@@ -394,7 +625,7 @@ Widget getHoldInNum(
           ),
         ),
         Container(
-            padding: const EdgeInsets.only(left: 15.0, right: 30, bottom: 10),
+            padding: const EdgeInsets.only(left: 16.0, right: 36, bottom: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -406,9 +637,10 @@ Widget getHoldInNum(
                       style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
                     ),
                     SizedBox(
-                      width: 11,
+                      width: 12,
                     ),
-                    Expanded(
+                    Flexible(
+                      flex: 1,
                       child: Form(
                         key: formKey,
                         child: TextFormField(
@@ -416,10 +648,21 @@ Widget getHoldInNum(
                             keyboardType: TextInputType.number,
                             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                             decoration: InputDecoration(
-                              hintStyle: TextStyles.textC9b9b9bS14,
+                              /*filled: true,
+                              fillColor: HexColor("#F2F2F2"),
+                              contentPadding: const EdgeInsets.only(left: 24.0),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: HexColor("#F2F2F2")),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: HexColor("#F2F2F2")),
+                                borderRadius: BorderRadius.circular(30),
+                              ),*/
+                              hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
                               labelStyle: TextStyles.textC333S14,
                               hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
-//                              border: InputBorder.none,
+                              //border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                             ),
                             validator: (textStr) {
                               if (textStr.length == 0) {
@@ -436,53 +679,36 @@ Widget getHoldInNum(
                               } else {
                                 return null;
                               }
-                            }),
+                            },
+                        ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: 17,
+                  height: 16,
                 ),
                 if (!isJoin && suggestList.length == 3)
                   Padding(
-                    padding: const EdgeInsets.only(left: 49.0),
+                    padding: const EdgeInsets.only(left: 49.0, bottom: 18),
                     child: Row(
-                      children: <Widget>[
-                        InkWell(
+                      children: [0, 0.5, 1, 0.5, 2].map((value) {
+                        if (value == 0.5) {
+                          return SizedBox(width: 16);
+                        }
+
+                        return InkWell(
                           child: Container(
-                            color: Color(0xFFFFF9E9),
+                            color: HexColor("#1FB9C7").withOpacity(0.08),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text(suggestList[0].toString(), style: TextStyle(fontSize: 12)),
+                            child: Text(suggestList[value].toString(),
+                                style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
                           ),
                           onTap: () {
-                            textEditingController.text = suggestList[0].toString();
+                            textEditingController.text = suggestList[value].toString();
                           },
-                        ),
-                        SizedBox(width: 16),
-                        InkWell(
-                          child: Container(
-                            color: Color(0xFFFFF9E9),
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text(suggestList[1].toString(), style: TextStyle(fontSize: 12)),
-                          ),
-                          onTap: () {
-                            textEditingController.text = suggestList[1].toString();
-                          },
-                        ),
-                        SizedBox(width: 16),
-                        InkWell(
-                          child: Container(
-                            color: Color(0xFFFFF9E9),
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text(suggestList[2].toString(), style: TextStyle(fontSize: 12)),
-                          ),
-                          onTap: () {
-//                            onPressFunction(suggestList[2].toString());
-                            textEditingController.text = suggestList[2].toString();
-                          },
-                        ),
-                      ],
+                        );
+                      }).toList(),
                     ),
                   ),
                 Row(
@@ -609,8 +835,8 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                   borderRadius: BorderRadius.circular(24.5),
                   child: Image.asset(
                     "res/drawable/ic_map3_node_item_contract_fit_bg.png",
-                    width: 50,
-                    height: 50,
+                    width: 62,
+                    height: 62,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -653,11 +879,9 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
   );
 }
 
-
 Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem,
     {isJoin = false, isDetail = true, hasShare = false}) {
-
-  double padding = UiUtil.isIPhoneX(context)?20:0;
+  double padding = UiUtil.isIPhoneX(context) ? 20 : 0;
   var title = !isDetail
       ? S.of(context).node_contract_detail
       : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
@@ -665,7 +889,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
   return Stack(
     children: <Widget>[
       Container(
-          height: isDetail ? (UiUtil.isIPhoneX(context)?280:250) : 250,
+          height: isDetail ? (UiUtil.isIPhoneX(context) ? 280 : 250) : 250,
           decoration: BoxDecoration(
             color: Theme.of(context).primaryColor,
 //          borderRadius: BorderRadius.only(bottomLeft:Radius.circular(15),bottomRight:Radius.circular(15),), // 也可控件一边圆角大小
@@ -723,7 +947,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           Navigator.of(context).pop();
         },
         child: Padding(
-          padding: EdgeInsets.only(top: 44.0+padding, left: 15),
+          padding: EdgeInsets.only(top: 44.0 + padding, left: 15),
           child: Icon(
             Icons.arrow_back,
             color: Colors.white,
@@ -768,7 +992,7 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
               }*/
             },
             child: Padding(
-              padding: EdgeInsets.only(top: 44.0+padding, right: 15),
+              padding: EdgeInsets.only(top: 44.0 + padding, right: 15),
               child: Icon(
                 Icons.share,
                 color: Colors.white,
