@@ -520,53 +520,35 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    return ClickRectangleButton(S.of(context).confirm_bug,() async {
+      await checkIsCreateContract();
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black38,
-            blurRadius: 4.0,
-          ),
-        ],
-      ),
-      constraints: BoxConstraints.expand(height: 50),
-      child: RaisedButton(
-          textColor: Colors.white,
-          color: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
-          child: Text(S.of(context).confirm_bug, style: TextStyle(fontSize: 16, color: Colors.white70)),
-          onPressed: () async {
-            await checkIsCreateContract();
+      setState(() {
+        if (!_joinCoinFormKey.currentState.validate()) {
+          return;
+        }
 
-            setState(() {
-              if (!_joinCoinFormKey.currentState.validate()) {
-                return;
-              }
+        if (!_isUserCreatable) {
+          Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
+          return;
+        }
 
-              if (!_isUserCreatable) {
-                Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-                return;
-              }
+        String provider = providerList[selectServerItemValue].id;
+        String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+        var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
 
-              String provider = providerList[selectServerItemValue].id;
-              String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
-              var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
-
-              Application.router.navigateTo(
-                  context,
-                  Routes.map3node_send_confirm_page +
-                      "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                      "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                      "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                      "&provider=$provider" +
-                      "&region=$region" +
-                      "&pageType=${widget.pageType}" +
-                      "&contractId=${widget.contractId}");
-            });
-          }),
-    );
+        Application.router.navigateTo(
+            context,
+            Routes.map3node_send_confirm_page +
+                "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+                "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
+                "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                "&provider=$provider" +
+                "&region=$region" +
+                "&pageType=${widget.pageType}" +
+                "&contractId=${widget.contractId}");
+      });
+    });
   }
 }
 
