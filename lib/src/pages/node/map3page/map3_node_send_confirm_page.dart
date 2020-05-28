@@ -30,6 +30,7 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
 import 'package:web3dart/json_rpc.dart';
@@ -299,31 +300,9 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   }
 
   Widget _sendWidget() {
-    return Container(
-//      height: 46,
-//      margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
-//      constraints: BoxConstraints.expand(height: 48),
-      child: FlatButton(
-        //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        disabledColor: Colors.grey[600],
-        color: Theme.of(context).primaryColor,
-        textColor: Colors.white,
-        disabledTextColor: Colors.white,
-        onPressed: _isTransferring ? null : _transferNew,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                _isTransferring ? S.of(context).please_waiting : S.of(context).send,
-                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 17),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    return ClickRectangleButton(S.of(context).send,()async{
+      await _transferNew();
+    });
   }
 
   Widget _dividerWidget() {

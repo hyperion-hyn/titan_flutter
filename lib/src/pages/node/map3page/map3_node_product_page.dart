@@ -16,6 +16,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
 
 import 'map3_node_create_wallet_page.dart';
 
@@ -183,7 +184,10 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
             Row(
               children: <Widget>[
                 Expanded(child: Text(nodeItem.durationType == 2?"满90天释放50%奖励":"", style: TextStyle(fontSize: 12, color: HexColor("9A9A9A")),)),
-                SizedBox(
+                ClickOvalButton(S.of(context).create_contract,(){
+                  _pushAction(nodeItem);
+                },height: 30,width: 92,),
+                /*SizedBox(
                   height: 30,
                   width: 92,
                   child: FlatButton(
@@ -194,7 +198,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                     child: Text(S.of(context).create_contract,
                         style: TextStyle(fontSize: 13, color: Colors.white)),
                   ),
-                ),
+                ),*/
               ],
             )
           ],
