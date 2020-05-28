@@ -139,10 +139,10 @@ class _Map3NodeState extends State<Map3NodePage> {
 //          children: <Widget>[getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])],
 //        );
 //      } else {
-        return Container(
+      return Container(
           padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
           color: Colors.white,
-            child: getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]));
+          child: getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]));
 //      }
     }, childCount: _nodePageEntityVo.contractNodeList.length));
   }
@@ -395,6 +395,230 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
     ),
     margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9),
     child: Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 16, top: 7, bottom: 7),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Image.asset(
+                "res/drawable/ic_map3_node_item_contract.png",
+                width: 42,
+                height: 42,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(
+                width: 6,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text.rich(TextSpan(children: [
+                    TextSpan(
+                        text: "天道酬勤唐唐", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                    TextSpan(text: "", style: TextStyles.textC333S14bold),
+                  ])),
+                  Container(
+                    height: 4,
+                  ),
+                  Text("节点地址 ${UiUtil.shortEthAddress(contractNodeItem.owner, limitLength: 6)}", style: TextStyles.textC9b9b9bS12),
+                ],
+              ),
+              Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Text(S.of(context).number + "${contractNodeItem.contractCode ?? ""}",
+                      style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                  Container(
+                    height: 4,
+                  ),
+                  Container(
+                    color: HexColor("#1FB9C7").withOpacity(0.08),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Text("第一期", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                  ),
+                ],
+              )
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 12, bottom: 12, left: 48),
+            child: Row(
+              children: [0, 0.5, 1, 0.5, 2].map((value) {
+                if (value == 0.5) {
+                  return SizedBox(width: 32);
+                }
+
+                String title = "";
+                String detail = "";
+                switch (value) {
+                  case 0:
+                    detail = S.of(context).n_day('${contractNodeItem.contract.duration}');
+                    title = "节点期限";
+                    break;
+
+                  case 1:
+                    detail = "10%";
+                    title = "管理费";
+                    break;
+
+                  case 2:
+                    detail = "${FormatUtil.formatPercent(contractNodeItem.contract.annualizedYield)}";
+                    title = S.of(context).annualized_rewards;
+                    break;
+
+                  default:
+                    break;
+                }
+
+                return Column(
+                  children: <Widget>[
+                    Text(
+                      detail,
+                      style: TextStyle(fontSize: 16, color: value == 2 ? HexColor("#FF4C3B") : HexColor("#333333")),
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      title,
+                      style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "节点宣言：",
+                style: TextStyle(fontSize: 10, color: HexColor("#999999")),
+              ),
+              Flexible(
+                child: Text(
+                  "大家快来参与我的节点吧，收益高高，收益真的很高，大家相信我，不会错的，快投吧，一会儿没机会了……",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, color: HexColor("#333333")),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 12, bottom: 12),
+            child: Divider(height: 1, color: Color(0x2277869e)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    isNotFull
+                        ? RichText(
+                            text: TextSpan(
+                                text: S.of(context).remain,
+                                style: TextStyles.textC9b9b9bS12,
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation))}",
+                                      style: TextStyles.textC7c5b00S12),
+                                  TextSpan(text: "HYN", style: TextStyles.textC9b9b9bS12),
+                                ]),
+                          )
+                        : RichText(
+                            text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[]),
+                          ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Text(dateDesc, style: TextStyle(color: Map3NodeUtil.stateColor(state), fontSize: 12)),
+                  ],
+                ),
+                Spacer(),
+                SizedBox(
+                  height: 30,
+//                width: 80,
+                  child: FlatButton(
+                    color: HexColor("#FF15B2D2"),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    onPressed: () {
+                      Application.router.navigateTo(
+                          context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+                    },
+                    child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
+                        style: TextStyle(fontSize: 13, color: Colors.white)),
+                    //style: TextStyles.textC906b00S13),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    ),
+  );
+}
+
+Widget getMap3NodeWaitItem_old(BuildContext context, ContractNodeItem contractNodeItem) {
+  if (contractNodeItem == null) return Container();
+
+  var state = contractNodeItem.stateValue;
+
+  var isNotFull = int.parse(contractNodeItem.remainDelegation) > 0;
+  var fullDesc = "";
+  var dateDesc = "";
+  var isPending = false;
+  switch (state) {
+    case ContractState.PRE_CREATE:
+    case ContractState.PENDING:
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
+      dateDesc = S.of(context).active + dateDesc;
+      fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
+      isPending = true;
+      break;
+
+    case ContractState.ACTIVE:
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
+      dateDesc = S.of(context).expired + dateDesc;
+      break;
+
+    case ContractState.DUE:
+      dateDesc = S.of(context).contract_had_expired;
+      break;
+
+    case ContractState.CANCELLED:
+    case ContractState.CANCELLED_COMPLETED:
+    case ContractState.FAIL:
+      dateDesc = S.of(context).launch_fail;
+      break;
+
+    case ContractState.DUE_COMPLETED:
+      dateDesc = S.of(context).contract_had_stop;
+      break;
+
+    default:
+      break;
+  }
+
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 8.0,
+        ),
+      ],
+    ),
+    margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9),
+    child: Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 7, bottom: 7),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -533,7 +757,8 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                     Application.router.navigateTo(
                         context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                   },
-                  child:Text(isPending ? S.of(context).check_join : S.of(context).detail, style: TextStyle(fontSize: 13, color: Colors.white)),
+                  child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
+                      style: TextStyle(fontSize: 13, color: Colors.white)),
                   //style: TextStyles.textC906b00S13),
                 ),
               ),

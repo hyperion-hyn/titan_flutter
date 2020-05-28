@@ -64,7 +64,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   var _isTransferring = false;
   var isLoadingGasFee = false;
 
-  int selectedPriceLevel = 1;
+  int selectedPriceLevel = 2;
 
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
@@ -393,12 +393,13 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   Future _transferNew() async {
     // todo: test_jison_0526
-    Application.router.navigateTo(
+    /*Application.router.navigateTo(
         context,
         Routes.map3node_broadcase_success_page +
             "?pageType=${widget.pageType}" +
             "&contractNodeItem=${FluroConvertUtils.object2string(widget.contractNodeItem.toJson())}");
     return;
+  */
 
     showModalBottomSheet(
         isScrollControlled: true,
