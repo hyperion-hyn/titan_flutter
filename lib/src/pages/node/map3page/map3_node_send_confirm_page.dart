@@ -17,8 +17,10 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -122,7 +124,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
             children: <Widget>[
               _headerWidget(),
               _dividerWidget(),
-              _nodeWidget(),
+              nodeWidget(context, widget.contractNodeItem.contract),
               _dividerWidget(),
               _gasInputWidget(),
               _dividerWidget(),
@@ -160,144 +162,6 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     );
   }
 
-  Widget _nodeWidget() {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          _nodeIntroductionWidget(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Divider(
-              height: 2,
-            ),
-          ),
-          _nodeServerWidget(),
-        ],
-      ),
-    );
-  }
-
-  Widget _nodeIntroductionWidget() {
-    var nodeItem = widget.contractNodeItem.contract;
-
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        //mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Image.asset(
-            "res/drawable/ic_map3_node_item_2.png",
-            width: 62,
-            height: 63,
-            fit: BoxFit.cover,
-          ),
-          SizedBox(
-            width: 12,
-          ),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 6.0),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                          "启动所需" +
-                              " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
-                              S.of(context).ten_thousand,
-                          style: TextStyles.textC99000000S13,
-                          maxLines: 1,
-                          softWrap: true),
-                      Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
-                      Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            children: <Widget>[
-              Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
-              Padding(
-                padding: const EdgeInsets.only(top: 3.0),
-                child: Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13),
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _nodeServerWidget() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [1, 2, 3, 4, 5, 6].map((value) {
-
-          var title = "";
-          var detail = "";
-          switch (value) {
-            case 1:
-              title = S.of(context).service_provider;
-              detail = widget.provider;
-              break;
-
-            case 2:
-              title = S.of(context).node_location;
-              detail = widget.region;
-              break;
-
-            case 3:
-              title = "管理费";
-              detail = "20%";
-              break;
-
-            case 4:
-              title = "自动续约";
-              detail = "是";
-              break;
-
-            case 5:
-              title = "节点宣言";
-              detail = "欢迎参加我的合约，前10名参与者返10%管理。";
-              break;
-
-            default:
-              return SizedBox(
-                height: 8,
-              );
-              break;
-          }
-
-          return Padding(
-            padding: EdgeInsets.only(top: value == 1 ? 0:12.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                    width: 80,
-                    child:
-                        Text(title, style: TextStyle(fontSize: 14, color: HexColor("#92979A")))),
-                Expanded(child: Text(detail, style: TextStyle(fontSize: 15, color: HexColor("#333333")), maxLines: 2, overflow: TextOverflow.ellipsis,))
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
 
   Widget _sendWidget() {
     return ClickRectangleButton(S.of(context).send,()async{
@@ -372,12 +236,12 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   Future _transferNew() async {
     // todo: test_jison_0526
-    Application.router.navigateTo(
+    /*Application.router.navigateTo(
         context,
         Routes.map3node_broadcase_success_page +
             "?pageType=${widget.pageType}" +
             "&contractNodeItem=${FluroConvertUtils.object2string(widget.contractNodeItem.toJson())}");
-    return;
+    return;*/
 
     showModalBottomSheet(
         isScrollControlled: true,
@@ -446,3 +310,4 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     });
   }
 }
+

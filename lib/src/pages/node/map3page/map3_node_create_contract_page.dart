@@ -452,7 +452,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Text(
-                  "节点宣言",
+                  "节点公告",
                   style: TextStyle(fontSize: 16, color: HexColor("#333333")),
                 ),
               ),

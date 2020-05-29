@@ -69,7 +69,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   ContractState _contractState;
 
   Wallet _wallet;
-
+  bool _haveNextEpisode = false;
   bool _visible = false;
   bool _isTransferring = false;
   String _lastActionTitle = "";
@@ -657,14 +657,18 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           onLoadingMore: getJoinMemberMoreData,
           child: CustomScrollView(
             slivers: <Widget>[
+              if (_haveNextEpisode) SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
               // 0.合约介绍信息
               SliverToBoxAdapter(child: getMap3NodeInfoItem(context, _contractNodeItem),),
               _spacer(),
-
+              SliverToBoxAdapter(child: nodeWidget(context, _contractNodeItem.contract),),
+              _spacer(),
               // 3.合约状态信息
               // 3.1最近已操作状态通知 + 总参与抵押金额及期望收益
               SliverToBoxAdapter(child: _contractNotifyWidget()),
               SliverToBoxAdapter(child: _lineSpacer()),
+              _spacer(),
+
               // 3.1合约进度状态
               SliverToBoxAdapter(child: _contractProgressWidget()),
               _spacer(),
@@ -693,6 +697,32 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               }, childCount: _delegateRecordList.length)),
             ],
           )),
+    );
+  }
+
+  Widget _topNextEpisodeNotifyWidget() {
+    return Container(
+      color: HexColor("#1FB9C7").withOpacity(0.08),
+      //margin: const EdgeInsets.only(top: 8.0),
+      padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
+      child: Row(
+        children: <Widget>[
+          Image.asset(
+            "res/drawable/volume.png",
+            width: 15,
+            height: 14,
+          ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Text(
+                "第二期已经开启，前往查看  >>",
+                style: TextStyle(fontSize: 12, color: HexColor("#5C4304")),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -843,10 +873,51 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 ],
               ),
             ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 18, top: 12),
+                child: Text("我的金额（HYN）", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+              ),
+            ],
+          ),
           Padding(
-            padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
+            padding: const EdgeInsets.only(top: 12),
+            child: RichText(text: TextSpan(
+                text: "总额: ",
+                style: TextStyle(fontSize: 11, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                children: [
+                  TextSpan(
+                    text: amountDelegation,
+                    style: TextStyle(fontSize: 22, color: HexColor("#BF8D2A"), fontWeight: FontWeight.w600),
+                  )
+                ]),),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              color: HexColor("#F2F2F2"),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: Text(
+                  "昨日收益 0",
+                  style: TextStyle(fontSize: 11, color: HexColor("#333333")),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Container(
+              color: HexColor("#F2F2F2"),
+              height: 0.5,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
             child: Row(
-              children: [1, 0.5, 2, 0.5, 3].map((value) {
+              children: [1, 0.5, 2, 0.5, 3, 0.5, 4].map((value) {
                 String title = "";
                 String detail = "0";
                 Color color = HexColor("#000000");
@@ -858,12 +929,17 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     break;
 
                   case 2:
+                    title = "可提金额";
+                    detail = commission;
+                    break;
+
+                  case 3:
                     title = S.of(context).expected_output_hyn;
                     detail = expectedYield;
                     color = HexColor("#B4985F");
                     break;
 
-                  case 3:
+                  case 4:
                     title = _isOwner ? S.of(context).get_manage_tip_hyn : S.of(context).out_mange_tip_hyn;
                     detail = commission;
                     break;
@@ -882,7 +958,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                   detail = "0";
                 }
 
-                TextStyle style = TextStyle(fontSize: 19, color: color, fontWeight: FontWeight.w600);
+                TextStyle style = TextStyle(fontSize: 16, color: color, fontWeight: FontWeight.w600);
 
                 return Expanded(
                   child: Center(
@@ -899,7 +975,120 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               }).toList(),
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 18, top: 0),
+                child: Text("本期账单", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+              ),
+            ],
+          ),
+          _profitWidget(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 18, top: 0),
+                child: Text("二期预设(HYN)", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+              ),
+            ],
+          ),
+          _profitWidget(),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Divider(height: 1, color: Color(0x2277869e)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12, left: 18, right: 12),
+            child: Row(
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+
+                    Text("你已开启跟随自动续约", style: TextStyle(color: HexColor("#333333"), fontSize: 14)),
+                  ],
+                ),
+                Spacer(),
+                SizedBox(
+                  height: 30,
+//                width: 80,
+                  child: Switch(
+                    activeColor: Theme.of(context).primaryColor,
+                    value: true,
+                    onChanged: (value){
+
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+
+  Widget _profitWidget() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 10, 18, 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [1, 2, 3, 4, 5].map((value) {
+
+          var title = "";
+          var detail = "";
+          switch (value) {
+            case 1:
+              title = "节点总抵押";
+              detail = "1,000,000";
+              break;
+
+            case 2:
+              title = "节点总收益";
+              detail = "1,000";
+              break;
+
+            case 3:
+              title = "本期抵押";
+              detail = "2,000,000";
+              break;
+
+            case 4:
+              title = "本期收益";
+              detail = "1,000";
+              break;
+
+            case 5:
+              title = "付管理费";
+              detail = "100";
+              break;
+
+            default:
+              return SizedBox(
+                height: 12,
+              );
+              break;
+          }
+
+          return Padding(
+            padding: EdgeInsets.only(top: value == 1 ? 0:12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    width: 80,
+                    child:
+                    Text(title, style: TextStyle(fontSize: 14, color: HexColor("#92979A")),)),
+                Expanded(child: Text(detail, style: TextStyle(fontSize: 15, color: HexColor("#333333")), maxLines: 2, overflow: TextOverflow.ellipsis,))
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -910,9 +1099,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       padding: EdgeInsets.only(top: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 16, 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+            child: Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 16, 8),
             child: Row(
               children: <Widget>[
                 Padding(
@@ -957,44 +1151,36 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       titles = [
         S.of(context).create_time,
         S.of(context).launch_success,
-        S.of(context).can_withdraw_fifty_reward,
-        S.of(context).expire_date,
-        S.of(context).extract_time
+        "中期发放50%奖励",
+        "到期时间",
       ];
       subtitles = [
         _contractNodeItem.instanceStartTime,
         _contractNodeItem.instanceActiveTime,
         0,
         _contractNodeItem.instanceDueTime,
-        _contractState.index < ContractState.ACTIVE.index ? 0 : _contractNodeItem.instanceFinishTime,
-
-//        _userDelegateState?.index<UserDelegateState?.ACTIVE?.index? 0:_contractNodeItem.instanceFinishTime,
       ];
       progressHints = [
-        S.of(context).n_day(7.toString()),
-        S.of(context).n_day(90.toString()),
-        S.of(context).n_day(90.toString()),
         "",
+        S.of(context).n_day(90.toString()),
+        S.of(context).n_day(90.toString()),
         ""
       ];
     } else {
       titles = [
         S.of(context).create_time,
         S.of(context).launch_success,
-        S.of(context).expire_date,
-        S.of(context).extract_time
+        "到期时间",
       ];
       subtitles = [
         _contractNodeItem.instanceStartTime,
         _contractNodeItem.instanceActiveTime,
         _contractNodeItem.instanceDueTime,
-        _contractState.index < ContractState.ACTIVE.index ? 0 : _contractNodeItem.instanceFinishTime,
       ];
       progressHints = [
-        S.of(context).n_day(7.toString()),
+        "",
         S.of(context).n_day(_contractNodeItem.contract.duration.toString()),
         "",
-        ""
       ];
     }
 

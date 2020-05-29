@@ -8,9 +8,11 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_pronounce_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/pages/node/widget/node_active_contract_widget.dart';
 import 'package:titan/src/routes/route_util.dart';
@@ -34,9 +36,11 @@ class _Map3NodeState extends State<Map3NodePage> {
   int currentPage = 0;
   List<ContractNodeItem> activeContractList = [];
 
+
   @override
   void initState() {
     super.initState();
+
     if (!MemoryCache.hasNodePageData) {
       loadDataBloc.add(LoadingEvent());
     } else {
@@ -306,7 +310,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 
   Future _pushContractListAction() async {
-    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context)??"";
     await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
@@ -393,7 +397,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
           Row(
             children: <Widget>[
               Image.asset(
-                "res/drawable/ic_map3_node_item_contract.png",
+                "res/drawable/map3_node_default_avatar.png",
                 width: 42,
                 height: 42,
                 fit: BoxFit.cover,
@@ -485,7 +489,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                "节点宣言：",
+                "节点公告：",
                 style: TextStyle(fontSize: 10, color: HexColor("#999999")),
               ),
               Flexible(
@@ -597,6 +601,11 @@ Widget getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeIt
       break;
   }
 
+
+  String _pronounceText = "";
+  _pronounceText = "大家快来参与我的节点吧，收益高高，收益真的很高，大家相信我，不会错的，快投吧，一会儿没机会了……";
+
+
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
@@ -609,7 +618,7 @@ Widget getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeIt
           Row(
             children: <Widget>[
               Image.asset(
-                "res/drawable/ic_map3_node_item_contract.png",
+                "res/drawable/map3_node_default_avatar.png",
                 width: 44,
                 height: 44,
                 fit: BoxFit.cover,
@@ -649,7 +658,7 @@ Widget getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeIt
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 12, bottom: 12, right: 52),
+            padding: const EdgeInsets.only(top: 12, bottom: 12, right: 36),
             child: Column(
               children: <Widget>[
                 Row(
@@ -661,16 +670,45 @@ Widget getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeIt
                     ),
                     Flexible(
                       child: Text(
-
-                        "大家快来参与我的节点吧，收益高高，收益真的很高，大家相信我，不会错的，快投吧，一会儿没机会了……",
+                        _pronounceText,
                         maxLines: 3,
+                        textAlign: TextAlign.justify,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 13, color: HexColor("#333333")),
                       ),
                     ),
                   ],
                 ),
-                Row()
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: InkWell(
+                    //color: HexColor("#FF15B2D2"),
+                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    onTap: () async{
+                      String text = await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              Map3NodePronouncePage()));
+                      if (text.isNotEmpty) {
+                        _pronounceText = text;
+                        print("[Pronounce] _pronounceText:${_pronounceText}");
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Image.asset(
+                          "res/drawable/map3_node_edit.png",
+                          width: 12,
+                          height: 12,
+                        ),
+                        SizedBox(width: 4,),
+                        Text("编辑",
+                            style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                      ],
+                    ),
+                    //style: TextStyles.textC906b00S13),
+                  ),
+                ),
               ],
             ),
           ),
@@ -687,28 +725,37 @@ Widget getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeIt
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
 
-                    Text("期满自动续约", style: TextStyle(color: Map3NodeUtil.stateColor(state), fontSize: 12)),
+                    Text("期满自动续约", style: TextStyle(color: HexColor("#333333"), fontSize: 14)),
                   ],
                 ),
                 Spacer(),
                 SizedBox(
                   height: 30,
 //                width: 80,
-                  child: FlatButton(
-                    color: HexColor("#FF15B2D2"),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                    onPressed: () {
+                  child: InkWell(
+                    //color: HexColor("#FF15B2D2"),
+                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    onTap: () {
                       Application.router.navigateTo(
                           context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                     },
-                    child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
-                        style: TextStyle(fontSize: 13, color: Colors.white)),
+                    child: Row(
+                      children: <Widget>[
+                        Text("已开启",
+                            style: TextStyle(fontSize: 14, color: HexColor("#008EAA"))),
+                        Image.asset(
+                          "res/drawable/map3_node_arrow.png",
+                          width: 12,
+                          height: 12,
+                        ),
+                      ],
+                    ),
                     //style: TextStyles.textC906b00S13),
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     ),
@@ -920,3 +967,182 @@ Widget getMap3NodeWaitItem_old(BuildContext context, ContractNodeItem contractNo
   );
 }
 
+
+Widget nodeWidget(BuildContext context, NodeItem nodeItem) {
+  return Container(
+    color: Colors.white,
+    child: Column(
+      children: <Widget>[
+        nodeIntroductionWidget(context, nodeItem),
+        nodeBrowerWidget(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Divider(
+            height: 2,
+          ),
+        ),
+        nodeServerWidget(context, nodeItem),
+      ],
+    ),
+  );
+}
+
+Widget nodeBrowerWidget() {
+
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 16, top: 0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(right: 18),
+          child: InkWell(
+            onTap: (){
+              print("[Pronounce] text:1111111");
+
+            },
+            child: Text(
+              "节点细则",
+              style: TextStyle(fontSize:14, color: HexColor("#1F81FF")),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: InkWell(
+            onTap: (){
+              print("[Pronounce] text:2222");
+
+            },
+            child: Text(
+              "访问节点",
+              style: TextStyle(fontSize:14, color: HexColor("#1F81FF")),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget nodeIntroductionWidget(BuildContext context, NodeItem nodeItem) {
+  //var nodeItem = widget.contractNodeItem.contract;
+
+  return Padding(
+    padding: const EdgeInsets.all(12.0),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      //mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Image.asset(
+          "res/drawable/ic_map3_node_item_2.png",
+          width: 62,
+          height: 63,
+          fit: BoxFit.cover,
+        ),
+        SizedBox(
+          width: 12,
+        ),
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 6.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                        "启动所需" +
+                            " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
+                            S.of(context).ten_thousand,
+                        style: TextStyles.textC99000000S13,
+                        maxLines: 1,
+                        softWrap: true),
+                    Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
+                    Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: <Widget>[
+            Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
+            Padding(
+              padding: const EdgeInsets.only(top: 3.0),
+              child: Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13),
+            )
+          ],
+        )
+      ],
+    ),
+  );
+}
+
+Widget nodeServerWidget(BuildContext context, NodeItem nodeItem, {String provider="", String region=""}) {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [1, 2, 3, 4, 5, 6].map((value) {
+
+        var title = "";
+        var detail = "";
+        switch (value) {
+          case 1:
+            title = S.of(context).service_provider;
+            detail = provider;
+            break;
+
+          case 2:
+            title = S.of(context).node_location;
+            detail = region;
+            break;
+
+          case 3:
+            title = "管理费";
+            detail = "20%";
+            break;
+
+          case 4:
+            title = "自动续约";
+            detail = "是";
+            break;
+
+          case 5:
+            title = "节点公告";
+            detail = "欢迎参加我的合约，前10名参与者返10%管理。";
+            break;
+
+          default:
+            return SizedBox(
+              height: 8,
+            );
+            break;
+        }
+
+        return Padding(
+          padding: EdgeInsets.only(top: value == 1 ? 0:12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  width: 80,
+                  child:
+                  Text(title, style: TextStyle(fontSize: 14, color: HexColor("#92979A")),)),
+              Expanded(child: Text(detail, style: TextStyle(fontSize: 15, color: HexColor("#333333")), maxLines: 2, overflow: TextOverflow.ellipsis,))
+            ],
+          ),
+        );
+      }).toList(),
+    ),
+  );
+}
