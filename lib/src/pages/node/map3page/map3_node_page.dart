@@ -18,6 +18,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
 
 class Map3NodePage extends StatefulWidget {
   @override
@@ -292,19 +293,9 @@ class _Map3NodeState extends State<Map3NodePage> {
                       )
                     ],
                   ),
-                  SizedBox(
-                    height: 35,
-                    width: 140,
-                    child: FlatButton(
-                      //color: DefaultColors.colorffdb58,
-                      color: HexColor("#FF15B2D2"),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
-                      onPressed: () {
-                        _pushContractListAction();
-                      },
-                      child: Text(S.of(context).create_contract, style: TextStyle(fontSize: 13, color: Colors.white)),
-                    ),
-                  ),
+                  ClickOvalButton(S.of(context).create_contract,(){
+                    _pushContractListAction();
+                  }),
                 ],
               ),
             ),

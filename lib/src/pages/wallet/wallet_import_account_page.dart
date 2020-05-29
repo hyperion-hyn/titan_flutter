@@ -374,30 +374,6 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     }
                   }
 
-                  /*var themeColor = '#${Theme.of(context).primaryColor.value.toRadixString(16)}';
-                  List<Asset> resultList = await MultiImagePicker.pickImages(
-                    maxImages: 1,
-                    enableCamera: true,
-                    cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-                    materialOptions: MaterialOptions(
-                      statusBarColor: themeColor,
-                      actionBarColor: themeColor,
-                      actionBarTitle: S.of(context).select_qrcode_picture,
-                      allViewTitle: S.of(context).all_picture,
-                      useDetailsView: false,
-                      selectCircleStrokeColor: "#ffffff",
-                    ),
-                  );
-
-                  if(resultList.length > 0){
-                  var filePath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
-                    RScanResult mnemonicWords = await RScan.scanImagePath(filePath);
-                    if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
-                      Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
-                    } else {
-                      _mnemonicController.text = mnemonicWords.message;
-                    }
-                  }*/
                 },
               ),
               ListTile(
