@@ -13,6 +13,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.d
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_join_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_precreate_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_share_page.dart';
@@ -160,6 +161,11 @@ var map3NodeCreateWalletHandler = Handler(handlerFunc: (context, params) {
 var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return Map3NodeCreateContractPage(params['contractId']?.first);
+});
+
+var map3NodePreCreateContractHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return Map3NodePreCreateContractPage(params['contractId']?.first);
 });
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {

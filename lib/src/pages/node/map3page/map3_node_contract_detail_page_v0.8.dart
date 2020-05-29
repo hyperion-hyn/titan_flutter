@@ -20,7 +20,6 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -33,7 +32,6 @@ import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -608,21 +606,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       onWillPop: () async => !_isTransferring,
       child: Scaffold(
         backgroundColor: DefaultColors.colorf5f5f5,
-        appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_contract_detail), actions: <Widget>[InkWell(
-          onTap: (){
-            Application.router.navigateTo(
-                context,
-                Routes.map3node_share_page +
-                    "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
-          },
-          child: Padding(
-            padding: EdgeInsets.only(right: 15),
-            child: Icon(
-              Icons.share,
-              color: Colors.white,
-            ),
-          ),
-        )],),
         body: Stack(
           children: <Widget>[
             _pageWidget(context),
@@ -636,7 +619,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _contractNodeItem?.contract == null) {
       return Scaffold(
-        //appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_contract_detail)),
+        appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_contract_detail)),
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = all_page_state.LoadingState();
@@ -658,7 +641,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           child: CustomScrollView(
             slivers: <Widget>[
               // 0.合约介绍信息
-              SliverToBoxAdapter(child: getMap3NodeInfoItem(context, _contractNodeItem),),
+              SliverToBoxAdapter(
+                child: Container(
+                    color: Colors.white,
+                    child: getMap3NodeProductHeadItem(context, _contractNodeItem,
+                        isJoin: true, isDetail: false, hasShare: true)),
+              ),
+
+              // 2.节点信息
+              SliverToBoxAdapter(child: _nodeInfoWidget()),
               _spacer(),
 
               // 3.合约状态信息

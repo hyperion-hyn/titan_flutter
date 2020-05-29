@@ -486,36 +486,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     );
   }
 
-  Widget _tipsWidget() {
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-
-    return Container(
-      padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
-          ),
-//                  Padding(
-//                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-//                    child: Text(S.of(context).freeze_balance_reward_direct_push, style: TextStyles.textC999S12),
-//                  ),
-        ],
-      ),
-    );
-  }
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
@@ -963,32 +933,6 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
                   context,
                   Routes.map3node_share_page +
                       "?contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-
-              /*final ByteData imageByte = await rootBundle.load("res/drawable/hyn.png");
-
-              var activityWallet = WalletInheritedModel.of(context).activatedWallet;
-              if(activityWallet != null) {
-                Wallet wallet = WalletInheritedModel
-                    .of(context)
-                    .activatedWallet
-                    .wallet;
-                bool isFromOwn = wallet
-                    .getEthAccount()
-                    .address == contractNodeItem.owner;
-                NodeShareEntity nodeShareEntity = NodeShareEntity(wallet
-                    .getEthAccount()
-                    .address, "detail", isFromOwn);
-                String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
-                Share.file(S
-                    .of(context)
-                    .nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
-                    text: "${contractNodeItem.shareUrl}&key=$encodeStr");
-              }else{
-                Share.file(S
-                    .of(context)
-                    .nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg',
-                    text: "${contractNodeItem.shareUrl}");
-              }*/
             },
             child: Padding(
               padding: EdgeInsets.only(top: 44.0 + padding, right: 15),
