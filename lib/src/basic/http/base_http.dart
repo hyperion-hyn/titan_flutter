@@ -105,7 +105,7 @@ class BaseHttpCore {
 
   Future<dynamic> _request(String url,
       {String method,
-      dynamic data,
+      Map<String, dynamic> data,
       Map<String, dynamic> params,
       Options options,
       CancelToken cancelToken,

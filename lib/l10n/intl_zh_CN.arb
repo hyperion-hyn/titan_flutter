@@ -634,5 +634,6 @@
   "not_allow_to_delegate_in_unpending_state_hint": "非待启动状态不能抵押",
   "not_allow_to_collect_in_pending_state_hint": "该状态下不能提币",
   "delegator_not_exist_hint": "代理人不存在",
-  "not_time_to_collect_hint": "未达到提取收益的时间"
+  "not_time_to_collect_hint": "未达到提取收益的时间",
+  "cannot_fint_wallet": "找不到本地钱包"
 }
