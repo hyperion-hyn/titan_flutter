@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/test_page/TestWidgetPage.dart';
 import 'package:titan/src/pages/wallet_demo/WalletDemo.dart';
 import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -181,6 +182,16 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   },
                   leading: Icon(Icons.monetization_on),
                   title: Text('钱包测试'),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                Container(height: 1, color: Colors.grey[100]),
+                ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => TestWidgetPage()));
+                  },
+                  leading: Icon(Icons.functions),
+                  title: Text('功能测试'),
                   trailing: Icon(Icons.navigate_next),
                 ),
               ],
