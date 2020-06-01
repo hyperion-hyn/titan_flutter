@@ -13,6 +13,15 @@ Widget walletHeaderWidget(String shortName,
     hexColor = "#" + address.substring(address.length - 6);
   }
   HexColor color = HexColor(hexColor);
+
+  // todo: test_jison_0529
+  return Image.asset(
+    "res/drawable/map3_node_default_avatar.png",
+    width: 44,
+    height: 44,
+    fit: BoxFit.cover,
+  );
+
   return Container(
     width: size,
     height: size,

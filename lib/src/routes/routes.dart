@@ -41,6 +41,7 @@ class Routes {
   static const String map3node_product_list = '/map3node/product_list';
   static const String map3node_create_wallet = '/map3node/create_wallet';
   static const String map3node_create_contract_page = '/map3node/create_contract_page';
+  static const String map3node_pre_create_contract_page = '/map3node/pre_create_contract_page';
   static const String map3node_join_contract_page = '/map3node/join_contract_page';
   static const String map3node_send_confirm_page = '/map3node/send_confirm_page';
   static const String map3node_broadcase_success_page = '/map3node/broadcase_success_page';
@@ -118,6 +119,8 @@ class Routes {
         handler: map3NodeCreateWalletHandler, transitionType: pushNewPageTransitionType);
     router.define(map3node_create_contract_page,
         handler: map3NodeCreateContractHandler, transitionType: pushNewPageTransitionType);
+    router.define(map3node_pre_create_contract_page,
+        handler: map3NodePreCreateContractHandler, transitionType: pushNewPageTransitionType);
     router.define(map3node_join_contract_page,
         handler: map3NodeJoinContractHandler, transitionType: pushNewPageTransitionType);
     router.define(map3node_send_confirm_page,

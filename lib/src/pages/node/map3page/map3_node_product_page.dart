@@ -214,7 +214,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
       Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       await Application.router
-          .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
+          .navigateTo(context, Routes.map3node_pre_create_contract_page + "?contractId=${nodeItem.id}");
     }
   }
   
