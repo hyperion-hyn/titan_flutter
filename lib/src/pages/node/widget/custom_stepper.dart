@@ -794,12 +794,13 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            Positioned(
-              child: tick,
-              left: isRightTick ? null: tickLeft,
-              right: isRightTick ? tickRight : null,
-              top: 12,
-            ),
+            if(widget.tickText.isNotEmpty)
+              Positioned(
+                child: tick,
+                left: isRightTick ? null: tickLeft,
+                right: isRightTick ? tickRight : null,
+                top: 12,
+              ),
           ],
         ),
       );
