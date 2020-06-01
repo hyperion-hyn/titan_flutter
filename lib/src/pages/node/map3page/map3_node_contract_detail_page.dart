@@ -228,34 +228,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     return value;
   }
 
-  /*
-  get _nodeStateDesc {
-    if (_contractState == null) {
-      return S.of(context).node_in_configuration;
-    }
-    ;
-
-    var _nodeStateDesc = "";
-
-    switch (_contractState) {
-      case ContractState.PRE_CREATE:
-      case ContractState.PENDING:
-        _nodeStateDesc = S.of(context).node_wait_to_launch;
-        break;
-
-      case ContractState.ACTIVE:
-        _nodeStateDesc = S.of(context).node_in_progress;
-
-        break;
-
-      default:
-        _nodeStateDesc = S.of(context).node_had_stop;
-        break;
-    }
-    return _nodeStateDesc;
-  }
-*/
-
   get _contractStateDesc {
     if (_contractState == null) {
       return S.of(context).wait_to_launch;
@@ -756,71 +728,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             onPressed: !_isTransferring ? onPressed : null,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _nodeInfoWidget() {
-    return Material(
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
-            child: Row(
-              children: <Widget>[
-                Text(_contractNodeItem.contract.nodeName,
-                    style: TextStyle(
-                      fontSize: 14, /*color: _stateColor*/
-                    )),
-                Spacer(),
-                if (_contractNodeItem?.remoteNodeUrl?.isNotEmpty == true && _contractState == ContractState.ACTIVE)
-                  InkWell(
-                      onTap: _pushNodeInfoAction,
-                      child: Text(S.of(context).click_view_detail,
-                          style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
-              ],
-            ),
-          ),
-          Container(
-            height: 0.8,
-            color: DefaultColors.colorf5f5f5,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(45, 6, 5, 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          width: 100,
-                          child: Text(S.of(context).service_provider,
-                              style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                      new Text("${_contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                          width: 100,
-                          child: Text(S.of(context).node_location,
-                              style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                      new Text("${_contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
