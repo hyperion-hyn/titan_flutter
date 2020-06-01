@@ -98,7 +98,7 @@ dependencies:
   loading: ^1.0.1
   flutter_inappwebview: ^3.1.0
   characters: ^0.5.0
-  custom_radio: ^0.1.2
+  custom_radio_grouped_button: ^1.0.0
 
   #  flutter_inappwebview:
   #    git:

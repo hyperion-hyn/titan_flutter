@@ -1,10 +1,13 @@
-import 'package:custom_radio/custom_radio.dart';
+import 'dart:convert';
+
+import 'package:custom_radio_grouped_button/CustomButtons/CustomRadioButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/node/widget/custom_stepper.dart';
+import 'package:titan/src/widget/picker_data/PickerData.dart';
 
 class TestWidgetPage extends StatefulWidget {
   @override
@@ -21,14 +24,14 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
     ["哈哈哈", "哈哈哈", "哈哈哈", "哈哈哈"],
     ["嗯嗯嗯", "嗯嗯嗯", "嗯嗯嗯", "嗯嗯嗯"]
   ];
-  RadioBuilder<String, double> simpleBuilder;
+//  RadioBuilder<String, double> simpleBuilder;
   StateSetter businessSheetState;
 
   @override
   void initState() {
     _tabController = new TabController(vsync: this, length: tabStrList.length);
 
-    simpleBuilder = (BuildContext context, List<double> animValues, Function updateState, String value) {
+    /*simpleBuilder = (BuildContext context, List<double> animValues, Function updateState, String value) {
       final alpha = (animValues[0] * 255).toInt();
       return GestureDetector(
           onTap: () {
@@ -53,7 +56,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
                 value,
                 style: Theme.of(context).textTheme.body1.copyWith(fontSize: 20.0),
               )));
-    };
+    };*/
     super.initState();
   }
 
@@ -92,7 +95,9 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
             height: 16,
           ),
           RaisedButton(
-            onPressed: () async {},
+            onPressed: () async {
+
+            },
             child: Text('其他'),
           ),
           Divider(
@@ -140,7 +145,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
   }
 
   void showBusinessTime() {
-    showModalBottomSheet(context: context, backgroundColor: Colors.transparent, builder: (context) {
+    /*showModalBottomSheet(context: context, backgroundColor: Colors.transparent, builder: (context) {
       return Material(
           color: Colors.white,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
@@ -149,9 +154,9 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
             child: getBusinessTimeGap(),
           )
       );
-    });
+    });*/
 
-    /*showModalBottomSheet(
+    showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return Column(
@@ -162,7 +167,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
               getBusinessTimeGap()
             ],
           );
-        });*/
+        });
   }
 
   List<Tab> getTabList() {
@@ -235,7 +240,22 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
   }
 
   Widget getBusinessDay() {
-    return StatefulBuilder(builder: (context1, sheetState) {
+    return CustomRadioButton(
+      enableShape: true,
+      customShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      buttonColor: Theme.of(context).canvasColor,
+      buttonLables: [
+        "Student",
+        "Parent/Teacher",
+      ],
+      buttonValues: [
+        "STUDENT",
+        "TEACHER",
+      ],
+      radioButtonValue: (value) => print(value),
+      selectedColor: Theme.of(context).accentColor,
+    );
+    /*return StatefulBuilder(builder: (context1, sheetState) {
       businessSheetState = sheetState;
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -263,71 +283,38 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
               builder: simpleBuilder),
         ],
       );
-    });
+    });*/
   }
 
   Widget getBusinessTimeGap(){
-    /*return Picker(
-        backgroundColor: Colors.transparent,
-        headerDecoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Colors.black12, width: 0.5))
-        ),
-        adapter: new DateTimePickerAdapter(
-            type: PickerDateTimeType.kMDYHM,
-            isNumberMonth: true,
-            yearSuffix: "年",
-            monthSuffix: "月",
-            daySuffix: "日"
-        ),
-        delimiter: [
-          PickerDelimiter(column: 3, child: Container(
-            width: 8.0,
-            alignment: Alignment.center,
-          )),
-          PickerDelimiter(column: 5, child: Container(
-            width: 12.0,
-            alignment: Alignment.center,
-            child: Text(':', style: TextStyle(fontWeight: FontWeight.bold)),
-            color: Colors.white,
-          )),
-        ],
-        title: new Text("Select DateTime"),
-        onConfirm: (Picker picker, List value) {
-          print(picker.adapter.text);
-        },
-        onSelect: (Picker picker, int index, List<int> selecteds) {
-          this.setState(() {
-//            stateText = picker.adapter.toString();
-          });
-        }
-    ).makePicker(null, true);*/
-    return Picker(
-        adapter: NumberPickerAdapter(data: [
-          NumberPickerColumn(begin: 0, end: 999, postfix: Text("\$"), suffix: Icon(Icons.insert_emoticon)),
-          NumberPickerColumn(begin: 200, end: 100, jump: -10),
-          NumberPickerColumn(begin: 200, end: 100, jump: -10),
-        ]),
-        delimiter: [
-          PickerDelimiter(column: 2, child: Container(
-            width: 12.0,
-            alignment: Alignment.center,
-            child: Text('至', style: TextStyle(fontWeight: FontWeight.bold)),
-            color: Colors.white,
-          )),
-          PickerDelimiter(child: Container(
-            width: 30.0,
-            alignment: Alignment.center,
-            child: Icon(Icons.more_vert),
-          ))
-        ],
-        hideHeader: true,
-        title: Text("Please Select"),
-        selectedTextStyle: TextStyle(color: Colors.blue),
-        onConfirm: (Picker picker, List value) {
-          print(value.toString());
-          print(picker.getSelectedValues());
-        }
-    ).makePicker(null, true);
+    return Padding(
+      padding: const EdgeInsets.only(left:20,right: 20),
+      child: Picker(
+          adapter: PickerDataAdapter<String>(
+            pickerdata: JsonDecoder().convert(TimePickerData),
+            isArray: true,
+          ),
+          delimiter: [
+            PickerDelimiter(column: 2, child: Container(
+              width: 100.0,
+              alignment: Alignment.center,
+              child: Text('至', style: TextStyle(fontWeight: FontWeight.bold)),
+              color: Colors.white,
+            ))
+          ],
+          hideHeader: true,
+          selecteds: [3, 0, 2, 0],
+          title: Text("Please Select"),
+          selectedTextStyle: TextStyle(color: Colors.blue),
+          cancel: FlatButton(onPressed: () {
+            Navigator.pop(context);
+          }, child: Icon(Icons.child_care)),
+          onConfirm: (Picker picker, List value) {
+            print(value.toString());
+            print(picker.getSelectedValues());
+          }
+      ).makePicker(null, true),
+    );
   }
 
   showPickerNumber(BuildContext context) {
