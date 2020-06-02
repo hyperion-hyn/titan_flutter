@@ -20,6 +20,8 @@ import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
+import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
 import 'map3_contract_control.dart';
@@ -337,7 +339,260 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
+  void showAlertView1(String title, List<Widget> actions, [String content, String detail, String boldContent, String suffixContent]) {
+
+    showDialog(
+      // 传入 context
+      context: context,
+      // 构建 Dialog 的视图
+      builder: (_) => Padding(
+        padding: EdgeInsets.all(36),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              //alignment: Alignment.center,
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(_),
+                      child: Image.asset(
+                        "res/drawable/map3_node_close.png",
+                        width: 18,
+                        height: 18,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: Text(title,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: HexColor("#333333"),
+                                decoration: TextDecoration.none)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 24, left: 24, right: 24),
+                        child: RichText(
+                            text: TextSpan(
+                                text: content,
+                                style: TextStyle(fontSize: 15, color: HexColor("#333333"), height: 1.8),
+                                children: [
+                              TextSpan(
+                                text: boldContent,
+                                style: TextStyle(fontSize: 15, color: HexColor("#FF4C3B"), height: 1.8),
+                              ),
+                              TextSpan(
+                                text: suffixContent,
+                                style: TextStyle(fontSize: 15, color: HexColor("#333333"), height: 1.8),
+                              ),
+                            ])),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 15, bottom: 18),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            FlatButton(
+                              onPressed: () {
+                                // 关闭 Dialog
+                                Navigator.pop(_);
+                              },
+                              child: Text(
+                                '确定撤销',
+                                style: TextStyle(color: HexColor("#999999"), fontSize: 16),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            ClickOvalButton(
+                              "再想想",
+                              () {
+                                Navigator.pop(_);
+                              },
+                              width: 120,
+                              height: 38,
+                              fontSize: 16,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showAlertView({String title, List<Widget> actions, String content, String detail="", String boldContent="", String suffixContent=""}) {
+
+    showDialog(
+      // 传入 context
+      context: context,
+      // 构建 Dialog 的视图
+      builder: (_) => Padding(
+        padding: EdgeInsets.all(36),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              //alignment: Alignment.center,
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(_),
+                      child: Image.asset(
+                        "res/drawable/map3_node_close.png",
+                        width: 18,
+                        height: 18,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: Text(title,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: HexColor("#333333"),
+                                decoration: TextDecoration.none)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 24, left: 24, right: 24),
+                        child: RichText(
+                            text: TextSpan(
+                                text: content,
+                                style: TextStyle(fontSize: 15, color: HexColor("#333333"), height: 1.8),
+                                children: [
+                                  TextSpan(
+                                    text: boldContent,
+                                    style: TextStyle(fontSize: 15, color: HexColor("#FF4C3B"), height: 1.8),
+                                  ),
+                                  TextSpan(
+                                    text: suffixContent,
+                                    style: TextStyle(fontSize: 15, color: HexColor("#333333"), height: 1.8),
+                                  ),
+                                ])),
+                      ),
+                      if (detail.isNotEmpty) Padding(
+                        padding: EdgeInsets.only(top: 6, left: 24, right: 24),
+                        child: Text(detail,
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
+                                color: HexColor("#999999"),
+                                height: 1.8,
+                                decoration: TextDecoration.none)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 15, bottom: 18),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: actions,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Future _scanAction() async {
+    showAlertView(title:"重要提示", actions:[
+      FlatButton(
+        onPressed: () {
+          print("[Alert] --> 确定撤销");
+                    Navigator.pop(context);
+         },
+        child: Text(
+          '确定撤销',
+          style: TextStyle(color: HexColor("#999999"), fontSize: 16),
+        ),
+      ),
+      SizedBox(
+        width: 20,
+      ),
+      ClickOvalButton(
+        "再想想",
+            () {
+              print("[Alert] --> 再想想");
+              Navigator.pop(context);
+            },
+        width: 120,
+        height: 38,
+        fontSize: 16,
+      ),
+    ], content:"你将撤销全部抵押(20,000HYN) 到原来钱包，且当前节点", boldContent:"将被取消", suffixContent:"，是否继续操作?");
+
+    /*showAlertView(title:"重要提示", actions:[
+      FlatButton(
+        onPressed: () {
+          print("[Alert] --> 确定撤销");
+          Navigator.pop(context);
+        },
+        child: Text(
+          '确定撤销',
+          style: TextStyle(color: HexColor("#999999"), fontSize: 16),
+        ),
+      ),
+      SizedBox(
+        width: 20,
+      ),
+      ClickOvalButton(
+        "再想想",
+            () {
+          print("[Alert] --> 再想想");
+          Navigator.pop(context);
+        },
+        width: 120,
+        height: 38,
+        fontSize: 16,
+      ),
+    ], content:"您的抵押金额为300,000 撤销100,000剩余200,000 距离节点启动所需还差400,000！");
+*/
+
+    /* showAlertView(title:"操作错误", actions:[
+      ClickOvalButton(
+        "重新输入",
+            () {
+          print("[Alert] --> 再想想");
+          Navigator.pop(context);
+        },
+        width: 200,
+        height: 38,
+        fontSize: 16,
+      ),
+    ], content:"撤销200,000后剩余抵押不足节点启动所需的20%!", detail:"你必须保证剩余额度不少于启动所需的20%来保证节点继续有效，或者撤销全部抵押以取消节点。");
+*/
+    return;
+
     // todo: test_jison_0429
     String scanStr = await BarcodeScanner.scan();
     print("[scan] indexInt= $scanStr");
@@ -346,8 +601,7 @@ class _MyPageState extends State<MyPage> {
     } else if (scanStr.contains("share?id=")) {
       int indexInt = scanStr.indexOf("=");
       String contractId = scanStr.substring(indexInt + 1, indexInt + 2);
-      Application.router
-          .navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
@@ -435,7 +689,7 @@ class _MyPageState extends State<MyPage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
-            onTap: (){
+            onTap: () {
               goSetWallet(wallet);
             },
             child: Column(
@@ -464,12 +718,12 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  void goSetWallet(Wallet wallet){
+  void goSetWallet(Wallet wallet) {
     var walletStr = FluroConvertUtils.object2string(wallet.toJson());
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
 //    print(currentRouteName);
-    Application.router.navigateTo(
-        context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+    Application.router
+        .navigateTo(context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
   }
 
   Widget _buildSloganRow() {

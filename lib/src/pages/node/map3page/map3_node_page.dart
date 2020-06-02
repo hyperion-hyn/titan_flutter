@@ -544,23 +544,8 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     onPressed: () {
 
-                      // todo: test_jison_0601
-                      print("dddd");
-
-                      AlertDialog(
-                        title: Text('Demo Application'),
-                        content: Text('Created by Guillaume Bernos'),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('Ok'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-//                      Application.router.navigateTo(
-//                          context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+                      Application.router.navigateTo(
+                          context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                     },
                     child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
                         style: TextStyle(fontSize: 13, color: Colors.white)),
