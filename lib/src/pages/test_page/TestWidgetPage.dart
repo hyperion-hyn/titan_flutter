@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/node/widget/custom_stepper.dart';
 import 'package:titan/src/widget/picker_data/PickerData.dart';
+import 'package:titan/src/widget/stepper/poi_stepper.dart';
 
 class TestWidgetPage extends StatefulWidget {
   @override
@@ -26,6 +26,23 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
   ];
 //  RadioBuilder<String, double> simpleBuilder;
   StateSetter businessSheetState;
+  int current_step = 0;
+  List<PoiStep> my_steps = [
+    new PoiStep(
+        title: new Text("Step 1"), content: new Text("Hello"), isActive: true),
+    new PoiStep(
+        title: new Text("Step 2"), content: new Text("World"), isActive: true),
+    PoiStep(
+        title: new Text("Step 2"), content: new Text("World"), isActive: true),
+    PoiStep(
+        title: new Text("Step 2"), content: new Text("World"), isActive: true),
+    PoiStep(
+        title: new Text("Step 2"), content: new Text("World"), isActive: true),
+    new PoiStep(
+        title: new Text("Step 3"),
+        content: new Text("Hello World"),
+        isActive: true)
+  ];
 
   @override
   void initState() {
@@ -225,17 +242,55 @@ class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStat
   }
 
   void showVerifySite() {
-    showModalBottomSheet(
+    /*showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return CustomStepper(
-            steps: ['提交任务', '本金返款', '评价返佣金', '追评返佣金', '任务完结', '追评返佣金', '任务完结', '追评返佣金', '任务完结']
+            steps: ['提交任务', '本金返款', '评价返佣金', '追评返佣金', '任务完结', '追评返佣金', '任务完结']
                 .map(
                   (s) => CustomStep(title: Text(s), content: Container(), isActive: true),
                 )
                 .toList(),
             type: CustomStepperType.horizontal,
           );
+        });*/
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context1, sheetState)
+          {
+            return new Container(
+              child: new PoiStepper(
+                currentStep: this.current_step,
+                steps: my_steps,
+                type: PoiStepperType.vertical,
+//                onStepTapped: (step) {
+//                  sheetState(() {
+//                    current_step = step;
+//                  });
+//                },
+                onStepCancel: () {
+                  sheetState(() {
+                    if (current_step > 0) {
+                      current_step = current_step - 1;
+                    } else {
+                      current_step = 0;
+                    }
+                  });
+                },
+                onStepContinue: () {
+                  sheetState(() {
+                    if (current_step < my_steps.length - 1) {
+                      current_step = current_step + 1;
+                    } else {
+                      current_step = 0;
+                    }
+                  });
+                },
+              ),
+            );
+          });
+
         });
   }
 
