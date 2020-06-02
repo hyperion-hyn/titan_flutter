@@ -9,6 +9,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
 
 class Map3NodeCollectPage extends StatefulWidget {
@@ -89,7 +90,10 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
-                      child: Container(color: HexColor("#F2F2F2"), height: 0.5,),
+                      child: Container(
+                        color: HexColor("#F2F2F2"),
+                        height: 0.5,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 16.0, top: 16, bottom: 12, right: 8),
@@ -97,13 +101,10 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
-                            child: Text("提取数量",
-                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            child: Text("提取数量", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                           ),
                           Expanded(
-                            child: Text(
-                                "（可用余额 20，000）",
-                                style: TextStyle(color: HexColor("#B8B8B8"))),
+                            child: Text("（可用余额 20，000）", style: TextStyle(color: HexColor("#B8B8B8"))),
                           ),
                         ],
                       ),
@@ -129,6 +130,11 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                                 decoration: InputDecoration(
+                                  focusedErrorBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: HexColor("#FF4C3B")),
+                                    borderRadius: BorderRadius.circular(0),
+                                  ),
+                                  errorStyle: TextStyle(color: HexColor("#FF4C3B"), fontSize: 14),
                                   hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
                                   labelStyle: TextStyles.textC333S14,
                                   hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
@@ -153,7 +159,7 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
                               ),
                             ),
                           ),
-                          Padding(
+                          /*Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: FlatButton(
                               child: Text(
@@ -163,7 +169,22 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
                               color: Theme.of(context).primaryColor,
                               onPressed: () {},
                             ),
-                          ),
+                          ),*/
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: _flatButton(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                child: Text(
+                                  "全部提取",
+                                  style: TextStyle(fontSize: 12, color: Colors.white),
+                                ),
+                              ),
+                              onTap: () {
+                                _formKey.currentState?.validate();
+                              },
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -191,6 +212,21 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
           ),
           _confirmButtonWidget(),
         ],
+      ),
+    );
+  }
+
+  Widget _flatButton({Widget child, VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        child: child,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [HexColor("#1096B1"), HexColor("#15B3D3")],
+              begin: FractionalOffset(1, 0.5),
+              end: FractionalOffset(0, 0.5)),
+        ),
       ),
     );
   }
