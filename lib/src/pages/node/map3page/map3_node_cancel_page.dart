@@ -6,11 +6,13 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_cancel_confirm_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/click_rectangle_button.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
 
 class Map3NodeCancelPage extends StatefulWidget {
@@ -295,6 +297,8 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                     onPressed: () {
                       print("[Alert] --> 确定撤销");
                       Navigator.pop(context);
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelConfirmPage()));
                     },
                     child: Text(
                       '确定撤销',
@@ -319,6 +323,7 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                 boldContent: "将被取消",
                 suffixContent: "，是否继续操作?");
 
+            /*
             showAlertView(
                 context,
                 title: "操作错误",
@@ -345,6 +350,17 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                     onPressed: () {
                       print("[Alert] --> 确定撤销");
                       Navigator.pop(context);
+
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EnterWalletPasswordWidget();
+                          }).then((walletPassword) async {
+                        if (walletPassword == null) {
+                          return;
+                        }
+                      });
                     },
                     child: Text(
                       '确定撤销',
@@ -366,6 +382,7 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                   ),
                 ],
                 content: "您的抵押金额为300,000 撤销100,000剩余200,000 距离节点启动所需还差400,000！");
+            */
           }),
     );
   }

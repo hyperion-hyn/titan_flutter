@@ -10,6 +10,7 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_cancel_confirm_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
@@ -342,11 +343,9 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future _scanAction() async {
-
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
     Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
 
-     return;
+    return;
 
     // todo: test_jison_0429
     String scanStr = await BarcodeScanner.scan();
@@ -500,6 +499,9 @@ class _MyPageState extends State<MyPage> {
   }
 
   void shareApp() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+    return;
+
     var languageCode = Localizations.localeOf(context).languageCode;
     var shareAppImage = "";
 

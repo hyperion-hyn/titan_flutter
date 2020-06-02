@@ -1,11 +1,9 @@
-import 'package:json_annotation/json_annotation.dart'; 
-  
+import 'package:json_annotation/json_annotation.dart';
+
 part 'node_item.g.dart';
 
-
 @JsonSerializable()
-  class NodeItem extends Object {
-
+class NodeItem extends Object {
   @JsonKey(name: 'id')
   int id;
 
@@ -48,12 +46,24 @@ part 'node_item.g.dart';
   @JsonKey(name: 'suggestQuantity')
   String suggestQuantity;
 
-  NodeItem(this.id,this.nodeName,this.nodeId,this.minTotalDelegation,this.ownerMinDelegationRate,this.minDelegationRate,this.annualizedYield,this.duration,this.durationType,this.commission,this.halfCollected,this.halfCollectedDuration,this.halfCollectedRate,this.suggestQuantity,);
+  NodeItem(
+    this.id,
+    this.nodeName,
+    this.nodeId,
+    this.minTotalDelegation,
+    this.ownerMinDelegationRate,
+    this.minDelegationRate,
+    this.annualizedYield,
+    this.duration,
+    this.durationType,
+    this.commission,
+    this.halfCollected,
+    this.halfCollectedDuration,
+    this.halfCollectedRate,
+    this.suggestQuantity,
+  );
 
   factory NodeItem.fromJson(Map<String, dynamic> srcJson) => _$NodeItemFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$NodeItemToJson(this);
-
 }
-
-  

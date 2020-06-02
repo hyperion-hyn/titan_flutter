@@ -10,6 +10,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_rectangle_button.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
 
 class Map3NodeCollectPage extends StatefulWidget {
@@ -248,7 +249,18 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
           color: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
           child: Text("提交", style: TextStyle(fontSize: 16, color: Colors.white)),
-          onPressed: () {}),
+          onPressed: () {
+            showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                builder: (BuildContext context) {
+                  return EnterWalletPasswordWidget();
+                }).then((walletPassword) async {
+              if (walletPassword == null) {
+                return;
+              }
+            });
+          }),
     );
   }
 }
