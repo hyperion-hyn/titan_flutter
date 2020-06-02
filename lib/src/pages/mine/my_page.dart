@@ -10,6 +10,7 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -525,7 +526,10 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future _scanAction() async {
-    showAlertView(title:"重要提示", actions:[
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+
+    /*showAlertView(title:"重要提示", actions:[
       FlatButton(
         onPressed: () {
           print("[Alert] --> 确定撤销");
@@ -550,6 +554,7 @@ class _MyPageState extends State<MyPage> {
         fontSize: 16,
       ),
     ], content:"你将撤销全部抵押(20,000HYN) 到原来钱包，且当前节点", boldContent:"将被取消", suffixContent:"，是否继续操作?");
+  */
 
     /*showAlertView(title:"重要提示", actions:[
       FlatButton(
