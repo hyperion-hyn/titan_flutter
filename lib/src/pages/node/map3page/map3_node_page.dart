@@ -543,6 +543,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                     color: HexColor("#FF15B2D2"),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     onPressed: () {
+
                       Application.router.navigateTo(
                           context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                     },

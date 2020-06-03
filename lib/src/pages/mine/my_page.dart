@@ -10,6 +10,9 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_cancel_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -20,6 +23,8 @@ import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
+import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
 import 'map3_contract_control.dart';
@@ -338,6 +343,10 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future _scanAction() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
+
+    return;
+
     // todo: test_jison_0429
     String scanStr = await BarcodeScanner.scan();
     print("[scan] indexInt= $scanStr");
@@ -346,8 +355,7 @@ class _MyPageState extends State<MyPage> {
     } else if (scanStr.contains("share?id=")) {
       int indexInt = scanStr.indexOf("=");
       String contractId = scanStr.substring(indexInt + 1, indexInt + 2);
-      Application.router
-          .navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
@@ -435,7 +443,7 @@ class _MyPageState extends State<MyPage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
-            onTap: (){
+            onTap: () {
               goSetWallet(wallet);
             },
             child: Column(
@@ -464,12 +472,12 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  void goSetWallet(Wallet wallet){
+  void goSetWallet(Wallet wallet) {
     var walletStr = FluroConvertUtils.object2string(wallet.toJson());
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
 //    print(currentRouteName);
-    Application.router.navigateTo(
-        context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+    Application.router
+        .navigateTo(context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
   }
 
   Widget _buildSloganRow() {
@@ -491,6 +499,9 @@ class _MyPageState extends State<MyPage> {
   }
 
   void shareApp() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+    return;
+
     var languageCode = Localizations.localeOf(context).languageCode;
     var shareAppImage = "";
 
