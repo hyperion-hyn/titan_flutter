@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
@@ -15,11 +16,42 @@ import 'map3_node_create_contract_page.dart';
 class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
   final String pageType;
   final ContractNodeItem contractNodeItem;
-
-  Map3NodeBroadcaseSuccessPage(this.pageType, {this.contractNodeItem});
+  final Map3NodeActionEvent actionEvent;
+  Map3NodeBroadcaseSuccessPage(this.pageType, {this.contractNodeItem, this.actionEvent});
 
   @override
   Widget build(BuildContext context) {
+
+    String action = "";
+    String detail = "";
+    switch (actionEvent) {
+      case Map3NodeActionEvent.CREATE:
+        action = "创建 Map3节点";
+        detail = "距离节点启动还需800000HYN，你可以邀请 好友参与抵押加速节点启动吧~";
+        break;
+
+      case Map3NodeActionEvent.DELEGATE:
+        action = "参与 Map3节点";
+        detail = "距离节点启动还需800000HYN，你可以邀请 好友参与抵押加速节点启动吧~";
+        break;
+
+      case Map3NodeActionEvent.COLLECT:
+        action = "Map3提币";
+        break;
+
+      case Map3NodeActionEvent.CANCEL:
+        action = "Map3撤销抵押";
+        break;
+
+      case Map3NodeActionEvent.CANCEL_CONFIRMED:
+        action = "Map3取消节点";
+        break;
+
+      default:
+        break;
+    }
+    action = "已在区块链上网络广播 【${action}的消息】区块链网络需要5-30分钟开采验证";
+
     return WillPopScope(
       onWillPop: () async {
         _pop(context);
@@ -68,7 +100,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 50),
                     child: Text(
-                      S.of(context).map_node_broadcase_success_description(pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE ? S.of(context).create : S.of(context).join),
+                      action,
                       style: TextStyle(fontSize: 14),
                     ),
                   ),
@@ -81,17 +113,17 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
                           child: Text(
-                            "距离节点启动还需800000HYN，你可以邀请 好友参与抵押加速节点启动吧~",
+                            detail,
                             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: HexColor("#0A6F84"), height: 1.5),
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        Image.asset(
+                        if (detail.isNotEmpty) Image.asset(
                           "res/drawable/node_create_success.gif",
                           fit: BoxFit.contain,
                           width: 26,
                         ),
-                        if (this.contractNodeItem != null) Container(
+                        Container(
                           padding: EdgeInsets.symmetric(horizontal: 48),
                           constraints: BoxConstraints.expand(height: 48),
                           child: FlatButton(
@@ -101,15 +133,20 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                                     color: Theme.of(context).primaryColor),
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
-                              Share.text(S.of(context).share, "http://baidu.com",
-                                  'text/plain');
+                              if (detail.isNotEmpty) {
+                                Share.text(S.of(context).share, "http://baidu.com",
+                                    'text/plain');
+                              }
+                              else {
+                                _pop(context);
+                              }
                             },
                             child: Container(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 40.0, vertical: 12.0),
                                 child: Text(
-                                  "分享邀请",
+                                  detail.isEmpty?"完成":"分享邀请",
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.white),
                                 ),
@@ -117,13 +154,13 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Padding(
+                        if (detail.isNotEmpty) Padding(
                           padding:
                               EdgeInsets.symmetric(vertical: 16, horizontal: 48),
                           child: Container(
                             constraints: BoxConstraints.expand(height: 48),
                             child: FlatButton(
-                              color: this.contractNodeItem == null?Theme.of(context).primaryColor:null,
+                              //color: this.contractNodeItem == null?Theme.of(context).primaryColor:null,
                               shape: RoundedRectangleBorder(
                                   side: BorderSide(
                                       color: Theme.of(context).primaryColor),
@@ -147,7 +184,7 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
 //                                  S.of(context).finish,
                                     "查看节点",
                                     style: TextStyle(
-                                        fontSize: 16, color: this.contractNodeItem != null?Theme.of(context).primaryColor:Colors.white),
+                                        fontSize: 16, color: Theme.of(context).primaryColor),
                                   ),
                                 ),
                               ),
@@ -165,14 +202,16 @@ class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
   }
 
   void _pop(BuildContext context) {
-    switch (this.pageType) {
-      case Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE:
+    switch (actionEvent) {
+      case Map3NodeActionEvent.CREATE:
         print("[pop] -----> _pop, contractNodeItem:${this.contractNodeItem.toJson()}");
 
         Routes.popUntilCachedEntryRouteName(context, this.contractNodeItem);
         break;
 
       default:
+        print("[pop] -----> _pop, contractNodeItem");
+
         Routes.popUntilCachedEntryRouteName(context, true);
         break;
     }

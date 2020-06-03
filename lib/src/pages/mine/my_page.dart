@@ -10,10 +10,13 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_cancel_confirm_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -499,7 +502,9 @@ class _MyPageState extends State<MyPage> {
   }
 
   void shareApp() async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeBroadcaseSuccessPage(Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE, actionEvent: Map3NodeActionEvent.CANCEL,)));
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+
     return;
 
     var languageCode = Localizations.localeOf(context).languageCode;

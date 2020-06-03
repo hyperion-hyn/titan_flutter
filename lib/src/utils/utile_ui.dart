@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {
@@ -164,6 +165,100 @@ class UiUtil {
     }
     return false;
   }
+
+  static Future<T> showAlertView<T>(
+      BuildContext context,
+      {String title,
+        List<Widget> actions,
+        String content,
+        String detail = "",
+        String boldContent = "",
+        String suffixContent = ""}) {
+    showDialog<T>(
+      // 传入 context
+      context: context,
+      // 构建 Dialog 的视图
+      builder: (_) => Padding(
+        padding: EdgeInsets.all(36),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              //alignment: Alignment.center,
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(_),
+                      child: Image.asset(
+                        "res/drawable/map3_node_close.png",
+                        width: 18,
+                        height: 18,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: Text(title,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: HexColor("#333333"),
+                                decoration: TextDecoration.none)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 24, left: 24, right: 24),
+                        child: RichText(
+                            text: TextSpan(
+                                text: content,
+                                style: TextStyle(fontSize: 15, color: HexColor("#333333"), height: 1.8),
+                                children: [
+                                  TextSpan(
+                                    text: boldContent,
+                                    style: TextStyle(fontSize: 15, color: HexColor("#FF4C3B"), height: 1.8),
+                                  ),
+                                  TextSpan(
+                                    text: suffixContent,
+                                    style: TextStyle(fontSize: 15, color: HexColor("#333333"), height: 1.8),
+                                  ),
+                                ])),
+                      ),
+                      if (detail.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(top: 6, left: 24, right: 24),
+                          child: Text(detail,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal,
+                                  color: HexColor("#999999"),
+                                  height: 1.8,
+                                  decoration: TextDecoration.none)),
+                        ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 15, bottom: 18),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: actions,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
 }
 
 void callLater(FrameCallback callback) {

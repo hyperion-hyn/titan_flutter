@@ -54,3 +54,5 @@ String transactionHistoryAction2String(TransactionHistoryAction action) {
 }
 
 enum AppSource { DEFAULT, TITAN, STARRICH}
+
+enum Map3NodeActionEvent { CREATE, DELEGATE, COLLECT, CANCEL, CANCEL_CONFIRMED}
