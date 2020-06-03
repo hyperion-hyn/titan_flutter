@@ -48,7 +48,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
-  bool _isUserCreatable = false;
   var selectServerItemValue = 0;
   var selectNodeItemValue = 0;
   List<DropdownMenuItem> serverList;
@@ -79,9 +78,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   void getNetworkData() async {
     try {
-//      contractItem = await _nodeApi.getContractItem(widget.contractId);
-//      providerList = await _nodeApi.getNodeProviderList();
-
       var requestList =
           await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
       contractItem = requestList[0];
@@ -99,13 +95,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     }
   }
 
-  Future checkIsCreateContract() async {
-    try {
-      _isUserCreatable = await _nodeApi.checkIsUserCreatableContractInstance();
-    } catch (e) {
-      log(e);
-    }
-  }
 
   void selectNodeProvider(int providerIndex, int regionIndex) {
     if (providerList.length == 0) {
@@ -491,17 +480,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     return ClickRectangleButton(S.of(context).confirm_bug,() async {
-      await checkIsCreateContract();
 
       setState(() {
         if (!_joinCoinFormKey.currentState.validate()) {
           return;
         }
 
-        if (!_isUserCreatable) {
-          Fluttertoast.showToast(msg: S.of(context).check_is_create_contract_hint);
-          return;
-        }
 
         String provider = providerList[selectServerItemValue].id;
         String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
@@ -773,7 +757,7 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                     )),
                 Text(
                   title,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -797,19 +781,19 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(contractNodeItem.contract.nodeName, style: TextStyle(fontSize: 16, color: Colors.white)),
+                      Text(nodeItem.name, style: TextStyle(fontSize: 16, color: Colors.white)),
                       SizedBox(height: 4),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                              '${S.of(context).highest} ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}',
-                              style: TextStyle(fontSize: 13, color: Colors.white60)),
+                              "启动所需" +'${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}',
+                              style: TextStyle(fontSize: 13, color: Colors.white)),
                           SizedBox(width: 4),
                           Container(width: 1, height: 10, color: Colors.white24),
                           SizedBox(width: 4),
                           Text(S.of(context).n_day(nodeItem.duration.toString()),
-                              style: TextStyle(fontSize: 13, color: Colors.white60)),
+                              style: TextStyle(fontSize: 13, color: Colors.white)),
                         ],
                       )
                     ],
@@ -819,7 +803,7 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                   children: <Widget>[
                     Text(FormatUtil.formatPercent(nodeItem.annualizedYield),
                         style: TextStyle(fontSize: 20, color: Colors.white)),
-                    Text(S.of(context).annualized_rewards, style: TextStyle(fontSize: 13, color: Colors.white60)),
+                    Text(S.of(context).annualized_rewards, style: TextStyle(fontSize: 13, color: Colors.white)),
                   ],
                 ),
               ],

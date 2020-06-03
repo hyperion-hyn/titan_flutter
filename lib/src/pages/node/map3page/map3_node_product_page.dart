@@ -147,7 +147,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
+                          Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold)))
                         ],
                       ),
                       Padding(
