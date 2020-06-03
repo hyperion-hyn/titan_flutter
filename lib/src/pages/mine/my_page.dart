@@ -346,11 +346,10 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future _scanAction() async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
-
-    return;
-
     // todo: test_jison_0429
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
+    //return;
+
     String scanStr = await BarcodeScanner.scan();
     print("[scan] indexInt= $scanStr");
     if (scanStr == null) {
@@ -502,10 +501,10 @@ class _MyPageState extends State<MyPage> {
   }
 
   void shareApp() async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeBroadcaseSuccessPage(Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE, actionEvent: Map3NodeActionEvent.CANCEL,)));
+    // todo: test_jison_0429
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeBroadcaseSuccessPage(Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE, actionEvent: Map3NodeActionEvent.CANCEL,)));
     //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
-
-    return;
+    //return;
 
     var languageCode = Localizations.localeOf(context).languageCode;
     var shareAppImage = "";
