@@ -35,13 +35,16 @@ class Node extends Object {
   @JsonKey(name: 'name')
   String name;
 
+  @JsonKey(name: 'version')
+  String version;
+
   @JsonKey(name: 'content')
   String content;
 
   @JsonKey(name: 'pic')
   String pic;
 
-  Node(this.name,this.content,this.pic,);
+  Node(this.name, this.version, this.content,this.pic,);
 
   factory Node.fromJson(Map<String, dynamic> srcJson) => _$NodeFromJson(srcJson);
 

@@ -79,6 +79,9 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
           contractList = [];
         }
         contractList.addAll(tempMemberList);
+//        contractList.addAll(tempMemberList);
+//        contractList.addAll(tempMemberList);
+
       });
     }
   }
@@ -109,11 +112,11 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                     )),
                     Text(
                       "查看更多",
-                      style: TextStyles.textC999S14,
+                      style: TextStyles.textC999S12,
                     ),
                     Icon(
                       Icons.chevron_right,
-                      color: Colors.black54,
+                      color: DefaultColors.color999,
                     ),
                     SizedBox(
                       width: 14,
@@ -166,40 +169,34 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
               ],
             ),
             margin: const EdgeInsets.only(right: 12),
-            child: Stack(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset(
-                        "res/drawable/ic_map3_node_item_contract.png",
-                        width: 42,
-                        height: 42,
-                        fit: BoxFit.cover,
-                      ),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0, right: 5),
-                        child: Text.rich(TextSpan(children: [
-                          TextSpan(
-                              text: S.of(context).number, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                          TextSpan(text: "${item.contractCode ?? ""}", style: TextStyles.textC333S14bold),
-                        ])),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(UiUtil.shortEthAddress(item.ownerName),
-                          style: TextStyles.textC9b9b9bS12),
-//                      Text(item.ownerName,
-//                          style: TextStyle(fontSize: 14, color: HexColor("#9B9B9B")))
-                    ],
-                  ),
+                Image.asset(
+                  "res/drawable/map3_node_default_avatar.png",
+                  //"res/drawable/ic_map3_node_item_contract.png",
+                  width: 42,
+                  height: 42,
+                  fit: BoxFit.cover,
                 ),
+                SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5.0, right: 5),
+                  child: Text(
+                      //item.ownerName,
+                      "大道至简",
+                      style: TextStyle(fontSize: 12, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+//                      Text(UiUtil.shortEthAddress(item.ownerName),
+//                          style: TextStyles.textC9b9b9bS12),
+                Text(S.of(context).number + " ${item.contractCode ?? ""}",
+                    style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
               ],
             ),
           ),

@@ -94,7 +94,8 @@ class _Map3NodeCancelConfirmState extends State<Map3NodeCancelConfirmPage> {
                           context,
                           NodeItem(
                             1,
-                            "Map3云节点（V0.9）",
+                            "Map3云节点",
+                            "0.9",
                             1,
                             "1000000",
                             0.2,
@@ -292,7 +293,7 @@ Widget nodeIntroductionWidget(BuildContext context, NodeItem nodeItem) {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
+                  Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold)))
                 ],
               ),
               Padding(

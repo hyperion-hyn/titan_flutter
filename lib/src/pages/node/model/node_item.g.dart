@@ -10,6 +10,7 @@ NodeItem _$NodeItemFromJson(Map<String, dynamic> json) {
   return NodeItem(
     json['id'] as int,
     json['nodeName'] as String,
+    json['nodeVersion'] as String,
     json['nodeId'] as int,
     json['minTotalDelegation'] as String,
     (json['ownerMinDelegationRate'] as num)?.toDouble(),
@@ -28,6 +29,7 @@ NodeItem _$NodeItemFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$NodeItemToJson(NodeItem instance) => <String, dynamic>{
       'id': instance.id,
       'nodeName': instance.nodeName,
+      'nodeVersion': instance.nodeVersion,
       'nodeId': instance.nodeId,
       'minTotalDelegation': instance.minTotalDelegation,
       'ownerMinDelegationRate': instance.ownerMinDelegationRate,

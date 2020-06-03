@@ -14,6 +14,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -25,11 +26,6 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
 class Map3NodePreCreateContractPage extends StatefulWidget {
-  static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
-  static const String CONTRACT_PAGE_TYPE_JOIN = "contract_page_type_join";
-  static const String CONTRACT_PAGE_TYPE_COLLECT = "contract_page_type_collect";
-
-  final String pageType = CONTRACT_PAGE_TYPE_CREATE;
   final String contractId;
 
   Map3NodePreCreateContractPage(this.contractId);
@@ -39,31 +35,14 @@ class Map3NodePreCreateContractPage extends StatefulWidget {
 }
 
 class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPage> {
-  TextEditingController _joinCoinController = new TextEditingController();
-  final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
-  ContractNodeItem contractItem;
-  PublishSubject<String> _filterSubject = PublishSubject<String>();
-  String endProfit = "";
-  String spendManager = "";
-  bool _isUserCreatable = false;
-  var selectServerItemValue = 0;
-  var selectNodeItemValue = 0;
-  List<DropdownMenuItem> serverList;
-  List<DropdownMenuItem> nodeList;
-  List<NodeProviderEntity> providerList = [];
-  String originInputStr = "";
+  ContractNodeItem _contractItem;
+  List<NodeProviderEntity> _providerList = [];
+  NodeItem _nodeItem;
 
   @override
   void initState() {
-    _joinCoinController.addListener(textChangeListener);
-
-    _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
-      getCurrentSpend(text);
-//      widget.fieldCallBack(text);
-    });
-
     getNetworkData();
     super.initState();
   }
@@ -79,15 +58,12 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
 
   void getNetworkData() async {
     try {
-//      contractItem = await _nodeApi.getContractItem(widget.contractId);
-//      providerList = await _nodeApi.getNodeProviderList();
-
       var requestList =
           await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
-      contractItem = requestList[0];
-      providerList = requestList[1];
+      _contractItem = requestList[0];
+      _nodeItem = _contractItem.contract;
 
-      selectNodeProvider(0, 0);
+      _providerList = requestList[1];
 
       setState(() {
         currentState = null;
@@ -99,86 +75,13 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
     }
   }
 
-  Future checkIsCreateContract() async {
-    try {
-      _isUserCreatable = await _nodeApi.checkIsUserCreatableContractInstance();
-    } catch (e) {
-      log(e);
-    }
-  }
-
-  void selectNodeProvider(int providerIndex, int regionIndex) {
-    if (providerList.length == 0) {
-      return;
-    }
-
-    serverList = new List();
-    for (int i = 0; i < providerList.length; i++) {
-      NodeProviderEntity nodeProviderEntity = providerList[i];
-      DropdownMenuItem item = new DropdownMenuItem(
-          value: i,
-          child: new Text(
-            nodeProviderEntity.name,
-            style: TextStyles.textC333S14,
-          ));
-      serverList.add(item);
-    }
-    selectServerItemValue = serverList[providerIndex].value;
-
-    List<Regions> nodeListStr = providerList[providerIndex].regions;
-    nodeList = new List();
-    for (int i = 0; i < nodeListStr.length; i++) {
-      Regions regions = nodeListStr[i];
-      DropdownMenuItem item =
-          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
-      nodeList.add(item);
-    }
-    selectNodeItemValue = nodeList[regionIndex].value;
-  }
-
-  void textChangeListener() {
-    _filterSubject.sink.add(_joinCoinController.text);
-  }
-
-  void getCurrentSpend(String inputText) {
-    if (contractItem == null || !mounted || originInputStr == inputText) {
-      return;
-    }
-
-    originInputStr = inputText;
-    _joinCoinFormKey.currentState?.validate();
-
-    if (inputText == null || inputText == "") {
-      setState(() {
-        endProfit = "";
-        spendManager = "";
-      });
-      return;
-    }
-    double inputValue = double.parse(inputText);
-    endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
-
-    if (mounted) {
-      setState(() {
-        _joinCoinController.value = TextEditingValue(
-            // 设置内容
-            text: inputText,
-            // 保持光标在最后
-            selection:
-                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
-      });
-    }
-  }
-
   @override
   void dispose() {
-    _filterSubject.close();
     super.dispose();
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractItem.contract == null) {
+    if (currentState != null || _nodeItem == null) {
       return Scaffold(
         body: AllPageStateContainer(currentState, () {
           setState(() {
@@ -189,10 +92,6 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
       );
     }
 
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-
-
     return Container(
       color: Colors.white,
       child: Column(
@@ -201,7 +100,12 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
             child: SingleChildScrollView(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               _nodeWidget(),
-              SizedBox(height: 10, child: Container(color: HexColor("#F4F4F4"),),),
+              SizedBox(
+                height: 10,
+                child: Container(
+                  color: HexColor("#F4F4F4"),
+                ),
+              ),
               _tipsWidget(),
             ])),
           ),
@@ -212,6 +116,51 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
   }
 
   Widget _tipsWidget() {
+    var _nodeWidget = Padding(
+      padding: const EdgeInsets.only(right: 10, top: 10),
+      child: Container(
+        width: 3,
+        height: 3,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: DefaultColors.color999,
+            border: Border.all(color: DefaultColors.color999, width: 1.0)),
+      ),
+    );
+
+    Widget _rowWidget(String title, {double top = 8}) {
+      return Padding(
+        padding: EdgeInsets.only(top: top),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _nodeWidget,
+            Expanded(child: Text(title, style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12))),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      color: Colors.white,
+      //height: MediaQuery.of(context).size.height-50,
+      padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 8),
+            child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
+          ),
+          _rowWidget("创建7天内不可撤销", top: 0),
+          _rowWidget("需要总抵押满100万才能正式启动，你至少需要20万的HYN作为首次抵押，剩余的份额需要其他抵押!者参加投入;你也可以一次性抵押100万即可启动节点"),
+          _rowWidget("创建时可设置自动续约，当期满后节点自动尝试重新启动以获得更多奖励;你也可以在任何时候关闭或开启自动续约开关"),
+        ],
+      ),
+    );
+  }
+
+  Widget _tipsWidget_old() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
 
@@ -249,8 +198,6 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
   }
 
   Widget _confirmButtonWidget() {
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
@@ -305,12 +252,15 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
           switch (value) {
             case 1:
               title = "创建最低抵押";
-              detail = "200,000";
+
+              double tempMinTotal = double.parse(_nodeItem.minTotalDelegation) * _nodeItem.ownerMinDelegationRate;
+              detail = FormatUtil.amountToString(tempMinTotal.toString());
+
               break;
 
             case 2:
               title = "年化奖励";
-              detail = "16%";
+              detail = FormatUtil.formatPercent(_nodeItem.annualizedYield);
               color = HexColor("#FF4C3B");
               break;
 
@@ -348,7 +298,7 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
   }
 
   Widget _nodeIntroductionWidget() {
-    var nodeItem = contractItem.contract;
+    var nodeItem = _nodeItem;
 
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -372,10 +322,22 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold))),
-                    InkWell(child: Text("节点细则", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))), onTap: (){
-
-                    },),
+                    Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold))),
+                    InkWell(
+                      child: Text("节点细则", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                      onTap: () {
+                        String webUrl =
+                        FluroConvertUtils.fluroCnParamsEncode(
+                            "http://baidu.com");
+                        String webTitle =
+                        FluroConvertUtils.fluroCnParamsEncode(
+                            "节点细则");
+                        Application.router.navigateTo(
+                            context,
+                            Routes.toolspage_webview_page +
+                                '?initUrl=$webUrl&title=$webTitle');
+                      },
+                    ),
                   ],
                 ),
                 Padding(
@@ -408,21 +370,16 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [1, 2, 3].map((value) {
+        children: [1, 2].map((value) {
           var title = "";
           var detail = "";
           switch (value) {
             case 1:
               title = S.of(context).service_provider;
-              detail = "亚马逊云";
+              detail = _providerList.first.name;
               break;
 
             case 2:
-              title = S.of(context).node_location;
-              detail = "1324次/秒";
-              break;
-
-            case 3:
               title = "服务片区";
               detail = "根据云所在链路位置就近服务";
               break;

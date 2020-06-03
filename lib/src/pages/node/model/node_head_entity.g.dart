@@ -11,14 +11,11 @@ NodeHeadEntity _$NodeHeadEntityFromJson(Map<String, dynamic> json) {
     json['instanceCount'] as int,
     (json['lastRecordMessage'] as List)?.map((e) => e as String)?.toList(),
     json['message'] as String,
-    json['node'] == null
-        ? null
-        : Node.fromJson(json['node'] as Map<String, dynamic>),
+    json['node'] == null ? null : Node.fromJson(json['node'] as Map<String, dynamic>),
   );
 }
 
-Map<String, dynamic> _$NodeHeadEntityToJson(NodeHeadEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$NodeHeadEntityToJson(NodeHeadEntity instance) => <String, dynamic>{
       'instanceCount': instance.instanceCount,
       'lastRecordMessage': instance.lastRecordMessage,
       'message': instance.message,
@@ -28,6 +25,7 @@ Map<String, dynamic> _$NodeHeadEntityToJson(NodeHeadEntity instance) =>
 Node _$NodeFromJson(Map<String, dynamic> json) {
   return Node(
     json['name'] as String,
+    json['version'] as String,
     json['content'] as String,
     json['pic'] as String,
   );
@@ -35,6 +33,7 @@ Node _$NodeFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$NodeToJson(Node instance) => <String, dynamic>{
       'name': instance.name,
+      'version': instance.version,
       'content': instance.content,
       'pic': instance.pic,
     };

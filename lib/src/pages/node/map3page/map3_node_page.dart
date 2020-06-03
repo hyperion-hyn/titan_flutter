@@ -15,6 +15,7 @@ import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/pages/node/widget/node_active_contract_widget.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -260,12 +261,12 @@ class _Map3NodeState extends State<Map3NodePage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 Expanded(
-                                    child: Text("${_nodePageEntityVo.nodeHeadEntity.node.name}",
+                                    child: Text("${_nodePageEntityVo.nodeHeadEntity.node.name}（V${_nodePageEntityVo.nodeHeadEntity.node.version}）",
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
                                             color: DefaultColors.colorcc000000))),
-                                /*InkWell(
+                                InkWell(
                                   onTap: () {
                                     String webUrl =
                                         FluroConvertUtils.fluroCnParamsEncode(
@@ -282,24 +283,27 @@ class _Map3NodeState extends State<Map3NodePage> {
                                       style: TextStyle(
                                           fontSize: 12,
                                           color: DefaultColors.color66000000,
-                                          decoration:
-                                              TextDecoration.underline)),
-                                )*/
+                                          /*decoration:
+                                              TextDecoration.underline*/)),
+                                )
                               ],
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0, bottom: 8),
                               child: Text("    ${_nodePageEntityVo.nodeHeadEntity.node.content}",
-                                  style: TextStyle(fontSize: 12, color: DefaultColors.color99000000)),
+                                  style: TextStyle(fontSize: 11, height: 1.8, color: DefaultColors.color99000000)),
                             ),
                           ],
                         ),
                       )
                     ],
                   ),
-                  ClickOvalButton(S.of(context).create_contract,(){
-                    _pushContractListAction();
-                  }),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: ClickOvalButton(S.of(context).create_contract,(){
+                      _pushContractListAction();
+                    }),
+                  ),
                 ],
               ),
             ),
@@ -1051,7 +1055,7 @@ Widget nodeIntroductionWidget(BuildContext context, NodeItem nodeItem) {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
+                  Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold)))
                 ],
               ),
               Padding(

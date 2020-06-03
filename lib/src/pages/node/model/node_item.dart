@@ -10,6 +10,9 @@ class NodeItem extends Object {
   @JsonKey(name: 'nodeName')
   String nodeName;
 
+  @JsonKey(name: 'nodeVersion')
+  String nodeVersion;
+
   @JsonKey(name: 'nodeId')
   int nodeId;
 
@@ -49,6 +52,7 @@ class NodeItem extends Object {
   NodeItem(
     this.id,
     this.nodeName,
+    this.nodeVersion,
     this.nodeId,
     this.minTotalDelegation,
     this.ownerMinDelegationRate,
@@ -66,4 +70,9 @@ class NodeItem extends Object {
   factory NodeItem.fromJson(Map<String, dynamic> srcJson) => _$NodeItemFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$NodeItemToJson(this);
+
+  get name {
+    return "${this.nodeName}（V${this.nodeVersion}）";
+  }
+
 }

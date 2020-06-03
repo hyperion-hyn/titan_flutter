@@ -21,7 +21,7 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
     json['nodeRegion'] as String,
     json['nodeRegionName'] as String,
     json['expectDueTime'] as int,
-    json['expectCancelTime'] as int,
+    json['expectCancelTime'] as int ?? 0,
     json['instanceStartTime'] as int,
     json['instanceActiveTime'] as int,
     json['instanceDueTime'] as int,
