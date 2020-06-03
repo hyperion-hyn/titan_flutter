@@ -37,6 +37,9 @@ class Routes {
   static const String contribute_add_nCov_poi = '/contribution/tasks/add_nCov_poi';
   static const String contribute_position_finish = '/contribution/tasks/position_finish';
 
+  static const String contribute_request_mortgage = '/contribution/mortgage_request';
+  static const String contribute_mortgage_broadcast_done = '/contribution/mortgage_broadcast_finish';
+
   //map3node
   static const String map3node_product_list = '/map3node/product_list';
   static const String map3node_create_wallet = '/map3node/create_wallet';
@@ -50,7 +53,7 @@ class Routes {
 
   static String cachedEntryRouteName;
 
-  static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
+  static void  popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
     print("Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
     if (Routes.cachedEntryRouteName == null) {
       //back to root
@@ -111,6 +114,8 @@ class Routes {
         handler: contributionScanSignalHandler, transitionType: pushNewPageTransitionType);
     router.define(contribute_position_finish,
         handler: contributionPositionFinishHandler, transitionType: pushNewPageTransitionType);
+
+    router.define(contribute_mortgage_broadcast_done, handler: contributionMortgageBroadcastDoneHandler, transitionType: pushNewPageTransitionType,);
 
     //map3node
     router.define(map3node_product_list,
