@@ -278,7 +278,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     );
   }
 
-  bool _autoRenewal = true;
+  bool _renew = true;
   Widget _autoRenewalWidget() {
     return Container(
       color: Colors.white,
@@ -298,11 +298,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             child: Transform.scale(
               scale: 0.8,
               child: CupertinoSwitch(
-                value: _autoRenewal,
+                value: _renew,
                 activeColor: Theme.of(context).primaryColor,
                 onChanged: (value) {
                   setState(() {
-                    _autoRenewal = value;
+                    _renew = value;
                   });
                   print("[AutoRenewalWidget] --> value:$value");
                 },
@@ -493,8 +493,9 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         contractItem.nodeProvider = providerModel.id;
         contractItem.nodeRegionName = regionsModel.name;
         contractItem.nodeProviderName = providerModel.name;
-
         var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
+        contractItem.announcement = _pronounceTextController.text.isNotEmpty?_pronounceTextController.text:"欢迎来到Titan";
+        contractItem.renew = _renew;
 
         Application.router.navigateTo(
             context,
