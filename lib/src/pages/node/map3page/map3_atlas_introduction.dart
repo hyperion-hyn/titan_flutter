@@ -64,15 +64,15 @@ Atlas将在技术上实现高可伸缩性、低延迟性、低成本、隐私保
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 18, bottom: 8),
-            child: Text("关于Atlas共识节点", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: HexColor("#333333")),),
+            child: Text("关于Atlas共识节点", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: HexColor("#333333")),),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 8),
-            child: Text(instroduction, style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, color: HexColor("#333333"), height: 2),),
+            child: Text(instroduction, style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: HexColor("#999999"), height: 2)),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 16),
-            child: Text("敬请期待！", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: HexColor("#333333")),),
+            child: Text("敬请期待！", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: HexColor("#333333")),),
           ),
         ],
       ),

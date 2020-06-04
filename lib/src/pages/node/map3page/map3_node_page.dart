@@ -242,61 +242,65 @@ class _Map3NodeState extends State<Map3NodePage> {
             ),
             margin: const EdgeInsets.only(left: 15, right: 15, top: 127, bottom: 16),
             child: Padding(
-              padding: const EdgeInsets.only(left: 15.0, right: 19, top: 13, bottom: 17),
+              padding: const EdgeInsets.only(left: 15.0, right: 19, top: 16, bottom: 17),
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      ClipRRect(
-                        child: Image.asset("res/drawable/ic_map3_node_item_2.png",
-                            width: 80, height: 80, fit: BoxFit.cover),
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      SizedBox(width: 16),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                    child: Text("${_nodePageEntityVo.nodeHeadEntity.node.name}（V${_nodePageEntityVo.nodeHeadEntity.node.version}）",
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: DefaultColors.colorcc000000))),
-                                InkWell(
-                                  onTap: () {
-                                    String webUrl =
-                                        FluroConvertUtils.fluroCnParamsEncode(
-                                            "http://baidu.com");
-                                    String webTitle =
-                                        FluroConvertUtils.fluroCnParamsEncode(
-                                            "如何新开Map3节点");
-                                    Application.router.navigateTo(
-                                        context,
-                                        Routes.toolspage_webview_page +
-                                            '?initUrl=$webUrl&title=$webTitle');
-                                  },
-                                  child: Text("开通教程",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: DefaultColors.color66000000,
-                                          /*decoration:
-                                              TextDecoration.underline*/)),
-                                )
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0, bottom: 8),
-                              child: Text("    ${_nodePageEntityVo.nodeHeadEntity.node.content}",
-                                  style: TextStyle(fontSize: 11, height: 1.8, color: DefaultColors.color99000000)),
-                            ),
-                          ],
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Text("${_nodePageEntityVo.nodeHeadEntity.node.name}（V${_nodePageEntityVo.nodeHeadEntity.node.version}）",
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: DefaultColors.colorcc000000)),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 36),
+                          child: InkWell(
+                            onTap: () {
+                              String webUrl =
+                              FluroConvertUtils.fluroCnParamsEncode(
+                                  "http://baidu.com");
+                              String webTitle =
+                              FluroConvertUtils.fluroCnParamsEncode(
+                                  "如何新开Map3节点");
+                              Application.router.navigateTo(
+                                  context,
+                                  Routes.toolspage_webview_page +
+                                      '?initUrl=$webUrl&title=$webTitle');
+                            },
+                            child: Text("开通教程",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: DefaultColors.color66000000,
+                                  /*decoration:
+                                                  TextDecoration.underline*/)),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: ClipRRect(
+                            child: Image.asset("res/drawable/ic_map3_node_item_2.png",
+                                width: 80, height: 80, fit: BoxFit.cover),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
                         ),
-                      )
-                    ],
+                        SizedBox(width: 16),
+                        Flexible(
+                          child: Text("${_nodePageEntityVo.nodeHeadEntity.node.content}",
+                              style: TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
+                        )
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
