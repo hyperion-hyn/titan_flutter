@@ -14,7 +14,7 @@ class AddPOIDonePage extends StatefulWidget {
 }
 
 class _AddPOIDonePageState extends State<AddPOIDonePage> {
-  String _POIName = '麦当劳';
+  String _poiName = '麦当劳';
   double _rewardHYN = 0.1;
   int _rewardCoins = 10;
   int _extraRewardCoins = 20;
@@ -60,7 +60,7 @@ class _AddPOIDonePageState extends State<AddPOIDonePage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    ' 干的漂亮！您在地图上添加了 $_POIName，获得${_rewardHYN}HYN + ${_rewardCoins}个金币。如果你的地点被评为优质地点，将额外再获得$_extraRewardCoins个金币。',
+                    ' 干的漂亮！您在地图上添加了 $_poiName，获得${_rewardHYN}HYN + ${_rewardCoins}个金币。如果你的地点被评为优质地点，将额外再获得$_extraRewardCoins个金币。',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Color(0xFF9B9B9B)),
                   ),
