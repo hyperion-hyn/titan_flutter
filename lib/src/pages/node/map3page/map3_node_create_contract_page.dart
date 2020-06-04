@@ -40,6 +40,7 @@ class Map3NodeCreateContractPage extends StatefulWidget {
 }
 
 class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
+
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
@@ -61,7 +62,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       getCurrentSpend(text);
-//      widget.fieldCallBack(text);
     });
 
     getNetworkData();
@@ -487,8 +487,13 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         }
 
 
-        String provider = providerList[selectServerItemValue].id;
-        String region = providerList[selectServerItemValue].regions[selectNodeItemValue].id;
+        var providerModel = providerList[selectServerItemValue];
+        var regionsModel = providerModel.regions[selectNodeItemValue];
+        contractItem.nodeRegion = regionsModel.id;
+        contractItem.nodeProvider = providerModel.id;
+        contractItem.nodeRegionName = regionsModel.name;
+        contractItem.nodeProviderName = providerModel.name;
+
         var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
 
         Application.router.navigateTo(
@@ -497,8 +502,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                 "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                 "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
                 "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                "&provider=$provider" +
-                "&region=$region" +
                 "&pageType=${widget.pageType}" +
                 "&contractId=${widget.contractId}");
       });

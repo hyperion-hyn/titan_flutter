@@ -191,8 +191,6 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
     params['receiverAddress']?.first ?? '0',
     params['pageType']?.first,
     params['contractId']?.first,
-    provider: params['provider']?.first ?? "",
-    region: params['region']?.first ?? "",
   );
 });
 

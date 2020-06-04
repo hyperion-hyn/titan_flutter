@@ -29,6 +29,7 @@ class Map3NodeJoinContractPage extends StatefulWidget {
 }
 
 class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
+
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   all_page_state.AllPageState currentState = all_page_state.LoadingState();

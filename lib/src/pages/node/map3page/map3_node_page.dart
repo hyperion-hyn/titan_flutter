@@ -256,9 +256,10 @@ class _Map3NodeState extends State<Map3NodePage> {
                                 fontWeight: FontWeight.w500,
                                 color: DefaultColors.colorcc000000)),
                         Padding(
-                          padding: const EdgeInsets.only(left: 36),
+                          padding: const EdgeInsets.only(left: 24),
                           child: InkWell(
                             onTap: () {
+                              // todo: test_jison_0604
                               String webUrl =
                               FluroConvertUtils.fluroCnParamsEncode(
                                   "http://baidu.com");

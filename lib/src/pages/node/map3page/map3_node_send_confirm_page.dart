@@ -45,13 +45,10 @@ class Map3NodeSendConfirmPage extends StatefulWidget {
   final String receiverAddress;
   final String pageType;
   final String contractId;
-  final String provider;
-  final String region;
   final ContractNodeItem contractNodeItem;
 
   Map3NodeSendConfirmPage(
-      String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress, this.pageType, this.contractId,
-      {this.provider, this.region})
+      String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress, this.pageType, this.contractId)
       : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -124,7 +121,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
             children: <Widget>[
               _headerWidget(),
               _dividerWidget(),
-              nodeWidget(context, widget.contractNodeItem.contract),
+              _nodeWidget(context, widget.contractNodeItem.contract),
               _dividerWidget(),
               _gasInputWidget(),
               _dividerWidget(),
@@ -219,7 +216,14 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                 Text(
                   "≈ $quoteSign${FormatUtil.formatPrice(widget.transferAmount.toDouble() * quotePrice)}",
                   style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
-                )
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    "1300（合约余额）+7000（钱包转入）",
+                    style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                  ),
+                ),
               ],
             ),
           ),
@@ -261,7 +265,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
         }
 
         var startJoin =
-            StartJoinInstance(activatedWallet.wallet.getEthAccount().address, widget.provider, widget.region);
+            StartJoinInstance(activatedWallet.wallet.getEthAccount().address, widget.contractNodeItem.nodeProvider, widget.contractNodeItem.nodeRegion);
         //ContractDetailItem _detailItem;
         String resultMsg = "";
         ContractNodeItem contractNodeItem;
@@ -309,5 +313,146 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
       }
     });
   }
+
+  Widget _nodeWidget(BuildContext context, NodeItem nodeItem) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          _nodeIntroductionWidget(context, nodeItem),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Divider(
+              height: 2,
+            ),
+          ),
+          _nodeServerWidget(context, nodeItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _nodeIntroductionWidget(BuildContext context, NodeItem nodeItem) {
+    //var nodeItem = widget.contractNodeItem.contract;
+
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        //mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Image.asset(
+            "res/drawable/ic_map3_node_item_2.png",
+            width: 62,
+            height: 63,
+            fit: BoxFit.cover,
+          ),
+          SizedBox(
+            width: 12,
+          ),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold)))
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 6.0),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                          "启动所需" +
+                              " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
+                              S.of(context).ten_thousand,
+                          style: TextStyles.textC99000000S13,
+                          maxLines: 1,
+                          softWrap: true),
+                      Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
+                      Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            children: <Widget>[
+              Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
+              Padding(
+                padding: const EdgeInsets.only(top: 3.0),
+                child: Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _nodeServerWidget(BuildContext context, NodeItem nodeItem) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [1, 2, 3, 4, 5, 6].map((value) {
+
+          var title = "";
+          var detail = "";
+          switch (value) {
+            case 1:
+              title = S.of(context).service_provider;
+              detail = widget.contractNodeItem.nodeProviderName;
+              break;
+
+            case 2:
+              title = S.of(context).node_location;
+              detail = widget.contractNodeItem.nodeRegionName;
+              break;
+
+            case 3:
+              title = "管理费";
+              detail = "20%";
+              break;
+
+            case 4:
+              title = "自动续约";
+              detail = widget.contractNodeItem.renew?"是":"否";
+              break;
+
+            case 5:
+              title = "节点公告";
+              detail = widget.contractNodeItem.announcement.isNotEmpty?widget.contractNodeItem.announcement:"欢迎参加我的合约，前10名参与者返10%管理。";
+              break;
+
+            default:
+              return SizedBox(
+                height: 8,
+              );
+              break;
+          }
+
+          return Padding(
+            padding: EdgeInsets.only(top: value == 1 ? 0:12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    width: 80,
+                    child:
+                    Text(title, style: TextStyle(fontSize: 14, color: HexColor("#92979A")),)),
+                Expanded(child: Text(detail, style: TextStyle(fontSize: 15, color: HexColor("#333333")), maxLines: 2, overflow: TextOverflow.ellipsis,))
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
 }
 

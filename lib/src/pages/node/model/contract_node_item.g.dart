@@ -30,9 +30,12 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
     json['shareUrl'] as String,
     json['remoteNodeUrl'] as String,
     json['appSource'] as int,
+    json['renew'] as bool,
+    json['announcement'] as String,
     json['state'] as String,
   )..nodeProviderName = json['nodeProviderName'] as String;
 }
+
 
 Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
     <String, dynamic>{
@@ -57,5 +60,7 @@ Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
       'shareUrl': instance.shareUrl,
       'remoteNodeUrl': instance.remoteNodeUrl,
       'appSource': instance.appSource,
+      'renew': instance.renew,
+      'announcement': instance.announcement,
       'state': instance.state,
     };
