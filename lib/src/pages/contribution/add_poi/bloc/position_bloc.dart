@@ -29,9 +29,10 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
 //        var language = (appLocale ?? defaultLocale).languageCode;
         if (event.language.startsWith('zh')) event.language = "zh-Hans";
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        String countryCode = prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
-        var categoryList =
-            await _positionApi.getCategoryList("", event.address, lang: event.language, countryCode: countryCode);
+        String countryCode =
+            prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
+        var categoryList = await _positionApi.getCategoryList("", event.address,
+            lang: event.language, countryCode: countryCode);
 
         yield SelectCategoryInitState(categoryList);
       } else if (event is SelectCategoryLoadingEvent) {
@@ -41,8 +42,10 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
 //        var language = (appLocale ?? defaultLocale).languageCode;
         if (event.language.startsWith('zh')) event.language = "zh-Hans";
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        String countryCode = prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
-        var categoryList = await _positionApi.getCategoryList(event.searchText, event.address,
+        String countryCode =
+            prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
+        var categoryList = await _positionApi.getCategoryList(
+            event.searchText, event.address,
             lang: event.language, countryCode: countryCode);
         yield SelectCategoryResultState(categoryList: categoryList);
       } else if (event is SelectCategoryClearEvent) {
@@ -51,8 +54,10 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         var userPosition = event.userPosition;
         var query = "${userPosition.latitude},${userPosition.longitude}";
 //        var language = (appLocale ?? defaultLocale).languageCode;
-        if (event.language != null && event.language.startsWith('zh')) event.language = "zh-Hans";
-        var _openCageData = await _positionApi.getOpenCageData(query, lang: event.language);
+        if (event.language != null && event.language.startsWith('zh'))
+          event.language = "zh-Hans";
+        var _openCageData =
+            await _positionApi.getOpenCageData(query, lang: event.language);
         yield GetOpenCageState(_openCageData);
       }
       // poi
@@ -71,11 +76,13 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         var userPosition = event.userPosition;
 //        var language = (appLocale ?? defaultLocale).languageCode;
         if (event.language.startsWith('zh')) event.language = "zh-Hans";
-        var _confirmPoiItem = await _positionApi
-            .getConfirmData(event.address, userPosition.longitude, userPosition.latitude, lang: event.language);
+        var _confirmPoiItem = await _positionApi.getConfirmData(
+            event.address, userPosition.longitude, userPosition.latitude,
+            lang: event.language);
         yield ConfirmPositionPageState(_confirmPoiItem);
       } else if (event is ConfirmPositionResultEvent) {
-        var confirmResult = await _positionApi.postConfirmPoiData(event.address, event.answer, event.confirmPoiItem);
+        var confirmResult = await _positionApi.postConfirmPoiData(
+            event.address, event.answer, event.confirmPoiItem);
         print("[PositionBloc] poi confirm result = $confirmResult");
         yield ConfirmPositionResultState(true, "");
       } else if (event is ConfirmPositionResultLoadingEvent) {
@@ -99,8 +106,9 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
 
   Future _uploadPoiData(PoiDataModel model, String address) async {
 //    var address = currentWalletVo.accountList[0].account.address;
-    int code =
-        await _positionApi.postPoiCollector(model.listImagePaths, address, model.poiCollector, (int count, int total) {
+    int code = await _positionApi
+        .postPoiCollector(model.listImagePaths, address, model.poiCollector,
+            (int count, int total) {
       double progress = count * 100.0 / total;
       //print('[upload] total:$total, count:$count, progress:$progress%');
       add(LoadingPostPoiDataEvent(progress));
@@ -115,8 +123,9 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
 
   Future _uploadPoiNcovData(PoiNcovDataModel model, String address) async {
 //    var address = currentWalletVo.accountList[0].account.address;
-    int code = await _positionApi.postPoiNcovCollector(model.listImagePaths, address, model.poiCollector,
-        (int count, int total) {
+    int code = await _positionApi
+        .postPoiNcovCollector(model.listImagePaths, address, model.poiCollector,
+            (int count, int total) {
       double progress = count * 100.0 / total;
       //print('[upload] total:$total, count:$count, progress:$progress%');
       add(LoadingPostPoiNcovDataEvent(progress));

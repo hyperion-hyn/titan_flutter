@@ -10,6 +10,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/add_poi_done_page.dart';
+import 'package:titan/src/pages/contribution/new_poi/add_poi_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/request_mortgage_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/mortgage_broadcast_done_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/verify_poi_done_page.dart';
@@ -254,6 +255,16 @@ class _TestWidgetPageState extends State<TestWidgetPage>
                   showBusinessTime();
                 },
                 child: Text('营业时间'),
+              ),
+              Divider(
+                height: 16,
+              ),
+              RaisedButton(
+                onPressed: () async {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddPoiPage()));
+                },
+                child: Text('添加poi页'),
               ),
               Divider(
                 height: 16,

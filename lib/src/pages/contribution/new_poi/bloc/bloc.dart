@@ -1,3 +1,3 @@
-export 'new_position_bloc_bloc.dart';
-export 'new_position_bloc_event.dart';
-export 'new_position_bloc_state.dart';
+export 'add_poi_bloc.dart';
+export 'add_poi_event.dart';
+export 'add_poi_state.dart';
