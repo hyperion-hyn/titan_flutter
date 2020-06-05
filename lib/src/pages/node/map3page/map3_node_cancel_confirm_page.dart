@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 
 class Map3NodeCancelConfirmPage extends StatefulWidget {

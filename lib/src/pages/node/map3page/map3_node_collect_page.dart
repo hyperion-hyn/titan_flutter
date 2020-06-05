@@ -9,7 +9,6 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
 

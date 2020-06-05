@@ -3,15 +3,10 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
 
-import 'map3_node_contract_detail_page.dart';
-import 'map3_node_create_contract_page.dart';
 
 class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
   final String pageType;
