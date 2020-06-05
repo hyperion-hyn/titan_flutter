@@ -257,6 +257,36 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
             ),
           ),
           _nodeIntroductionWidget(context, nodeItem),
+          _nodeManagerWidget(nodeItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _nodeManagerWidget(NodeItem nodeItem) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 86.0, bottom: 16),
+      child: Row(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 30),
+            child: RichText(
+              text: TextSpan(style: TextStyle(fontSize: 12, color: HexColor("#999999")), text: "管理费", children: [
+                TextSpan(
+                  text: "  ${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
+                  style: TextStyle(fontSize: 12, color: HexColor("#333333")),
+                )
+              ]),
+            ),
+          ),
+          RichText(
+            text: TextSpan(style: TextStyle(fontSize: 12, color: HexColor("#999999")), text: "最低抵押", children: [
+              TextSpan(
+                text: "  ${FormatUtil.formatPercent(nodeItem.minDelegationRate)}",
+                style: TextStyle(fontSize: 12, color: HexColor("#333333")),
+              )
+            ]),
+          ),
         ],
       ),
     );
