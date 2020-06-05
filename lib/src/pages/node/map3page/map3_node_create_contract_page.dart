@@ -40,7 +40,6 @@ class Map3NodeCreateContractPage extends StatefulWidget {
 }
 
 class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
-
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
@@ -94,7 +93,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       });
     }
   }
-
 
   void selectNodeProvider(int providerIndex, int regionIndex) {
     if (providerList.length == 0) {
@@ -197,8 +195,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             _managerSpendWidget(),
             SizedBox(height: 8),
             _nodePronounceWidget(),
-                SizedBox(height: 18),
-              ])),
+            SizedBox(height: 18),
+          ])),
         ),
         _confirmButtonWidget(),
       ],
@@ -448,51 +446,48 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             ],
           ),
           TextFormField(
-              controller: _pronounceTextController,
-              keyboardType: TextInputType.text,
-              maxLength: 200,
-              maxLines: 6,
-              style: TextStyle(color: HexColor("#333333"), fontSize: 14),
-              decoration: InputDecoration(
-                hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 14),
-                //labelStyle: TextStyle(color: HexColor("#333333"), fontSize: 12),
-                hintText: "大家快来参与我的节点吧，收益高高！",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              validator: (textStr) {
-                if (textStr.length == 0) {
-                  return "大家快来参与我的节点吧，收益高高！";
-                }  {
-                  return null;
-                }
-              },
+            controller: _pronounceTextController,
+            keyboardType: TextInputType.text,
+            maxLength: 200,
+            maxLines: 6,
+            style: TextStyle(color: HexColor("#333333"), fontSize: 14),
+            decoration: InputDecoration(
+              hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 14),
+              //labelStyle: TextStyle(color: HexColor("#333333"), fontSize: 12),
+              hintText: "大家快来参与我的节点吧，收益高高！",
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            validator: (textStr) {
+              if (textStr.length == 0) {
+                return "大家快来参与我的节点吧，收益高高！";
+              }
+              {
+                return null;
+              }
+            },
             onChanged: (value) {
               print("[NodePronounce] value:$value");
             },
           ),
-
         ],
       ),
     );
   }
 
-
   Widget _confirmButtonWidget() {
-
-
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    return ClickRectangleButton(S.of(context).confirm_bug,() async {
-
+    return ClickRectangleButton(S.of(context).confirm_bug, () async {
       setState(() {
         if (!_joinCoinFormKey.currentState.validate()) {
           return;
         }
 
-
+        /*
         var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
         Application.router.navigateTo(context,
             Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${widget.contractId}");
         return;
+        */
 
         var providerModel = providerList[selectServerItemValue];
         var regionsModel = providerModel.regions[selectNodeItemValue];
@@ -501,7 +496,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         contractItem.nodeRegionName = regionsModel.name;
         contractItem.nodeProviderName = providerModel.name;
         var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
-        contractItem.announcement = _pronounceTextController.text.isNotEmpty?_pronounceTextController.text:"欢迎来到Titan";
+        contractItem.announcement =
+            _pronounceTextController.text.isNotEmpty ? _pronounceTextController.text : "欢迎来到Titan";
         contractItem.renew = _renew;
         contractItem.commission = _managerSpendCount * 0.01;
         Application.router.navigateTo(
@@ -591,11 +587,11 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                       child: Form(
                         key: formKey,
                         child: TextFormField(
-                            controller: textEditingController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                            decoration: InputDecoration(
-                              /*filled: true,
+                          controller: textEditingController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                          decoration: InputDecoration(
+                            /*filled: true,
                               fillColor: HexColor("#F2F2F2"),
                               contentPadding: const EdgeInsets.only(left: 24.0),
                               focusedBorder: OutlineInputBorder(
@@ -606,27 +602,27 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                                 borderSide: BorderSide(color: HexColor("#F2F2F2")),
                                 borderRadius: BorderRadius.circular(30),
                               ),*/
-                              hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
-                              labelStyle: TextStyles.textC333S14,
-                              hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
-                              //border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                            ),
-                            validator: (textStr) {
-                              if (textStr.length == 0) {
-                                return S.of(context).please_input_hyn_count;
-                              } else if (minTotal == 0) {
-                                return "抵押已满";
-                              } else if (int.parse(textStr) < minTotal) {
-                                return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                              } else if (int.parse(textStr) > remainTotal) {
-                                return "不能超过剩余份额";
-                              } else if (Decimal.parse(textStr) >
-                                  Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
-                                return S.of(context).hyn_balance_no_enough;
-                              } else {
-                                return null;
-                              }
-                            },
+                            hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
+                            labelStyle: TextStyles.textC333S14,
+                            hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
+                            //border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                          ),
+                          validator: (textStr) {
+                            if (textStr.length == 0) {
+                              return S.of(context).please_input_hyn_count;
+                            } else if (minTotal == 0) {
+                              return "抵押已满";
+                            } else if (int.parse(textStr) < minTotal) {
+                              return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
+                            } else if (int.parse(textStr) > remainTotal) {
+                              return "不能超过剩余份额";
+                            } else if (Decimal.parse(textStr) >
+                                Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                              return S.of(context).hyn_balance_no_enough;
+                            } else {
+                              return null;
+                            }
+                          },
                         ),
                       ),
                     ),
@@ -798,7 +794,8 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                              "启动所需" +'${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}',
+                              "启动所需" +
+                                  '${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}',
                               style: TextStyle(fontSize: 13, color: Colors.white)),
                           SizedBox(width: 4),
                           Container(width: 1, height: 10, color: Colors.white24),

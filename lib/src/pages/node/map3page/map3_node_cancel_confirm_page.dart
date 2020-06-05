@@ -88,7 +88,7 @@ class _Map3NodeCancelConfirmState extends State<Map3NodeCancelConfirmPage> {
                           height: 0.5,
                         ),
                       ),
-                      nodeWidget(
+                      _nodeWidget(
                           context,
                           NodeItem(
                             1,
@@ -246,141 +246,141 @@ class _Map3NodeCancelConfirmState extends State<Map3NodeCancelConfirmPage> {
       ),
     );
   }
-}
 
-Widget nodeWidget(BuildContext context, NodeItem nodeItem) {
-  return Container(
-    color: Colors.white,
-    child: Column(
-      children: <Widget>[
-        nodeIntroductionWidget(context, nodeItem),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Divider(
-            height: 2,
+  Widget _nodeWidget(BuildContext context, NodeItem nodeItem) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          _nodeIntroductionWidget(context, nodeItem),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Divider(
+              height: 2,
+            ),
           ),
-        ),
-        nodeServerWidget(context, nodeItem),
-      ],
-    ),
-  );
-}
+          _nodeServerWidget(context, nodeItem),
+        ],
+      ),
+    );
+  }
 
-Widget nodeIntroductionWidget(BuildContext context, NodeItem nodeItem) {
-  //var nodeItem = widget.contractNodeItem.contract;
+  Widget _nodeIntroductionWidget(BuildContext context, NodeItem nodeItem) {
+    //var nodeItem = widget.contractNodeItem.contract;
 
-  return Padding(
-    padding: const EdgeInsets.all(12.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      //mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Image.asset(
-          "res/drawable/ic_map3_node_item_2.png",
-          width: 62,
-          height: 63,
-          fit: BoxFit.cover,
-        ),
-        SizedBox(
-          width: 12,
-        ),
-        Flexible(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold)))
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 6.0),
-                child: Row(
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        //mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Image.asset(
+            "res/drawable/ic_map3_node_item_2.png",
+            width: 62,
+            height: 63,
+            fit: BoxFit.cover,
+          ),
+          SizedBox(
+            width: 12,
+          ),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Text(
-                        "启动所需" +
-                            " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
-                            S.of(context).ten_thousand,
-                        style: TextStyles.textC99000000S13,
-                        maxLines: 1,
-                        softWrap: true),
-                    Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
-                    Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
+                    Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold)))
                   ],
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 6.0),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                          "启动所需" +
+                              " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
+                              S.of(context).ten_thousand,
+                          style: TextStyles.textC99000000S13,
+                          maxLines: 1,
+                          softWrap: true),
+                      Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
+                      Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        Column(
-          children: <Widget>[
-            Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
-            Padding(
-              padding: const EdgeInsets.only(top: 3.0),
-              child: Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13),
-            )
-          ],
-        )
-      ],
-    ),
-  );
-}
-
-Widget nodeServerWidget(BuildContext context, NodeItem nodeItem, {String provider = "", String region = ""}) {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [1, 2, 3].map((value) {
-        var title = "";
-        var detail = "";
-        switch (value) {
-          case 1:
-            title = "创建日期";
-            detail = "2020.02.18";
-            break;
-
-          case 2:
-            title = "参与地址";
-            detail = "12个";
-            break;
-
-          case 3:
-            title = "抵押金额";
-            detail = "900,0000";
-            break;
-
-          default:
-            return SizedBox(
-              height: 8,
-            );
-            break;
-        }
-
-        return Padding(
-          padding: EdgeInsets.only(top: value == 1 ? 0 : 12.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Column(
             children: <Widget>[
-              Container(
-                  width: 80,
-                  child: Text(
-                    title,
-                    style: TextStyle(fontSize: 14, color: HexColor("#92979A")),
-                  )),
-              Expanded(
-                  child: Text(
-                detail,
-                style: TextStyle(fontSize: 15, color: HexColor("#333333")),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ))
+              Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
+              Padding(
+                padding: const EdgeInsets.only(top: 3.0),
+                child: Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13),
+              )
             ],
-          ),
-        );
-      }).toList(),
-    ),
-  );
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _nodeServerWidget(BuildContext context, NodeItem nodeItem, {String provider = "", String region = ""}) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [1, 2, 3].map((value) {
+          var title = "";
+          var detail = "";
+          switch (value) {
+            case 1:
+              title = "创建日期";
+              detail = "2020.02.18";
+              break;
+
+            case 2:
+              title = "参与地址";
+              detail = "12个";
+              break;
+
+            case 3:
+              title = "抵押金额";
+              detail = "900,0000";
+              break;
+
+            default:
+              return SizedBox(
+                height: 8,
+              );
+              break;
+          }
+
+          return Padding(
+            padding: EdgeInsets.only(top: value == 1 ? 0 : 12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    width: 80,
+                    child: Text(
+                      title,
+                      style: TextStyle(fontSize: 14, color: HexColor("#92979A")),
+                    )),
+                Expanded(
+                    child: Text(
+                  detail,
+                  style: TextStyle(fontSize: 15, color: HexColor("#333333")),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ))
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
 }

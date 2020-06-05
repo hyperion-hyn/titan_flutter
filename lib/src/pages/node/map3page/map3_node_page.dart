@@ -465,7 +465,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                     break;
 
                   case 1:
-                    detail = "10%";
+                    detail = "${FormatUtil.formatPercent(contractNodeItem.contract.commission)}";
                     title = "管理费";
                     break;
 
@@ -505,7 +505,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
               ),
               Flexible(
                 child: Text(
-                  "大家快来参与我的节点吧，收益高高，收益真的很高，大家相信我，不会错的，快投吧，一会儿没机会了……",
+                  contractNodeItem.announcement,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 11, color: HexColor("#333333")),
