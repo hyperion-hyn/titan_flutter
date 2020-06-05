@@ -421,7 +421,7 @@
   "node_version": "节点版本",
   "service_provider": "服务商",
   "node_location": "节点位置",
-  "please_confirm_eth_gas_enough": "•  请确保钱包账户（{walletName}）的ETH GAS费充足",
+  "please_confirm_eth_gas_enough": "请确保钱包账户（{walletName}）的ETH GAS费充足",
   "create_no_enough_hyn_start_fail": "•  创建后，若7天内没能积攒足够启动所需HYN，则本次节点启动失败。已投入的HYN可自行取回。",
   "contract_create_cant_destroy": "•  节点创建后不可撤销。",
   "freeze_balance_reward_direct_push": "•  创建节点需要暂时冻结500U账户余额，用于支付直推人的贡献奖励。直推人及奖励收取节点总收益的5%。",

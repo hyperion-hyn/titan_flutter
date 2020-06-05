@@ -32,6 +32,7 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
     json['appSource'] as int,
     json['renew'] as bool,
     json['announcement'] as String,
+    json['commission'] as double,
     json['state'] as String,
   )..nodeProviderName = json['nodeProviderName'] as String;
 }
@@ -62,5 +63,6 @@ Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
       'appSource': instance.appSource,
       'renew': instance.renew,
       'announcement': instance.announcement,
+      'commission': instance.commission,
       'state': instance.state,
     };

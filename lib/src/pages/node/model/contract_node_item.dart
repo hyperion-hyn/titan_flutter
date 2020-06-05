@@ -76,6 +76,9 @@ class ContractNodeItem extends Object {
   @JsonKey(name: 'announcement')
   String announcement;
 
+  @JsonKey(name: 'commission')
+  double commission;
+
 //  enum ContractState { PRE_CREATE, PENDING, CANCELLED, CANCELLED_COMPLETED, ACTIVE, DUE, DUE_COMPLETED, FAIL}
   @JsonKey(name: 'state')
   String state;
@@ -103,6 +106,7 @@ class ContractNodeItem extends Object {
     this.appSource,
     this.renew,
     this.announcement,
+    this.commission,
     this.state,
   );
 

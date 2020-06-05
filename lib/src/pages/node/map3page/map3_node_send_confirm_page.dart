@@ -315,6 +315,25 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   }
 
   Widget _nodeWidget(BuildContext context, NodeItem nodeItem) {
+
+    if (widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN) {
+      return Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            _nodeOwnerWidget(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Divider(
+                height: 2,
+              ),
+            ),
+          _nodeIntroductionWidget(context, nodeItem),
+          ],
+        ),
+      );
+    }
+
     return Container(
       color: Colors.white,
       child: Column(
@@ -327,6 +346,53 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
             ),
           ),
           _nodeServerWidget(context, nodeItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _nodeOwnerWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
+      child: Row(
+        children: <Widget>[
+          Image.asset(
+            "res/drawable/map3_node_default_avatar_1.png",
+            width: 42,
+            height: 42,
+            fit: BoxFit.cover,
+          ),
+          SizedBox(
+            width: 6,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text.rich(TextSpan(children: [
+                TextSpan(text: "派大星", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                TextSpan(
+                    text: "  编号 PB2020", style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+              ])),
+              Container(
+                height: 4,
+              ),
+              Text("节点地址 oxfdaf89fdaff", style: TextStyles.textC9b9b9bS12),
+            ],
+          ),
+          Spacer(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Container(
+                color: HexColor("#1FB9C7").withOpacity(0.08),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Text("第一期", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+              ),
+              Container(
+                height: 4,
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -416,7 +482,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
             case 3:
               title = "管理费";
-              detail = "20%";
+              print("[confirm] widget.contractNodeItem.commission:${widget.contractNodeItem.commission}");
+              detail = FormatUtil.formatPercent(widget.contractNodeItem.commission);
               break;
 
             case 4:
@@ -426,7 +493,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
             case 5:
               title = "节点公告";
-              detail = widget.contractNodeItem.announcement.isNotEmpty?widget.contractNodeItem.announcement:"欢迎参加我的合约，前10名参与者返10%管理。";
+              detail = FormatUtil.formatPercent(widget.contractNodeItem.commission);
+              detail = widget.contractNodeItem.announcement.isNotEmpty?widget.contractNodeItem.announcement:"欢迎参加我的合约，前10名参与者返$detail管理。";
               break;
 
             default:

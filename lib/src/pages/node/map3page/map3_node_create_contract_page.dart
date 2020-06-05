@@ -478,6 +478,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
 
   Widget _confirmButtonWidget() {
+
+
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     return ClickRectangleButton(S.of(context).confirm_bug,() async {
 
@@ -486,6 +488,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
           return;
         }
 
+
+        var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+        Application.router.navigateTo(context,
+            Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${widget.contractId}");
+        return;
 
         var providerModel = providerList[selectServerItemValue];
         var regionsModel = providerModel.regions[selectNodeItemValue];
@@ -496,7 +503,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
         contractItem.announcement = _pronounceTextController.text.isNotEmpty?_pronounceTextController.text:"欢迎来到Titan";
         contractItem.renew = _renew;
-
+        contractItem.commission = _managerSpendCount * 0.01;
         Application.router.navigateTo(
             context,
             Routes.map3node_send_confirm_page +
