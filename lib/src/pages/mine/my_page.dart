@@ -501,10 +501,6 @@ class _MyPageState extends State<MyPage> {
   }
 
   void shareApp() async {
-    // todo: test_jison_0429
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeBroadcaseSuccessPage(Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE, actionEvent: Map3NodeActionEvent.CANCEL,)));
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
-    //return;
 
     var languageCode = Localizations.localeOf(context).languageCode;
     var shareAppImage = "";

@@ -7,6 +7,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_product_page_vo.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -211,6 +212,17 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
     if (walletList.length == 0) {
       Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
+      // todo: test_jison_0605
+      if (nodeItem.durationType == 0) {
+        var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+        Application.router.navigateTo(context,
+            Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${nodeItem.id}");
+        return;
+      } else if (nodeItem.durationType == 1) {
+        //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeBroadcaseSuccessPage(Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE, actionEvent: Map3NodeActionEvent.CANCEL,)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+        return;
+      }
       await Application.router
           .navigateTo(context, Routes.map3node_pre_create_contract_page + "?contractId=${nodeItem.id}");
     }

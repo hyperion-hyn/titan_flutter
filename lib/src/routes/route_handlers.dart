@@ -19,6 +19,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_share_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
@@ -184,25 +185,32 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
       ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   var transferAmount = params['transferAmount']?.first ?? '0';
 
+  var actionEvent = params['actionEvent']?.first;
+  print("[node] actionEvent:$actionEvent");
+
   return Map3NodeSendConfirmPage(
     params['coinVo']?.first ?? '0',
     contractNodeItem,
     Decimal.parse(transferAmount),
     params['receiverAddress']?.first ?? '0',
-    params['pageType']?.first,
+    Map3NodeActionEvent.CREATE,
     params['contractId']?.first,
   );
 });
 
-var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
+var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   ContractNodeItem contractNodeItem;
   var item = params['contractNodeItem']?.first;
   if (item != null) {
     contractNodeItem = ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
   }
-  return Map3NodeBroadcaseSuccessPage(
-    params['pageType']?.first,
+
+  var actionEvent = params['actionEvent']?.first;
+  print("[node] actionEvent:$actionEvent");
+
+  return Map3NodeBroadcastSuccessPage(
+    actionEvent: Map3NodeActionEvent.CREATE,
     contractNodeItem: contractNodeItem,
   );
 });

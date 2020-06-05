@@ -7,11 +7,11 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 
 
-class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
-  final String pageType;
-  final ContractNodeItem contractNodeItem;
+class Map3NodeBroadcastSuccessPage extends StatelessWidget {
+
   final Map3NodeActionEvent actionEvent;
-  Map3NodeBroadcaseSuccessPage(this.pageType, {this.contractNodeItem, this.actionEvent});
+  final ContractNodeItem contractNodeItem;
+  Map3NodeBroadcastSuccessPage({this.actionEvent, this.contractNodeItem});
 
   @override
   Widget build(BuildContext context) {

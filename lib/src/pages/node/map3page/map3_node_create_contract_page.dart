@@ -13,6 +13,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -30,7 +31,6 @@ class Map3NodeCreateContractPage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_JOIN = "contract_page_type_join";
   static const String CONTRACT_PAGE_TYPE_COLLECT = "contract_page_type_collect";
 
-  final String pageType = CONTRACT_PAGE_TYPE_CREATE;
   final String contractId;
 
   Map3NodeCreateContractPage(this.contractId);
@@ -482,13 +482,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
           return;
         }
 
-        /*
-        var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-        Application.router.navigateTo(context,
-            Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${widget.contractId}");
-        return;
-        */
-
         var providerModel = providerList[selectServerItemValue];
         var regionsModel = providerModel.regions[selectNodeItemValue];
         contractItem.nodeRegion = regionsModel.id;
@@ -506,7 +499,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                 "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
                 "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
                 "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                "&pageType=${widget.pageType}" +
+                "&actionEvent=${Map3NodeActionEvent.CREATE}" +
                 "&contractId=${widget.contractId}");
       });
     });

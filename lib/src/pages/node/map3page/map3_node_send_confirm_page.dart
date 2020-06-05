@@ -18,6 +18,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -39,12 +40,12 @@ class Map3NodeSendConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final Decimal transferAmount;
   final String receiverAddress;
-  final String pageType;
+  final Map3NodeActionEvent actionEvent;
   final String contractId;
   final ContractNodeItem contractNodeItem;
 
   Map3NodeSendConfirmPage(
-      String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress, this.pageType, this.contractId)
+      String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress, this.actionEvent, this.contractId)
       : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -265,7 +266,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
         //ContractDetailItem _detailItem;
         String resultMsg = "";
         ContractNodeItem contractNodeItem;
-        if (widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
+        if (widget.actionEvent == Map3NodeActionEvent.CREATE) {
           contractNodeItem = await _nodeApi.startContractInstance(widget.contractNodeItem, activatedWallet,
               walletPassword, gasPrice.toInt(), widget.contractId, startJoin, widget.transferAmount);
           print("creat post result = $resultMsg");
@@ -277,8 +278,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
         }
         Application.router.navigateTo(
             context,
-            Routes.map3node_broadcase_success_page +
-                "?pageType=${widget.pageType}" +
+            Routes.map3node_broadcast_success_page +
+                "?actionEvent=${widget.actionEvent}" +
                 "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
       } catch (_) {
         logger.e(_);
@@ -312,7 +313,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   Widget _nodeWidget(BuildContext context, NodeItem nodeItem) {
 
-    if (widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN) {
+    if (widget.actionEvent == Map3NodeActionEvent.DELEGATE) {
       return Container(
         color: Colors.white,
         child: Column(

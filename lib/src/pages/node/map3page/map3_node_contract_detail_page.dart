@@ -1874,7 +1874,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         var success = await _api.withdrawContractInstance(
             _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
         if (success == "success") {
-          _broadcaseContractAction();
+          _broadcastContractAction();
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
 
@@ -1955,12 +1955,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     _nextAction();
   }
 
-  void _broadcaseContractAction() async {
+  void _broadcastContractAction() async {
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     await Application.router.navigateTo(
         context,
-        Routes.map3node_broadcase_success_page +
-            "?entryRouteName=$entryRouteName&pageType=${Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_COLLECT}");
+        Routes.map3node_broadcast_success_page +
+            "?entryRouteName=$entryRouteName&actionEvent=${Map3NodeActionEvent.COLLECT}");
     _nextAction();
   }
 

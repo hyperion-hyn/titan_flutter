@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
@@ -22,7 +23,6 @@ import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'map3_node_create_contract_page.dart';
 
 class Map3NodeJoinContractPage extends StatefulWidget {
-  final String pageType = Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_JOIN;
 
   final String contractId;
 
@@ -450,7 +450,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                 "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
                 "&transferAmount=${transferAmount.trim()}" +
                 "&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                "&pageType=${widget.pageType}" +
+                "&actionEvent=${Map3NodeActionEvent.DELEGATE}" +
                 "&contractId=${widget.contractId}");
       });
     });
