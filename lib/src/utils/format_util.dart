@@ -24,6 +24,10 @@ class FormatUtil {
   }
 
   static String formatPercent(double doubleValue) {
+    if (doubleValue == null) {
+      return "0";
+    }
+
     doubleValue = doubleValue * 100;
     return NumberFormat("#,###.##").format(doubleValue) + "%";
   }

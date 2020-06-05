@@ -237,12 +237,12 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   Future _transferNew() async {
     // todo: test_jison_0526
-    /*Application.router.navigateTo(
+    Application.router.navigateTo(
         context,
-        Routes.map3node_broadcase_success_page +
-            "?pageType=${widget.pageType}" +
+        Routes.map3node_broadcast_success_page +
+            "?actionEvent=${widget.actionEvent}" +
             "&contractNodeItem=${FluroConvertUtils.object2string(widget.contractNodeItem.toJson())}");
-    return;*/
+    return;
 
     showModalBottomSheet(
         isScrollControlled: true,
@@ -485,13 +485,14 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
             case 4:
               title = "自动续约";
-              detail = widget.contractNodeItem.renew?"是":"否";
+              detail = widget.contractNodeItem.renew??false ?"是":"否";
               break;
 
             case 5:
               title = "节点公告";
               detail = FormatUtil.formatPercent(widget.contractNodeItem.commission);
-              detail = widget.contractNodeItem.announcement.isNotEmpty?widget.contractNodeItem.announcement:"欢迎参加我的合约，前10名参与者返$detail管理。";
+              var announcement = widget.contractNodeItem.announcement ?? "";
+              detail = announcement.isNotEmpty?announcement:"欢迎参加我的合约，前10名参与者返$detail管理。";
               break;
 
             default:
@@ -499,6 +500,10 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                 height: 8,
               );
               break;
+          }
+
+          if (detail == null) {
+            detail = "";
           }
 
           return Padding(

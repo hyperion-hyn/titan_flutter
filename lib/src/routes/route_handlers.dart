@@ -186,14 +186,13 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   var transferAmount = params['transferAmount']?.first ?? '0';
 
   var actionEvent = params['actionEvent']?.first;
-  print("[node] actionEvent:$actionEvent");
 
   return Map3NodeSendConfirmPage(
     params['coinVo']?.first ?? '0',
     contractNodeItem,
     Decimal.parse(transferAmount),
     params['receiverAddress']?.first ?? '0',
-    Map3NodeActionEvent.CREATE,
+    enumActionEventFromString(actionEvent),
     params['contractId']?.first,
   );
 });
@@ -207,10 +206,9 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
   }
 
   var actionEvent = params['actionEvent']?.first;
-  print("[node] actionEvent:$actionEvent");
 
   return Map3NodeBroadcastSuccessPage(
-    actionEvent: Map3NodeActionEvent.CREATE,
+    actionEvent: enumActionEventFromString(actionEvent),
     contractNodeItem: contractNodeItem,
   );
 });
@@ -218,7 +216,14 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
-  return Map3NodeContractDetailPage(int.parse(params['contractId']?.first));
+  // todo: test_jison_0605
+  var id = int.tryParse(params['contractId']?.first);
+  int contractId = id;
+  if (id == null) {
+    contractId = 1;
+  }
+
+  return Map3NodeContractDetailPage(contractId);
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
