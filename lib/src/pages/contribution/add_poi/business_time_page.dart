@@ -66,7 +66,9 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
       }
     }
 
-    _timeList = _timeLabel.map((labelStr) => BusinessTimeItem(label: labelStr)).toList();
+    _timeList = _timeLabel
+        .map((labelStr) => BusinessTimeItem(label: labelStr))
+        .toList();
     _timeList[_timeList.length - 1].isCustom = true;
   }
 
@@ -95,19 +97,25 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
               _dayList.forEach((item) => {
                     if (item.isCheck) {hasCheck = true}
                   });
-              if (!hasCheck || (currentTime == null /* && customTime.isEmpty*/)) {
-                Fluttertoast.showToast(msg: S.of(context).please_select_business_hours_hint);
+              if (!hasCheck ||
+                  (currentTime == null /* && customTime.isEmpty*/)) {
+                Fluttertoast.showToast(
+                    msg: S.of(context).please_select_business_hours_hint);
                 return;
               }
 
-              if (currentTime.isCustom && currentTime.isCheck && customTimeStr.isEmpty) {
-                Fluttertoast.showToast(msg: S.of(context).please_input_custom_time_hint);
+              if (currentTime.isCustom &&
+                  currentTime.isCheck &&
+                  customTimeStr.isEmpty) {
+                Fluttertoast.showToast(
+                    msg: S.of(context).please_input_custom_time_hint);
                 return;
               } else if (currentTime.isCustom && currentTime.isCheck) {
                 currentTime.label = customTimeStr;
               }
 
-              BusinessInfo businessInfo = BusinessInfo(dayList: _dayList, timeStr: currentTime.label);
+              BusinessInfo businessInfo =
+                  BusinessInfo(dayList: _dayList, timeStr: currentTime.label);
               Navigator.pop(context, businessInfo);
             },
             child: Container(
@@ -126,7 +134,9 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
   }
 
   bool isRightTime(String customTime) {
-    return RegExp("([0-1]?[0-9]|2[0-3]):([0-5][0-9])-([0-1]?[0-9]|2[0-3]):([0-5][0-9])").hasMatch(customTime);
+    return RegExp(
+            "([0-1]?[0-9]|2[0-3]):([0-5][0-9])-([0-1]?[0-9]|2[0-3]):([0-5][0-9])")
+        .hasMatch(customTime);
   }
 
   Widget _buildView(BuildContext context) {
@@ -146,12 +156,14 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
   }
 
   Widget _buildTimeItem(BusinessTimeItem timeItem) {
-    TextStyle textStyle = timeItem.isCheck ? TextStyles.textC333S14 : TextStyles.textC777S14;
+    TextStyle textStyle =
+        timeItem.isCheck ? TextStyles.textC333S14 : TextStyles.textC777S14;
     String imagePath = timeItem.isCheck
         ? "res/drawable/ic_business_time_switch_on.png"
         : "res/drawable/ic_business_time_switch_off.png";
     if (timeItem.isCustom) {
-      return Stack(alignment: AlignmentDirectional.centerStart, children: <Widget>[
+      return Stack(alignment: AlignmentDirectional.centerStart, children: <
+          Widget>[
         Container(
           color: HexColor("#f8f8f8"),
           height: 40,
@@ -161,7 +173,8 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Image.asset("res/drawable/ic_business_time_add_custom.png", width: 15, height: 15),
+              Image.asset("res/drawable/ic_business_time_add_custom.png",
+                  width: 15, height: 15),
               SizedBox(width: 10, height: 1),
               Expanded(
                 child: TextField(
@@ -199,9 +212,17 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
 
   Widget _buildBody() {
     return ListView(padding: EdgeInsets.only(top: 20), children: <Widget>[
-      Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: _buildDayView()),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: _buildDayView(),
+      ),
       Padding(
-          padding: EdgeInsets.only(left: 15), child: Text(S.of(context).business_time, style: TextStyles.textC333S14)),
+        padding: EdgeInsets.only(left: 15),
+        child: Text(
+          S.of(context).business_time,
+          style: TextStyles.textC333S14,
+        ),
+      ),
       Column(children: _buildBusinessTime()),
     ]);
   }
@@ -248,30 +269,33 @@ class _BusinessTimeState extends BaseState<BusinessTimePage> {
   }
 
   Widget _buildCustomTime() {
-    return Stack(alignment: AlignmentDirectional.centerStart, children: <Widget>[
-      Container(
-        color: HexColor("#f8f8f8"),
-        height: 40,
-      ),
-      Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Image.asset("res/drawable/ic_business_time_add_custom.png", width: 15, height: 15),
-            SizedBox(width: 10, height: 1),
-            Expanded(
-              child: TextField(
-                  controller: _timeController,
-                  decoration: new InputDecoration(
-                    border: InputBorder.none,
-                    hintStyle: TextStyles.textCaaaS14,
-                    hintText: S.of(context).user_defined_time_format_hint,
-                  )),
-            )
-          ],
-        ),
-      )
-    ]);
+    return Stack(
+        alignment: AlignmentDirectional.centerStart,
+        children: <Widget>[
+          Container(
+            color: HexColor("#f8f8f8"),
+            height: 40,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Image.asset("res/drawable/ic_business_time_add_custom.png",
+                    width: 15, height: 15),
+                SizedBox(width: 10, height: 1),
+                Expanded(
+                  child: TextField(
+                      controller: _timeController,
+                      decoration: new InputDecoration(
+                        border: InputBorder.none,
+                        hintStyle: TextStyles.textCaaaS14,
+                        hintText: S.of(context).user_defined_time_format_hint,
+                      )),
+                )
+              ],
+            ),
+          )
+        ]);
   }
 }

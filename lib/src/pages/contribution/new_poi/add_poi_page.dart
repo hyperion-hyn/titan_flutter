@@ -82,10 +82,11 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
               child: Column(
                 children: <Widget>[
                   _poiNameCell(),
-                  _categoryCell(ctx),
+                  _categoryCell(),
                   _addressCell(),
                   _photoCell(),
                   _businessTimeCell(),
+                  _businessPhoneCell(),
                   _websiteCell(),
                   _uploadProtocolBox(),
                   _divider(),
@@ -99,6 +100,49 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
     );
   }
 
+  List<Widget> _businessTimeRowList() {
+    return List.generate(
+      3,
+      (index) => Row(
+        children: <Widget>[
+          Icon(Icons.indeterminate_check_box),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                '周一～周五： 9；30 - 18：30',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 13, color: DefaultColors.color777),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _businessPhoneRowList() {
+    return List.generate(
+      3,
+      (index) => Row(
+        children: <Widget>[
+          Icon(Icons.indeterminate_check_box),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                '020-912598275',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _businessTimeCell() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,19 +153,49 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
           S.of(context).business_time,
           false,
         ),
-        Text(
-          '周一～周五： 9；30 - 18：30',
-          style: TextStyle(fontSize: 13, color: DefaultColors.color777),
+        Column(
+          children: _businessTimeRowList(),
         ),
         GestureDetector(
           onTap: () {
-            _shoBusinessTimeDialog(context);
+            _showBusinessTimeDialog(context);
           },
           child: Row(
             children: <Widget>[
               Icon(Icons.add),
               Text(
                 '添加营业时间',
+                style: TextStyle(fontSize: 13, color: DefaultColors.color777),
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _businessPhoneCell() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _titleRow(
+          'business_phone',
+          Size(19, 15),
+          '营业电话',
+          false,
+        ),
+        Column(
+          children: _businessPhoneRowList(),
+        ),
+        GestureDetector(
+          onTap: () {
+            _showBusinessTimeDialog(context);
+          },
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.add),
+              Text(
+                '添加营业电话',
                 style: TextStyle(fontSize: 13, color: DefaultColors.color777),
               )
             ],
@@ -260,7 +334,7 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _categoryCell(BuildContext ctx) {
+  Widget _categoryCell() {
     return Column(
       children: <Widget>[
         _titleRow('category', Size(18, 18), S.of(context).category, true),
@@ -424,7 +498,7 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
     );
   }
 
-  void _shoBusinessTimeDialog(BuildContext ctx) {
+  void _showBusinessTimeDialog(BuildContext ctx) {
     bool is24hrsOpen = false;
     showDialog(
         context: context,
@@ -477,8 +551,8 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         buttonColor: Theme.of(context).canvasColor,
         buttonLables: ['每天', '节假日', '工作日'],
-        buttonValues: ["everyday", 'weekends', 'workdays'],
-        radioButtonValue: (value) => print(value),
+        buttonValues: ['everyday', 'weekends', 'workdays'],
+        radioButtonValue: (value) => {},
         selectedColor: Theme.of(context).primaryColor,
       ),
     );

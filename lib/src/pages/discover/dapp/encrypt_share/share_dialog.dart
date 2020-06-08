@@ -10,7 +10,6 @@ import 'package:titan/src/utils/encryption.dart';
 
 import '../../../../global.dart';
 
-
 class ShareDialog extends StatefulWidget {
   final IPoi poi;
 
@@ -50,11 +49,12 @@ class ShareDialogState extends State<ShareDialog> {
     Duration insetAnimationDuration = const Duration(milliseconds: 100);
     Curve insetAnimationCurve = Curves.decelerate;
 
-    RoundedRectangleBorder _defaultDialogShape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(2.0)));
+    RoundedRectangleBorder _defaultDialogShape = RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(2.0)));
 
     return AnimatedPadding(
-      padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+      padding: MediaQuery.of(context).viewInsets +
+          const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
       duration: insetAnimationDuration,
       curve: insetAnimationCurve,
       child: Material(
@@ -158,8 +158,10 @@ class ShareDialogState extends State<ShareDialog> {
                           autofocus: true,
                           decoration: InputDecoration(
                               labelText: S.of(context).accept_share_pub_key,
-                              hintText: S.of(context).receiver_encrypted_address,
-                              contentPadding: EdgeInsets.only(top: 16, right: 32, bottom: 8)),
+                              hintText:
+                                  S.of(context).receiver_encrypted_address,
+                              contentPadding: EdgeInsets.only(
+                                  top: 16, right: 32, bottom: 8)),
                           validator: validatePubAddress,
                           onSaved: (value) {
                             pubAddress = value;
@@ -171,7 +173,8 @@ class ShareDialogState extends State<ShareDialog> {
                               onTap: onScan,
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 16),
-                                child: Icon(IconData(0xe75a, fontFamily: 'iconfont')),
+                                child: Icon(
+                                    IconData(0xe75a, fontFamily: 'iconfont')),
                               ),
                             ))
                       ],
@@ -182,7 +185,9 @@ class ShareDialogState extends State<ShareDialog> {
                     autofocus: true,
                     maxLength: 50,
                     decoration: InputDecoration(
-                        labelText: S.of(context).postscript, hintText: S.of(context).postscript_hint, contentPadding: EdgeInsets.only(top: 16, bottom: 8)),
+                        labelText: S.of(context).postscript,
+                        hintText: S.of(context).postscript_hint,
+                        contentPadding: EdgeInsets.only(top: 16, bottom: 8)),
                     onSaved: (value) {
                       remark = value;
                     },
@@ -205,7 +210,8 @@ class ShareDialogState extends State<ShareDialog> {
                     color: Colors.black87,
                     splashColor: Colors.white10,
                     textColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32.0)),
                   ),
                 )
               ],
@@ -237,16 +243,19 @@ class ShareDialogState extends State<ShareDialog> {
     try {
       String barcode = await BarcodeScanner.scan();
       if (barcode.length != 130) {
-        Fluttertoast.showToast(msg: S.of(context).public_key_scan_fail_rescan, toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(
+            msg: S.of(context).public_key_scan_fail_rescan,
+            toastLength: Toast.LENGTH_SHORT);
       } else {
         pubKeyTextEditController.text = barcode;
         setState(() => {});
       }
     } catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        Fluttertoast.showToast(msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(
+            msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
       } else {
-        logger.e("",e);
+        logger.e("", e);
         setState(() => this.pubAddress = S.of(context).unknown_error);
       }
     }
@@ -260,7 +269,8 @@ class ShareDialogState extends State<ShareDialog> {
     bool isReEncrypt = pubAddress == null || pubAddress.isEmpty;
     if (isReEncrypt) {
       try {
-        cipherText = await reEncryptPoi(Injector.of(context).repository, widget.poi, remark);
+        cipherText = await reEncryptPoi(
+            Injector.of(context).repository, widget.poi, remark);
       } catch (err) {
         logger.e(err);
         Fluttertoast.showToast(msg: S.of(context).encrypt_error);
@@ -280,7 +290,8 @@ class ShareDialogState extends State<ShareDialog> {
     }
 
     if (cipherText != null && cipherText.isNotEmpty) {
-      Share.text(S.of(context).share_encrypted_location, cipherText, 'text/plain');
+      Share.text(
+          S.of(context).share_encrypted_location, cipherText, 'text/plain');
       Navigator.pop(context, true);
     }
   }

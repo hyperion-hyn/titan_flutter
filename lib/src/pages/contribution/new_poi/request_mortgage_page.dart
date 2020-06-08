@@ -58,59 +58,98 @@ class _RequestMortgagePageState extends State<RequestMortgagePage> {
   }
 
   _showMortgageDialog() {
+    Duration insetAnimationDuration = const Duration(milliseconds: 100);
+    Curve insetAnimationCurve = Curves.decelerate;
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialog(
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.start,
-              runSpacing: 0.0,
-              children: <Widget>[
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                  child: Text('输入抵押量'),
+          return AnimatedPadding(
+            padding: MediaQuery.of(context).viewInsets +
+                const EdgeInsets.symmetric(
+                  horizontal: 32.0,
+                  vertical: 24.0,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: _textEditingController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
-                      decoration: InputDecoration(
-                        focusedErrorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: HexColor("#FF4C3B")),
-                          borderRadius: BorderRadius.circular(0),
+            duration: insetAnimationDuration,
+            curve: insetAnimationCurve,
+            child: Material(
+              color: Colors.transparent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      color: Colors.white,
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          runSpacing: 0.0,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 16.0),
+                              child: Text('输入抵押量'),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Form(
+                                key: _formKey,
+                                child: TextFormField(
+                                  controller: _textEditingController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    WhitelistingTextInputFormatter.digitsOnly
+                                  ],
+                                  decoration: InputDecoration(
+                                    focusedErrorBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: HexColor("#FF4C3B")),
+                                      borderRadius: BorderRadius.circular(0),
+                                    ),
+                                    errorStyle: TextStyle(
+                                        color: HexColor("#FF4C3B"),
+                                        fontSize: 14),
+                                    hintStyle: TextStyle(
+                                        color: HexColor("#B8B8B8"),
+                                        fontSize: 12),
+                                    labelStyle: TextStyles.textC333S14,
+                                    hintText: '输入抵押HYN量',
+                                  ),
+                                  validator: (textStr) {},
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: ClickRectangleButton('确定抵押', () {
+                                ///Request mortgage
+                                ///Navigate to broadcast-finished page when broadcast was sent
+                                Application.router.navigateTo(
+                                  context,
+                                  Routes.contribute_mortgage_broadcast_done,
+                                  replace: true,
+                                );
+                              }),
+                            )
+                          ],
                         ),
-                        errorStyle:
-                            TextStyle(color: HexColor("#FF4C3B"), fontSize: 14),
-                        hintStyle:
-                            TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
-                        labelStyle: TextStyles.textC333S14,
-                        hintText: '输入抵押HYN量',
-                      ),
-                      validator: (textStr) {},
+                        Align(
+                          child: InkWell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(Icons.close),
+                            ),
+                            onTap: () => Navigator.pop(context),
+                          ),
+                          alignment: Alignment.topRight,
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ClickRectangleButton('确定抵押', () {
-                    ///Request mortgage
-                    ///Navigate to broadcast-finished page when broadcast was sent
-
-                    Application.router.navigateTo(
-                      context,
-                      Routes.contribute_mortgage_broadcast_done,
-                      replace: true,
-                    );
-                  }),
-                )
-              ],
+                ],
+              ),
             ),
           );
         });

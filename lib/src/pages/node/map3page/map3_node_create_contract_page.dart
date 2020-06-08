@@ -36,7 +36,8 @@ class Map3NodeCreateContractPage extends StatefulWidget {
   Map3NodeCreateContractPage(this.contractId);
 
   @override
-  _Map3NodeCreateContractState createState() => new _Map3NodeCreateContractState();
+  _Map3NodeCreateContractState createState() =>
+      new _Map3NodeCreateContractState();
 }
 
 class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
@@ -77,8 +78,10 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   void getNetworkData() async {
     try {
-      var requestList =
-          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+      var requestList = await Future.wait([
+        _nodeApi.getContractItem(widget.contractId),
+        _nodeApi.getNodeProviderList()
+      ]);
       contractItem = requestList[0];
       providerList = requestList[1];
 
@@ -116,8 +119,9 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     nodeList = new List();
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
-      DropdownMenuItem item =
-          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
+      DropdownMenuItem item = new DropdownMenuItem(
+          value: i,
+          child: new Text(regions.name, style: TextStyles.textC333S14));
       nodeList.add(item);
     }
     selectNodeItemValue = nodeList[regionIndex].value;
@@ -144,7 +148,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     }
     double inputValue = double.parse(inputText);
     endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
+    spendManager =
+        Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
@@ -152,8 +157,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection:
-                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection: TextSelection.fromPosition(TextPosition(
+                affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
@@ -167,7 +172,9 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   Widget _pageView(BuildContext context) {
     if (currentState != null || contractItem.contract == null) {
       return Scaffold(
-        appBar: AppBar(centerTitle: true, title: Text(S.of(context).create_map_mortgage_contract)),
+        appBar: AppBar(
+            centerTitle: true,
+            title: Text(S.of(context).create_map_mortgage_contract)),
         body: AllPageStateContainer(currentState, () {
           setState(() {
             currentState = LoadingState();
@@ -184,19 +191,22 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
       children: <Widget>[
         Expanded(
           child: SingleChildScrollView(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            getMap3NodeProductHeadItemSmall(context, contractItem),
-            _nodeIntroductionWidget(),
-            SizedBox(height: 8),
-            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
-            SizedBox(height: 8),
-            _autoRenewalWidget(),
-            SizedBox(height: 8),
-            _managerSpendWidget(),
-            SizedBox(height: 8),
-            _nodePronounceWidget(),
-            SizedBox(height: 18),
-          ])),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                getMap3NodeProductHeadItemSmall(context, contractItem),
+                _nodeIntroductionWidget(),
+                SizedBox(height: 8),
+                getHoldInNum(context, contractItem, _joinCoinFormKey,
+                    _joinCoinController, endProfit, spendManager, false),
+                SizedBox(height: 8),
+                _autoRenewalWidget(),
+                SizedBox(height: 8),
+                _managerSpendWidget(),
+                SizedBox(height: 8),
+                _nodePronounceWidget(),
+                SizedBox(height: 18),
+              ])),
         ),
         _confirmButtonWidget(),
       ],
@@ -215,9 +225,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               children: <Widget>[
                 Container(
                     width: 100,
-                    child:
-                        Text(S.of(context).node_version, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                Text("${contractItem.contract.nodeName}", style: TextStyles.textC333S14),
+                    child: Text(S.of(context).node_version,
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#92979a")))),
+                Text("${contractItem.contract.nodeName}",
+                    style: TextStyles.textC333S14),
               ],
             ),
           ),
@@ -228,7 +240,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                 Container(
                     width: 100,
                     child: Text(S.of(context).service_provider,
-                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -252,8 +265,9 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               children: <Widget>[
                 Container(
                     width: 100,
-                    child:
-                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                    child: Text(S.of(context).node_location,
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -277,6 +291,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 
   bool _renew = true;
+
   Widget _autoRenewalWidget() {
     return Container(
       color: Colors.white,
@@ -313,6 +328,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 
   int _managerSpendCount = 20;
+
   Widget _managerSpendWidget() {
     return Container(
       color: Colors.white,
@@ -324,11 +340,17 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             child: RichText(
               text: TextSpan(
                   text: "管理费设置",
-                  style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: HexColor("#333333"),
+                      fontWeight: FontWeight.normal),
                   children: [
                     TextSpan(
                       text: "（1%-20%）",
-                      style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: HexColor("#999999"),
+                          fontWeight: FontWeight.normal),
                     )
                   ]),
             ),
@@ -352,10 +374,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Container(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 12),
                         child: Text(
                           "-",
-                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                          style: TextStyle(
+                              fontSize: 16, color: HexColor("#333333")),
                         ),
                       ),
                       decoration: BoxDecoration(
@@ -369,15 +393,18 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                   padding: const EdgeInsets.only(right: 4.0),
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 16),
                       child: Text(
                         "$_managerSpendCount",
-                        style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                        style:
+                            TextStyle(fontSize: 16, color: HexColor("#333333")),
                       ),
                     ),
                     decoration: BoxDecoration(
                       color: HexColor("#FFFFFF"),
-                      border: Border.all(color: HexColor("#DEDEDE"), width: 0.5),
+                      border:
+                          Border.all(color: HexColor("#DEDEDE"), width: 0.5),
                       borderRadius: BorderRadius.circular(13.0),
                     ),
                   ),
@@ -387,7 +414,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                   child: Container(
                     child: Text(
                       "%",
-                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333")),
                     ),
                   ),
                 ),
@@ -404,10 +432,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Container(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 12),
                         child: Text(
                           "+",
-                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                          style: TextStyle(
+                              fontSize: 16, color: HexColor("#333333")),
                         ),
                       ),
                       decoration: BoxDecoration(
@@ -426,6 +456,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 
   TextEditingController _pronounceTextController = TextEditingController();
+
   Widget _nodePronounceWidget() {
     return Container(
       color: Colors.white,
@@ -455,7 +486,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 14),
               //labelStyle: TextStyle(color: HexColor("#333333"), fontSize: 12),
               hintText: "大家快来参与我的节点吧，收益高高！",
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             ),
             validator: (textStr) {
               if (textStr.length == 0) {
@@ -488,9 +520,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
         contractItem.nodeProvider = providerModel.id;
         contractItem.nodeRegionName = regionsModel.name;
         contractItem.nodeProviderName = providerModel.name;
-        var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
-        contractItem.announcement =
-            _pronounceTextController.text.isNotEmpty ? _pronounceTextController.text : "欢迎来到Titan";
+        var transferAmount = _joinCoinController.text?.isNotEmpty == true
+            ? _joinCoinController.text
+            : "0";
+        contractItem.announcement = _pronounceTextController.text.isNotEmpty
+            ? _pronounceTextController.text
+            : "欢迎来到Titan";
         contractItem.renew = _renew;
         contractItem.commission = _managerSpendCount * 0.01;
         Application.router.navigateTo(
@@ -506,11 +541,19 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 }
 
-Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
-    TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
+Widget getHoldInNum(
+    BuildContext context,
+    ContractNodeItem contractNodeItem,
+    GlobalKey<FormState> formKey,
+    TextEditingController textEditingController,
+    String endProfit,
+    String spendManager,
+    bool isJoin,
     {bool isMyself = false}) {
-  List<int> suggestList =
-      contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
+  List<int> suggestList = contractNodeItem.contract.suggestQuantity
+      .split(",")
+      .map((suggest) => int.parse(suggest))
+      .toList();
 
   double minTotal = 0;
   double remainTotal = 0;
@@ -518,7 +561,8 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
     //calculation
     remainTotal = double.parse(contractNodeItem.remainDelegation);
     double tempMinTotal =
-        double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.minDelegationRate;
+        double.parse(contractNodeItem.contract.minTotalDelegation) *
+            contractNodeItem.contract.minDelegationRate;
     if (remainTotal <= 0) {
       minTotal = 0;
       remainTotal = 0;
@@ -530,11 +574,12 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
     }
   } else {
     remainTotal = double.parse(contractNodeItem.contract.minTotalDelegation);
-    minTotal =
-        double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.ownerMinDelegationRate;
+    minTotal = double.parse(contractNodeItem.contract.minTotalDelegation) *
+        contractNodeItem.contract.ownerMinDelegationRate;
   }
 
-  var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
+  var walletName =
+      WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
   walletName = UiUtil.shortString(walletName, limitLength: 6);
 
   var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
@@ -550,11 +595,14 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child:
-                    Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                child: Text(S.of(context).mortgage_hyn_num,
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
-                child: Text(S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                child: Text(
+                    S.of(context).mortgage_wallet_balance(
+                        FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                     style: TextStyle(color: Colors.grey[600])),
               ),
             ],
@@ -570,7 +618,8 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                   children: <Widget>[
                     Text(
                       "HYN",
-                      style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
+                      style:
+                          TextStyle(fontSize: 18, color: HexColor("#35393E")),
                     ),
                     SizedBox(
                       width: 12,
@@ -582,7 +631,9 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                         child: TextFormField(
                           controller: textEditingController,
                           keyboardType: TextInputType.number,
-                          inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                          inputFormatters: [
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
                           decoration: InputDecoration(
                             /*filled: true,
                               fillColor: HexColor("#F2F2F2"),
@@ -595,9 +646,11 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                                 borderSide: BorderSide(color: HexColor("#F2F2F2")),
                                 borderRadius: BorderRadius.circular(30),
                               ),*/
-                            hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
+                            hintStyle: TextStyle(
+                                color: HexColor("#B8B8B8"), fontSize: 12),
                             labelStyle: TextStyles.textC333S14,
-                            hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
+                            hintText: S.of(context).mintotal_buy(
+                                FormatUtil.formatNumDecimal(minTotal)),
                             //border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                           ),
                           validator: (textStr) {
@@ -606,11 +659,13 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                             } else if (minTotal == 0) {
                               return "抵押已满";
                             } else if (int.parse(textStr) < minTotal) {
-                              return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
+                              return S.of(context).mintotal_hyn(
+                                  FormatUtil.formatNumDecimal(minTotal));
                             } else if (int.parse(textStr) > remainTotal) {
                               return "不能超过剩余份额";
                             } else if (Decimal.parse(textStr) >
-                                Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                                Decimal.parse(
+                                    FormatUtil.coinBalanceHumanRead(coinVo))) {
                               return S.of(context).hyn_balance_no_enough;
                             } else {
                               return null;
@@ -636,12 +691,15 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                         return InkWell(
                           child: Container(
                             color: HexColor("#1FB9C7").withOpacity(0.08),
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             child: Text(suggestList[value].toString(),
-                                style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                style: TextStyle(
+                                    fontSize: 12, color: HexColor("#5C4304"))),
                           ),
                           onTap: () {
-                            textEditingController.text = suggestList[value].toString();
+                            textEditingController.text =
+                                suggestList[value].toString();
                           },
                         );
                       }).toList(),
@@ -663,12 +721,17 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                                   text: TextSpan(
                                       text: S.of(context).balance_portion_hyn,
                                       style: TextStyle(
-                                          fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                                          fontSize: 14,
+                                          color: HexColor("#333333"),
+                                          fontWeight: FontWeight.bold),
                                       children: [
                                         TextSpan(
-                                          text: "${FormatUtil.stringFormatNum(contractNodeItem.remainDelegation)}",
+                                          text:
+                                              "${FormatUtil.stringFormatNum(contractNodeItem.remainDelegation)}",
                                           style: TextStyle(
-                                              fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                                              fontSize: 14,
+                                              color: HexColor("#333333"),
+                                              fontWeight: FontWeight.bold),
                                         )
                                       ]),
                                 ),
@@ -682,16 +745,20 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                                       padding: const EdgeInsets.all(0),
                                       color: HexColor("#FFDE64"),
                                       onPressed: () {
-                                        textEditingController.text = contractNodeItem.remainDelegation;
+                                        textEditingController.text =
+                                            contractNodeItem.remainDelegation;
 //                                        joinEnougnFunction();
                                       },
                                       child: Text(S.of(context).all_bug,
-                                          style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: HexColor("#5C4304"))),
                                     )),
                               ],
                             ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                            padding:
+                                const EdgeInsets.only(top: 10.0, bottom: 10),
                             child: RichText(
                               text: TextSpan(
                                   text: S.of(context).end_profit_hyn,
@@ -707,7 +774,9 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                           if (!isMyself)
                             RichText(
                               text: TextSpan(
-                                  text: isJoin ? S.of(context).spend_manager_hyn : S.of(context).get_manager_hyn,
+                                  text: isJoin
+                                      ? S.of(context).spend_manager_hyn
+                                      : S.of(context).get_manager_hyn,
                                   style: TextStyles.textC9b9b9bS12,
                                   children: [
                                     TextSpan(
@@ -728,11 +797,14 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
   );
 }
 
-Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem contractNodeItem,
+Widget getMap3NodeProductHeadItemSmall(
+    BuildContext context, ContractNodeItem contractNodeItem,
     {isJoin = false, isDetail = true, hasShare = false}) {
   var title = !isDetail
       ? S.of(context).node_contract_detail
-      : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
+      : isJoin
+          ? S.of(context).join_map_node_mortgage
+          : S.of(context).create_map_mortgage_contract;
   var nodeItem = contractNodeItem.contract;
   return Material(
     child: Container(
@@ -757,7 +829,10 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                     )),
                 Text(
                   title,
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -781,7 +856,8 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(nodeItem.name, style: TextStyle(fontSize: 16, color: Colors.white)),
+                      Text(nodeItem.name,
+                          style: TextStyle(fontSize: 16, color: Colors.white)),
                       SizedBox(height: 4),
                       Row(
                         mainAxisSize: MainAxisSize.min,
@@ -789,12 +865,16 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                           Text(
                               "启动所需" +
                                   '${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}',
-                              style: TextStyle(fontSize: 13, color: Colors.white)),
+                              style:
+                                  TextStyle(fontSize: 13, color: Colors.white)),
                           SizedBox(width: 4),
-                          Container(width: 1, height: 10, color: Colors.white24),
+                          Container(
+                              width: 1, height: 10, color: Colors.white24),
                           SizedBox(width: 4),
-                          Text(S.of(context).n_day(nodeItem.duration.toString()),
-                              style: TextStyle(fontSize: 13, color: Colors.white)),
+                          Text(
+                              S.of(context).n_day(nodeItem.duration.toString()),
+                              style:
+                                  TextStyle(fontSize: 13, color: Colors.white)),
                         ],
                       )
                     ],
@@ -804,7 +884,8 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
                   children: <Widget>[
                     Text(FormatUtil.formatPercent(nodeItem.annualizedYield),
                         style: TextStyle(fontSize: 20, color: Colors.white)),
-                    Text(S.of(context).annualized_rewards, style: TextStyle(fontSize: 13, color: Colors.white)),
+                    Text(S.of(context).annualized_rewards,
+                        style: TextStyle(fontSize: 13, color: Colors.white)),
                   ],
                 ),
               ],
@@ -816,12 +897,15 @@ Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem co
   );
 }
 
-Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem,
+Widget getMap3NodeProductHeadItem(
+    BuildContext context, ContractNodeItem contractNodeItem,
     {isJoin = false, isDetail = true, hasShare = false}) {
   double padding = UiUtil.isIPhoneX(context) ? 20 : 0;
   var title = !isDetail
       ? S.of(context).node_contract_detail
-      : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
+      : isJoin
+          ? S.of(context).join_map_node_mortgage
+          : S.of(context).create_map_mortgage_contract;
   var nodeItem = contractNodeItem.contract;
   return Stack(
     children: <Widget>[
@@ -838,10 +922,13 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           height: 120,
           width: 120,
           decoration: BoxDecoration(
-            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-              HexColor("#22ffffff"),
-              HexColor("#00ffffff"),
-            ]),
+            gradient: new LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  HexColor("#22ffffff"),
+                  HexColor("#00ffffff"),
+                ]),
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
           ),
@@ -854,10 +941,13 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           height: 120,
           width: 120,
           decoration: BoxDecoration(
-            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-              HexColor("#22ffffff"),
-              HexColor("#00ffffff"),
-            ]),
+            gradient: new LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  HexColor("#22ffffff"),
+                  HexColor("#00ffffff"),
+                ]),
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
           ),
@@ -870,10 +960,13 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
           height: 40,
           width: 40,
           decoration: BoxDecoration(
-            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-              HexColor("#22ffffff"),
-              HexColor("#00ffffff"),
-            ]),
+            gradient: new LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  HexColor("#22ffffff"),
+                  HexColor("#00ffffff"),
+                ]),
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
           ),
@@ -931,18 +1024,20 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
             ),
             RichText(
                 text: TextSpan(
-                    text: "${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}",
+                    text:
+                        "${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}",
                     style: TextStyles.textCfffS46,
                     children: <TextSpan>[
                   TextSpan(
-                    text:
-                        S.of(context).ten_thousand_annualizedyield(FormatUtil.formatPercent(nodeItem.annualizedYield)),
+                    text: S.of(context).ten_thousand_annualizedyield(
+                        FormatUtil.formatPercent(nodeItem.annualizedYield)),
                     style: TextStyles.textCfffS24,
                   )
                 ])),
             Padding(
               padding: const EdgeInsets.only(top: 4.0, bottom: 24),
-              child: Text(S.of(context).all_join_end_reward, style: TextStyles.textCccfffS12),
+              child: Text(S.of(context).all_join_end_reward,
+                  style: TextStyles.textCccfffS12),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -951,16 +1046,21 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
                 isJoin
                     ? Column(
                         children: <Widget>[
-                          Text(S.of(context).min_invest, style: TextStyles.textCccfffS12),
+                          Text(S.of(context).min_invest,
+                              style: TextStyles.textCccfffS12),
                           SizedBox(height: 4),
-                          Text("${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textCfffS14)
+                          Text(
+                              "${FormatUtil.formatPercent(nodeItem.minDelegationRate)}",
+                              style: TextStyles.textCfffS14)
                         ],
                       )
                     : Column(
                         children: <Widget>[
-                          Text(S.of(context).create_min_invest, style: TextStyles.textCccfffS12),
+                          Text(S.of(context).create_min_invest,
+                              style: TextStyles.textCccfffS12),
                           SizedBox(height: 4),
-                          Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
+                          Text(
+                              "${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
                               style: TextStyles.textCfffS14)
                         ],
                       ),
@@ -972,9 +1072,11 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
                 ),
                 Column(
                   children: <Widget>[
-                    Text(S.of(context).contract_deadline, style: TextStyles.textCccfffS12),
+                    Text(S.of(context).contract_deadline,
+                        style: TextStyles.textCccfffS12),
                     SizedBox(height: 4),
-                    Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textCfffS14)
+                    Text(S.of(context).n_day(nodeItem.duration.toString()),
+                        style: TextStyles.textCfffS14)
                   ],
                 ),
                 Container(
@@ -985,9 +1087,11 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
                 ),
                 Column(
                   children: <Widget>[
-                    Text(S.of(context).manage_fee, style: TextStyles.textCccfffS12),
+                    Text(S.of(context).manage_fee,
+                        style: TextStyles.textCccfffS12),
                     SizedBox(height: 4),
-                    Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textCfffS14)
+                    Text("${FormatUtil.formatPercent(nodeItem.commission)}",
+                        style: TextStyles.textCfffS14)
                   ],
                 ),
               ],

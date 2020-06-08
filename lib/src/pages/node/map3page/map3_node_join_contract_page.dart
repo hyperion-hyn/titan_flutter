@@ -23,7 +23,6 @@ import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'map3_node_create_contract_page.dart';
 
 class Map3NodeJoinContractPage extends StatefulWidget {
-
   final String contractId;
 
   Map3NodeJoinContractPage(this.contractId);
@@ -64,15 +63,18 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffF3F0F5),
-      appBar: AppBar(centerTitle: true, title: Text(S.of(context).join_map_node_mortgage)),
+      appBar: AppBar(
+          centerTitle: true, title: Text(S.of(context).join_map_node_mortgage)),
       body: _pageView(context),
     );
   }
 
   void getNetworkData() async {
     try {
-      var requestList =
-          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+      var requestList = await Future.wait([
+        _nodeApi.getContractItem(widget.contractId),
+        _nodeApi.getNodeProviderList()
+      ]);
       contractItem = requestList[0];
       providerList = requestList[1];
 
@@ -110,8 +112,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     nodeList = new List();
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
-      DropdownMenuItem item =
-          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
+      DropdownMenuItem item = new DropdownMenuItem(
+          value: i,
+          child: new Text(regions.name, style: TextStyles.textC333S14));
       nodeList.add(item);
     }
     selectNodeItemValue = nodeList[regionIndex].value;
@@ -138,7 +141,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     }
     double inputValue = double.parse(inputText);
     endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
+    spendManager =
+        Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
@@ -146,8 +150,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
             // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection:
-                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection: TextSelection.fromPosition(TextPosition(
+                affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
@@ -177,15 +181,18 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
       children: <Widget>[
         Expanded(
           child: SingleChildScrollView(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _nodeWidget(context, contractItem.contract),
-            SizedBox(height: 8),
-            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
-            SizedBox(height: 8),
-            _autoRenewalWidget(),
-            SizedBox(height: 8),
-            _tipsWidget(),
-          ])),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                _nodeWidget(context, contractItem.contract),
+                SizedBox(height: 8),
+                getHoldInNum(context, contractItem, _joinCoinFormKey,
+                    _joinCoinController, endProfit, spendManager, false),
+                SizedBox(height: 8),
+                _autoRenewalWidget(),
+                SizedBox(height: 8),
+                _tipsWidget(),
+              ])),
         ),
         _confirmButtonWidget(),
       ],
@@ -215,7 +222,12 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _nodeWidget,
-            Expanded(child: Text(title, style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12))),
+            Expanded(
+                child: Text(title,
+                    style: TextStyle(
+                        height: 1.8,
+                        color: DefaultColors.color999,
+                        fontSize: 12))),
           ],
         ),
       );
@@ -230,11 +242,13 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-            child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
+            child: Text("注意事项",
+                style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
           _rowWidget("创建7天内不可撤销", top: 0),
           _rowWidget(S.of(context).please_confirm_eth_gas_enough(walletName)),
-          _rowWidget("需要总抵押满100万才能正式启动，每次参与抵押数额不少于10000HYN（如果节点剩余额度少于10000HYN，你必须抵押剩下的全部额度"),
+          _rowWidget(
+              "需要总抵押满100万才能正式启动，每次参与抵押数额不少于10000HYN（如果节点剩余额度少于10000HYN，你必须抵押剩下的全部额度"),
           _rowWidget("你可以设置是否自动跟随自动续约来决定本期满期后是否跟随节点自动进入下一期来获得更多的奖励"),
           _rowWidget("如果节点主撤销节点，已抵押的HYN可自行取回"),
         ],
@@ -269,21 +283,30 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
           Padding(
             padding: const EdgeInsets.only(right: 30),
             child: RichText(
-              text: TextSpan(style: TextStyle(fontSize: 12, color: HexColor("#999999")), text: "管理费", children: [
-                TextSpan(
-                  text: "  ${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
-                  style: TextStyle(fontSize: 12, color: HexColor("#333333")),
-                )
-              ]),
+              text: TextSpan(
+                  style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                  text: "管理费",
+                  children: [
+                    TextSpan(
+                      text:
+                          "  ${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
+                      style:
+                          TextStyle(fontSize: 12, color: HexColor("#333333")),
+                    )
+                  ]),
             ),
           ),
           RichText(
-            text: TextSpan(style: TextStyle(fontSize: 12, color: HexColor("#999999")), text: "最低抵押", children: [
-              TextSpan(
-                text: "  ${FormatUtil.formatPercent(nodeItem.minDelegationRate)}",
-                style: TextStyle(fontSize: 12, color: HexColor("#333333")),
-              )
-            ]),
+            text: TextSpan(
+                style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                text: "最低抵押",
+                children: [
+                  TextSpan(
+                    text:
+                        "  ${FormatUtil.formatPercent(nodeItem.minDelegationRate)}",
+                    style: TextStyle(fontSize: 12, color: HexColor("#333333")),
+                  )
+                ]),
           ),
         ],
       ),
@@ -292,7 +315,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 
   Widget _nodeOwnerWidget() {
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
+      padding:
+          const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
       child: Row(
         children: <Widget>[
           Image.asset(
@@ -308,8 +332,13 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text.rich(TextSpan(children: [
-                TextSpan(text: "派大星", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                TextSpan(text: "  编号 PB2020", style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                TextSpan(
+                    text: "派大星",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                TextSpan(
+                    text: "  编号 PB2020",
+                    style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(
                 height: 4,
@@ -324,7 +353,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               Container(
                 color: HexColor("#1FB9C7").withOpacity(0.08),
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Text("第一期", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                child: Text("第一期",
+                    style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
               ),
               Container(
                 height: 4,
@@ -361,7 +391,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold)))
+                    Expanded(
+                        child: Text(nodeItem.name,
+                            style: TextStyle(fontWeight: FontWeight.bold)))
                   ],
                 ),
                 Padding(
@@ -375,8 +407,12 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                           style: TextStyles.textC99000000S13,
                           maxLines: 1,
                           softWrap: true),
-                      Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
-                      Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
+                      Text("  |  ",
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: HexColor("000000").withOpacity(0.2))),
+                      Text(S.of(context).n_day(nodeItem.duration.toString()),
+                          style: TextStyles.textC99000000S13)
                     ],
                   ),
                 ),
@@ -385,10 +421,12 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
           ),
           Column(
             children: <Widget>[
-              Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}", style: TextStyles.textCff4c3bS20),
+              Text("${FormatUtil.formatPercent(nodeItem.annualizedYield)}",
+                  style: TextStyles.textCff4c3bS20),
               Padding(
                 padding: const EdgeInsets.only(top: 3.0),
-                child: Text(S.of(context).annualized_rewards, style: TextStyles.textC99000000S13),
+                child: Text(S.of(context).annualized_rewards,
+                    style: TextStyles.textC99000000S13),
               )
             ],
           )
@@ -398,6 +436,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   }
 
   bool _renew = true;
+
   Widget _autoRenewalWidget() {
     return Container(
       color: Colors.white,
@@ -441,7 +480,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
           return;
         }
 
-        var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
+        var transferAmount = _joinCoinController.text?.isNotEmpty == true
+            ? _joinCoinController.text
+            : "0";
 
         Application.router.navigateTo(
             context,

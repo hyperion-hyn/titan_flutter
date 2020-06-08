@@ -75,17 +75,22 @@ class _AddPositionState extends BaseState<AddPositionPage> {
   int _requestOpenCageDataCount = 0;
   String language;
   String address;
+
 //  List<Asset> images = List<Asset>();
 
   @override
   void onCreated() {
     language = SettingInheritedModel.of(context).languageCode;
-    address = WalletInheritedModel.of(context).activatedWallet.wallet.accounts[0].address;
+    address = WalletInheritedModel.of(context)
+        .activatedWallet
+        .wallet
+        .accounts[0]
+        .address;
 
-    _positionBloc.add(GetOpenCageEvent(widget.userPosition,language));
+    _positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
     _filterSubject.debounceTime(Duration(seconds: 1)).listen((count) {
       //print('[add] ---> count:$count, _requestOpenCageDataCount:$_requestOpenCageDataCount');
-      _positionBloc.add(GetOpenCageEvent(widget.userPosition,language));
+      _positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
     });
     super.onCreated();
   }
@@ -141,8 +146,10 @@ class _AddPositionState extends BaseState<AddPositionPage> {
 
         if (state is SuccessPostPoiDataState) {
 //          createWalletPopUtilName = '/data_contribution_page';
-          Application.router.navigateTo(context,Routes.contribute_position_finish
-              + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
+          Application.router.navigateTo(
+              context,
+              Routes.contribute_position_finish +
+                  '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_ADD}');
 //          Navigator.push(
 //            context,
 //            MaterialPageRoute(
@@ -154,7 +161,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
             _isUploading = false;
           });
           var hint = S.of(context).add_failed_exist_hint;
-          Fluttertoast.showToast(msg: state.code == -409 ? hint : S.of(context).add_failed_hint);
+          Fluttertoast.showToast(
+              msg: state.code == -409 ? hint : S.of(context).add_failed_hint);
         } else if (state is GetOpenCageState) {
           _openCageData = state.openCageData;
 
@@ -167,7 +175,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
 
           setState(() {
             //_addressText = country + " " + provinces + " " + city + " " + county;
-            _addressText = county + "，" + city + "，" + provinces + "，" + country;
+            _addressText =
+                county + "，" + city + "，" + provinces + "，" + country;
             //_addressText = "中国 广东省 广州市 天河区 中山大道 环球都会广场 2601楼";
           });
 
@@ -258,11 +267,15 @@ class _AddPositionState extends BaseState<AddPositionPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             // 交叉轴（竖直）对其方式
             children: <Widget>[
-              _buildTitleRow('category', Size(18, 18), S.of(context).category, true, isCategory: true),
+              _buildTitleRow(
+                  'category', Size(18, 18), S.of(context).category, true,
+                  isCategory: true),
               Spacer(),
               Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Text(_categoryText, style: TextStyle(color: DefaultColors.color777, fontSize: 14))),
+                  child: Text(_categoryText,
+                      style: TextStyle(
+                          color: DefaultColors.color777, fontSize: 14))),
               Padding(
                 padding: const EdgeInsets.only(right: 14),
                 child: Icon(
@@ -315,7 +328,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     var itemCount = 1;
     if (_listImagePaths.length == 0) {
       itemCount = 1;
-    } else if (_listImagePaths.length > 0 && _listImagePaths.length < _listImagePathsMaxLength) {
+    } else if (_listImagePaths.length > 0 &&
+        _listImagePaths.length < _listImagePathsMaxLength) {
       itemCount = 1 + _listImagePaths.length;
     } else if (_listImagePaths.length >= _listImagePathsMaxLength) {
       itemCount = _listImagePathsMaxLength;
@@ -325,7 +339,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
 
     return Column(
       children: <Widget>[
-        _buildTitleRow('camera', Size(19, 15), S.of(context).scene_photographed, true),
+        _buildTitleRow(
+            'camera', Size(19, 15), S.of(context).scene_photographed, true),
         Container(
           height: containerHeight,
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
@@ -338,7 +353,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
               childAspectRatio: childAspectRatio,
             ),
             itemBuilder: (context, index) {
-              if (index == itemCount - 1 && _listImagePaths.length < _listImagePathsMaxLength) {
+              if (index == itemCount - 1 &&
+                  _listImagePaths.length < _listImagePathsMaxLength) {
                 return InkWell(
                   onTap: () {
                     _selectImages();
@@ -366,7 +382,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
                     children: <Widget>[
                       ClipRRect(
                         borderRadius: BorderRadius.circular(3),
-                        child: Image.file(File(_listImagePaths[index].path), width: itemWidth, fit: BoxFit.cover),
+                        child: Image.file(File(_listImagePaths[index].path),
+                            width: itemWidth, fit: BoxFit.cover),
                       ),
                       /*SizedBox(
                         width:itemWidth,
@@ -423,7 +440,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 18, 10, 11),
-              child: Image.asset('res/drawable/add_position_address.png', width: 17, height: 21),
+              child: Image.asset('res/drawable/add_position_address.png',
+                  width: 17, height: 21),
             ),
             _openCageData == null
                 ? Padding(
@@ -465,15 +483,19 @@ class _AddPositionState extends BaseState<AddPositionPage> {
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              _buildAddressCellRow(
-                  S.of(context).details_of_street, S.of(context).please_add_streets_hint, _addressController,
+              _buildAddressCellRow(S.of(context).details_of_street,
+                  S.of(context).please_add_streets_hint, _addressController,
                   isDetailAddress: true),
               _divider(),
               _buildAddressCellRow(
-                  S.of(context).house_number, S.of(context).please_enter_door_number_hint, _addressHouseNumController),
+                  S.of(context).house_number,
+                  S.of(context).please_enter_door_number_hint,
+                  _addressHouseNumController),
               _divider(),
               _buildAddressCellRow(
-                  S.of(context).postal_code, S.of(context).please_enter_postal_code, _addressPostcodeController),
+                  S.of(context).postal_code,
+                  S.of(context).please_enter_postal_code,
+                  _addressPostcodeController),
             ],
           ),
         ),
@@ -506,7 +528,10 @@ class _AddPositionState extends BaseState<AddPositionPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       // 交叉轴（竖直）对其方式
                       children: <Widget>[
-                        Image.asset('res/drawable/ic_user_poi_business_time.png', width: 19, height: 19),
+                        Image.asset(
+                            'res/drawable/ic_user_poi_business_time.png',
+                            width: 19,
+                            height: 19),
                         Container(
                           padding: const EdgeInsets.only(left: 28, right: 20),
                           child: Container(
@@ -515,8 +540,10 @@ class _AddPositionState extends BaseState<AddPositionPage> {
                               _timeText ?? _timeDefaultText,
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.clip,
-                              style:
-                                  TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
+                              style: TextStyle(
+                                  color: DefaultColors.color777,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 13),
                             ),
                           ),
                         ),
@@ -531,10 +558,13 @@ class _AddPositionState extends BaseState<AddPositionPage> {
               ),
               _divider(),
               _buildDetailCellRow(
-                  'ic_user_poi_phone_num', S.of(context).phone_number, TextInputType.number, _detailPhoneNumController),
+                  'ic_user_poi_phone_num',
+                  S.of(context).phone_number,
+                  TextInputType.number,
+                  _detailPhoneNumController),
               _divider(),
-              _buildDetailCellRow(
-                  'ic_user_poi_web_site', S.of(context).website, TextInputType.emailAddress, _detailWebsiteController),
+              _buildDetailCellRow('ic_user_poi_web_site', S.of(context).website,
+                  TextInputType.emailAddress, _detailWebsiteController),
             ],
           ),
         ),
@@ -552,7 +582,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
             //margin: EdgeInsets.symmetric(vertical: 16),
             constraints: BoxConstraints.expand(height: 48),
             child: RaisedButton(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
               disabledColor: Colors.grey[600],
               color: Theme.of(context).primaryColor,
               textColor: Colors.white,
@@ -577,7 +608,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
                   children: <Widget>[
                     Text(
                       S.of(context).submit,
-                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 16),
                     ),
                   ],
                 ),
@@ -653,7 +685,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     );
   }
 
-  Widget _buildAddressCellRow(String title, String hintText, TextEditingController controller,
+  Widget _buildAddressCellRow(
+      String title, String hintText, TextEditingController controller,
       {bool isDetailAddress = false}) {
     return Container(
         height: !isDetailAddress ? 40 : _inputHeight,
@@ -670,7 +703,10 @@ class _AddPositionState extends BaseState<AddPositionPage> {
               child: Text(
                 title,
                 textAlign: TextAlign.left,
-                style: TextStyle(color: DefaultColors.color777, fontWeight: FontWeight.normal, fontSize: 13),
+                style: TextStyle(
+                    color: DefaultColors.color777,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 13),
               ),
             ),
             Expanded(
@@ -681,7 +717,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: hintText,
-                  hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+                  hintStyle:
+                      TextStyle(fontSize: 13, color: DefaultColors.color777),
                 ),
                 keyboardType: TextInputType.text,
                 maxLines: !isDetailAddress ? 1 : 4,
@@ -692,8 +729,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
         ));
   }
 
-  Widget _buildDetailCellRow(
-      String imageName, String hintText, TextInputType keyboardType, TextEditingController controller) {
+  Widget _buildDetailCellRow(String imageName, String hintText,
+      TextInputType keyboardType, TextEditingController controller) {
     return Container(
         height: 40,
         padding: const EdgeInsets.only(left: 15, right: 14),
@@ -715,7 +752,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
-                    hintStyle: TextStyle(fontSize: 13, color: DefaultColors.color777),
+                    hintStyle:
+                        TextStyle(fontSize: 13, color: DefaultColors.color777),
                   ),
                   keyboardType: keyboardType,
                 ),
@@ -725,7 +763,9 @@ class _AddPositionState extends BaseState<AddPositionPage> {
         ));
   }
 
-  Widget _buildTitleRow(String imageName, Size size, String title, bool isVisibleStar, {bool isCategory = false}) {
+  Widget _buildTitleRow(
+      String imageName, Size size, String title, bool isVisibleStar,
+      {bool isCategory = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       // // 主轴方向（横向）对齐方式
@@ -733,11 +773,16 @@ class _AddPositionState extends BaseState<AddPositionPage> {
       // 交叉轴（竖直）对其方式
       children: <Widget>[
         Padding(
-          padding: isCategory ? const EdgeInsets.fromLTRB(15, 0, 10, 0) : const EdgeInsets.fromLTRB(15, 18, 10, 11),
-          child: Image.asset('res/drawable/add_position_$imageName.png', width: size.width, height: size.height),
+          padding: isCategory
+              ? const EdgeInsets.fromLTRB(15, 0, 10, 0)
+              : const EdgeInsets.fromLTRB(15, 18, 10, 11),
+          child: Image.asset('res/drawable/add_position_$imageName.png',
+              width: size.width, height: size.height),
         ),
         Padding(
-            padding: isCategory ? const EdgeInsets.only(right: 10) : const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            padding: isCategory
+                ? const EdgeInsets.only(right: 10)
+                : const EdgeInsets.fromLTRB(0, 14, 10, 6),
             child: Text(
               title,
               overflow: TextOverflow.clip,
@@ -750,8 +795,11 @@ class _AddPositionState extends BaseState<AddPositionPage> {
         Visibility(
           visible: isVisibleStar,
           child: Padding(
-            padding: isCategory ? const EdgeInsets.only(right: 10) : const EdgeInsets.fromLTRB(0, 14, 10, 6),
-            child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
+            padding: isCategory
+                ? const EdgeInsets.only(right: 10)
+                : const EdgeInsets.fromLTRB(0, 14, 10, 6),
+            child: Image.asset('res/drawable/add_position_star.png',
+                width: 8, height: 9),
           ),
         ),
       ],
@@ -833,9 +881,9 @@ class _AddPositionState extends BaseState<AddPositionPage> {
       String dayText = "";
       for (var item in _timeItem.dayList) {
         if (!item.isCheck) continue;
-          dayText += "${item.label}、";
+        dayText += "${item.label}、";
       }
-      dayText = dayText.replaceFirst("、", "",dayText.length - 1);
+      dayText = dayText.replaceFirst("、", "", dayText.length - 1);
       setState(() {
         _timeText = _timeItem.timeStr + " " + dayText;
       });
@@ -858,7 +906,9 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     }
 
     // 1.检测必须类别、图片
-    var _isEmptyOfCategory = (_categoryItem == null || _categoryItem.title.length == 0 || _categoryItem.title == "");
+    var _isEmptyOfCategory = (_categoryItem == null ||
+        _categoryItem.title.length == 0 ||
+        _categoryItem.title == "");
     var _isEmptyOfImages = (_listImagePaths.length == 0);
 
     if (_isEmptyOfCategory) {
@@ -867,12 +917,14 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     }
 
     if (_isEmptyOfImages) {
-      Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
+      Fluttertoast.showToast(
+          msg: S.of(context).take_pictures_must_not_be_empty_hint);
       return;
     }
 
     if (!_isAcceptSignalProtocol) {
-      Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
+      Fluttertoast.showToast(
+          msg: S.of(context).poi_upload_protocol_not_accepted_hint);
       return;
     }
 
@@ -892,17 +944,33 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     var poiWebsite = _maxLengthLimit(_detailWebsiteController);
     var postalCode = _maxLengthLimit(_addressPostcodeController);
 
-    var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city, county,
-        poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite);
+    var collector = PoiCollector(
+        categoryId,
+        widget.userPosition,
+        poiName,
+        countryCode,
+        country,
+        state,
+        city,
+        county,
+        poiAddress,
+        "",
+        poiHouseNum,
+        postalCode,
+        _timeText,
+        poiPhoneNum,
+        poiWebsite);
 
-    var model = PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
-    _positionBloc.add(StartPostPoiDataEvent(model,address));
+    var model =
+        PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
+    _positionBloc.add(StartPostPoiDataEvent(model, address));
     setState(() {
       _isUploading = true;
     });
   }
 
-  String _maxLengthLimit(TextEditingController controller, {bool isDetailAddress = false}) {
+  String _maxLengthLimit(TextEditingController controller,
+      {bool isDetailAddress = false}) {
     String text = controller.text ?? "";
     if (isDetailAddress) {
       if (text.length > 200) {

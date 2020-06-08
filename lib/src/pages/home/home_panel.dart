@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:barcode_scan/barcode_scan.dart';
@@ -53,7 +52,8 @@ class HomePanelState extends State<HomePanel> {
     return Container(
       padding: const EdgeInsets.only(top: 4, left: 0, right: 0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -76,7 +76,7 @@ class HomePanelState extends State<HomePanel> {
               ],
             ),
           ),
-    //搜索
+          //搜索
           SliverToBoxAdapter(
             child: _search(),
           ),
@@ -94,7 +94,6 @@ class HomePanelState extends State<HomePanel> {
     );
   }
 
-
   Widget _focusArea(context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -111,7 +110,6 @@ class HomePanelState extends State<HomePanel> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     onTap: () {
-
                       // todo: test_jison_0426
                       print('[Home_panel] -->focusArea， 数组展示');
                       /*if (Platform.isIOS) {
@@ -139,12 +137,12 @@ class HomePanelState extends State<HomePanel> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          gradient: LinearGradient(
-                            colors: [HexColor("#1C9DB7"), HexColor("#3AC2DD")],
-                            begin: Alignment.topRight,
-                            end: Alignment.bottomLeft,
-                          ),
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        gradient: LinearGradient(
+                          colors: [HexColor("#1C9DB7"), HexColor("#3AC2DD")],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                        ),
                       ),
                       child: Stack(
                         children: <Widget>[
@@ -156,13 +154,18 @@ class HomePanelState extends State<HomePanel> {
                               children: <Widget>[
                                 Text(
                                   S.of(context).global_nodes,
-                                  style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 4.0, right: 4),
+                                  padding:
+                                      const EdgeInsets.only(top: 4.0, right: 4),
                                   child: Text(
                                     S.of(context).global_map_server_nodes,
-                                    style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.8),
+                                        fontSize: 12),
                                   ),
                                 )
                               ],
@@ -192,7 +195,9 @@ class HomePanelState extends State<HomePanel> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => WebViewContainer(
-                                    initUrl: S.of(context).hyperion_project_intro_url,
+                                    initUrl: S
+                                        .of(context)
+                                        .hyperion_project_intro_url,
                                     title: S.of(context).Hyperion,
                                   )));
                     },
@@ -215,13 +220,17 @@ class HomePanelState extends State<HomePanel> {
                               children: <Widget>[
                                 Text(
                                   S.of(context).Hyperion,
-                                  style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: Text(
                                     S.of(context).project_introduction,
-                                    style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.8),
+                                        fontSize: 12),
                                   ),
                                 )
                               ],
@@ -250,7 +259,8 @@ class HomePanelState extends State<HomePanel> {
             child: InkWell(
               borderRadius: BorderRadius.all(Radius.circular(8.0)),
               onTap: () {
-                Application.router.navigateTo(context,Routes.contribute_tasks_list);
+                Application.router
+                    .navigateTo(context, Routes.contribute_tasks_list);
 //                Navigator.push(
 //                  context,
 //                  MaterialPageRoute(
@@ -278,13 +288,17 @@ class HomePanelState extends State<HomePanel> {
                         children: <Widget>[
                           Text(
                             S.of(context).data_contribute,
-                            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
                               S.of(context).data_contribute_reward,
-                              style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 12),
                             ),
                           ),
                         ],
@@ -353,12 +367,14 @@ class HomePanelState extends State<HomePanel> {
               onTap: () async {
                 await activeDMap('encryptShare');
                 var mapboxController =
-                    (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
+                    (Keys.mapContainerKey.currentState as MapContainerState)
+                        ?.mapboxMapController;
 
                 var lastLocation = await mapboxController?.lastKnownLocation();
                 if (lastLocation != null) {
                   Future.delayed(Duration(milliseconds: 500)).then((value) {
-                    mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
+                    mapboxController?.animateCamera(
+                        CameraUpdate.newLatLngZoom(lastLocation, 17));
                   });
                 }
               },
@@ -367,11 +383,11 @@ class HomePanelState extends State<HomePanel> {
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                     color: HexColor("#EFFBFD"),
-                    borderRadius: BorderRadius.all(Radius.circular(8))
-                ),
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('res/drawable/ic_dmap_location_share.png', width: 32, height: 32),
+                    Image.asset('res/drawable/ic_dmap_location_share.png',
+                        width: 32, height: 32),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8.0),
@@ -380,20 +396,23 @@ class HomePanelState extends State<HomePanel> {
                           children: <Widget>[
                             Text(
                               S.of(context).private_sharing,
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 12),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
                                 S.of(context).private_sharing_text,
-                                style: TextStyle(color: Colors.grey, fontSize: 12),
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 12),
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    Image.asset('res/drawable/ic_dmap_location_share_arrow.png', width: 22, height: 22),
+                    Image.asset('res/drawable/ic_dmap_location_share_arrow.png',
+                        width: 22, height: 22),
                   ],
                 ),
               ),
@@ -401,7 +420,8 @@ class HomePanelState extends State<HomePanel> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 24.0),
-            child: Text(S.of(context).dmap_life, style: TextStyle(color: Colors.grey)),
+            child: Text(S.of(context).dmap_life,
+                style: TextStyle(color: Colors.grey)),
           ),
           Padding(
             padding: EdgeInsets.only(top: 16),
@@ -420,8 +440,7 @@ class HomePanelState extends State<HomePanel> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                             color: HexColor("#EFFBFD"),
-                            borderRadius: BorderRadius.all(Radius.circular(8))
-                        ),
+                            borderRadius: BorderRadius.all(Radius.circular(8))),
                         child: Row(
                           children: <Widget>[
                             Image.asset(
@@ -437,7 +456,9 @@ class HomePanelState extends State<HomePanel> {
                                   children: <Widget>[
                                     Text(
                                       S.of(context).embassy_guide,
-                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
@@ -446,7 +467,9 @@ class HomePanelState extends State<HomePanel> {
                                           Expanded(
                                             child: Text(
                                               S.of(context).global_embassies,
-                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 12),
                                             ),
                                           ),
                                         ],
@@ -475,8 +498,7 @@ class HomePanelState extends State<HomePanel> {
                         padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
                         decoration: BoxDecoration(
                             color: HexColor("#EFFBFD"),
-                            borderRadius: BorderRadius.all(Radius.circular(8))
-                        ),
+                            borderRadius: BorderRadius.all(Radius.circular(8))),
                         child: Row(
                           children: <Widget>[
                             Image.asset(
@@ -493,15 +515,19 @@ class HomePanelState extends State<HomePanel> {
                                   children: <Widget>[
                                     Text(
                                       S.of(context).police_security_station,
-                                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12),
                                     ),
                                     Flexible(
                                       flex: 2,
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 8.0),
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
                                         child: Text(
                                           S.of(context).police_station_text,
-                                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 12),
                                         ),
                                       ),
                                     ),
@@ -672,7 +698,6 @@ class HomePanelState extends State<HomePanel> {
 
  */
 
-
   Widget _search() {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
@@ -741,7 +766,20 @@ class HomePanelState extends State<HomePanel> {
       "cafe",
       "hospital"
     ];
-    List<String> searchTexts = ["美食", "酒店", "景点", "停车场", "加油站", "银行", "超市", "商场", "网吧", "厕所", "咖啡馆", "医院"];
+    List<String> searchTexts = [
+      "美食",
+      "酒店",
+      "景点",
+      "停车场",
+      "加油站",
+      "银行",
+      "超市",
+      "商场",
+      "网吧",
+      "厕所",
+      "咖啡馆",
+      "医院"
+    ];
     List<String> titles = [
       S.of(context).foods,
       S.of(context).hotel,
@@ -757,7 +795,10 @@ class HomePanelState extends State<HomePanel> {
       S.of(context).hospital
     ];
 
-    bool isChinaMainland = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland;
+    bool isChinaMainland =
+        SettingInheritedModel.of(context, aspect: SettingAspect.area)
+            .areaModel
+            .isChinaMainland;
     List<String> typeOfNearBys = [
       "restaurant",
       "lodging",
@@ -879,12 +920,15 @@ class HomePanelState extends State<HomePanel> {
     } else if (scanStr.contains("share?id=")) {
       int indexInt = scanStr.indexOf("=");
       String contractId = scanStr.substring(indexInt + 1, indexInt + 2);
-      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+      Application.router.navigateTo(context,
+          Routes.map3node_contract_detail_page + "?contractId=$contractId");
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
-      Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
+      Application.router.navigateTo(
+          context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
     } else {
-      Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
+      Application.router.navigateTo(
+          context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
     }
   }
 
@@ -893,8 +937,10 @@ class HomePanelState extends State<HomePanel> {
 
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {
-      if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
-        MapContainerState mapState = (Keys.mapContainerKey.currentState as MapContainerState);
+      if (model.dMapConfigModel.defaultLocation != null &&
+          model.dMapConfigModel.defaultZoom != null) {
+        MapContainerState mapState =
+            (Keys.mapContainerKey.currentState as MapContainerState);
         mapState.updateMyLocationTrackingMode(MyLocationTrackingMode.None);
         await Future.delayed(Duration(milliseconds: 300));
 
@@ -920,5 +966,9 @@ class SearchTextModel {
   String typeOfNearBy; //only not China mainland, category of type
 
   SearchTextModel(this.title, this.avatar,
-      {this.searchText, this.center, this.gaodeType, this.isCategorySearch = true, this.typeOfNearBy});
+      {this.searchText,
+      this.center,
+      this.gaodeType,
+      this.isCategorySearch = true,
+      this.typeOfNearBy});
 }
