@@ -9,7 +9,8 @@ class ClickRectangleButton extends StatefulWidget {
   Function onTap;
   bool isLoading = false;
 
-  ClickRectangleButton(this.text, this.onTap, {this.height = 50,this.fontSize = 17});
+  ClickRectangleButton(this.text, this.onTap,
+      {this.height = 50, this.fontSize = 17});
 
   @override
   State<StatefulWidget> createState() {
@@ -33,7 +34,11 @@ class _ClickRectangleButtonState extends State<ClickRectangleButton> {
       child: RaisedButton(
           disabledColor: HexColor("#dedede"),
           color: Theme.of(context).primaryColor,
-          child: Text(widget.text, style: TextStyle(fontSize: widget.fontSize, color: widget.isLoading ? DefaultColors.color999 : Colors.white)),
+          child: Text(widget.text,
+              style: TextStyle(
+                fontSize: widget.fontSize,
+                color: widget.isLoading ? DefaultColors.color999 : Colors.white,
+              )),
           onPressed: widget.isLoading
               ? null
               : () async {

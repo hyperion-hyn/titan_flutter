@@ -15,7 +15,8 @@ class ContributorMortgageBroadcastDonePage extends StatefulWidget {
   }
 }
 
-class _ContributorMortgageBroadcastDonePageState extends State<ContributorMortgageBroadcastDonePage> {
+class _ContributorMortgageBroadcastDonePageState
+    extends State<ContributorMortgageBroadcastDonePage> {
   double _rewardHyn = 0.1;
   int _rewardCoins = 10;
 

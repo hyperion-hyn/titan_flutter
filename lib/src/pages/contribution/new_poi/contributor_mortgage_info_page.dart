@@ -2,33 +2,36 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
+import 'package:titan/src/widget/click_rectangle_button.dart';
 
-class ContributorMortgagePage extends StatefulWidget {
+class ContributorMortgageInfoPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _ContributorMortgagePageState();
+    return _ContributorMortgageInfoPageState();
   }
 }
 
 class ContributorAssets {
   var name = 'Lance';
+  var walletAddress =
+      'AsjdlALIj…flslsl89sjAsjdlALIj…flslsl89sjAsjdlALIj…flslsl89sj';
   double totalHyn = 3100;
-  var coins = 300;
   var quota = 10;
   double energy = 230;
-  var hyn = 10;
   double mortgage = 3000;
   double notMortgagedReward = 1020;
-  var contribute = 10;
   var lastReward = '昨日奖励 2HYN';
 }
 
-class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
+class _ContributorMortgageInfoPageState
+    extends State<ContributorMortgageInfoPage> {
   ContributorAssets contributorAssets = ContributorAssets();
   var chartName = '全球杯周赛';
+  var notEnoughHYN = true;
 
   @override
   void initState() {
@@ -39,24 +42,36 @@ class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          _statusBarPadding(),
-          _contributorAssets(),
-          _globalChart(),
-          _contributorTrophies(),
-          _contributedPoiList(),
-          _contributedRecords(),
-          _bottomPadding()
-        ],
-      ),
-    ));
+        appBar: AppBar(
+          title: Text('我的抵押'),
+        ),
+        body: SafeArea(
+            child: Stack(
+          children: <Widget>[
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  //_statusBarPadding(),
+                  _contributorAssets(),
+                  _introduction(),
+//            _globalChart(),
+//            _contributorTrophies(),
+//            _contributedPoiList(),
+//            _contributedRecords(),
+                  _bottomPadding()
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: ClickRectangleButton('抵押', () {}),
+            )
+          ],
+        )));
   }
 
   _contributorAssets() {
     return Container(
-      color: Theme.of(context).primaryColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -80,20 +95,19 @@ class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Text(
                         'Lance',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(color: Colors.black, fontSize: 16),
                       ),
                     ),
                     Container(
-                      color: Colors.grey[400],
-                      padding: EdgeInsets.all(4.0),
+                      width: 150,
                       child: Text(
-                        '贡献值 ${contributorAssets.contribute}',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 10),
+                        '钱包地址: ${contributorAssets.walletAddress}',
+                        maxLines: 1,
+                        style: TextStyle(color: Colors.black, fontSize: 10),
                       ),
                     )
                   ],
                 ),
-                Spacer(),
                 Row(
                   children: <Widget>[
                     Icon(Icons.account_balance_wallet),
@@ -134,15 +148,6 @@ class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.end,
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(4.0),
-                  padding: EdgeInsets.all(2.0),
-                  color: Colors.grey[200],
-                  child: Text(
-                    ' 资产 ',
-                    style: TextStyle(color: Colors.black, fontSize: 11),
-                  ),
-                ),
                 Text.rich(
                   TextSpan(children: [
                     TextSpan(
@@ -151,12 +156,12 @@ class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
-                          color: Colors.white,
+                          color: Colors.black,
                         )),
                     TextSpan(
-                        text: ' HYN',
+                        text: ' (HYN)',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                         ))
                   ]),
                 ),
@@ -165,11 +170,15 @@ class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              contributorAssets.lastReward,
-              style: TextStyle(
-                color: Colors.grey[300],
-                fontSize: 13,
+            child: Container(
+              padding: EdgeInsets.all(4.0),
+              color: Colors.grey[200],
+              child: Text(
+                contributorAssets.lastReward,
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 13,
+                ),
               ),
             ),
           ),
@@ -179,80 +188,47 @@ class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(
-                width: 32,
-              ),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '抵押中（HYN）',
-                      style: TextStyle(color: Colors.grey[300], fontSize: 13),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        '${FormatUtil.doubleFormatNum(contributorAssets.mortgage)}',
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 32,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '贡献奖励（HYN）',
-                      style: TextStyle(color: Colors.grey[300], fontSize: 13),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(top: 8.0, bottom: 8.0, right: 8.0),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            '${FormatUtil.doubleFormatNum(contributorAssets.notMortgagedReward)}',
-                            maxLines: 2,
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Spacer()
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
+                flex: 1,
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-                  child: Text(
-                    '当前抵押权益：+1 地点 ≈ 0.1 HYN',
-                    style: TextStyle(color: Colors.grey[300], fontSize: 13),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '${FormatUtil.doubleFormatNum(contributorAssets.mortgage)}',
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      ),
+                      Text(
+                        '抵押中（HYN）',
+                        style: TextStyle(color: Colors.black, fontSize: 13),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text('数据贡献细则>>',
-                    style: TextStyle(
-                      color: Colors.lightBlueAccent,
-                    )),
-              )
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '${FormatUtil.doubleFormatNum(contributorAssets.notMortgagedReward)}',
+                        maxLines: 2,
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      ),
+                      Text(
+                        '贡献奖励（HYN）',
+                        style: TextStyle(color: Colors.black, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -474,6 +450,20 @@ class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
     );
   }
 
+  _dot() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: 7.0,
+        height: 7.0,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: DefaultColors.color999,
+            border: Border.all(color: DefaultColors.color999, width: 1.0)),
+      ),
+    );
+  }
+
   _cardView(String iconPath, String title, Widget child, Function onDetail,
       {double childHeight, bool isIconDetail}) {
     return Card(
@@ -519,10 +509,95 @@ class _ContributorMortgagePageState extends State<ContributorMortgagePage> {
     );
   }
 
-  _statusBarPadding() {
+  _introduction() {
     return Container(
-      color: Theme.of(context).primaryColor,
-      height: UiUtil.isIPhoneX(context) ? 40.0 : 20.0,
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Text(
+                '当前抵押权益:',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              Icon(Icons.edit),
+              Text(
+                '抵押细则 >>',
+                style: TextStyle(color: Colors.blue),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 8.0,
+          ),
+          notEnoughHYN
+              ? Text.rich(TextSpan(children: [
+                  TextSpan(
+                      text: '! ',
+                      style: TextStyle(fontSize: 20, color: Colors.red)),
+                  TextSpan(
+                      text: '您当前没有抵押金额，最少抵押500HYN可获得收益',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ))
+                ]))
+              : SizedBox(),
+          SizedBox(
+            height: 8.0,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                ' 例: ',
+                style: TextStyle(color: Colors.grey),
+              ),
+              SizedBox(
+                width: 8.0,
+              ),
+              Text(
+                '当前抵押500HYN，可获奖励：\n添加/修改 1 地点 ≈ 0.1 HYN',
+                style: TextStyle(),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 32.0,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              _dot(),
+              Text(
+                '抵押金额上限是5000HYN，添加/修改 1 地点 ≈ 0.5 HYN',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 13,
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 8.0,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              _dot(),
+              Text(
+                '抵押金额越多，贡献POI获得的奖励就越多',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 

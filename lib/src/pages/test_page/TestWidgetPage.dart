@@ -12,7 +12,9 @@ import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/add_poi_done_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/add_poi_page.dart';
-import 'package:titan/src/pages/contribution/new_poi/contributor_mortgage_page.dart';
+import 'package:titan/src/pages/contribution/new_poi/contributor_add_mortgage_page.dart';
+import 'package:titan/src/pages/contribution/new_poi/contributor_mortgage_info_page.dart';
+import 'package:titan/src/pages/contribution/new_poi/contributor_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/request_mortgage_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/contributor_mortgage_broadcast_done_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/verify_poi_done_page.dart';
@@ -239,126 +241,129 @@ class _TestWidgetPageState extends State<TestWidgetPage>
         appBar: AppBar(
           title: Text("Wallet Demo1"),
         ),
-        body: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.all(16),
-            children: <Widget>[
-              RaisedButton(
-                onPressed: () async {
-                  showPub();
-                },
-                child: Text('选择类型'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  showBusinessTime();
-                },
-                child: Text('营业时间'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddPoiPage()));
-                },
-                child: Text('添加poi页'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddPOIDonePage()));
-                },
-                child: Text('添加poi成功页'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  showVerifySite();
-                },
-                child: Text('校验poi'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VerifyPOIDonePage()));
-                },
-                child: Text('校验poi成功页'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ContributorMortgagePage()));
-                },
-                child: Text('贡献者的抵押'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RequestMortgagePage()));
-                },
-                child: Text('数据贡献者申请抵押'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ContributorMortgageBroadcastDonePage()));
-                },
-                child: Text('抵押广播成功页'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  _showKChart();
-                },
-                child: Text('K线图'),
-              ),
-              Divider(
-                height: 16,
-              ),
-              RaisedButton(
-                onPressed: () async {
-                  _showVerifyConfirmDialog(context);
-                },
-                child: Text('其他'),
-              ),
-              Divider(
-                height: 16,
-              )
-            ]));
+        body:
+            ListView(shrinkWrap: true, padding: EdgeInsets.all(16), children: <
+                Widget>[
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ContributorPage()));
+            },
+            child: Text('我的贡献'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ContributorMortgageInfoPage()));
+            },
+            child: Text('我的抵押'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ContributorAddMortgagePage()));
+            },
+            child: Text('增加抵押'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RequestMortgagePage()));
+            },
+            child: Text('申请抵押'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ContributorMortgageBroadcastDonePage()));
+            },
+            child: Text('抵押广播成功页'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AddPoiPage()));
+            },
+            child: Text('添加poi页'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AddPOIDonePage()));
+            },
+            child: Text('添加poi成功页'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              showVerifySite();
+            },
+            child: Text('校验poi'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => VerifyPOIDonePage()));
+            },
+            child: Text('校验poi成功页'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              _showKChart();
+            },
+            child: Text('K线图'),
+          ),
+          Divider(
+            height: 16,
+          ),
+          RaisedButton(
+            onPressed: () async {
+              _showVerifyConfirmDialog(context);
+            },
+            child: Text('其他'),
+          ),
+          Divider(
+            height: 16,
+          )
+        ]));
   }
 
   _showKChart() {
