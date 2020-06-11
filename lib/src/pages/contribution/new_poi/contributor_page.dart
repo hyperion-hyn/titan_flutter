@@ -67,12 +67,18 @@ class _ContributorPageState extends State<ContributorPage> {
                 children: <Widget>[
                   Expanded(
                     flex: 1,
-                    child: ClickRectangleButton('查看抵押', () {
-                      Navigator.push(
+                    child: ClickRectangleButton(
+                      '查看抵押',
+                      () {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ContributorMortgageInfoPage()));
-                    }),
+                            builder: (context) => ContributorMortgageInfoPage(),
+                          ),
+                        );
+                      },
+                      isLightTheme: true,
+                    ),
                   ),
                   Expanded(
                     flex: 1,

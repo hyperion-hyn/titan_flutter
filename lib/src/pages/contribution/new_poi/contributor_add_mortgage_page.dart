@@ -58,7 +58,9 @@ class _ContributorAddMortgagePageState
                           padding: EdgeInsets.all(16.0),
                           child: Text("抵押钱包",
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 16)),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              )),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
@@ -79,13 +81,10 @@ class _ContributorAddMortgagePageState
                                 children: <Widget>[
                                   Text.rich(TextSpan(children: [
                                     TextSpan(
-                                        text: "天道酬勤唐唐",
+                                        text: "Lance",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: 16)),
-                                    TextSpan(
-                                        text: "",
-                                        style: TextStyles.textC333S14bold),
                                   ])),
                                   Container(
                                     height: 4,
@@ -100,7 +99,10 @@ class _ContributorAddMortgagePageState
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
-                              left: 16.0, top: 16, right: 16),
+                            left: 16.0,
+                            top: 16,
+                            right: 16,
+                          ),
                           child: Container(
                             color: HexColor("#F2F2F2"),
                             height: 0.5,
@@ -125,12 +127,16 @@ class _ContributorAddMortgagePageState
                                     Text(
                                       '${FormatUtil.doubleFormatNum(200)}',
                                       style: TextStyle(
-                                          color: Colors.black, fontSize: 20),
+                                        color: Colors.black,
+                                        fontSize: 20,
+                                      ),
                                     ),
                                     Text(
                                       '抵押中（HYN）',
                                       style: TextStyle(
-                                          color: Colors.black, fontSize: 13),
+                                        color: Colors.black,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -147,12 +153,16 @@ class _ContributorAddMortgagePageState
                                       '${FormatUtil.doubleFormatNum(1000)}',
                                       maxLines: 2,
                                       style: TextStyle(
-                                          color: Colors.black, fontSize: 20),
+                                        color: Colors.black,
+                                        fontSize: 20,
+                                      ),
                                     ),
                                     Text(
                                       '剩余可抵押（HYN）',
                                       style: TextStyle(
-                                          color: Colors.black, fontSize: 13),
+                                        color: Colors.black,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                   ],
                                 ),

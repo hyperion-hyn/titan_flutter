@@ -6,7 +6,8 @@ import 'package:titan/src/basic/http/http_exception.dart';
 import 'vo/symbol_quote_vo.dart';
 
 class CoinMarketApi {
-  Future<List<SymbolQuoteVo>> quotes(List<String> symbols, List<String> quoteConverts) async {
+  Future<List<SymbolQuoteVo>> quotes(
+      List<String> symbols, List<String> quoteConverts) async {
     /*
     final symbolString = symbols.reduce((value, element) => value + ',' + element);
     final convert = quoteConverts.reduce((value, element) => value + ',' + element);
@@ -16,28 +17,35 @@ class CoinMarketApi {
             headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
 */
     var response = await HttpCore.instance.get('api/v1/market/prices/latest',
-        options: RequestOptions(
-            headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
+        options: RequestOptions(headers: {
+          "X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY,
+          "Accept": "application/json"
+        })) as Map;
 
     var status = response['state'];
     //print("[coin] ---> status:$status");
 
     if (status['error_code'] == 0) {
-
       List<SymbolQuoteVo> list = [];
       var datas = response["data"] as Map;
       var keys = datas.keys;
       for (var key in keys) {
         for (var convert in quoteConverts) {
           var price = datas[key]["quote"][convert]["price"];
-          var percentChange24h = datas[key]["quote"][convert]["percent_change_24h"];
-          var vo = SymbolQuoteVo(symbol: key, quote: convert, price: price, percentChange24h: percentChange24h);
+          var percentChange24h =
+              datas[key]["quote"][convert]["percent_change_24h"];
+          var vo = SymbolQuoteVo(
+              symbol: key,
+              quote: convert,
+              price: price,
+              percentChange24h: percentChange24h);
           list.add(vo);
         }
       }
       return list;
     }
 
-    throw HttpResponseCodeNotSuccess(status['error_code'], status['error_message']);
+    throw HttpResponseCodeNotSuccess(
+        status['error_code'], status['error_message']);
   }
 }

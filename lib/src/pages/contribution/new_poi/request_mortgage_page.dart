@@ -40,7 +40,7 @@ class _RequestMortgagePageState extends State<RequestMortgagePage> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            Image.asset("res/drawable/atlas_logo.png"),
+            Image.asset('res/drawable/img_placeholder.jpg'),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

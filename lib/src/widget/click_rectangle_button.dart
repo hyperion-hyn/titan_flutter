@@ -8,9 +8,15 @@ class ClickRectangleButton extends StatefulWidget {
   double fontSize;
   Function onTap;
   bool isLoading = false;
+  bool isLightTheme = false;
 
-  ClickRectangleButton(this.text, this.onTap,
-      {this.height = 50, this.fontSize = 17});
+  ClickRectangleButton(
+    this.text,
+    this.onTap, {
+    this.height = 50,
+    this.fontSize = 17,
+    this.isLightTheme = false,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -33,12 +39,25 @@ class _ClickRectangleButtonState extends State<ClickRectangleButton> {
       constraints: BoxConstraints.expand(height: widget.height),
       child: RaisedButton(
           disabledColor: HexColor("#dedede"),
-          color: Theme.of(context).primaryColor,
-          child: Text(widget.text,
-              style: TextStyle(
-                fontSize: widget.fontSize,
-                color: widget.isLoading ? DefaultColors.color999 : Colors.white,
-              )),
+          color: widget.isLightTheme
+              ? Colors.white
+              : Theme.of(context).primaryColor,
+          child: Text(
+            widget.text,
+            style: widget.isLightTheme
+                ? TextStyle(
+                    fontSize: widget.fontSize,
+                    color: widget.isLoading
+                        ? DefaultColors.color999
+                        : Colors.black,
+                  )
+                : TextStyle(
+                    fontSize: widget.fontSize,
+                    color: widget.isLoading
+                        ? DefaultColors.color999
+                        : Colors.white,
+                  ),
+          ),
           onPressed: widget.isLoading
               ? null
               : () async {
