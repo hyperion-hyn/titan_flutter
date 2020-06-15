@@ -25,6 +25,7 @@ import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'package:titan/src/widget/picker_data/PickerData.dart';
 import 'package:titan/src/widget/stepper/poi_stepper.dart';
+import 'package:web_socket_channel/io.dart';
 
 class TestWidgetPage extends StatefulWidget {
   @override
@@ -348,8 +349,14 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => WebSocketTestPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WebSocketPage(
+                        channel: IOWebSocketChannel.connect(
+                      'wss://api.huobi.pro/ws',
+                    )),
+                  ));
             },
             child: Text('websocket测试'),
           ),

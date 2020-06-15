@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_introduction.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
-import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/pages/market/order/item_order.dart';
 
-import 'wallet_page/wallet_page.dart';
+import 'entity/order_entity.dart';
 
-class WalletTabsPage extends StatefulWidget {
+class OrderManagementPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _WalletTabsPageState();
+    return _OrderManagementPageState();
   }
 }
 
-class _WalletTabsPageState extends State<WalletTabsPage>
+class _OrderManagementPageState extends State<OrderManagementPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
@@ -62,10 +59,10 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                   unselectedLabelColor: HexColor("#aaffffff"),
                   tabs: [
                     Tab(
-                      text: S.of(context).wallet,
+                      text: '全部委托',
                     ),
                     Tab(
-                      text: '交易',
+                      text: '历史记录',
                     ),
                   ],
                 ),
@@ -76,8 +73,19 @@ class _WalletTabsPageState extends State<WalletTabsPage>
         body: TabBarView(
           controller: _tabController,
           children: [
-            WalletPage(),
-            ExchangePage(),
+            Container(
+              color: Colors.amber,
+              child: Column(
+                children: List.generate(
+                    5,
+                    (index) => OrderItem(
+                          ExchangeType.BUY,
+                        )),
+              ),
+            ),
+            Container(
+              color: Colors.blue,
+            )
           ],
         ),
       ),

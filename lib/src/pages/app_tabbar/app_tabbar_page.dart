@@ -438,7 +438,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
     switch (index) {
       case 1:
-        return WalletPage();
+        return WalletTabsPage();
 
       case 2:
         return Map3NodeTabsPage();
