@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 
 import 'entity/order_entity.dart';
 
 class OrderItem extends StatefulWidget {
-  final int _type;
+  final OrderEntity _order;
 
-  OrderItem(this._type);
+  OrderItem(this._order);
 
   @override
   State<StatefulWidget> createState() {
@@ -33,10 +34,13 @@ class OrderItemState extends State<OrderItem> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    widget._type == 0 ? '买入' : '卖出',
+                    widget._order.type == 0
+                        ? S.of(context).order_type_buy
+                        : S.of(context).order_type_sell,
                     style: TextStyle(
                       fontSize: 16,
-                      color: widget._type == 0 ? Colors.green : Colors.red,
+                      color:
+                          widget._order.type == 0 ? Colors.green : Colors.red,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

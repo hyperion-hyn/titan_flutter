@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
-import 'package:titan/src/pages/market/exchange/exchange_page.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/pages/market/order/all_orders_page.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
+import 'package:titan/src/pages/market/order/open_orders_page.dart';
 
 import 'entity/order_entity.dart';
 
@@ -15,13 +18,25 @@ class OrderManagementPage extends StatefulWidget {
 }
 
 class _OrderManagementPageState extends State<OrderManagementPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin{
   TabController _tabController;
 
   @override
   void initState() {
-    _tabController = new TabController(initialIndex: 0, vsync: this, length: 2);
+    _tabController = TabController(initialIndex: 0, vsync: this, length: 2);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -63,26 +78,11 @@ class _OrderManagementPageState extends State<OrderManagementPage>
       body: TabBarView(
         controller: _tabController,
         children: [
-          Container(
-            child: Column(
-              children: List.generate(
-                  5,
-                  (index) => OrderItem(
-                        ExchangeType.BUY,
-                      )),
-            ),
-          ),
-          Container(
-            child: ListView.builder(
-                itemCount: 30,
-                itemBuilder: (ctx, index) {
-                  return OrderItem(
-                    ExchangeType.SELL,
-                  );
-                }),
-          )
+          AllOrdersPage(),
+          OpenOrdersPage(),
         ],
       ),
     );
   }
+
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/market/balances_page.dart';
+import 'package:titan/src/pages/market/exchange/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/order_mangement_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -176,7 +178,15 @@ class _ExchangePageState extends State<ExchangePage> {
                 Spacer(),
                 ClickOvalIconButton(
                   '交易',
-                  () {},
+                  () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ExchangeDetailPage(
+                                  symbol: 'USDT',
+                                  type: ExchangeType.BUY,
+                                )));
+                  },
                   width: 80,
                   child: Icon(
                     Icons.arrow_forward,
@@ -369,7 +379,11 @@ class _ExchangePageState extends State<ExchangePage> {
 
   _openOrderListView() {
     return Column(
-      children: List.generate(2, (index) => OrderItem(ExchangeType.BUY)),
+      children: List.generate(
+          2,
+          (index) => OrderItem(
+                OrderEntity()..type = ExchangeType.BUY,
+              )),
     );
   }
 

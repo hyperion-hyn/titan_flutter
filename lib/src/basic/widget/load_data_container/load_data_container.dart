@@ -21,17 +21,16 @@ class LoadDataContainer extends StatefulWidget {
   final VoidCallback onLoadingMore;
   final VoidCallback onLoadingMoreEmpty;
 
-  LoadDataContainer({
-    @required this.child,
-    @required this.bloc,
-    this.enablePullDown = true,
-    this.enablePullUp = true,
-    this.hasFootView = true,
-    this.onLoadData,
-    this.onRefresh,
-    this.onLoadingMore,
-    this.onLoadingMoreEmpty
-  });
+  LoadDataContainer(
+      {@required this.child,
+      @required this.bloc,
+      this.enablePullDown = true,
+      this.enablePullUp = true,
+      this.hasFootView = true,
+      this.onLoadData,
+      this.onRefresh,
+      this.onLoadingMore,
+      this.onLoadingMoreEmpty});
 
   @override
   State<StatefulWidget> createState() {
@@ -157,7 +156,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
       controller.loadComplete();
     } else if (state is LoadMoreEmptyState) {
       controller.loadNoData();
-      if(widget.onLoadingMoreEmpty != null) widget.onLoadingMoreEmpty();
+      if (widget.onLoadingMoreEmpty != null) widget.onLoadingMoreEmpty();
     } else if (state is LoadMoreFailState) {
       controller.loadFailed();
     }
@@ -183,7 +182,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           } else if (mode == LoadStatus.canLoading) {
             body = Container();
           } else {
-            if(widget.hasFootView){
+            if (widget.hasFootView) {
               body = Text(
                 S.of(context).no_more_data,
                 style: TextStyle(color: Colors.grey, fontSize: 14),
