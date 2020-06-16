@@ -26,68 +26,62 @@ class _OrderManagementPageState extends State<OrderManagementPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AppTabBarBloc, AppTabBarState>(
-      listener: (context, state) {
-        if (state is ChangeTabBarItemState) {
-          if (state.index == 1) {
-            this.setState(() {
-              _tabController.index = 0;
-            });
-          }
-        }
-      },
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: Container(
-            color: Theme.of(context).primaryColor,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  labelColor: Colors.white,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  indicatorSize: TabBarIndicatorSize.label,
-                  indicatorColor: Colors.white,
-                  indicatorWeight: 3,
-                  indicatorPadding: EdgeInsets.only(bottom: 2),
-                  unselectedLabelColor: HexColor("#aaffffff"),
-                  tabs: [
-                    Tab(
-                      text: '全部委托',
-                    ),
-                    Tab(
-                      text: '历史记录',
-                    ),
-                  ],
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Container(
+          color: Theme.of(context).primaryColor,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                labelColor: Colors.white,
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
                 ),
+                indicatorSize: TabBarIndicatorSize.label,
+                indicatorColor: Colors.white,
+                indicatorWeight: 3,
+                indicatorPadding: EdgeInsets.only(bottom: 2),
+                unselectedLabelColor: HexColor("#aaffffff"),
+                tabs: [
+                  Tab(
+                    text: '全部委托',
+                  ),
+                  Tab(
+                    text: '历史记录',
+                  ),
+                ],
               ),
             ),
           ),
         ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            Container(
-              color: Colors.amber,
-              child: Column(
-                children: List.generate(
-                    5,
-                    (index) => OrderItem(
-                          ExchangeType.BUY,
-                        )),
-              ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          Container(
+            child: Column(
+              children: List.generate(
+                  5,
+                  (index) => OrderItem(
+                        ExchangeType.BUY,
+                      )),
             ),
-            Container(
-              color: Colors.blue,
-            )
-          ],
-        ),
+          ),
+          Container(
+            child: ListView.builder(
+                itemCount: 30,
+                itemBuilder: (ctx, index) {
+                  return OrderItem(
+                    ExchangeType.SELL,
+                  );
+                }),
+          )
+        ],
       ),
     );
   }

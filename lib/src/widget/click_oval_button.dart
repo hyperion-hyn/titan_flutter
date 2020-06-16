@@ -9,7 +9,6 @@ class ClickOvalButton extends StatefulWidget {
   double fontSize;
   Function onTap;
   bool isLoading = false;
-  Icon icon;
 
   ClickOvalButton(
     this.text,
@@ -17,7 +16,6 @@ class ClickOvalButton extends StatefulWidget {
     this.height = 36,
     this.width = 180,
     this.fontSize = 13,
-    this.icon,
   });
 
   @override

@@ -3,10 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:titan/src/widget/kChart/entity/k_line_entity.dart';
-import 'package:titan/src/widget/kChart/k_chart_widget.dart';
-import 'package:titan/src/widget/kChart/utils/data_util.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:http/http.dart' as http;
 

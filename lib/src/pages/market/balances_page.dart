@@ -1,21 +1,125 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 
-import 'entity/order_entity.dart';
-
-class OrderItem extends StatefulWidget {
-  final int _type;
-
-  OrderItem(this._type);
-
+class BalancesPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return OrderItemState();
+    return _BalancesPageState();
   }
 }
 
-class OrderItemState extends State<OrderItem> {
+class _BalancesPageState extends State<BalancesPage> {
+  double total = 9876.00;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          title: Text(
+        '交易账户',
+      )),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _totalBalances(),
+          Expanded(
+            child: _coinList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+_totalBalances() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          '交易账户总资产折合(CNY)',
+          style: TextStyle(
+            fontSize: 16.0,
+          ),
+        ),
+        Text(
+          '≈￥9876.00',
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 30,
+                child: OutlineButton(
+                  child: Text(
+                    '充币',
+                    style: TextStyle(color: HexColor('#FF1095B0')),
+                  ),
+                  onPressed: () {},
+                  borderSide: BorderSide(
+                    color: HexColor('#FF1095B0'),
+                    width: 1,
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0)),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 30,
+                child: OutlineButton(
+                  child: Text(
+                    '提币',
+                    style: TextStyle(color: HexColor('#FF1095B0')),
+                  ),
+                  onPressed: () {},
+                  borderSide: BorderSide(
+                    color: HexColor('#FF1095B0'),
+                    width: 1,
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0)),
+                ),
+              ),
+            )
+          ],
+        )
+      ],
+    ),
+  );
+}
+
+_coinList() {
+  return ListView.builder(
+      itemCount: 4,
+      itemBuilder: (ctx, index) {
+        return CoinItem('USDT');
+      });
+}
+
+class CoinItem extends StatefulWidget {
+  final String _symbol;
+
+  CoinItem(this._symbol);
+
+  @override
+  State<StatefulWidget> createState() {
+    return CoinItemState();
+  }
+}
+
+class CoinItemState extends State<CoinItem> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -27,51 +131,27 @@ class OrderItemState extends State<OrderItem> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(
-                  left: 16.0, top: 8.0, bottom: 8.0, right: 8.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    widget._type == 0 ? '买入' : '卖出',
+                    'USDT',
                     style: TextStyle(
                       fontSize: 16,
-                      color: widget._type == 0 ? Colors.green : Colors.red,
                       fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  SizedBox(
-                    width: 8.0,
-                  ),
-                  Text(
-                    '10:37 06/11',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
-                  )
                 ],
               ),
             ),
             Spacer(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Container(
-                width: 60,
-                height: 25,
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                  ),
-                  textColor: HexColor('#FF1F81FF'),
-                  child: Text(
-                    '撤销',
-                    style: TextStyle(
-                      fontSize: 13,
-                    ),
-                  ),
-                  onPressed: () {},
-                ),
+              child: Icon(
+                Icons.arrow_forward_ios,
+                size: 15,
               ),
             )
           ],
@@ -89,10 +169,10 @@ class OrderItemState extends State<OrderItem> {
                   child: Row(
                     children: <Widget>[
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '价格(USDT)',
+                            '可用',
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 12,
@@ -119,7 +199,7 @@ class OrderItemState extends State<OrderItem> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '数量(HYN)',
+                      '冻结',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
@@ -142,7 +222,7 @@ class OrderItemState extends State<OrderItem> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      '实际成交(HYN)',
+                      '折合(CNY)',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,

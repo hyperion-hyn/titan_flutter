@@ -23,7 +23,11 @@ class _WalletTabsPageState extends State<WalletTabsPage>
 
   @override
   void initState() {
-    _tabController = new TabController(initialIndex: 0, vsync: this, length: 2);
+    _tabController = new TabController(
+      initialIndex: 0,
+      vsync: this,
+      length: 2,
+    );
     super.initState();
   }
 
@@ -45,30 +49,54 @@ class _WalletTabsPageState extends State<WalletTabsPage>
           child: Container(
             color: Theme.of(context).primaryColor,
             child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  labelColor: Colors.white,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+              child: Stack(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      labelColor: Colors.white,
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      indicatorSize: TabBarIndicatorSize.label,
+                      indicatorColor: Colors.white,
+                      indicatorWeight: 3,
+                      indicatorPadding: EdgeInsets.only(bottom: 2),
+                      unselectedLabelColor: HexColor("#aaffffff"),
+                      tabs: [
+                        Tab(
+                          text: S.of(context).wallet,
+                        ),
+                        Tab(
+                          text: '交易',
+                        ),
+                      ],
+                    ),
                   ),
-                  indicatorSize: TabBarIndicatorSize.label,
-                  indicatorColor: Colors.white,
-                  indicatorWeight: 3,
-                  indicatorPadding: EdgeInsets.only(bottom: 2),
-                  unselectedLabelColor: HexColor("#aaffffff"),
-                  tabs: [
-                    Tab(
-                      text: S.of(context).wallet,
+                  Positioned(
+                    right: 16.0,
+                    top: 16.0,
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.contact_phone,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        SizedBox(
+                          width: 8.0,
+                        ),
+                        Text(
+                          '资质',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        )
+                      ],
                     ),
-                    Tab(
-                      text: '交易',
-                    ),
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
           ),
